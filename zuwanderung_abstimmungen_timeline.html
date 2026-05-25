@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zuwanderung an der Urne – Schweizer Abstimmungen 1970–2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,900&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F1EDE2;
+    --card:#FBF9F3;
+    --ink:#1C1B16;
+    --soft:#6E6C60;
+    --red:#D52B1E;
+    --green:#2E7D4E;
+    --slate:#5C5B52;
+    --blue:#2C5C8A;
+    --clay:#BC4A2E;
+    --line:rgba(28,27,22,.16);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{background:var(--paper);}
+  body{
+    font-family:'Archivo',sans-serif;
+    color:var(--ink);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    position:relative;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.5;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+    mix-blend-mode:multiply;
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:54px 26px 70px;position:relative;z-index:2;}
+
+  /* ---------- Header ---------- */
+  header{margin-bottom:46px;}
+  .kicker{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+  .swisscross{width:26px;height:26px;background:var(--red);position:relative;flex:none;}
+  .swisscross::before,.swisscross::after{content:"";position:absolute;background:#fff;}
+  .swisscross::before{width:5px;height:15px;left:10.5px;top:5.5px;}
+  .swisscross::after{width:15px;height:5px;left:5.5px;top:10.5px;}
+  .kicker span{font-size:.74rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--red);}
+  h1{
+    font-family:'Fraunces',serif;font-weight:900;
+    font-size:clamp(2.7rem,8vw,4.6rem);line-height:.98;letter-spacing:-.02em;
+    margin-bottom:20px;
+  }
+  h1 em{font-style:italic;color:var(--red);}
+  .lead{font-size:1.06rem;color:var(--soft);max-width:46ch;margin-bottom:30px;}
+  .stats{display:flex;flex-wrap:wrap;gap:0;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);}
+  .stat{flex:1;min-width:150px;padding:16px 18px 14px;border-right:1px solid var(--line);}
+  .stat:last-child{border-right:none;}
+  .stat b{font-family:'Fraunces',serif;font-weight:900;font-size:1.9rem;display:block;line-height:1;}
+  .stat span{font-size:.78rem;color:var(--soft);text-transform:uppercase;letter-spacing:.06em;margin-top:7px;display:block;}
+
+  /* ---------- Legend ---------- */
+  .legend{display:flex;flex-wrap:wrap;gap:18px;margin:34px 0 8px;font-size:.8rem;}
+  .legend div{display:flex;align-items:center;gap:7px;color:var(--soft);}
+  .swatch{width:13px;height:13px;border-radius:3px;flex:none;}
+
+  /* ---------- Timeline ---------- */
+  .timeline{position:relative;padding-top:14px;}
+  .timeline::before{content:"";position:absolute;left:104px;top:0;bottom:0;width:2px;background:var(--ink);}
+
+  .phase{display:grid;grid-template-columns:104px 1fr;gap:30px;margin:30px 0 14px;position:relative;}
+  .phase::after{content:"";position:absolute;left:104px;top:50%;width:13px;height:13px;background:var(--red);transform:translate(-50%,-50%) rotate(45deg);}
+  .phase p{grid-column:2;font-family:'Fraunces',serif;font-weight:600;font-size:1.15rem;color:var(--ink);padding-top:1px;}
+  .phase p small{display:block;font-family:'Archivo',sans-serif;font-weight:500;font-size:.78rem;color:var(--soft);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;}
+
+  .event{display:grid;grid-template-columns:104px 1fr;gap:30px;margin-bottom:22px;position:relative;
+    opacity:0;animation:fadeup .6s cubic-bezier(.2,.7,.3,1) forwards;animation-delay:calc(var(--i) * .07s);}
+  @keyframes fadeup{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+  .event::after{content:"";position:absolute;left:104px;top:24px;width:15px;height:15px;border-radius:50%;
+    background:var(--paper);border:3px solid var(--ink);transform:translate(-50%,-50%);}
+  .event[data-r="accepted"]::after{border-color:var(--green);}
+  .event[data-r="rejected"]::after{border-color:var(--slate);}
+  .event[data-r="future"]::after{border-color:var(--red);background:var(--red);
+    box-shadow:0 0 0 0 rgba(213,43,30,.5);animation:pulse 2s infinite;}
+  @keyframes pulse{70%{box-shadow:0 0 0 12px rgba(213,43,30,0);}100%{box-shadow:0 0 0 0 rgba(213,43,30,0);}}
+
+  .year{font-family:'Fraunces',serif;font-weight:900;font-size:2rem;line-height:1;text-align:right;padding-top:11px;}
+  .year small{display:block;font-family:'Archivo',sans-serif;font-weight:600;font-size:.66rem;
+    color:var(--soft);letter-spacing:.05em;margin-top:3px;}
+
+  .card{background:var(--card);border:1.5px solid var(--ink);border-radius:3px;padding:18px 20px;
+    box-shadow:4px 4px 0 rgba(28,27,22,.10);transition:transform .18s ease,box-shadow .18s ease;}
+  .card:hover{transform:translate(-3px,-3px);box-shadow:8px 8px 0 rgba(28,27,22,.15);}
+  .card-top{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px;}
+  .tag{font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    padding:3px 8px;border-radius:3px;}
+  .tag--limit{background:rgba(188,74,46,.12);color:var(--clay);}
+  .tag--open{background:rgba(44,92,138,.12);color:var(--blue);}
+  .result{font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    padding:3px 9px;border-radius:3px;margin-left:auto;}
+  .result--accepted{background:var(--green);color:#fff;}
+  .result--rejected{background:var(--slate);color:#fff;}
+  .result--future{background:var(--red);color:#fff;}
+  .card h3{font-family:'Fraunces',serif;font-weight:600;font-size:1.28rem;line-height:1.15;margin-bottom:5px;}
+  .card-desc{font-size:.93rem;color:var(--soft);margin-bottom:13px;}
+  .card-note{font-size:.82rem;font-style:italic;color:var(--clay);margin-top:11px;
+    border-left:2px solid var(--clay);padding-left:9px;}
+
+  /* result bar */
+  .bar-labels{display:flex;justify-content:space-between;font-size:.72rem;font-weight:600;
+    letter-spacing:.04em;margin-bottom:5px;}
+  .bar-labels .ja{color:var(--ink);}
+  .bar-labels .nein{color:var(--soft);}
+  .bar-track{position:relative;height:24px;background:#E4E0D3;border:1.5px solid var(--ink);
+    border-radius:3px;overflow:hidden;}
+  .bar-ja{height:100%;background:repeating-linear-gradient(45deg,var(--ink),var(--ink) 6px,#33322a 6px,#33322a 12px);}
+  .bar-mid{position:absolute;top:-3px;bottom:-3px;left:50%;width:2px;background:var(--red);}
+  .bar-mid::after{content:"50%";position:absolute;top:-15px;left:50%;transform:translateX(-50%);
+    font-size:.58rem;font-weight:700;color:var(--red);letter-spacing:.04em;}
+
+  /* future card */
+  .card--future{border-color:var(--red);background:#FCEFEC;box-shadow:4px 4px 0 rgba(213,43,30,.18);}
+  .card--future:hover{box-shadow:8px 8px 0 rgba(213,43,30,.24);}
+  .vote-date{display:flex;align-items:center;gap:9px;font-weight:700;font-size:.95rem;
+    color:var(--red);margin-bottom:9px;}
+  .vote-date i{width:9px;height:9px;border-radius:50%;background:var(--red);flex:none;}
+  .card--future .question{font-family:'Fraunces',serif;font-style:italic;font-size:1.04rem;
+    color:var(--ink);margin-top:11px;}
+
+  /* ---------- Takeaway ---------- */
+  .takeaway{margin-top:50px;background:var(--ink);color:var(--paper);border-radius:4px;padding:30px 30px 26px;}
+  .takeaway h2{font-family:'Fraunces',serif;font-weight:600;font-size:1.5rem;margin-bottom:6px;}
+  .takeaway .sub{font-size:.83rem;color:#B6B3A4;text-transform:uppercase;letter-spacing:.1em;margin-bottom:20px;}
+  .takeaway ol{list-style:none;counter-reset:t;}
+  .takeaway li{counter-increment:t;display:grid;grid-template-columns:38px 1fr;gap:14px;
+    padding:14px 0;border-top:1px solid rgba(255,255,255,.14);}
+  .takeaway li::before{content:counter(t);font-family:'Fraunces',serif;font-weight:900;font-size:1.5rem;
+    color:var(--red);line-height:1;}
+  .takeaway li b{color:#fff;}
+
+  footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--line);
+    font-size:.74rem;color:var(--soft);display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:space-between;}
+
+  @media(max-width:560px){
+    .wrap{padding:38px 16px 54px;}
+    .timeline::before{left:62px;}
+    .phase,.event{grid-template-columns:62px 1fr;gap:16px;}
+    .phase::after,.event::after{left:62px;}
+    .year{font-size:1.35rem;padding-top:9px;}
+    .year small{font-size:.58rem;}
+    .card:hover,.card--future:hover{transform:none;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="kicker"><div class="swisscross"></div><span>Schweizer Abstimmungsgeschichte</span></div>
+    <h1>Zuwanderung<br>an der <em>Urne</em></h1>
+    <p class="lead">Seit fast sechs Jahrzehnten stimmt die Schweiz immer wieder über die Begrenzung der Zuwanderung und das Verhältnis zur EU ab. Die «Nachhaltigkeitsinitiative» reiht sich in eine lange Geschichte ein.</p>
+    <div class="stats">
+      <div class="stat"><b>1970–2026</b><span>Sechs Jahrzehnte Abstimmungen</span></div>
+      <div class="stat"><b>10</b><span>Volksentscheide zum Thema</span></div>
+      <div class="stat"><b>1</b><span>angenommene Begrenzungs&shy;initiative</span></div>
+    </div>
+  </header>
+
+  <div class="legend">
+    <div><span class="swatch" style="background:var(--clay)"></span>Zuwanderung begrenzen</div>
+    <div><span class="swatch" style="background:var(--blue)"></span>Öffnung / EU-Weg</div>
+    <div><span class="swatch" style="background:var(--green)"></span>Angenommen</div>
+    <div><span class="swatch" style="background:var(--slate)"></span>Abgelehnt</div>
+  </div>
+
+  <div class="timeline">
+
+    <!-- Phase 1 -->
+    <div class="phase"><p><small>Phase 1 · 1970er-Jahre</small>Die «Überfremdungs&shy;initiativen»</p></div>
+
+    <article class="event" data-r="rejected" style="--i:1">
+      <div class="year">1970<small>7. Juni</small></div>
+      <div class="card">
+        <div class="card-top">
+          <span class="tag tag--limit">Zuwanderung begrenzen</span>
+          <span class="result result--rejected">Abgelehnt</span>
+        </div>
+        <h3>Schwarzenbach-Initiative</h3>
+        <p class="card-desc">Wollte den Ausländeranteil auf höchstens 10 % begrenzen – bei einer Annahme hätten rund 350'000 Menschen die Schweiz verlassen müssen.</p>
+        <div class="bar">
+          <div class="bar-labels"><span class="ja">JA 46 %</span><span class="nein">NEIN 54 %</span></div>
+          <div class="bar-track"><div class="bar-ja" style="width:46%"></div><div class="bar-mid"></div></div>
+        </div>
+        <p class="card-note">Eine der umstrittensten Abstimmungen des 20. Jahrhunderts – knapp abgelehnt bei Rekord-Stimmbeteiligung.</p>
+      </div>
+    </article>
+
+    <article class="event" data-r="rejected" style="--i:2">
+      <div class="year">1974<small>20. Okt.</small></div>
+      <div class="card">
+        <div class="card-top">
+          <span class="tag tag--limit">Zuwanderung begrenzen</span>
+          <span class="result result--rejected">Abgelehnt</span>
+        </div>
+        <h3>Initiative gegen Überfremdung und Überbevölkerung</h3>
+        <p class="card-desc">Forderte eine starke Senkung des Ausländerbestands.</p>
+        <div class="bar">
+          <div class="bar-labels"><span class="ja">JA 34,2 %</span><span class="nein">NEIN 65,8 %</span></div>
+          <div class="bar-track"><div class="bar-ja" style="width:34.2%"></div><div class="bar-mid"></div></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="event" data-r="rejected" style="--i:3">
+      <div class="year">1977<small>13. März</small></div>
+      <div class="card">
+        <div class="card-top">
+          <span class="tag tag--limit">Zuwanderung begrenzen</span>
+          <span class="result result--rejected">Abgelehnt</span>
+        </div>
+        <h3>IV. Überfremdungsinitiative</h3>
+        <p class="card-desc">Wollte die Zuwanderung weiter einschränken – deutlich verworfen.</p>
+        <div class="bar">
+          <div class="bar-labels"><span class="ja">JA 29,5 %</span><span class="nein">NEIN 70,5 %</span></div>
+          <div class="bar-track"><div class="bar-ja" style="width:29.5%"></div><div class="bar-mid"></div></div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Phase 2 -->
+    <div class="phase"><p><small>Phase 2 · 1992–2020</small>Personenfreizügigkeit &amp; der bilaterale Weg</p></div>
+
+    <article class="event" data-r="rejected" style="--i:4">
+      <div class="year">1992<small>6. Dez.</small></div>
+      <div class="card">
+        <div class="card-top">
+          <span class="tag tag--open">Öffnung / EU-Weg</span>
+          <span class="result result--rejected">Abgelehnt</span>
+        </div>
+        <h3>Beitritt zum EWR</h3>
+        <p class="card-desc">Der geplante Beitritt zum Europäischen Wirtschaftsraum scheiterte – als Reaktion entstand danach der bilaterale Weg.</p>
+        <div class="bar">
+          <div class="bar-labels"><span class="ja">JA 49,7 %</span><span class="nein">NEIN 50,3 %</span></div>
+          <div class="bar-track"><div class="bar-ja" style="width:49.7%"></div><div class="bar-mid"></div></div>
+        </div>
+        <p class="card-note">Abgelehnt mit hauchdünnem Vorsprung – eine der folgenreichsten Abstimmungen überhaupt.</p>
+      </div>
+    </article>
+
+    <article class="event" data-r="accepted" style="--i:5">
+      <div class="year">2000<small>21. Mai</small></div>
+      <div class="card">
+        <div class="card-top">
+          <span class="tag tag--open">Öffnung / EU-Weg</span>
+          <span class="result result--accepted">Angenommen</span>
+        </div>
+        <h3>Bilaterale I &amp; Personenfreizügigkeit</h3>
+        <p class="card-desc">Das Vertragspaket mit der EU – inklusive des Personenfreizügigkeitsabkommens (FZA). Damit trat das FZA überhaupt erst in Kraft.</p>
+        <div class="bar">
+          <div class="bar-labels"><span class="ja">JA 67,2 %</span><span class="nein">NEIN 32,8 %</span></div>
+          <div class="bar-track"><div class="bar-ja" style="width:67.2%"></div><div class="bar-mid"></div></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="event" data-r="accepted" style="--i:6">
+      <div class="year">2005<small>25. Sept.</small></div>
+      <div class="card">
+        <div class="card-top">
+          <span class="tag tag--open">Öffnung / EU-Weg</span>
+          <span class="result result--accepted">Angenommen</span>
+        </div>
+        <h3>Ausdehnung der Personenfreizügigkeit</h3>
+        <p class="card-desc">Ausweitung des FZA auf die neuen EU-Staaten in Osteuropa.</p>
+        <div class="bar">
+          <div class="bar-labels"><span class="ja">JA 56,0 %</span><span class="nein">NEIN 44,0 %</span></div>
+          <div class="bar-track"><div class="bar-ja" style="width:56%"></div><div class="bar-mid"></div></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="event" data-r="accepted" style="--i:7">
+      <div class="year">2009<small>8. Feb.</small></div>
+      <div class="card">
+        <div class="card-top">
+          <span class="tag tag--open">Öffnung / EU-Weg</span>
+          <span class="result result--accepted">Angenommen</span>
+        </div>
+        <h3>Weiterführung &amp; Ausdehnung auf Bulgarien / Rumänien</h3>
+        <p class="card-desc">Fortsetzung des FZA und Erweiterung auf zwei weitere EU-Staaten.</p>
+        <div class="bar">
+          <div class="bar-labels"><span class="ja">JA 59,6 %</span><span class="nein">NEIN 40,4 %</span></div>
+          <div class="bar-track"><div class="bar-ja" style="width:59.6%"></div><div class="bar-mid"></div></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="event" data-r="accepted" style="--i:8">
+      <div class="year">2014<small>9. Februar</small></div>
+      <div class="card">
+        <div class="card-top">
+          <span class="tag tag--limit">Zuwanderung begrenzen</span>
+          <span class="result result--accepted">Angenommen</span>
+        </div>
+        <h3>Masseneinwanderungsinitiative</h3>
+        <p class="card-desc">Verlangte eine eigenständige Steuerung der Zuwanderung über Kontingente und Höchstzahlen.</p>
+        <div class="bar">
+          <div class="bar-labels"><span class="ja">JA 50,3 %</span><span class="nein">NEIN 49,7 %</span></div>
+          <div class="bar-track"><div class="bar-ja" style="width:50.3%"></div><div class="bar-mid"></div></div>
+        </div>
+        <p class="card-note">Die einzige angenommene Begrenzungs-Initiative – und damit die grosse Ausnahme.</p>
+      </div>
+    </article>
+
+    <article class="event" data-r="rejected" style="--i:9">
+      <div class="year">2014<small>30. Nov.</small></div>
+      <div class="card">
+        <div class="card-top">
+          <span class="tag tag--limit">Zuwanderung begrenzen</span>
+          <span class="result result--rejected">Abgelehnt</span>
+        </div>
+        <h3>Ecopop-Initiative</h3>
+        <p class="card-desc">Wollte die Zuwanderung an das Bevölkerungswachstum koppeln – mit Umwelt und Überbevölkerung als Begründung.</p>
+        <div class="bar">
+          <div class="bar-labels"><span class="ja">JA 25,9 %</span><span class="nein">NEIN 74,1 %</span></div>
+          <div class="bar-track"><div class="bar-ja" style="width:25.9%"></div><div class="bar-mid"></div></div>
+        </div>
+        <p class="card-note">Inhaltlich die direkteste Vorläuferin der heutigen «Nachhaltigkeitsinitiative».</p>
+      </div>
+    </article>
+
+    <article class="event" data-r="rejected" style="--i:10">
+      <div class="year">2020<small>27. Sept.</small></div>
+      <div class="card">
+        <div class="card-top">
+          <span class="tag tag--limit">Zuwanderung begrenzen</span>
+          <span class="result result--rejected">Abgelehnt</span>
+        </div>
+        <h3>Begrenzungsinitiative</h3>
+        <p class="card-desc">Wollte das Personenfreizügigkeitsabkommen mit der EU beenden.</p>
+        <div class="bar">
+          <div class="bar-labels"><span class="ja">JA 38,3 %</span><span class="nein">NEIN 61,7 %</span></div>
+          <div class="bar-track"><div class="bar-ja" style="width:38.3%"></div><div class="bar-mid"></div></div>
+        </div>
+        <p class="card-note">Der bislang letzte direkte Angriff auf die Personenfreizügigkeit.</p>
+      </div>
+    </article>
+
+    <!-- Future -->
+    <div class="phase"><p><small>Phase 3 · heute</small>Die nächste Vorlage</p></div>
+
+    <article class="event" data-r="future" style="--i:11">
+      <div class="year" style="color:var(--red)">2026<small>14. Juni</small></div>
+      <div class="card card--future">
+        <div class="card-top">
+          <span class="tag tag--limit">Zuwanderung begrenzen</span>
+          <span class="result result--future">Abstimmung steht bevor</span>
+        </div>
+        <h3>Nachhaltigkeitsinitiative «Keine 10-Millionen-Schweiz»</h3>
+        <p class="card-desc">Will die Bevölkerung der Schweiz auf höchstens 10 Millionen Menschen begrenzen. Wird die Grenze überschritten, müsste der Bundesrat das FZA kündigen.</p>
+        <div class="vote-date"><i></i>Volksabstimmung vom 14. Juni 2026</div>
+        <p class="question">Reiht sich diese Vorlage in die lange Liste der abgelehnten Initiativen ein – oder wird sie zur zweiten Ausnahme?</p>
+      </div>
+    </article>
+
+  </div>
+
+  <section class="takeaway">
+    <h2>Was die Geschichte zeigt</h2>
+    <p class="sub">Drei Muster aus sechs Jahrzehnten</p>
+    <ol>
+      <li><span><b>Begrenzungs-Initiativen scheitern fast immer.</b> Von sechs abgeschlossenen Vorlagen zur Begrenzung der Zuwanderung wurde nur eine angenommen – die Masseneinwanderungsinitiative 2014.</span></li>
+      <li><span><b>Der bilaterale Weg wurde bestätigt.</b> Alle Abstimmungen zur Personenfreizügigkeit gingen positiv aus; einzig der EWR-Beitritt 1992 wurde – hauchdünn – abgelehnt.</span></li>
+      <li><span><b>Die Begründung hat sich gewandelt.</b> Aus der «Überfremdung» der 1970er-Jahre wurden Umwelt, Infrastruktur und Lebensqualität – der Weg führt von Schwarzenbach über Ecopop zur «Nachhaltigkeitsinitiative».</span></li>
+    </ol>
+  </section>
+
+  <footer>
+    <span>Zusammengestellt für den ABU-Unterricht · HKV Aarau</span>
+    <span>Quellen: Bundeskanzlei, easyvote, NCCR on the move, Schweiz. Nationalmuseum</span>
+  </footer>
+
+</div>
+</body>
+</html>
