@@ -1,0 +1,76 @@
+
+<h2 class="sr-only">Bevölkerungsentwicklung Schweiz 1925–2025 mit historischen Phasen</h2>
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px" id="toggles">
+<button onclick="toggle('curve')" id="btn-curve" style="font-size:13px;padding:6px 14px;border-radius:6px;border:2px solid #1F4E78;background:#1F4E78;color:#fff;cursor:pointer;font-weight:500">Kurve</button>
+<button onclick="toggle('ww2')" id="btn-ww2" style="font-size:13px;padding:6px 14px;border-radius:6px;border:2px solid #e74c3c;background:#e74c3c;color:#fff;cursor:pointer;font-weight:500">2. Weltkrieg</button>
+<button onclick="toggle('gast')" id="btn-gast" style="font-size:13px;padding:6px 14px;border-radius:6px;border:2px solid #2ecc71;background:#2ecc71;color:#fff;cursor:pointer;font-weight:500">Gastarbeiter</button>
+<button onclick="toggle('oil')" id="btn-oil" style="font-size:13px;padding:6px 14px;border-radius:6px;border:2px solid #e67e22;background:#e67e22;color:#fff;cursor:pointer;font-weight:500">&Ouml;lkrise</button>
+<button onclick="toggle('pfz')" id="btn-pfz" style="font-size:13px;padding:6px 14px;border-radius:6px;border:2px solid #9b59b6;background:#9b59b6;color:#fff;cursor:pointer;font-weight:500">Personenfreiz&uuml;gigkeit</button>
+</div>
+<div style="position:relative;width:100%;height:380px;">
+<canvas id="popChart" role="img" aria-label="Bev&ouml;lkerungsentwicklung Schweiz 1925-2025 mit historischen Annotationen">Bev&ouml;lkerung 3.9 Mio (1925) bis 9.1 Mio (2025)</canvas>
+</div>
+<div style="font-size:11px;color:var(--color-text-tertiary);margin-top:8px">Quelle: Bundesamt f&uuml;r Statistik (BFS). Werte gerundet.</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.0.1/chartjs-plugin-annotation.min.js"></script>
+<script>
+var labels=[1925,1930,1935,1940,1945,1950,1955,1960,1965,1970,1975,1980,1985,1990,1995,2000,2005,2010,2015,2020,2025];
+var data=[3.88,4.07,4.17,4.27,4.47,4.72,5.01,5.36,5.94,6.27,6.34,6.30,6.47,6.75,7.04,7.20,7.46,7.87,8.33,8.67,9.10];
+var isDk=matchMedia('(prefers-color-scheme:dark)').matches;
+var state={curve:true,ww2:true,gast:true,oil:true,pfz:true};
+var colors={curve:'#1F4E78',ww2:'#e74c3c',gast:'#2ecc71',oil:'#e67e22',pfz:'#9b59b6'};
+
+function mkAnnotations(){
+  var a={};
+  if(state.ww2){
+    a.ww2box={type:'box',xMin:2.8,xMax:4.2,backgroundColor:isDk?'rgba(231,76,60,0.12)':'rgba(231,76,60,0.08)',borderColor:'transparent'};
+    a.ww2label={type:'label',xValue:3.5,yValue:9.6,content:['2. Weltkrieg','1939\u20131945'],font:{size:11,weight:'500'},color:'#e74c3c',textAlign:'center'};
+  }
+  if(state.gast){
+    a.gastbox={type:'box',xMin:5,xMax:9,backgroundColor:isDk?'rgba(46,204,113,0.12)':'rgba(46,204,113,0.08)',borderColor:'transparent'};
+    a.gastlabel={type:'label',xValue:7,yValue:9.6,content:['Gastarbeiter-Boom','1950\u20131970'],font:{size:11,weight:'500'},color:'#2ecc71',textAlign:'center'};
+  }
+  if(state.oil){
+    a.oilbox={type:'box',xMin:9,xMax:11,backgroundColor:isDk?'rgba(230,126,34,0.12)':'rgba(230,126,34,0.08)',borderColor:'transparent'};
+    a.oillabel={type:'label',xValue:10,yValue:9.6,content:['\u00d6lkrise','1973\u20131982'],font:{size:11,weight:'500'},color:'#e67e22',textAlign:'center'};
+  }
+  if(state.pfz){
+    a.pfzline={type:'line',xMin:15.4,xMax:15.4,borderColor:'#9b59b6',borderWidth:2,borderDash:[5,4]};
+    a.pfzlabel={type:'label',xValue:17,yValue:4,content:['Personenfreiz\u00fcgigkeit','ab 2002'],font:{size:11,weight:'500'},color:'#9b59b6',textAlign:'center'};
+  }
+  return a;
+}
+
+var chart=new Chart(document.getElementById('popChart'),{
+  type:'line',
+  data:{labels:labels,datasets:[{
+    label:'Bev\u00f6lkerung (Mio.)',data:data,
+    borderColor:colors.curve,backgroundColor:isDk?'rgba(31,78,120,0.15)':'rgba(31,78,120,0.08)',
+    fill:true,tension:0.3,pointRadius:4,pointBackgroundColor:colors.curve,
+    pointBorderColor:isDk?'#222':'#fff',pointBorderWidth:2,pointHoverRadius:7,
+    hidden:false
+  }]},
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},
+      tooltip:{callbacks:{label:function(c){return c.parsed.y.toFixed(2)+' Mio.';}}},
+      annotation:{annotations:mkAnnotations()}
+    },
+    scales:{
+      x:{ticks:{autoSkip:false,maxRotation:45,font:{size:11}},grid:{display:false}},
+      y:{min:3,max:10,ticks:{callback:function(v){return v+' Mio.';},font:{size:11},stepSize:1},
+        grid:{color:isDk?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.06)'}}
+    }
+  }
+});
+
+function toggle(key){
+  state[key]=!state[key];
+  var btn=document.getElementById('btn-'+key);
+  if(state[key]){btn.style.background=colors[key];btn.style.color='#fff';}
+  else{btn.style.background='transparent';btn.style.color=colors[key];}
+  if(key==='curve'){chart.data.datasets[0].hidden=!state[key];}
+  chart.options.plugins.annotation.annotations=mkAnnotations();
+  chart.update();
+}
+</script>
