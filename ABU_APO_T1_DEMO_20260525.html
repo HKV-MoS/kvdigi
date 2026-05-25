@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>T1 · Ich beginne einen neuen Lebensabschnitt – ABU APO HKV Aarau</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --kv-lila: #642483;
+    --kv-lila-hell: #8b4ba8;
+    --kv-lila-dunkel: #4a1a61;
+    --bg-sidebar: #2b2b3a;
+    --bg-sidebar-hover: #3a3a4d;
+    --bg-main: #ffffff;
+    --txt-dunkel: #2b2b3a;
+    --txt-grau: #6b7280;
+    --lz-blau: #E0F2FE;
+    --auf-gelb: #FEF9C3;
+    --the-grau: #E5E7EB;
+    --wic-rot: #EF4444;
+    --bsp-gruen: #86EFAC;
+    --lp-grau: #F3F4F6;
+  }
+  html, body {
+    height: 100%;
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    color: var(--txt-dunkel);
+    background: #1a1a24;
+  }
+  body { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+  /* ===== HEADER ===== */
+  .kv-header {
+    height: 56px; flex-shrink: 0;
+    background: linear-gradient(90deg, #ffffff 0%, #ffffff 60%, #f0e6f5 100%);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 18px; border-bottom: 1px solid #ddd; z-index: 30;
+  }
+  .kv-logo { display: flex; align-items: center; gap: 9px; }
+  .kv-logo .burger { font-size: 20px; color: var(--txt-dunkel); cursor: pointer; }
+  .kv-logo .brand {
+    font-weight: 700; font-size: 17px;
+    border: 2px solid var(--txt-dunkel); border-radius: 8px;
+    padding: 5px 11px;
+  }
+  .kv-logo .brand .dot { color: var(--kv-lila); }
+  .kv-modultitel {
+    font-weight: 700; font-size: 15px; color: var(--txt-dunkel);
+    border: 1px solid #ccc; border-radius: 18px; padding: 7px 20px;
+    background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  }
+  .kv-headright { display: flex; align-items: center; gap: 10px; }
+  .kv-flag { color: var(--kv-lila); font-size: 17px; }
+  .kv-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--kv-lila); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+  }
+
+  /* ===== BODY: SIDEBAR + MAIN ===== */
+  .kv-body { flex: 1; display: flex; overflow: hidden; }
+
+  /* ===== SIDEBAR / TIMELINE ===== */
+  .kv-sidebar {
+    width: 340px; flex-shrink: 0; background: var(--bg-sidebar);
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .kv-sidebar-head {
+    padding: 13px 18px; color: #c9c9d6; font-size: 12px; font-weight: 700;
+    letter-spacing: 1.2px; background: #34344a;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .kv-timeline { flex: 1; overflow-y: auto; padding: 14px 0 40px; position: relative; }
+  .kv-timeline::-webkit-scrollbar { width: 8px; }
+  .kv-timeline::-webkit-scrollbar-thumb { background: #4a4a5e; border-radius: 4px; }
+  .kv-tl-start { color: #fff; font-size: 19px; font-weight: 700; padding: 4px 20px 12px; }
+  .kv-tl-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 9px 18px 9px 30px; cursor: pointer; position: relative;
+    color: #c9c9d6; font-size: 13.5px; line-height: 1.35;
+    border-left: 3px solid transparent;
+  }
+  .kv-tl-item:hover { background: var(--bg-sidebar-hover); }
+  .kv-tl-item.active {
+    background: var(--bg-sidebar-hover); color: #fff;
+    border-left: 3px solid var(--kv-lila-hell);
+  }
+  .kv-tl-node {
+    width: 15px; height: 15px; border-radius: 50%;
+    background: #fff; flex-shrink: 0; z-index: 2;
+    border: 3px solid var(--bg-sidebar);
+  }
+  .kv-tl-item.active .kv-tl-node { background: var(--kv-lila-hell); }
+  /* vertikale Linie */
+  .kv-tl-line {
+    position: absolute; left: 36.5px; top: 0; bottom: 0;
+    width: 2px; background: #4a4a5e; z-index: 1;
+  }
+  .kv-tl-modnum { color: #8888a0; font-weight: 700; margin-right: 2px; }
+
+  /* ===== MAIN ===== */
+  .kv-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #d8d8e0; }
+  .kv-content-wrap { flex: 1; overflow-y: auto; padding: 26px; }
+  .kv-content {
+    background: var(--bg-main); border-radius: 8px;
+    max-width: 1000px; margin: 0 auto; min-height: 100%;
+    padding: 40px 54px; box-shadow: 0 2px 16px rgba(0,0,0,.13);
+  }
+  .kv-content::-webkit-scrollbar { width: 10px; }
+
+  /* ===== CONTENT TYPOGRAFIE ===== */
+  .folie-modul-titel {
+    font-size: 30px; font-weight: 800; color: var(--txt-dunkel);
+    padding-bottom: 14px; border-bottom: 3px solid var(--kv-lila);
+    margin-bottom: 8px;
+  }
+  .folie-breadcrumb { font-size: 13px; color: var(--txt-grau); margin-bottom: 22px; }
+  .folie-h-sektion {
+    font-size: 13px; font-weight: 700; letter-spacing: .5px;
+    color: var(--kv-lila); text-transform: uppercase; margin: 4px 0 2px;
+  }
+  .folie-titel {
+    font-size: 27px; font-weight: 800; color: var(--txt-dunkel);
+    margin-bottom: 4px;
+  }
+  .folie-untertitel { font-size: 14px; color: var(--txt-grau); margin-bottom: 22px; font-style: italic; }
+  .folie p { font-size: 15.5px; line-height: 1.62; margin-bottom: 13px; color: #333; }
+  .folie ul { margin: 0 0 14px 22px; }
+  .folie li { font-size: 15.5px; line-height: 1.6; margin-bottom: 6px; }
+  .folie ol { margin: 0 0 14px 24px; }
+  .folie ol li { margin-bottom: 7px; }
+
+  /* ===== FARBBOXEN ===== */
+  .box { border-radius: 8px; padding: 18px 22px; margin: 16px 0; }
+  .box-titel { font-weight: 800; font-size: 16.5px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .box ul, .box ol { margin-bottom: 0; }
+  .box p:last-child { margin-bottom: 0; }
+  .box-lernziel  { background: var(--lz-blau); }
+  .box-theorie   { background: var(--the-grau); }
+  .box-beispiel  { background: var(--bsp-gruen); }
+  .box-aufgabe   { background: var(--auf-gelb); }
+  .box-wichtig   { background: var(--wic-rot); color: #fff; }
+  .box-wichtig .box-titel { color: #fff; }
+  .box-meta { font-size: 13px; font-style: italic; color: #555; margin-bottom: 12px; }
+  .box-wichtig .box-meta { color: #ffe; }
+
+  /* Dialog */
+  .dialog { margin-bottom: 11px; font-size: 15.5px; line-height: 1.6; }
+  .dialog .name { font-weight: 700; }
+  .dialog .text { font-style: italic; color: #444; }
+
+  /* Lösung (details) */
+  .loesung { margin-top: 12px; }
+  .loesung summary {
+    cursor: pointer; font-weight: 700; font-size: 14px;
+    color: var(--kv-lila); padding: 7px 12px; background: var(--lp-grau);
+    border-radius: 6px; display: inline-block; user-select: none;
+    list-style: none;
+  }
+  .loesung summary::-webkit-details-marker { display: none; }
+  .loesung summary::before { content: "🔒 "; }
+  .loesung[open] summary::before { content: "🔓 "; }
+  .loesung-inhalt {
+    background: var(--lp-grau); border-radius: 6px;
+    padding: 14px 18px; margin-top: 8px; font-size: 14.5px;
+  }
+  .loesung-inhalt ul { margin-bottom: 0; }
+
+  /* Tabelle */
+  .folie table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 14px; }
+  .folie th { background: var(--txt-dunkel); color: #fff; padding: 9px 12px; text-align: left; font-weight: 700; }
+  .folie td { border: 1px solid #d0d0d8; padding: 8px 12px; }
+  .folie tr:nth-child(even) td { background: #f7f7fa; }
+
+  /* Interaktions-Markierung */
+  .ix-meta {
+    font-size: 12.5px; font-style: italic; color: #777;
+    margin-bottom: 9px; font-family: 'Consolas', monospace;
+  }
+  .ix-luecke {
+    background: #fff; border-bottom: 2px solid #b59a00;
+    padding: 1px 7px; font-weight: 700; border-radius: 3px;
+  }
+  .ix-paar { font-family: 'Consolas', monospace; font-size: 14px; }
+  .ix-option { margin: 5px 0; }
+  .ix-korrekt { color: #888; font-family: 'Consolas', monospace; font-size: 12px; }
+
+  /* ===== FOLIEN-TABLEISTE UNTEN ===== */
+  .kv-tabs {
+    flex-shrink: 0; background: #ececef; border-top: 1px solid #ccc;
+    display: flex; align-items: stretch; height: 48px; overflow-x: auto;
+  }
+  .kv-tabs::-webkit-scrollbar { height: 5px; }
+  .kv-tab {
+    display: flex; align-items: center; gap: 7px;
+    padding: 0 17px; cursor: pointer; white-space: nowrap;
+    font-size: 13px; color: #555; border-right: 1px solid #ddd;
+    transition: background .12s;
+  }
+  .kv-tab:hover { background: #e0e0e5; }
+  .kv-tab.active { background: var(--txt-dunkel); color: #fff; font-weight: 600; }
+  .kv-tab .tabnum {
+    font-weight: 700; color: var(--kv-lila);
+  }
+  .kv-tab.active .tabnum { color: #c79fd9; }
+  .kv-tab.versteckt { opacity: .55; font-style: italic; }
+  .kv-tabs-nav {
+    margin-left: auto; display: flex; align-items: center;
+    gap: 4px; padding: 0 12px; flex-shrink: 0; background: #ececef;
+  }
+  .kv-navbtn {
+    width: 30px; height: 30px; border-radius: 50%; border: none;
+    background: var(--kv-lila); color: #fff; font-size: 15px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+  .kv-navbtn:hover { background: var(--kv-lila-hell); }
+  .kv-navbtn:disabled { background: #bbb; cursor: default; }
+
+  /* ===== STARTSEITE ===== */
+  .start-hero {
+    text-align: center; padding: 30px 20px 24px;
+  }
+  .start-hero h1 { font-size: 33px; font-weight: 800; margin-bottom: 10px; }
+  .start-hero .sub { font-size: 16px; color: var(--txt-grau); margin-bottom: 4px; }
+  .start-hero .badge {
+    display: inline-block; background: var(--kv-lila); color: #fff;
+    font-size: 13px; font-weight: 700; padding: 5px 14px;
+    border-radius: 14px; margin-top: 12px;
+  }
+  .start-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 14px; margin-top: 24px;
+  }
+  .start-card {
+    border: 1px solid #e0e0e8; border-radius: 9px; padding: 16px 18px;
+    cursor: pointer; transition: all .14s; background: #fafafc;
+  }
+  .start-card:hover {
+    border-color: var(--kv-lila); box-shadow: 0 3px 12px rgba(100,36,131,.14);
+    transform: translateY(-2px);
+  }
+  .start-card . modnr { }
+  .start-card .nr {
+    font-size: 12px; font-weight: 700; color: var(--kv-lila);
+    letter-spacing: .5px;
+  }
+  .start-card .ti { font-size: 17px; font-weight: 700; margin: 3px 0 5px; }
+  .start-card .lb { font-size: 13px; color: var(--txt-grau); }
+  .start-info {
+    background: var(--lz-blau); border-radius: 8px; padding: 16px 20px;
+    margin-top: 26px; font-size: 14px; line-height: 1.6;
+  }
+  .start-legende { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .leg-item { display: flex; align-items: center; gap: 6px; font-size: 12.5px; }
+  .leg-swatch { width: 18px; height: 18px; border-radius: 4px; border: 1px solid rgba(0,0,0,.1); }
+
+  @media (max-width: 860px) {
+    .kv-sidebar { width: 230px; }
+    .kv-content { padding: 26px 22px; }
+    .start-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="kv-header">
+  <div class="kv-logo">
+    <span class="burger">☰</span>
+    <span class="brand">kvdigital<span class="dot">.swiss</span></span>
+  </div>
+  <div class="kv-modultitel" id="headerTitel">T1 · Ich beginne einen neuen Lebensabschnitt</div>
+  <div class="kv-headright">
+    <span class="kv-flag">⚑</span>
+    <span class="kv-avatar">MoS</span>
+  </div>
+</div>
+
+<div class="kv-body">
+  <div class="kv-sidebar">
+    <div class="kv-sidebar-head">📅 TIMELINE</div>
+    <div class="kv-timeline" id="timeline">
+      <div class="kv-tl-line"></div>
+      <div class="kv-tl-start">Start</div>
+      <!-- Timeline-Items per JS -->
+    </div>
+  </div>
+
+  <div class="kv-main">
+    <div class="kv-content-wrap">
+      <div class="kv-content" id="content"><!-- per JS --></div>
+    </div>
+    <div class="kv-tabs" id="tabs"><!-- per JS --></div>
+  </div>
+</div>
+
+<script>
+// ====================================================================
+// ABU APO T1 – KVdigital-Look · Daten + Navigation · MoS · 25.5.2026
+// ====================================================================
+// modules_data.js – T1 Modul-Inhalte (Teil 1: 001-005)
+// Block-Typen: lernziele, theorie, beispiel, aufgabe, wichtig, dialog, text, liste,
+//              ix_luecke, ix_zuordnung, ix_check, loesung, tabelle, ol
+window.T1_MODULE = [
+
+// ============================ T1.001 ============================
+{
+  id:"T1.001", titel:"Erste Tage an der HKV Aarau", lebensbezug:"LB 1.1a",
+  sektionen:[
+    { nr:"001", titel:"Lernziele", folien:[
+      { nr:"001.1", titel:"Lernziele Modul T1.001", bloecke:[
+        {typ:"lernziele", items:[
+          "Sie benennen die drei Lernorte der dualen Berufsbildung Schweiz und erklären deren Aufgaben.",
+          "Sie kennen die wichtigsten Eckdaten und digitalen Werkzeuge der HKV Aarau.",
+          "Sie reflektieren die Vielfalt in Ihrer Klasse und erkennen sie als Lernchance."
+        ]}
+      ]}
+    ]},
+    { nr:"002", titel:"Einführung", folien:[
+      { nr:"002.1", titel:"Pausen-Dialog Lena & Noel", bloecke:[
+        {typ:"text", text:"Mit dem ersten Schultag an der HKV Aarau beginnt für Sie ein neuer Lebensabschnitt. Lena und Noel sitzen in der Pause auf dem Pausenplatz vor der Schule."},
+        {typ:"dialog", name:"Lena", text:"Heute war mein erster Tag in der Apotheke. Drei Tage hier in der Schule, zwei Tage im Lehrbetrieb – das fühlt sich richtig erwachsen an."},
+        {typ:"dialog", name:"Noel", text:"Bei mir auch. Aber wer entscheidet eigentlich, was wir lernen müssen? Und warum bin ich nicht nur in einer Schule, sondern an drei Orten gleichzeitig?"},
+        {typ:"text", text:"Genau diese Fragen klären wir in diesem Modul."}
+      ]}
+    ]},
+    { nr:"003", titel:"Theorie", folien:[
+      { nr:"003.1", titel:"Drei Lernorte der dualen Berufsbildung", bloecke:[
+        {typ:"text", text:"Die berufliche Grundbildung in der Schweiz findet an drei Orten gleichzeitig statt. Jeder Lernort hat seinen klaren Auftrag und ergänzt die anderen. Das System ist international anerkannt und ein Erfolgsmodell der Schweiz."},
+        {typ:"theorie", titel:"Drei Lernorte", liste:[
+          "Lehrbetrieb (Apotheke): praktische Ausbildung im realen Berufsalltag",
+          "Berufsfachschule (HKV Aarau): Berufskunde, Allgemeinbildung (ABU), Sport",
+          "Überbetrieblicher Kurs (üK): branchenspezifische Ergänzung durch pharmaSuisse"
+        ]},
+        {typ:"beispiel", titel:"Für Sie als Lernende:r", text:"Sie sind nie «nur Schülerin» oder «nur Arbeiterin» – Sie sind beides gleichzeitig. Das macht die Schweizer Berufsbildung international anerkannt."}
+      ]},
+      { nr:"003.2", titel:"Die HKV Aarau", bloecke:[
+        {typ:"text", text:"Die HKV Aarau ist eine der grössten kaufmännischen Berufsfachschulen im Kanton Aargau und unterrichtet auch Berufslernende der Fachrichtung Apotheke."},
+        {typ:"theorie", titel:"HKV-Eckdaten", liste:[
+          "Adresse: Bahnhofstrasse 46, 5000 Aarau",
+          "WLAN: HKVA_WLAN · Sekretariat: 062 837 97 10",
+          "Entschuldigung: 21 Tage Frist · Vorausabsenz: 10 Tage im Voraus",
+          "Druckguthaben (PaperCut): CHF 20 pro Lehrjahr",
+          "Digitale Werkzeuge: KVdigital · Tocco · Office365 · PaperCut"
+        ]}
+      ]}
+    ]},
+    { nr:"004", titel:"Aufgaben", folien:[
+      { nr:"004.1", titel:"Interaktion – HKV-Eckdaten-Lückentext", bloecke:[
+        {typ:"ix_luecke", titel:"HKV-Eckdaten zum Ausfüllen",
+         saetze:[
+           ["Die HKV Aarau liegt an der ","Bahnhofstrasse 46"," in ","Aarau","."],
+           ["Die Entschuldigungsfrist beträgt ","21"," Tage."],
+           ["Vorausabsenzen müssen ","10"," Tage im Voraus gemeldet werden."],
+           ["Pro Lehrjahr stehen ","20"," CHF Druckguthaben zur Verfügung."],
+           ["Die Lernplattform der HKV heisst ","KVdigital","."]
+         ]},
+        {typ:"loesung", inhalt:["Bahnhofstrasse 46 · Aarau · 21 · 10 · 20 · KVdigital"]}
+      ]},
+      { nr:"004.2", titel:"Interaktion – Lernort-Zuordnung", bloecke:[
+        {typ:"ix_zuordnung", titel:"Lernort und Hauptaufgabe",
+         begriffe:["Lehrbetrieb","Berufsfachschule","überbetrieblicher Kurs","SBFI","Kanton Aargau"]},
+        {typ:"loesung", tabelle:{kopf:["Begriff","Definition"], zeilen:[
+          ["Lehrbetrieb","praktische Ausbildung im Berufsalltag"],
+          ["Berufsfachschule","theoretische Grundbildung (ABU, Berufskunde, Sport)"],
+          ["überbetrieblicher Kurs","branchenspezifische Ergänzung durch pharmaSuisse"],
+          ["SBFI","Bundesgesetzgebung Berufsbildung (BBG)"],
+          ["Kanton Aargau","Aufsicht über Lehrverhältnisse"]
+        ]}}
+      ]},
+      { nr:"004.3", titel:"Auftrag – Aktivitäten zuordnen", bloecke:[
+        {typ:"aufgabe", titel:"Auftrag · Aktivitäten zuordnen",
+         meta:"Sozialform: Einzelarbeit, dann Plenum · Zeit: 15 Min · Kompetenzen: Anwendung",
+         text:"Ordnen Sie folgende Aktivitäten dem richtigen Lernort zu (B = Lehrbetrieb, S = Berufsfachschule, ü = überbetrieblicher Kurs):",
+         liste:[
+           "a) Sie beraten eine Kundin mit Heuschnupfen am Schalter. ___",
+           "b) Sie schreiben einen ABU-Test über die Schweizer Berufsbildung. ___",
+           "c) Sie nehmen an einem pharmaSuisse-Kurs zur Magistralrezeptur teil. ___",
+           "d) Sie tragen Medikamente in das betriebsinterne Warenwirtschaftssystem ein. ___"
+         ]},
+        {typ:"loesung", inhalt:[
+          "a) B (Lehrbetrieb – Beratung am Verkaufspunkt)",
+          "b) S (Berufsfachschule – ABU-Test)",
+          "c) ü (üK – pharmaSuisse organisiert Branchenkurse)",
+          "d) B (Lehrbetrieb – betriebsinterne Software)"
+        ]}
+      ]},
+      { nr:"004.4", titel:"SUK – Synonym-Check", bloecke:[
+        {typ:"ix_check", titel:"Synonym-Check", modus:"SINGLE",
+         frage:"Welche Aussage stimmt? (Single Choice)",
+         optionen:[
+           ["Lernende:r und Auszubildende:r sind Synonyme",true],
+           ["Lehrbetrieb und Berufsfachschule sind Synonyme",false],
+           ["Berufsbildner:in und Klassenlehrperson sind Synonyme",false],
+           ["überbetrieblicher Kurs und Praktikum sind Synonyme",false]
+         ]},
+        {typ:"loesung", inhalt:["Korrekt: «Lernende:r und Auszubildende:r sind Synonyme» – beide Begriffe meinen dasselbe."]}
+      ]}
+    ]},
+    { nr:"005", titel:"Abschluss", folien:[
+      { nr:"005.1", titel:"Reflexion – Portfolio-Eintrag", bloecke:[
+        {typ:"aufgabe", titel:"Reflexion · Portfolio-Eintrag T1.001",
+         meta:"Sozialform: Einzelarbeit · Zeit: 10 Min · Kompetenzen: Selbstkompetenz",
+         text:"Beantworten Sie schriftlich (je 1–2 Sätze):",
+         ol:[
+           "Was war meine grösste Überraschung an meinem ersten Schultag an der HKV?",
+           "Welcher Lernort fühlt sich für mich gerade am wichtigsten an – und warum?",
+           "Welche Person in meiner Klasse möchte ich besser kennenlernen?",
+           "Was nehme ich aus T1.001 konkret mit?"
+         ]}
+      ]},
+      { nr:"005.2", titel:"Didaktische Hinweise [VERSTECKT]", versteckt:true, bloecke:[
+        {typ:"loesung", titel:"Didaktische Hinweise – nur für Lehrperson", inhalt:[
+          "Lebensbezug 1.1 (SLP 2026): Lehrbetrieb/Schule + Heterogenität. Personenrecht → T1.002.",
+          "Sprachmodi: Interaktion mündlich (Dialog), Rezeption schriftlich (Theorie), Produktion schriftlich (Reflexion).",
+          "Digit. Komp.: Arbeitsgerät einrichten, Lernplattformen nutzen."
+        ]}
+      ]}
+    ]}
+  ]
+},
+
+// ============================ T1.002 ============================
+{
+  id:"T1.002", titel:"Meine Rolle und das Personenrecht", lebensbezug:"LB 1.1b",
+  sektionen:[
+    { nr:"001", titel:"Lernziele", folien:[
+      { nr:"001.1", titel:"Lernziele Modul T1.002", bloecke:[
+        {typ:"lernziele", items:[
+          "Sie erklären den Unterschied zwischen Rechts-, Urteils- und Handlungsfähigkeit.",
+          "Sie kennen Ihre wichtigsten Rechte und Pflichten an der HKV Aarau.",
+          "Sie beurteilen einfache Alltagssituationen aus rechtlicher Sicht."
+        ]}
+      ]}
+    ]},
+    { nr:"002", titel:"Einführung", folien:[
+      { nr:"002.1", titel:"Eine neue Rolle", bloecke:[
+        {typ:"text", text:"Mit dem Lehrvertrag haben Sie eine neue Rolle übernommen: Sie sind nicht mehr Schülerin oder Schüler – Sie sind Berufslernende:r."},
+        {typ:"dialog", name:"Noel", text:"Mein Berufsbildner sagte gestern: ‹Ab heute bist du nicht mehr Kind – du bist Mitarbeiter.› Das hat mich beeindruckt."},
+        {typ:"dialog", name:"Lena", text:"Ich finde das gut. Endlich werde ich ernst genommen. Aber ich merke auch, dass ich mehr Verantwortung trage."}
+      ]}
+    ]},
+    { nr:"003", titel:"Theorie", folien:[
+      { nr:"003.1", titel:"Rechts-, Urteils- und Handlungsfähigkeit", bloecke:[
+        {typ:"text", text:"Das Personenrecht ist Teil des Schweizerischen Zivilgesetzbuches (ZGB), genauer der erste Teil (Art. 11 ff.). Es regelt, was Sie ab welchem Alter dürfen, müssen und können."},
+        {typ:"theorie", titel:"Drei zentrale Begriffe", liste:[
+          "Rechtsfähigkeit (ZGB Art. 11): Jeder Mensch von Geburt bis Tod. Träger von Rechten und Pflichten.",
+          "Urteilsfähigkeit (ZGB Art. 16): Vernünftig handeln können. Hängt von Alter UND Geschäft ab.",
+          "Handlungsfähigkeit (ZGB Art. 13): Urteilsfähig + 18 Jahre = voll handlungsfähig."
+        ]},
+        {typ:"beispiel", titel:"Im Apothekenalltag", text:"Eine 14-jährige Kundin darf Hustenbonbons kaufen (üblicher Kauf), aber kein rezeptpflichtiges Medikament beziehen. Sie schätzen ein, wer was darf – im Zweifel Berufsbildnerin einbeziehen."}
+      ]},
+      { nr:"003.2", titel:"Beschränkte Handlungsfähigkeit", bloecke:[
+        {typ:"theorie", titel:"ZGB Art. 19 – Was Sie heute dürfen", liste:[
+          "Verträge schliessen: ja, aber Erziehungsberechtigte können sie nachträglich verweigern.",
+          "Höchstpersönliche Rechte (z.B. Religionswahl ab 16): selbst.",
+          "Übliche Geschäfte mit eigenem Geld (z.B. Snack, Kleidung): selbst.",
+          "Mit Lehrlingslohn (ZGB Art. 323): übliche Anschaffungen selbst entscheiden."
+        ]}
+      ]}
+    ]},
+    { nr:"004", titel:"Aufgaben", folien:[
+      { nr:"004.1", titel:"Interaktion – Begriffe zuordnen", bloecke:[
+        {typ:"ix_zuordnung", titel:"Begriff – Definition",
+         begriffe:["Rechtsfähigkeit","Urteilsfähigkeit","Handlungsfähigkeit","beschränkte Handlungsfähigkeit","Mündigkeit"]},
+        {typ:"loesung", tabelle:{kopf:["Begriff","Definition"], zeilen:[
+          ["Rechtsfähigkeit","Träger von Rechten und Pflichten ab Geburt"],
+          ["Urteilsfähigkeit","vernünftig handeln können (situationsabhängig)"],
+          ["Handlungsfähigkeit","Verträge selbst schliessen (urteilsfähig + 18 J.)"],
+          ["beschränkte Handlungsfähigkeit","Verträge mit Genehmigungspflicht (7–18 J.)"],
+          ["Mündigkeit","Volljährigkeit ab 18. Geburtstag"]
+        ]}}
+      ]},
+      { nr:"004.2", titel:"Auftrag – Alltagsfälle beurteilen", bloecke:[
+        {typ:"aufgabe", titel:"Auftrag · Wer darf was?",
+         meta:"Sozialform: Einzel + Partner · Zeit: 20 Min · Kompetenzen: Anwendung, Kritisches Denken",
+         text:"Beurteilen Sie und begründen Sie mit Verweis auf Rechts-/Urteils-/Handlungsfähigkeit:",
+         liste:[
+           "a) Lena (16) kauft Sneakers für CHF 90 mit Lehrlingslohn. Erlaubt?",
+           "b) Noel (17) schliesst allein einen 24-Monats-Handyvertrag ab. Erlaubt?",
+           "c) Ein 13-jähriger Kunde kauft Hustenbonbons für CHF 5. Erlaubt?",
+           "d) Eine 15-Jährige möchte die rezeptpflichtige Notfallpille für ihre Schwester. Wie reagieren Sie?"
+         ]},
+        {typ:"loesung", inhalt:[
+          "a) Erlaubt: üblicher Kauf mit eigenem Lohn (ZGB Art. 323).",
+          "b) Nicht ohne Erziehungsberechtigte: 24-Monats-Vertrag = erhebliches Geschäft.",
+          "c) Erlaubt: üblicher Kauf, 13-Jähriger ist hier urteilsfähig.",
+          "d) NICHT abgeben! Verweis an Apothekerin. Notfallpille apothekenpflichtig mit Beratung."
+        ]}
+      ]},
+      { nr:"004.3", titel:"SUK – das oder dass", bloecke:[
+        {typ:"text", text:"Tipp: «dass» (mit zwei s) ist eine Konjunktion und kann NICHT durch «welches» ersetzt werden. «das» (mit einem s) kann durch «welches» ersetzt werden."},
+        {typ:"ix_luecke", titel:"das oder dass einsetzen",
+         saetze:[
+           ["Ich finde es gut, ","dass"," ich jetzt einen Lehrvertrag habe."],
+           ["","Das"," Lehrmittel liegt auf dem Tisch."],
+           ["Mein Berufsbildner hat gesagt, ","dass"," ich pünktlich sein muss."],
+           ["Das Medikament, ","das"," Sie verlangen, ist rezeptpflichtig."]
+         ]},
+        {typ:"loesung", inhalt:["dass · Das · dass · das"]}
+      ]}
+    ]},
+    { nr:"005", titel:"Abschluss", folien:[
+      { nr:"005.1", titel:"Reflexion – Portfolio-Eintrag", bloecke:[
+        {typ:"aufgabe", titel:"Reflexion · Portfolio-Eintrag T1.002",
+         meta:"Sozialform: Einzelarbeit · Zeit: 10 Min · Kompetenzen: Selbstkompetenz",
+         text:"Beantworten Sie schriftlich:",
+         ol:[
+           "Welche Erwartung an mich als Lernende:r ist mir am wichtigsten – und warum?",
+           "Welche Pflicht an der HKV finde ich am schwierigsten einzuhalten?",
+           "Was möchte ich an meiner neuen Rolle in den nächsten Wochen üben?"
+         ]}
+      ]},
+      { nr:"005.2", titel:"Didaktische Hinweise [VERSTECKT]", versteckt:true, bloecke:[
+        {typ:"loesung", titel:"Didaktische Hinweise – nur für Lehrperson", inhalt:[
+          "Lebensbezug 1.1 (SLP 2026): Personenrecht-Teil; ZGB Art. 11–19, 323.",
+          "Sprachmodi: Rezeption schriftlich (ZGB-Bezüge), Produktion schriftlich (Reflexion)."
+        ]}
+      ]}
+    ]}
+  ]
+},
+
+// ============================ T1.003 ============================
+{
+  id:"T1.003", titel:"Team & Rollen", lebensbezug:"LB 1.2a",
+  sektionen:[
+    { nr:"001", titel:"Lernziele", folien:[
+      { nr:"001.1", titel:"Lernziele Modul T1.003", bloecke:[
+        {typ:"lernziele", items:[
+          "Sie erklären die Merkmale eines funktionierenden Teams.",
+          "Sie unterscheiden Aufgabenrollen und Gruppenrollen.",
+          "Sie reflektieren Ihre eigene Rolle im Apotheken-Team und in Ihrer Klasse."
+        ]}
+      ]}
+    ]},
+    { nr:"002", titel:"Einführung", folien:[
+      { nr:"002.1", titel:"Im Team angekommen", bloecke:[
+        {typ:"dialog", name:"Lena", text:"Meine Apotheke hat sieben Leute. Manchmal habe ich das Gefühl, alle wissen schon alles – nur ich nicht."},
+        {typ:"dialog", name:"Noel", text:"Geht mir auch so. Aber meine Berufsbildnerin sagt: ‹Du musst nicht alles wissen – du musst wissen, wen du fragen kannst.›"},
+        {typ:"text", text:"In der Apotheke sind Sie nie allein. Sie arbeiten im Team aus Apothekerinnen, Fachleuten Apotheke, Lernenden und manchmal Aushilfen."}
+      ]}
+    ]},
+    { nr:"003", titel:"Theorie", folien:[
+      { nr:"003.1", titel:"Was ist ein Team?", bloecke:[
+        {typ:"theorie", titel:"Vier Merkmale eines Teams", liste:[
+          "Gemeinsames Ziel","Klare Rollen und Aufgaben",
+          "Verlässliche Kommunikation","Gegenseitiger Respekt und Vertrauen"
+        ]},
+        {typ:"text", text:"Ein Team ist eine Gruppe von Menschen, die gemeinsam an einer Aufgabe arbeitet, sich gegenseitig ergänzt und ein gemeinsames Ziel verfolgt."}
+      ]},
+      { nr:"003.2", titel:"Soziale Rollen", bloecke:[
+        {typ:"text", text:"Jeder Mensch trägt mehrere soziale Rollen gleichzeitig: Tochter/Sohn, Berufslernende:r, Mitschüler:in, Freund:in, Team-Mitglied, Konsument:in."},
+        {typ:"theorie", titel:"Drei Begriffe zur Rolle", liste:[
+          "Rollenerwartung: Was andere von Ihnen erwarten.",
+          "Rollenkonflikt: Wenn zwei Rollen kollidieren.",
+          "Rollenwechsel: Bewusster Wechsel je nach Situation."
+        ]}
+      ]},
+      { nr:"003.3", titel:"Aufgaben- und Gruppenrollen", bloecke:[
+        {typ:"tabelle", kopf:["Aufgabenrollen (Inhalt)","Gruppenrollen (Beziehung)"], zeilen:[
+          ["Initiator:in – schlägt Ideen vor","Ermutiger:in – lobt, motiviert"],
+          ["Informationssucher:in – sammelt Wissen","Harmonisierer:in – schlichtet"],
+          ["Koordinator:in – verbindet Beiträge","Türöffner:in – holt Stille ins Gespräch"]
+        ]},
+        {typ:"beispiel", titel:"Im Apotheken-Team", text:"Ihre Rolle als Lernende ist legitim und wichtig: Sie bringen frische Fragen und Außenperspektive ins Team."}
+      ]}
+    ]},
+    { nr:"004", titel:"Aufgaben", folien:[
+      { nr:"004.1", titel:"Interaktion – Rollen erkennen", bloecke:[
+        {typ:"ix_check", titel:"Welche Rolle dominiert?", modus:"SINGLE",
+         frage:"Lena trifft sich nach der Arbeit mit ihrer Mutter zum Kaffee. Welche Rolle dominiert?",
+         optionen:[["Berufslernende",false],["Tochter",true],["Konsumentin",false],["Freundin",false]]},
+        {typ:"loesung", inhalt:["Tochter – im Familienkontext dominiert diese Rolle."]}
+      ]},
+      { nr:"004.2", titel:"Auftrag – Rollenanalyse", bloecke:[
+        {typ:"aufgabe", titel:"Auftrag · Meine Rollen",
+         meta:"Sozialform: Einzel + Partner · Zeit: 20 Min · Kompetenzen: Selbstkompetenz, Empathie",
+         text:"Analysieren Sie Ihre eigenen Rollen:",
+         liste:[
+           "Listen Sie 5 soziale Rollen auf, die Sie aktuell einnehmen.",
+           "Beschreiben Sie pro Rolle eine zentrale Erwartung.",
+           "Identifizieren Sie eine Situation mit Rollenkonflikt.",
+           "Welche Rolle übernehmen Sie typisch in Gruppenarbeiten?"
+         ]}
+      ]},
+      { nr:"004.3", titel:"SUK – Antonyme Teamarbeit", bloecke:[
+        {typ:"ix_check", titel:"Antonyme", modus:"SINGLE",
+         frage:"Welches Paar ist ein echtes Gegensatzpaar (Antonym)?",
+         optionen:[
+           ["kooperativ – konkurrenzorientiert",true],
+           ["verlässlich – ehrlich",false],
+           ["Vertrauen – Achtung",false],
+           ["Team – Gruppe",false]
+         ]},
+        {typ:"loesung", inhalt:["kooperativ – konkurrenzorientiert ist das eindeutige Antonym-Paar."]}
+      ]}
+    ]},
+    { nr:"005", titel:"Abschluss", folien:[
+      { nr:"005.1", titel:"Reflexion – Portfolio-Eintrag", bloecke:[
+        {typ:"aufgabe", titel:"Reflexion · Portfolio-Eintrag T1.003",
+         meta:"Sozialform: Einzelarbeit · Zeit: 10 Min · Kompetenzen: Selbstkompetenz",
+         text:"Beantworten Sie schriftlich:",
+         ol:[
+           "Welche Rolle übernehme ich aktuell in meinem Apotheken-Team?",
+           "Welche Rolle möchte ich mir noch erarbeiten?",
+           "Was möchte ich an meiner Teamfähigkeit konkret verbessern?"
+         ]}
+      ]},
+      { nr:"005.2", titel:"Didaktische Hinweise [VERSTECKT]", versteckt:true, bloecke:[
+        {typ:"loesung", titel:"Didaktische Hinweise – nur für Lehrperson", inhalt:[
+          "Belbin-Teamrollen als Vertiefung im Selbststudium möglich.",
+          "Sprachmodi: Interaktion mündlich (Partnerarbeit), Produktion schriftlich (Reflexion)."
+        ]}
+      ]}
+    ]}
+  ]
+},
+
+// ============================ T1.004 ============================
+{
+  id:"T1.004", titel:"Kommunikation & Konflikte", lebensbezug:"LB 1.2b",
+  sektionen:[
+    { nr:"001", titel:"Lernziele", folien:[
+      { nr:"001.1", titel:"Lernziele Modul T1.004", bloecke:[
+        {typ:"lernziele", items:[
+          "Sie erklären das Modell «Vier Seiten einer Nachricht» (Schulz von Thun).",
+          "Sie formulieren Ich-Botschaften und unterscheiden sie von Du-Botschaften.",
+          "Sie kennen Konfliktarten und wenden eine Strategie zur Konfliktlösung an."
+        ]}
+      ]}
+    ]},
+    { nr:"002", titel:"Einführung", folien:[
+      { nr:"002.1", titel:"Missverstanden", bloecke:[
+        {typ:"dialog", name:"Lena", text:"Gestern hat mein Berufsbildner gesagt: ‹Der Beratungsbereich ist nicht aufgeräumt.› Ich dachte, er kritisiert mich persönlich."},
+        {typ:"dialog", name:"Noel", text:"Vielleicht war es aber nur eine Sachaussage – ohne Vorwurf?"},
+        {typ:"text", text:"Genau das ist die Herausforderung: Was als Sachaussage gesendet wird, kann als Vorwurf empfangen werden."}
+      ]}
+    ]},
+    { nr:"003", titel:"Theorie", folien:[
+      { nr:"003.1", titel:"Vier Seiten einer Nachricht", bloecke:[
+        {typ:"text", text:"Der Kommunikationspsychologe Friedemann Schulz von Thun hat beschrieben, dass jede Nachricht vier Seiten gleichzeitig hat."},
+        {typ:"tabelle", kopf:["Seite","Frage","Beispiel «Die Heizung läuft noch.»"], zeilen:[
+          ["Sachebene","Was ist die Information?","Die Heizung ist eingeschaltet."],
+          ["Selbstoffenbarung","Was sage ich über mich?","Mir ist warm."],
+          ["Beziehung","Wie stehe ich zu dir?","Ich erwarte, dass du dich kümmerst."],
+          ["Appell","Was möchte ich erreichen?","Stelle die Heizung bitte ab!"]
+        ]}
+      ]},
+      { nr:"003.2", titel:"Du-Botschaft vs. Ich-Botschaft", bloecke:[
+        {typ:"text", text:"Du-Botschaften setzen das Gegenüber unter Druck. Ich-Botschaften drücken Wünsche und Gefühle aus, ohne anzugreifen."},
+        {typ:"theorie", titel:"Aufbau einer Ich-Botschaft (3 Teile)", liste:[
+          "1. Wahrnehmung – Was beobachte ich konkret?",
+          "2. Gefühl – Wie geht es mir damit?",
+          "3. Wunsch – Was wünsche ich mir?"
+        ]},
+        {typ:"beispiel", titel:"Schweigepflicht hinter den Kulissen", text:"Auch im Apotheken-Team gilt: Vertrauliche Patient:innen-Daten gehören nicht in Streitgespräche."}
+      ]},
+      { nr:"003.3", titel:"Drei Konfliktarten", bloecke:[
+        {typ:"theorie", titel:"Sach-, Beziehungs- und Wertekonflikt", liste:[
+          "Sachkonflikt: Unterschiedliche Meinung zu einer konkreten Frage.",
+          "Beziehungskonflikt: Persönliche Spannungen häufen sich.",
+          "Wertekonflikt: Erwartungen widersprechen Ihren persönlichen Werten."
+        ]},
+        {typ:"wichtig", titel:"Konstruktive Konfliktlösung", text:"Ruhig bleiben → Standpunkt klären → Gespräch suchen (Ich-Botschaft) → Zuhören → gemeinsam Lösung suchen."}
+      ]}
+    ]},
+    { nr:"004", titel:"Aufgaben", folien:[
+      { nr:"004.1", titel:"Interaktion – Ich- statt Du-Botschaft", bloecke:[
+        {typ:"ix_check", titel:"Welche Aussagen sind Ich-Botschaften?", modus:"MULTIPLE",
+         frage:"Markieren Sie die korrekten Ich-Botschaften. (Mehrfachauswahl)",
+         optionen:[
+           ["«Du hörst nie zu!»",false],
+           ["«Wenn du auf dein Handy schaust, fühle ich mich nicht ernst genommen.»",true],
+           ["«Du bist immer zu spät!»",false],
+           ["«Wenn du zu spät kommst, ärgere ich mich, weil ich gewartet habe.»",true]
+         ]},
+        {typ:"loesung", inhalt:["Korrekt: Aussagen 2 und 4 – beide mit Wahrnehmung + Gefühl + Wunsch."]}
+      ]},
+      { nr:"004.2", titel:"Auftrag – Konfliktfall analysieren", bloecke:[
+        {typ:"aufgabe", titel:"Auftrag · Konfliktsituation analysieren",
+         meta:"Sozialform: Zweierteam · Zeit: 25 Min · Kompetenzen: Empathie, Kommunikation",
+         text:"Fallbeispiel: Eine Kollegin korrigiert Sie ständig vor Kundinnen und sagt: ‹Du machst immer alles falsch.›",
+         liste:[
+           "Welche Konfliktart liegt vor? Begründen Sie.",
+           "Welche vier Seiten könnten in der Aussage stecken?",
+           "Formulieren Sie eine Ich-Botschaft für das Gespräch.",
+           "Wann, wo und wie führen Sie dieses Gespräch?"
+         ]},
+        {typ:"loesung", inhalt:[
+          "Konfliktart: Mischung aus Beziehungs- und Sachkonflikt.",
+          "Ich-Botschaft: «Wenn du mich vor Kundinnen korrigierst, fühle ich mich gedemütigt. Können wir das in einem 4-Augen-Gespräch besprechen?»",
+          "Setting: 4-Augen-Gespräch, ruhiger Zeitpunkt."
+        ]}
+      ]},
+      { nr:"004.3", titel:"SUK – Adressatengerechte E-Mail", bloecke:[
+        {typ:"aufgabe", titel:"SUK · E-Mail an Berufsbildnerin",
+         meta:"Interaktionstyp: Offener Text – max. 400 Zeichen",
+         text:"Sie sind krank und können morgen nicht in den Lehrbetrieb. Verfassen Sie eine adressatengerechte E-Mail: Anrede – Begründung – ggf. Vertretung – Grussformel."}
+      ]}
+    ]},
+    { nr:"005", titel:"Abschluss", folien:[
+      { nr:"005.1", titel:"Reflexion – Portfolio-Eintrag", bloecke:[
+        {typ:"aufgabe", titel:"Reflexion · Portfolio-Eintrag T1.004",
+         meta:"Sozialform: Einzelarbeit · Zeit: 10 Min · Kompetenzen: Selbstkompetenz",
+         text:"Beantworten Sie schriftlich:",
+         ol:[
+           "Wann habe ich diese Woche eine Du-Botschaft gesendet?",
+           "Welche der vier Nachrichtenseiten ist für mich am schwierigsten zu erkennen?",
+           "Eine konkrete kommunikative Verbesserung, die ich ausprobiere:"
+         ]}
+      ]},
+      { nr:"005.2", titel:"Didaktische Hinweise [VERSTECKT]", versteckt:true, bloecke:[
+        {typ:"loesung", titel:"Didaktische Hinweise – nur für Lehrperson", inhalt:[
+          "Schlüsselkomp.: 7 Empathie, 4 Teamfähigkeit, 10 Anpassungsfähigkeit.",
+          "Sprachmodi: Interaktion mündlich (Konfliktgespräch), Produktion schriftlich (E-Mail)."
+        ]}
+      ]}
+    ]}
+  ]
+},
+
+// ============================ T1.005 ============================
+{
+  id:"T1.005", titel:"Lernstrategien & KI", lebensbezug:"LB 1.3",
+  sektionen:[
+    { nr:"001", titel:"Lernziele", folien:[
+      { nr:"001.1", titel:"Lernziele Modul T1.005", bloecke:[
+        {typ:"lernziele", items:[
+          "Sie erklären den Unterschied zwischen Kurzzeit- und Langzeitgedächtnis.",
+          "Sie kennen drei zentrale Lernstrategien und wenden Spaced Repetition an.",
+          "Sie setzen KI als Lernhilfe gezielt ein und kennen die wichtigsten Risiken."
+        ]}
+      ]}
+    ]},
+    { nr:"002", titel:"Einführung", folien:[
+      { nr:"002.1", titel:"Vergessen nach zwei Tagen", bloecke:[
+        {typ:"dialog", name:"Noel", text:"Ich büffle einen Abend vor dem Test und vergesse alles nach zwei Tagen wieder. Was mache ich falsch?"},
+        {typ:"dialog", name:"Lena", text:"Du wiederholst nur einmal. Wenn du den Stoff über mehrere Tage verteilt anschaust, bleibt er hängen."}
+      ]}
+    ]},
+    { nr:"003", titel:"Theorie", folien:[
+      { nr:"003.1", titel:"Kurz- und Langzeitgedächtnis", bloecke:[
+        {typ:"theorie", titel:"Zwei Speicher im Gehirn", liste:[
+          "Kurzzeitgedächtnis: 15–30 Sek, max. 7 ± 2 Einheiten.",
+          "Langzeitgedächtnis: Tage bis Lebenszeit.",
+          "Übergang braucht: Wiederholung, Verknüpfung, emotionale Bedeutung."
+        ]}
+      ]},
+      { nr:"003.2", titel:"Drei Lernstrategien", bloecke:[
+        {typ:"tabelle", kopf:["Strategie","Wie funktioniert sie?"], zeilen:[
+          ["Karteikarten","Frage vorne, Antwort hinten. Schwierige Karten öfter."],
+          ["Mindmap","Hauptthema in Mitte, Äste mit Unterthemen."],
+          ["Spaced Repetition","Stoff in zunehmenden Abständen: 1, 3, 7, 30 Tage."]
+        ]},
+        {typ:"beispiel", titel:"Lernen in der Apotheke", text:"Sie lernen hunderte Medikamentennamen. Mit Karteikarten-Apps und Spaced Repetition halten Sie das Wissen ein Leben lang."}
+      ]},
+      { nr:"003.3", titel:"KI als Lernhilfe", bloecke:[
+        {typ:"theorie", titel:"Drei sinnvolle Anwendungen", liste:[
+          "Erklären lassen: «Erkläre mir Spaced Repetition einfach.»",
+          "Üben lassen: «Stelle mir 5 MC-Fragen zur Berufsbildung.»",
+          "Korrigieren lassen: «Korrigiere meinen Text auf Rechtschreibung.»"
+        ]},
+        {typ:"wichtig", titel:"Vier Grenzen und Risiken", text:"KI halluziniert (erfindet Quellen) · KI versteht Schweizer Spezifika oft falsch · KEINE Patient:innen-Daten in öffentliche KI · Lernen ohne Anstrengung ist kein Lernen."}
+      ]}
+    ]},
+    { nr:"004", titel:"Aufgaben", folien:[
+      { nr:"004.1", titel:"Interaktion – Strategie zuordnen", bloecke:[
+        {typ:"ix_zuordnung", titel:"Aufgabe – beste Strategie",
+         begriffe:["Vokabeln zu Krankheitsbildern","Übersicht über Bildungssystem","Begriffe für QV-Vorbereitung","Verknüpfung von Themen"]},
+        {typ:"loesung", tabelle:{kopf:["Aufgabe","Strategie"], zeilen:[
+          ["Vokabeln zu Krankheitsbildern","Karteikarten"],
+          ["Übersicht über Bildungssystem","Mindmap"],
+          ["Begriffe für QV-Vorbereitung","Spaced Repetition"],
+          ["Verknüpfung von Themen","Mindmap"]
+        ]}}
+      ]},
+      { nr:"004.2", titel:"Auftrag – Guten KI-Prompt schreiben", bloecke:[
+        {typ:"aufgabe", titel:"Auftrag · Prompt formulieren",
+         meta:"Sozialform: Einzelarbeit · Zeit: 15 Min · Digit. Komp.: KI anwenden",
+         text:"Ein guter Prompt hat drei Teile: 1. Rolle definieren · 2. Aufgabe beschreiben · 3. Format vorgeben. Formulieren Sie zu jedem Lernziel einen Prompt:",
+         liste:[
+           "a) Unterschied rezeptpflichtig / rezeptfrei verstehen.",
+           "b) 5 MC-Fragen zur Berufsbildung zur Selbstprüfung.",
+           "c) Schwierigen ABU-Text als Mindmap zusammenfassen lassen."
+         ]}
+      ]},
+      { nr:"004.3", titel:"SUK – KI-Prompt formulieren", bloecke:[
+        {typ:"ix_luecke", titel:"Prompt-Bausteine ergänzen",
+         saetze:[
+           ["Rolle: «Du bist eine ","Apothekerin",".»"],
+           ["Aufgabe: «Erkläre mir den ","Unterschied"," zwischen Antibiotikum und Antiviralem.»"],
+           ["Format: «Antworte in ","5 Stichworten","»."]
+         ]},
+        {typ:"loesung", inhalt:["Apothekerin · Unterschied · 5 Stichworten"]}
+      ]}
+    ]},
+    { nr:"005", titel:"Abschluss", folien:[
+      { nr:"005.1", titel:"Reflexion – Portfolio-Eintrag", bloecke:[
+        {typ:"aufgabe", titel:"Reflexion · Portfolio-Eintrag T1.005",
+         meta:"Sozialform: Einzelarbeit · Zeit: 10 Min · Kompetenzen: Selbstkompetenz",
+         text:"Beantworten Sie schriftlich:",
+         ol:[
+           "Welche Lernstrategie probiere ich diese Woche konkret aus?",
+           "Wie habe ich bisher gelernt – und was möchte ich ändern?",
+           "Wofür will ich KI als Lernhilfe einsetzen – und wofür nicht?"
+         ]}
+      ]},
+      { nr:"005.2", titel:"Didaktische Hinweise [VERSTECKT]", versteckt:true, bloecke:[
+        {typ:"loesung", titel:"Didaktische Hinweise – nur für Lehrperson", inhalt:[
+          "Schlüsselkomp.: 1 Informationskompetenz (Quellen kritisch prüfen).",
+          "Digit. Komp.: KI anwenden, Lernplattformen nutzen."
+        ]}
+      ]}
+    ]}
+  ]
+}
+];
+
+// modules_2.js – T1 Modul-Inhalte (Teil 2: 006-010)
+window.T1_MODULE.push(
+
+// ============================ T1.006 ============================
+{
+  id:"T1.006", titel:"Gesundheit & Work-Life-Balance", lebensbezug:"LB 1.4a",
+  sektionen:[
+    { nr:"001", titel:"Lernziele", folien:[
+      { nr:"001.1", titel:"Lernziele Modul T1.006", bloecke:[
+        {typ:"lernziele", items:[
+          "Sie unterscheiden physische, psychische und soziale Gesundheit und erkennen deren Wechselwirkung.",
+          "Sie unterscheiden Eustress und Distress und benennen eigene Stressoren.",
+          "Sie analysieren Ihren Tagesablauf und entwickeln eine konkrete Verbesserungsidee."
+        ]}
+      ]}
+    ]},
+    { nr:"002", titel:"Einführung", folien:[
+      { nr:"002.1", titel:"Schlecht geschlafen", bloecke:[
+        {typ:"dialog", name:"Lena", text:"Ich schlafe in letzter Zeit schlecht. Lege mich um 23 Uhr hin, schaue noch eine Stunde Tiktok – und morgens bin ich erledigt."},
+        {typ:"dialog", name:"Noel", text:"Bei mir genauso. Aber an den Tagen, an denen ich Sport mache, schlafe ich besser. Körper wirkt auf Kopf."}
+      ]}
+    ]},
+    { nr:"003", titel:"Theorie", folien:[
+      { nr:"003.1", titel:"Drei Dimensionen der Gesundheit", bloecke:[
+        {typ:"text", text:"Die WHO definiert Gesundheit als Zustand des vollständigen körperlichen, geistigen und sozialen Wohlbefindens – nicht nur Abwesenheit von Krankheit."},
+        {typ:"tabelle", kopf:["Dimension","Was gehört dazu?"], zeilen:[
+          ["Physisch","Körper, Bewegung, Ernährung, Schlaf"],
+          ["Psychisch","Gefühle, Stressregulation, Selbstwert"],
+          ["Sozial","Beziehungen, Zugehörigkeit"]
+        ]},
+        {typ:"theorie", titel:"Wechselwirkungen", liste:[
+          "Schlafmangel (physisch) → Gereiztheit (psychisch) → Streit (sozial)",
+          "Sport (physisch) → bessere Stimmung (psychisch) → mehr Freude (sozial)"
+        ]}
+      ]},
+      { nr:"003.2", titel:"Eustress und Distress", bloecke:[
+        {typ:"tabelle", kopf:["Eustress (positiv)","Distress (negativ)"], zeilen:[
+          ["Vor Präsentation Aufregung, Adrenalin","Vor jeder Lektion Angst"],
+          ["Sich auf Prüfung freuen, konzentriert lernen","Wochenlang schlecht schlafen"]
+        ]},
+        {typ:"theorie", titel:"Strategien für Erholung", liste:[
+          "Schlafhygiene: feste Zeiten, Bildschirm-frei 30 Min vor dem Schlaf",
+          "Bewegung: 30 Min pro Tag",
+          "Soziales: mind. eine gute Freundschaft für ehrliche Gespräche",
+          "Hilfe holen: Berufsbildner:in, Eltern, Hausarzt, 147, ask Aargau"
+        ]}
+      ]}
+    ]},
+    { nr:"004", titel:"Aufgaben", folien:[
+      { nr:"004.1", titel:"Interaktion – Wechselwirkungen erkennen", bloecke:[
+        {typ:"ix_check", titel:"Welche Dimensionen sind beteiligt?", modus:"MULTIPLE",
+         frage:"Lena schläft schlecht, weil sie sich mit ihrer besten Freundin gestritten hat. Welche Dimensionen sind beteiligt?",
+         optionen:[
+           ["Physisch (Schlaf)",true],
+           ["Psychisch (Sorge, Grübeln)",true],
+           ["Sozial (Konflikt mit Freundin)",true],
+           ["Berufliche Gesundheit",false]
+         ]},
+        {typ:"loesung", inhalt:["Korrekt: Physisch, Psychisch, Sozial – alle drei sind beteiligt."]}
+      ]},
+      { nr:"004.2", titel:"Auftrag – Tagesablauf analysieren", bloecke:[
+        {typ:"aufgabe", titel:"Auftrag · Mein Tagesablauf",
+         meta:"Sozialform: Einzelarbeit · Zeit: 25 Min · Digit. Komp.: Officeprogramme (Excel)",
+         text:"Analysieren Sie Ihren typischen Werktag:",
+         liste:[
+           "Erstellen Sie eine Excel-Tabelle: Uhrzeit (06:00–23:00) × Aktivität.",
+           "Markieren Sie mit Farben: Grün = positiv, Gelb = neutral, Rot = negativ.",
+           "Berechnen Sie: Stunden Bildschirm, Schlaf, Bewegung.",
+           "Formulieren Sie eine SMART-Veränderung."
+         ]}
+      ]},
+      { nr:"004.3", titel:"SUK – Kommasetzung", bloecke:[
+        {typ:"ix_luecke", titel:"Kommas setzen",
+         saetze:[
+           ["Für meine Gesundheit ist mir Schlaf",","," Bewegung und gutes Essen wichtig."],
+           ["Wenn ich gestresst bin",","," gehe ich spazieren."],
+           ["Stress kann positiv oder negativ sein",","," wichtig ist die Erholung."]
+         ]},
+        {typ:"loesung", inhalt:["Komma jeweils zur Trennung von Aufzählung bzw. Haupt-/Nebensatz."]}
+      ]}
+    ]},
+    { nr:"005", titel:"Abschluss", folien:[
+      { nr:"005.1", titel:"Reflexion – Portfolio-Eintrag", bloecke:[
+        {typ:"aufgabe", titel:"Reflexion · Portfolio-Eintrag T1.006",
+         meta:"Sozialform: Einzelarbeit · Zeit: 10 Min · Kompetenzen: Selbstkompetenz",
+         text:"Beantworten Sie schriftlich:",
+         ol:[
+           "Welche der drei Gesundheits-Dimensionen ist bei mir am besten in Schuss?",
+           "Welche ist am vernachlässigsten?",
+           "Welche eine Gewohnheit möchte ich in den nächsten zwei Wochen verändern?"
+         ]}
+      ]},
+      { nr:"005.2", titel:"Didaktische Hinweise [VERSTECKT]", versteckt:true, bloecke:[
+        {typ:"loesung", titel:"Didaktische Hinweise – nur für Lehrperson", inhalt:[
+          "Schlüsselkomp.: 2 Selbstmanagement, 8 Lebensplanung.",
+          "Anlaufstellen für Vertiefung: 147 Pro Juventute, ask Aargau, feel-ok.ch."
+        ]}
+      ]}
+    ]}
+  ]
+},
+
+// ============================ T1.007 ============================
+{
+  id:"T1.007", titel:"Freizeit, Gemeinde & Vereinsleben", lebensbezug:"LB 1.4b",
+  sektionen:[
+    { nr:"001", titel:"Lernziele", folien:[
+      { nr:"001.1", titel:"Lernziele Modul T1.007", bloecke:[
+        {typ:"lernziele", items:[
+          "Sie erklären die Bedeutung von Freizeit für Gesundheit und Persönlichkeit.",
+          "Sie kennen das Freizeitangebot Ihrer Wohngemeinde und dessen Bedeutung.",
+          "Sie planen und halten eine 2–3-minütige Kurzpräsentation (Pecha-Kucha-Stil)."
+        ]}
+      ]}
+    ]},
+    { nr:"002", titel:"Einführung", folien:[
+      { nr:"002.1", titel:"Keine Zeit mehr", bloecke:[
+        {typ:"dialog", name:"Noel", text:"Ich habe in den letzten Wochen so wenig Zeit gehabt. Mein Schwimmtraining hat schon angefangen ohne mich."},
+        {typ:"dialog", name:"Lena", text:"Versuche, einmal pro Woche hinzugehen. Mein Volleyball ist mein wichtigster Stresslöser."}
+      ]}
+    ]},
+    { nr:"003", titel:"Theorie", folien:[
+      { nr:"003.1", titel:"Fünf Funktionen von Freizeit", bloecke:[
+        {typ:"theorie", titel:"Freizeit als Ressource", liste:[
+          "Erholung: Körper und Geist regenerieren",
+          "Sinn: tun, was Sie wollen, nicht müssen",
+          "Identität: Hobbys zeigen, wer Sie sind",
+          "Soziale Bindung: Verein, Freunde, Familie",
+          "Lernen: Sport, Musik, Sprachen ausserhalb der Schule"
+        ]}
+      ]},
+      { nr:"003.2", titel:"Vereinsleben in der Schweiz", bloecke:[
+        {typ:"text", text:"Über 100 000 Vereine, rund 4 Mio. Mitglieder. Zentral für das Zusammenleben."},
+        {typ:"theorie", titel:"Was Vereine leisten", liste:[
+          "Zusammenhalt über Generationen und Herkünfte hinweg",
+          "Bildung: Jugendliche lernen Verantwortung und Teamarbeit",
+          "Gesundheit: Sport- und Bewegungsvereine",
+          "Integration: neue Bewohner:innen finden Anschluss"
+        ]},
+        {typ:"beispiel", titel:"Freizeit rund um Aarau", text:"Lernende in Aarau haben Zugang zu 11 Sportvereinen, 4 Musikvereinen, Stadtbibliothek, Stadtbad – grösstenteils gratis oder mit Lehrlingsrabatt."}
+      ]},
+      { nr:"003.3", titel:"Kurzpräsentation strukturieren", bloecke:[
+        {typ:"text", text:"Pecha-Kucha ist ein Präsentationsformat: 6 Folien × 20 Sekunden = 2 Min. Vorteil: Zwingt zu Klarheit."},
+        {typ:"theorie", titel:"Aufbau einer guten Kurzpräsentation", liste:[
+          "Einstieg (~20 Sek): Hook – Frage, Bild, Zahl",
+          "Hauptteil (~90–120 Sek): 2–3 Kernpunkte mit Beispiel",
+          "Schluss (~20 Sek): Zusammenfassung + Wertung"
+        ]}
+      ]}
+    ]},
+    { nr:"004", titel:"Aufgaben", folien:[
+      { nr:"004.1", titel:"Interaktion – Verein und Funktion", bloecke:[
+        {typ:"ix_zuordnung", titel:"Verein – Hauptfunktion",
+         begriffe:["Fussballclub","Musikgesellschaft","Pfadi/Cevi","Samariterverein"]},
+        {typ:"loesung", tabelle:{kopf:["Verein","Funktion"], zeilen:[
+          ["Fussballclub","Sport/Gesundheit"],
+          ["Musikgesellschaft","Kultur/Brauchtum"],
+          ["Pfadi/Cevi","Bildung Jugendliche"],
+          ["Samariterverein","Soziales Engagement"]
+        ]}}
+      ]},
+      { nr:"004.2", titel:"Auftrag – Recherche & Interview", bloecke:[
+        {typ:"aufgabe", titel:"Auftrag · Freizeitangebot meiner Gemeinde",
+         meta:"Sozialform: Einzelarbeit · Zeit: 30 Min + Hausaufgabe · Kompetenzen: Recherche",
+         text:"Recherchieren Sie das Freizeitangebot Ihrer Wohngemeinde:",
+         liste:[
+           "Listen Sie mindestens 8 Angebote auf.",
+           "Notieren Sie pro Angebot: Name, Zielgruppe, Kosten, Webseite.",
+           "Wählen Sie EIN Angebot, das Sie interessiert.",
+           "Befragen Sie kurz ein Vorstandsmitglied (~10 Min)."
+         ]}
+      ]},
+      { nr:"004.3", titel:"SUK – Kurzpräsentation (NOTE!)", bloecke:[
+        {typ:"aufgabe", titel:"SUK · Kurzpräsentation Freizeitangebot (NOTE)",
+         meta:"Sozialform: Einzelarbeit, Vortrag im Plenum · Zeit: 2–3 Min Vortrag",
+         text:"Halten Sie eine 2–3-minütige Kurzpräsentation zu Ihrem recherchierten Freizeitangebot. 6-Folien-Pecha-Kucha empfohlen. Diese Präsentation zählt als 1× SUK-Note."}
+      ]}
+    ]},
+    { nr:"005", titel:"Abschluss", folien:[
+      { nr:"005.1", titel:"Reflexion – Portfolio-Eintrag", bloecke:[
+        {typ:"aufgabe", titel:"Reflexion · Portfolio-Eintrag T1.007",
+         meta:"Sozialform: Einzelarbeit · Zeit: 10 Min · Kompetenzen: Selbstkompetenz",
+         text:"Beantworten Sie schriftlich:",
+         ol:[
+           "Welches Freizeitangebot meiner Gemeinde habe ich heute neu entdeckt?",
+           "Welchem Verein möchte ich mich anschliessen – was hält mich davon ab?",
+           "Wie wichtig ist mir Vereinsleben – und warum?"
+         ]}
+      ]},
+      { nr:"005.2", titel:"Didaktische Hinweise [VERSTECKT]", versteckt:true, bloecke:[
+        {typ:"loesung", titel:"Didaktische Hinweise – nur für Lehrperson", inhalt:[
+          "SUK-Note Modul 7 = 1 der 4 Semester-Noten (Kurzpräsentation Pecha-Kucha).",
+          "Bewertung: Inhalt 5P · Struktur 4P · Vortragsweise 4P · Folien 3P = 16P."
+        ]}
+      ]}
+    ]}
+  ]
+},
+
+// ============================ T1.008 ============================
+{
+  id:"T1.008", titel:"Lehrvertrag & Obligationenrecht", lebensbezug:"LB 1.5a",
+  sektionen:[
+    { nr:"001", titel:"Lernziele", folien:[
+      { nr:"001.1", titel:"Lernziele Modul T1.008", bloecke:[
+        {typ:"lernziele", items:[
+          "Sie erklären, was ein Lehrvertrag rechtlich ist und welches Gesetz ihn regelt.",
+          "Sie kennen Ihre wichtigsten Rechte und Pflichten und die des Lehrbetriebs.",
+          "Sie verstehen Probezeit, Kündigung und Vertragsänderung."
+        ]}
+      ]}
+    ]},
+    { nr:"002", titel:"Einführung", folien:[
+      { nr:"002.1", titel:"Nur unterschrieben", bloecke:[
+        {typ:"dialog", name:"Lena", text:"Ich habe den Lehrvertrag damals nur kurz angeschaut. Habe einfach unterschrieben, weil meine Mutter sagte, das sei in Ordnung."},
+        {typ:"dialog", name:"Noel", text:"Mir ging es genauso. Aber jetzt würde ich ihn wirklich gerne verstehen."}
+      ]}
+    ]},
+    { nr:"003", titel:"Theorie", folien:[
+      { nr:"003.1", titel:"Obligationenrecht & Berufsbildung", bloecke:[
+        {typ:"theorie", titel:"Was ist das OR?", liste:[
+          "Das Obligationenrecht (OR) regelt alle Verträge – auch den Lehrvertrag (Art. 344 ff.).",
+          "Volltext kostenlos auf admin.ch / Fedlex.",
+          "Bei Minderjährigkeit unterzeichnen die Erziehungsberechtigten mit."
+        ]},
+        {typ:"tabelle", kopf:["Akteur","Rolle"], zeilen:[
+          ["Bund (SBFI)","Berufsbildungsgesetz BBG, Rahmenbedingungen"],
+          ["Kantone","Vollzug, Aufsicht über Lehrverhältnisse"],
+          ["Branche (pharmaSuisse)","Bildungsplan, üK, QV"]
+        ]}
+      ]},
+      { nr:"003.2", titel:"Rechte und Pflichten", bloecke:[
+        {typ:"tabelle", kopf:["Ihre Rechte (OR 345a)","Ihre Pflichten (OR 345)"], zeilen:[
+          ["Ausbildung gemäss Bildungsplan","Sorgfältig und ehrlich arbeiten"],
+          ["Lohn gemäss Vertrag","Berufsschule besuchen"],
+          ["Mind. 5 Wochen Ferien (< 20 J.)","Geheimnisse des Betriebs wahren"]
+        ]},
+        {typ:"beispiel", titel:"Schweigepflicht in der Apotheke", text:"Was Sie über Patient:innen erfahren, dürfen Sie niemandem weitererzählen – auch nicht in sozialen Medien. Gilt auch nach der Lehre."}
+      ]}
+    ]},
+    { nr:"004", titel:"Aufgaben", folien:[
+      { nr:"004.1", titel:"Interaktion – OR-Artikel zuordnen", bloecke:[
+        {typ:"ix_zuordnung", titel:"OR-Artikel und Inhalt",
+         begriffe:["OR Art. 344","OR Art. 344a","OR Art. 345","OR Art. 345a"]},
+        {typ:"loesung", tabelle:{kopf:["Artikel","Inhalt"], zeilen:[
+          ["OR Art. 344","Definition Lehrvertrag"],
+          ["OR Art. 344a","Probezeit"],
+          ["OR Art. 345","Pflichten der Lernenden"],
+          ["OR Art. 345a","Pflichten des Lehrbetriebs"]
+        ]}}
+      ]},
+      { nr:"004.2", titel:"Auftrag – Mein Lehrvertrag", bloecke:[
+        {typ:"aufgabe", titel:"Auftrag · Mein Lehrvertrag analysieren",
+         meta:"Sozialform: Einzelarbeit · Zeit: 25 Min · Digit. Komp.: Officeprogramme (Word)",
+         text:"Analysieren Sie Ihren mitgebrachten Lehrvertrag:",
+         liste:[
+           "Welche Probezeit haben Sie? (Monate)",
+           "Lohn 1./2./3. Lehrjahr?",
+           "Wie viele Ferienwochen? (Soll: mind. 5)",
+           "Recherchieren Sie auf admin.ch einen OR-Artikel und fassen Sie ihn zusammen."
+         ]}
+      ]},
+      { nr:"004.3", titel:"SUK – Fachwortschatz", bloecke:[
+        {typ:"ix_zuordnung", titel:"Begriff – Definition",
+         begriffe:["Probezeit","Obligationenrecht","Berufsbildner:in","Bildungsplan"]},
+        {typ:"loesung", tabelle:{kopf:["Begriff","Definition"], zeilen:[
+          ["Probezeit","Anfangsphase 1–3 Monate mit kurzer Kündigungsfrist"],
+          ["Obligationenrecht","Gesetz für alle Verträge"],
+          ["Berufsbildner:in","Ausbildende Person im Betrieb"],
+          ["Bildungsplan","Kompetenzdokument für die Lehrzeit"]
+        ]}}
+      ]}
+    ]},
+    { nr:"005", titel:"Abschluss", folien:[
+      { nr:"005.1", titel:"Reflexion – Portfolio-Eintrag", bloecke:[
+        {typ:"aufgabe", titel:"Reflexion · Portfolio-Eintrag T1.008",
+         meta:"Sozialform: Einzelarbeit · Zeit: 10 Min · Kompetenzen: Selbstkompetenz",
+         text:"Beantworten Sie schriftlich:",
+         ol:[
+           "Was war für mich der überraschendste Punkt in meinem Lehrvertrag?",
+           "Welche Pflicht fällt mir am schwersten – warum?",
+           "Welches Recht ist mir am wichtigsten – warum?"
+         ]}
+      ]},
+      { nr:"005.2", titel:"Didaktische Hinweise [VERSTECKT]", versteckt:true, bloecke:[
+        {typ:"loesung", titel:"Didaktische Hinweise – nur für Lehrperson", inhalt:[
+          "Akteure-Kette: SBFI – nicht mehr BBT (seit 2013).",
+          "Sprachmodi: Rezeption schriftlich (Vertrag, OR-Artikel), Produktion schriftlich."
+        ]}
+      ]}
+    ]}
+  ]
+},
+
+// ============================ T1.009 ============================
+{
+  id:"T1.009", titel:"Fehlentwicklungen & Anlaufstellen", lebensbezug:"LB 1.5b",
+  sektionen:[
+    { nr:"001", titel:"Lernziele", folien:[
+      { nr:"001.1", titel:"Lernziele Modul T1.009", bloecke:[
+        {typ:"lernziele", items:[
+          "Sie erkennen Warnzeichen für Fehlentwicklungen in einem Lehrverhältnis.",
+          "Sie kennen die wichtigsten Aargauer und Schweizer Anlaufstellen.",
+          "Sie beurteilen einfache Rechtsfälle und schlagen Handlungsschritte vor."
+        ]}
+      ]}
+    ]},
+    { nr:"002", titel:"Einführung", folien:[
+      { nr:"002.1", titel:"Ist das noch normal?", bloecke:[
+        {typ:"dialog", name:"Lena", text:"Ich kenne jemanden aus einer anderen Apotheke. Sie putzt seit drei Wochen jeden Tag eine Stunde lang. Sie sagt, das sei normal."},
+        {typ:"dialog", name:"Noel", text:"Hin und wieder Putzen ja – aber täglich? Das ist kein Bildungsplan-Inhalt. Sie sollte das ansprechen."}
+      ]}
+    ]},
+    { nr:"003", titel:"Theorie", folien:[
+      { nr:"003.1", titel:"Warnzeichen erkennen", bloecke:[
+        {typ:"theorie", titel:"Wann aufmerksam werden?", liste:[
+          "Regelmässig niedrige Hilfsarbeiten statt Ausbildung",
+          "Regelmässige Überstunden ohne Ausgleich",
+          "Lohn wird wiederholt zu spät oder unvollständig ausbezahlt",
+          "Übergriffiges Verhalten (verbal, körperlich, sexuell)"
+        ]},
+        {typ:"wichtig", titel:"4 Schritte konstruktiv vorgehen", text:"1. Beobachten und dokumentieren · 2. Gespräch mit Berufsbildner:in (Ich-Botschaften) · 3. Eltern, Klassenlehrperson einbeziehen · 4. Bei schweren Verstössen direkt an Anlaufstelle."}
+      ]},
+      { nr:"003.2", titel:"Anlaufstellen Aargau & Schweiz", bloecke:[
+        {typ:"tabelle", kopf:["Anlaufstelle","Zuständig für"], zeilen:[
+          ["ask Aargau","Beratung Lernende AG (gratis, vertraulich)"],
+          ["Berufsinspektor:in (AG)","Aufsicht über Lehrverhältnisse"],
+          ["147 Pro Juventute","Jugendberatung 24/7, anonym"],
+          ["143 Dargebotene Hand","Erwachsenenberatung anonym 24/7"]
+        ]},
+        {typ:"beispiel", titel:"ask Aargau – die wichtigste Anlaufstelle", text:"ask Aargau ist staatlich finanziert, gratis und vertraulich. Eltern und Berufsbildnerin erfahren nichts, solange Sie das nicht wollen."}
+      ]}
+    ]},
+    { nr:"004", titel:"Aufgaben", folien:[
+      { nr:"004.1", titel:"Interaktion – Warnzeichen unterscheiden", bloecke:[
+        {typ:"ix_check", titel:"Was ist ein klares Warnzeichen?", modus:"MULTIPLE",
+         frage:"Welche Situationen sind klar problematisch?",
+         optionen:[
+           ["Berufsbildner:in vergisst einmalig einen Termin",false],
+           ["Putzen ist tägliche Hauptaufgabe statt Ausbildung",true],
+           ["Regelmässige verbale Herabsetzung vor Kundinnen",true],
+           ["Lohn kommt seit 3 Monaten unregelmässig",true]
+         ]},
+        {typ:"loesung", inhalt:["Korrekt: tägliches Putzen, verbale Herabsetzung, unregelmässiger Lohn."]}
+      ]},
+      { nr:"004.2", titel:"Auftrag – Rechtsfälle beurteilen", bloecke:[
+        {typ:"aufgabe", titel:"Auftrag · Rechtsfälle aus der Lehre",
+         meta:"Sozialform: Dreiergruppen, dann Plenum · Zeit: 25 Min · Kompetenzen: Anwendung",
+         text:"Beurteilen Sie folgende Fälle (Pflichtverletzung? OR-Artikel? Handlung?):",
+         liste:[
+           "Fall A: Lohnzahlung kommt seit zwei Monaten 10 Tage zu spät.",
+           "Fall B: 3.-Lehrjahr-Lernende macht regelmässig 3 h Überstunden/Woche ohne Ausgleich.",
+           "Fall C: Kollege wird mit homophoben Bemerkungen angeredet.",
+           "Fall D: Lernende soll rezeptpflichtigen Wirkstoff privat per WhatsApp abgeben."
+         ]},
+        {typ:"loesung", inhalt:[
+          "Fall A: Lohnzahlungspflicht-Verletzung (OR 323). Schriftliche Mahnung, dann ask.",
+          "Fall C: Diskriminierung – sofort melden, Tagebuch führen.",
+          "Fall D: Verletzung Schweigepflicht + Heilmittelgesetz – ablehnen, Apothekerin informieren."
+        ]}
+      ]},
+      { nr:"004.3", titel:"SUK – Gross- und Kleinschreibung", bloecke:[
+        {typ:"ix_luecke", titel:"Gross- und Kleinschreibung",
+         saetze:[
+           ["","Meine"," Berufsbildnerin hat das ","Gespräch"," vereinbart."],
+           ["Im ","Obligationenrecht"," stehen alle wichtigen ","Rechte"," und Pflichten."],
+           ["Die ","Schweigepflicht"," gilt auch ausserhalb der Apotheke."]
+         ]},
+        {typ:"loesung", inhalt:["Substantive und Satzanfänge gross: Meine · Gespräch · Obligationenrecht · Rechte · Schweigepflicht."]}
+      ]}
+    ]},
+    { nr:"005", titel:"Abschluss", folien:[
+      { nr:"005.1", titel:"Reflexion – Portfolio-Eintrag", bloecke:[
+        {typ:"aufgabe", titel:"Reflexion · Portfolio-Eintrag T1.009",
+         meta:"Sozialform: Einzelarbeit · Zeit: 10 Min · Kompetenzen: Selbstkompetenz",
+         text:"Beantworten Sie schriftlich:",
+         ol:[
+           "Wenn ich in meiner Lehre auf ein Problem stosse – mit wem würde ich zuerst reden?",
+           "Welche Anlaufstelle würde ich nutzen – und welche eher nicht? Warum?",
+           "Eine konkrete Sache, die ich beim nächsten Konflikt anders mache:"
+         ]}
+      ]},
+      { nr:"005.2", titel:"Didaktische Hinweise [VERSTECKT]", versteckt:true, bloecke:[
+        {typ:"loesung", titel:"Didaktische Hinweise – nur für Lehrperson", inhalt:[
+          "Schlüsselkomp.: 1 Informationskompetenz (Anlaufstellen kennen und nutzen).",
+          "Verweise auf ask Aargau und 147 bei Bedarf aktualisieren."
+        ]}
+      ]}
+    ]}
+  ]
+},
+
+// ============================ T1.010 ============================
+{
+  id:"T1.010", titel:"Kompetenznachweis & Portfolio-Abschluss", lebensbezug:"Abschluss",
+  sektionen:[
+    { nr:"001", titel:"Lernziele", folien:[
+      { nr:"001.1", titel:"Lernziele Modul T1.010", bloecke:[
+        {typ:"lernziele", items:[
+          "Sie repetieren die zentralen Inhalte aus T1.001–T1.009.",
+          "Sie zeigen im schriftlichen Kompetenznachweis Ihr Wissen aus T1 (50/50 G:S&K).",
+          "Sie reflektieren Ihren Lernfortschritt und schliessen Ihr Portfolio ab."
+        ]}
+      ]}
+    ]},
+    { nr:"002", titel:"Einführung", folien:[
+      { nr:"002.1", titel:"Repetition zentrale Begriffe", bloecke:[
+        {typ:"text", text:"Folgende Begriffe sollten Sie definieren können – nutzen Sie sie als Lerngerüst."},
+        {typ:"tabelle", kopf:["Modul","Zentrale Begriffe"], zeilen:[
+          ["T1.001","Drei Lernorte, duale Berufsbildung, üK"],
+          ["T1.002","Rechts-/Urteils-/Handlungsfähigkeit"],
+          ["T1.004","Vier Seiten, Ich-Botschaft, Konfliktarten"],
+          ["T1.005","Spaced Repetition, KI-Prompt"],
+          ["T1.008","OR 344–346a, Probezeit, Schweigepflicht"]
+        ]}
+      ]}
+    ]},
+    { nr:"003", titel:"Theorie", folien:[
+      { nr:"003.1", titel:"Aufbau Kompetenznachweis (NOTE!)", bloecke:[
+        {typ:"text", text:"Der schriftliche Kompetenznachweis prüft Inhalte aus T1.001–T1.009. Dauer: 45 Minuten. Gesamtpunkte: 50. Inhalt 50/50 Gesellschaft : Sprache & Kommunikation."},
+        {typ:"tabelle", kopf:["Teil","Inhalt","Punkte"], zeilen:[
+          ["A","Multiple Choice (10 Fragen)","10"],
+          ["B","Kurzantworten","10"],
+          ["C","Fallaufgabe","5"],
+          ["D","Rechtschreibung & Grammatik","10"],
+          ["E","Leseverständnis Apo-Fachtext","10"],
+          ["F","Produktion (Ich-Botschaft)","5"]
+        ]}
+      ]}
+    ]},
+    { nr:"004", titel:"Aufgaben", folien:[
+      { nr:"004.1", titel:"Interaktion – Begriffspaare", bloecke:[
+        {typ:"ix_zuordnung", titel:"Begriff – Definition",
+         begriffe:["Spaced Repetition","OR Art. 344","Ich-Botschaft","Eustress"]},
+        {typ:"loesung", tabelle:{kopf:["Begriff","Definition"], zeilen:[
+          ["Spaced Repetition","Verteiltes Wiederholen mit zunehmenden Abständen"],
+          ["OR Art. 344","Definition Lehrvertrag"],
+          ["Ich-Botschaft","Wahrnehmung + Gefühl + Wunsch"],
+          ["Eustress","Positiver, motivierender Stress"]
+        ]}}
+      ]},
+      { nr:"004.2", titel:"SUK-Leseverständnis – Apo-Fachtext (NOTE!)", bloecke:[
+        {typ:"text", text:"Lesen Sie den folgenden Fachtext (eigener didaktischer Text der HKV Aarau) aufmerksam. Dieser Teil zählt als 1× SUK-Note."},
+        {typ:"theorie", titel:"Die Schweizer Apotheken im Wandel", liste:[
+          "In der Schweiz gibt es rund 1800 öffentliche Apotheken – zentraler Teil des Gesundheitswesens.",
+          "Früher: hauptsächlich Medikamente abgeben und freiverkäufliche Produkte verkaufen.",
+          "Heute zusätzlich: Blutdruck messen, Impfberatung, Erstkonsultationen.",
+          "Gründe: Hausärztemangel, Wunsch nach rascher Beratung, Digitalisierung.",
+          "Für Lernende: anspruchsvoller geworden. Schweigepflicht bleibt oberstes Gebot."
+        ]},
+        {typ:"ix_check", titel:"Leseverständnis-Fragen (NOTE)", modus:"SINGLE",
+         frage:"Wie viele öffentliche Apotheken gibt es in der Schweiz?",
+         optionen:[["rund 1300",false],["rund 1800",true],["rund 2300",false],["rund 3000",false]]},
+        {typ:"loesung", inhalt:["Rund 1800. Pro richtige Antwort 2 Punkte, Total 10 Punkte."]}
+      ]},
+      { nr:"004.3", titel:"Auftrag – Portfolio-Gesamtfazit (NOTE!)", bloecke:[
+        {typ:"aufgabe", titel:"Reflexion · Portfolio-Gesamtfazit T1 (NOTE)",
+         meta:"Sozialform: Einzelarbeit · Zeit: 30 Min · Produktion schriftlich",
+         text:"Schreiben Sie einen zusammenhängenden Reflexionstext (250–400 Wörter) zu Ihrem Lernen in T1. Struktur in 3 Teile:",
+         ol:[
+           "Teil 1 – Was war wichtig? Welche zwei Inhalte aus T1 waren am wichtigsten?",
+           "Teil 2 – Wie habe ich gelernt? Welche Lernstrategie hat am besten geholfen?",
+           "Teil 3 – Was nehme ich mit? Eine Sache für den Lehrbetrieb, eine für T2."
+         ]}
+      ]}
+    ]},
+    { nr:"005", titel:"Abschluss", folien:[
+      { nr:"005.1", titel:"Reflexion – Modul-Abschluss", bloecke:[
+        {typ:"aufgabe", titel:"Reflexion · Mein T1-Abschluss",
+         meta:"Sozialform: Einzelarbeit · Zeit: 15 Min · Kompetenzen: Selbstkompetenz",
+         text:"Beantworten Sie schriftlich:",
+         ol:[
+           "Was war für mich der wichtigste Moment in T1 – und warum?",
+           "Welche zwei Begriffe werde ich mit Sicherheit in 5 Jahren noch kennen?",
+           "Welche Erkenntnis aus T1 ist auch ausserhalb der Apotheke nützlich?"
+         ]},
+        {typ:"beispiel", titel:"Ausblick", text:"In T2 «Ich übernehme finanzielle Verantwortung» geht es um Budget, Konsum, Versicherungen und Kaufverträge."}
+      ]},
+      { nr:"005.2", titel:"Didaktische Hinweise [VERSTECKT]", versteckt:true, bloecke:[
+        {typ:"loesung", titel:"Didaktische Hinweise – nur für Lehrperson", inhalt:[
+          "Notenkonzept Modul 10: Erfahrungsnote (Kompetenznachweis 45 Min) + SUK-Note (Leseverständnis) + Portfolio-Note.",
+          "Plus 1× SUK-Note aus Modul 7 (Kurzpräsentation) = 4 Noten/Semester.",
+          "Der Kompetenznachweis wird separat als Prüfungsdokument vorbereitet."
+        ]}
+      ]}
+    ]}
+  ]
+}
+
+);
+
+// engine.js – Render-Engine + Navigation für T1 ABU-Lehrmittel KVdigital-Look
+(function(){
+  "use strict";
+  var M = window.T1_MODULE || [];
+  var state = { modul: -1, folie: 0 }; // modul -1 = Startseite
+
+  var elTimeline = document.getElementById('timeline');
+  var elContent  = document.getElementById('content');
+  var elTabs     = document.getElementById('tabs');
+  var elHeaderT  = document.getElementById('headerTitel');
+
+  // ---- Helfer: alle Folien eines Moduls flach (inkl. Sektion-Info) ----
+  function folienFlach(mod){
+    var arr = [];
+    mod.sektionen.forEach(function(sek){
+      sek.folien.forEach(function(fol){
+        arr.push({ sektion:sek, folie:fol });
+      });
+    });
+    return arr;
+  }
+
+  // ================= BLOCK-RENDERER =================
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function renderListe(items){
+    return '<ul>' + items.map(function(i){ return '<li>'+esc(i)+'</li>'; }).join('') + '</ul>';
+  }
+  function renderOl(items){
+    return '<ol>' + items.map(function(i){ return '<li>'+esc(i)+'</li>'; }).join('') + '</ol>';
+  }
+
+  function renderBlock(b){
+    switch(b.typ){
+      case 'text':
+        return '<p>'+esc(b.text)+'</p>';
+
+      case 'lernziele':
+        return '<div class="box box-lernziel">'
+             + '<div class="box-titel">🎯 Lernziele</div>'
+             + renderListe(b.items) + '</div>';
+
+      case 'theorie':
+        return '<div class="box box-theorie">'
+             + '<div class="box-titel">'+esc(b.titel||'Theorie')+'</div>'
+             + (b.text ? '<p>'+esc(b.text)+'</p>' : '')
+             + (b.liste ? renderListe(b.liste) : '') + '</div>';
+
+      case 'beispiel':
+        return '<div class="box box-beispiel">'
+             + '<div class="box-titel">💊 '+esc(b.titel||'Berufsbezug')+'</div>'
+             + (b.text ? '<p>'+esc(b.text)+'</p>' : '')
+             + (b.liste ? renderListe(b.liste) : '') + '</div>';
+
+      case 'wichtig':
+        return '<div class="box box-wichtig">'
+             + '<div class="box-titel">⚠ '+esc(b.titel||'Wichtig')+'</div>'
+             + (b.text ? '<p>'+esc(b.text)+'</p>' : '')
+             + (b.liste ? renderListe(b.liste) : '') + '</div>';
+
+      case 'aufgabe':
+        var h = '<div class="box box-aufgabe">';
+        h += '<div class="box-titel">📝 '+esc(b.titel||'Auftrag')+'</div>';
+        if(b.meta) h += '<div class="box-meta">'+esc(b.meta)+'</div>';
+        if(b.text) h += '<p>'+esc(b.text)+'</p>';
+        if(b.liste) h += renderListe(b.liste);
+        if(b.ol) h += renderOl(b.ol);
+        h += '</div>';
+        return h;
+
+      case 'dialog':
+        return '<p class="dialog"><span class="name">'+esc(b.name)+': </span>'
+             + '<span class="text">«'+esc(b.text)+'»</span></p>';
+
+      case 'tabelle':
+        var t = '<table><thead><tr>';
+        b.kopf.forEach(function(k){ t += '<th>'+esc(k)+'</th>'; });
+        t += '</tr></thead><tbody>';
+        b.zeilen.forEach(function(z){
+          t += '<tr>';
+          z.forEach(function(c){ t += '<td>'+esc(c)+'</td>'; });
+          t += '</tr>';
+        });
+        t += '</tbody></table>';
+        return t;
+
+      case 'ix_luecke':
+        var l = '<div class="box box-aufgabe">';
+        l += '<div class="box-titel">✏️ Interaktion · '+esc(b.titel||'Lückentext')+'</div>';
+        l += '<div class="ix-meta">Interaktionstyp: Lückentext – {{Lösung}}</div>';
+        b.saetze.forEach(function(satz){
+          var line = '<p>';
+          satz.forEach(function(teil, idx){
+            if(idx % 2 === 0){ line += esc(teil); }
+            else { line += '<span class="ix-luecke">'+esc(teil)+'</span>'; }
+          });
+          line += '</p>';
+          l += line;
+        });
+        l += '</div>';
+        return l;
+
+      case 'ix_zuordnung':
+        var z = '<div class="box box-aufgabe">';
+        z += '<div class="box-titel">✏️ Interaktion · '+esc(b.titel||'Zuordnung')+'</div>';
+        z += '<div class="ix-meta">Interaktionstyp: Zuordnung – Begriff :: Definition</div>';
+        z += '<p>Ordnen Sie die folgenden Begriffe zu:</p>';
+        z += '<ul>';
+        b.begriffe.forEach(function(g){ z += '<li class="ix-paar">'+esc(g)+' ::</li>'; });
+        z += '</ul></div>';
+        return z;
+
+      case 'ix_check':
+        var c = '<div class="box box-aufgabe">';
+        c += '<div class="box-titel">✏️ Interaktion · '+esc(b.titel||'Check')+'</div>';
+        c += '<div class="ix-meta">Interaktionstyp: Check/Auswahl – '+esc(b.modus||'SINGLE')+'</div>';
+        if(b.frage) c += '<p>'+esc(b.frage)+'</p>';
+        b.optionen.forEach(function(o){
+          var sym = (b.modus==='MULTIPLE') ? '☐' : '○';
+          c += '<div class="ix-option">'+sym+' '+esc(o[0])
+             + (o[1] ? ' <span class="ix-korrekt">[korrekt]</span>' : '') + '</div>';
+        });
+        c += '</div>';
+        return c;
+
+      case 'loesung':
+        var s = '<details class="loesung">';
+        s += '<summary>'+esc(b.titel||'Lösung – nur für Lehrperson')+'</summary>';
+        s += '<div class="loesung-inhalt">';
+        if(b.inhalt) s += renderListe(b.inhalt);
+        if(b.tabelle){
+          s += '<table><thead><tr>';
+          b.tabelle.kopf.forEach(function(k){ s += '<th>'+esc(k)+'</th>'; });
+          s += '</tr></thead><tbody>';
+          b.tabelle.zeilen.forEach(function(z){
+            s += '<tr>';
+            z.forEach(function(cc){ s += '<td>'+esc(cc)+'</td>'; });
+            s += '</tr>';
+          });
+          s += '</tbody></table>';
+        }
+        s += '</div></details>';
+        return s;
+
+      default:
+        return '<p>'+esc(JSON.stringify(b))+'</p>';
+    }
+  }
+
+  // ================= STARTSEITE =================
+  function renderStart(){
+    var h = '<div class="start-hero">';
+    h += '<h1>T1 · Ich beginne einen neuen Lebensabschnitt</h1>';
+    h += '<div class="sub">ABU-Lehrmittel für Fachleute Apotheke EFZ · HKV Aarau</div>';
+    h += '<div class="sub">10 Module · 30 Lektionen · 1. Lehrjahr</div>';
+    h += '<div class="badge">Demo-Ansicht für das ABU-Team · MoS</div>';
+    h += '</div>';
+
+    h += '<div class="start-grid">';
+    M.forEach(function(mod, i){
+      var folienAnz = folienFlach(mod).filter(function(x){ return !x.folie.versteckt; }).length;
+      h += '<div class="start-card" data-modul="'+i+'">'
+         + '<div class="nr">'+esc(mod.id)+' · '+esc(mod.lebensbezug)+'</div>'
+         + '<div class="ti">'+esc(mod.titel)+'</div>'
+         + '<div class="lb">'+mod.sektionen.length+' Sektionen · '+folienAnz+' Folien</div>'
+         + '</div>';
+    });
+    h += '</div>';
+
+    h += '<div class="start-info">';
+    h += '<strong>Farbsystem des Lehrmittels</strong>';
+    h += '<div class="start-legende">';
+    var leg = [
+      ['var(--lz-blau)','Lernziele'],
+      ['var(--the-grau)','Theorie'],
+      ['var(--bsp-gruen)','Berufsbezug Apotheke'],
+      ['var(--auf-gelb)','Aufgaben & Interaktionen'],
+      ['var(--wic-rot)','Wichtiges / Merke'],
+      ['var(--lp-grau)','Lösung (für Lehrperson)']
+    ];
+    leg.forEach(function(p){
+      h += '<div class="leg-item"><span class="leg-swatch" style="background:'+p[0]+'"></span>'+p[1]+'</div>';
+    });
+    h += '</div></div>';
+
+    elContent.innerHTML = h;
+    elContent.parentElement.scrollTop = 0;
+
+    // Klick auf Karten
+    var cards = elContent.querySelectorAll('.start-card');
+    cards.forEach(function(c){
+      c.addEventListener('click', function(){
+        gotoModul(parseInt(c.getAttribute('data-modul'),10), 0);
+      });
+    });
+  }
+
+  // ================= MODUL-FOLIE RENDERN =================
+  function renderFolie(){
+    var mod = M[state.modul];
+    var flach = folienFlach(mod);
+    if(state.folie >= flach.length) state.folie = flach.length-1;
+    if(state.folie < 0) state.folie = 0;
+    var akt = flach[state.folie];
+
+    var h = '';
+    // Modul-Titel nur auf erster Folie gross
+    if(state.folie === 0){
+      h += '<div class="folie-modul-titel">'+esc(mod.id)+' · '+esc(mod.titel)+'</div>';
+      h += '<div class="folie-breadcrumb">ABU APO · HKV Aarau · '+esc(mod.lebensbezug)
+         + ' · 3 Lektionen</div>';
+    }
+    h += '<div class="folie">';
+    h += '<div class="folie-h-sektion">'+esc(akt.sektion.nr)+' · '+esc(akt.sektion.titel)+'</div>';
+    h += '<div class="folie-titel">'+esc(akt.folie.nr)+' · '+esc(akt.folie.titel)+'</div>';
+    if(akt.folie.versteckt){
+      h += '<div class="folie-untertitel">Diese Folie ist in KVdigital als «versteckt» markiert – nur für Lehrpersonen sichtbar.</div>';
+    }
+    akt.folie.bloecke.forEach(function(b){ h += renderBlock(b); });
+    h += '</div>';
+
+    elContent.innerHTML = h;
+    elContent.parentElement.scrollTop = 0;
+    renderTabs(flach);
+  }
+
+  // ================= TABS UNTEN =================
+  function renderTabs(flach){
+    var h = '';
+    flach.forEach(function(x, i){
+      var cls = 'kv-tab' + (i===state.folie?' active':'') + (x.folie.versteckt?' versteckt':'');
+      h += '<div class="'+cls+'" data-folie="'+i+'">'
+         + '<span class="tabnum">'+(i+1)+'</span> '
+         + esc(x.folie.titel.length>26 ? x.folie.titel.slice(0,24)+'…' : x.folie.titel)
+         + '</div>';
+    });
+    elTabs.innerHTML = h
+      + '<div class="kv-tabs-nav">'
+      + '<button class="kv-navbtn" id="navPrev">←</button>'
+      + '<button class="kv-navbtn" id="navNext">→</button>'
+      + '</div>';
+
+    elTabs.querySelectorAll('.kv-tab').forEach(function(t){
+      t.addEventListener('click', function(){
+        state.folie = parseInt(t.getAttribute('data-folie'),10);
+        renderFolie();
+      });
+    });
+    document.getElementById('navPrev').addEventListener('click', function(){
+      if(state.folie>0){ state.folie--; renderFolie(); }
+      else { gotoModulRelativ(-1); }
+    });
+    document.getElementById('navNext').addEventListener('click', function(){
+      if(state.folie < flach.length-1){ state.folie++; renderFolie(); }
+      else { gotoModulRelativ(1); }
+    });
+    // aktiven Tab in Sicht scrollen
+    var act = elTabs.querySelector('.kv-tab.active');
+    if(act) act.scrollIntoView({block:'nearest', inline:'center'});
+  }
+
+  // ================= TIMELINE SIDEBAR =================
+  function renderTimeline(){
+    var h = '<div class="kv-tl-line"></div><div class="kv-tl-start">Start</div>';
+    // Startseite-Knoten
+    h += '<div class="kv-tl-item'+(state.modul===-1?' active':'')+'" data-modul="-1">'
+       + '<span class="kv-tl-node"></span>'
+       + '<span>Übersicht T1</span></div>';
+    M.forEach(function(mod, i){
+      h += '<div class="kv-tl-item'+(state.modul===i?' active':'')+'" data-modul="'+i+'">'
+         + '<span class="kv-tl-node"></span>'
+         + '<span><span class="kv-tl-modnum">'+esc(mod.id)+'</span> '+esc(mod.titel)+'</span>'
+         + '</div>';
+    });
+    elTimeline.innerHTML = h;
+    elTimeline.querySelectorAll('.kv-tl-item').forEach(function(it){
+      it.addEventListener('click', function(){
+        var mi = parseInt(it.getAttribute('data-modul'),10);
+        if(mi === -1) gotoStart();
+        else gotoModul(mi, 0);
+      });
+    });
+  }
+
+  // ================= NAVIGATION =================
+  function gotoStart(){
+    state.modul = -1; state.folie = 0;
+    elHeaderT.textContent = 'T1 · Ich beginne einen neuen Lebensabschnitt';
+    elTabs.innerHTML = '';
+    renderTimeline();
+    renderStart();
+  }
+  function gotoModul(i, folie){
+    state.modul = i; state.folie = folie||0;
+    elHeaderT.textContent = M[i].id + ' · ' + M[i].titel;
+    renderTimeline();
+    renderFolie();
+  }
+  function gotoModulRelativ(delta){
+    var ni = state.modul + delta;
+    if(ni < 0){ gotoStart(); return; }
+    if(ni >= M.length){ return; }
+    gotoModul(ni, delta>0 ? 0 : folienFlach(M[ni]).length-1);
+  }
+
+  // Tastatur-Navigation
+  document.addEventListener('keydown', function(e){
+    if(state.modul === -1) return;
+    if(e.key === 'ArrowRight'){ document.getElementById('navNext').click(); }
+    if(e.key === 'ArrowLeft'){ document.getElementById('navPrev').click(); }
+  });
+
+  // ================= START =================
+  gotoStart();
+})();
+
+</script>
+</body>
+</html>
