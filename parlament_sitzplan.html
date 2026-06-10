@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bundesversammlung – Interaktiver Sitzplan</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Aptos', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #FAFBFC;
+    color: #1A1A1A;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  header {
+    background: linear-gradient(135deg, #1F4E78 0%, #2C6BAA 100%);
+    color: white;
+    padding: 18px 24px 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  header h1 {
+    margin: 0 0 4px 0;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+  header .sub { font-size: 13px; opacity: 0.9; }
+  .main {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 18px;
+    padding: 18px;
+    max-width: 1500px;
+    margin: 0 auto;
+  }
+  @media (max-width: 960px) {
+    .main { grid-template-columns: 1fr; }
+  }
+  .plot {
+    background: white;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid #e1e5e9;
+    flex-wrap: wrap;
+  }
+  .tab {
+    background: none; border: none;
+    padding: 10px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #6B7280;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .tab:hover { color: #1F4E78; }
+  .tab.active { color: #1F4E78; border-bottom-color: #1F4E78; }
+  .tab .badge {
+    background: #E5E7EB; color: #374151;
+    padding: 2px 8px; border-radius: 10px;
+    font-size: 11px; margin-left: 6px; font-weight: 700;
+  }
+  .tab.active .badge { background: #1F4E78; color: white; }
+  .canvas-wrap {
+    position: relative;
+    background: linear-gradient(180deg, #fcfcfd 0%, #f3f5f7 100%);
+    border-radius: 8px;
+    padding: 12px;
+  }
+  svg { width: 100%; height: auto; display: block; }
+  .seat {
+    cursor: pointer;
+    transition: opacity 0.2s, stroke-width 0.15s;
+  }
+  .seat:hover { stroke-width: 2.5; stroke: #1F4E78; }
+  .seat.dimmed { opacity: 0.06; }
+  .seat.sr-seat { stroke: #1F4E78; stroke-width: 2; }
+  .stats-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #F0F4F8;
+    padding: 8px 14px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .stats-bar strong { color: #1F4E78; font-size: 15px; }
+  .reset-btn {
+    background: white;
+    border: 1px solid #D1D5DB;
+    color: #374151;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .reset-btn:hover { background: #F3F4F6; border-color: #1F4E78; color: #1F4E78; }
+  .color-mode {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #6B7280;
+  }
+  .color-mode select {
+    font-family: inherit;
+    font-size: 12px;
+    padding: 4px 8px;
+    border: 1px solid #D1D5DB;
+    border-radius: 6px;
+    background: white;
+  }
+  
+  /* Filter Panel */
+  .filters {
+    background: white;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    position: sticky;
+    top: 18px;
+  }
+  .filter-group { margin-bottom: 16px; }
+  .filter-group:last-child { margin-bottom: 0; }
+  .filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6B7280;
+    cursor: pointer;
+    user-select: none;
+  }
+  .filter-header:hover { color: #1F4E78; }
+  .filter-header .arrow {
+    transition: transform 0.2s;
+    font-size: 10px;
+  }
+  .filter-group.collapsed .arrow { transform: rotate(-90deg); }
+  .filter-group.collapsed .filter-body { display: none; }
+  .toggle-all {
+    background: none;
+    border: none;
+    color: #1F4E78;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: inherit;
+    text-decoration: underline;
+  }
+  .filter-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.1s;
+  }
+  .filter-item:hover { background: #F3F4F6; }
+  .filter-item input { margin: 0; cursor: pointer; }
+  .filter-item .dot {
+    width: 11px; height: 11px; border-radius: 50%;
+    flex-shrink: 0;
+    border: 1px solid rgba(0,0,0,0.1);
+  }
+  .filter-item .lbl { flex: 1; }
+  .filter-item .count {
+    color: #9CA3AF;
+    font-size: 11px;
+    font-weight: 600;
+    background: #F3F4F6;
+    padding: 1px 6px;
+    border-radius: 8px;
+    min-width: 20px;
+    text-align: center;
+  }
+  .filter-item.dim { opacity: 0.4; }
+  .filter-item .kt-abk {
+    font-family: monospace;
+    font-weight: 700;
+    color: #1F4E78;
+    background: #E0E7EE;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 11px;
+    min-width: 26px;
+    text-align: center;
+  }
+  .canton-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+  }
+  /* Kanton-Item mit Wikipedia-Link */
+  .kt-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1px;
+  }
+  .kt-wrap .filter-item { flex: 1; }
+  .wiki-link {
+    color: #9CA3AF;
+    text-decoration: none;
+    padding: 3px 6px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    transition: all 0.12s;
+    flex-shrink: 0;
+  }
+  .wiki-link:hover {
+    color: #1F4E78;
+    background: #E0E7EE;
+  }
+  
+  /* Tooltip */
+  #tooltip {
+    position: fixed;
+    background: rgba(31, 78, 120, 0.97);
+    color: white;
+    padding: 0;
+    border-radius: 8px;
+    font-size: 12px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.12s;
+    z-index: 1000;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    line-height: 1.45;
+    max-width: 320px;
+    min-width: 200px;
+    overflow: hidden;
+  }
+  #tooltip.show { opacity: 1; }
+  #tooltip .tt-content {
+    display: flex;
+    gap: 10px;
+    padding: 10px 12px;
+  }
+  #tooltip .tt-photo {
+    width: 60px;
+    height: 75px;
+    border-radius: 4px;
+    object-fit: cover;
+    background: rgba(255,255,255,0.1);
+    flex-shrink: 0;
+  }
+  #tooltip .tt-photo.loading {
+    background: rgba(255,255,255,0.1) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20'><circle cx='10' cy='10' r='8' stroke='white' stroke-width='2' fill='none' opacity='0.5'/></svg>") center/24px no-repeat;
+  }
+  #tooltip .tt-photo-missing {
+    width: 60px;
+    height: 75px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.08);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: rgba(255,255,255,0.4);
+  }
+  #tooltip .tt-text { flex: 1; min-width: 0; }
+  #tooltip .tt-name { font-weight: 700; font-size: 13px; }
+  #tooltip .tt-meta { opacity: 0.92; font-size: 11px; margin-top: 2px; }
+  #tooltip .tt-tags { margin-top: 4px; font-size: 10.5px; opacity: 0.85; }
+  #tooltip .tt-hint {
+    background: rgba(0,0,0,0.2);
+    padding: 5px 12px;
+    font-size: 10px;
+    opacity: 0.8;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  
+  .footer {
+    text-align: center;
+    color: #9CA3AF;
+    font-size: 11px;
+    padding: 14px;
+  }
+  .footer a { color: #1F4E78; text-decoration: none; }
+  .footer .copyright {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid #E5E7EB;
+    color: #6B7280;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .footer .copyright span {
+    color: #9CA3AF;
+    font-weight: 400;
+  }
+  
+  /* Kantonswappen */
+  .wappen {
+    cursor: pointer;
+    transition: transform 0.15s ease, filter 0.15s ease;
+    transform-origin: center;
+            transform-box: fill-box;
+  }
+  .wappen:hover {
+    transform: scale(1.18);
+    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));
+  }
+  .wappen-label {
+    font-family: monospace;
+    font-size: 9px;
+    font-weight: 700;
+    fill: #1F4E78;
+    text-anchor: middle;
+    pointer-events: none;
+  }
+  
+  /* Legende */
+  .legend-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    margin-top: 10px;
+    padding-top: 12px;
+    border-top: 1px solid #f0f2f4;
+    font-size: 11px;
+    color: #4B5563;
+  }
+  .legend-row .lg-item { display: inline-flex; align-items: center; gap: 5px; }
+  .legend-row .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.1);
+  }
+  
+  /* Bar-Charts Container (2 Spalten) */
+  .bar-charts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  @media (max-width: 700px) {
+    .bar-charts { grid-template-columns: 1fr; }
+  }
+  .bar-chart {
+    padding: 12px 14px;
+    background: linear-gradient(180deg, #F8FAFC 0%, #F0F4F8 100%);
+    border-radius: 8px;
+    border: 1px solid #E5E7EB;
+  }
+  .bar-chart-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #6B7280;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+  }
+  .bar-chart-title .bc-tab {
+    font-size: 10px;
+    color: #9CA3AF;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 600;
+  }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 4px 0;
+  }
+  .bar-label {
+    width: 26px;
+    font-family: monospace;
+    font-weight: 700;
+    color: #1F4E78;
+    background: #E0E7EE;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 10px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .bar-canton {
+    font-size: 11px;
+    color: #4B5563;
+    flex-shrink: 0;
+    width: 70px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .bar-row.gender-row .bar-canton {
+    width: auto;
+    min-width: 64px;
+    font-weight: 600;
+  }
+  .bar-row.gender-row .bar-icon {
+    width: 18px;
+    flex-shrink: 0;
+    font-size: 14px;
+    text-align: center;
+  }
+  .bar-track {
+    flex: 1;
+    background: #E5E7EB;
+    height: 16px;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    min-width: 30px;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+  }
+  /* Abwechselnde Blautöne für Top-5-Kantone */
+  .bar-fill.blue-dark  { background: linear-gradient(90deg, #1F4E78 0%, #2C6BAA 100%); }
+  .bar-fill.blue-light { background: linear-gradient(90deg, #6FA8DC 0%, #9FC5E8 100%); }
+  /* Gender-Farben */
+  .bar-fill.gender-m { background: linear-gradient(90deg, #3B82F6 0%, #60A5FA 100%); }
+  .bar-fill.gender-w { background: linear-gradient(90deg, #EC4899 0%, #F472B6 100%); }
+  .bar-value {
+    font-weight: 700;
+    color: #1F4E78;
+    font-size: 12px;
+    min-width: 24px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .bar-value .bar-pct {
+    font-size: 10px;
+    font-weight: 500;
+    color: #9CA3AF;
+    margin-left: 4px;
+  }
+  .bar-empty {
+    color: #9CA3AF;
+    font-size: 12px;
+    font-style: italic;
+    text-align: center;
+    padding: 10px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Bundesversammlung – Interaktiver Sitzplan</h1>
+  <div class="sub">52. Legislaturperiode (2023–2027) · Erstellt für den ABU-Unterricht an der HKV Aarau</div>
+</header>
+
+<div class="main">
+  <div class="plot">
+    <div class="tabs">
+      <button class="tab active" data-council="nr">Nationalrat <span class="badge">200</span></button>
+      <button class="tab" data-council="sr">Ständerat <span class="badge">46</span></button>
+      <button class="tab" data-council="vb">Vereinigte Bundesversammlung <span class="badge">246</span></button>
+    </div>
+    
+    <div class="stats-bar">
+      <div><strong id="stat-visible">200</strong> von <span id="stat-total">200</span> Sitzen angezeigt</div>
+      <div class="color-mode">
+        Färbung nach:
+        <select id="color-by">
+          <option value="partei" selected>Partei</option>
+          <option value="fraktion">Fraktion</option>
+          <option value="gender">Geschlecht</option>
+          <option value="lang">Sprache</option>
+          <option value="stadtland">Stadt/Land</option>
+        </select>
+      </div>
+      <button class="reset-btn" id="reset-btn">Filter zurücksetzen</button>
+    </div>
+    
+    <div class="canvas-wrap">
+      <svg id="parlament-svg" viewBox="0 0 1000 510" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+        <g id="seats-group"></g>
+        <rect id="pult" x="470" y="490" width="60" height="8" fill="#D1D5DB" rx="2"/>
+      </svg>
+    </div>
+    
+    <div class="legend-row" id="legend"></div>
+    
+    <div class="bar-charts">
+      <div class="bar-chart">
+        <div class="bar-chart-title">
+          <span>Top 5 Kantone</span>
+          <span class="bc-tab" id="bc-context">Nationalrat</span>
+        </div>
+        <div id="bar-chart-content"></div>
+      </div>
+      <div class="bar-chart">
+        <div class="bar-chart-title">
+          <span>Geschlechterverteilung</span>
+          <span class="bc-tab" id="bc-gender-total"></span>
+        </div>
+        <div id="bar-gender-content"></div>
+      </div>
+    </div>
+  </div>
+  
+  <aside class="filters">
+    <div class="filter-group">
+      <div class="filter-header">
+        <span>Fraktion <span class="arrow">▼</span></span>
+        <button class="toggle-all" data-type="fraktion">Alle / Keine</button>
+      </div>
+      <div class="filter-body"><label class="filter-item " data-key="S"><input type="checkbox" checked data-type="fraktion" data-value="S"><span class="dot" style="background:#E63946"></span><span class="lbl">SP-Fraktion</span><span class="count" id="cnt-fraktion-S"></span></label><label class="filter-item " data-key="G"><input type="checkbox" checked data-type="fraktion" data-value="G"><span class="dot" style="background:#7AB648"></span><span class="lbl">Grüne Fraktion</span><span class="count" id="cnt-fraktion-G"></span></label><label class="filter-item " data-key="M-E"><input type="checkbox" checked data-type="fraktion" data-value="M-E"><span class="dot" style="background:#F4A024"></span><span class="lbl">Mitte-EVP-Fraktion</span><span class="count" id="cnt-fraktion-M-E"></span></label><label class="filter-item " data-key="GL"><input type="checkbox" checked data-type="fraktion" data-value="GL"><span class="dot" style="background:#9333EA"></span><span class="lbl">Grünliberale Fraktion</span><span class="count" id="cnt-fraktion-GL"></span></label><label class="filter-item " data-key="RL"><input type="checkbox" checked data-type="fraktion" data-value="RL"><span class="dot" style="background:#2563EB"></span><span class="lbl">FDP-Liberale Fraktion</span><span class="count" id="cnt-fraktion-RL"></span></label><label class="filter-item " data-key="fl"><input type="checkbox" checked data-type="fraktion" data-value="fl"><span class="dot" style="background:#8B6F47"></span><span class="lbl">Fraktionslos</span><span class="count" id="cnt-fraktion-fl"></span></label><label class="filter-item " data-key="V"><input type="checkbox" checked data-type="fraktion" data-value="V"><span class="dot" style="background:#3D7A2C"></span><span class="lbl">SVP-Fraktion</span><span class="count" id="cnt-fraktion-V"></span></label></div>
+    </div>
+    
+    <div class="filter-group">
+      <div class="filter-header">
+        <span>Partei <span class="arrow">▼</span></span>
+        <button class="toggle-all" data-type="partei">Alle / Keine</button>
+      </div>
+      <div class="filter-body"><label class="filter-item " data-key="EDU"><input type="checkbox" checked data-type="partei" data-value="EDU"><span class="dot" style="background:#8B6F47"></span><span class="lbl">EDU</span><span class="count" id="cnt-partei-EDU"></span></label><label class="filter-item " data-key="EVP"><input type="checkbox" checked data-type="partei" data-value="EVP"><span class="dot" style="background:#FFD700"></span><span class="lbl">EVP</span><span class="count" id="cnt-partei-EVP"></span></label><label class="filter-item " data-key="FDP"><input type="checkbox" checked data-type="partei" data-value="FDP"><span class="dot" style="background:#2563EB"></span><span class="lbl">FDP</span><span class="count" id="cnt-partei-FDP"></span></label><label class="filter-item " data-key="GLP"><input type="checkbox" checked data-type="partei" data-value="GLP"><span class="dot" style="background:#9333EA"></span><span class="lbl">GLP</span><span class="count" id="cnt-partei-GLP"></span></label><label class="filter-item " data-key="Grüne"><input type="checkbox" checked data-type="partei" data-value="Grüne"><span class="dot" style="background:#7AB648"></span><span class="lbl">Grüne</span><span class="count" id="cnt-partei-Grüne"></span></label><label class="filter-item " data-key="LDP"><input type="checkbox" checked data-type="partei" data-value="LDP"><span class="dot" style="background:#1A3D7A"></span><span class="lbl">LDP</span><span class="count" id="cnt-partei-LDP"></span></label><label class="filter-item " data-key="Lega"><input type="checkbox" checked data-type="partei" data-value="Lega"><span class="dot" style="background:#2E5F2E"></span><span class="lbl">Lega</span><span class="count" id="cnt-partei-Lega"></span></label><label class="filter-item " data-key="MCG"><input type="checkbox" checked data-type="partei" data-value="MCG"><span class="dot" style="background:#A0522D"></span><span class="lbl">MCG</span><span class="count" id="cnt-partei-MCG"></span></label><label class="filter-item " data-key="Mitte"><input type="checkbox" checked data-type="partei" data-value="Mitte"><span class="dot" style="background:#F4A024"></span><span class="lbl">Mitte</span><span class="count" id="cnt-partei-Mitte"></span></label><label class="filter-item " data-key="SP"><input type="checkbox" checked data-type="partei" data-value="SP"><span class="dot" style="background:#E63946"></span><span class="lbl">SP</span><span class="count" id="cnt-partei-SP"></span></label><label class="filter-item " data-key="SVP"><input type="checkbox" checked data-type="partei" data-value="SVP"><span class="dot" style="background:#3D7A2C"></span><span class="lbl">SVP</span><span class="count" id="cnt-partei-SVP"></span></label></div>
+    </div>
+    
+    <div class="filter-group">
+      <div class="filter-header">
+        <span>Geschlecht <span class="arrow">▼</span></span>
+        <button class="toggle-all" data-type="gender">Alle / Keine</button>
+      </div>
+      <div class="filter-body"><label class="filter-item " data-key="m"><input type="checkbox" checked data-type="gender" data-value="m"><span class="dot" style="background:#3B82F6"></span><span class="lbl">Mann</span><span class="count" id="cnt-gender-m"></span></label><label class="filter-item " data-key="w"><input type="checkbox" checked data-type="gender" data-value="w"><span class="dot" style="background:#EC4899"></span><span class="lbl">Frau</span><span class="count" id="cnt-gender-w"></span></label></div>
+    </div>
+    
+    <div class="filter-group">
+      <div class="filter-header">
+        <span>Sprachregion <span class="arrow">▼</span></span>
+        <button class="toggle-all" data-type="lang">Alle / Keine</button>
+      </div>
+      <div class="filter-body"><label class="filter-item " data-key="D"><input type="checkbox" checked data-type="lang" data-value="D"><span class="dot" style="background:#DC2626"></span><span class="lbl">Deutsch</span><span class="count" id="cnt-lang-D"></span></label><label class="filter-item " data-key="F"><input type="checkbox" checked data-type="lang" data-value="F"><span class="dot" style="background:#1E40AF"></span><span class="lbl">Französisch</span><span class="count" id="cnt-lang-F"></span></label><label class="filter-item " data-key="I"><input type="checkbox" checked data-type="lang" data-value="I"><span class="dot" style="background:#16A34A"></span><span class="lbl">Italienisch</span><span class="count" id="cnt-lang-I"></span></label><label class="filter-item " data-key="R"><input type="checkbox" checked data-type="lang" data-value="R"><span class="dot" style="background:#A855F7"></span><span class="lbl">Rätoromanisch</span><span class="count" id="cnt-lang-R"></span></label></div>
+    </div>
+    
+    <div class="filter-group">
+      <div class="filter-header">
+        <span>Stadt / Land <span class="arrow">▼</span></span>
+        <button class="toggle-all" data-type="stadtland">Alle / Keine</button>
+      </div>
+      <div class="filter-body"><label class="filter-item " data-key="S"><input type="checkbox" checked data-type="stadtland" data-value="S"><span class="dot" style="background:#7C3AED"></span><span class="lbl">Städtisch</span><span class="count" id="cnt-stadtland-S"></span></label><label class="filter-item " data-key="M"><input type="checkbox" checked data-type="stadtland" data-value="M"><span class="dot" style="background:#EAB308"></span><span class="lbl">Gemischt</span><span class="count" id="cnt-stadtland-M"></span></label><label class="filter-item " data-key="L"><input type="checkbox" checked data-type="stadtland" data-value="L"><span class="dot" style="background:#16A34A"></span><span class="lbl">Ländlich</span><span class="count" id="cnt-stadtland-L"></span></label></div>
+    </div>
+    
+    <div class="filter-group collapsed">
+      <div class="filter-header">
+        <span>Kanton <span class="arrow">▼</span></span>
+        <button class="toggle-all" data-type="kanton">Alle / Keine</button>
+      </div>
+      <div class="filter-body canton-grid"><div class="kt-wrap"><label class="filter-item kt-item" data-key="AG"><input type="checkbox" checked data-type="kanton" data-value="AG"><span class="kt-abk">AG</span><span class="lbl">Aargau</span><span class="count" id="cnt-kanton-AG"></span></label><a class="wiki-link" href="https://de.wikipedia.org/wiki/Kanton_Aargau" target="_blank" rel="noopener" title="Wikipedia-Seite: Kanton Aargau">↗</a></div><div class="kt-wrap"><label class="filter-item kt-item" data-key="AR"><input type="checkbox" checked data-type="kanton" data-value="AR"><span class="kt-abk">AR</span><span class="lbl">Appenzell A.Rh.</span><span class="count" id="cnt-kanton-AR"></span></label><a class="wiki-link" href="https://de.wikipedia.org/wiki/Kanton_Appenzell_Ausserrhoden" target="_blank" rel="noopener" title="Wikipedia-Seite: Kanton Appenzell A.Rh.">↗</a></div><div class="kt-wrap"><label class="filter-item kt-item" data-key="AI"><input type="checkbox" checked data-type="kanton" data-value="AI"><span class="kt-abk">AI</span><span class="lbl">Appenzell I.Rh.</span><span class="count" id="cnt-kanton-AI"></span></label><a class="wiki-link" href="https://de.wikipedia.org/wiki/Kanton_Appenzell_Innerrhoden" target="_blank" rel="noopener" title="Wikipedia-Seite: Kanton Appenzell I.Rh.">↗</a></div><div class="kt-wrap"><label class="filter-item kt-item" data-key="BL"><input type="checkbox" checked data-type="kanton" data-value="BL"><span class="kt-abk">BL</span><span class="lbl">Basel-Landschaft</span><span class="count" id="cnt-kanton-BL"></span></label><a class="wiki-link" href="https://de.wikipedia.org/wiki/Kanton_Basel-Landschaft" target="_blank" rel="noopener" title="Wikipedia-Seite: Kanton Basel-Landschaft">↗</a></div><div class="kt-wrap"><label class="filter-item kt-item" data-key="BS"><input type="checkbox" checked data-type="kanton" data-value="BS"><span class="kt-abk">BS</span><span class="lbl">Basel-Stadt</span><span class="count" id="cnt-kanton-BS"></span></label><a class="wiki-link" href="https://de.wikipedia.org/wiki/Kanton_Basel-Stadt" target="_blank" rel="noopener" title="Wikipedia-Seite: Kanton Basel-Stadt">↗</a></div><div class="kt-wrap"><label class="filter-item kt-item" data-key="BE"><input type="checkbox" checked data-type="kanton" data-value="BE"><span class="kt-abk">BE</span><span class="lbl">Bern</span><span class="count" id="cnt-kanton-BE"></span></label><a class="wiki-link" href="https://de.wikipedia.org/wiki/Kanton_Bern" target="_blank" rel="noopener" title="Wikipedia-Seite: Kanton Bern">↗</a></div><div class="kt-wrap"><label class="filter-item kt-item" data-key="FR"><input type="checkbox" checked data-type="kanton" data-value="FR"><span class="kt-abk">FR</span><span class="lbl">Freiburg</span><span class="count" id="cnt-kanton-FR"></span></label><a class="wiki-link" href="https://de.wikipedia.org/wiki/Kanton_Freiburg" target="_blank" rel="noopener" title="Wikipedia-Seite: Kanton Freiburg">↗</a></div><div class="kt-wrap"><label class="filter-item kt-item" data-key="GE"><input type="checkbox" checked data-type="kanton" data-value="GE"><span class="kt-abk">GE</span><span class="lbl">Genf</span><span class="count" id="cnt-kanton-GE"></span></label><a class="wiki-link" href="https://de.wikipedia.org/wiki/Kanton_Genf" target="_blank" rel="noopener" title="Wikipedia-Seite: Kanton Genf">↗</a></div><div class="kt-wrap"><label class="filter-item kt-item" data-key="GL"><input type="checkbox" checked data-type="kanton" data-value="GL"><span class="kt-abk">GL</span><span class="lbl">Glarus</span><span class="count" id="cnt-kanton-GL"></span></label><a class="wiki-link" href="https://de.wikipedia.org/wiki/Kanton_Glarus" target="_blank" rel="noopener" title="Wikipedia-Seite: Kanton Glarus">↗</a></div><div class="kt-wrap"><label class="filter-item kt-item" data-key="GR"><input type="checkbox" checked data-type="kanton" data-value="GR"><span class="kt-abk">GR</span><span class="lbl">Graubünden</span><span class="count" id="cnt-kanton-GR"></span></label><a class="wiki-link" href="https://de.wikipedia.org/wiki/Kanton_Graubünden" target="_blank" rel="noopener" title="Wikipedia-Seite: Kanton Graubünden">↗</a></div><div class="kt-wrap"><label class="filter-item kt-item" data-key="JU"><input type="checkbox" checked data-type="kanton" data-value="JU"><span class="kt-abk">JU</span><span class="lbl">Jura</span><span class="count" id="cnt-kanton-JU"></span></label><a class="wiki-link" href="https://de.wikipedia.org/wiki/Kanton_Jura" target="_blank" rel="noopener" title="Wikipedia-Seite: Kanton Jura">↗</a></div><div class="kt-wrap"><label class="filter-item kt-item" data-key="LU"><input type="checkbox" checked data-type="kanton" data-value="LU"><span class="kt-abk">LU</span><span class="lbl">Luzern</span><span class="count" id="cnt-kanton-LU"></span></label><a class="wiki-link" href="https://de.wikipedia.org/wiki/Kanton_Luzern" target="_blank" rel="noopener" title="Wikipedia-Seite: Kanton Luzern">↗</a></div><div class="kt-wrap"><label class="filter-item kt-item" data-key="NE"><input type="checkbox" checked data-type="kanton" data-value="NE"><span class="kt-abk">NE</span><span class="lbl">Neuenburg</span><span class="count" id="cnt-kanton-NE"></span></label><a class="wiki-link" href="https://de.wikipedia.org/wiki/Kanton_Neuenburg" target="_blank" rel="noopener" title="Wikipedia-Seite: Kanton Neuenburg">↗</a></div><div class="kt-wrap"><label class="filter-item kt-item" data-key="NW"><input type="checkbox" checked data-type="kanton" data-value="NW"><span class="kt-abk">NW</span><span class="lbl">Nidwalden</span><span class="count" id="cnt-kanton-NW"></span></label><a class="wiki-link" href="https://de.wikipedia.org/wiki/Kanton_Nidwalden" target="_blank" rel="noopener" title="Wikipedia-Seite: Kanton Nidwalden">↗</a></div><div class="kt-wrap"><label class="filter-item kt-item" data-key="OW"><input type="checkbox" checked data-type="kanton" data-value="OW"><span class="kt-abk">OW</span><span class="lbl">Obwalden</span><span class="count" id="cnt-kanton-OW"></span></label><a class="wiki-link" href="https://de.wikipedia.org/wiki/Kanton_Obwalden" target="_blank" rel="noopener" title="Wikipedia-Seite: Kanton Obwalden">↗</a></div><div class="kt-wrap"><label class="filter-item kt-item" data-key="SH"><input type="checkbox" checked data-type="kanton" data-value="SH"><span class="kt-abk">SH</span><span class="lbl">Schaffhausen</span><span class="count" id="cnt-kanton-SH"></span></label><a class="wiki-link" href="https://de.wikipedia.org/wiki/Kanton_Schaffhausen" target="_blank" rel="noopener" title="Wikipedia-Seite: Kanton Schaffhausen">↗</a></div><div class="kt-wrap"><label class="filter-item kt-item" data-key="SZ"><input type="checkbox" checked data-type="kanton" data-value="SZ"><span class="kt-abk">SZ</span><span class="lbl">Schwyz</span><span class="count" id="cnt-kanton-SZ"></span></label><a class="wiki-link" href="https://de.wikipedia.org/wiki/Kanton_Schwyz" target="_blank" rel="noopener" title="Wikipedia-Seite: Kanton Schwyz">↗</a></div><div class="kt-wrap"><label class="filter-item kt-item" data-key="SO"><input type="checkbox" checked data-type="kanton" data-value="SO"><span class="kt-abk">SO</span><span class="lbl">Solothurn</span><span class="count" id="cnt-kanton-SO"></span></label><a class="wiki-link" href="https://de.wikipedia.org/wiki/Kanton_Solothurn" target="_blank" rel="noopener" title="Wikipedia-Seite: Kanton Solothurn">↗</a></div><div class="kt-wrap"><label class="filter-item kt-item" data-key="SG"><input type="checkbox" checked data-type="kanton" data-value="SG"><span class="kt-abk">SG</span><span class="lbl">St. Gallen</span><span class="count" id="cnt-kanton-SG"></span></label><a class="wiki-link" href="https://de.wikipedia.org/wiki/Kanton_St._Gallen" target="_blank" rel="noopener" title="Wikipedia-Seite: Kanton St. Gallen">↗</a></div><div class="kt-wrap"><label class="filter-item kt-item" data-key="TI"><input type="checkbox" checked data-type="kanton" data-value="TI"><span class="kt-abk">TI</span><span class="lbl">Tessin</span><span class="count" id="cnt-kanton-TI"></span></label><a class="wiki-link" href="https://de.wikipedia.org/wiki/Kanton_Tessin" target="_blank" rel="noopener" title="Wikipedia-Seite: Kanton Tessin">↗</a></div><div class="kt-wrap"><label class="filter-item kt-item" data-key="TG"><input type="checkbox" checked data-type="kanton" data-value="TG"><span class="kt-abk">TG</span><span class="lbl">Thurgau</span><span class="count" id="cnt-kanton-TG"></span></label><a class="wiki-link" href="https://de.wikipedia.org/wiki/Kanton_Thurgau" target="_blank" rel="noopener" title="Wikipedia-Seite: Kanton Thurgau">↗</a></div><div class="kt-wrap"><label class="filter-item kt-item" data-key="UR"><input type="checkbox" checked data-type="kanton" data-value="UR"><span class="kt-abk">UR</span><span class="lbl">Uri</span><span class="count" id="cnt-kanton-UR"></span></label><a class="wiki-link" href="https://de.wikipedia.org/wiki/Kanton_Uri" target="_blank" rel="noopener" title="Wikipedia-Seite: Kanton Uri">↗</a></div><div class="kt-wrap"><label class="filter-item kt-item" data-key="VD"><input type="checkbox" checked data-type="kanton" data-value="VD"><span class="kt-abk">VD</span><span class="lbl">Waadt</span><span class="count" id="cnt-kanton-VD"></span></label><a class="wiki-link" href="https://de.wikipedia.org/wiki/Kanton_Waadt" target="_blank" rel="noopener" title="Wikipedia-Seite: Kanton Waadt">↗</a></div><div class="kt-wrap"><label class="filter-item kt-item" data-key="VS"><input type="checkbox" checked data-type="kanton" data-value="VS"><span class="kt-abk">VS</span><span class="lbl">Wallis</span><span class="count" id="cnt-kanton-VS"></span></label><a class="wiki-link" href="https://de.wikipedia.org/wiki/Kanton_Wallis" target="_blank" rel="noopener" title="Wikipedia-Seite: Kanton Wallis">↗</a></div><div class="kt-wrap"><label class="filter-item kt-item" data-key="ZG"><input type="checkbox" checked data-type="kanton" data-value="ZG"><span class="kt-abk">ZG</span><span class="lbl">Zug</span><span class="count" id="cnt-kanton-ZG"></span></label><a class="wiki-link" href="https://de.wikipedia.org/wiki/Kanton_Zug" target="_blank" rel="noopener" title="Wikipedia-Seite: Kanton Zug">↗</a></div><div class="kt-wrap"><label class="filter-item kt-item" data-key="ZH"><input type="checkbox" checked data-type="kanton" data-value="ZH"><span class="kt-abk">ZH</span><span class="lbl">Zürich</span><span class="count" id="cnt-kanton-ZH"></span></label><a class="wiki-link" href="https://de.wikipedia.org/wiki/Kanton_Zürich" target="_blank" rel="noopener" title="Wikipedia-Seite: Kanton Zürich">↗</a></div></div>
+    </div>
+  </aside>
+</div>
+
+<div id="tooltip"></div>
+
+<div class="footer">
+  <strong>Stand: 9. Juni 2026</strong> · Datenquellen: <a href="https://www.parlament.ch/de/organe/nationalrat/sitzordnung-nr" target="_blank" rel="noopener">parlament.ch</a>, Wikipedia · Erstellt für den ABU-Unterricht an der HKV Aarau<br>
+  <em>Diese Visualisierung zeigt die Fraktionen als klare Keile (didaktisch). Den offiziellen Sitzplan mit den individuell zugewiesenen Sitznummern findet ihr <a href="https://www.parlament.ch/de/organe/nationalrat/sitzordnung-nr" target="_blank" rel="noopener">hier (NR)</a> und <a href="https://www.parlament.ch/de/organe/staenderat/sitzordnung-sr" target="_blank" rel="noopener">hier (SR)</a>.</em><br>
+  <em>Porträtfotos werden bei Hover dynamisch von Wikipedia geladen (Lizenz CC-BY-SA, je nach Bild). Klick auf einen Sitz öffnet die Wikipedia-Seite. Klassifikation Sprache: nach Wahlkreis-Hauptsprache (BfS). Stadt/Land: nach Kanton-Charakter (vereinfacht).</em>
+  <div class="copyright">© 2026 Samuel Mollet · HKV Aarau <span>· realisiert mit Claude (Anthropic)</span></div>
+</div>
+
+<script>
+const NR_DATA = [{"id": "nr-0", "x": 40.4, "y": 456.9, "name": "Cédric Wermuth", "partei": "SP", "fraktion": "S", "kanton": "Aargau", "kt": "AG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-1", "x": 90.4, "y": 457.1, "name": "Gabriela Suter", "partei": "SP", "fraktion": "S", "kanton": "Aargau", "kt": "AG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-2", "x": 140.4, "y": 457.3, "name": "Simona Brizzi", "partei": "SP", "fraktion": "S", "kanton": "Aargau", "kt": "AG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-3", "x": 190.5, "y": 457.0, "name": "Andrea Zryd", "partei": "SP", "fraktion": "S", "kanton": "Bern", "kt": "BE", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-4", "x": 240.6, "y": 457.3, "name": "Matthias Aebischer", "partei": "SP", "fraktion": "S", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-5", "x": 290.8, "y": 456.7, "name": "Nadine Masshardt", "partei": "SP", "fraktion": "S", "kanton": "Bern", "kt": "BE", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-6", "x": 341.0, "y": 457.1, "name": "Tamara Funiciello", "partei": "SP", "fraktion": "S", "kanton": "Bern", "kt": "BE", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-7", "x": 43.2, "y": 420.9, "name": "Ursula Zybach", "partei": "SP", "fraktion": "S", "kanton": "Bern", "kt": "BE", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-8", "x": 93.5, "y": 421.5, "name": "Eric Nussbaumer", "partei": "SP", "fraktion": "S", "kanton": "Basel-Landschaft", "kt": "BL", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-9", "x": 143.9, "y": 422.2, "name": "Samira Marti", "partei": "SP", "fraktion": "S", "kanton": "Basel-Landschaft", "kt": "BL", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-10", "x": 391.4, "y": 457.8, "name": "Sarah Wyss", "partei": "SP", "fraktion": "S", "kanton": "Basel-Stadt", "kt": "BS", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-11", "x": 194.7, "y": 421.2, "name": "Valérie Piller Carrard", "partei": "SP", "fraktion": "S", "kanton": "Freiburg", "kt": "FR", "gender": "w", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-12", "x": 48.8, "y": 385.3, "name": "Christian Dandres", "partei": "SP", "fraktion": "S", "kanton": "Genf", "kt": "GE", "gender": "m", "lang": "F", "stadtland": "S", "rat": "NR"}, {"id": "nr-13", "x": 245.4, "y": 422.1, "name": "Estelle Revaz", "partei": "SP", "fraktion": "S", "kanton": "Genf", "kt": "GE", "gender": "w", "lang": "F", "stadtland": "S", "rat": "NR"}, {"id": "nr-14", "x": 99.7, "y": 386.3, "name": "Laurence Fehlmann Rielle", "partei": "SP", "fraktion": "S", "kanton": "Genf", "kt": "GE", "gender": "w", "lang": "F", "stadtland": "S", "rat": "NR"}, {"id": "nr-15", "x": 150.8, "y": 387.5, "name": "Jon Pult", "partei": "SP", "fraktion": "S", "kanton": "Graubünden", "kt": "GR", "gender": "m", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "nr-16", "x": 297.2, "y": 420.6, "name": "Pierre-Alain Fridez", "partei": "SP", "fraktion": "S", "kanton": "Jura", "kt": "JU", "gender": "m", "lang": "F", "stadtland": "L", "rat": "NR"}, {"id": "nr-17", "x": 57.3, "y": 350.1, "name": "David Roth", "partei": "SP", "fraktion": "S", "kanton": "Luzern", "kt": "LU", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-18", "x": 203.0, "y": 386.1, "name": "Hasan Candan", "partei": "SP", "fraktion": "S", "kanton": "Luzern", "kt": "LU", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-19", "x": 109.0, "y": 351.7, "name": "Baptiste Hurni", "partei": "SP", "fraktion": "S", "kanton": "Neuenburg", "kt": "NE", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-20", "x": 349.0, "y": 422.2, "name": "Barbara Gysi", "partei": "SP", "fraktion": "S", "kanton": "St. Gallen", "kt": "SG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-21", "x": 255.0, "y": 387.9, "name": "Claudia Friedl", "partei": "SP", "fraktion": "S", "kanton": "St. Gallen", "kt": "SG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-22", "x": 161.0, "y": 353.7, "name": "Martina Munz", "partei": "SP", "fraktion": "S", "kanton": "Schaffhausen", "kt": "SH", "gender": "w", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "nr-23", "x": 68.4, "y": 315.8, "name": "Farah Rumy", "partei": "SP", "fraktion": "S", "kanton": "Solothurn", "kt": "SO", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-24", "x": 121.2, "y": 318.1, "name": "Nina Schläfli", "partei": "SP", "fraktion": "S", "kanton": "Thurgau", "kt": "TG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-25", "x": 215.4, "y": 352.2, "name": "Bruno Storni", "partei": "SP", "fraktion": "S", "kanton": "Tessin", "kt": "TI", "gender": "m", "lang": "I", "stadtland": "M", "rat": "NR"}, {"id": "nr-26", "x": 82.3, "y": 282.4, "name": "Brenda Tuosto", "partei": "SP", "fraktion": "S", "kanton": "Waadt", "kt": "VD", "gender": "w", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-27", "x": 309.7, "y": 386.3, "name": "Brigitte Crottaz", "partei": "SP", "fraktion": "S", "kanton": "Waadt", "kt": "VD", "gender": "w", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-28", "x": 174.6, "y": 321.1, "name": "Jean Tschopp", "partei": "SP", "fraktion": "S", "kanton": "Waadt", "kt": "VD", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-29", "x": 402.0, "y": 425.1, "name": "Jessica Jaccoud", "partei": "SP", "fraktion": "S", "kanton": "Waadt", "kt": "VD", "gender": "w", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-30", "x": 269.1, "y": 355.4, "name": "Roger Nordmann", "partei": "SP", "fraktion": "S", "kanton": "Waadt", "kt": "VD", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-31", "x": 136.3, "y": 285.7, "name": "Samuel Bendahan", "partei": "SP", "fraktion": "S", "kanton": "Waadt", "kt": "VD", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-32", "x": 98.7, "y": 250.2, "name": "Emmanuel Amoos", "partei": "SP", "fraktion": "S", "kanton": "Wallis", "kt": "VS", "gender": "m", "lang": "F", "stadtland": "L", "rat": "NR"}, {"id": "nr-33", "x": 231.5, "y": 320.0, "name": "Anna Rosenwasser", "partei": "SP", "fraktion": "S", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-34", "x": 191.2, "y": 289.9, "name": "Celine Widmer", "partei": "SP", "fraktion": "S", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-35", "x": 364.5, "y": 389.9, "name": "Fabian Molina", "partei": "SP", "fraktion": "S", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-36", "x": 154.2, "y": 254.7, "name": "Islam Aliyaj", "partei": "SP", "fraktion": "S", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-37", "x": 117.5, "y": 219.4, "name": "Jacqueline Badran", "partei": "SP", "fraktion": "S", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-38", "x": 328.0, "y": 354.5, "name": "Mattea Meyer", "partei": "SP", "fraktion": "S", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-39", "x": 287.6, "y": 325.1, "name": "Min Li Marti", "partei": "SP", "fraktion": "S", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-40", "x": 210.8, "y": 260.5, "name": "Priska Seiler Graf", "partei": "SP", "fraktion": "S", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-41", "x": 251.3, "y": 289.9, "name": "Irène Kälin", "partei": "Grüne", "fraktion": "G", "kanton": "Aargau", "kt": "AG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-42", "x": 174.7, "y": 225.4, "name": "Aline Trede", "partei": "Grüne", "fraktion": "G", "kanton": "Bern", "kt": "BE", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-43", "x": 138.8, "y": 190.2, "name": "Christine Badertscher", "partei": "Grüne", "fraktion": "G", "kanton": "Bern", "kt": "BE", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-44", "x": 233.3, "y": 233.2, "name": "Kilian Baumann", "partei": "Grüne", "fraktion": "G", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-45", "x": 197.7, "y": 198.0, "name": "Florence Brenzikofer", "partei": "Grüne", "fraktion": "G", "kanton": "Basel-Landschaft", "kt": "BL", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-46", "x": 162.2, "y": 162.8, "name": "Sibel Arslan", "partei": "Grüne", "fraktion": "G", "kanton": "Basel-Stadt", "kt": "BS", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-47", "x": 310.0, "y": 297.5, "name": "Gerhard Andrey", "partei": "Grüne", "fraktion": "G", "kanton": "Freiburg", "kt": "FR", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-48", "x": 274.5, "y": 262.3, "name": "Delphine Klopfenstein Broggini", "partei": "Grüne", "fraktion": "G", "kanton": "Genf", "kt": "GE", "gender": "w", "lang": "F", "stadtland": "S", "rat": "NR"}, {"id": "nr-49", "x": 351.5, "y": 326.5, "name": "Nicolas Walder", "partei": "Grüne", "fraktion": "G", "kanton": "Genf", "kt": "GE", "gender": "m", "lang": "F", "stadtland": "S", "rat": "NR"}, {"id": "nr-50", "x": 386.9, "y": 361.9, "name": "Michael Töngi", "partei": "Grüne", "fraktion": "G", "kanton": "Luzern", "kt": "LU", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-51", "x": 422.2, "y": 397.2, "name": "Fabien Fivaz", "partei": "Grüne", "fraktion": "G", "kanton": "Neuenburg", "kt": "NE", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-52", "x": 187.8, "y": 137.2, "name": "Franziska Ryser", "partei": "Grüne", "fraktion": "G", "kanton": "St. Gallen", "kt": "SG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-53", "x": 223.0, "y": 172.7, "name": "Felix Wettstein", "partei": "Grüne", "fraktion": "G", "kanton": "Solothurn", "kt": "SO", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-54", "x": 258.2, "y": 208.3, "name": "Greta Gysin", "partei": "Grüne", "fraktion": "G", "kanton": "Tessin", "kt": "TI", "gender": "w", "lang": "I", "stadtland": "M", "rat": "NR"}, {"id": "nr-55", "x": 300.7, "y": 237.5, "name": "Leonore Porchet", "partei": "Grüne", "fraktion": "G", "kanton": "Waadt", "kt": "VD", "gender": "w", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-56", "x": 335.9, "y": 273.3, "name": "Raphaël Mahaim", "partei": "Grüne", "fraktion": "G", "kanton": "Waadt", "kt": "VD", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-57", "x": 215.2, "y": 113.8, "name": "Sophie Michaud Gigon", "partei": "Grüne", "fraktion": "G", "kanton": "Waadt", "kt": "VD", "gender": "w", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-58", "x": 250.4, "y": 149.7, "name": "Christophe Clivaz", "partei": "Grüne", "fraktion": "G", "kanton": "Wallis", "kt": "VS", "gender": "m", "lang": "F", "stadtland": "L", "rat": "NR"}, {"id": "nr-59", "x": 285.5, "y": 185.8, "name": "Manuela Weichelt-Picard", "partei": "Grüne", "fraktion": "G", "kanton": "Zug", "kt": "ZG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-60", "x": 379.5, "y": 303.0, "name": "Balthasar Glättli", "partei": "Grüne", "fraktion": "G", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-61", "x": 244.4, "y": 92.5, "name": "Bastien Girod", "partei": "Grüne", "fraktion": "G", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-62", "x": 329.7, "y": 216.0, "name": "Katharina Prelicz-Huber", "partei": "Grüne", "fraktion": "G", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-63", "x": 279.7, "y": 129.2, "name": "Marionna Schlatter", "partei": "Grüne", "fraktion": "G", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-64", "x": 414.9, "y": 339.5, "name": "Andreas Meier", "partei": "Mitte", "fraktion": "M-E", "kanton": "Aargau", "kt": "AG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-65", "x": 364.9, "y": 252.9, "name": "Maya Bally", "partei": "Mitte", "fraktion": "M-E", "kanton": "Aargau", "kt": "AG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-66", "x": 314.9, "y": 166.2, "name": "Thomas Rechsteiner", "partei": "Mitte", "fraktion": "M-E", "kanton": "Appenzell I.Rh.", "kt": "AI", "gender": "m", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "nr-67", "x": 275.2, "y": 73.7, "name": "Lorenz Hess", "partei": "Mitte", "fraktion": "M-E", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-68", "x": 310.7, "y": 111.3, "name": "Marc Jost", "partei": "EVP", "fraktion": "M-E", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-69", "x": 450.1, "y": 377.0, "name": "Reto Nause", "partei": "Mitte", "fraktion": "M-E", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-70", "x": 360.9, "y": 198.0, "name": "Elisabeth Schneider-Schneiter", "partei": "Mitte", "fraktion": "M-E", "kanton": "Basel-Landschaft", "kt": "BL", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-71", "x": 346.1, "y": 149.6, "name": "Christine Bulliard-Marbach", "partei": "Mitte", "fraktion": "M-E", "kanton": "Freiburg", "kt": "FR", "gender": "w", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-72", "x": 411.3, "y": 284.7, "name": "Marie-France Roth Pasquier", "partei": "Mitte", "fraktion": "M-E", "kanton": "Freiburg", "kt": "FR", "gender": "w", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-73", "x": 307.4, "y": 57.3, "name": "Vincent Maitre", "partei": "Mitte", "fraktion": "M-E", "kanton": "Genf", "kt": "GE", "gender": "m", "lang": "F", "stadtland": "S", "rat": "NR"}, {"id": "nr-74", "x": 396.4, "y": 236.5, "name": "Martin Candinas", "partei": "Mitte", "fraktion": "M-E", "kanton": "Graubünden", "kt": "GR", "gender": "m", "lang": "R", "stadtland": "L", "rat": "NR"}, {"id": "nr-75", "x": 343.1, "y": 96.2, "name": "Leo Müller", "partei": "Mitte", "fraktion": "M-E", "kanton": "Luzern", "kt": "LU", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-76", "x": 340.8, "y": 43.4, "name": "Pius Kaufmann", "partei": "Mitte", "fraktion": "M-E", "kanton": "Luzern", "kt": "LU", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-77", "x": 394.0, "y": 183.7, "name": "Priska Wismer-Felder", "partei": "Mitte", "fraktion": "M-E", "kanton": "Luzern", "kt": "LU", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-78", "x": 378.7, "y": 136.0, "name": "Regina Durrer-Knobel", "partei": "Mitte", "fraktion": "M-E", "kanton": "Nidwalden", "kt": "NW", "gender": "w", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "nr-79", "x": 447.2, "y": 324.0, "name": "Markus Ritter", "partei": "Mitte", "fraktion": "M-E", "kanton": "St. Gallen", "kt": "SG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-80", "x": 376.7, "y": 84.0, "name": "Nicolo Paganini", "partei": "Mitte", "fraktion": "M-E", "kanton": "St. Gallen", "kt": "SG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-81", "x": 375.1, "y": 32.3, "name": "Stefan Müller-Altermatt", "partei": "Mitte", "fraktion": "M-E", "kanton": "Solothurn", "kt": "SO", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-82", "x": 429.9, "y": 224.6, "name": "Dominik Blunschy", "partei": "Mitte", "fraktion": "M-E", "kanton": "Schwyz", "kt": "SZ", "gender": "m", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "nr-83", "x": 445.6, "y": 272.2, "name": "Christian Lohr", "partei": "Mitte", "fraktion": "M-E", "kanton": "Thurgau", "kt": "TG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-84", "x": 412.5, "y": 125.8, "name": "Giorgio Fonio", "partei": "Mitte", "fraktion": "M-E", "kanton": "Tessin", "kt": "TI", "gender": "m", "lang": "I", "stadtland": "M", "rat": "NR"}, {"id": "nr-85", "x": 428.5, "y": 173.4, "name": "Simon Stadler", "partei": "Mitte", "fraktion": "M-E", "kanton": "Uri", "kt": "UR", "gender": "m", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "nr-86", "x": 411.3, "y": 74.7, "name": "Isabelle Chappuis", "partei": "Mitte", "fraktion": "M-E", "kanton": "Waadt", "kt": "VD", "gender": "w", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-87", "x": 410.3, "y": 23.8, "name": "Benjamin Roduit", "partei": "Mitte", "fraktion": "M-E", "kanton": "Wallis", "kt": "VS", "gender": "m", "lang": "F", "stadtland": "L", "rat": "NR"}, {"id": "nr-88", "x": 482.8, "y": 366.4, "name": "Philipp Matthias Bregy", "partei": "Mitte", "fraktion": "M-E", "kanton": "Wallis", "kt": "VS", "gender": "m", "lang": "F", "stadtland": "L", "rat": "NR"}, {"id": "nr-89", "x": 447.2, "y": 118.9, "name": "Sidney Kamerzin", "partei": "Mitte", "fraktion": "M-E", "kanton": "Wallis", "kt": "VS", "gender": "m", "lang": "F", "stadtland": "L", "rat": "NR"}, {"id": "nr-90", "x": 464.6, "y": 217.4, "name": "Gerhard Pfister", "partei": "Mitte", "fraktion": "M-E", "kanton": "Zug", "kt": "ZG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-91", "x": 446.5, "y": 68.5, "name": "Nicole Barandun", "partei": "Mitte", "fraktion": "M-E", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-92", "x": 445.9, "y": 18.2, "name": "Nik Gugger", "partei": "EVP", "fraktion": "M-E", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-93", "x": 464.0, "y": 167.1, "name": "Philipp Kutter", "partei": "Mitte", "fraktion": "M-E", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-94", "x": 482.1, "y": 316.0, "name": "Yvonne Bürgin", "partei": "Mitte", "fraktion": "M-E", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-95", "x": 481.7, "y": 265.8, "name": "Beat Flach", "partei": "GLP", "fraktion": "GL", "kanton": "Aargau", "kt": "AG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-96", "x": 482.3, "y": 115.4, "name": "Jürg Grossen", "partei": "GLP", "fraktion": "GL", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-97", "x": 482.1, "y": 65.4, "name": "Kathrin Bertschy", "partei": "GLP", "fraktion": "GL", "kanton": "Bern", "kt": "BE", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-98", "x": 481.9, "y": 15.4, "name": "Melanie Mettler", "partei": "GLP", "fraktion": "GL", "kanton": "Bern", "kt": "BE", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-99", "x": 500.0, "y": 165.0, "name": "Katja Christ", "partei": "GLP", "fraktion": "GL", "kanton": "Basel-Stadt", "kt": "BS", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-100", "x": 500.0, "y": 215.0, "name": "Céline Weber Koppenburg", "partei": "GLP", "fraktion": "GL", "kanton": "Waadt", "kt": "VD", "gender": "w", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-101", "x": 518.1, "y": 15.4, "name": "Barbara Schaffner", "partei": "GLP", "fraktion": "GL", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-102", "x": 517.9, "y": 65.4, "name": "Corina Gredig", "partei": "GLP", "fraktion": "GL", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-103", "x": 517.7, "y": 115.4, "name": "Martin Bäumle", "partei": "GLP", "fraktion": "GL", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-104", "x": 518.3, "y": 265.8, "name": "Patrick Hässig", "partei": "GLP", "fraktion": "GL", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-105", "x": 517.9, "y": 316.0, "name": "Maja Riniker", "partei": "FDP", "fraktion": "RL", "kanton": "Aargau", "kt": "AG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-106", "x": 536.0, "y": 167.1, "name": "Matthias Jauslin", "partei": "FDP", "fraktion": "RL", "kanton": "Aargau", "kt": "AG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-107", "x": 554.1, "y": 18.2, "name": "Christian Wasserfallen", "partei": "FDP", "fraktion": "RL", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-108", "x": 553.5, "y": 68.5, "name": "Daniela Schneeberger", "partei": "FDP", "fraktion": "RL", "kanton": "Basel-Landschaft", "kt": "BL", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-109", "x": 535.4, "y": 217.4, "name": "Patricia von Falkenstein", "partei": "LDP", "fraktion": "RL", "kanton": "Basel-Stadt", "kt": "BS", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-110", "x": 552.8, "y": 118.9, "name": "Nadine Gobet", "partei": "FDP", "fraktion": "RL", "kanton": "Freiburg", "kt": "FR", "gender": "w", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-111", "x": 517.2, "y": 366.4, "name": "Cyril Aellen", "partei": "FDP", "fraktion": "RL", "kanton": "Genf", "kt": "GE", "gender": "m", "lang": "F", "stadtland": "S", "rat": "NR"}, {"id": "nr-112", "x": 589.7, "y": 23.8, "name": "Simone de Montmollin", "partei": "FDP", "fraktion": "RL", "kanton": "Genf", "kt": "GE", "gender": "w", "lang": "F", "stadtland": "S", "rat": "NR"}, {"id": "nr-113", "x": 588.7, "y": 74.7, "name": "Anna Giacometti", "partei": "FDP", "fraktion": "RL", "kanton": "Graubünden", "kt": "GR", "gender": "w", "lang": "R", "stadtland": "L", "rat": "NR"}, {"id": "nr-114", "x": 571.5, "y": 173.4, "name": "Peter Schilliger", "partei": "FDP", "fraktion": "RL", "kanton": "Luzern", "kt": "LU", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-115", "x": 587.5, "y": 125.8, "name": "Damien Cottier", "partei": "FDP", "fraktion": "RL", "kanton": "Neuenburg", "kt": "NE", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-116", "x": 554.4, "y": 272.2, "name": "Marcel Dobler", "partei": "FDP", "fraktion": "RL", "kanton": "St. Gallen", "kt": "SG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-117", "x": 570.1, "y": 224.6, "name": "Susanne Vincenz-Stauffacher", "partei": "FDP", "fraktion": "RL", "kanton": "St. Gallen", "kt": "SG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-118", "x": 624.9, "y": 32.3, "name": "Simon Michel", "partei": "FDP", "fraktion": "RL", "kanton": "Solothurn", "kt": "SO", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-119", "x": 623.3, "y": 84.0, "name": "Heinz Theiler", "partei": "FDP", "fraktion": "RL", "kanton": "Schwyz", "kt": "SZ", "gender": "m", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "nr-120", "x": 552.8, "y": 324.0, "name": "Kris Vietze", "partei": "FDP", "fraktion": "RL", "kanton": "Thurgau", "kt": "TG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-121", "x": 621.3, "y": 136.0, "name": "Alex Farinelli", "partei": "FDP", "fraktion": "RL", "kanton": "Tessin", "kt": "TI", "gender": "m", "lang": "I", "stadtland": "M", "rat": "NR"}, {"id": "nr-122", "x": 606.0, "y": 183.7, "name": "Simone Gianini", "partei": "FDP", "fraktion": "RL", "kanton": "Tessin", "kt": "TI", "gender": "m", "lang": "I", "stadtland": "M", "rat": "NR"}, {"id": "nr-123", "x": 659.2, "y": 43.4, "name": "Daniel Ruch", "partei": "FDP", "fraktion": "RL", "kanton": "Waadt", "kt": "VD", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-124", "x": 656.9, "y": 96.2, "name": "Jacqueline de Quattro", "partei": "FDP", "fraktion": "RL", "kanton": "Waadt", "kt": "VD", "gender": "w", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-125", "x": 603.6, "y": 236.5, "name": "Laurent Wehrli", "partei": "FDP", "fraktion": "RL", "kanton": "Waadt", "kt": "VD", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-126", "x": 692.6, "y": 57.3, "name": "Olivier Feller", "partei": "FDP", "fraktion": "RL", "kanton": "Waadt", "kt": "VD", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-127", "x": 588.7, "y": 284.7, "name": "Philippe Nantermod", "partei": "FDP", "fraktion": "RL", "kanton": "Wallis", "kt": "VS", "gender": "m", "lang": "F", "stadtland": "L", "rat": "NR"}, {"id": "nr-128", "x": 653.9, "y": 149.6, "name": "Andri Silberschmidt", "partei": "FDP", "fraktion": "RL", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-129", "x": 639.1, "y": 198.0, "name": "Beat Walti", "partei": "FDP", "fraktion": "RL", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-130", "x": 549.9, "y": 377.0, "name": "Bettina Balmer", "partei": "FDP", "fraktion": "RL", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-131", "x": 689.3, "y": 111.3, "name": "Hans-Peter Portmann", "partei": "FDP", "fraktion": "RL", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-132", "x": 724.8, "y": 73.7, "name": "Regine Sauter", "partei": "FDP", "fraktion": "RL", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-133", "x": 685.1, "y": 166.2, "name": "Andreas Gafner", "partei": "EDU", "fraktion": "fl", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-134", "x": 635.1, "y": 252.9, "name": "Erich Vontobel", "partei": "EDU", "fraktion": "fl", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-135", "x": 585.1, "y": 339.5, "name": "Alois Huber", "partei": "SVP", "fraktion": "V", "kanton": "Aargau", "kt": "AG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-136", "x": 720.3, "y": 129.2, "name": "Andreas Glarner", "partei": "SVP", "fraktion": "V", "kanton": "Aargau", "kt": "AG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-137", "x": 670.3, "y": 216.0, "name": "Benjamin Giezendanner", "partei": "SVP", "fraktion": "V", "kanton": "Aargau", "kt": "AG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-138", "x": 755.6, "y": 92.5, "name": "Christoph Riner", "partei": "SVP", "fraktion": "V", "kanton": "Aargau", "kt": "AG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-139", "x": 620.5, "y": 303.0, "name": "Martina Bircher", "partei": "SVP", "fraktion": "V", "kanton": "Aargau", "kt": "AG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-140", "x": 714.5, "y": 185.8, "name": "Stefanie Heimgartner", "partei": "SVP", "fraktion": "V", "kanton": "Aargau", "kt": "AG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-141", "x": 749.6, "y": 149.7, "name": "Thomas Burgherr", "partei": "SVP", "fraktion": "V", "kanton": "Aargau", "kt": "AG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-142", "x": 784.8, "y": 113.8, "name": "David Zuberbühler", "partei": "SVP", "fraktion": "V", "kanton": "Appenzell A.Rh.", "kt": "AR", "gender": "m", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "nr-143", "x": 664.1, "y": 273.3, "name": "Erich Hess", "partei": "SVP", "fraktion": "V", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-144", "x": 699.3, "y": 237.5, "name": "Ernst Wandfluh", "partei": "SVP", "fraktion": "V", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-145", "x": 741.8, "y": 208.3, "name": "Hans Jörg Rüegsegger", "partei": "SVP", "fraktion": "V", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-146", "x": 777.0, "y": 172.7, "name": "Katja Riem", "partei": "SVP", "fraktion": "V", "kanton": "Bern", "kt": "BE", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-147", "x": 812.2, "y": 137.2, "name": "Lars Guggisberg", "partei": "SVP", "fraktion": "V", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-148", "x": 648.5, "y": 326.5, "name": "Manfred Bühler", "partei": "SVP", "fraktion": "V", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-149", "x": 613.1, "y": 361.9, "name": "Nadja Pieren", "partei": "SVP", "fraktion": "V", "kanton": "Bern", "kt": "BE", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-150", "x": 577.8, "y": 397.2, "name": "Thomas Knutti", "partei": "SVP", "fraktion": "V", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-151", "x": 725.5, "y": 262.3, "name": "Sandra Sollberger-Muff", "partei": "SVP", "fraktion": "V", "kanton": "Basel-Landschaft", "kt": "BL", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-152", "x": 690.0, "y": 297.5, "name": "Thomas de Courten", "partei": "SVP", "fraktion": "V", "kanton": "Basel-Landschaft", "kt": "BL", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-153", "x": 837.8, "y": 162.8, "name": "Nicolas Kolly", "partei": "SVP", "fraktion": "V", "kanton": "Freiburg", "kt": "FR", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-154", "x": 802.3, "y": 198.0, "name": "Pierre-André Page", "partei": "SVP", "fraktion": "V", "kanton": "Freiburg", "kt": "FR", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-155", "x": 766.7, "y": 233.2, "name": "Celine Amaudruz", "partei": "SVP", "fraktion": "V", "kanton": "Genf", "kt": "GE", "gender": "w", "lang": "F", "stadtland": "S", "rat": "NR"}, {"id": "nr-156", "x": 861.2, "y": 190.2, "name": "Daniel Sormanni", "partei": "MCG", "fraktion": "V", "kanton": "Genf", "kt": "GE", "gender": "m", "lang": "F", "stadtland": "S", "rat": "NR"}, {"id": "nr-157", "x": 825.3, "y": 225.4, "name": "Roger Golay", "partei": "MCG", "fraktion": "V", "kanton": "Genf", "kt": "GE", "gender": "m", "lang": "F", "stadtland": "S", "rat": "NR"}, {"id": "nr-158", "x": 748.7, "y": 289.9, "name": "Thomas Bläsi", "partei": "SVP", "fraktion": "V", "kanton": "Genf", "kt": "GE", "gender": "m", "lang": "F", "stadtland": "S", "rat": "NR"}, {"id": "nr-159", "x": 789.2, "y": 260.5, "name": "Markus Schnyder", "partei": "SVP", "fraktion": "V", "kanton": "Glarus", "kt": "GL", "gender": "m", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "nr-160", "x": 712.4, "y": 325.1, "name": "Magdalena Martullo-Blocher", "partei": "SVP", "fraktion": "V", "kanton": "Graubünden", "kt": "GR", "gender": "w", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "nr-161", "x": 672.0, "y": 354.5, "name": "Roman Hug", "partei": "SVP", "fraktion": "V", "kanton": "Graubünden", "kt": "GR", "gender": "m", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "nr-162", "x": 882.5, "y": 219.4, "name": "Thomas Stettler", "partei": "SVP", "fraktion": "V", "kanton": "Jura", "kt": "JU", "gender": "m", "lang": "F", "stadtland": "L", "rat": "NR"}, {"id": "nr-163", "x": 845.8, "y": 254.7, "name": "Franz Grüter", "partei": "SVP", "fraktion": "V", "kanton": "Luzern", "kt": "LU", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-164", "x": 635.5, "y": 389.9, "name": "Vroni Thalmann-Bieri", "partei": "SVP", "fraktion": "V", "kanton": "Luzern", "kt": "LU", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-165", "x": 808.8, "y": 289.9, "name": "Didier Calame", "partei": "SVP", "fraktion": "V", "kanton": "Neuenburg", "kt": "NE", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-166", "x": 768.5, "y": 320.0, "name": "Monika Rüegger", "partei": "SVP", "fraktion": "V", "kanton": "Obwalden", "kt": "OW", "gender": "w", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "nr-167", "x": 901.3, "y": 250.2, "name": "Lukas Reimann", "partei": "SVP", "fraktion": "V", "kanton": "St. Gallen", "kt": "SG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-168", "x": 863.7, "y": 285.7, "name": "Michael Gotte", "partei": "SVP", "fraktion": "V", "kanton": "St. Gallen", "kt": "SG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-169", "x": 730.9, "y": 355.4, "name": "Mike Egger", "partei": "SVP", "fraktion": "V", "kanton": "St. Gallen", "kt": "SG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-170", "x": 598.0, "y": 425.1, "name": "Roland Rino Büchel", "partei": "SVP", "fraktion": "V", "kanton": "St. Gallen", "kt": "SG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-171", "x": 825.4, "y": 321.1, "name": "Walter Gartmann", "partei": "SVP", "fraktion": "V", "kanton": "St. Gallen", "kt": "SG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-172", "x": 690.3, "y": 386.3, "name": "Thomas Hurter", "partei": "SVP", "fraktion": "V", "kanton": "Schaffhausen", "kt": "SH", "gender": "m", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "nr-173", "x": 917.7, "y": 282.4, "name": "Christian Imark", "partei": "SVP", "fraktion": "V", "kanton": "Solothurn", "kt": "SO", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-174", "x": 784.6, "y": 352.2, "name": "Remy Wyssmann", "partei": "SVP", "fraktion": "V", "kanton": "Solothurn", "kt": "SO", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-175", "x": 878.8, "y": 318.1, "name": "Marcel Dettling", "partei": "SVP", "fraktion": "V", "kanton": "Schwyz", "kt": "SZ", "gender": "m", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "nr-176", "x": 931.6, "y": 315.8, "name": "Roman Bürgi", "partei": "SVP", "fraktion": "V", "kanton": "Schwyz", "kt": "SZ", "gender": "m", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "nr-177", "x": 839.0, "y": 353.7, "name": "Diana Gutjahr", "partei": "SVP", "fraktion": "V", "kanton": "Thurgau", "kt": "TG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-178", "x": 745.0, "y": 387.9, "name": "Manuel Strupler", "partei": "SVP", "fraktion": "V", "kanton": "Thurgau", "kt": "TG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-179", "x": 651.0, "y": 422.2, "name": "Pascal Schmid", "partei": "SVP", "fraktion": "V", "kanton": "Thurgau", "kt": "TG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-180", "x": 891.0, "y": 351.7, "name": "Lorenzo Quadri", "partei": "Lega", "fraktion": "V", "kanton": "Tessin", "kt": "TI", "gender": "m", "lang": "I", "stadtland": "M", "rat": "NR"}, {"id": "nr-181", "x": 797.0, "y": 386.1, "name": "Paolo Pamini", "partei": "SVP", "fraktion": "V", "kanton": "Tessin", "kt": "TI", "gender": "m", "lang": "I", "stadtland": "M", "rat": "NR"}, {"id": "nr-182", "x": 942.7, "y": 350.1, "name": "Piero Marchesi", "partei": "SVP", "fraktion": "V", "kanton": "Tessin", "kt": "TI", "gender": "m", "lang": "I", "stadtland": "M", "rat": "NR"}, {"id": "nr-183", "x": 702.8, "y": 420.6, "name": "Jacques Nicolet", "partei": "SVP", "fraktion": "V", "kanton": "Waadt", "kt": "VD", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-184", "x": 849.2, "y": 387.5, "name": "Michael Buffat", "partei": "SVP", "fraktion": "V", "kanton": "Waadt", "kt": "VD", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-185", "x": 900.3, "y": 386.3, "name": "Sylvain Freymond", "partei": "SVP", "fraktion": "V", "kanton": "Waadt", "kt": "VD", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-186", "x": 754.6, "y": 422.1, "name": "Yvan Pahud", "partei": "SVP", "fraktion": "V", "kanton": "Waadt", "kt": "VD", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "nr-187", "x": 951.2, "y": 385.3, "name": "Jean-Luc Addor", "partei": "SVP", "fraktion": "V", "kanton": "Wallis", "kt": "VS", "gender": "m", "lang": "F", "stadtland": "L", "rat": "NR"}, {"id": "nr-188", "x": 805.3, "y": 421.2, "name": "Michael Graber", "partei": "SVP", "fraktion": "V", "kanton": "Wallis", "kt": "VS", "gender": "m", "lang": "F", "stadtland": "L", "rat": "NR"}, {"id": "nr-189", "x": 608.6, "y": 457.8, "name": "Thomas Aeschi", "partei": "SVP", "fraktion": "V", "kanton": "Zug", "kt": "ZG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "nr-190", "x": 856.1, "y": 422.2, "name": "Alfred Heer", "partei": "SVP", "fraktion": "V", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-191", "x": 906.5, "y": 421.5, "name": "Barbara Steinemann", "partei": "SVP", "fraktion": "V", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-192", "x": 956.8, "y": 420.9, "name": "Benjamin Fischer", "partei": "SVP", "fraktion": "V", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-193", "x": 659.0, "y": 457.1, "name": "Bruno Walliser", "partei": "SVP", "fraktion": "V", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-194", "x": 709.2, "y": 456.7, "name": "Gregor Rutz", "partei": "SVP", "fraktion": "V", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-195", "x": 759.4, "y": 457.3, "name": "Martin Haab", "partei": "SVP", "fraktion": "V", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-196", "x": 809.5, "y": 457.0, "name": "Martin Hübscher", "partei": "SVP", "fraktion": "V", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-197", "x": 859.6, "y": 457.3, "name": "Mauro Tuena", "partei": "SVP", "fraktion": "V", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-198", "x": 909.6, "y": 457.1, "name": "Nina Fehr Düsel", "partei": "SVP", "fraktion": "V", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "nr-199", "x": 959.6, "y": 456.9, "name": "Thomas Matter", "partei": "SVP", "fraktion": "V", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}];
+const SR_DATA = [{"id": "sr-0", "x": 101.7, "y": 403.1, "name": "Flavia Wasserfallen", "partei": "SP", "fraktion": "S", "kanton": "Bern", "kt": "BE", "gender": "w", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "sr-1", "x": 192.3, "y": 402.6, "name": "Eva Herzog", "partei": "SP", "fraktion": "S", "kanton": "Basel-Stadt", "kt": "BS", "gender": "w", "lang": "D", "stadtland": "S", "rat": "SR"}, {"id": "sr-2", "x": 282.7, "y": 405.6, "name": "Carlo Sommaruga", "partei": "SP", "fraktion": "S", "kanton": "Genf", "kt": "GE", "gender": "m", "lang": "F", "stadtland": "S", "rat": "SR"}, {"id": "sr-3", "x": 374.4, "y": 406.4, "name": "Mathilde Crevoisier Crelier", "partei": "SP", "fraktion": "S", "kanton": "Jura", "kt": "JU", "gender": "w", "lang": "F", "stadtland": "L", "rat": "SR"}, {"id": "sr-4", "x": 115.3, "y": 330.5, "name": "Baptiste Hurni", "partei": "SP", "fraktion": "S", "kanton": "Neuenburg", "kt": "NE", "gender": "m", "lang": "F", "stadtland": "M", "rat": "SR"}, {"id": "sr-5", "x": 210.1, "y": 330.1, "name": "Franziska Roth", "partei": "SP", "fraktion": "S", "kanton": "Solothurn", "kt": "SO", "gender": "w", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "sr-6", "x": 141.9, "y": 261.7, "name": "Pierre-Yves Maillard", "partei": "SP", "fraktion": "S", "kanton": "Waadt", "kt": "VD", "gender": "m", "lang": "F", "stadtland": "M", "rat": "SR"}, {"id": "sr-7", "x": 304.0, "y": 340.1, "name": "Daniel Jositsch", "partei": "SP", "fraktion": "S", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "SR"}, {"id": "sr-8", "x": 244.9, "y": 263.9, "name": "Maya Graf", "partei": "Grüne", "fraktion": "G", "kanton": "Basel-Landschaft", "kt": "BL", "gender": "w", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "sr-9", "x": 180.8, "y": 198.9, "name": "Mathias Zopfi", "partei": "Grüne", "fraktion": "G", "kanton": "Glarus", "kt": "GL", "gender": "m", "lang": "D", "stadtland": "L", "rat": "SR"}, {"id": "sr-10", "x": 344.4, "y": 284.4, "name": "Céline Vara", "partei": "Grüne", "fraktion": "G", "kanton": "Neuenburg", "kt": "NE", "gender": "w", "lang": "F", "stadtland": "M", "rat": "SR"}, {"id": "sr-11", "x": 408.1, "y": 348.1, "name": "Marianne Binder-Keller", "partei": "Mitte", "fraktion": "M-E", "kanton": "Aargau", "kt": "AG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "sr-12", "x": 230.5, "y": 144.4, "name": "Daniel Fässler", "partei": "Mitte", "fraktion": "M-E", "kanton": "Appenzell I.Rh.", "kt": "AI", "gender": "m", "lang": "D", "stadtland": "L", "rat": "SR"}, {"id": "sr-13", "x": 294.4, "y": 208.0, "name": "Isabelle Chassot", "partei": "Mitte", "fraktion": "M-E", "kanton": "Freiburg", "kt": "FR", "gender": "w", "lang": "F", "stadtland": "M", "rat": "SR"}, {"id": "sr-14", "x": 289.4, "y": 99.9, "name": "Stefan Engler", "partei": "Mitte", "fraktion": "M-E", "kanton": "Graubünden", "kt": "GR", "gender": "m", "lang": "R", "stadtland": "L", "rat": "SR"}, {"id": "sr-15", "x": 355.9, "y": 165.5, "name": "Charles Juillard", "partei": "Mitte", "fraktion": "M-E", "kanton": "Jura", "kt": "JU", "gender": "m", "lang": "F", "stadtland": "L", "rat": "SR"}, {"id": "sr-16", "x": 400.1, "y": 244.0, "name": "Andrea Gmür-Schönenberger", "partei": "Mitte", "fraktion": "M-E", "kanton": "Luzern", "kt": "LU", "gender": "w", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "sr-17", "x": 355.5, "y": 67.0, "name": "Erich Ettlin", "partei": "Mitte", "fraktion": "M-E", "kanton": "Obwalden", "kt": "OW", "gender": "m", "lang": "D", "stadtland": "L", "rat": "SR"}, {"id": "sr-18", "x": 466.4, "y": 314.4, "name": "Benedikt Würth", "partei": "Mitte", "fraktion": "M-E", "kanton": "St. Gallen", "kt": "SG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "sr-19", "x": 425.8, "y": 139.0, "name": "Pirmin Bischof", "partei": "Mitte", "fraktion": "M-E", "kanton": "Solothurn", "kt": "SO", "gender": "m", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "sr-20", "x": 426.5, "y": 46.8, "name": "Brigitte Häberli-Koller", "partei": "Mitte", "fraktion": "M-E", "kanton": "Thurgau", "kt": "TG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "sr-21", "x": 465.6, "y": 222.7, "name": "Fabio Regazzi", "partei": "Mitte", "fraktion": "M-E", "kanton": "Tessin", "kt": "TI", "gender": "m", "lang": "I", "stadtland": "M", "rat": "SR"}, {"id": "sr-22", "x": 500.0, "y": 40.0, "name": "Heidi Z'graggen", "partei": "Mitte", "fraktion": "M-E", "kanton": "Uri", "kt": "UR", "gender": "w", "lang": "D", "stadtland": "L", "rat": "SR"}, {"id": "sr-23", "x": 500.0, "y": 130.0, "name": "Beat Rieder", "partei": "Mitte", "fraktion": "M-E", "kanton": "Wallis", "kt": "VS", "gender": "m", "lang": "F", "stadtland": "L", "rat": "SR"}, {"id": "sr-24", "x": 534.4, "y": 222.7, "name": "Marianne Maret", "partei": "Mitte", "fraktion": "M-E", "kanton": "Wallis", "kt": "VS", "gender": "w", "lang": "F", "stadtland": "L", "rat": "SR"}, {"id": "sr-25", "x": 573.5, "y": 46.8, "name": "Peter Hegglin", "partei": "Mitte", "fraktion": "M-E", "kanton": "Zug", "kt": "ZG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "sr-26", "x": 574.2, "y": 139.0, "name": "Tiana Angelina Moser", "partei": "GLP", "fraktion": "GL", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "SR"}, {"id": "sr-27", "x": 533.6, "y": 314.4, "name": "Thierry Burkart", "partei": "FDP", "fraktion": "RL", "kanton": "Aargau", "kt": "AG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "sr-28", "x": 644.5, "y": 67.0, "name": "Andrea Caroni", "partei": "FDP", "fraktion": "RL", "kanton": "Appenzell A.Rh.", "kt": "AR", "gender": "m", "lang": "D", "stadtland": "L", "rat": "SR"}, {"id": "sr-29", "x": 599.9, "y": 244.0, "name": "Johanna Gapany", "partei": "FDP", "fraktion": "RL", "kanton": "Freiburg", "kt": "FR", "gender": "w", "lang": "F", "stadtland": "M", "rat": "SR"}, {"id": "sr-30", "x": 644.1, "y": 165.5, "name": "Benjamin Mühlemann", "partei": "FDP", "fraktion": "RL", "kanton": "Glarus", "kt": "GL", "gender": "m", "lang": "D", "stadtland": "L", "rat": "SR"}, {"id": "sr-31", "x": 710.6, "y": 99.9, "name": "Martin Schmid", "partei": "FDP", "fraktion": "RL", "kanton": "Graubünden", "kt": "GR", "gender": "m", "lang": "D", "stadtland": "L", "rat": "SR"}, {"id": "sr-32", "x": 705.6, "y": 208.0, "name": "Damian Müller", "partei": "FDP", "fraktion": "RL", "kanton": "Luzern", "kt": "LU", "gender": "m", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "sr-33", "x": 769.5, "y": 144.4, "name": "Hans Wicki", "partei": "FDP", "fraktion": "RL", "kanton": "Nidwalden", "kt": "NW", "gender": "m", "lang": "D", "stadtland": "L", "rat": "SR"}, {"id": "sr-34", "x": 655.6, "y": 284.4, "name": "Severin Brüngger", "partei": "FDP", "fraktion": "RL", "kanton": "Schaffhausen", "kt": "SH", "gender": "m", "lang": "D", "stadtland": "L", "rat": "SR"}, {"id": "sr-35", "x": 591.9, "y": 348.1, "name": "Petra Gössi", "partei": "FDP", "fraktion": "RL", "kanton": "Schwyz", "kt": "SZ", "gender": "w", "lang": "D", "stadtland": "L", "rat": "SR"}, {"id": "sr-36", "x": 819.2, "y": 198.9, "name": "Josef Dittli", "partei": "FDP", "fraktion": "RL", "kanton": "Uri", "kt": "UR", "gender": "m", "lang": "D", "stadtland": "L", "rat": "SR"}, {"id": "sr-37", "x": 755.1, "y": 263.9, "name": "Pascal Broulis", "partei": "FDP", "fraktion": "RL", "kanton": "Waadt", "kt": "VD", "gender": "m", "lang": "F", "stadtland": "M", "rat": "SR"}, {"id": "sr-38", "x": 696.0, "y": 340.1, "name": "Matthias Michel", "partei": "FDP", "fraktion": "RL", "kanton": "Zug", "kt": "ZG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "sr-39", "x": 858.1, "y": 261.7, "name": "Werner Salzmann", "partei": "SVP", "fraktion": "V", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "sr-40", "x": 789.9, "y": 330.1, "name": "Mauro Poggia", "partei": "MCG", "fraktion": "V", "kanton": "Genf", "kt": "GE", "gender": "m", "lang": "F", "stadtland": "S", "rat": "SR"}, {"id": "sr-41", "x": 884.7, "y": 330.5, "name": "Esther Friedli", "partei": "SVP", "fraktion": "V", "kanton": "St. Gallen", "kt": "SG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "sr-42", "x": 625.6, "y": 406.4, "name": "Hannes Germann", "partei": "SVP", "fraktion": "V", "kanton": "Schaffhausen", "kt": "SH", "gender": "m", "lang": "D", "stadtland": "L", "rat": "SR"}, {"id": "sr-43", "x": 717.3, "y": 405.6, "name": "Pirmin Schwander", "partei": "SVP", "fraktion": "V", "kanton": "Schwyz", "kt": "SZ", "gender": "m", "lang": "D", "stadtland": "L", "rat": "SR"}, {"id": "sr-44", "x": 807.7, "y": 402.6, "name": "Jakob Stark", "partei": "SVP", "fraktion": "V", "kanton": "Thurgau", "kt": "TG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "sr-45", "x": 898.3, "y": 403.1, "name": "Marco Chiesa", "partei": "SVP", "fraktion": "V", "kanton": "Tessin", "kt": "TI", "gender": "m", "lang": "I", "stadtland": "M", "rat": "SR"}];
+const VB_DATA = [{"id": "vb-0", "x": 40.4, "y": 456.9, "name": "Cédric Wermuth", "partei": "SP", "fraktion": "S", "kanton": "Aargau", "kt": "AG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-1", "x": 90.4, "y": 457.1, "name": "Gabriela Suter", "partei": "SP", "fraktion": "S", "kanton": "Aargau", "kt": "AG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-2", "x": 140.4, "y": 457.3, "name": "Simona Brizzi", "partei": "SP", "fraktion": "S", "kanton": "Aargau", "kt": "AG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-3", "x": 190.5, "y": 457.0, "name": "Andrea Zryd", "partei": "SP", "fraktion": "S", "kanton": "Bern", "kt": "BE", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-4", "x": 240.6, "y": 457.3, "name": "Matthias Aebischer", "partei": "SP", "fraktion": "S", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-5", "x": 290.8, "y": 456.7, "name": "Nadine Masshardt", "partei": "SP", "fraktion": "S", "kanton": "Bern", "kt": "BE", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-6", "x": 341.0, "y": 457.1, "name": "Tamara Funiciello", "partei": "SP", "fraktion": "S", "kanton": "Bern", "kt": "BE", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-7", "x": 43.2, "y": 420.9, "name": "Ursula Zybach", "partei": "SP", "fraktion": "S", "kanton": "Bern", "kt": "BE", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-8", "x": 93.5, "y": 421.5, "name": "Eric Nussbaumer", "partei": "SP", "fraktion": "S", "kanton": "Basel-Landschaft", "kt": "BL", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-9", "x": 143.9, "y": 422.2, "name": "Samira Marti", "partei": "SP", "fraktion": "S", "kanton": "Basel-Landschaft", "kt": "BL", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-10", "x": 391.4, "y": 457.8, "name": "Sarah Wyss", "partei": "SP", "fraktion": "S", "kanton": "Basel-Stadt", "kt": "BS", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-11", "x": 194.7, "y": 421.2, "name": "Valérie Piller Carrard", "partei": "SP", "fraktion": "S", "kanton": "Freiburg", "kt": "FR", "gender": "w", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-12", "x": 48.8, "y": 385.3, "name": "Christian Dandres", "partei": "SP", "fraktion": "S", "kanton": "Genf", "kt": "GE", "gender": "m", "lang": "F", "stadtland": "S", "rat": "NR"}, {"id": "vb-13", "x": 245.4, "y": 422.1, "name": "Estelle Revaz", "partei": "SP", "fraktion": "S", "kanton": "Genf", "kt": "GE", "gender": "w", "lang": "F", "stadtland": "S", "rat": "NR"}, {"id": "vb-14", "x": 99.7, "y": 386.3, "name": "Laurence Fehlmann Rielle", "partei": "SP", "fraktion": "S", "kanton": "Genf", "kt": "GE", "gender": "w", "lang": "F", "stadtland": "S", "rat": "NR"}, {"id": "vb-15", "x": 150.8, "y": 387.5, "name": "Jon Pult", "partei": "SP", "fraktion": "S", "kanton": "Graubünden", "kt": "GR", "gender": "m", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "vb-16", "x": 297.2, "y": 420.6, "name": "Pierre-Alain Fridez", "partei": "SP", "fraktion": "S", "kanton": "Jura", "kt": "JU", "gender": "m", "lang": "F", "stadtland": "L", "rat": "NR"}, {"id": "vb-17", "x": 57.3, "y": 350.1, "name": "David Roth", "partei": "SP", "fraktion": "S", "kanton": "Luzern", "kt": "LU", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-18", "x": 203.0, "y": 386.1, "name": "Hasan Candan", "partei": "SP", "fraktion": "S", "kanton": "Luzern", "kt": "LU", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-19", "x": 109.0, "y": 351.7, "name": "Baptiste Hurni", "partei": "SP", "fraktion": "S", "kanton": "Neuenburg", "kt": "NE", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-20", "x": 349.0, "y": 422.2, "name": "Barbara Gysi", "partei": "SP", "fraktion": "S", "kanton": "St. Gallen", "kt": "SG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-21", "x": 255.0, "y": 387.9, "name": "Claudia Friedl", "partei": "SP", "fraktion": "S", "kanton": "St. Gallen", "kt": "SG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-22", "x": 161.0, "y": 353.7, "name": "Martina Munz", "partei": "SP", "fraktion": "S", "kanton": "Schaffhausen", "kt": "SH", "gender": "w", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "vb-23", "x": 68.4, "y": 315.8, "name": "Farah Rumy", "partei": "SP", "fraktion": "S", "kanton": "Solothurn", "kt": "SO", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-24", "x": 121.2, "y": 318.1, "name": "Nina Schläfli", "partei": "SP", "fraktion": "S", "kanton": "Thurgau", "kt": "TG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-25", "x": 215.4, "y": 352.2, "name": "Bruno Storni", "partei": "SP", "fraktion": "S", "kanton": "Tessin", "kt": "TI", "gender": "m", "lang": "I", "stadtland": "M", "rat": "NR"}, {"id": "vb-26", "x": 82.3, "y": 282.4, "name": "Brenda Tuosto", "partei": "SP", "fraktion": "S", "kanton": "Waadt", "kt": "VD", "gender": "w", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-27", "x": 309.7, "y": 386.3, "name": "Brigitte Crottaz", "partei": "SP", "fraktion": "S", "kanton": "Waadt", "kt": "VD", "gender": "w", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-28", "x": 174.6, "y": 321.1, "name": "Jean Tschopp", "partei": "SP", "fraktion": "S", "kanton": "Waadt", "kt": "VD", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-29", "x": 402.0, "y": 425.1, "name": "Jessica Jaccoud", "partei": "SP", "fraktion": "S", "kanton": "Waadt", "kt": "VD", "gender": "w", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-30", "x": 269.1, "y": 355.4, "name": "Roger Nordmann", "partei": "SP", "fraktion": "S", "kanton": "Waadt", "kt": "VD", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-31", "x": 136.3, "y": 285.7, "name": "Samuel Bendahan", "partei": "SP", "fraktion": "S", "kanton": "Waadt", "kt": "VD", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-32", "x": 98.7, "y": 250.2, "name": "Emmanuel Amoos", "partei": "SP", "fraktion": "S", "kanton": "Wallis", "kt": "VS", "gender": "m", "lang": "F", "stadtland": "L", "rat": "NR"}, {"id": "vb-33", "x": 231.5, "y": 320.0, "name": "Anna Rosenwasser", "partei": "SP", "fraktion": "S", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-34", "x": 191.2, "y": 289.9, "name": "Celine Widmer", "partei": "SP", "fraktion": "S", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-35", "x": 364.5, "y": 389.9, "name": "Fabian Molina", "partei": "SP", "fraktion": "S", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-36", "x": 154.2, "y": 254.7, "name": "Islam Aliyaj", "partei": "SP", "fraktion": "S", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-37", "x": 117.5, "y": 219.4, "name": "Jacqueline Badran", "partei": "SP", "fraktion": "S", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-38", "x": 328.0, "y": 354.5, "name": "Mattea Meyer", "partei": "SP", "fraktion": "S", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-39", "x": 287.6, "y": 325.1, "name": "Min Li Marti", "partei": "SP", "fraktion": "S", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-40", "x": 210.8, "y": 260.5, "name": "Priska Seiler Graf", "partei": "SP", "fraktion": "S", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-41", "x": 251.3, "y": 289.9, "name": "Irène Kälin", "partei": "Grüne", "fraktion": "G", "kanton": "Aargau", "kt": "AG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-42", "x": 174.7, "y": 225.4, "name": "Aline Trede", "partei": "Grüne", "fraktion": "G", "kanton": "Bern", "kt": "BE", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-43", "x": 138.8, "y": 190.2, "name": "Christine Badertscher", "partei": "Grüne", "fraktion": "G", "kanton": "Bern", "kt": "BE", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-44", "x": 233.3, "y": 233.2, "name": "Kilian Baumann", "partei": "Grüne", "fraktion": "G", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-45", "x": 197.7, "y": 198.0, "name": "Florence Brenzikofer", "partei": "Grüne", "fraktion": "G", "kanton": "Basel-Landschaft", "kt": "BL", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-46", "x": 162.2, "y": 162.8, "name": "Sibel Arslan", "partei": "Grüne", "fraktion": "G", "kanton": "Basel-Stadt", "kt": "BS", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-47", "x": 310.0, "y": 297.5, "name": "Gerhard Andrey", "partei": "Grüne", "fraktion": "G", "kanton": "Freiburg", "kt": "FR", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-48", "x": 274.5, "y": 262.3, "name": "Delphine Klopfenstein Broggini", "partei": "Grüne", "fraktion": "G", "kanton": "Genf", "kt": "GE", "gender": "w", "lang": "F", "stadtland": "S", "rat": "NR"}, {"id": "vb-49", "x": 351.5, "y": 326.5, "name": "Nicolas Walder", "partei": "Grüne", "fraktion": "G", "kanton": "Genf", "kt": "GE", "gender": "m", "lang": "F", "stadtland": "S", "rat": "NR"}, {"id": "vb-50", "x": 386.9, "y": 361.9, "name": "Michael Töngi", "partei": "Grüne", "fraktion": "G", "kanton": "Luzern", "kt": "LU", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-51", "x": 422.2, "y": 397.2, "name": "Fabien Fivaz", "partei": "Grüne", "fraktion": "G", "kanton": "Neuenburg", "kt": "NE", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-52", "x": 187.8, "y": 137.2, "name": "Franziska Ryser", "partei": "Grüne", "fraktion": "G", "kanton": "St. Gallen", "kt": "SG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-53", "x": 223.0, "y": 172.7, "name": "Felix Wettstein", "partei": "Grüne", "fraktion": "G", "kanton": "Solothurn", "kt": "SO", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-54", "x": 258.2, "y": 208.3, "name": "Greta Gysin", "partei": "Grüne", "fraktion": "G", "kanton": "Tessin", "kt": "TI", "gender": "w", "lang": "I", "stadtland": "M", "rat": "NR"}, {"id": "vb-55", "x": 300.7, "y": 237.5, "name": "Leonore Porchet", "partei": "Grüne", "fraktion": "G", "kanton": "Waadt", "kt": "VD", "gender": "w", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-56", "x": 335.9, "y": 273.3, "name": "Raphaël Mahaim", "partei": "Grüne", "fraktion": "G", "kanton": "Waadt", "kt": "VD", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-57", "x": 215.2, "y": 113.8, "name": "Sophie Michaud Gigon", "partei": "Grüne", "fraktion": "G", "kanton": "Waadt", "kt": "VD", "gender": "w", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-58", "x": 250.4, "y": 149.7, "name": "Christophe Clivaz", "partei": "Grüne", "fraktion": "G", "kanton": "Wallis", "kt": "VS", "gender": "m", "lang": "F", "stadtland": "L", "rat": "NR"}, {"id": "vb-59", "x": 285.5, "y": 185.8, "name": "Manuela Weichelt-Picard", "partei": "Grüne", "fraktion": "G", "kanton": "Zug", "kt": "ZG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-60", "x": 379.5, "y": 303.0, "name": "Balthasar Glättli", "partei": "Grüne", "fraktion": "G", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-61", "x": 244.4, "y": 92.5, "name": "Bastien Girod", "partei": "Grüne", "fraktion": "G", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-62", "x": 329.7, "y": 216.0, "name": "Katharina Prelicz-Huber", "partei": "Grüne", "fraktion": "G", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-63", "x": 279.7, "y": 129.2, "name": "Marionna Schlatter", "partei": "Grüne", "fraktion": "G", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-64", "x": 414.9, "y": 339.5, "name": "Andreas Meier", "partei": "Mitte", "fraktion": "M-E", "kanton": "Aargau", "kt": "AG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-65", "x": 364.9, "y": 252.9, "name": "Maya Bally", "partei": "Mitte", "fraktion": "M-E", "kanton": "Aargau", "kt": "AG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-66", "x": 314.9, "y": 166.2, "name": "Thomas Rechsteiner", "partei": "Mitte", "fraktion": "M-E", "kanton": "Appenzell I.Rh.", "kt": "AI", "gender": "m", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "vb-67", "x": 275.2, "y": 73.7, "name": "Lorenz Hess", "partei": "Mitte", "fraktion": "M-E", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-68", "x": 310.7, "y": 111.3, "name": "Marc Jost", "partei": "EVP", "fraktion": "M-E", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-69", "x": 450.1, "y": 377.0, "name": "Reto Nause", "partei": "Mitte", "fraktion": "M-E", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-70", "x": 360.9, "y": 198.0, "name": "Elisabeth Schneider-Schneiter", "partei": "Mitte", "fraktion": "M-E", "kanton": "Basel-Landschaft", "kt": "BL", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-71", "x": 346.1, "y": 149.6, "name": "Christine Bulliard-Marbach", "partei": "Mitte", "fraktion": "M-E", "kanton": "Freiburg", "kt": "FR", "gender": "w", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-72", "x": 411.3, "y": 284.7, "name": "Marie-France Roth Pasquier", "partei": "Mitte", "fraktion": "M-E", "kanton": "Freiburg", "kt": "FR", "gender": "w", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-73", "x": 307.4, "y": 57.3, "name": "Vincent Maitre", "partei": "Mitte", "fraktion": "M-E", "kanton": "Genf", "kt": "GE", "gender": "m", "lang": "F", "stadtland": "S", "rat": "NR"}, {"id": "vb-74", "x": 396.4, "y": 236.5, "name": "Martin Candinas", "partei": "Mitte", "fraktion": "M-E", "kanton": "Graubünden", "kt": "GR", "gender": "m", "lang": "R", "stadtland": "L", "rat": "NR"}, {"id": "vb-75", "x": 343.1, "y": 96.2, "name": "Leo Müller", "partei": "Mitte", "fraktion": "M-E", "kanton": "Luzern", "kt": "LU", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-76", "x": 340.8, "y": 43.4, "name": "Pius Kaufmann", "partei": "Mitte", "fraktion": "M-E", "kanton": "Luzern", "kt": "LU", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-77", "x": 394.0, "y": 183.7, "name": "Priska Wismer-Felder", "partei": "Mitte", "fraktion": "M-E", "kanton": "Luzern", "kt": "LU", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-78", "x": 378.7, "y": 136.0, "name": "Regina Durrer-Knobel", "partei": "Mitte", "fraktion": "M-E", "kanton": "Nidwalden", "kt": "NW", "gender": "w", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "vb-79", "x": 447.2, "y": 324.0, "name": "Markus Ritter", "partei": "Mitte", "fraktion": "M-E", "kanton": "St. Gallen", "kt": "SG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-80", "x": 376.7, "y": 84.0, "name": "Nicolo Paganini", "partei": "Mitte", "fraktion": "M-E", "kanton": "St. Gallen", "kt": "SG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-81", "x": 375.1, "y": 32.3, "name": "Stefan Müller-Altermatt", "partei": "Mitte", "fraktion": "M-E", "kanton": "Solothurn", "kt": "SO", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-82", "x": 429.9, "y": 224.6, "name": "Dominik Blunschy", "partei": "Mitte", "fraktion": "M-E", "kanton": "Schwyz", "kt": "SZ", "gender": "m", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "vb-83", "x": 445.6, "y": 272.2, "name": "Christian Lohr", "partei": "Mitte", "fraktion": "M-E", "kanton": "Thurgau", "kt": "TG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-84", "x": 412.5, "y": 125.8, "name": "Giorgio Fonio", "partei": "Mitte", "fraktion": "M-E", "kanton": "Tessin", "kt": "TI", "gender": "m", "lang": "I", "stadtland": "M", "rat": "NR"}, {"id": "vb-85", "x": 428.5, "y": 173.4, "name": "Simon Stadler", "partei": "Mitte", "fraktion": "M-E", "kanton": "Uri", "kt": "UR", "gender": "m", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "vb-86", "x": 411.3, "y": 74.7, "name": "Isabelle Chappuis", "partei": "Mitte", "fraktion": "M-E", "kanton": "Waadt", "kt": "VD", "gender": "w", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-87", "x": 410.3, "y": 23.8, "name": "Benjamin Roduit", "partei": "Mitte", "fraktion": "M-E", "kanton": "Wallis", "kt": "VS", "gender": "m", "lang": "F", "stadtland": "L", "rat": "NR"}, {"id": "vb-88", "x": 482.8, "y": 366.4, "name": "Philipp Matthias Bregy", "partei": "Mitte", "fraktion": "M-E", "kanton": "Wallis", "kt": "VS", "gender": "m", "lang": "F", "stadtland": "L", "rat": "NR"}, {"id": "vb-89", "x": 447.2, "y": 118.9, "name": "Sidney Kamerzin", "partei": "Mitte", "fraktion": "M-E", "kanton": "Wallis", "kt": "VS", "gender": "m", "lang": "F", "stadtland": "L", "rat": "NR"}, {"id": "vb-90", "x": 464.6, "y": 217.4, "name": "Gerhard Pfister", "partei": "Mitte", "fraktion": "M-E", "kanton": "Zug", "kt": "ZG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-91", "x": 446.5, "y": 68.5, "name": "Nicole Barandun", "partei": "Mitte", "fraktion": "M-E", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-92", "x": 445.9, "y": 18.2, "name": "Nik Gugger", "partei": "EVP", "fraktion": "M-E", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-93", "x": 464.0, "y": 167.1, "name": "Philipp Kutter", "partei": "Mitte", "fraktion": "M-E", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-94", "x": 482.1, "y": 316.0, "name": "Yvonne Bürgin", "partei": "Mitte", "fraktion": "M-E", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-95", "x": 481.7, "y": 265.8, "name": "Beat Flach", "partei": "GLP", "fraktion": "GL", "kanton": "Aargau", "kt": "AG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-96", "x": 482.3, "y": 115.4, "name": "Jürg Grossen", "partei": "GLP", "fraktion": "GL", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-97", "x": 482.1, "y": 65.4, "name": "Kathrin Bertschy", "partei": "GLP", "fraktion": "GL", "kanton": "Bern", "kt": "BE", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-98", "x": 481.9, "y": 15.4, "name": "Melanie Mettler", "partei": "GLP", "fraktion": "GL", "kanton": "Bern", "kt": "BE", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-99", "x": 500.0, "y": 165.0, "name": "Katja Christ", "partei": "GLP", "fraktion": "GL", "kanton": "Basel-Stadt", "kt": "BS", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-100", "x": 500.0, "y": 215.0, "name": "Céline Weber Koppenburg", "partei": "GLP", "fraktion": "GL", "kanton": "Waadt", "kt": "VD", "gender": "w", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-101", "x": 518.1, "y": 15.4, "name": "Barbara Schaffner", "partei": "GLP", "fraktion": "GL", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-102", "x": 517.9, "y": 65.4, "name": "Corina Gredig", "partei": "GLP", "fraktion": "GL", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-103", "x": 517.7, "y": 115.4, "name": "Martin Bäumle", "partei": "GLP", "fraktion": "GL", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-104", "x": 518.3, "y": 265.8, "name": "Patrick Hässig", "partei": "GLP", "fraktion": "GL", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-105", "x": 517.9, "y": 316.0, "name": "Maja Riniker", "partei": "FDP", "fraktion": "RL", "kanton": "Aargau", "kt": "AG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-106", "x": 536.0, "y": 167.1, "name": "Matthias Jauslin", "partei": "FDP", "fraktion": "RL", "kanton": "Aargau", "kt": "AG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-107", "x": 554.1, "y": 18.2, "name": "Christian Wasserfallen", "partei": "FDP", "fraktion": "RL", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-108", "x": 553.5, "y": 68.5, "name": "Daniela Schneeberger", "partei": "FDP", "fraktion": "RL", "kanton": "Basel-Landschaft", "kt": "BL", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-109", "x": 535.4, "y": 217.4, "name": "Patricia von Falkenstein", "partei": "LDP", "fraktion": "RL", "kanton": "Basel-Stadt", "kt": "BS", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-110", "x": 552.8, "y": 118.9, "name": "Nadine Gobet", "partei": "FDP", "fraktion": "RL", "kanton": "Freiburg", "kt": "FR", "gender": "w", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-111", "x": 517.2, "y": 366.4, "name": "Cyril Aellen", "partei": "FDP", "fraktion": "RL", "kanton": "Genf", "kt": "GE", "gender": "m", "lang": "F", "stadtland": "S", "rat": "NR"}, {"id": "vb-112", "x": 589.7, "y": 23.8, "name": "Simone de Montmollin", "partei": "FDP", "fraktion": "RL", "kanton": "Genf", "kt": "GE", "gender": "w", "lang": "F", "stadtland": "S", "rat": "NR"}, {"id": "vb-113", "x": 588.7, "y": 74.7, "name": "Anna Giacometti", "partei": "FDP", "fraktion": "RL", "kanton": "Graubünden", "kt": "GR", "gender": "w", "lang": "R", "stadtland": "L", "rat": "NR"}, {"id": "vb-114", "x": 571.5, "y": 173.4, "name": "Peter Schilliger", "partei": "FDP", "fraktion": "RL", "kanton": "Luzern", "kt": "LU", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-115", "x": 587.5, "y": 125.8, "name": "Damien Cottier", "partei": "FDP", "fraktion": "RL", "kanton": "Neuenburg", "kt": "NE", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-116", "x": 554.4, "y": 272.2, "name": "Marcel Dobler", "partei": "FDP", "fraktion": "RL", "kanton": "St. Gallen", "kt": "SG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-117", "x": 570.1, "y": 224.6, "name": "Susanne Vincenz-Stauffacher", "partei": "FDP", "fraktion": "RL", "kanton": "St. Gallen", "kt": "SG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-118", "x": 624.9, "y": 32.3, "name": "Simon Michel", "partei": "FDP", "fraktion": "RL", "kanton": "Solothurn", "kt": "SO", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-119", "x": 623.3, "y": 84.0, "name": "Heinz Theiler", "partei": "FDP", "fraktion": "RL", "kanton": "Schwyz", "kt": "SZ", "gender": "m", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "vb-120", "x": 552.8, "y": 324.0, "name": "Kris Vietze", "partei": "FDP", "fraktion": "RL", "kanton": "Thurgau", "kt": "TG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-121", "x": 621.3, "y": 136.0, "name": "Alex Farinelli", "partei": "FDP", "fraktion": "RL", "kanton": "Tessin", "kt": "TI", "gender": "m", "lang": "I", "stadtland": "M", "rat": "NR"}, {"id": "vb-122", "x": 606.0, "y": 183.7, "name": "Simone Gianini", "partei": "FDP", "fraktion": "RL", "kanton": "Tessin", "kt": "TI", "gender": "m", "lang": "I", "stadtland": "M", "rat": "NR"}, {"id": "vb-123", "x": 659.2, "y": 43.4, "name": "Daniel Ruch", "partei": "FDP", "fraktion": "RL", "kanton": "Waadt", "kt": "VD", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-124", "x": 656.9, "y": 96.2, "name": "Jacqueline de Quattro", "partei": "FDP", "fraktion": "RL", "kanton": "Waadt", "kt": "VD", "gender": "w", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-125", "x": 603.6, "y": 236.5, "name": "Laurent Wehrli", "partei": "FDP", "fraktion": "RL", "kanton": "Waadt", "kt": "VD", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-126", "x": 692.6, "y": 57.3, "name": "Olivier Feller", "partei": "FDP", "fraktion": "RL", "kanton": "Waadt", "kt": "VD", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-127", "x": 588.7, "y": 284.7, "name": "Philippe Nantermod", "partei": "FDP", "fraktion": "RL", "kanton": "Wallis", "kt": "VS", "gender": "m", "lang": "F", "stadtland": "L", "rat": "NR"}, {"id": "vb-128", "x": 653.9, "y": 149.6, "name": "Andri Silberschmidt", "partei": "FDP", "fraktion": "RL", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-129", "x": 639.1, "y": 198.0, "name": "Beat Walti", "partei": "FDP", "fraktion": "RL", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-130", "x": 549.9, "y": 377.0, "name": "Bettina Balmer", "partei": "FDP", "fraktion": "RL", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-131", "x": 689.3, "y": 111.3, "name": "Hans-Peter Portmann", "partei": "FDP", "fraktion": "RL", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-132", "x": 724.8, "y": 73.7, "name": "Regine Sauter", "partei": "FDP", "fraktion": "RL", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-133", "x": 685.1, "y": 166.2, "name": "Andreas Gafner", "partei": "EDU", "fraktion": "fl", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-134", "x": 635.1, "y": 252.9, "name": "Erich Vontobel", "partei": "EDU", "fraktion": "fl", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-135", "x": 585.1, "y": 339.5, "name": "Alois Huber", "partei": "SVP", "fraktion": "V", "kanton": "Aargau", "kt": "AG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-136", "x": 720.3, "y": 129.2, "name": "Andreas Glarner", "partei": "SVP", "fraktion": "V", "kanton": "Aargau", "kt": "AG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-137", "x": 670.3, "y": 216.0, "name": "Benjamin Giezendanner", "partei": "SVP", "fraktion": "V", "kanton": "Aargau", "kt": "AG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-138", "x": 755.6, "y": 92.5, "name": "Christoph Riner", "partei": "SVP", "fraktion": "V", "kanton": "Aargau", "kt": "AG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-139", "x": 620.5, "y": 303.0, "name": "Martina Bircher", "partei": "SVP", "fraktion": "V", "kanton": "Aargau", "kt": "AG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-140", "x": 714.5, "y": 185.8, "name": "Stefanie Heimgartner", "partei": "SVP", "fraktion": "V", "kanton": "Aargau", "kt": "AG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-141", "x": 749.6, "y": 149.7, "name": "Thomas Burgherr", "partei": "SVP", "fraktion": "V", "kanton": "Aargau", "kt": "AG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-142", "x": 784.8, "y": 113.8, "name": "David Zuberbühler", "partei": "SVP", "fraktion": "V", "kanton": "Appenzell A.Rh.", "kt": "AR", "gender": "m", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "vb-143", "x": 664.1, "y": 273.3, "name": "Erich Hess", "partei": "SVP", "fraktion": "V", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-144", "x": 699.3, "y": 237.5, "name": "Ernst Wandfluh", "partei": "SVP", "fraktion": "V", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-145", "x": 741.8, "y": 208.3, "name": "Hans Jörg Rüegsegger", "partei": "SVP", "fraktion": "V", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-146", "x": 777.0, "y": 172.7, "name": "Katja Riem", "partei": "SVP", "fraktion": "V", "kanton": "Bern", "kt": "BE", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-147", "x": 812.2, "y": 137.2, "name": "Lars Guggisberg", "partei": "SVP", "fraktion": "V", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-148", "x": 648.5, "y": 326.5, "name": "Manfred Bühler", "partei": "SVP", "fraktion": "V", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-149", "x": 613.1, "y": 361.9, "name": "Nadja Pieren", "partei": "SVP", "fraktion": "V", "kanton": "Bern", "kt": "BE", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-150", "x": 577.8, "y": 397.2, "name": "Thomas Knutti", "partei": "SVP", "fraktion": "V", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-151", "x": 725.5, "y": 262.3, "name": "Sandra Sollberger-Muff", "partei": "SVP", "fraktion": "V", "kanton": "Basel-Landschaft", "kt": "BL", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-152", "x": 690.0, "y": 297.5, "name": "Thomas de Courten", "partei": "SVP", "fraktion": "V", "kanton": "Basel-Landschaft", "kt": "BL", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-153", "x": 837.8, "y": 162.8, "name": "Nicolas Kolly", "partei": "SVP", "fraktion": "V", "kanton": "Freiburg", "kt": "FR", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-154", "x": 802.3, "y": 198.0, "name": "Pierre-André Page", "partei": "SVP", "fraktion": "V", "kanton": "Freiburg", "kt": "FR", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-155", "x": 766.7, "y": 233.2, "name": "Celine Amaudruz", "partei": "SVP", "fraktion": "V", "kanton": "Genf", "kt": "GE", "gender": "w", "lang": "F", "stadtland": "S", "rat": "NR"}, {"id": "vb-156", "x": 861.2, "y": 190.2, "name": "Daniel Sormanni", "partei": "MCG", "fraktion": "V", "kanton": "Genf", "kt": "GE", "gender": "m", "lang": "F", "stadtland": "S", "rat": "NR"}, {"id": "vb-157", "x": 825.3, "y": 225.4, "name": "Roger Golay", "partei": "MCG", "fraktion": "V", "kanton": "Genf", "kt": "GE", "gender": "m", "lang": "F", "stadtland": "S", "rat": "NR"}, {"id": "vb-158", "x": 748.7, "y": 289.9, "name": "Thomas Bläsi", "partei": "SVP", "fraktion": "V", "kanton": "Genf", "kt": "GE", "gender": "m", "lang": "F", "stadtland": "S", "rat": "NR"}, {"id": "vb-159", "x": 789.2, "y": 260.5, "name": "Markus Schnyder", "partei": "SVP", "fraktion": "V", "kanton": "Glarus", "kt": "GL", "gender": "m", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "vb-160", "x": 712.4, "y": 325.1, "name": "Magdalena Martullo-Blocher", "partei": "SVP", "fraktion": "V", "kanton": "Graubünden", "kt": "GR", "gender": "w", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "vb-161", "x": 672.0, "y": 354.5, "name": "Roman Hug", "partei": "SVP", "fraktion": "V", "kanton": "Graubünden", "kt": "GR", "gender": "m", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "vb-162", "x": 882.5, "y": 219.4, "name": "Thomas Stettler", "partei": "SVP", "fraktion": "V", "kanton": "Jura", "kt": "JU", "gender": "m", "lang": "F", "stadtland": "L", "rat": "NR"}, {"id": "vb-163", "x": 845.8, "y": 254.7, "name": "Franz Grüter", "partei": "SVP", "fraktion": "V", "kanton": "Luzern", "kt": "LU", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-164", "x": 635.5, "y": 389.9, "name": "Vroni Thalmann-Bieri", "partei": "SVP", "fraktion": "V", "kanton": "Luzern", "kt": "LU", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-165", "x": 808.8, "y": 289.9, "name": "Didier Calame", "partei": "SVP", "fraktion": "V", "kanton": "Neuenburg", "kt": "NE", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-166", "x": 768.5, "y": 320.0, "name": "Monika Rüegger", "partei": "SVP", "fraktion": "V", "kanton": "Obwalden", "kt": "OW", "gender": "w", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "vb-167", "x": 901.3, "y": 250.2, "name": "Lukas Reimann", "partei": "SVP", "fraktion": "V", "kanton": "St. Gallen", "kt": "SG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-168", "x": 863.7, "y": 285.7, "name": "Michael Gotte", "partei": "SVP", "fraktion": "V", "kanton": "St. Gallen", "kt": "SG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-169", "x": 730.9, "y": 355.4, "name": "Mike Egger", "partei": "SVP", "fraktion": "V", "kanton": "St. Gallen", "kt": "SG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-170", "x": 598.0, "y": 425.1, "name": "Roland Rino Büchel", "partei": "SVP", "fraktion": "V", "kanton": "St. Gallen", "kt": "SG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-171", "x": 825.4, "y": 321.1, "name": "Walter Gartmann", "partei": "SVP", "fraktion": "V", "kanton": "St. Gallen", "kt": "SG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-172", "x": 690.3, "y": 386.3, "name": "Thomas Hurter", "partei": "SVP", "fraktion": "V", "kanton": "Schaffhausen", "kt": "SH", "gender": "m", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "vb-173", "x": 917.7, "y": 282.4, "name": "Christian Imark", "partei": "SVP", "fraktion": "V", "kanton": "Solothurn", "kt": "SO", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-174", "x": 784.6, "y": 352.2, "name": "Remy Wyssmann", "partei": "SVP", "fraktion": "V", "kanton": "Solothurn", "kt": "SO", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-175", "x": 878.8, "y": 318.1, "name": "Marcel Dettling", "partei": "SVP", "fraktion": "V", "kanton": "Schwyz", "kt": "SZ", "gender": "m", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "vb-176", "x": 931.6, "y": 315.8, "name": "Roman Bürgi", "partei": "SVP", "fraktion": "V", "kanton": "Schwyz", "kt": "SZ", "gender": "m", "lang": "D", "stadtland": "L", "rat": "NR"}, {"id": "vb-177", "x": 839.0, "y": 353.7, "name": "Diana Gutjahr", "partei": "SVP", "fraktion": "V", "kanton": "Thurgau", "kt": "TG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-178", "x": 745.0, "y": 387.9, "name": "Manuel Strupler", "partei": "SVP", "fraktion": "V", "kanton": "Thurgau", "kt": "TG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-179", "x": 651.0, "y": 422.2, "name": "Pascal Schmid", "partei": "SVP", "fraktion": "V", "kanton": "Thurgau", "kt": "TG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-180", "x": 891.0, "y": 351.7, "name": "Lorenzo Quadri", "partei": "Lega", "fraktion": "V", "kanton": "Tessin", "kt": "TI", "gender": "m", "lang": "I", "stadtland": "M", "rat": "NR"}, {"id": "vb-181", "x": 797.0, "y": 386.1, "name": "Paolo Pamini", "partei": "SVP", "fraktion": "V", "kanton": "Tessin", "kt": "TI", "gender": "m", "lang": "I", "stadtland": "M", "rat": "NR"}, {"id": "vb-182", "x": 942.7, "y": 350.1, "name": "Piero Marchesi", "partei": "SVP", "fraktion": "V", "kanton": "Tessin", "kt": "TI", "gender": "m", "lang": "I", "stadtland": "M", "rat": "NR"}, {"id": "vb-183", "x": 702.8, "y": 420.6, "name": "Jacques Nicolet", "partei": "SVP", "fraktion": "V", "kanton": "Waadt", "kt": "VD", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-184", "x": 849.2, "y": 387.5, "name": "Michael Buffat", "partei": "SVP", "fraktion": "V", "kanton": "Waadt", "kt": "VD", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-185", "x": 900.3, "y": 386.3, "name": "Sylvain Freymond", "partei": "SVP", "fraktion": "V", "kanton": "Waadt", "kt": "VD", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-186", "x": 754.6, "y": 422.1, "name": "Yvan Pahud", "partei": "SVP", "fraktion": "V", "kanton": "Waadt", "kt": "VD", "gender": "m", "lang": "F", "stadtland": "M", "rat": "NR"}, {"id": "vb-187", "x": 951.2, "y": 385.3, "name": "Jean-Luc Addor", "partei": "SVP", "fraktion": "V", "kanton": "Wallis", "kt": "VS", "gender": "m", "lang": "F", "stadtland": "L", "rat": "NR"}, {"id": "vb-188", "x": 805.3, "y": 421.2, "name": "Michael Graber", "partei": "SVP", "fraktion": "V", "kanton": "Wallis", "kt": "VS", "gender": "m", "lang": "F", "stadtland": "L", "rat": "NR"}, {"id": "vb-189", "x": 608.6, "y": 457.8, "name": "Thomas Aeschi", "partei": "SVP", "fraktion": "V", "kanton": "Zug", "kt": "ZG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "NR"}, {"id": "vb-190", "x": 856.1, "y": 422.2, "name": "Alfred Heer", "partei": "SVP", "fraktion": "V", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-191", "x": 906.5, "y": 421.5, "name": "Barbara Steinemann", "partei": "SVP", "fraktion": "V", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-192", "x": 956.8, "y": 420.9, "name": "Benjamin Fischer", "partei": "SVP", "fraktion": "V", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-193", "x": 659.0, "y": 457.1, "name": "Bruno Walliser", "partei": "SVP", "fraktion": "V", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-194", "x": 709.2, "y": 456.7, "name": "Gregor Rutz", "partei": "SVP", "fraktion": "V", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-195", "x": 759.4, "y": 457.3, "name": "Martin Haab", "partei": "SVP", "fraktion": "V", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-196", "x": 809.5, "y": 457.0, "name": "Martin Hübscher", "partei": "SVP", "fraktion": "V", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-197", "x": 859.6, "y": 457.3, "name": "Mauro Tuena", "partei": "SVP", "fraktion": "V", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-198", "x": 909.6, "y": 457.1, "name": "Nina Fehr Düsel", "partei": "SVP", "fraktion": "V", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-199", "x": 959.6, "y": 456.9, "name": "Thomas Matter", "partei": "SVP", "fraktion": "V", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "NR"}, {"id": "vb-200", "x": -9.7, "y": 457.6, "name": "Marianne Binder-Keller", "partei": "Mitte", "fraktion": "M-E", "kanton": "Aargau", "kt": "AG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "vb-201", "x": -7.3, "y": 422.8, "name": "Thierry Burkart", "partei": "FDP", "fraktion": "RL", "kanton": "Aargau", "kt": "AG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "vb-202", "x": -2.6, "y": 388.3, "name": "Daniel Fässler", "partei": "Mitte", "fraktion": "M-E", "kanton": "Appenzell I.Rh.", "kt": "AI", "gender": "m", "lang": "D", "stadtland": "L", "rat": "SR"}, {"id": "vb-203", "x": 4.5, "y": 354.3, "name": "Andrea Caroni", "partei": "FDP", "fraktion": "RL", "kanton": "Appenzell A.Rh.", "kt": "AR", "gender": "m", "lang": "D", "stadtland": "L", "rat": "SR"}, {"id": "vb-204", "x": 13.9, "y": 320.7, "name": "Flavia Wasserfallen", "partei": "SP", "fraktion": "S", "kanton": "Bern", "kt": "BE", "gender": "w", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "vb-205", "x": 25.6, "y": 287.9, "name": "Werner Salzmann", "partei": "SVP", "fraktion": "V", "kanton": "Bern", "kt": "BE", "gender": "m", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "vb-206", "x": 39.4, "y": 256.0, "name": "Maya Graf", "partei": "Grüne", "fraktion": "G", "kanton": "Basel-Landschaft", "kt": "BL", "gender": "w", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "vb-207", "x": 55.5, "y": 225.0, "name": "Eva Herzog", "partei": "SP", "fraktion": "S", "kanton": "Basel-Stadt", "kt": "BS", "gender": "w", "lang": "D", "stadtland": "S", "rat": "SR"}, {"id": "vb-208", "x": 73.5, "y": 195.3, "name": "Isabelle Chassot", "partei": "Mitte", "fraktion": "M-E", "kanton": "Freiburg", "kt": "FR", "gender": "w", "lang": "F", "stadtland": "M", "rat": "SR"}, {"id": "vb-209", "x": 93.6, "y": 166.8, "name": "Johanna Gapany", "partei": "FDP", "fraktion": "RL", "kanton": "Freiburg", "kt": "FR", "gender": "w", "lang": "F", "stadtland": "M", "rat": "SR"}, {"id": "vb-210", "x": 115.6, "y": 139.8, "name": "Carlo Sommaruga", "partei": "SP", "fraktion": "S", "kanton": "Genf", "kt": "GE", "gender": "m", "lang": "F", "stadtland": "S", "rat": "SR"}, {"id": "vb-211", "x": 139.4, "y": 114.4, "name": "Mauro Poggia", "partei": "MCG", "fraktion": "V", "kanton": "Genf", "kt": "GE", "gender": "m", "lang": "F", "stadtland": "S", "rat": "SR"}, {"id": "vb-212", "x": 164.8, "y": 90.6, "name": "Benjamin Mühlemann", "partei": "FDP", "fraktion": "RL", "kanton": "Glarus", "kt": "GL", "gender": "m", "lang": "D", "stadtland": "L", "rat": "SR"}, {"id": "vb-213", "x": 191.8, "y": 68.6, "name": "Mathias Zopfi", "partei": "Grüne", "fraktion": "G", "kanton": "Glarus", "kt": "GL", "gender": "m", "lang": "D", "stadtland": "L", "rat": "SR"}, {"id": "vb-214", "x": 220.3, "y": 48.5, "name": "Martin Schmid", "partei": "FDP", "fraktion": "RL", "kanton": "Graubünden", "kt": "GR", "gender": "m", "lang": "D", "stadtland": "L", "rat": "SR"}, {"id": "vb-215", "x": 250.0, "y": 30.5, "name": "Stefan Engler", "partei": "Mitte", "fraktion": "M-E", "kanton": "Graubünden", "kt": "GR", "gender": "m", "lang": "R", "stadtland": "L", "rat": "SR"}, {"id": "vb-216", "x": 281.0, "y": 14.4, "name": "Charles Juillard", "partei": "Mitte", "fraktion": "M-E", "kanton": "Jura", "kt": "JU", "gender": "m", "lang": "F", "stadtland": "L", "rat": "SR"}, {"id": "vb-217", "x": 312.9, "y": 0.6, "name": "Mathilde Crevoisier Crelier", "partei": "SP", "fraktion": "S", "kanton": "Jura", "kt": "JU", "gender": "w", "lang": "F", "stadtland": "L", "rat": "SR"}, {"id": "vb-218", "x": 345.7, "y": -11.1, "name": "Andrea Gmür-Schönenberger", "partei": "Mitte", "fraktion": "M-E", "kanton": "Luzern", "kt": "LU", "gender": "w", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "vb-219", "x": 379.3, "y": -20.5, "name": "Damian Müller", "partei": "FDP", "fraktion": "RL", "kanton": "Luzern", "kt": "LU", "gender": "m", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "vb-220", "x": 413.3, "y": -27.6, "name": "Baptiste Hurni", "partei": "SP", "fraktion": "S", "kanton": "Neuenburg", "kt": "NE", "gender": "m", "lang": "F", "stadtland": "M", "rat": "SR"}, {"id": "vb-221", "x": 447.8, "y": -32.3, "name": "Céline Vara", "partei": "Grüne", "fraktion": "G", "kanton": "Neuenburg", "kt": "NE", "gender": "w", "lang": "F", "stadtland": "M", "rat": "SR"}, {"id": "vb-222", "x": 482.6, "y": -34.7, "name": "Hans Wicki", "partei": "FDP", "fraktion": "RL", "kanton": "Nidwalden", "kt": "NW", "gender": "m", "lang": "D", "stadtland": "L", "rat": "SR"}, {"id": "vb-223", "x": 517.4, "y": -34.7, "name": "Erich Ettlin", "partei": "Mitte", "fraktion": "M-E", "kanton": "Obwalden", "kt": "OW", "gender": "m", "lang": "D", "stadtland": "L", "rat": "SR"}, {"id": "vb-224", "x": 552.2, "y": -32.3, "name": "Benedikt Würth", "partei": "Mitte", "fraktion": "M-E", "kanton": "St. Gallen", "kt": "SG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "vb-225", "x": 586.7, "y": -27.6, "name": "Esther Friedli", "partei": "SVP", "fraktion": "V", "kanton": "St. Gallen", "kt": "SG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "vb-226", "x": 620.7, "y": -20.5, "name": "Hannes Germann", "partei": "SVP", "fraktion": "V", "kanton": "Schaffhausen", "kt": "SH", "gender": "m", "lang": "D", "stadtland": "L", "rat": "SR"}, {"id": "vb-227", "x": 654.3, "y": -11.1, "name": "Severin Brüngger", "partei": "FDP", "fraktion": "RL", "kanton": "Schaffhausen", "kt": "SH", "gender": "m", "lang": "D", "stadtland": "L", "rat": "SR"}, {"id": "vb-228", "x": 687.1, "y": 0.6, "name": "Franziska Roth", "partei": "SP", "fraktion": "S", "kanton": "Solothurn", "kt": "SO", "gender": "w", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "vb-229", "x": 719.0, "y": 14.4, "name": "Pirmin Bischof", "partei": "Mitte", "fraktion": "M-E", "kanton": "Solothurn", "kt": "SO", "gender": "m", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "vb-230", "x": 750.0, "y": 30.5, "name": "Petra Gössi", "partei": "FDP", "fraktion": "RL", "kanton": "Schwyz", "kt": "SZ", "gender": "w", "lang": "D", "stadtland": "L", "rat": "SR"}, {"id": "vb-231", "x": 779.7, "y": 48.5, "name": "Pirmin Schwander", "partei": "SVP", "fraktion": "V", "kanton": "Schwyz", "kt": "SZ", "gender": "m", "lang": "D", "stadtland": "L", "rat": "SR"}, {"id": "vb-232", "x": 808.2, "y": 68.6, "name": "Brigitte Häberli-Koller", "partei": "Mitte", "fraktion": "M-E", "kanton": "Thurgau", "kt": "TG", "gender": "w", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "vb-233", "x": 835.2, "y": 90.6, "name": "Jakob Stark", "partei": "SVP", "fraktion": "V", "kanton": "Thurgau", "kt": "TG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "vb-234", "x": 860.6, "y": 114.4, "name": "Fabio Regazzi", "partei": "Mitte", "fraktion": "M-E", "kanton": "Tessin", "kt": "TI", "gender": "m", "lang": "I", "stadtland": "M", "rat": "SR"}, {"id": "vb-235", "x": 884.4, "y": 139.8, "name": "Marco Chiesa", "partei": "SVP", "fraktion": "V", "kanton": "Tessin", "kt": "TI", "gender": "m", "lang": "I", "stadtland": "M", "rat": "SR"}, {"id": "vb-236", "x": 906.4, "y": 166.8, "name": "Heidi Z'graggen", "partei": "Mitte", "fraktion": "M-E", "kanton": "Uri", "kt": "UR", "gender": "w", "lang": "D", "stadtland": "L", "rat": "SR"}, {"id": "vb-237", "x": 926.5, "y": 195.3, "name": "Josef Dittli", "partei": "FDP", "fraktion": "RL", "kanton": "Uri", "kt": "UR", "gender": "m", "lang": "D", "stadtland": "L", "rat": "SR"}, {"id": "vb-238", "x": 944.5, "y": 225.0, "name": "Pascal Broulis", "partei": "FDP", "fraktion": "RL", "kanton": "Waadt", "kt": "VD", "gender": "m", "lang": "F", "stadtland": "M", "rat": "SR"}, {"id": "vb-239", "x": 960.6, "y": 256.0, "name": "Pierre-Yves Maillard", "partei": "SP", "fraktion": "S", "kanton": "Waadt", "kt": "VD", "gender": "m", "lang": "F", "stadtland": "M", "rat": "SR"}, {"id": "vb-240", "x": 974.4, "y": 287.9, "name": "Beat Rieder", "partei": "Mitte", "fraktion": "M-E", "kanton": "Wallis", "kt": "VS", "gender": "m", "lang": "F", "stadtland": "L", "rat": "SR"}, {"id": "vb-241", "x": 986.1, "y": 320.7, "name": "Marianne Maret", "partei": "Mitte", "fraktion": "M-E", "kanton": "Wallis", "kt": "VS", "gender": "w", "lang": "F", "stadtland": "L", "rat": "SR"}, {"id": "vb-242", "x": 995.5, "y": 354.3, "name": "Matthias Michel", "partei": "FDP", "fraktion": "RL", "kanton": "Zug", "kt": "ZG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "vb-243", "x": 1002.6, "y": 388.3, "name": "Peter Hegglin", "partei": "Mitte", "fraktion": "M-E", "kanton": "Zug", "kt": "ZG", "gender": "m", "lang": "D", "stadtland": "M", "rat": "SR"}, {"id": "vb-244", "x": 1007.3, "y": 422.8, "name": "Daniel Jositsch", "partei": "SP", "fraktion": "S", "kanton": "Zürich", "kt": "ZH", "gender": "m", "lang": "D", "stadtland": "S", "rat": "SR"}, {"id": "vb-245", "x": 1009.7, "y": 457.6, "name": "Tiana Angelina Moser", "partei": "GLP", "fraktion": "GL", "kanton": "Zürich", "kt": "ZH", "gender": "w", "lang": "D", "stadtland": "S", "rat": "SR"}];
+const KANTONS_FULL = {"AG": "Aargau", "AR": "Appenzell A.Rh.", "AI": "Appenzell I.Rh.", "BL": "Basel-Landschaft", "BS": "Basel-Stadt", "BE": "Bern", "FR": "Freiburg", "GE": "Genf", "GL": "Glarus", "GR": "Graubünden", "JU": "Jura", "LU": "Luzern", "NE": "Neuenburg", "NW": "Nidwalden", "OW": "Obwalden", "SH": "Schaffhausen", "SZ": "Schwyz", "SO": "Solothurn", "SG": "St. Gallen", "TI": "Tessin", "TG": "Thurgau", "UR": "Uri", "VD": "Waadt", "VS": "Wallis", "ZG": "Zug", "ZH": "Zürich"};
+const KANTONS_WAPPEN = {"AG": "Wappen Aargau matt.svg", "AI": "Wappen Appenzell Innerrhoden matt.svg", "AR": "Wappen Appenzell Ausserrhoden matt.svg", "BE": "Wappen Bern matt.svg", "BL": "Wappen Basel-Landschaft matt.svg", "BS": "Wappen Basel-Stadt matt.svg", "FR": "Wappen Freiburg matt.svg", "GE": "Wappen Genf matt.svg", "GL": "Wappen Glarus matt.svg", "GR": "Wappen Graubünden matt.svg", "JU": "Wappen Jura matt.svg", "LU": "Wappen Luzern matt.svg", "NE": "Wappen Neuenburg matt.svg", "NW": "Wappen Nidwalden matt.svg", "OW": "Wappen Obwalden matt.svg", "SG": "Wappen St. Gallen matt.svg", "SH": "Wappen Schaffhausen matt.svg", "SO": "Wappen Solothurn matt.svg", "SZ": "Wappen Schwyz matt.svg", "TG": "Wappen Thurgau matt.svg", "TI": "Wappen Tessin matt.svg", "UR": "Wappen Uri matt.svg", "VD": "Wappen Waadt matt.svg", "VS": "Wappen Wallis matt.svg", "ZG": "Wappen Zug matt.svg", "ZH": "Wappen Zürich matt.svg"};
+const KANTONS_WIKI_SLUG = {"AG": "Aargau", "AI": "Appenzell_Innerrhoden", "AR": "Appenzell_Ausserrhoden", "BE": "Bern", "BL": "Basel-Landschaft", "BS": "Basel-Stadt", "FR": "Freiburg", "GE": "Genf", "GL": "Glarus", "GR": "Graubünden", "JU": "Jura", "LU": "Luzern", "NE": "Neuenburg", "NW": "Nidwalden", "OW": "Obwalden", "SG": "St._Gallen", "SH": "Schaffhausen", "SO": "Solothurn", "SZ": "Schwyz", "TG": "Thurgau", "TI": "Tessin", "UR": "Uri", "VD": "Waadt", "VS": "Wallis", "ZG": "Zug", "ZH": "Zürich"};
+const PARTY_COLORS = {"SVP": "#3D7A2C", "SP": "#E63946", "FDP": "#2563EB", "Mitte": "#F4A024", "Grüne": "#7AB648", "GLP": "#9333EA", "EVP": "#FFD700", "EDU": "#8B6F47", "Lega": "#2E5F2E", "MCG": "#A0522D", "LDP": "#1A3D7A"};
+const FRACTION_COLORS = {"S": "#E63946", "G": "#7AB648", "M-E": "#F4A024", "GL": "#9333EA", "RL": "#2563EB", "V": "#3D7A2C", "fl": "#8B6F47"};
+const GENDER_COLORS = {"m": "#3B82F6", "w": "#EC4899"};
+const LANG_COLORS = {"D": "#DC2626", "F": "#1E40AF", "I": "#16A34A", "R": "#A855F7"};
+const STADTLAND_COLORS = {"S": "#7C3AED", "M": "#EAB308", "L": "#16A34A"};
+const GENDER_LABELS = {"m": "Mann", "w": "Frau"};
+const LANG_LABELS = {"D": "Deutsch", "F": "Französisch", "I": "Italienisch", "R": "Rätoromanisch"};
+const STADTLAND_LABELS = {"S": "Städtisch", "M": "Gemischt", "L": "Ländlich"};
+const PARTY_NAMES_LONG = {
+  "SVP": "Schweizerische Volkspartei", "SP": "Sozialdemokratische Partei",
+  "FDP": "FDP.Die Liberalen", "Mitte": "Die Mitte", "Grüne": "Grüne (GPS)",
+  "GLP": "Grünliberale Partei", "EVP": "Evangelische Volkspartei",
+  "EDU": "Eidg.-Demokratische Union", "Lega": "Lega dei Ticinesi",
+  "MCG": "Mouvement Citoyens Genevois", "LDP": "Liberal-Demokratische Partei",
+};
+
+let currentCouncil = "nr";
+let colorBy = "partei";
+let filterState = {
+  fraktion: new Set(), partei: new Set(), kanton: new Set(),
+  gender: new Set(), lang: new Set(), stadtland: new Set(),
+};
+
+function initFilters() {
+  document.querySelectorAll('input[data-type]').forEach(cb => {
+    if (cb.checked) filterState[cb.dataset.type].add(cb.dataset.value);
+  });
+}
+
+function getColor(m) {
+  if (colorBy === "partei") return PARTY_COLORS[m.partei] || "#999";
+  if (colorBy === "fraktion") return FRACTION_COLORS[m.fraktion] || "#999";
+  if (colorBy === "gender") return GENDER_COLORS[m.gender] || "#999";
+  if (colorBy === "lang") return LANG_COLORS[m.lang] || "#999";
+  if (colorBy === "stadtland") return STADTLAND_COLORS[m.stadtland] || "#999";
+  return "#999";
+}
+
+function renderSeats() {
+  const g = document.getElementById('seats-group');
+  g.innerHTML = '';
+  let data, r, viewbox;
+  if (currentCouncil === "nr") {
+    data = NR_DATA; r = 9; viewbox = '0 0 1000 510';
+    document.getElementById('pult').setAttribute('y', '490');
+  } else if (currentCouncil === "sr") {
+    data = SR_DATA; r = 13; viewbox = '0 0 1000 470';
+    document.getElementById('pult').setAttribute('y', '450');
+  } else {
+    data = VB_DATA; r = 8; viewbox = '-90 -130 1180 640';
+    document.getElementById('pult').setAttribute('y', '490');
+  }
+  document.getElementById('parlament-svg').setAttribute('viewBox', viewbox);
+  
+  // Kantonswappen nur im VB-Modus
+  if (currentCouncil === "vb") {
+    renderWappen(g);
+  }
+  
+  data.forEach(m => {
+    const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    const isVbSr = (currentCouncil === "vb" && m.rat === "SR");
+    c.setAttribute("class", "seat" + (isVbSr ? " sr-seat" : ""));
+    c.setAttribute("cx", m.x);
+    c.setAttribute("cy", m.y);
+    c.setAttribute("r", isVbSr ? 11 : r);
+    c.setAttribute("fill", getColor(m));
+    c.setAttribute("stroke", isVbSr ? "#1F4E78" : "#fff");
+    c.setAttribute("stroke-width", isVbSr ? "2.5" : "1.2");
+    Object.keys(m).forEach(k => { c.dataset[k] = m[k]; });
+    c.addEventListener('mouseenter', showTooltip);
+    c.addEventListener('mouseleave', hideTooltip);
+    c.addEventListener('mousemove', moveTooltip);
+    c.addEventListener('click', handleSeatClick);
+    g.appendChild(c);
+  });
+  applyFilter();
+  updateLegend();
+}
+
+function renderWappen(g) {
+  // Berechne Mittelpunkt der SR-Sitze pro Kanton und platziere Wappen darüber
+  const srByCanton = {};
+  VB_DATA.filter(m => m.rat === "SR").forEach(m => {
+    if (!srByCanton[m.kt]) srByCanton[m.kt] = [];
+    srByCanton[m.kt].push(m);
+  });
+  
+  const cx = 500, cy = 475;
+  const r_wappen = 565;
+  
+  Object.entries(srByCanton).forEach(([kt, sitze]) => {
+    // Mittelpunkt-Winkel der SR-Sitze dieses Kantons
+    const angles = sitze.map(s => Math.atan2(cy - s.y, s.x - cx));
+    const midAngle = angles.reduce((a, b) => a + b, 0) / angles.length;
+    const x = cx + r_wappen * Math.cos(midAngle);
+    const y = cy - r_wappen * Math.sin(midAngle);
+    
+    const wappenFile = KANTONS_WAPPEN[kt];
+    if (!wappenFile) return;
+    const url = `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(wappenFile)}?width=60`;
+    
+    // Wappen-Bild
+    const img = document.createElementNS("http://www.w3.org/2000/svg", "image");
+    img.setAttribute("href", url);
+    img.setAttribute("x", x - 16);
+    img.setAttribute("y", y - 18);
+    img.setAttribute("width", 32);
+    img.setAttribute("height", 32);
+    img.setAttribute("class", "wappen");
+    img.setAttribute("preserveAspectRatio", "xMidYMid meet");
+    // Klick öffnet Wikipedia-Seite des Kantons
+    const wikiSlug = KANTONS_WIKI_SLUG[kt];
+    if (wikiSlug) {
+      const wikiUrl = `https://de.wikipedia.org/wiki/Kanton_${wikiSlug}`;
+      img.addEventListener('click', () => window.open(wikiUrl, '_blank', 'noopener'));
+      // Tooltip beim Hover über Wappen
+      img.addEventListener('mouseenter', (e) => {
+        currentHoverSeat = `wappen-${kt}`;
+        tt.innerHTML = `
+          <div class="tt-content">
+            <div class="tt-text">
+              <div class="tt-name">Kanton ${KANTONS_FULL[kt] || kt}</div>
+              <div class="tt-meta">${kt} · Klick öffnet Wikipedia-Seite</div>
+            </div>
+          </div>
+        `;
+        tt.classList.add('show');
+        moveTooltip(e);
+      });
+      img.addEventListener('mouseleave', hideTooltip);
+      img.addEventListener('mousemove', moveTooltip);
+    }
+    g.appendChild(img);
+    
+    // Kürzel-Label darunter
+    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    text.setAttribute("x", x);
+    text.setAttribute("y", y + 22);
+    text.setAttribute("class", "wappen-label");
+    text.textContent = kt;
+    g.appendChild(text);
+  });
+}
+
+function updateLegend() {
+  const lg = document.getElementById('legend');
+  let html = '<span style="font-weight:600;color:#374151;">Aktuelle Färbung:</span>';
+  let map = {};
+  let labels = {};
+  if (colorBy === "partei") { map = PARTY_COLORS; labels = PARTY_NAMES_LONG; }
+  else if (colorBy === "fraktion") {
+    map = FRACTION_COLORS;
+    labels = {"S": "SP-Fraktion", "G": "Grüne Fraktion", "M-E": "Mitte-EVP-Fraktion", "GL": "Grünliberale Fraktion", "RL": "FDP-Liberale Fraktion", "V": "SVP-Fraktion", "fl": "Fraktionslos"};
+  }
+  else if (colorBy === "gender") { map = GENDER_COLORS; labels = GENDER_LABELS; }
+  else if (colorBy === "lang") { map = LANG_COLORS; labels = LANG_LABELS; }
+  else if (colorBy === "stadtland") { map = STADTLAND_COLORS; labels = STADTLAND_LABELS; }
+  Object.keys(map).forEach(k => {
+    html += `<span class="lg-item"><span class="dot" style="background:${map[k]}"></span>${labels[k] || k}</span>`;
+  });
+  // Im VB-Modus: Hinweis auf SR-Anordnung an der Rückwand
+  if (currentCouncil === "vb") {
+    html += '<span class="lg-item" style="margin-left:14px;border-left:1px solid #e1e5e9;padding-left:14px;"><span class="dot" style="background:#fff;border:2px solid #1F4E78;"></span>Ständerat (sitzt an der Rückwand des NR-Saals, sortiert nach Kanton)</span>';
+  }
+  lg.innerHTML = html;
+}
+
+function applyFilter() {
+  const seats = document.querySelectorAll('.seat');
+  let visible = 0;
+  const data = currentCouncil === "nr" ? NR_DATA : currentCouncil === "sr" ? SR_DATA : VB_DATA;
+  const cnt = { fraktion: {}, partei: {}, kanton: {}, gender: {}, lang: {}, stadtland: {} };
+  const total = { fraktion: {}, partei: {}, kanton: {}, gender: {}, lang: {}, stadtland: {} };
+  
+  data.forEach(m => {
+    Object.keys(total).forEach(t => {
+      const key = t === "kanton" ? m.kt : m[t];
+      total[t][key] = (total[t][key] || 0) + 1;
+    });
+  });
+  
+  seats.forEach(s => {
+    const ok =
+      filterState.fraktion.has(s.dataset.fraktion) &&
+      filterState.partei.has(s.dataset.partei) &&
+      filterState.kanton.has(s.dataset.kt) &&
+      filterState.gender.has(s.dataset.gender) &&
+      filterState.lang.has(s.dataset.lang) &&
+      filterState.stadtland.has(s.dataset.stadtland);
+    
+    if (ok) {
+      s.classList.remove('dimmed');
+      visible++;
+      Object.keys(cnt).forEach(t => {
+        const key = t === "kanton" ? s.dataset.kt : s.dataset[t];
+        cnt[t][key] = (cnt[t][key] || 0) + 1;
+      });
+      // Färbung aktualisieren (falls colorMode geändert)
+      s.setAttribute("fill", getColor({
+        partei: s.dataset.partei,
+        fraktion: s.dataset.fraktion,
+        gender: s.dataset.gender,
+        lang: s.dataset.lang,
+        stadtland: s.dataset.stadtland,
+      }));
+    } else {
+      s.classList.add('dimmed');
+    }
+  });
+  
+  document.querySelectorAll('.filter-item').forEach(item => {
+    const input = item.querySelector('input');
+    const type = input.dataset.type;
+    const val = input.dataset.value;
+    const tot = (total[type] && total[type][val]) || 0;
+    const cur = (cnt[type] && cnt[type][val]) || 0;
+    const span = item.querySelector('.count');
+    if (span) span.textContent = (cur === tot) ? tot : (cur + '/' + tot);
+    if (tot === 0) item.classList.add('dim');
+    else item.classList.remove('dim');
+  });
+  
+  document.getElementById('stat-visible').textContent = visible;
+  document.getElementById('stat-total').textContent = data.length;
+  updateBarChart(cnt.kanton);
+  updateGenderChart(cnt.gender);
+}
+
+function updateBarChart(cantonCounts) {
+  const ctxLabels = {
+    nr: "Nationalrat", sr: "Ständerat", vb: "Verein. Bundesvers."
+  };
+  document.getElementById('bc-context').textContent = ctxLabels[currentCouncil];
+  
+  const sorted = Object.entries(cantonCounts || {})
+    .filter(([_, n]) => n > 0)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+  
+  const container = document.getElementById('bar-chart-content');
+  if (sorted.length === 0) {
+    container.innerHTML = '<div class="bar-empty">Keine Sitze angezeigt</div>';
+    return;
+  }
+  
+  const max = sorted[0][1];
+  container.innerHTML = sorted.map(([kt, count], i) => {
+    const colorClass = (i % 2 === 0) ? 'blue-dark' : 'blue-light';
+    return `
+      <div class="bar-row">
+        <span class="bar-label">${kt}</span>
+        <span class="bar-canton">${KANTONS_FULL[kt] || kt}</span>
+        <div class="bar-track">
+          <div class="bar-fill ${colorClass}" style="width: ${(count/max)*100}%"></div>
+        </div>
+        <span class="bar-value">${count}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function updateGenderChart(genderCounts) {
+  const counts = genderCounts || {};
+  const m = counts.m || 0;
+  const w = counts.w || 0;
+  const total = m + w;
+  
+  // Header-Total
+  document.getElementById('bc-gender-total').textContent =
+    total > 0 ? `${total} Sitze sichtbar` : '';
+  
+  const container = document.getElementById('bar-gender-content');
+  if (total === 0) {
+    container.innerHTML = '<div class="bar-empty">Keine Sitze angezeigt</div>';
+    return;
+  }
+  
+  const max = Math.max(m, w);
+  const mPct = Math.round((m / total) * 100);
+  const wPct = Math.round((w / total) * 100);
+  
+  container.innerHTML = `
+    <div class="bar-row gender-row">
+      <span class="bar-icon">♂</span>
+      <span class="bar-canton">Männer</span>
+      <div class="bar-track">
+        <div class="bar-fill gender-m" style="width: ${(m/max)*100}%"></div>
+      </div>
+      <span class="bar-value">${m}<span class="bar-pct">${mPct}%</span></span>
+    </div>
+    <div class="bar-row gender-row">
+      <span class="bar-icon">♀</span>
+      <span class="bar-canton">Frauen</span>
+      <div class="bar-track">
+        <div class="bar-fill gender-w" style="width: ${(w/max)*100}%"></div>
+      </div>
+      <span class="bar-value">${w}<span class="bar-pct">${wPct}%</span></span>
+    </div>
+  `;
+}
+
+const tt = document.getElementById('tooltip');
+
+// Wikipedia-Bilder-Cache (session-scoped)
+const wikiCache = {};
+
+async function fetchWikiInfo(name) {
+  if (name in wikiCache) return wikiCache[name];
+  
+  // Wikipedia REST API für Page-Summary
+  const tryFetch = async (lang) => {
+    const title = name.replace(/ /g, '_');
+    const url = `https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
+    try {
+      const r = await fetch(url, { headers: { Accept: 'application/json' } });
+      if (!r.ok) return null;
+      const data = await r.json();
+      // Disambiguation-Seiten oder fehlende Personen ausschliessen
+      if (data.type === 'disambiguation') return null;
+      // Sicherheitscheck: ist die Beschreibung politisch? (heuristisch)
+      const extract = (data.extract || '').toLowerCase();
+      const isPolitician = /politiker|nationalrat|ständerat|conseiller|abgeordnet|svp|sp|fdp|mitte|grün|glp|svrp/i.test(extract);
+      if (!isPolitician && extract.length > 50) {
+        // Wahrscheinlich falsche Person mit gleichem Namen
+        return null;
+      }
+      return {
+        img: data.thumbnail?.source || null,
+        url: data.content_urls?.desktop?.page || null,
+        extract: data.extract || null,
+      };
+    } catch (e) {
+      return null;
+    }
+  };
+  
+  // Erst deutsch, dann französisch versuchen
+  let result = await tryFetch('de');
+  if (!result || !result.img) {
+    const fr = await tryFetch('fr');
+    if (fr) result = fr;
+  }
+  
+  wikiCache[name] = result || { img: null, url: null, extract: null };
+  return wikiCache[name];
+}
+
+let currentHoverSeat = null;
+
+async function showTooltip(e) {
+  const d = e.target.dataset;
+  currentHoverSeat = d.id;
+  const ratStr = currentCouncil === "vb" ? ` · 📍 ${d.rat}` : '';
+  
+  // Erst sofortiges Text-Tooltip (mit Foto-Platzhalter)
+  tt.innerHTML = `
+    <div class="tt-content">
+      <div class="tt-photo loading" data-photo></div>
+      <div class="tt-text">
+        <div class="tt-name">${d.name}</div>
+        <div class="tt-meta">${d.partei} (${d.fraktion}-Fraktion) · ${d.kanton}${ratStr}</div>
+        <div class="tt-tags">
+          ${d.gender === 'm' ? '♂' : '♀'} ${GENDER_LABELS[d.gender]} · 
+          ${LANG_LABELS[d.lang]} · 
+          ${STADTLAND_LABELS[d.stadtland]}
+        </div>
+      </div>
+    </div>
+    <div class="tt-hint">Klick öffnet Wikipedia-Seite</div>
+  `;
+  tt.classList.add('show');
+  moveTooltip(e);
+  
+  // Foto async laden
+  const seatId = d.id;
+  const info = await fetchWikiInfo(d.name);
+  // Nur einfügen, wenn der Sitz noch gehovert wird
+  if (currentHoverSeat !== seatId) return;
+  const photoEl = tt.querySelector('[data-photo]');
+  if (!photoEl) return;
+  if (info.img) {
+    photoEl.outerHTML = `<img class="tt-photo" src="${info.img}" alt="${d.name}" />`;
+  } else {
+    photoEl.outerHTML = `<div class="tt-photo-missing">?</div>`;
+  }
+}
+
+function hideTooltip() {
+  currentHoverSeat = null;
+  tt.classList.remove('show');
+}
+
+function moveTooltip(e) {
+  let x = e.clientX + 14, y = e.clientY + 14;
+  const r = tt.getBoundingClientRect();
+  if (x + r.width > window.innerWidth - 10) x = e.clientX - r.width - 14;
+  if (y + r.height > window.innerHeight - 10) y = e.clientY - r.height - 14;
+  tt.style.left = x + 'px';
+  tt.style.top = y + 'px';
+}
+
+// Klick auf Sitz öffnet Wikipedia-Seite
+async function handleSeatClick(e) {
+  const d = e.target.dataset;
+  const info = await fetchWikiInfo(d.name);
+  if (info.url) {
+    window.open(info.url, '_blank', 'noopener');
+  } else {
+    // Fallback: Wikipedia-Suche
+    const searchUrl = `https://de.wikipedia.org/w/index.php?search=${encodeURIComponent(d.name)}`;
+    window.open(searchUrl, '_blank', 'noopener');
+  }
+}
+
+// Tabs
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    currentCouncil = t.dataset.council;
+    renderSeats();
+  });
+});
+
+// Color-by
+document.getElementById('color-by').addEventListener('change', (e) => {
+  colorBy = e.target.value;
+  document.querySelectorAll('.seat').forEach(s => {
+    s.setAttribute("fill", getColor({
+      partei: s.dataset.partei, fraktion: s.dataset.fraktion,
+      gender: s.dataset.gender, lang: s.dataset.lang, stadtland: s.dataset.stadtland,
+    }));
+  });
+  updateLegend();
+});
+
+// Filter
+document.querySelectorAll('input[data-type]').forEach(cb => {
+  cb.addEventListener('change', () => {
+    const t = cb.dataset.type, v = cb.dataset.value;
+    if (cb.checked) filterState[t].add(v); else filterState[t].delete(v);
+    applyFilter();
+  });
+});
+
+document.querySelectorAll('.toggle-all').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const type = btn.dataset.type;
+    const items = document.querySelectorAll(`input[data-type="${type}"]`);
+    const allOn = Array.from(items).every(i => i.checked);
+    items.forEach(i => {
+      i.checked = !allOn;
+      if (i.checked) filterState[type].add(i.dataset.value);
+      else filterState[type].delete(i.dataset.value);
+    });
+    applyFilter();
+  });
+});
+
+// Filter-Header (Collapse)
+document.querySelectorAll('.filter-header').forEach(h => {
+  h.addEventListener('click', (e) => {
+    if (e.target.tagName === 'BUTTON') return;
+    h.closest('.filter-group').classList.toggle('collapsed');
+  });
+});
+
+// Reset
+document.getElementById('reset-btn').addEventListener('click', () => {
+  document.querySelectorAll('input[data-type]').forEach(cb => {
+    cb.checked = true;
+    filterState[cb.dataset.type].add(cb.dataset.value);
+  });
+  applyFilter();
+});
+
+initFilters();
+renderSeats();
+</script>
+</body>
+</html>
