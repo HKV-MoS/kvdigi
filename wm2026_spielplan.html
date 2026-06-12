@@ -1377,13 +1377,21 @@ async function openMatchDetail(matchId) {
     } catch (e) {}
     evInfo = espnEventByKey[minKey];
   }
-  const goalsHtml = (r && r.goals && r.goals.length)
-    ? '<div style="font-size:13px;margin-bottom:10px;">⚽ ' +
-      r.goals.map(g => {
-        const fl = g.side ? TEAMS[g.side === 'h' ? m.heim : m.gast].flag + ' ' : '';
-        return fl + (g.min ? g.min + "' " : '') + (g.who || '') +
-          (g.pen ? ' (P)' : '') + (g.og ? ' (ET)' : '');
-      }).join(' · ') + '</div>' : '';
+  const gl = (r && r.goals) ? r.goals : [];
+  const goalRow = g => '<div>⚽ ' +
+    (g.min ? '<strong style="color:var(--hkv-blue)">' + g.min + "'</strong> " : '') +
+    (g.who || '') + (g.pen ? ' (P)' : '') +
+    (g.og ? ' <span style="color:var(--muted)">(ET)</span>' : '') + '</div>';
+  const hG = gl.filter(g => g.side === 'h').map(goalRow).join('');
+  const aG = gl.filter(g => g.side === 'a').map(goalRow).join('');
+  const rest = gl.filter(g => !g.side);
+  const goalsHtml = gl.length
+    ? '<div class="lineup-cols" style="margin-bottom:12px;font-size:13px;line-height:1.7;">' +
+      '<div style="text-align:center;">' + hG + '</div>' +
+      '<div style="text-align:center;">' + aG + '</div></div>' +
+      (rest.length ? '<div style="text-align:center;font-size:12px;color:var(--muted);margin:-6px 0 10px;">⚽ ' +
+        rest.map(g => (g.min ? g.min + "'" : '')).join(' · ') + '</div>' : '')
+    : '';
   if (!evInfo) {
     body.innerHTML = goalsHtml + '<div class="modal-hint">Offizielle Aufstellung folgt ~1 h vor Anpfiff. ' +
       'Unten eine <strong>aus dem Kader abgeleitete</strong> mögliche Elf.</div>' +
