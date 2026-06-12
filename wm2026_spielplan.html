@@ -146,7 +146,9 @@ header .reset:hover { background: rgba(255,255,255,0.3); }
 #stadion-panel .pbtn.maps { background: white; color: var(--hkv-blue); border: 1px solid var(--hkv-blue); }
 .map-tooltip { position: fixed; background: rgba(20,20,30,0.92); color: white;
   padding: 6px 10px; border-radius: 6px; font-size: 12px; pointer-events: none;
-  z-index: 1000; display: none; white-space: nowrap; }
+  z-index: 3000; display: none; white-space: nowrap; text-align: center; }
+.map-tooltip img { width: 58px; height: 58px; object-fit: cover; border-radius: 6px;
+  display: block; margin: 5px auto 0; background: #2a2a35; }
 
 /* ── TORSCHÜTZEN ── */
 .scorer-card { background: white; border: 1px solid var(--border); border-radius: 10px;
@@ -187,9 +189,10 @@ footer { margin-top: 22px; padding: 14px; text-align: center; color: var(--muted
 .roster-table a { color: inherit; text-decoration: none; }
 .roster-table a:hover { color: var(--hkv-blue); text-decoration: underline; }
 .lineup-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.lineup-col { min-width: 0; text-align: center; }
 .lineup-col h4 { margin: 0 0 6px; font-size: 14px; color: var(--hkv-blue); }
-.pitch-svg { width: 100%; height: auto; border-radius: 10px; display: block;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+.pitch-svg { width: 100%; max-width: 235px; height: auto; border-radius: 10px;
+  display: block; margin: 0 auto; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
 .formation-badge { display: inline-block; background: var(--hkv-blue); color: white;
   padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; margin-left: 6px; }
 .lineup-list { font-size: 12.5px; line-height: 1.8; }
@@ -1285,12 +1288,15 @@ function lineupColHtml(code, ros, note) {
     if (s.length <= 3 && parts.length > 1) s = parts[parts.length - 2] + ' ' + s;
     return s.length > 13 ? s.slice(0, 12) + '…' : s;
   };
+  const escA = s => String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+  const fullName = p => (p.athlete && (p.athlete.displayName || p.athlete.fullName)) || '';
   const shirt = (x, y, p, f, tx) =>
-    '<g transform="translate(' + x + ',' + y + ')">' +
+    '<g class="pl" data-pname="' + escA(fullName(p)) + '" style="cursor:pointer;" ' +
+    'transform="translate(' + x + ',' + y + ')">' +
     '<path d="M-16,-9 L-7,-15 L-3,-11 L3,-11 L7,-15 L16,-9 L12,-1 L8,-4 L8,13 L-8,13 L-8,-4 L-12,-1 Z" ' +
     'fill="' + f + '" stroke="rgba(0,0,0,0.3)" stroke-width="1"/>' +
-    '<text y="7" text-anchor="middle" font-size="11" font-weight="700" fill="' + tx + '">' + (p.jersey || '') + '</text>' +
-    '<text y="27" text-anchor="middle" font-size="8" font-weight="600" fill="#fff" ' +
+    '<text y="7" text-anchor="middle" font-size="12" font-weight="700" fill="' + tx + '">' + (p.jersey || '') + '</text>' +
+    '<text y="28" text-anchor="middle" font-size="9" font-weight="600" fill="#fff" ' +
     'stroke="rgba(0,0,0,0.45)" stroke-width="2.5" paint-order="stroke">' + shortName(p) + '</text></g>';
   // Spieler-Positionen berechnen
   let players = '';
@@ -1434,6 +1440,59 @@ function kaderButtons(m) {
     '<button class="modal-close" style="width:auto;padding:0 14px;height:32px;font-size:12px;" ' +
     'onclick="openTeamRoster(\'' + m.gast + '\')">👥 Kader ' + TEAMS[m.gast].name + '</button></div>';
 }
+
+// ═══ SPIELERFOTO BEI HOVER (Wikipedia, wie beim Parlament) ═══
+const playerPhotoCache = {};
+async function fetchPlayerPhoto(name) {
+  if (name in playerPhotoCache) return playerPhotoCache[name];
+  let found = null;
+  for (const lang of ['de', 'en']) {
+    try {
+      const r = await fetch('https://' + lang + '.wikipedia.org/api/rest_v1/page/summary/' +
+        encodeURIComponent(name.replace(/ /g, '_')));
+      if (!r.ok) continue;
+      const j = await r.json();
+      if (j.type && String(j.type).includes('disambiguation')) continue;
+      const txt = ((j.extract || '') + ' ' + (j.description || '')).toLowerCase();
+      if (!/fußball|fussball|footballer|football|soccer/.test(txt)) continue;
+      if (j.thumbnail && j.thumbnail.source) { found = j.thumbnail.source; break; }
+    } catch (e) {}
+  }
+  playerPhotoCache[name] = found;
+  return found;
+}
+
+(function () {
+  const body = document.getElementById('modal-body');
+  const tt = document.getElementById('map-tooltip');
+  let hoverName = null;
+  body.addEventListener('mouseover', async e => {
+    const g = e.target.closest('g.pl');
+    if (!g || !g.dataset.pname) return;
+    const name = g.dataset.pname;
+    hoverName = name;
+    tt.innerHTML = '<div style="font-weight:600">' + name + '</div>';
+    tt.style.display = 'block';
+    const photo = await fetchPlayerPhoto(name);
+    if (hoverName !== name || tt.style.display === 'none') return;
+    if (photo) tt.innerHTML = '<div style="font-weight:600">' + name + '</div>' +
+      '<img src="' + photo + '" alt="" onerror="this.remove()">';
+  });
+  body.addEventListener('mousemove', e => {
+    if (!e.target.closest('g.pl')) return;
+    tt.style.left = (e.clientX + 14) + 'px';
+    tt.style.top = (e.clientY + 14) + 'px';
+  });
+  body.addEventListener('mouseout', e => {
+    if (e.target.closest('g.pl')) { hoverName = null; tt.style.display = 'none'; }
+  });
+  body.addEventListener('click', e => {
+    const g = e.target.closest('g.pl');
+    if (!g || !g.dataset.pname) return;
+    window.open('https://de.wikipedia.org/w/index.php?search=' +
+      encodeURIComponent(g.dataset.pname + ' Fussball'), '_blank', 'noopener');
+  });
+})();
 
 // ═══ HELPERS ═══
 function formatDate(iso, long) {
