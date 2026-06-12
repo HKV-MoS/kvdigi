@@ -1176,29 +1176,49 @@ function posKey(p) {
   return 'F';
 }
 
+async function fetchRoster(code) {
+  if (rosterCache[code]) return rosterCache[code];
+  await ensureTeamIds();
+  const id = espnTeamIds[code];
+  if (!id) return null;
+  try {
+    const r = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/teams/' + id + '/roster');
+    if (!r.ok) return null;
+    const j = await r.json();
+    const roster = (j && j.athletes) || [];
+    if (roster.length) rosterCache[code] = roster;
+    return roster.length ? roster : null;
+  } catch (e) { return null; }
+}
+
+// Wahrscheinliche Startelf aus dem Kader ableiten (Nummern-Heuristik, 4-3-3)
+function buildLineupFromRoster(roster) {
+  const byNr = arr => arr.slice().sort((a, b) =>
+    (parseInt(a.jersey, 10) || 99) - (parseInt(b.jersey, 10) || 99));
+  const grp = { G: [], D: [], M: [], F: [] };
+  roster.forEach(a => grp[posKey(a.position)].push(a));
+  Object.keys(grp).forEach(k => grp[k] = byNr(grp[k]));
+  const pick = [];
+  const take = (arr, n) => { const t = arr.splice(0, n); pick.push(...t); return t.length; };
+  const gkN = take(grp.G, 1);
+  let d = take(grp.D, 4), m = take(grp.M, 3), f = take(grp.F, 3);
+  // Auffüllen, falls Gruppen zu klein
+  let rest = [...grp.M, ...grp.D, ...grp.F];
+  while (pick.length < 11 && rest.length) { pick.push(rest.shift()); m++; }
+  const toEntry = a => ({ starter: true, jersey: a.jersey,
+    position: a.position, athlete: { displayName: a.displayName || a.fullName } });
+  return {
+    formation: gkN ? (d + '-' + m + '-' + f) : '',
+    roster: pick.slice(0, 11).map(toEntry),
+  };
+}
+
 async function openTeamRoster(code) {
   const t = TEAMS[code];
   openModal(t.flag + ' Kader ' + t.name);
-  await ensureTeamIds();
-  const id = espnTeamIds[code];
   const body = document.getElementById('modal-body');
-  if (!id) {
-    body.innerHTML = '<div class="modal-hint">Für dieses Team ist noch keine Kader-Quelle verknüpft. ' +
-      'Das passiert automatisch, sobald die Daten verfügbar sind.</div>';
-    return;
-  }
-  let roster = rosterCache[code];
+  const roster = await fetchRoster(code);
   if (!roster) {
-    try {
-      const r = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/teams/' + id + '/roster');
-      if (r.ok) {
-        const j = await r.json();
-        roster = (j && j.athletes) || [];
-        rosterCache[code] = roster;
-      }
-    } catch (e) {}
-  }
-  if (!roster || !roster.length) {
     body.innerHTML = '<div class="modal-hint">Der Kader wird angezeigt, sobald er in der Datenquelle hinterlegt ist.</div>';
     return;
   }
@@ -1236,7 +1256,7 @@ async function fetchSummary(eventId) {
   } catch (e) { return null; }
 }
 
-function lineupColHtml(code, ros) {
+function lineupColHtml(code, ros, note) {
   const t = TEAMS[code];
   const starters = (ros.roster || []).filter(p => p.starter);
   const bench = (ros.roster || []).filter(p => !p.starter);
@@ -1304,6 +1324,7 @@ function lineupColHtml(code, ros) {
   return '<div class="lineup-col"><h4>' + t.flag + ' ' + t.name +
     (ros.formation ? '<span class="formation-badge">' + ros.formation + '</span>' : '') + '</h4>' +
     pitch +
+    (note ? '<div style="font-size:10px;color:var(--muted);margin-top:4px;">' + note + '</div>' : '') +
     (bench.length ? '<div class="bench-title">Bank</div><div class="lineup-list" style="opacity:0.7">' +
       sortPos(bench).slice(0, 12).map(p => '<span style="margin-right:10px;white-space:nowrap;">' +
         '<span class="nr">' + (p.jersey || '') + '</span>' + shortName(p) + '</span>').join('') +
@@ -1336,8 +1357,20 @@ async function openMatchDetail(matchId) {
     ? '<div style="font-size:12px;color:var(--muted);margin-bottom:10px;">⚽ ' +
       r.goals.map(g => g.min + "' " + g.who + (g.pen ? ' (P)' : '')).join(' · ') + '</div>' : '';
   if (!evInfo) {
-    body.innerHTML = goalsHtml + '<div class="modal-hint">Aufstellungen werden hier angezeigt, sobald sie ' +
-      'publiziert sind (in der Regel rund eine Stunde vor Anpfiff).</div>' + kaderButtons(m);
+    body.innerHTML = goalsHtml + '<div class="modal-hint">Offizielle Aufstellung folgt ~1 h vor Anpfiff. ' +
+      'Unten eine <strong>aus dem Kader abgeleitete</strong> mögliche Elf.</div>' +
+      '<div id="last-lineups" class="lineup-cols"><div class="modal-loading">Lade Kader…</div></div>' +
+      kaderButtons(m);
+    const cols = [];
+    for (const code of [m.heim, m.gast]) {
+      const roster = await fetchRoster(code);
+      cols.push(roster
+        ? lineupColHtml(code, buildLineupFromRoster(roster), 'mögliche Elf — aus dem Kader abgeleitet')
+        : '<div class="lineup-col"><h4>' + TEAMS[code].flag + ' ' + TEAMS[code].name +
+          '</h4><div style="font-size:12px;color:var(--muted);">Aufstellung folgt, sobald Daten verfügbar sind.</div></div>');
+    }
+    const el = document.getElementById('last-lineups');
+    if (el) el.innerHTML = cols.join('');
     return;
   }
   const sum = await fetchSummary(evInfo.id);
@@ -1351,17 +1384,27 @@ async function openMatchDetail(matchId) {
       lineupColHtml(m.heim, rosH || {}) + lineupColHtml(m.gast, rosA || {}) +
       '</div>' + kaderButtons(m);
   } else {
-    // Aufstellung noch nicht publiziert → letzte Aufstellung beider Teams versuchen
+    // Aufstellung noch nicht publiziert → letzte Aufstellung, sonst aus Kader ableiten
     body.innerHTML = goalsHtml + '<div class="modal-hint">Offizielle Aufstellung noch nicht publiziert ' +
-      '(kommt ~1 h vor Anpfiff). Unten die <strong>zuletzt gespielte Aufstellung</strong>, falls verfügbar.</div>' +
-      '<div id="last-lineups" class="lineup-cols"><div class="modal-loading">Suche letzte Aufstellungen…</div></div>' +
+      '(kommt ~1 h vor Anpfiff). Angezeigt wird die <strong>zuletzt gespielte</strong> oder eine ' +
+      '<strong>aus dem Kader abgeleitete</strong> Aufstellung.</div>' +
+      '<div id="last-lineups" class="lineup-cols"><div class="modal-loading">Lade Aufstellungen…</div></div>' +
       kaderButtons(m);
     const cols = [];
     for (const code of [m.heim, m.gast]) {
       const last = await findLastLineup(code, evInfo.id);
-      cols.push(last ? lineupColHtml(code, last) :
-        '<div class="lineup-col"><h4>' + TEAMS[code].flag + ' ' + TEAMS[code].name +
-        '</h4><div style="font-size:12px;color:var(--muted);">Noch keine frühere Aufstellung im Turnier.</div></div>');
+      if (last) {
+        cols.push(lineupColHtml(code, last, 'zuletzt gespielte Aufstellung'));
+        continue;
+      }
+      const roster = await fetchRoster(code);
+      if (roster) {
+        cols.push(lineupColHtml(code, buildLineupFromRoster(roster),
+          'mögliche Elf — aus dem Kader abgeleitet'));
+      } else {
+        cols.push('<div class="lineup-col"><h4>' + TEAMS[code].flag + ' ' + TEAMS[code].name +
+          '</h4><div style="font-size:12px;color:var(--muted);">Aufstellung folgt, sobald Daten verfügbar sind.</div></div>');
+      }
     }
     const el = document.getElementById('last-lineups');
     if (el) el.innerHTML = cols.join('');
