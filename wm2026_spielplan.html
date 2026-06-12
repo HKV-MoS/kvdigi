@@ -164,6 +164,41 @@ header .reset:hover { background: rgba(255,255,255,0.3); }
 footer { margin-top: 22px; padding: 14px; text-align: center; color: var(--muted);
   font-size: 12px; border-top: 1px solid var(--border); }
 
+/* ── MODAL (Kader & Spiel-Details) ── */
+#modal-overlay { display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.55);
+  z-index: 2000; padding: 20px; overflow-y: auto; }
+#modal-overlay.show { display: flex; align-items: flex-start; justify-content: center; }
+.modal-box { background: white; border-radius: 12px; max-width: 780px; width: 100%;
+  padding: 18px; margin-top: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+.modal-head { display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 12px; padding-bottom: 10px; border-bottom: 2px solid var(--hkv-light); }
+.modal-head h3 { margin: 0; color: var(--hkv-blue); font-size: 17px; }
+.modal-close { border: none; background: var(--hkv-light); color: var(--hkv-blue);
+  width: 30px; height: 30px; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: 700; }
+.modal-close:hover { background: #d3e2f0; }
+.roster-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.roster-table th { text-align: left; padding: 5px 7px; font-size: 10px; text-transform: uppercase;
+  color: var(--muted); border-bottom: 2px solid var(--hkv-light); }
+.roster-table td { padding: 5px 7px; border-bottom: 1px solid var(--border); }
+.roster-table .jersey { font-weight: 700; color: var(--hkv-blue); width: 34px; text-align: center; }
+.roster-table a { color: inherit; text-decoration: none; }
+.roster-table a:hover { color: var(--hkv-blue); text-decoration: underline; }
+.lineup-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.lineup-col h4 { margin: 0 0 6px; font-size: 14px; color: var(--hkv-blue); }
+.formation-badge { display: inline-block; background: var(--hkv-blue); color: white;
+  padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; margin-left: 6px; }
+.lineup-list { font-size: 12.5px; line-height: 1.8; }
+.lineup-list .pos { display: inline-block; width: 22px; color: var(--muted); font-size: 10px; }
+.lineup-list .nr { display: inline-block; width: 24px; font-weight: 700; color: var(--hkv-blue); }
+.bench-title { font-size: 10px; text-transform: uppercase; color: var(--muted); margin-top: 8px; }
+.kader-btn { border: none; background: transparent; cursor: pointer; font-size: 12px;
+  padding: 0 2px; opacity: 0.55; }
+.kader-btn:hover { opacity: 1; }
+.modal-hint { background: #FEF3C7; border: 1px solid #FDE68A; border-radius: 8px;
+  padding: 10px; font-size: 13px; margin-bottom: 12px; }
+.modal-loading { text-align: center; color: var(--muted); padding: 24px; font-size: 13px; }
+@media (max-width: 600px) { .lineup-cols { grid-template-columns: 1fr; } }
+
 @media (max-width: 600px) {
   .groups-grid { grid-template-columns: 1fr; }
   header h1 { font-size: 17px; }
@@ -263,9 +298,18 @@ footer { margin-top: 22px; padding: 14px; text-align: center; color: var(--muted
 </div>
 
 <footer>
-  © 2026 S. Mollet · HKV Aarau · realisiert mit Claude (Anthropic) · Datenquellen: FIFA, UEFA, Wikipedia, OpenLigaDB, TheSportsDB
+  © 2026 S. Mollet · HKV Aarau · realisiert mit Claude (Anthropic) · Datenquellen: FIFA, UEFA, Wikipedia, OpenLigaDB, TheSportsDB, ESPN
 </footer>
 
+</div>
+<div id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="modal-title">…</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
 </div>
 <div class="map-tooltip" id="map-tooltip"></div>
 
@@ -290,6 +334,10 @@ let scorerCovered = {};   // Spiel-Key → true, wenn Schützen bereits aus eine
 let diag = { oldb: '–', oldbGames: 0, oldbGoals: 0, oldbNamed: 0,
              tsdb: '–', tsdbEvents: 0, tsdbScored: 0, tsdbDetails: 0, lookups: 0,
              unmatched: [] };
+let espnTeamIds = {};     // Teamcode → ESPN-Team-ID (für Kader-Abruf)
+let espnEventByKey = {};  // minKey → {id, dateIso} (für Aufstellungs-Abruf)
+let rosterCache = {};     // Teamcode → Roster-Daten
+let summaryCache = {};    // eventId → Summary-Daten
 let followTeam = null;    // ⭐ hervorgehobenes Team
 let oldbShortcut = null;
 
@@ -577,6 +625,10 @@ function parseESPN(events) {
     if (!c1 || !c2) return;
     const key = c1 + '_' + c2;
     const minKey = [c1, c2].sort().join('_');
+    // ESPN-IDs für Kader & Aufstellungen merken
+    if (home.team && home.team.id) espnTeamIds[c1] = home.team.id;
+    if (away.team && away.team.id) espnTeamIds[c2] = away.team.id;
+    if (ev.id) espnEventByKey[minKey] = { id: ev.id, dateIso: (ev.date || '').slice(0, 10) };
     // Resultat-Backup (nur wenn beide anderen Quellen nichts haben)
     const hs = parseInt(home.score, 10), as = parseInt(away.score, 10);
     const finished = !!(ev.status && ev.status.type && ev.status.type.completed);
@@ -783,7 +835,8 @@ function renderGroups() {
         let cls = i < 2 ? 'qualified' : (i === 2 && best8.has(t.code) ? 'third-pos' : '');
         if (t.code === followTeam) cls += ' followed-row';
         return '<tr class="' + cls + '"><td class="num">' + (i + 1) + '</td>' +
-          '<td><span class="team-cell">' + flagLink(t.code) + nameLink(t.code) + '</span></td>' +
+          '<td><span class="team-cell">' + flagLink(t.code) + nameLink(t.code) +
+          '<button class="kader-btn" title="Kader anzeigen" onclick="openTeamRoster(\'' + t.code + '\')">👥</button></span></td>' +
           '<td class="num">' + t.sp + '</td><td class="num">' + t.s + '</td><td class="num">' + t.u + '</td>' +
           '<td class="num">' + t.n + '</td><td class="num">' + (t.td > 0 ? '+' : '') + t.td + '</td>' +
           '<td class="num"><strong>' + t.pkt + '</strong></td></tr>';
@@ -828,7 +881,7 @@ function matchRow(m, withInputs, forceLive) {
     : '';
   let cls = isLive ? 'is-live' : (isReal ? 'is-real' : (r ? 'has-tip' : ''));
   if (followTeam && (m.heim === followTeam || m.gast === followTeam)) cls += ' followed';
-  return '<div class="match ' + cls + '">' +
+  return '<div class="match ' + cls + '" data-mid="' + m.id + '" style="cursor:pointer;" title="Klick: Aufstellung & Details">' +
     '<div class="home">' + nameLink(m.heim) + ' ' + flagLink(m.heim) + '</div>' +
     '<div class="vs">' + center + liveBadge + '</div>' +
     '<div class="away">' + flagLink(m.gast) + ' ' + nameLink(m.gast) + '</div>' +
@@ -1081,6 +1134,195 @@ function renderScorers() {
     }).join('') + '</tbody></table>';
 }
 
+// ═══ MODAL: KADER & SPIEL-DETAILS ═══
+function openModal(title) {
+  document.getElementById('modal-title').innerHTML = title;
+  document.getElementById('modal-body').innerHTML = '<div class="modal-loading">Lade Daten…</div>';
+  document.getElementById('modal-overlay').classList.add('show');
+}
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('show');
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+async function ensureTeamIds() {
+  if (Object.keys(espnTeamIds).length >= 40) return;
+  try {
+    const r = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/teams');
+    if (!r.ok) return;
+    const j = await r.json();
+    const list = j && j.sports && j.sports[0] && j.sports[0].leagues &&
+                 j.sports[0].leagues[0] && j.sports[0].leagues[0].teams || [];
+    list.forEach(t => {
+      const tm = t.team || t;
+      const code = codeFor(tm.displayName || tm.name);
+      if (code && tm.id) espnTeamIds[code] = tm.id;
+    });
+  } catch (e) {}
+}
+
+const POS_ORDER = { G: 0, GK: 0, D: 1, M: 2, F: 3 };
+function posKey(p) {
+  const a = (p && (p.abbreviation || p.name) || '').toUpperCase().slice(0, 2);
+  if (a.startsWith('G')) return 'G';
+  if (a.startsWith('D')) return 'D';
+  if (a.startsWith('M')) return 'M';
+  return 'F';
+}
+
+async function openTeamRoster(code) {
+  const t = TEAMS[code];
+  openModal(t.flag + ' Kader ' + t.name);
+  await ensureTeamIds();
+  const id = espnTeamIds[code];
+  const body = document.getElementById('modal-body');
+  if (!id) {
+    body.innerHTML = '<div class="modal-hint">Für dieses Team ist noch keine Kader-Quelle verknüpft. ' +
+      'Das passiert automatisch, sobald die Daten verfügbar sind.</div>';
+    return;
+  }
+  let roster = rosterCache[code];
+  if (!roster) {
+    try {
+      const r = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/teams/' + id + '/roster');
+      if (r.ok) {
+        const j = await r.json();
+        roster = (j && j.athletes) || [];
+        rosterCache[code] = roster;
+      }
+    } catch (e) {}
+  }
+  if (!roster || !roster.length) {
+    body.innerHTML = '<div class="modal-hint">Der Kader wird angezeigt, sobald er in der Datenquelle hinterlegt ist.</div>';
+    return;
+  }
+  const rows = roster.slice().sort((a, b) => {
+    const pa = POS_ORDER[posKey(a.position)] ?? 9, pb = POS_ORDER[posKey(b.position)] ?? 9;
+    if (pa !== pb) return pa - pb;
+    return (parseInt(a.jersey, 10) || 99) - (parseInt(b.jersey, 10) || 99);
+  }).map(a => {
+    const name = a.displayName || a.fullName || '?';
+    const wiki = 'https://de.wikipedia.org/w/index.php?search=' + encodeURIComponent(name + ' Fussball');
+    return '<tr><td class="jersey">' + (a.jersey || '–') + '</td>' +
+      '<td><a href="' + wiki + '" target="_blank" rel="noopener">' + name + '</a></td>' +
+      '<td>' + (a.position && (a.position.displayName || a.position.name) || '') + '</td>' +
+      '<td class="num">' + (a.age || '') + '</td></tr>';
+  }).join('');
+  body.innerHTML = '<table class="roster-table"><thead><tr>' +
+    '<th>#</th><th>Spieler (Klick → Wikipedia)</th><th>Position</th><th>Alter</th>' +
+    '</tr></thead><tbody>' + rows + '</tbody></table>';
+}
+
+async function fetchSummary(eventId) {
+  if (summaryCache[eventId]) return summaryCache[eventId];
+  try {
+    const r = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/summary?event=' + eventId);
+    if (!r.ok) return null;
+    const j = await r.json();
+    summaryCache[eventId] = j;
+    return j;
+  } catch (e) { return null; }
+}
+
+function lineupColHtml(code, ros) {
+  const t = TEAMS[code];
+  const starters = (ros.roster || []).filter(p => p.starter);
+  const bench = (ros.roster || []).filter(p => !p.starter);
+  const sortPos = arr => arr.slice().sort((a, b) =>
+    (POS_ORDER[posKey(a.position)] ?? 9) - (POS_ORDER[posKey(b.position)] ?? 9) ||
+    (parseInt(a.jersey, 10) || 99) - (parseInt(b.jersey, 10) || 99));
+  const row = p => '<div><span class="nr">' + (p.jersey || '') + '</span>' +
+    '<span class="pos">' + posKey(p.position) + '</span>' +
+    ((p.athlete && (p.athlete.displayName || p.athlete.fullName)) || '?') + '</div>';
+  return '<div class="lineup-col"><h4>' + t.flag + ' ' + t.name +
+    (ros.formation ? '<span class="formation-badge">' + ros.formation + '</span>' : '') + '</h4>' +
+    '<div class="lineup-list">' + sortPos(starters).map(row).join('') + '</div>' +
+    (bench.length ? '<div class="bench-title">Bank</div><div class="lineup-list" style="opacity:0.7">' +
+      sortPos(bench).slice(0, 12).map(row).join('') + '</div>' : '') +
+    '</div>';
+}
+
+async function openMatchDetail(matchId) {
+  const m = MATCHES.find(x => x.id === matchId);
+  if (!m) return;
+  const minKey = [m.heim, m.gast].sort().join('_');
+  const r = getResult(m, true);
+  const title = TEAMS[m.heim].flag + ' ' + TEAMS[m.heim].name +
+    (r ? ' <span style="color:var(--hkv-blue)">' + r.home + ' : ' + r.away + '</span> ' : ' – ') +
+    TEAMS[m.gast].name + ' ' + TEAMS[m.gast].flag;
+  openModal(title);
+  const body = document.getElementById('modal-body');
+  // Event-ID besorgen (notfalls Scoreboard des Spieltags abfragen)
+  let evInfo = espnEventByKey[minKey];
+  if (!evInfo) {
+    const lk = liveSchedule[liveKey(m)];
+    const d = (lk ? new Date(lk).toLocaleDateString('sv-SE') : m.datum).replace(/-/g, '');
+    try {
+      const rs = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=' + d);
+      if (rs.ok) { const js = await rs.json(); if (js && js.events) parseESPN(js.events); }
+    } catch (e) {}
+    evInfo = espnEventByKey[minKey];
+  }
+  const goalsHtml = (r && r.goals && r.goals.length)
+    ? '<div style="font-size:12px;color:var(--muted);margin-bottom:10px;">⚽ ' +
+      r.goals.map(g => g.min + "' " + g.who + (g.pen ? ' (P)' : '')).join(' · ') + '</div>' : '';
+  if (!evInfo) {
+    body.innerHTML = goalsHtml + '<div class="modal-hint">Aufstellungen werden hier angezeigt, sobald sie ' +
+      'publiziert sind (in der Regel rund eine Stunde vor Anpfiff).</div>' + kaderButtons(m);
+    return;
+  }
+  const sum = await fetchSummary(evInfo.id);
+  const rosters = sum && sum.rosters;
+  const hasLineup = rosters && rosters.some(x => x.roster && x.roster.length);
+  if (hasLineup) {
+    const rosH = rosters.find(x => x.homeAway === 'home') || rosters[0];
+    const rosA = rosters.find(x => x.homeAway === 'away') || rosters[1];
+    body.innerHTML = goalsHtml +
+      '<div class="lineup-cols">' +
+      lineupColHtml(m.heim, rosH || {}) + lineupColHtml(m.gast, rosA || {}) +
+      '</div>' + kaderButtons(m);
+  } else {
+    // Aufstellung noch nicht publiziert → letzte Aufstellung beider Teams versuchen
+    body.innerHTML = goalsHtml + '<div class="modal-hint">Offizielle Aufstellung noch nicht publiziert ' +
+      '(kommt ~1 h vor Anpfiff). Unten die <strong>zuletzt gespielte Aufstellung</strong>, falls verfügbar.</div>' +
+      '<div id="last-lineups" class="lineup-cols"><div class="modal-loading">Suche letzte Aufstellungen…</div></div>' +
+      kaderButtons(m);
+    const cols = [];
+    for (const code of [m.heim, m.gast]) {
+      const last = await findLastLineup(code, evInfo.id);
+      cols.push(last ? lineupColHtml(code, last) :
+        '<div class="lineup-col"><h4>' + TEAMS[code].flag + ' ' + TEAMS[code].name +
+        '</h4><div style="font-size:12px;color:var(--muted);">Noch keine frühere Aufstellung im Turnier.</div></div>');
+    }
+    const el = document.getElementById('last-lineups');
+    if (el) el.innerHTML = cols.join('');
+  }
+}
+
+async function findLastLineup(code, excludeEventId) {
+  // Jüngstes anderes Event dieses Teams mit publizierter Aufstellung suchen
+  const entries = Object.entries(espnEventByKey)
+    .filter(([k, v]) => k.includes(code) && v.id !== excludeEventId)
+    .sort((a, b) => (b[1].dateIso || '').localeCompare(a[1].dateIso || ''));
+  for (const [, v] of entries.slice(0, 3)) {
+    const sum = await fetchSummary(v.id);
+    const ros = sum && sum.rosters && sum.rosters.find(x => {
+      const tc = codeFor(x.team && (x.team.displayName || x.team.name));
+      return tc === code && x.roster && x.roster.length;
+    });
+    if (ros) return ros;
+  }
+  return null;
+}
+
+function kaderButtons(m) {
+  return '<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;">' +
+    '<button class="modal-close" style="width:auto;padding:0 14px;height:32px;font-size:12px;" ' +
+    'onclick="openTeamRoster(\'' + m.heim + '\')">👥 Kader ' + TEAMS[m.heim].name + '</button>' +
+    '<button class="modal-close" style="width:auto;padding:0 14px;height:32px;font-size:12px;" ' +
+    'onclick="openTeamRoster(\'' + m.gast + '\')">👥 Kader ' + TEAMS[m.gast].name + '</button></div>';
+}
+
 // ═══ HELPERS ═══
 function formatDate(iso, long) {
   const d = new Date(iso + 'T12:00:00');
@@ -1088,6 +1330,14 @@ function formatDate(iso, long) {
     ? { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }
     : { weekday: 'short', day: 'numeric', month: 'short' });
 }
+
+// Spiel-Klick → Detail-Modal (Inputs & Links bleiben funktional)
+document.addEventListener('click', e => {
+  const matchEl = e.target.closest('.match');
+  if (!matchEl || !matchEl.dataset.mid) return;
+  if (e.target.closest('input, a, button')) return;
+  openMatchDetail(matchEl.dataset.mid);
+});
 
 // ═══ TABS ═══
 document.querySelectorAll('.tab').forEach(tab => {
