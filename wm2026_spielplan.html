@@ -276,7 +276,7 @@ const MATCHES = [{"id": "A1", "datum": "2026-06-11", "uhrzeit": "21:00", "heim":
 const STADIONS = {"atl": {"name": "Atlanta-Stadion", "stadt": "Atlanta", "land": "USA", "kap": 75000, "lat": 33.7553, "lng": -84.4006, "spiele": 8, "wiki": "Mercedes-Benz_Stadium"}, "bos": {"name": "Boston-Stadion", "stadt": "Foxborough", "land": "USA", "kap": 65000, "lat": 42.0909, "lng": -71.2643, "spiele": 7, "wiki": "Gillette_Stadium"}, "dal": {"name": "Dallas-Stadion", "stadt": "Arlington", "land": "USA", "kap": 94000, "lat": 32.7475, "lng": -97.0945, "spiele": 9, "wiki": "AT&T_Stadium"}, "hou": {"name": "Houston-Stadion", "stadt": "Houston", "land": "USA", "kap": 72000, "lat": 29.6847, "lng": -95.4108, "spiele": 7, "wiki": "NRG_Stadium"}, "kan": {"name": "Kansas City-Stadion", "stadt": "Kansas City", "land": "USA", "kap": 76000, "lat": 39.0489, "lng": -94.4839, "spiele": 6, "wiki": "Arrowhead_Stadium"}, "los": {"name": "Los Angeles-Stadion", "stadt": "Inglewood", "land": "USA", "kap": 70000, "lat": 33.9535, "lng": -118.3392, "spiele": 8, "wiki": "SoFi_Stadium"}, "mia": {"name": "Miami-Stadion", "stadt": "Miami Gardens", "land": "USA", "kap": 65000, "lat": 25.958, "lng": -80.2389, "spiele": 7, "wiki": "Hard_Rock_Stadium"}, "nyc": {"name": "New York/New Jersey-Stadion", "stadt": "East Rutherford", "land": "USA", "kap": 82500, "lat": 40.8135, "lng": -74.0744, "spiele": 8, "wiki": "MetLife_Stadium"}, "phi": {"name": "Philadelphia-Stadion", "stadt": "Philadelphia", "land": "USA", "kap": 69000, "lat": 39.9008, "lng": -75.1675, "spiele": 6, "wiki": "Lincoln_Financial_Field"}, "sfo": {"name": "San Francisco-Stadion", "stadt": "Santa Clara", "land": "USA", "kap": 70000, "lat": 37.403, "lng": -121.97, "spiele": 6, "wiki": "Levi’s_Stadium"}, "sea": {"name": "Seattle-Stadion", "stadt": "Seattle", "land": "USA", "kap": 69000, "lat": 47.5952, "lng": -122.3316, "spiele": 6, "wiki": "Lumen_Field"}, "azt": {"name": "Aztekenstadion", "stadt": "Mexiko-Stadt", "land": "MEX", "kap": 87000, "lat": 19.3029, "lng": -99.1505, "spiele": 5, "wiki": "Aztekenstadion"}, "gua": {"name": "Guadalajara-Stadion", "stadt": "Guadalajara", "land": "MEX", "kap": 49000, "lat": 20.6818, "lng": -103.4625, "spiele": 4, "wiki": "Estadio_Akron"}, "mty": {"name": "Monterrey-Stadion", "stadt": "Monterrey", "land": "MEX", "kap": 53500, "lat": 25.6692, "lng": -100.2444, "spiele": 4, "wiki": "Estadio_BBVA"}, "tor": {"name": "Toronto-Stadion", "stadt": "Toronto", "land": "CAN", "kap": 45000, "lat": 43.6332, "lng": -79.4185, "spiele": 6, "wiki": "BMO_Field"}, "van": {"name": "Vancouver-Stadion", "stadt": "Vancouver", "land": "CAN", "kap": 54000, "lat": 49.2767, "lng": -123.1119, "spiele": 7, "wiki": "BC_Place"}};
 const GROUPS = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
 const R32 = [{"id": "r32_1", "a": "1E", "b": "3:ABCDF"}, {"id": "r32_2", "a": "1I", "b": "3:CDFGH"}, {"id": "r32_3", "a": "2A", "b": "2B"}, {"id": "r32_4", "a": "1F", "b": "2C"}, {"id": "r32_5", "a": "1C", "b": "2F"}, {"id": "r32_6", "a": "2E", "b": "2I"}, {"id": "r32_7", "a": "1A", "b": "3:CEFHI"}, {"id": "r32_8", "a": "1L", "b": "3:EHIJK"}, {"id": "r32_9", "a": "2K", "b": "2L"}, {"id": "r32_10", "a": "1H", "b": "2J"}, {"id": "r32_11", "a": "1D", "b": "3:BEFIJ"}, {"id": "r32_12", "a": "1G", "b": "3:AEHIJ"}, {"id": "r32_13", "a": "1J", "b": "2H"}, {"id": "r32_14", "a": "2D", "b": "2G"}, {"id": "r32_15", "a": "1B", "b": "3:EFGIJ"}, {"id": "r32_16", "a": "1K", "b": "3:DEIJL"}];
-const OLDB_ALIAS = {"mexiko": "MEX", "südafrika": "RSA", "suedafrika": "RSA", "südkorea": "KOR", "suedkorea": "KOR", "korea republik": "KOR", "korea, süd": "KOR", "republik korea": "KOR", "tschechien": "CZE", "tschechische republik": "CZE", "kanada": "CAN", "bosnien-herzegowina": "BIH", "bosnien und herzegowina": "BIH", "bosnien": "BIH", "katar": "QAT", "schweiz": "SUI", "brasilien": "BRA", "marokko": "MAR", "haiti": "HAI", "schottland": "SCO", "usa": "USA", "vereinigte staaten": "USA", "vereinigte staaten von amerika": "USA", "paraguay": "PAR", "australien": "AUS", "türkei": "TUR", "tuerkei": "TUR", "deutschland": "GER", "curacao": "CUW", "curaçao": "CUW", "elfenbeinküste": "CIV", "elfenbeinkueste": "CIV", "cote d'ivoire": "CIV", "côte d'ivoire": "CIV", "ecuador": "ECU", "niederlande": "NED", "japan": "JPN", "schweden": "SWE", "tunesien": "TUN", "belgien": "BEL", "ägypten": "EGY", "aegypten": "EGY", "iran": "IRN", "ir iran": "IRN", "neuseeland": "NZL", "spanien": "ESP", "kap verde": "CPV", "kapverde": "CPV", "cabo verde": "CPV", "saudi-arabien": "KSA", "saudi arabien": "KSA", "uruguay": "URU", "frankreich": "FRA", "senegal": "SEN", "irak": "IRQ", "norwegen": "NOR", "argentinien": "ARG", "algerien": "ALG", "österreich": "AUT", "oesterreich": "AUT", "jordanien": "JOR", "portugal": "POR", "dr kongo": "COD", "kongo dr": "COD", "demokratische republik kongo": "COD", "kongo, demokratische republik": "COD", "usbekistan": "UZB", "kolumbien": "COL", "england": "ENG", "kroatien": "CRO", "ghana": "GHA", "panama": "PAN", "mexico": "MEX", "south africa": "RSA", "south korea": "KOR", "korea republic": "KOR", "czech republic": "CZE", "czechia": "CZE", "canada": "CAN", "bosnia and herzegovina": "BIH", "switzerland": "SUI", "brazil": "BRA", "morocco": "MAR", "scotland": "SCO", "united states": "USA", "australia": "AUS", "turkey": "TUR", "türkiye": "TUR", "germany": "GER", "ivory coast": "CIV", "netherlands": "NED", "sweden": "SWE", "tunisia": "TUN", "belgium": "BEL", "egypt": "EGY", "new zealand": "NZL", "spain": "ESP", "cape verde": "CPV", "saudi arabia": "KSA", "france": "FRA", "iraq": "IRQ", "norway": "NOR", "argentina": "ARG", "algeria": "ALG", "austria": "AUT", "jordan": "JOR", "dr congo": "COD", "congo dr": "COD", "uzbekistan": "UZB", "colombia": "COL", "croatia": "CRO", "qatar": "QAT"};
+const OLDB_ALIAS = {"mexiko": "MEX", "südafrika": "RSA", "suedafrika": "RSA", "südkorea": "KOR", "suedkorea": "KOR", "korea republik": "KOR", "korea, süd": "KOR", "republik korea": "KOR", "tschechien": "CZE", "tschechische republik": "CZE", "kanada": "CAN", "bosnien-herzegowina": "BIH", "bosnien und herzegowina": "BIH", "bosnien": "BIH", "katar": "QAT", "schweiz": "SUI", "brasilien": "BRA", "marokko": "MAR", "haiti": "HAI", "schottland": "SCO", "usa": "USA", "vereinigte staaten": "USA", "vereinigte staaten von amerika": "USA", "paraguay": "PAR", "australien": "AUS", "türkei": "TUR", "tuerkei": "TUR", "deutschland": "GER", "curacao": "CUW", "curaçao": "CUW", "elfenbeinküste": "CIV", "elfenbeinkueste": "CIV", "cote d'ivoire": "CIV", "côte d'ivoire": "CIV", "ecuador": "ECU", "niederlande": "NED", "japan": "JPN", "schweden": "SWE", "tunesien": "TUN", "belgien": "BEL", "ägypten": "EGY", "aegypten": "EGY", "iran": "IRN", "ir iran": "IRN", "neuseeland": "NZL", "spanien": "ESP", "kap verde": "CPV", "kapverde": "CPV", "cabo verde": "CPV", "saudi-arabien": "KSA", "saudi arabien": "KSA", "uruguay": "URU", "frankreich": "FRA", "senegal": "SEN", "irak": "IRQ", "norwegen": "NOR", "argentinien": "ARG", "algerien": "ALG", "österreich": "AUT", "oesterreich": "AUT", "jordanien": "JOR", "portugal": "POR", "dr kongo": "COD", "kongo dr": "COD", "demokratische republik kongo": "COD", "kongo, demokratische republik": "COD", "usbekistan": "UZB", "kolumbien": "COL", "england": "ENG", "kroatien": "CRO", "ghana": "GHA", "panama": "PAN", "mexico": "MEX", "south africa": "RSA", "south korea": "KOR", "korea republic": "KOR", "czech republic": "CZE", "czechia": "CZE", "canada": "CAN", "bosnia and herzegovina": "BIH", "bosnia herzegovina": "BIH", "switzerland": "SUI", "brazil": "BRA", "morocco": "MAR", "scotland": "SCO", "united states": "USA", "australia": "AUS", "turkey": "TUR", "türkiye": "TUR", "germany": "GER", "ivory coast": "CIV", "netherlands": "NED", "sweden": "SWE", "tunisia": "TUN", "belgium": "BEL", "egypt": "EGY", "new zealand": "NZL", "spain": "ESP", "cape verde": "CPV", "saudi arabia": "KSA", "france": "FRA", "iraq": "IRQ", "norway": "NOR", "argentina": "ARG", "algeria": "ALG", "austria": "AUT", "jordan": "JOR", "dr congo": "COD", "congo dr": "COD", "uzbekistan": "UZB", "colombia": "COL", "croatia": "CRO", "qatar": "QAT"};
 const STRENGTH = {"ESP": 1880, "ARG": 1870, "FRA": 1860, "ENG": 1815, "BRA": 1780, "POR": 1770, "NED": 1755, "BEL": 1735, "GER": 1720, "CRO": 1705, "MAR": 1695, "URU": 1675, "COL": 1670, "USA": 1665, "MEX": 1655, "SUI": 1648, "JPN": 1640, "SEN": 1625, "IRN": 1615, "KOR": 1590, "ECU": 1588, "AUT": 1575, "AUS": 1565, "NOR": 1560, "TUR": 1552, "CAN": 1548, "ALG": 1520, "EGY": 1512, "CZE": 1502, "SWE": 1500, "TUN": 1495, "CIV": 1490, "SCO": 1483, "PAR": 1478, "UZB": 1452, "QAT": 1442, "KSA": 1438, "RSA": 1435, "COD": 1395, "JOR": 1389, "BIH": 1385, "PAN": 1378, "GHA": 1370, "IRQ": 1352, "CPV": 1330, "NZL": 1303, "CUW": 1312, "HAI": 1290};
 
 // ═══ STATE ═══
@@ -421,7 +421,8 @@ async function fetchLive() {
   scorerCovered = {};
   diag = { oldb: 'nicht erreichbar', oldbGames: 0, oldbGoals: 0, oldbNamed: 0,
            tsdb: 'nicht erreichbar', tsdbEvents: 0, tsdbScored: 0, tsdbDetails: 0,
-           lookups: 0, unmatched: diag.unmatched || [] };
+           lookups: 0, espn: 'nicht abgefragt', espnGoals: 0,
+           unmatched: diag.unmatched || [] };
   // Quelle 1: OpenLigaDB (Shortcut 'wm26') — liefert Live-Stände & Torschützen
   const base = oldbShortcut ? [oldbShortcut] : ['wm26', 'wm2026', 'WM26', 'wm'];
   const candidates = [];
@@ -480,6 +481,35 @@ async function fetchLive() {
       if (n > 0) { scorerCovered[ev.minKey] = true; diag.tsdbDetails += n; }
     } catch (e) {}
   }
+  // Quelle 3: ESPN — zuverlässige Torschützen (live gepflegt)
+  // Nur Tage abfragen, an denen Tore gefallen sind, deren Schützen noch fehlen — plus heute
+  const espnDays = new Set();
+  const todayIso = new Date().toLocaleDateString('sv-SE');
+  espnDays.add(todayIso.replace(/-/g, ''));
+  MATCHES.forEach(m => {
+    const r = liveResults[liveKey(m)];
+    if (!r || r.home === null) return;
+    if ((r.home + r.away) === 0) return;
+    const minKey = [m.heim, m.gast].sort().join('_');
+    if (scorerCovered[minKey]) return;
+    const lk = liveSchedule[liveKey(m)];
+    const d = lk ? new Date(lk).toLocaleDateString('sv-SE') : m.datum;
+    espnDays.add(d.replace(/-/g, ''));
+  });
+  let espnOk = false;
+  for (const day of Array.from(espnDays).slice(0, 6)) {
+    try {
+      const r5 = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=' + day);
+      if (!r5.ok) continue;
+      const j5 = await r5.json();
+      if (j5 && Array.isArray(j5.events)) {
+        parseESPN(j5.events);
+        espnOk = true;
+      }
+    } catch (e) {}
+  }
+  diag.espn = espnOk ? (espnDays.size + ' Tag(e) abgefragt') : 'nicht erreichbar';
+  if (espnOk && diag.espnGoals > 0 && !srcs.includes('ESPN')) srcs.push('ESPN');
   // Status
   if (srcs.length) {
     const fin = Object.values(liveResults).filter(r => r.finished).length / 2;
@@ -534,6 +564,56 @@ function parseTSDB(events, needDetails) {
   });
 }
 
+// ESPN-Scoreboard: Torschützen (Hauptzweck) + Resultat-Backup
+function parseESPN(events) {
+  events.forEach(ev => {
+    const comp = ev.competitions && ev.competitions[0];
+    if (!comp || !Array.isArray(comp.competitors)) return;
+    const home = comp.competitors.find(c => c.homeAway === 'home');
+    const away = comp.competitors.find(c => c.homeAway === 'away');
+    if (!home || !away) return;
+    const c1 = codeFor(home.team && (home.team.displayName || home.team.name));
+    const c2 = codeFor(away.team && (away.team.displayName || away.team.name));
+    if (!c1 || !c2) return;
+    const key = c1 + '_' + c2;
+    const minKey = [c1, c2].sort().join('_');
+    // Resultat-Backup (nur wenn beide anderen Quellen nichts haben)
+    const hs = parseInt(home.score, 10), as = parseInt(away.score, 10);
+    const finished = !!(ev.status && ev.status.type && ev.status.type.completed);
+    if (!isNaN(hs) && !isNaN(as) && (finished || (ev.status && ev.status.type && ev.status.type.state === 'in'))) {
+      if (!liveResults[key] || liveResults[key].home === null) {
+        const entry = { home: hs, away: as, finished, live: !finished,
+                        goals: [], kickoff: liveSchedule[key] || null, hz: null };
+        liveResults[key] = entry;
+        liveResults[c2 + '_' + c1] = { ...entry, home: as, away: hs };
+      }
+    }
+    // Torschützen aus details
+    if (scorerCovered[minKey]) return;
+    const details = comp.details || [];
+    let counted = 0;
+    details.forEach(d => {
+      const txt = (d.type && d.type.text) || '';
+      const isGoal = d.scoringPlay === true || /goal/i.test(txt);
+      if (!isGoal) return;
+      if (/own goal/i.test(txt)) return;                 // Eigentore zählen nicht
+      if (/missed|shootout/i.test(txt)) return;          // verschossene Penaltys / Penaltyschiessen
+      const ath = d.athletesInvolved && d.athletesInvolved[0];
+      const name = ath && (ath.displayName || ath.fullName);
+      if (!name) return;
+      const teamId = d.team && d.team.id;
+      const team = (teamId && home.team && String(home.team.id) === String(teamId)) ? c1 : c2;
+      const pen = /penalty/i.test(txt);
+      const e2 = scorerStats[name] || (scorerStats[name] = { goals: 0, pens: 0, team });
+      e2.goals++;
+      if (pen) e2.pens++;
+      e2.team = team;
+      counted++;
+    });
+    if (counted > 0) { scorerCovered[minKey] = true; diag.espnGoals += counted; }
+  });
+}
+
 // Parst TSDB-Strings wie "34':J. Musiala;45'+2:K. Havertz (pen);" in scorerStats
 function parseGoalDetails(s, team) {
   if (!s) return 0;
@@ -565,9 +645,12 @@ function normName(s) {
 function codeFor(teamName) {
   const n = normName(teamName);
   if (!n) return null;
+  const n2 = n.replace(/-/g, ' ');  // "bosnia-herzegovina" → "bosnia herzegovina"
   if (OLDB_ALIAS[n]) return OLDB_ALIAS[n];
+  if (OLDB_ALIAS[n2]) return OLDB_ALIAS[n2];
   for (const [alias, code] of Object.entries(OLDB_ALIAS)) {
-    if (n.includes(alias) || alias.includes(n)) return code;
+    const a2 = alias.replace(/-/g, ' ');
+    if (n.includes(alias) || alias.includes(n) || n2.includes(a2) || a2.includes(n2)) return code;
   }
   if (!diag.unmatched.includes(n) && diag.unmatched.length < 20) diag.unmatched.push(n);
   return null;
@@ -965,6 +1048,7 @@ function renderScorers() {
       '<strong>TheSportsDB:</strong> ' + diag.tsdb +
       ' · ' + diag.tsdbEvents + ' Endrunden-Events gematcht · ' + diag.tsdbScored + ' mit Resultat · ' +
       diag.tsdbDetails + ' Schützen aus Details · ' + diag.lookups + ' Einzel-Nachladungen<br>' +
+      '<strong>ESPN:</strong> ' + diag.espn + ' · ' + diag.espnGoals + ' Schützen erfasst<br>' +
       '<strong>Nicht erkannte Teamnamen:</strong> ' +
       (diag.unmatched.length ? diag.unmatched.join(', ') : 'keine');
   }
