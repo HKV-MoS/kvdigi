@@ -435,6 +435,14 @@ footer { margin-top: 22px; padding: 14px; text-align: center; color: var(--muted
   padding: 10px; font-size: 13px; margin-bottom: 12px; }
 .stats-box { margin: 2px 0 14px; padding: 10px 14px; background: #F8FAFC;
   border: 1px solid var(--border); border-radius: 10px; }
+.heat-layer { display: none; }
+#modal-body.heat-on .heat-layer { display: block; }
+.heat-toggle { text-align: center; margin: 0 0 10px; }
+.heat-toggle button { border: 1.5px solid var(--hkv-blue); background: white;
+  color: var(--hkv-blue); border-radius: 16px; padding: 4px 14px; font-size: 12px;
+  font-weight: 700; cursor: pointer; }
+#modal-body.heat-on .heat-toggle button { background: var(--hkv-blue); color: white; }
+.heat-note { font-size: 10px; color: var(--muted); margin-top: 3px; }
 .poss-wrap { display: flex; align-items: center; gap: 10px; font-size: 13px;
   font-weight: 700; color: var(--hkv-blue); }
 .poss-bar { flex: 1; height: 12px; background: #CBD5E1; border-radius: 6px; overflow: hidden; }
@@ -1549,11 +1557,24 @@ function renderScorers() {
 // ═══ MODAL: KADER & SPIEL-DETAILS ═══
 function openModal(title) {
   document.getElementById('modal-title').innerHTML = title;
-  document.getElementById('modal-body').innerHTML = '<div class="modal-loading">Lade Daten…</div>';
+  const b = document.getElementById('modal-body');
+  b.innerHTML = '<div class="modal-loading">Lade Daten…</div>';
+  b.classList.toggle('heat-on', heatOn);
   document.getElementById('modal-overlay').classList.add('show');
 }
 function closeModal() {
   document.getElementById('modal-overlay').classList.remove('show');
+}
+let heatOn = false;
+try { heatOn = localStorage.getItem('wm2026_heat') === '1'; } catch (e) {}
+function toggleHeat() {
+  heatOn = !heatOn;
+  try { localStorage.setItem('wm2026_heat', heatOn ? '1' : '0'); } catch (e) {}
+  document.getElementById('modal-body').classList.toggle('heat-on', heatOn);
+}
+function heatToggleHtml() {
+  return '<div class="heat-toggle"><button onclick="toggleHeat()">🔥 Heatmap</button>' +
+    '<div class="heat-note">modellbasiert aus Formation & Ballbesitz — keine Laufdaten</div></div>';
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
@@ -1662,6 +1683,25 @@ async function fetchSummary(eventId) {
   } catch (e) { return null; }
 }
 
+// Ballbesitz beider Teams aus dem Summary (für Stats & Heatmap-Verschiebung)
+function getPoss(sum, m) {
+  const bx = sum && sum.boxscore && sum.boxscore.teams;
+  if (!bx || bx.length < 2) return null;
+  const sideOf = t => {
+    if (t.homeAway) return t.homeAway;
+    const cc = codeFor(t.team && (t.team.displayName || t.team.name));
+    return cc === m.heim ? 'home' : 'away';
+  };
+  const v = t => {
+    const s = (t.statistics || []).find(x => x.name === 'possessionPct');
+    return s ? parseFloat(s.displayValue) || 0 : 0;
+  };
+  const th = bx.find(t => sideOf(t) === 'home') || bx[0];
+  const ta = bx.find(t => sideOf(t) === 'away') || bx[1];
+  const h = v(th), a = v(ta);
+  return (h + a) > 0 ? { h, a } : null;
+}
+
 // Spielstatistiken aus dem ESPN-Summary (Ballbesitz, Schüsse, Ecken, Karten …)
 function buildStatsHtml(sum, m) {
   const bx = sum && sum.boxscore && sum.boxscore.teams;
@@ -1724,7 +1764,7 @@ function isYellowish(h) {
   return r > 200 && g > 170 && b < 130;
 }
 
-function lineupColHtml(code, ros, note, invert) {
+function lineupColHtml(code, ros, note, invert, heatShift) {
   const t = TEAMS[code];
   const starters = (ros.roster || []).filter(p => p.starter);
   const bench = (ros.roster || []).filter(p => !p.starter);
@@ -1763,9 +1803,10 @@ function lineupColHtml(code, ros, note, invert) {
     '<text y="7" text-anchor="middle" font-size="12" font-weight="700" fill="' + tx + '">' + (p.jersey || '') + '</text>' +
     '<text y="28" text-anchor="middle" font-size="9" font-weight="600" fill="#fff" ' +
     'stroke="rgba(0,0,0,0.45)" stroke-width="2.5" paint-order="stroke">' + shortName(p) + '</text></g>';
-  // Spieler-Positionen berechnen
+  // Spieler-Positionen berechnen (+ für Heatmap sammeln)
   let players = '';
-  if (gk) players += shirt(150, 388, gk, gkFill, '#1a1a1a');
+  const heatPos = [];
+  if (gk) { players += shirt(150, 388, gk, gkFill, '#1a1a1a'); heatPos.push([150, 388, true]); }
   let idx = 0;
   const nRows = rows.length;
   rows.forEach((k, ri) => {
@@ -1775,8 +1816,22 @@ function lineupColHtml(code, ros, note, invert) {
       if (!p) continue;
       const x = 300 * (j + 1) / (k + 1);
       players += shirt(x, y, p, fill, txt);
+      heatPos.push([x, y, false]);
     }
   });
+  // Heat-Layer: Wärmezonen um die Positionen, Ballbesitz schiebt das Feld vor/zurück
+  const shift = Math.max(-28, Math.min(28, (heatShift || 0) * 1.2));
+  const gid = 'hg_' + code;
+  const heat = '<g class="heat-layer">' +
+    '<defs><radialGradient id="' + gid + '">' +
+    '<stop offset="0%" stop-color="rgba(255,30,0,0.55)"/>' +
+    '<stop offset="45%" stop-color="rgba(255,150,0,0.32)"/>' +
+    '<stop offset="100%" stop-color="rgba(255,220,0,0)"/>' +
+    '</radialGradient></defs>' +
+    heatPos.map(([x, y, isGk]) => isGk
+      ? '<ellipse cx="' + x + '" cy="' + y + '" rx="30" ry="26" fill="url(#' + gid + ')"/>'
+      : '<ellipse cx="' + x + '" cy="' + (y - shift).toFixed(0) + '" rx="40" ry="58" fill="url(#' + gid + ')"/>'
+    ).join('') + '</g>';
   // Halbfeld: Rasenstreifen, Linien, Strafraum, Mittelkreis-Bogen oben
   let stripes = '';
   for (let i = 0; i < 6; i++) {
@@ -1791,7 +1846,7 @@ function lineupColHtml(code, ros, note, invert) {
     '<rect x="62" y="348" width="176" height="72" fill="none" stroke="white" stroke-width="2"/>' +
     '<rect x="105" y="392" width="90" height="28" fill="none" stroke="white" stroke-width="2"/>' +
     '<circle cx="150" cy="365" r="2.5" fill="white"/>' +
-    players + '</svg>';
+    heat + players + '</svg>';
   return '<div class="lineup-col"><h4>' + t.flag + ' ' + t.name +
     (ros.formation ? '<span class="formation-badge">' + ros.formation + '</span>' : '') + '</h4>' +
     pitch +
@@ -1843,7 +1898,7 @@ async function openMatchDetail(matchId) {
   const invertAway = colorsClash((JERSEY[m.heim] || ['#FFF'])[0], (JERSEY[m.gast] || ['#FFF'])[0]);
   if (!evInfo) {
     body.innerHTML = goalsHtml + '<div class="modal-hint">Offizielle Aufstellung folgt ~1 h vor Anpfiff. ' +
-      'Unten eine <strong>aus dem Kader abgeleitete</strong> mögliche Elf.</div>' +
+      'Unten eine <strong>aus dem Kader abgeleitete</strong> mögliche Elf.</div>' + heatToggleHtml() +
       '<div id="last-lineups" class="lineup-cols"><div class="modal-loading">Lade Kader…</div></div>' +
       kaderButtons(m);
     const cols = [];
@@ -1863,32 +1918,37 @@ async function openMatchDetail(matchId) {
   const rosters = sum && sum.rosters;
   const hasLineup = rosters && rosters.some(x => x.roster && x.roster.length);
   const statsHtml = buildStatsHtml(sum, m);
+  const poss = getPoss(sum, m);
+  const shiftH = poss ? poss.h - 50 : 0;
+  const shiftA = poss ? poss.a - 50 : 0;
   if (hasLineup) {
     const rosH = rosters.find(x => x.homeAway === 'home') || rosters[0];
     const rosA = rosters.find(x => x.homeAway === 'away') || rosters[1];
-    body.innerHTML = goalsHtml + statsHtml +
+    body.innerHTML = goalsHtml + statsHtml + heatToggleHtml() +
       '<div class="lineup-cols">' +
-      lineupColHtml(m.heim, rosH || {}) + lineupColHtml(m.gast, rosA || {}, null, invertAway) +
+      lineupColHtml(m.heim, rosH || {}, null, false, shiftH) +
+      lineupColHtml(m.gast, rosA || {}, null, invertAway, shiftA) +
       '</div>' + kaderButtons(m);
   } else {
     // Aufstellung noch nicht publiziert → letzte Aufstellung, sonst aus Kader ableiten
     body.innerHTML = goalsHtml + statsHtml + '<div class="modal-hint">Offizielle Aufstellung noch nicht publiziert ' +
       '(kommt ~1 h vor Anpfiff). Angezeigt wird die <strong>zuletzt gespielte</strong> oder eine ' +
-      '<strong>aus dem Kader abgeleitete</strong> Aufstellung.</div>' +
+      '<strong>aus dem Kader abgeleitete</strong> Aufstellung.</div>' + heatToggleHtml() +
       '<div id="last-lineups" class="lineup-cols"><div class="modal-loading">Lade Aufstellungen…</div></div>' +
       kaderButtons(m);
     const cols = [];
     for (const code of [m.heim, m.gast]) {
       const inv = (code === m.gast) && invertAway;
+      const sh = code === m.heim ? shiftH : shiftA;
       const last = await findLastLineup(code, evInfo.id);
       if (last) {
-        cols.push(lineupColHtml(code, last, 'zuletzt gespielte Aufstellung', inv));
+        cols.push(lineupColHtml(code, last, 'zuletzt gespielte Aufstellung', inv, sh));
         continue;
       }
       const roster = await fetchRoster(code);
       if (roster) {
         cols.push(lineupColHtml(code, buildLineupFromRoster(roster),
-          'mögliche Elf — aus dem Kader abgeleitet', inv));
+          'mögliche Elf — aus dem Kader abgeleitet', inv, sh));
       } else {
         cols.push('<div class="lineup-col"><h4>' + TEAMS[code].flag + ' ' + TEAMS[code].name +
           '</h4><div style="font-size:12px;color:var(--muted);">Aufstellung folgt, sobald Daten verfügbar sind.</div></div>');
