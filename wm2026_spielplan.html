@@ -1389,7 +1389,21 @@ async function fetchSummary(eventId) {
   } catch (e) { return null; }
 }
 
-function lineupColHtml(code, ros, note) {
+// Farbähnlichkeit: erkennen, wenn beide Teams praktisch gleiche Trikotfarbe haben
+function hexRGB(h) {
+  h = (h || '#FFFFFF').replace('#', '');
+  return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+}
+function colorsClash(a, b) {
+  const [r1, g1, b1] = hexRGB(a), [r2, g2, b2] = hexRGB(b);
+  return Math.sqrt((r1 - r2) ** 2 + (g1 - g2) ** 2 + (b1 - b2) ** 2) < 95;
+}
+function isYellowish(h) {
+  const [r, g, b] = hexRGB(h);
+  return r > 200 && g > 170 && b < 130;
+}
+
+function lineupColHtml(code, ros, note, invert) {
   const t = TEAMS[code];
   const starters = (ros.roster || []).filter(p => p.starter);
   const bench = (ros.roster || []).filter(p => !p.starter);
@@ -1408,9 +1422,9 @@ function lineupColHtml(code, ros, note) {
     rows = [cnt.D, cnt.M, cnt.F].filter(n => n > 0);
     if (!rows.length && outfield.length) rows = [outfield.length];
   }
-  const [fill, txt] = JERSEY[code] || ['#FFFFFF', '#1a1a1a'];
-  const YELLOWISH = ['BRA', 'AUS', 'SWE', 'ECU', 'COL', 'RSA'];
-  const gkFill = YELLOWISH.includes(code) ? '#FF8A00' : '#FFD400';
+  let [fill, txt] = JERSEY[code] || ['#FFFFFF', '#1a1a1a'];
+  if (invert) [fill, txt] = [txt, fill];   // «Auswärtsdress»: Farben getauscht
+  const gkFill = isYellowish(fill) ? '#FF8A00' : '#FFD400';
   const shortName = p => {
     const n = (p.athlete && (p.athlete.displayName || p.athlete.fullName)) || '';
     const parts = n.split(' ');
@@ -1504,6 +1518,8 @@ async function openMatchDetail(matchId) {
       (rest.length ? '<div style="text-align:center;font-size:12px;color:var(--muted);margin:-6px 0 10px;">⚽ ' +
         rest.map(g => (g.min ? g.min + "'" : '')).join(' · ') + '</div>' : '')
     : '';
+  // Trikot-Kollision: Gast bekommt «Auswärtsdress» (Farben invertiert)
+  const invertAway = colorsClash((JERSEY[m.heim] || ['#FFF'])[0], (JERSEY[m.gast] || ['#FFF'])[0]);
   if (!evInfo) {
     body.innerHTML = goalsHtml + '<div class="modal-hint">Offizielle Aufstellung folgt ~1 h vor Anpfiff. ' +
       'Unten eine <strong>aus dem Kader abgeleitete</strong> mögliche Elf.</div>' +
@@ -1511,9 +1527,10 @@ async function openMatchDetail(matchId) {
       kaderButtons(m);
     const cols = [];
     for (const code of [m.heim, m.gast]) {
+      const inv = (code === m.gast) && invertAway;
       const roster = await fetchRoster(code);
       cols.push(roster
-        ? lineupColHtml(code, buildLineupFromRoster(roster), 'mögliche Elf — aus dem Kader abgeleitet')
+        ? lineupColHtml(code, buildLineupFromRoster(roster), 'mögliche Elf — aus dem Kader abgeleitet', inv)
         : '<div class="lineup-col"><h4>' + TEAMS[code].flag + ' ' + TEAMS[code].name +
           '</h4><div style="font-size:12px;color:var(--muted);">Aufstellung folgt, sobald Daten verfügbar sind.</div></div>');
     }
@@ -1529,7 +1546,7 @@ async function openMatchDetail(matchId) {
     const rosA = rosters.find(x => x.homeAway === 'away') || rosters[1];
     body.innerHTML = goalsHtml +
       '<div class="lineup-cols">' +
-      lineupColHtml(m.heim, rosH || {}) + lineupColHtml(m.gast, rosA || {}) +
+      lineupColHtml(m.heim, rosH || {}) + lineupColHtml(m.gast, rosA || {}, null, invertAway) +
       '</div>' + kaderButtons(m);
   } else {
     // Aufstellung noch nicht publiziert → letzte Aufstellung, sonst aus Kader ableiten
@@ -1540,15 +1557,16 @@ async function openMatchDetail(matchId) {
       kaderButtons(m);
     const cols = [];
     for (const code of [m.heim, m.gast]) {
+      const inv = (code === m.gast) && invertAway;
       const last = await findLastLineup(code, evInfo.id);
       if (last) {
-        cols.push(lineupColHtml(code, last, 'zuletzt gespielte Aufstellung'));
+        cols.push(lineupColHtml(code, last, 'zuletzt gespielte Aufstellung', inv));
         continue;
       }
       const roster = await fetchRoster(code);
       if (roster) {
         cols.push(lineupColHtml(code, buildLineupFromRoster(roster),
-          'mögliche Elf — aus dem Kader abgeleitet'));
+          'mögliche Elf — aus dem Kader abgeleitet', inv));
       } else {
         cols.push('<div class="lineup-col"><h4>' + TEAMS[code].flag + ' ' + TEAMS[code].name +
           '</h4><div style="font-size:12px;color:var(--muted);">Aufstellung folgt, sobald Daten verfügbar sind.</div></div>');
