@@ -378,7 +378,8 @@ footer { margin-top: 22px; padding: 14px; text-align: center; color: var(--muted
 .celeb-ava { display: flex; flex-direction: column; align-items: center; gap: 3px; }
 .celeb-face { width: 62px; height: 62px; border-radius: 50%; background: var(--hkv-blue);
   display: flex; align-items: center; justify-content: center; font-size: 33px;
-  border: 3px solid white; box-shadow: 0 4px 14px rgba(0,0,0,0.25); }
+  border: 3px solid white; box-shadow: 0 4px 14px rgba(0,0,0,0.25); overflow: hidden; }
+.celeb-face img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 .celeb-name { font-size: 10px; font-weight: 700; color: var(--hkv-blue); background: white;
   padding: 1px 7px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.15);
   white-space: nowrap; }
@@ -1952,34 +1953,53 @@ function renderAll() { renderGroups(); renderBracket(); renderSchedule(); render
 if (liveInTips) document.getElementById('live-toggle').classList.add('on');
 // ═══ 🎉 PROMI-SPRECHBLASEN (Easter Egg) ═══
 const CELEBS = [
-  { n: 'Marco Odermatt', e: '⛷️', s: 'Hopp Schwiiz! Abfahrt Richtung Titel!' },
-  { n: 'José Mourinho', e: '🧥', s: 'Hopp Schwiiz. The Special One has spoken.' },
-  { n: 'Ronaldo (R9)', e: '🇧🇷', s: 'Hopp Schwiiz! Sagt sogar o Fenômeno.' },
-  { n: 'Taylor Swift', e: '🎤', s: 'Hopp Schwiiz! (Taylor\'s Version)' },
-  { n: 'Chuck Norris', e: '🥋', s: 'Die Schweiz braucht kein Glück. Chuck Norris hat Hopp Schwiiz gesagt.' },
+  { n: 'Marco Odermatt', e: '⛷️', w: 'Marco Odermatt', s: 'Hopp Schwiiz! Abfahrt Richtung Titel!' },
+  { n: 'José Mourinho', e: '🧥', w: 'José Mourinho', s: 'Hopp Schwiiz. The Special One has spoken.' },
+  { n: 'Ronaldo (R9)', e: '🇧🇷', w: 'Ronaldo (Fußballspieler, 1976)', s: 'Hopp Schwiiz! Sagt sogar o Fenômeno.' },
+  { n: 'Taylor Swift', e: '🎤', w: 'Taylor Swift', s: 'Hopp Schwiiz! (Taylor\'s Version)' },
+  { n: 'Chuck Norris', e: '🥋', w: 'Chuck Norris', s: 'Die Schweiz braucht kein Glück. Chuck Norris hat Hopp Schwiiz gesagt.' },
   { n: 'Darth Vader', e: '🌑', s: 'Ich bin dein Fan. Hopp Schwiiz!' },
-  { n: 'Roger Federer', e: '🎾', s: 'Hopp Schwiiz! Auch vom Center Court.' },
-  { n: 'Granit Xhaka', e: '💪', s: 'Hopp Schwiiz! Mir händ das im Griff.' },
-  { n: 'Murat Yakin', e: '📋', s: 'Hopp Schwiiz! Taktik stimmt, Jungs.' },
+  { n: 'Roger Federer', e: '🎾', w: 'Roger Federer', s: 'Hopp Schwiiz! Auch vom Center Court.' },
+  { n: 'Granit Xhaka', e: '💪', w: 'Granit Xhaka', s: 'Hopp Schwiiz! Mir händ das im Griff.' },
+  { n: 'Murat Yakin', e: '📋', w: 'Murat Yakin', s: 'Hopp Schwiiz! Taktik stimmt, Jungs.' },
   { n: 'Yoda', e: '🧘', s: 'Hopp Schwiiz, es heisst. Gewinnen, sie werden.' },
   { n: 'Heidi', e: '🏔️', s: 'Hopp Schwiiz! Der Grossvater schaut auch zu!' },
   { n: 'Wilhelm Tell', e: '🏹', s: 'Hopp Schwiiz! Den Apfel treff ich, das Tor trefft ihr!' },
   { n: 'James Bond', e: '🍸', s: 'Hopp Schwiiz. Geschüttelt, nicht gerührt.' },
-  { n: 'Lionel Messi', e: '🐐', s: 'Hopp Schwiiz... aber nur heute, eh.' },
+  { n: 'Lionel Messi', e: '🐐', w: 'Lionel Messi', s: 'Hopp Schwiiz... aber nur heute, eh.' },
   { n: 'Super Mario', e: '🍄', s: 'It\'s-a me! Hopp-a Schwiiz!' },
   { n: 'Pikachu', e: '⚡', s: 'Pika pika! (Übersetzung: Hopp Schwiiz!)' },
-  { n: 'Albert Einstein', e: '🧠', s: 'E = mc² — und Hopp Schwiiz! Relativ klar.' },
+  { n: 'Albert Einstein', e: '🧠', w: 'Albert Einstein', s: 'E = mc² — und Hopp Schwiiz! Relativ klar.' },
   { n: 'Globi', e: '🦜', s: 'Hopp Schwiiz! Globi isch au derbii!' },
-  { n: 'DJ Bobo', e: '🎶', s: 'Somebody Dance With Me... und Hopp Schwiiz!' },
+  { n: 'DJ Bobo', e: '🎶', w: 'DJ BoBo', s: 'Somebody Dance With Me... und Hopp Schwiiz!' },
   { n: 'Asterix & Obelix', e: '🛡️', s: 'Die spinnen, die Gegner! Hopp Schwiiz!' },
-  { n: 'Shakira', e: '💃', s: 'Waka Waka... äh: Hopp Schwiiz!' },
+  { n: 'Shakira', e: '💃', w: 'Shakira', s: 'Waka Waka... äh: Hopp Schwiiz!' },
   { n: 'Sherlock Holmes', e: '🔍', s: 'Elementar, mein lieber Watson: Hopp Schwiiz.' },
   { n: 'Batman', e: '🦇', s: 'Ich bin die Nacht. Und die Nacht sagt: Hopp Schwiiz.' },
   { n: 'SpongeBob', e: '🧽', s: 'Ich bin bereit! Hopp Schwiiz!' },
-  { n: 'Cristiano Ronaldo', e: '😎', s: 'Siuuu... ich meine: Hopp Schwiiz!' },
+  { n: 'Cristiano Ronaldo', e: '😎', w: 'Cristiano Ronaldo', s: 'Siuuu... ich meine: Hopp Schwiiz!' },
   { n: 'Gandalf', e: '🧙', s: 'Ihr kommt nicht vorbei! Ausser die Schweiz. Hopp Schwiiz!' },
+  { n: 'Gilbert Gress', e: '🎙️', w: 'Gilbert Gress', s: 'Mon Dieu, keine Ahnung... aber Hopp Schwiiz!' },
+  { n: 'Beni Thurnheer', e: '📺', w: 'Beni Thurnheer', s: 'Hopp Schwiiz — das isch doch benissimo!' },
 ];
-let lastCeleb = -1, celebTimer = null;
+let lastCeleb = -1, celebTimer = null, celebToken = 0;
+const celebPhotoCache = {};
+async function fetchCelebThumb(title) {
+  if (title in celebPhotoCache) return celebPhotoCache[title];
+  let found = null;
+  for (const lang of ['de', 'en']) {
+    try {
+      const r = await fetch('https://' + lang + '.wikipedia.org/api/rest_v1/page/summary/' +
+        encodeURIComponent(title.replace(/ /g, '_')));
+      if (!r.ok) continue;
+      const j = await r.json();
+      if (j.type && String(j.type).includes('disambiguation')) continue;
+      if (j.thumbnail && j.thumbnail.source) { found = j.thumbnail.source; break; }
+    } catch (e) {}
+  }
+  celebPhotoCache[title] = found;
+  return found;
+}
 let celebsMuted = false;
 try { celebsMuted = localStorage.getItem('wm2026_celebsmute') === '1'; } catch (e) {}
 function updateCelebBtn() {
@@ -2001,9 +2021,20 @@ function showCeleb() {
   const c = CELEBS[i];
   const el = document.getElementById('celeb-pop');
   el.innerHTML = '<div class="celeb-bubble">' + c.s + '</div>' +
-    '<div class="celeb-ava"><div class="celeb-face">' + c.e + '</div>' +
+    '<div class="celeb-ava"><div class="celeb-face" id="celeb-face">' + c.e + '</div>' +
     '<div class="celeb-name">' + c.n + '</div></div>';
   el.classList.add('show');
+  // Echte Personen: Wikipedia-Porträt nachladen (fiktive Figuren bleiben Emoji)
+  if (c.w) {
+    const tok = ++celebToken;
+    fetchCelebThumb(c.w).then(u => {
+      if (!u || tok !== celebToken) return;
+      const f = document.getElementById('celeb-face');
+      if (f) f.innerHTML = '<img src="' + u + '" alt="' + c.n + '" onerror="this.remove()">';
+    });
+  } else {
+    celebToken++;
+  }
   clearTimeout(celebTimer);
   celebTimer = setTimeout(hideCeleb, 8000);
 }
