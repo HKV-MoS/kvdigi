@@ -199,6 +199,10 @@ footer { margin-top: 22px; padding: 14px; text-align: center; color: var(--muted
 .lineup-list .pos { display: inline-block; width: 22px; color: var(--muted); font-size: 10px; }
 .lineup-list .nr { display: inline-block; width: 24px; font-weight: 700; color: var(--hkv-blue); }
 .bench-title { font-size: 10px; text-transform: uppercase; color: var(--muted); margin-top: 8px; }
+.bench-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px 8px;
+  font-size: 10.5px; text-align: left; opacity: 0.8; max-width: 235px; margin: 4px auto 0; }
+.bench-grid span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bench-grid .nr { font-weight: 700; color: var(--hkv-blue); margin-right: 3px; }
 .kader-btn { border: none; background: transparent; cursor: pointer; font-size: 12px;
   padding: 0 2px; opacity: 0.55; }
 .kader-btn:hover { opacity: 1; }
@@ -650,21 +654,27 @@ function parseESPN(events) {
       }
     }
     // Torschützen aus details
-    if (scorerCovered[minKey]) return;
     const details = comp.details || [];
+    const matchGoals = [];
+    const needScorers = !scorerCovered[minKey];
     let counted = 0;
     details.forEach(d => {
       const txt = (d.type && d.type.text) || '';
       const isGoal = d.scoringPlay === true || /goal/i.test(txt);
       if (!isGoal) return;
-      if (/own goal/i.test(txt)) return;                 // Eigentore zählen nicht
       if (/missed|shootout/i.test(txt)) return;          // verschossene Penaltys / Penaltyschiessen
       const ath = d.athletesInvolved && d.athletesInvolved[0];
       const name = ath && (ath.displayName || ath.fullName);
       if (!name) return;
       const teamId = d.team && d.team.id;
-      const team = (teamId && home.team && String(home.team.id) === String(teamId)) ? c1 : c2;
+      const sideHome = !!(teamId && home.team && String(home.team.id) === String(teamId));
+      const og = /own goal/i.test(txt);
       const pen = /penalty/i.test(txt);
+      const min = parseInt((d.clock && d.clock.displayValue) || '', 10) || null;
+      // Eigentor: Schütze gehört zum Gegner des begünstigten Teams
+      matchGoals.push({ min, who: name, pen, og, side: (og ? !sideHome : sideHome) ? 'h' : 'a' });
+      if (og || !needScorers) return;                    // Eigentore zählen nicht; keine Doppelzählung
+      const team = sideHome ? c1 : c2;
       const e2 = scorerStats[name] || (scorerStats[name] = { goals: 0, pens: 0, team });
       e2.goals++;
       if (pen) e2.pens++;
@@ -672,6 +682,15 @@ function parseESPN(events) {
       counted++;
     });
     if (counted > 0) { scorerCovered[minKey] = true; diag.espnGoals += counted; }
+    // Schützen-Namen in die Spiel-Einträge übernehmen, wenn dort keine Namen vorhanden
+    if (matchGoals.length) {
+      const cur = liveResults[key];
+      if (cur && (!cur.goals.length || !cur.goals.some(g => g.who && String(g.who).trim()))) {
+        cur.goals = matchGoals;
+        const rev = liveResults[c2 + '_' + c1];
+        if (rev) rev.goals = matchGoals.map(g => ({ ...g, side: g.side === 'h' ? 'a' : 'h' }));
+      }
+    }
   });
 }
 
@@ -885,8 +904,8 @@ function matchRow(m, withInputs, forceLive) {
   const timeTxt = lk ? new Date(lk).toLocaleTimeString('de-CH', {hour: '2-digit', minute: '2-digit'}) : m.uhrzeit;
   const goalsLine = (r && r.goals && r.goals.length)
     ? '<div class="goals-line">⚽ ' + r.goals.map(g =>
-        g.min + "' " + g.who + (g.pen ? ' (P)' : '') + (g.og ? ' (ET)' : '') +
-        ' [' + g.s1 + ':' + g.s2 + ']').join(' · ') + '</div>'
+        (g.min ? g.min + "' " : '') + (g.who || '') + (g.pen ? ' (P)' : '') + (g.og ? ' (ET)' : '') +
+        (g.s1 != null ? ' [' + g.s1 + ':' + g.s2 + ']' : '')).join(' · ') + '</div>'
     : '';
   let cls = isLive ? 'is-live' : (isReal ? 'is-real' : (r ? 'has-tip' : ''));
   if (followTeam && (m.heim === followTeam || m.gast === followTeam)) cls += ' followed';
@@ -1331,10 +1350,9 @@ function lineupColHtml(code, ros, note) {
     (ros.formation ? '<span class="formation-badge">' + ros.formation + '</span>' : '') + '</h4>' +
     pitch +
     (note ? '<div style="font-size:10px;color:var(--muted);margin-top:4px;">' + note + '</div>' : '') +
-    (bench.length ? '<div class="bench-title">Bank</div><div class="lineup-list" style="opacity:0.7">' +
-      sortPos(bench).slice(0, 12).map(p => '<span style="margin-right:10px;white-space:nowrap;">' +
-        '<span class="nr">' + (p.jersey || '') + '</span>' + shortName(p) + '</span>').join('') +
-      '</div>' : '') +
+    (bench.length ? '<div class="bench-title">Bank</div><div class="bench-grid">' +
+      sortPos(bench).slice(0, 15).map(p => '<span><span class="nr">' + (p.jersey || '') + '</span>' +
+        shortName(p) + '</span>').join('') + '</div>' : '') +
     '</div>';
 }
 
@@ -1360,8 +1378,12 @@ async function openMatchDetail(matchId) {
     evInfo = espnEventByKey[minKey];
   }
   const goalsHtml = (r && r.goals && r.goals.length)
-    ? '<div style="font-size:12px;color:var(--muted);margin-bottom:10px;">⚽ ' +
-      r.goals.map(g => g.min + "' " + g.who + (g.pen ? ' (P)' : '')).join(' · ') + '</div>' : '';
+    ? '<div style="font-size:13px;margin-bottom:10px;">⚽ ' +
+      r.goals.map(g => {
+        const fl = g.side ? TEAMS[g.side === 'h' ? m.heim : m.gast].flag + ' ' : '';
+        return fl + (g.min ? g.min + "' " : '') + (g.who || '') +
+          (g.pen ? ' (P)' : '') + (g.og ? ' (ET)' : '');
+      }).join(' · ') + '</div>' : '';
   if (!evInfo) {
     body.innerHTML = goalsHtml + '<div class="modal-hint">Offizielle Aufstellung folgt ~1 h vor Anpfiff. ' +
       'Unten eine <strong>aus dem Kader abgeleitete</strong> mögliche Elf.</div>' +
