@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WM 2026 — interaktiver Spielplan</title>
+<style>
+:root {
+  --hkv-blue: #1F4E78;
+  --hkv-light: #EAF1F8;
+  --fifa-purple: #8B5CF6;
+  --bg: #fafbfc;
+  --text: #1a1a1a;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --konf-uefa: #3B82F6;
+  --konf-conmebol: #F59E0B;
+  --konf-concacaf: #10B981;
+  --konf-caf: #EF4444;
+  --konf-afc: #8B5CF6;
+  --konf-ofc: #06B6D4;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: 'Aptos', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+.container { max-width: 1400px; margin: 0 auto; padding: 16px; }
+
+header {
+  background: linear-gradient(135deg, var(--hkv-blue) 0%, var(--fifa-purple) 100%);
+  color: white;
+  padding: 20px 24px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+header h1 { margin: 0; font-size: 24px; font-weight: 700; }
+header .subtitle { font-size: 13px; opacity: 0.9; margin-top: 2px; }
+header .reset {
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+}
+header .reset:hover { background: rgba(255,255,255,0.3); }
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  background: white;
+  padding: 4px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+.tab {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--muted);
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+.tab:hover { background: var(--hkv-light); }
+.tab.active { background: var(--hkv-blue); color: white; }
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ─── GRUPPEN ─── */
+.groups-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 16px;
+}
+.group-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+}
+.group-header {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--hkv-blue);
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--hkv-light);
+}
+.group-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+.group-table th {
+  text-align: left;
+  padding: 4px 6px;
+  font-weight: 600;
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.group-table th.num { text-align: center; width: 28px; }
+.group-table td { padding: 6px; border-top: 1px solid var(--border); }
+.group-table td.num { text-align: center; font-variant-numeric: tabular-nums; }
+.group-table tr.qualified td { background: #ECFDF5; }
+.group-table tr.qualified td:first-child { border-left: 3px solid #10B981; }
+.group-table tr.third-pos td { background: #FEF3C7; }
+.group-table tr.third-pos td:first-child { border-left: 3px solid #F59E0B; }
+.team-cell { display: flex; align-items: center; gap: 6px; }
+.team-flag { font-size: 16px; }
+.team-name { font-size: 13px; font-weight: 500; }
+
+.match-list { display: flex; flex-direction: column; gap: 6px; }
+.match {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 8px;
+  background: #f9fafb;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.match:hover { background: var(--hkv-light); }
+.match .home { text-align: right; }
+.match .away { text-align: left; }
+.match .vs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.match .score-input {
+  width: 32px;
+  height: 24px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  background: white;
+}
+.match .score-input:focus {
+  outline: 2px solid var(--hkv-blue);
+  outline-offset: -1px;
+}
+.match.has-tip { background: #EFF6FF; }
+.match.has-tip:hover { background: #DBEAFE; }
+.match .meta {
+  font-size: 10px;
+  color: var(--muted);
+  text-align: center;
+  grid-column: 1 / -1;
+  margin-top: 2px;
+}
+
+/* ─── KO-BAUM ─── */
+.ko-info {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.ko-info h3 { margin: 0 0 8px; color: var(--hkv-blue); }
+.ko-info p { margin: 6px 0; font-size: 14px; }
+.ko-info ul { margin: 6px 0; padding-left: 20px; font-size: 14px; }
+.ko-tree {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+.ko-round { min-width: 180px; flex-shrink: 0; }
+.ko-round h4 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  margin: 0 0 8px;
+}
+.ko-match {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+.ko-team {
+  padding: 3px 0;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+.ko-team:last-child { border-bottom: none; }
+.ko-team .name { display: flex; align-items: center; gap: 4px; }
+.ko-team.tbd { color: var(--muted); font-style: italic; }
+
+/* ─── SPIELPLAN ─── */
+.day-section {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.day-header {
+  font-weight: 700;
+  color: var(--hkv-blue);
+  margin-bottom: 10px;
+  font-size: 15px;
+}
+.day-matches { display: flex; flex-direction: column; gap: 6px; }
+
+/* ─── STADIEN ─── */
+.stadion-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+.stadion-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+}
+.stadion-card .name { font-weight: 700; color: var(--hkv-blue); }
+.stadion-card .stadt { font-size: 13px; color: var(--muted); margin: 2px 0; }
+.stadion-card .stats {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+}
+.flag-USA::before { content: "🇺🇸"; margin-right: 4px; }
+.flag-MEX::before { content: "🇲🇽"; margin-right: 4px; }
+.flag-CAN::before { content: "🇨🇦"; margin-right: 4px; }
+
+/* Footer */
+footer {
+  margin-top: 24px;
+  padding: 16px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+  border-top: 1px solid var(--border);
+}
+footer a { color: var(--hkv-blue); text-decoration: none; }
+
+@media (max-width: 600px) {
+  .groups-grid { grid-template-columns: 1fr; }
+  header h1 { font-size: 18px; }
+  .tab { padding: 8px; font-size: 12px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div>
+    <h1>⚽ WM 2026 — interaktiver Spielplan</h1>
+    <div class="subtitle">11. Juni – 19. Juli 2026 · USA · Kanada · Mexiko · 48 Teams · 104 Spiele</div>
+  </div>
+  <button class="reset" onclick="resetAllTips()">↻ Alle Tipps zurücksetzen</button>
+</header>
+
+<div class="tabs">
+  <button class="tab active" data-tab="groups">12 Gruppen + Tipps</button>
+  <button class="tab" data-tab="ko">KO-Baum</button>
+  <button class="tab" data-tab="schedule">Spielplan chronologisch</button>
+  <button class="tab" data-tab="stadions">16 Stadien</button>
+</div>
+
+<!-- ─── TAB: GRUPPEN ─── -->
+<div class="tab-content active" id="tab-groups">
+  <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:12px;margin-bottom:16px;font-size:13px;">
+    💡 <strong>Tipp-Modus:</strong> Klicke auf ein Spiel und gib dein Wunschresultat ein. Die Tabelle aktualisiert sich automatisch. Top 2 + die 8 besten Dritten kommen ins Sechzehntelfinale (Grün = qualifiziert, Gelb = möglicher 3. Platz für KO).
+  </div>
+  <div class="groups-grid" id="groups-grid"></div>
+</div>
+
+<!-- ─── TAB: KO-BAUM ─── -->
+<div class="tab-content" id="tab-ko">
+  <div class="ko-info">
+    <h3>Modus der KO-Phase (neu für 2026)</h3>
+    <p>Mit 48 Teams gibt es erstmals ein <strong>Sechzehntelfinale</strong> mit 32 Mannschaften. Es qualifizieren sich:</p>
+    <ul>
+      <li>die <strong>Top 2</strong> jeder der 12 Gruppen (= 24 Teams)</li>
+      <li>die <strong>8 besten Dritten</strong> aller Gruppen (= 8 Teams)</li>
+    </ul>
+    <p style="color:var(--muted);font-size:13px;margin-top:12px;">📅 Sechzehntelfinale 28. Juni – 3. Juli · Achtelfinale 4. – 7. Juli · Viertelfinale 9. – 11. Juli · Halbfinale 14. & 15. Juli · Finale 19. Juli (MetLife Stadium, New Jersey)</p>
+  </div>
+  <div class="ko-tree" id="ko-tree"></div>
+</div>
+
+<!-- ─── TAB: SPIELPLAN ─── -->
+<div class="tab-content" id="tab-schedule">
+  <div id="schedule-list"></div>
+</div>
+
+<!-- ─── TAB: STADIEN ─── -->
+<div class="tab-content" id="tab-stadions">
+  <div class="stadion-grid" id="stadion-grid"></div>
+</div>
+
+<footer>
+  © 2026 Samuel Mollet · HKV Aarau · realisiert mit Claude (Anthropic) · Datenquellen: FIFA, UEFA, Wikipedia
+</footer>
+
+</div>
+
+<script>
+// ═══ DATEN ═══
+const TEAMS = {"MEX": {"name": "Mexiko", "flag": "🇲🇽", "konf": "CONCACAF", "gruppe": "A"}, "RSA": {"name": "Südafrika", "flag": "🇿🇦", "konf": "CAF", "gruppe": "A"}, "KOR": {"name": "Südkorea", "flag": "🇰🇷", "konf": "AFC", "gruppe": "A"}, "CZE": {"name": "Tschechien", "flag": "🇨🇿", "konf": "UEFA", "gruppe": "A"}, "CAN": {"name": "Kanada", "flag": "🇨🇦", "konf": "CONCACAF", "gruppe": "B"}, "BIH": {"name": "Bosnien-Herz.", "flag": "🇧🇦", "konf": "UEFA", "gruppe": "B"}, "QAT": {"name": "Katar", "flag": "🇶🇦", "konf": "AFC", "gruppe": "B"}, "SUI": {"name": "Schweiz", "flag": "🇨🇭", "konf": "UEFA", "gruppe": "B"}, "BRA": {"name": "Brasilien", "flag": "🇧🇷", "konf": "CONMEBOL", "gruppe": "C"}, "MAR": {"name": "Marokko", "flag": "🇲🇦", "konf": "CAF", "gruppe": "C"}, "HAI": {"name": "Haiti", "flag": "🇭🇹", "konf": "CONCACAF", "gruppe": "C"}, "SCO": {"name": "Schottland", "flag": "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "konf": "UEFA", "gruppe": "C"}, "USA": {"name": "USA", "flag": "🇺🇸", "konf": "CONCACAF", "gruppe": "D"}, "PAR": {"name": "Paraguay", "flag": "🇵🇾", "konf": "CONMEBOL", "gruppe": "D"}, "AUS": {"name": "Australien", "flag": "🇦🇺", "konf": "AFC", "gruppe": "D"}, "TUR": {"name": "Türkei", "flag": "🇹🇷", "konf": "UEFA", "gruppe": "D"}, "GER": {"name": "Deutschland", "flag": "🇩🇪", "konf": "UEFA", "gruppe": "E"}, "CUW": {"name": "Curaçao", "flag": "🇨🇼", "konf": "CONCACAF", "gruppe": "E"}, "CIV": {"name": "Elfenbeinküste", "flag": "🇨🇮", "konf": "CAF", "gruppe": "E"}, "ECU": {"name": "Ecuador", "flag": "🇪🇨", "konf": "CONMEBOL", "gruppe": "E"}, "NED": {"name": "Niederlande", "flag": "🇳🇱", "konf": "UEFA", "gruppe": "F"}, "JPN": {"name": "Japan", "flag": "🇯🇵", "konf": "AFC", "gruppe": "F"}, "SWE": {"name": "Schweden", "flag": "🇸🇪", "konf": "UEFA", "gruppe": "F"}, "TUN": {"name": "Tunesien", "flag": "🇹🇳", "konf": "CAF", "gruppe": "F"}, "BEL": {"name": "Belgien", "flag": "🇧🇪", "konf": "UEFA", "gruppe": "G"}, "EGY": {"name": "Ägypten", "flag": "🇪🇬", "konf": "CAF", "gruppe": "G"}, "IRN": {"name": "Iran", "flag": "🇮🇷", "konf": "AFC", "gruppe": "G"}, "NZL": {"name": "Neuseeland", "flag": "🇳🇿", "konf": "OFC", "gruppe": "G"}, "ESP": {"name": "Spanien", "flag": "🇪🇸", "konf": "UEFA", "gruppe": "H"}, "CPV": {"name": "Kap Verde", "flag": "🇨🇻", "konf": "CAF", "gruppe": "H"}, "KSA": {"name": "Saudi-Arabien", "flag": "🇸🇦", "konf": "AFC", "gruppe": "H"}, "URU": {"name": "Uruguay", "flag": "🇺🇾", "konf": "CONMEBOL", "gruppe": "H"}, "FRA": {"name": "Frankreich", "flag": "🇫🇷", "konf": "UEFA", "gruppe": "I"}, "SEN": {"name": "Senegal", "flag": "🇸🇳", "konf": "CAF", "gruppe": "I"}, "IRQ": {"name": "Irak", "flag": "🇮🇶", "konf": "AFC", "gruppe": "I"}, "NOR": {"name": "Norwegen", "flag": "🇳🇴", "konf": "UEFA", "gruppe": "I"}, "ARG": {"name": "Argentinien", "flag": "🇦🇷", "konf": "CONMEBOL", "gruppe": "J"}, "ALG": {"name": "Algerien", "flag": "🇩🇿", "konf": "CAF", "gruppe": "J"}, "AUT": {"name": "Österreich", "flag": "🇦🇹", "konf": "UEFA", "gruppe": "J"}, "JOR": {"name": "Jordanien", "flag": "🇯🇴", "konf": "AFC", "gruppe": "J"}, "POR": {"name": "Portugal", "flag": "🇵🇹", "konf": "UEFA", "gruppe": "K"}, "COD": {"name": "DR Kongo", "flag": "🇨🇩", "konf": "CAF", "gruppe": "K"}, "UZB": {"name": "Usbekistan", "flag": "🇺🇿", "konf": "AFC", "gruppe": "K"}, "COL": {"name": "Kolumbien", "flag": "🇨🇴", "konf": "CONMEBOL", "gruppe": "K"}, "ENG": {"name": "England", "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "konf": "UEFA", "gruppe": "L"}, "CRO": {"name": "Kroatien", "flag": "🇭🇷", "konf": "UEFA", "gruppe": "L"}, "GHA": {"name": "Ghana", "flag": "🇬🇭", "konf": "CAF", "gruppe": "L"}, "PAN": {"name": "Panama", "flag": "🇵🇦", "konf": "CONCACAF", "gruppe": "L"}};
+const MATCHES = [{"id": "A1", "datum": "2026-06-11", "uhrzeit": "21:00", "heim": "MEX", "gast": "RSA", "stadion": "azt", "spieltag": 1}, {"id": "D1", "datum": "2026-06-12", "uhrzeit": "19:00", "heim": "USA", "gast": "PAR", "stadion": "los", "spieltag": 1}, {"id": "B1", "datum": "2026-06-12", "uhrzeit": "22:00", "heim": "CAN", "gast": "BIH", "stadion": "tor", "spieltag": 1}, {"id": "A2", "datum": "2026-06-13", "uhrzeit": "19:00", "heim": "KOR", "gast": "CZE", "stadion": "hou", "spieltag": 1}, {"id": "C1", "datum": "2026-06-13", "uhrzeit": "21:00", "heim": "BRA", "gast": "MAR", "stadion": "mia", "spieltag": 1}, {"id": "D2", "datum": "2026-06-13", "uhrzeit": "22:00", "heim": "AUS", "gast": "TUR", "stadion": "sea", "spieltag": 1}, {"id": "B2", "datum": "2026-06-13", "uhrzeit": "01:00", "heim": "QAT", "gast": "SUI", "stadion": "van", "spieltag": 1}, {"id": "C2", "datum": "2026-06-14", "uhrzeit": "19:00", "heim": "HAI", "gast": "SCO", "stadion": "kan", "spieltag": 1}, {"id": "E1", "datum": "2026-06-14", "uhrzeit": "19:00", "heim": "GER", "gast": "CUW", "stadion": "hou", "spieltag": 1}, {"id": "E2", "datum": "2026-06-14", "uhrzeit": "22:00", "heim": "CIV", "gast": "ECU", "stadion": "phi", "spieltag": 1}, {"id": "F1", "datum": "2026-06-14", "uhrzeit": "01:00", "heim": "NED", "gast": "JPN", "stadion": "los", "spieltag": 1}, {"id": "F2", "datum": "2026-06-15", "uhrzeit": "19:00", "heim": "SWE", "gast": "TUN", "stadion": "bos", "spieltag": 1}, {"id": "G1", "datum": "2026-06-15", "uhrzeit": "21:00", "heim": "BEL", "gast": "EGY", "stadion": "atl", "spieltag": 1}, {"id": "G2", "datum": "2026-06-15", "uhrzeit": "22:00", "heim": "IRN", "gast": "NZL", "stadion": "nyc", "spieltag": 1}, {"id": "H1", "datum": "2026-06-16", "uhrzeit": "19:00", "heim": "ESP", "gast": "CPV", "stadion": "dal", "spieltag": 1}, {"id": "H2", "datum": "2026-06-16", "uhrzeit": "22:00", "heim": "KSA", "gast": "URU", "stadion": "kan", "spieltag": 1}, {"id": "I1", "datum": "2026-06-16", "uhrzeit": "01:00", "heim": "FRA", "gast": "SEN", "stadion": "atl", "spieltag": 1}, {"id": "I2", "datum": "2026-06-17", "uhrzeit": "19:00", "heim": "IRQ", "gast": "NOR", "stadion": "sfo", "spieltag": 1}, {"id": "J1", "datum": "2026-06-17", "uhrzeit": "21:00", "heim": "ARG", "gast": "ALG", "stadion": "mia", "spieltag": 1}, {"id": "J2", "datum": "2026-06-17", "uhrzeit": "22:00", "heim": "AUT", "gast": "JOR", "stadion": "nyc", "spieltag": 1}, {"id": "K1", "datum": "2026-06-17", "uhrzeit": "01:00", "heim": "POR", "gast": "COD", "stadion": "sea", "spieltag": 1}, {"id": "K2", "datum": "2026-06-17", "uhrzeit": "04:00", "heim": "UZB", "gast": "COL", "stadion": "los", "spieltag": 1}, {"id": "L1", "datum": "2026-06-17", "uhrzeit": "06:00", "heim": "ENG", "gast": "CRO", "stadion": "bos", "spieltag": 1}, {"id": "L2", "datum": "2026-06-17", "uhrzeit": "06:00", "heim": "GHA", "gast": "PAN", "stadion": "phi", "spieltag": 1}, {"id": "A3", "datum": "2026-06-18", "uhrzeit": "19:00", "heim": "MEX", "gast": "KOR", "stadion": "gua", "spieltag": 2}, {"id": "A4", "datum": "2026-06-18", "uhrzeit": "22:00", "heim": "RSA", "gast": "CZE", "stadion": "phi", "spieltag": 2}, {"id": "B3", "datum": "2026-06-18", "uhrzeit": "21:00", "heim": "CAN", "gast": "QAT", "stadion": "van", "spieltag": 2}, {"id": "B4", "datum": "2026-06-19", "uhrzeit": "01:00", "heim": "BIH", "gast": "SUI", "stadion": "tor", "spieltag": 2}, {"id": "C3", "datum": "2026-06-19", "uhrzeit": "19:00", "heim": "BRA", "gast": "HAI", "stadion": "mia", "spieltag": 2}, {"id": "C4", "datum": "2026-06-19", "uhrzeit": "22:00", "heim": "MAR", "gast": "SCO", "stadion": "bos", "spieltag": 2}, {"id": "D3", "datum": "2026-06-19", "uhrzeit": "01:00", "heim": "USA", "gast": "AUS", "stadion": "sea", "spieltag": 2}, {"id": "D4", "datum": "2026-06-19", "uhrzeit": "21:00", "heim": "PAR", "gast": "TUR", "stadion": "kan", "spieltag": 2}, {"id": "E3", "datum": "2026-06-20", "uhrzeit": "19:00", "heim": "GER", "gast": "CIV", "stadion": "tor", "spieltag": 2}, {"id": "E4", "datum": "2026-06-20", "uhrzeit": "22:00", "heim": "CUW", "gast": "ECU", "stadion": "atl", "spieltag": 2}, {"id": "F3", "datum": "2026-06-20", "uhrzeit": "01:00", "heim": "NED", "gast": "SWE", "stadion": "los", "spieltag": 2}, {"id": "F4", "datum": "2026-06-21", "uhrzeit": "19:00", "heim": "JPN", "gast": "TUN", "stadion": "nyc", "spieltag": 2}, {"id": "G3", "datum": "2026-06-21", "uhrzeit": "21:00", "heim": "BEL", "gast": "IRN", "stadion": "phi", "spieltag": 2}, {"id": "G4", "datum": "2026-06-21", "uhrzeit": "22:00", "heim": "EGY", "gast": "NZL", "stadion": "dal", "spieltag": 2}, {"id": "H3", "datum": "2026-06-22", "uhrzeit": "19:00", "heim": "ESP", "gast": "KSA", "stadion": "atl", "spieltag": 2}, {"id": "H4", "datum": "2026-06-22", "uhrzeit": "22:00", "heim": "CPV", "gast": "URU", "stadion": "mty", "spieltag": 2}, {"id": "I3", "datum": "2026-06-22", "uhrzeit": "01:00", "heim": "FRA", "gast": "IRQ", "stadion": "sfo", "spieltag": 2}, {"id": "I4", "datum": "2026-06-23", "uhrzeit": "19:00", "heim": "SEN", "gast": "NOR", "stadion": "hou", "spieltag": 2}, {"id": "J3", "datum": "2026-06-23", "uhrzeit": "21:00", "heim": "ARG", "gast": "AUT", "stadion": "los", "spieltag": 2}, {"id": "J4", "datum": "2026-06-23", "uhrzeit": "22:00", "heim": "ALG", "gast": "JOR", "stadion": "kan", "spieltag": 2}, {"id": "K3", "datum": "2026-06-23", "uhrzeit": "01:00", "heim": "POR", "gast": "UZB", "stadion": "nyc", "spieltag": 2}, {"id": "K4", "datum": "2026-06-24", "uhrzeit": "04:00", "heim": "COD", "gast": "COL", "stadion": "mia", "spieltag": 2}, {"id": "L3", "datum": "2026-06-24", "uhrzeit": "21:00", "heim": "ENG", "gast": "GHA", "stadion": "tor", "spieltag": 2}, {"id": "L4", "datum": "2026-06-24", "uhrzeit": "22:00", "heim": "CRO", "gast": "PAN", "stadion": "atl", "spieltag": 2}, {"id": "A5", "datum": "2026-06-24", "uhrzeit": "22:00", "heim": "CZE", "gast": "MEX", "stadion": "azt", "spieltag": 3}, {"id": "A6", "datum": "2026-06-24", "uhrzeit": "22:00", "heim": "KOR", "gast": "RSA", "stadion": "los", "spieltag": 3}, {"id": "B5", "datum": "2026-06-24", "uhrzeit": "22:00", "heim": "SUI", "gast": "CAN", "stadion": "van", "spieltag": 3}, {"id": "B6", "datum": "2026-06-24", "uhrzeit": "22:00", "heim": "QAT", "gast": "BIH", "stadion": "sea", "spieltag": 3}, {"id": "C5", "datum": "2026-06-25", "uhrzeit": "19:00", "heim": "SCO", "gast": "BRA", "stadion": "kan", "spieltag": 3}, {"id": "C6", "datum": "2026-06-25", "uhrzeit": "19:00", "heim": "HAI", "gast": "MAR", "stadion": "mty", "spieltag": 3}, {"id": "D5", "datum": "2026-06-25", "uhrzeit": "22:00", "heim": "TUR", "gast": "USA", "stadion": "los", "spieltag": 3}, {"id": "D6", "datum": "2026-06-25", "uhrzeit": "22:00", "heim": "PAR", "gast": "AUS", "stadion": "bos", "spieltag": 3}, {"id": "E5", "datum": "2026-06-25", "uhrzeit": "22:00", "heim": "ECU", "gast": "GER", "stadion": "nyc", "spieltag": 3}, {"id": "E6", "datum": "2026-06-25", "uhrzeit": "22:00", "heim": "CUW", "gast": "CIV", "stadion": "phi", "spieltag": 3}, {"id": "F5", "datum": "2026-06-26", "uhrzeit": "19:00", "heim": "TUN", "gast": "NED", "stadion": "atl", "spieltag": 3}, {"id": "F6", "datum": "2026-06-26", "uhrzeit": "19:00", "heim": "JPN", "gast": "SWE", "stadion": "sfo", "spieltag": 3}, {"id": "G5", "datum": "2026-06-26", "uhrzeit": "22:00", "heim": "NZL", "gast": "BEL", "stadion": "tor", "spieltag": 3}, {"id": "G6", "datum": "2026-06-26", "uhrzeit": "22:00", "heim": "EGY", "gast": "IRN", "stadion": "dal", "spieltag": 3}, {"id": "H5", "datum": "2026-06-26", "uhrzeit": "22:00", "heim": "URU", "gast": "ESP", "stadion": "atl", "spieltag": 3}, {"id": "H6", "datum": "2026-06-26", "uhrzeit": "22:00", "heim": "KSA", "gast": "CPV", "stadion": "hou", "spieltag": 3}, {"id": "I5", "datum": "2026-06-27", "uhrzeit": "19:00", "heim": "NOR", "gast": "FRA", "stadion": "kan", "spieltag": 3}, {"id": "I6", "datum": "2026-06-27", "uhrzeit": "19:00", "heim": "SEN", "gast": "IRQ", "stadion": "mia", "spieltag": 3}, {"id": "J5", "datum": "2026-06-27", "uhrzeit": "22:00", "heim": "JOR", "gast": "ARG", "stadion": "los", "spieltag": 3}, {"id": "J6", "datum": "2026-06-27", "uhrzeit": "22:00", "heim": "AUT", "gast": "ALG", "stadion": "phi", "spieltag": 3}, {"id": "K5", "datum": "2026-06-27", "uhrzeit": "22:00", "heim": "COL", "gast": "POR", "stadion": "nyc", "spieltag": 3}, {"id": "K6", "datum": "2026-06-27", "uhrzeit": "22:00", "heim": "COD", "gast": "UZB", "stadion": "sea", "spieltag": 3}, {"id": "L5", "datum": "2026-06-27", "uhrzeit": "22:00", "heim": "PAN", "gast": "ENG", "stadion": "atl", "spieltag": 3}, {"id": "L6", "datum": "2026-06-27", "uhrzeit": "22:00", "heim": "GHA", "gast": "CRO", "stadion": "dal", "spieltag": 3}];
+const STADIONS = {"atl": {"name": "Atlanta-Stadion", "stadt": "Atlanta", "land": "USA", "kap": 75000, "lat": 33.7553, "lng": -84.4006, "spiele": 8}, "bos": {"name": "Boston-Stadion", "stadt": "Foxborough", "land": "USA", "kap": 65000, "lat": 42.0909, "lng": -71.2643, "spiele": 7}, "dal": {"name": "Dallas-Stadion", "stadt": "Arlington", "land": "USA", "kap": 94000, "lat": 32.7475, "lng": -97.0945, "spiele": 9}, "hou": {"name": "Houston-Stadion", "stadt": "Houston", "land": "USA", "kap": 72000, "lat": 29.6847, "lng": -95.4108, "spiele": 7}, "kan": {"name": "Kansas City-Stadion", "stadt": "Kansas City", "land": "USA", "kap": 76000, "lat": 39.0489, "lng": -94.4839, "spiele": 6}, "los": {"name": "Los Angeles-Stadion", "stadt": "Inglewood", "land": "USA", "kap": 70000, "lat": 33.9535, "lng": -118.3392, "spiele": 8}, "mia": {"name": "Miami-Stadion", "stadt": "Miami Gardens", "land": "USA", "kap": 65000, "lat": 25.958, "lng": -80.2389, "spiele": 7}, "nyc": {"name": "New York/New Jersey-Stadion", "stadt": "East Rutherford", "land": "USA", "kap": 82500, "lat": 40.8135, "lng": -74.0744, "spiele": 8}, "phi": {"name": "Philadelphia-Stadion", "stadt": "Philadelphia", "land": "USA", "kap": 69000, "lat": 39.9008, "lng": -75.1675, "spiele": 6}, "sfo": {"name": "San Francisco-Stadion", "stadt": "Santa Clara", "land": "USA", "kap": 70000, "lat": 37.403, "lng": -121.97, "spiele": 6}, "sea": {"name": "Seattle-Stadion", "stadt": "Seattle", "land": "USA", "kap": 69000, "lat": 47.5952, "lng": -122.3316, "spiele": 6}, "azt": {"name": "Aztekenstadion", "stadt": "Mexiko-Stadt", "land": "MEX", "kap": 87000, "lat": 19.3029, "lng": -99.1505, "spiele": 5}, "gua": {"name": "Guadalajara-Stadion", "stadt": "Guadalajara", "land": "MEX", "kap": 49000, "lat": 20.6818, "lng": -103.4625, "spiele": 4}, "mty": {"name": "Monterrey-Stadion", "stadt": "Monterrey", "land": "MEX", "kap": 53500, "lat": 25.6692, "lng": -100.2444, "spiele": 4}, "tor": {"name": "Toronto-Stadion", "stadt": "Toronto", "land": "CAN", "kap": 45000, "lat": 43.6332, "lng": -79.4185, "spiele": 6}, "van": {"name": "Vancouver-Stadion", "stadt": "Vancouver", "land": "CAN", "kap": 54000, "lat": 49.2767, "lng": -123.1119, "spiele": 7}};
+const GROUPS = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
+
+// ═══ STATE: User-Tipps ═══
+let tips = {};  // matchId → {home: n, away: n}
+try {
+  const saved = localStorage.getItem('wm2026_tips');
+  if (saved) tips = JSON.parse(saved);
+} catch (e) { console.warn('localStorage nicht verfügbar', e); }
+
+function saveTips() {
+  try { localStorage.setItem('wm2026_tips', JSON.stringify(tips)); }
+  catch (e) { /* silent */ }
+}
+
+function resetAllTips() {
+  if (!confirm('Wirklich alle Tipps zurücksetzen?')) return;
+  tips = {};
+  saveTips();
+  renderAll();
+}
+
+// ═══ TABELLENBERECHNUNG ═══
+function computeTable(group) {
+  const teams = Object.entries(TEAMS).filter(([_, t]) => t.gruppe === group).map(([code]) => code);
+  const stats = {};
+  teams.forEach(c => stats[c] = {
+    code: c, sp: 0, s: 0, u: 0, n: 0, t: 0, gt: 0, td: 0, pkt: 0
+  });
+  
+  MATCHES.filter(m => TEAMS[m.heim].gruppe === group).forEach(m => {
+    const tip = tips[m.id];
+    if (!tip) return;
+    const h = stats[m.heim], a = stats[m.gast];
+    h.sp++; a.sp++;
+    h.t += tip.home; h.gt += tip.away;
+    a.t += tip.away; a.gt += tip.home;
+    if (tip.home > tip.away) { h.s++; a.n++; h.pkt += 3; }
+    else if (tip.home < tip.away) { a.s++; h.n++; a.pkt += 3; }
+    else { h.u++; a.u++; h.pkt++; a.pkt++; }
+  });
+  
+  return Object.values(stats).map(s => ({...s, td: s.t - s.gt})).sort((a, b) => {
+    if (b.pkt !== a.pkt) return b.pkt - a.pkt;
+    if (b.td !== a.td) return b.td - a.td;
+    return b.t - a.t;
+  });
+}
+
+// Sammle alle Dritten und ermittle die 8 besten
+function compute8BestThirds() {
+  const thirds = GROUPS.map(g => {
+    const table = computeTable(g);
+    return table.length >= 3 ? {...table[2], gruppe: g} : null;
+  }).filter(t => t && t.sp > 0);
+  thirds.sort((a, b) => {
+    if (b.pkt !== a.pkt) return b.pkt - a.pkt;
+    if (b.td !== a.td) return b.td - a.td;
+    return b.t - a.t;
+  });
+  return thirds.slice(0, 8).map(t => t.code);
+}
+
+// ═══ GRUPPEN-TAB ═══
+function renderGroups() {
+  const grid = document.getElementById('groups-grid');
+  const best8Thirds = new Set(compute8BestThirds());
+  
+  grid.innerHTML = GROUPS.map(g => {
+    const table = computeTable(g);
+    const matches = MATCHES.filter(m => TEAMS[m.heim].gruppe === g)
+                           .sort((a, b) => a.spieltag - b.spieltag || a.datum.localeCompare(b.datum));
+    
+    const tableHtml = `
+      <table class="group-table">
+        <thead>
+          <tr>
+            <th class="num">#</th><th>Team</th>
+            <th class="num">SP</th><th class="num">S</th><th class="num">U</th><th class="num">N</th>
+            <th class="num">TD</th><th class="num">Pkt</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${table.map((t, i) => {
+            const cls = i < 2 ? 'qualified' : (i === 2 && best8Thirds.has(t.code) ? 'third-pos' : '');
+            return `<tr class="${cls}">
+              <td class="num">${i + 1}</td>
+              <td><span class="team-cell"><span class="team-flag">${TEAMS[t.code].flag}</span><span class="team-name">${TEAMS[t.code].name}</span></span></td>
+              <td class="num">${t.sp}</td><td class="num">${t.s}</td><td class="num">${t.u}</td><td class="num">${t.n}</td>
+              <td class="num">${t.td > 0 ? '+' : ''}${t.td}</td><td class="num"><strong>${t.pkt}</strong></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    `;
+    
+    const matchesHtml = matches.map(m => {
+      const tip = tips[m.id] || {home: '', away: ''};
+      const hasTip = tips[m.id] !== undefined;
+      const stadion = STADIONS[m.stadion];
+      return `
+        <div class="match ${hasTip ? 'has-tip' : ''}">
+          <div class="home">${TEAMS[m.heim].name} <span class="team-flag">${TEAMS[m.heim].flag}</span></div>
+          <div class="vs">
+            <input class="score-input" type="number" min="0" max="99" value="${tip.home}" 
+                   data-match="${m.id}" data-side="home" onchange="onTipChange(event)">
+            <span>:</span>
+            <input class="score-input" type="number" min="0" max="99" value="${tip.away}" 
+                   data-match="${m.id}" data-side="away" onchange="onTipChange(event)">
+          </div>
+          <div class="away"><span class="team-flag">${TEAMS[m.gast].flag}</span> ${TEAMS[m.gast].name}</div>
+          <div class="meta">${formatDate(m.datum)} · ${m.uhrzeit} · ${stadion.stadt} · Spieltag ${m.spieltag}</div>
+        </div>
+      `;
+    }).join('');
+    
+    return `
+      <div class="group-card">
+        <div class="group-header">Gruppe ${g}</div>
+        ${tableHtml}
+        <div class="match-list">${matchesHtml}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function onTipChange(e) {
+  const matchId = e.target.dataset.match;
+  const side = e.target.dataset.side;
+  const value = e.target.value === '' ? null : parseInt(e.target.value, 10);
+  
+  if (!tips[matchId]) tips[matchId] = {home: null, away: null};
+  tips[matchId][side] = value;
+  
+  // Wenn beide gesetzt: speichern. Wenn einer leer: Eintrag löschen.
+  if (tips[matchId].home === null && tips[matchId].away === null) {
+    delete tips[matchId];
+  }
+  
+  saveTips();
+  renderAll();
+}
+
+// ═══ KO-BAUM ═══
+function renderKO() {
+  const tree = document.getElementById('ko-tree');
+  
+  // Sammle qualifizierte Teams pro Gruppe
+  const quals = {};  // gruppe → [1.Platz, 2.Platz]
+  GROUPS.forEach(g => {
+    const t = computeTable(g);
+    quals[g] = [t[0]?.code, t[1]?.code];
+  });
+  const thirds = compute8BestThirds();
+  
+  // Sechzehntelfinale: 16 Spiele = 32 Teams
+  // Vereinfachte Paarungs-Logik (echte FIFA-Paarungen sind komplexer mit Pre-Bracket)
+  const placeholder = (label) => `<div class="ko-team tbd"><span class="name">⏳ ${label}</span><span></span></div>`;
+  const teamRow = (code) => code ?
+    `<div class="ko-team"><span class="name"><span class="team-flag">${TEAMS[code].flag}</span>${TEAMS[code].name}</span><span style="color:var(--muted);font-size:10px;">${TEAMS[code].gruppe}</span></div>` :
+    placeholder('TBD');
+  
+  // Stand der Tipps
+  const tippedMatches = Object.keys(tips).length;
+  const totalMatches = MATCHES.length;
+  
+  let r32Html = '<h4>Sechzehntelfinale (32 Teams)</h4>';
+  r32Html += `<div style="font-size:11px;color:var(--muted);margin-bottom:8px;">${tippedMatches}/${totalMatches} Gruppenspiele getippt</div>`;
+  
+  // Liste alle qualifizierten Teams auf
+  const allQualified = [];
+  GROUPS.forEach(g => {
+    if (quals[g][0]) allQualified.push({code: quals[g][0], pos: '1.', gruppe: g});
+    if (quals[g][1]) allQualified.push({code: quals[g][1], pos: '2.', gruppe: g});
+  });
+  thirds.forEach(code => {
+    allQualified.push({code, pos: '3.', gruppe: TEAMS[code].gruppe});
+  });
+  
+  if (allQualified.length === 0) {
+    r32Html += '<div style="background:#FEF3C7;padding:12px;border-radius:6px;font-size:13px;">💡 Trage Resultate in der Gruppenphase ein, damit hier die qualifizierten Teams angezeigt werden.</div>';
+  } else {
+    r32Html += '<div style="display:flex;flex-direction:column;gap:4px;">';
+    allQualified.forEach(t => {
+      r32Html += `<div class="ko-match" style="padding:6px 8px;">
+        <span class="team-flag">${TEAMS[t.code].flag}</span>
+        <span style="margin-left:6px;">${TEAMS[t.code].name}</span>
+        <span style="float:right;color:var(--muted);font-size:10px;">${t.pos} Gruppe ${t.gruppe}</span>
+      </div>`;
+    });
+    r32Html += '</div>';
+    
+    if (allQualified.length < 32) {
+      r32Html += `<div style="margin-top:8px;font-size:11px;color:var(--muted);">${32 - allQualified.length} weitere Plätze offen</div>`;
+    }
+  }
+  
+  tree.innerHTML = `
+    <div class="ko-round">${r32Html}</div>
+    <div class="ko-round">
+      <h4>Achtelfinale</h4>
+      <div class="ko-match">${placeholder('aus 16tel')}${placeholder('aus 16tel')}</div>
+      <div style="font-size:11px;color:var(--muted);">4. – 7. Juli<br>8 Spiele</div>
+    </div>
+    <div class="ko-round">
+      <h4>Viertelfinale</h4>
+      <div class="ko-match">${placeholder('—')}${placeholder('—')}</div>
+      <div style="font-size:11px;color:var(--muted);">9. – 11. Juli<br>4 Spiele</div>
+    </div>
+    <div class="ko-round">
+      <h4>Halbfinale</h4>
+      <div class="ko-match">${placeholder('—')}${placeholder('—')}</div>
+      <div style="font-size:11px;color:var(--muted);">14. & 15. Juli<br>2 Spiele</div>
+    </div>
+    <div class="ko-round">
+      <h4>Finale 🏆</h4>
+      <div class="ko-match" style="border:2px solid #FFD700;">
+        ${placeholder('Sieger HF1')}${placeholder('Sieger HF2')}
+      </div>
+      <div style="font-size:11px;color:var(--muted);">19. Juli · MetLife Stadium</div>
+    </div>
+  `;
+}
+
+// ═══ SPIELPLAN CHRONOLOGISCH ═══
+function renderSchedule() {
+  const list = document.getElementById('schedule-list');
+  const byDate = {};
+  MATCHES.forEach(m => {
+    if (!byDate[m.datum]) byDate[m.datum] = [];
+    byDate[m.datum].push(m);
+  });
+  const dates = Object.keys(byDate).sort();
+  list.innerHTML = dates.map(d => {
+    const sorted = byDate[d].sort((a, b) => a.uhrzeit.localeCompare(b.uhrzeit));
+    return `
+      <div class="day-section">
+        <div class="day-header">${formatDate(d, true)}</div>
+        <div class="day-matches">
+          ${sorted.map(m => {
+            const tip = tips[m.id];
+            const stadion = STADIONS[m.stadion];
+            const scoreText = tip ? `<strong>${tip.home} : ${tip.away}</strong>` : '– : –';
+            return `<div class="match ${tip ? 'has-tip' : ''}">
+              <div class="home">${TEAMS[m.heim].name} <span class="team-flag">${TEAMS[m.heim].flag}</span></div>
+              <div class="vs">${scoreText}</div>
+              <div class="away"><span class="team-flag">${TEAMS[m.gast].flag}</span> ${TEAMS[m.gast].name}</div>
+              <div class="meta">${m.uhrzeit} · ${stadion.name}, ${stadion.stadt} · Gruppe ${TEAMS[m.heim].gruppe} · Spieltag ${m.spieltag}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ═══ STADIEN ═══
+function renderStadions() {
+  const grid = document.getElementById('stadion-grid');
+  const sorted = Object.entries(STADIONS).sort((a, b) => b[1].spiele - a[1].spiele);
+  grid.innerHTML = sorted.map(([id, s]) => `
+    <div class="stadion-card">
+      <div class="name">${s.name}</div>
+      <div class="stadt flag-${s.land}">${s.stadt}, ${s.land}</div>
+      <div class="stats">
+        <span>👥 ${s.kap.toLocaleString('de-CH')} Plätze</span>
+        <span>⚽ ${s.spiele} Spiele</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ═══ HELPERS ═══
+function formatDate(iso, long = false) {
+  const d = new Date(iso + 'T12:00:00');
+  const opts = long
+    ? { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }
+    : { weekday: 'short', day: 'numeric', month: 'short' };
+  return d.toLocaleDateString('de-CH', opts);
+}
+
+// ═══ TABS ═══
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ═══ INIT ═══
+function renderAll() {
+  renderGroups();
+  renderKO();
+  renderSchedule();
+  renderStadions();
+}
+
+renderAll();
+</script>
+
+</body>
+</html>
