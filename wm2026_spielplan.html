@@ -111,6 +111,9 @@ header .reset:hover { background: rgba(255,255,255,0.3); }
   border-radius: 4px; cursor: pointer; }
 .bk-team:hover { background: var(--hkv-light); }
 .bk-team.winner { background: #ECFDF5; font-weight: 700; }
+.bk-team.real-winner { background: #A7F3D0; cursor: default; }
+.bk-score { text-align: center; font-size: 10px; color: var(--real-green);
+  font-weight: 700; margin-top: 2px; }
 .bk-team.tbd { color: var(--muted); font-style: italic; cursor: default; font-size: 10.5px; }
 .bk-team .nm { display: flex; align-items: center; gap: 4px; overflow: hidden; white-space: nowrap; }
 .bk-info { font-size: 9px; color: var(--muted); text-align: center; margin-top: 2px; }
@@ -351,6 +354,35 @@ let espnTeamIds = {};     // Teamcode → ESPN-Team-ID (für Kader-Abruf)
 let espnEventByKey = {};  // minKey → {id, dateIso} (für Aufstellungs-Abruf)
 let rosterCache = {};     // Teamcode → Roster-Daten
 let summaryCache = {};    // eventId → Summary-Daten
+let koLiveMatches = {};   // minKey → dynamisches KO-Spiel aus den Live-Quellen
+let koWinners = {};       // minKey → Siegercode (echte KO-Resultate)
+
+// Alle Gruppenpaarungen (zur Erkennung von KO-Spielen in den Live-Daten)
+const GROUP_PAIRS = new Set();
+
+// KO-Runde anhand des Datums bestimmen
+function roundForDate(iso) {
+  if (!iso) return 'KO-Runde';
+  if (iso <= '2026-07-03') return 'Sechzehntelfinale';
+  if (iso <= '2026-07-07') return 'Achtelfinale';
+  if (iso <= '2026-07-11') return 'Viertelfinale';
+  if (iso <= '2026-07-15') return 'Halbfinale';
+  if (iso === '2026-07-18') return 'Spiel um Platz 3';
+  if (iso === '2026-07-19') return 'Finale';
+  return 'KO-Runde';
+}
+
+function registerKoMatch(minKey, heim, gast, kickoff, venue) {
+  const dateIso = kickoff ? new Date(kickoff).toLocaleDateString('sv-SE') : null;
+  if (!dateIso || dateIso < '2026-06-28') return;
+  const cur = koLiveMatches[minKey] || {};
+  koLiveMatches[minKey] = {
+    id: 'ko_' + minKey, heim, gast,
+    kickoff: kickoff || cur.kickoff || null,
+    venue: venue || cur.venue || '',
+    runde: roundForDate(dateIso),
+  };
+}
 let followTeam = null;    // ⭐ hervorgehobenes Team
 let oldbShortcut = null;
 
@@ -435,14 +467,7 @@ function simulateAll() {
   r32.forEach(m => {
     if (m.teamA && m.teamB) koPicks[m.id] = eloWin(m.teamA, m.teamB);
   });
-  const pairs = {
-    af_1: ['r32_1','r32_2'], af_2: ['r32_3','r32_4'], af_3: ['r32_5','r32_6'], af_4: ['r32_7','r32_8'],
-    af_5: ['r32_9','r32_10'], af_6: ['r32_11','r32_12'], af_7: ['r32_13','r32_14'], af_8: ['r32_15','r32_16'],
-    vf_1: ['af_1','af_2'], vf_2: ['af_3','af_4'], vf_3: ['af_5','af_6'], vf_4: ['af_7','af_8'],
-    hf_1: ['vf_1','vf_2'], hf_2: ['vf_3','vf_4'],
-    final: ['hf_1','hf_2'],
-  };
-  Object.entries(pairs).forEach(([id, [p1, p2]]) => {
+  Object.entries(KO_PAIRS).forEach(([id, [p1, p2]]) => {
     const a = koPicks[p1], b = koPicks[p2];
     if (a && b) koPicks[id] = eloWin(a, b);
   });
@@ -557,6 +582,17 @@ async function fetchLive() {
     const d = lk ? new Date(lk).toLocaleDateString('sv-SE') : m.datum;
     espnDays.add(d.replace(/-/g, ''));
   });
+  // KO-Spiele: Tage mit offenem Sieger oder fehlenden Schützen ebenfalls abfragen
+  Object.entries(koLiveMatches).forEach(([minKey, km]) => {
+    if (!km.kickoff) return;
+    const r = liveResults[km.heim + '_' + km.gast];
+    const needWinner = r && r.finished && !koWinners[minKey];
+    const needScorer = r && r.home !== null && (r.home + r.away) > 0 && !scorerCovered[minKey];
+    const needVenue = !km.venue;
+    if (needWinner || needScorer || needVenue) {
+      espnDays.add(new Date(km.kickoff).toLocaleDateString('sv-SE').replace(/-/g, ''));
+    }
+  });
   let espnOk = false;
   for (const day of Array.from(espnDays).slice(0, 6)) {
     try {
@@ -642,6 +678,21 @@ function parseESPN(events) {
     if (home.team && home.team.id) espnTeamIds[c1] = home.team.id;
     if (away.team && away.team.id) espnTeamIds[c2] = away.team.id;
     if (ev.id) espnEventByKey[minKey] = { id: ev.id, dateIso: (ev.date || '').slice(0, 10) };
+    // KO-Spiel? → registrieren (mit Stadion); Sieger via winner-Flag (auch bei Penaltyschiessen)
+    if (!GROUP_PAIRS.has(minKey)) {
+      const ko = ev.date ? new Date(ev.date).getTime() : null;
+      if (ko && !isNaN(ko) && !liveSchedule[key]) {
+        liveSchedule[key] = ko; liveSchedule[c2 + '_' + c1] = ko;
+      }
+      const venue = (comp.venue && (comp.venue.fullName || comp.venue.shortName)) || '';
+      registerKoMatch(minKey, c1, c2, ko || liveSchedule[key] || null, venue);
+      const finishedKO = !!(ev.status && ev.status.type && ev.status.type.completed);
+      if (finishedKO) {
+        const w = comp.competitors.find(x => x.winner === true);
+        const wCode = w && codeFor(w.team && (w.team.displayName || w.team.name));
+        if (wCode) koWinners[minKey] = wCode;
+      }
+    }
     // Resultat-Backup (nur wenn beide anderen Quellen nichts haben)
     const hs = parseInt(home.score, 10), as = parseInt(away.score, 10);
     const finished = !!(ev.status && ev.status.type && ev.status.type.completed);
@@ -776,6 +827,10 @@ function parseLive(data) {
       liveSchedule[c1 + '_' + c2] = kickoff;
       liveSchedule[c2 + '_' + c1] = kickoff;
     }
+    // KO-Spiel? (Paarung ist kein Gruppenspiel) → im Spielplan registrieren
+    const minKeyO = [c1, c2].sort().join('_');
+    const isKO = !GROUP_PAIRS.has(minKeyO);
+    if (isKO) registerKoMatch(minKeyO, c1, c2, kickoff, '');
     const started = now >= kickoff;
     const isLive = started && !m.matchIsFinished && (now - kickoff) < 3 * 3600 * 1000;
     const goals = (m.goals || []).map(g => ({
@@ -794,6 +849,9 @@ function parseLive(data) {
     liveResults[c1 + '_' + c2] = entry;
     liveResults[c2 + '_' + c1] = { ...entry, home: entry.away, away: entry.home,
                                    hz: hz ? hz.pointsTeam2 + ':' + hz.pointsTeam1 : null };
+    if (isKO && m.matchIsFinished && entry.home !== null && entry.home !== entry.away) {
+      koWinners[minKeyO] = entry.home > entry.away ? c1 : c2;
+    }
   });
 }
 
@@ -808,12 +866,12 @@ function liveMinute(kickoff) {
 }
 
 // ═══ TABELLEN ═══
-function computeTable(group) {
+function computeTable(group, force) {
   const teams = Object.keys(TEAMS).filter(c => TEAMS[c].gruppe === group);
   const stats = {};
   teams.forEach(c => stats[c] = { code: c, sp: 0, s: 0, u: 0, n: 0, t: 0, gt: 0, td: 0, pkt: 0 });
   MATCHES.filter(m => TEAMS[m.heim].gruppe === group).forEach(m => {
-    const r = getResult(m, false);
+    const r = getResult(m, !!force);
     if (!r) return;
     const h = stats[m.heim], a = stats[m.gast];
     h.sp++; a.sp++;
@@ -827,9 +885,9 @@ function computeTable(group) {
     b.pkt - a.pkt || b.td - a.td || b.t - a.t);
 }
 
-function compute8BestThirds() {
+function compute8BestThirds(force) {
   const thirds = GROUPS.map(g => {
-    const t = computeTable(g);
+    const t = computeTable(g, force);
     return t.length >= 3 && t[2].sp > 0 ? { ...t[2], gruppe: g } : null;
   }).filter(Boolean);
   thirds.sort((a, b) => b.pkt - a.pkt || b.td - a.td || b.t - a.t);
@@ -881,6 +939,8 @@ function matchRow(m, withInputs, forceLive) {
   const isReal = r && r.real;
   const isLive = r && r.live;
   const st = STADIONS[m.stadion];
+  const ortTxt = st ? st.stadt : (m.venue || '');
+  const tagTxt = m.runde ? m.runde : ('Spieltag ' + m.spieltag);
   let center;
   if (withInputs && !isReal) {
     const t = tips[m.id] || { home: '', away: '' };
@@ -913,8 +973,8 @@ function matchRow(m, withInputs, forceLive) {
     '<div class="home">' + nameLink(m.heim) + ' ' + flagLink(m.heim) + '</div>' +
     '<div class="vs">' + center + liveBadge + '</div>' +
     '<div class="away">' + flagLink(m.gast) + ' ' + nameLink(m.gast) + '</div>' +
-    '<div class="meta">' + formatDate(dateIso) + ' · ' + timeTxt + ' · ' + st.stadt +
-    ' · Spieltag ' + m.spieltag + hzTxt + '</div>' + goalsLine + '</div>';
+    '<div class="meta">' + formatDate(dateIso) + ' · ' + timeTxt + ' · ' + ortTxt +
+    ' · ' + tagTxt + hzTxt + '</div>' + goalsLine + '</div>';
 }
 
 function onTipChange(e) {
@@ -970,13 +1030,13 @@ function assignThirds(thirds) {
   return assignment;
 }
 
-function computeR32() {
+function computeR32(force) {
   const quals = {};
   GROUPS.forEach(g => {
-    const t = computeTable(g);
+    const t = computeTable(g, force);
     quals[g] = [t[0] && t[0].sp > 0 ? t[0].code : null, t[1] && t[1].sp > 0 ? t[1].code : null];
   });
-  const thirds = compute8BestThirds();
+  const thirds = compute8BestThirds(force);
   const thirdAssign = assignThirds(thirds);
   return R32.map(m => ({ ...m,
     teamA: m.a.startsWith('3:') ? (thirdAssign[m.id] || null) : slotTeam(m.a, quals),
@@ -986,32 +1046,70 @@ function computeR32() {
 
 function bkTeamHtml(code, matchId, slotLabel) {
   if (!code) return '<div class="bk-team tbd"><span class="nm">⏳ ' + slotLabel + '</span></div>';
-  const isWinner = koPicks[matchId] === code;
+  const isReal = lastRealKO[matchId] === code;
+  const isWinner = isReal || koPicks[matchId] === code;
   const isFollowed = code === followTeam;
-  return '<div class="bk-team ' + (isWinner ? 'winner' : '') + (isFollowed ? ' followed' : '') +
+  return '<div class="bk-team ' + (isWinner ? 'winner' : '') + (isReal ? ' real-winner' : '') +
+    (isFollowed ? ' followed' : '') +
     '" onclick="pickWinner(\'' +
     matchId + '\',\'' + code + '\')">' +
     '<span class="nm">' + TEAMS[code].flag + ' ' + TEAMS[code].name + '</span>' +
-    '<span style="color:var(--muted);font-size:9px;">' + slotLabel + '</span></div>';
+    '<span style="color:var(--muted);font-size:9px;">' + (isReal ? '✓' : slotLabel) + '</span></div>';
 }
 
 function pickWinner(matchId, code) {
+  if (lastRealKO && lastRealKO[matchId]) return;  // echtes Resultat ist fix
   if (koPicks[matchId] === code) delete koPicks[matchId];
   else koPicks[matchId] = code;
   persist(); renderAll();
 }
 
+const KO_PAIRS = {
+  af_1: ['r32_1','r32_2'], af_2: ['r32_3','r32_4'], af_3: ['r32_5','r32_6'], af_4: ['r32_7','r32_8'],
+  af_5: ['r32_9','r32_10'], af_6: ['r32_11','r32_12'], af_7: ['r32_13','r32_14'], af_8: ['r32_15','r32_16'],
+  vf_1: ['af_1','af_2'], vf_2: ['af_3','af_4'], vf_3: ['af_5','af_6'], vf_4: ['af_7','af_8'],
+  hf_1: ['vf_1','vf_2'], hf_2: ['vf_3','vf_4'],
+  final: ['hf_1','hf_2'],
+};
+
+// Echte KO-Sieger den Bracket-Slots zuordnen (kaskadiert bis zum Finale)
+let lastRealKO = {};
+function resolveRealKO() {
+  const real = {};
+  if (!Object.keys(koWinners).length) return real;
+  const pairWin = (a, b) => (a && b) ? (koWinners[[a, b].sort().join('_')] || null) : null;
+  const r32 = computeR32(true);  // Slots aus den ECHTEN Gruppenresultaten
+  r32.forEach(mm => {
+    const w = pairWin(mm.teamA, mm.teamB);
+    if (w) real[mm.id] = w;
+  });
+  Object.entries(KO_PAIRS).forEach(([id, [p1, p2]]) => {
+    const w = pairWin(real[p1], real[p2]);
+    if (w) real[id] = w;
+  });
+  return real;
+}
+
 function renderBracket() {
   const el = document.getElementById('bracket');
   const r32 = computeR32();
-  const winner = id => koPicks[id] || null;
+  const realKO = resolveRealKO();
+  lastRealKO = realKO;
+  const winner = id => realKO[id] || koPicks[id] || null;
   
   const afL = [['r32_1','r32_2'],['r32_3','r32_4'],['r32_5','r32_6'],['r32_7','r32_8']];
   const afR = [['r32_9','r32_10'],['r32_11','r32_12'],['r32_13','r32_14'],['r32_15','r32_16']];
   
   function koMatchHtml(id, a, b, la, lb, extra) {
+    let scoreTxt = '';
+    if (a && b) {
+      const rr = liveResults[a + '_' + b];
+      if (rr && rr.finished && rr.home !== null) scoreTxt =
+        '<div class="bk-score">' + rr.home + ':' + rr.away +
+        (koWinners[[a, b].sort().join('_')] && rr.home === rr.away ? ' n.E.' : '') + '</div>';
+    }
     return '<div class="bk-match ' + (extra || '') + '">' +
-      bkTeamHtml(a, id, la) + bkTeamHtml(b, id, lb) + '</div>';
+      bkTeamHtml(a, id, la) + bkTeamHtml(b, id, lb) + scoreTxt + '</div>';
   }
   
   const afTeams = {};
@@ -1057,11 +1155,24 @@ function renderSchedule() {
     const d = lk ? new Date(lk).toLocaleDateString('sv-SE') : m.datum;
     (byDate[d] = byDate[d] || []).push(m);
   });
+  // Dynamische KO-Spiele aus den Live-Quellen einsortieren
+  Object.values(koLiveMatches).forEach(m => {
+    if (!m.kickoff) return;
+    const d = new Date(m.kickoff).toLocaleDateString('sv-SE');
+    (byDate[d] = byDate[d] || []).push(m);
+  });
   const sortTime = m => {
-    const lk = liveSchedule[liveKey(m)];
-    return lk ? new Date(lk).toLocaleTimeString('sv-SE') : m.uhrzeit;
+    const lk = liveSchedule[liveKey(m)] || m.kickoff;
+    return lk ? new Date(lk).toLocaleTimeString('sv-SE') : (m.uhrzeit || '00:00');
   };
   const today = new Date().toLocaleDateString('sv-SE');
+  const koInfo = '<div class="day-section" style="background:var(--hkv-light);">' +
+    '<div class="day-header">🏆 KO-Phase</div>' +
+    '<div style="font-size:13px;line-height:1.8;">Sechzehntelfinale 28. Juni – 3. Juli · ' +
+    'Achtelfinale 4.–7. Juli · Viertelfinale 9.–11. Juli · Halbfinale 14./15. Juli (Dallas, Atlanta) · ' +
+    'Spiel um Platz 3: 18. Juli (Miami) · 🏆 Finale: 19. Juli (MetLife Stadium, New York/New Jersey)<br>' +
+    '<span style="color:var(--muted);font-size:12px;">Die KO-Partien erscheinen hier automatisch mit Datum, ' +
+    'Stadion und Live-Resultat, sobald die Paarungen feststehen.</span></div></div>';
   list.innerHTML = Object.keys(byDate).sort().map(d => {
     const matches = byDate[d].sort((a, b) => sortTime(a).localeCompare(sortTime(b)));
     const isToday = d === today;
@@ -1069,7 +1180,7 @@ function renderSchedule() {
       '<div class="day-header ' + (isToday ? 'today' : '') + '">' + formatDate(d, true) +
       (isToday ? ' · HEUTE' : '') + '</div>' +
       '<div class="day-matches">' + matches.map(m => matchRow(m, false, true)).join('') + '</div></div>';
-  }).join('');
+  }).join('') + koInfo;
 }
 
 // ═══ SVG-KARTE ═══
@@ -1357,7 +1468,8 @@ function lineupColHtml(code, ros, note) {
 }
 
 async function openMatchDetail(matchId) {
-  const m = MATCHES.find(x => x.id === matchId);
+  const m = MATCHES.find(x => x.id === matchId) ||
+            Object.values(koLiveMatches).find(x => x.id === matchId);
   if (!m) return;
   const minKey = [m.heim, m.gast].sort().join('_');
   const r = getResult(m, true);
@@ -1369,7 +1481,7 @@ async function openMatchDetail(matchId) {
   // Event-ID besorgen (notfalls Scoreboard des Spieltags abfragen)
   let evInfo = espnEventByKey[minKey];
   if (!evInfo) {
-    const lk = liveSchedule[liveKey(m)];
+    const lk = liveSchedule[liveKey(m)] || m.kickoff;
     const d = (lk ? new Date(lk).toLocaleDateString('sv-SE') : m.datum).replace(/-/g, '');
     try {
       const rs = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=' + d);
@@ -1551,6 +1663,7 @@ document.querySelectorAll('.tab').forEach(tab => {
 });
 
 // ═══ INIT — Live läuft IMMER ═══
+MATCHES.forEach(m => GROUP_PAIRS.add([m.heim, m.gast].sort().join('_')));
 function renderAll() { renderGroups(); renderBracket(); renderSchedule(); renderScorers(); }
 // Follow-Dropdown befüllen (alphabetisch)
 (function () {
