@@ -135,6 +135,12 @@ header .reset:hover { background: rgba(255,255,255,0.3); }
   letter-spacing: 3px; font-family: inherit; pointer-events: none; }
 .stadion-dot { cursor: pointer; transition: r 0.15s; }
 .stadion-dot:hover { r: 13; }
+.next-ring { fill: none; stroke: #FFD700; pointer-events: none;
+  animation: nextpulse 1.6s ease-in-out infinite; }
+@keyframes nextpulse {
+  0%, 100% { opacity: 0.25; stroke-width: 3; }
+  50%      { opacity: 1;    stroke-width: 5.5; }
+}
 .map-legend { display: flex; gap: 16px; margin-top: 10px; font-size: 13px; flex-wrap: wrap; }
 .map-legend span { display: flex; align-items: center; gap: 6px; }
 .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
@@ -168,6 +174,27 @@ header .reset:hover { background: rgba(255,255,255,0.3); }
 
 footer { margin-top: 22px; padding: 14px; text-align: center; color: var(--muted);
   font-size: 12px; border-top: 1px solid var(--border); }
+
+/* ── PROMI-SPRECHBLASE (Easter Egg) ── */
+#celeb-pop { position: fixed; right: 18px; bottom: 18px; z-index: 1500;
+  display: flex; align-items: flex-end; gap: 10px; opacity: 0;
+  transform: translateY(40px); transition: opacity .45s, transform .45s;
+  pointer-events: none; cursor: pointer; }
+#celeb-pop.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.celeb-bubble { background: white; border: 2px solid var(--hkv-blue); border-radius: 14px;
+  padding: 10px 14px; max-width: 230px; font-size: 13.5px; line-height: 1.45;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.18); position: relative;
+  animation: bubblepop .45s cubic-bezier(.34,1.56,.64,1); }
+.celeb-bubble::after { content: ''; position: absolute; right: -10px; bottom: 16px;
+  border: 6px solid transparent; border-left-color: var(--hkv-blue); }
+@keyframes bubblepop { 0% { transform: scale(.6); } 100% { transform: scale(1); } }
+.celeb-ava { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.celeb-face { width: 62px; height: 62px; border-radius: 50%; background: var(--hkv-blue);
+  display: flex; align-items: center; justify-content: center; font-size: 33px;
+  border: 3px solid white; box-shadow: 0 4px 14px rgba(0,0,0,0.25); }
+.celeb-name { font-size: 10px; font-weight: 700; color: var(--hkv-blue); background: white;
+  padding: 1px 7px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  white-space: nowrap; }
 
 /* ── MODAL (Kader & Spiel-Details) ── */
 #modal-overlay { display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.55);
@@ -239,6 +266,7 @@ footer { margin-top: 22px; padding: 14px; text-align: center; color: var(--muted
     <span class="live-status" id="live-status">lädt…</span>
     <button class="reset" onclick="simulateAll()" title="Realistische Zufallsresultate nach FIFA-Rangliste — inkl. KO-Baum bis zum Weltmeister">🎲 Simulieren</button>
     <button class="reset" onclick="resetAllTips()">↻ Tipps zurücksetzen</button>
+    <button class="reset" id="celeb-mute-btn" onclick="toggleCelebs()" title="Promi-Sprechblasen ein-/ausschalten">🤐 Promis stummschalten</button>
   </div>
 </header>
 
@@ -306,7 +334,7 @@ footer { margin-top: 22px; padding: 14px; text-align: center; color: var(--muted
       <span><span class="dot" style="background:#1F4E78"></span> USA (11 Stadien)</span>
       <span><span class="dot" style="background:#0E9F6E"></span> Mexiko (3 Stadien)</span>
       <span><span class="dot" style="background:#DC2626"></span> Kanada (2 Stadien)</span>
-      <span style="color:var(--muted)">Klick auf Punkt → Details & Spiele · ⭐ Goldring = Spielort des verfolgten Teams</span>
+      <span style="color:var(--muted)">Klick auf Punkt → Details & Spiele · ⭐ Goldring = Spielort des verfolgten Teams · 🟡 Pulsierend = Spielorte der nächsten Partien</span>
     </div>
     <div id="stadion-panel"></div>
   </div>
@@ -326,6 +354,7 @@ footer { margin-top: 22px; padding: 14px; text-align: center; color: var(--muted
     <div id="modal-body"></div>
   </div>
 </div>
+<div id="celeb-pop" onclick="hideCeleb()"></div>
 <div class="map-tooltip" id="map-tooltip"></div>
 
 <script>
@@ -397,13 +426,56 @@ function setFollow(code) {
   updateMapHighlights();
 }
 
+// Spielorte der nächsten Partien (frühestes Spieldatum ab heute, KO via Stadion-Name)
+function venueToStadion(v) {
+  if (!v) return null;
+  const lv = v.toLowerCase();
+  for (const [sid, s] of Object.entries(STADIONS)) {
+    if (lv.includes((s.name || '').toLowerCase()) || lv.includes((s.stadt || '').toLowerCase())) return sid;
+  }
+  return null;
+}
+function nextMatchStadiums() {
+  const todayIso = new Date().toLocaleDateString('sv-SE');
+  const byDate = {};
+  const add = (iso, sid) => {
+    if (sid && iso >= todayIso) (byDate[iso] = byDate[iso] || new Set()).add(sid);
+  };
+  MATCHES.forEach(m => {
+    const lk = liveSchedule[liveKey(m)];
+    add(lk ? new Date(lk).toLocaleDateString('sv-SE') : m.datum, m.stadion);
+  });
+  Object.values(koLiveMatches).forEach(km => {
+    if (!km.kickoff) return;
+    add(new Date(km.kickoff).toLocaleDateString('sv-SE'), venueToStadion(km.venue));
+  });
+  const dates = Object.keys(byDate).sort();
+  return dates.length ? byDate[dates[0]] : new Set();
+}
+
 function updateMapHighlights() {
+  const nxt = nextMatchStadiums();
   document.querySelectorAll('.stadion-dot').forEach(dot => {
     const sid = dot.dataset.sid;
     const has = followTeam && MATCHES.some(m =>
       m.stadion === sid && (m.heim === followTeam || m.gast === followTeam));
     dot.setAttribute('stroke', has ? '#EAB308' : 'white');
     dot.setAttribute('stroke-width', has ? '4.5' : '2.5');
+    // Pulsierender Goldring: hier wird als Nächstes gespielt
+    let ring = dot.parentNode.querySelector('.next-ring[data-sid="' + sid + '"]');
+    if (nxt.has(sid)) {
+      if (!ring) {
+        ring = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        ring.setAttribute('class', 'next-ring');
+        ring.setAttribute('data-sid', sid);
+        ring.setAttribute('cx', dot.getAttribute('cx'));
+        ring.setAttribute('cy', dot.getAttribute('cy'));
+        ring.setAttribute('r', '15');
+        dot.parentNode.insertBefore(ring, dot);
+      }
+    } else if (ring) {
+      ring.remove();
+    }
   });
 }
 
@@ -1682,7 +1754,7 @@ document.querySelectorAll('.tab').forEach(tab => {
 
 // ═══ INIT — Live läuft IMMER ═══
 MATCHES.forEach(m => GROUP_PAIRS.add([m.heim, m.gast].sort().join('_')));
-function renderAll() { renderGroups(); renderBracket(); renderSchedule(); renderScorers(); }
+function renderAll() { renderGroups(); renderBracket(); renderSchedule(); renderScorers(); updateMapHighlights(); }
 // Follow-Dropdown befüllen (alphabetisch)
 (function () {
   const sel = document.getElementById('follow-select');
@@ -1698,6 +1770,73 @@ function renderAll() { renderGroups(); renderBracket(); renderSchedule(); render
   else followTeam = null;
 })();
 if (liveInTips) document.getElementById('live-toggle').classList.add('on');
+// ═══ 🎉 PROMI-SPRECHBLASEN (Easter Egg) ═══
+const CELEBS = [
+  { n: 'Marco Odermatt', e: '⛷️', s: 'Hopp Schwiiz! Abfahrt Richtung Titel!' },
+  { n: 'José Mourinho', e: '🧥', s: 'Hopp Schwiiz. The Special One has spoken.' },
+  { n: 'Ronaldo (R9)', e: '🇧🇷', s: 'Hopp Schwiiz! Sagt sogar o Fenômeno.' },
+  { n: 'Taylor Swift', e: '🎤', s: 'Hopp Schwiiz! (Taylor\'s Version)' },
+  { n: 'Chuck Norris', e: '🥋', s: 'Die Schweiz braucht kein Glück. Chuck Norris hat Hopp Schwiiz gesagt.' },
+  { n: 'Darth Vader', e: '🌑', s: 'Ich bin dein Fan. Hopp Schwiiz!' },
+  { n: 'Roger Federer', e: '🎾', s: 'Hopp Schwiiz! Auch vom Center Court.' },
+  { n: 'Granit Xhaka', e: '💪', s: 'Hopp Schwiiz! Mir händ das im Griff.' },
+  { n: 'Murat Yakin', e: '📋', s: 'Hopp Schwiiz! Taktik stimmt, Jungs.' },
+  { n: 'Yoda', e: '🧘', s: 'Hopp Schwiiz, es heisst. Gewinnen, sie werden.' },
+  { n: 'Heidi', e: '🏔️', s: 'Hopp Schwiiz! Der Grossvater schaut auch zu!' },
+  { n: 'Wilhelm Tell', e: '🏹', s: 'Hopp Schwiiz! Den Apfel treff ich, das Tor trefft ihr!' },
+  { n: 'James Bond', e: '🍸', s: 'Hopp Schwiiz. Geschüttelt, nicht gerührt.' },
+  { n: 'Lionel Messi', e: '🐐', s: 'Hopp Schwiiz... aber nur heute, eh.' },
+  { n: 'Super Mario', e: '🍄', s: 'It\'s-a me! Hopp-a Schwiiz!' },
+  { n: 'Pikachu', e: '⚡', s: 'Pika pika! (Übersetzung: Hopp Schwiiz!)' },
+  { n: 'Albert Einstein', e: '🧠', s: 'E = mc² — und Hopp Schwiiz! Relativ klar.' },
+  { n: 'Globi', e: '🦜', s: 'Hopp Schwiiz! Globi isch au derbii!' },
+  { n: 'DJ Bobo', e: '🎶', s: 'Somebody Dance With Me... und Hopp Schwiiz!' },
+  { n: 'Asterix & Obelix', e: '🛡️', s: 'Die spinnen, die Gegner! Hopp Schwiiz!' },
+  { n: 'Shakira', e: '💃', s: 'Waka Waka... äh: Hopp Schwiiz!' },
+  { n: 'Sherlock Holmes', e: '🔍', s: 'Elementar, mein lieber Watson: Hopp Schwiiz.' },
+  { n: 'Batman', e: '🦇', s: 'Ich bin die Nacht. Und die Nacht sagt: Hopp Schwiiz.' },
+  { n: 'SpongeBob', e: '🧽', s: 'Ich bin bereit! Hopp Schwiiz!' },
+  { n: 'Cristiano Ronaldo', e: '😎', s: 'Siuuu... ich meine: Hopp Schwiiz!' },
+  { n: 'Gandalf', e: '🧙', s: 'Ihr kommt nicht vorbei! Ausser die Schweiz. Hopp Schwiiz!' },
+];
+let lastCeleb = -1, celebTimer = null;
+let celebsMuted = false;
+try { celebsMuted = localStorage.getItem('wm2026_celebsmute') === '1'; } catch (e) {}
+function updateCelebBtn() {
+  const b = document.getElementById('celeb-mute-btn');
+  if (b) b.textContent = celebsMuted ? '🎉 Promis aktivieren' : '🤐 Promis stummschalten';
+}
+function toggleCelebs() {
+  celebsMuted = !celebsMuted;
+  try { localStorage.setItem('wm2026_celebsmute', celebsMuted ? '1' : '0'); } catch (e) {}
+  updateCelebBtn();
+  if (celebsMuted) hideCeleb();
+  else showCeleb();   // Quittung: einer meldet sich gleich zurück
+}
+function showCeleb() {
+  if (celebsMuted) return;
+  let i;
+  do { i = Math.floor(Math.random() * CELEBS.length); } while (i === lastCeleb);
+  lastCeleb = i;
+  const c = CELEBS[i];
+  const el = document.getElementById('celeb-pop');
+  el.innerHTML = '<div class="celeb-bubble">' + c.s + '</div>' +
+    '<div class="celeb-ava"><div class="celeb-face">' + c.e + '</div>' +
+    '<div class="celeb-name">' + c.n + '</div></div>';
+  el.classList.add('show');
+  clearTimeout(celebTimer);
+  celebTimer = setTimeout(hideCeleb, 8000);
+}
+function hideCeleb() {
+  document.getElementById('celeb-pop').classList.remove('show');
+}
+function scheduleCeleb() {
+  setTimeout(() => { showCeleb(); scheduleCeleb(); }, 75000 + Math.random() * 75000);
+}
+updateCelebBtn();
+setTimeout(showCeleb, 18000 + Math.random() * 12000);  // erster Auftritt nach ~20–30 s
+scheduleCeleb();
+
 renderAll();
 updateMapHighlights();
 fetchLive().then(() => renderAll());
