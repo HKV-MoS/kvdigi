@@ -176,15 +176,20 @@ footer { margin-top: 22px; padding: 14px; text-align: center; color: var(--muted
 .modal-close { border: none; background: var(--hkv-light); color: var(--hkv-blue);
   width: 30px; height: 30px; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: 700; }
 .modal-close:hover { background: #d3e2f0; }
-.roster-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.roster-table th { text-align: left; padding: 5px 7px; font-size: 10px; text-transform: uppercase;
+.roster-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+@media (max-width: 560px) { .roster-grid { grid-template-columns: 1fr; } }
+.roster-table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+.roster-table th { text-align: left; padding: 3px 5px; font-size: 9px; text-transform: uppercase;
   color: var(--muted); border-bottom: 2px solid var(--hkv-light); }
-.roster-table td { padding: 5px 7px; border-bottom: 1px solid var(--border); }
-.roster-table .jersey { font-weight: 700; color: var(--hkv-blue); width: 34px; text-align: center; }
+.roster-table td { padding: 3px 5px; border-bottom: 1px solid var(--border); }
+.roster-table .jersey { font-weight: 700; color: var(--hkv-blue); width: 26px; text-align: center; }
+.roster-table .pos-abbr { width: 22px; text-align: center; color: var(--muted); }
 .roster-table a { color: inherit; text-decoration: none; }
 .roster-table a:hover { color: var(--hkv-blue); text-decoration: underline; }
 .lineup-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .lineup-col h4 { margin: 0 0 6px; font-size: 14px; color: var(--hkv-blue); }
+.pitch-svg { width: 100%; height: auto; border-radius: 10px; display: block;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
 .formation-badge { display: inline-block; background: var(--hkv-blue); color: white;
   padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; margin-left: 6px; }
 .lineup-list { font-size: 12.5px; line-height: 1.8; }
@@ -322,6 +327,7 @@ const GROUPS = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
 const R32 = [{"id": "r32_1", "a": "1E", "b": "3:ABCDF"}, {"id": "r32_2", "a": "1I", "b": "3:CDFGH"}, {"id": "r32_3", "a": "2A", "b": "2B"}, {"id": "r32_4", "a": "1F", "b": "2C"}, {"id": "r32_5", "a": "1C", "b": "2F"}, {"id": "r32_6", "a": "2E", "b": "2I"}, {"id": "r32_7", "a": "1A", "b": "3:CEFHI"}, {"id": "r32_8", "a": "1L", "b": "3:EHIJK"}, {"id": "r32_9", "a": "2K", "b": "2L"}, {"id": "r32_10", "a": "1H", "b": "2J"}, {"id": "r32_11", "a": "1D", "b": "3:BEFIJ"}, {"id": "r32_12", "a": "1G", "b": "3:AEHIJ"}, {"id": "r32_13", "a": "1J", "b": "2H"}, {"id": "r32_14", "a": "2D", "b": "2G"}, {"id": "r32_15", "a": "1B", "b": "3:EFGIJ"}, {"id": "r32_16", "a": "1K", "b": "3:DEIJL"}];
 const OLDB_ALIAS = {"mexiko": "MEX", "südafrika": "RSA", "suedafrika": "RSA", "südkorea": "KOR", "suedkorea": "KOR", "korea republik": "KOR", "korea, süd": "KOR", "republik korea": "KOR", "tschechien": "CZE", "tschechische republik": "CZE", "kanada": "CAN", "bosnien-herzegowina": "BIH", "bosnien und herzegowina": "BIH", "bosnien": "BIH", "katar": "QAT", "schweiz": "SUI", "brasilien": "BRA", "marokko": "MAR", "haiti": "HAI", "schottland": "SCO", "usa": "USA", "vereinigte staaten": "USA", "vereinigte staaten von amerika": "USA", "paraguay": "PAR", "australien": "AUS", "türkei": "TUR", "tuerkei": "TUR", "deutschland": "GER", "curacao": "CUW", "curaçao": "CUW", "elfenbeinküste": "CIV", "elfenbeinkueste": "CIV", "cote d'ivoire": "CIV", "côte d'ivoire": "CIV", "ecuador": "ECU", "niederlande": "NED", "japan": "JPN", "schweden": "SWE", "tunesien": "TUN", "belgien": "BEL", "ägypten": "EGY", "aegypten": "EGY", "iran": "IRN", "ir iran": "IRN", "neuseeland": "NZL", "spanien": "ESP", "kap verde": "CPV", "kapverde": "CPV", "cabo verde": "CPV", "saudi-arabien": "KSA", "saudi arabien": "KSA", "uruguay": "URU", "frankreich": "FRA", "senegal": "SEN", "irak": "IRQ", "norwegen": "NOR", "argentinien": "ARG", "algerien": "ALG", "österreich": "AUT", "oesterreich": "AUT", "jordanien": "JOR", "portugal": "POR", "dr kongo": "COD", "kongo dr": "COD", "demokratische republik kongo": "COD", "kongo, demokratische republik": "COD", "usbekistan": "UZB", "kolumbien": "COL", "england": "ENG", "kroatien": "CRO", "ghana": "GHA", "panama": "PAN", "mexico": "MEX", "south africa": "RSA", "south korea": "KOR", "korea republic": "KOR", "czech republic": "CZE", "czechia": "CZE", "canada": "CAN", "bosnia and herzegovina": "BIH", "bosnia herzegovina": "BIH", "switzerland": "SUI", "brazil": "BRA", "morocco": "MAR", "scotland": "SCO", "united states": "USA", "australia": "AUS", "turkey": "TUR", "türkiye": "TUR", "germany": "GER", "ivory coast": "CIV", "netherlands": "NED", "sweden": "SWE", "tunisia": "TUN", "belgium": "BEL", "egypt": "EGY", "new zealand": "NZL", "spain": "ESP", "cape verde": "CPV", "saudi arabia": "KSA", "france": "FRA", "iraq": "IRQ", "norway": "NOR", "argentina": "ARG", "algeria": "ALG", "austria": "AUT", "jordan": "JOR", "dr congo": "COD", "congo dr": "COD", "uzbekistan": "UZB", "colombia": "COL", "croatia": "CRO", "qatar": "QAT"};
 const STRENGTH = {"ESP": 1880, "ARG": 1870, "FRA": 1860, "ENG": 1815, "BRA": 1780, "POR": 1770, "NED": 1755, "BEL": 1735, "GER": 1720, "CRO": 1705, "MAR": 1695, "URU": 1675, "COL": 1670, "USA": 1665, "MEX": 1655, "SUI": 1648, "JPN": 1640, "SEN": 1625, "IRN": 1615, "KOR": 1590, "ECU": 1588, "AUT": 1575, "AUS": 1565, "NOR": 1560, "TUR": 1552, "CAN": 1548, "ALG": 1520, "EGY": 1512, "CZE": 1502, "SWE": 1500, "TUN": 1495, "CIV": 1490, "SCO": 1483, "PAR": 1478, "UZB": 1452, "QAT": 1442, "KSA": 1438, "RSA": 1435, "COD": 1395, "JOR": 1389, "BIH": 1385, "PAN": 1378, "GHA": 1370, "IRQ": 1352, "CPV": 1330, "NZL": 1303, "CUW": 1312, "HAI": 1290};
+const JERSEY = {"MEX": ["#006847", "#FFFFFF"], "RSA": ["#FFB612", "#007749"], "KOR": ["#CD2E3A", "#FFFFFF"], "CZE": ["#D7141A", "#FFFFFF"], "CAN": ["#C8102E", "#FFFFFF"], "BIH": ["#002F6C", "#F8C300"], "QAT": ["#8A1538", "#FFFFFF"], "SUI": ["#D52B1E", "#FFFFFF"], "BRA": ["#FFDC00", "#009C3B"], "MAR": ["#C1272D", "#006233"], "HAI": ["#00209F", "#FFFFFF"], "SCO": ["#0B1C45", "#FFFFFF"], "USA": ["#FFFFFF", "#0A3161"], "PAR": ["#D52B1E", "#FFFFFF"], "AUS": ["#FFCD00", "#00843D"], "TUR": ["#E30A17", "#FFFFFF"], "GER": ["#FFFFFF", "#000000"], "CUW": ["#002B7F", "#F9E814"], "CIV": ["#FF8200", "#FFFFFF"], "ECU": ["#FFDD00", "#003DA5"], "NED": ["#F36C21", "#FFFFFF"], "JPN": ["#003DA5", "#FFFFFF"], "SWE": ["#FECC02", "#005293"], "TUN": ["#E70013", "#FFFFFF"], "BEL": ["#E30613", "#FFFFFF"], "EGY": ["#CE1126", "#FFFFFF"], "IRN": ["#FFFFFF", "#DA0000"], "NZL": ["#FFFFFF", "#000000"], "ESP": ["#C60B1E", "#FFC400"], "CPV": ["#003893", "#FFFFFF"], "KSA": ["#FFFFFF", "#006C35"], "URU": ["#5CB8E6", "#0A3161"], "FRA": ["#21304B", "#FFFFFF"], "SEN": ["#FFFFFF", "#00853F"], "IRQ": ["#007A3D", "#FFFFFF"], "NOR": ["#EF2B2D", "#002868"], "ARG": ["#75AADB", "#1A1A1A"], "ALG": ["#FFFFFF", "#006233"], "AUT": ["#ED2939", "#FFFFFF"], "JOR": ["#CE1126", "#FFFFFF"], "POR": ["#A50021", "#FFD700"], "COD": ["#007FFF", "#CE1021"], "UZB": ["#FFFFFF", "#0099B5"], "COL": ["#FCD116", "#003893"], "ENG": ["#FFFFFF", "#0A3161"], "CRO": ["#FFFFFF", "#E63946"], "GHA": ["#FFFFFF", "#1A1A1A"], "PAN": ["#DA121A", "#FFFFFF"]};
 
 // ═══ STATE ═══
 let tips = {};
@@ -1196,21 +1202,27 @@ async function openTeamRoster(code) {
     body.innerHTML = '<div class="modal-hint">Der Kader wird angezeigt, sobald er in der Datenquelle hinterlegt ist.</div>';
     return;
   }
-  const rows = roster.slice().sort((a, b) => {
+  const sorted = roster.slice().sort((a, b) => {
     const pa = POS_ORDER[posKey(a.position)] ?? 9, pb = POS_ORDER[posKey(b.position)] ?? 9;
     if (pa !== pb) return pa - pb;
     return (parseInt(a.jersey, 10) || 99) - (parseInt(b.jersey, 10) || 99);
-  }).map(a => {
+  });
+  const rowHtml = a => {
     const name = a.displayName || a.fullName || '?';
     const wiki = 'https://de.wikipedia.org/w/index.php?search=' + encodeURIComponent(name + ' Fussball');
+    const posFull = (a.position && (a.position.displayName || a.position.name)) || '';
     return '<tr><td class="jersey">' + (a.jersey || '–') + '</td>' +
       '<td><a href="' + wiki + '" target="_blank" rel="noopener">' + name + '</a></td>' +
-      '<td>' + (a.position && (a.position.displayName || a.position.name) || '') + '</td>' +
+      '<td class="pos-abbr" title="' + posFull + '">' + posKey(a.position) + '</td>' +
       '<td class="num">' + (a.age || '') + '</td></tr>';
-  }).join('');
-  body.innerHTML = '<table class="roster-table"><thead><tr>' +
-    '<th>#</th><th>Spieler (Klick → Wikipedia)</th><th>Position</th><th>Alter</th>' +
-    '</tr></thead><tbody>' + rows + '</tbody></table>';
+  };
+  const half = Math.ceil(sorted.length / 2);
+  const tableHtml = rows => '<table class="roster-table"><thead><tr>' +
+    '<th>#</th><th>Spieler</th><th>Pos</th><th>Alter</th>' +
+    '</tr></thead><tbody>' + rows.map(rowHtml).join('') + '</tbody></table>';
+  body.innerHTML = '<div class="roster-grid">' +
+    tableHtml(sorted.slice(0, half)) + tableHtml(sorted.slice(half)) + '</div>' +
+    '<div style="font-size:10px;color:var(--muted);margin-top:8px;">Klick auf Spieler → Wikipedia · G Tor, D Abwehr, M Mittelfeld, F Sturm</div>';
 }
 
 async function fetchSummary(eventId) {
@@ -1231,14 +1243,71 @@ function lineupColHtml(code, ros) {
   const sortPos = arr => arr.slice().sort((a, b) =>
     (POS_ORDER[posKey(a.position)] ?? 9) - (POS_ORDER[posKey(b.position)] ?? 9) ||
     (parseInt(a.jersey, 10) || 99) - (parseInt(b.jersey, 10) || 99));
-  const row = p => '<div><span class="nr">' + (p.jersey || '') + '</span>' +
-    '<span class="pos">' + posKey(p.position) + '</span>' +
-    ((p.athlete && (p.athlete.displayName || p.athlete.fullName)) || '?') + '</div>';
+  const sorted = sortPos(starters);
+  // Formation in Reihen parsen, sonst aus Positionsgruppen ableiten
+  let rows = (ros.formation || '').split('-').map(n => parseInt(n, 10)).filter(n => n > 0);
+  const field = sorted.filter(p => posKey(p.position) !== 'G');
+  const gk = sorted.find(p => posKey(p.position) === 'G') || sorted[0];
+  const outfield = sorted.filter(p => p !== gk);
+  if (!rows.length || rows.reduce((a, b) => a + b, 0) !== outfield.length) {
+    const cnt = { D: 0, M: 0, F: 0 };
+    outfield.forEach(p => cnt[posKey(p.position)] = (cnt[posKey(p.position)] || 0) + 1);
+    rows = [cnt.D, cnt.M, cnt.F].filter(n => n > 0);
+    if (!rows.length && outfield.length) rows = [outfield.length];
+  }
+  const [fill, txt] = JERSEY[code] || ['#FFFFFF', '#1a1a1a'];
+  const YELLOWISH = ['BRA', 'AUS', 'SWE', 'ECU', 'COL', 'RSA'];
+  const gkFill = YELLOWISH.includes(code) ? '#FF8A00' : '#FFD400';
+  const shortName = p => {
+    const n = (p.athlete && (p.athlete.displayName || p.athlete.fullName)) || '';
+    const parts = n.split(' ');
+    let s = parts[parts.length - 1];
+    if (s.length <= 3 && parts.length > 1) s = parts[parts.length - 2] + ' ' + s;
+    return s.length > 13 ? s.slice(0, 12) + '…' : s;
+  };
+  const shirt = (x, y, p, f, tx) =>
+    '<g transform="translate(' + x + ',' + y + ')">' +
+    '<path d="M-16,-9 L-7,-15 L-3,-11 L3,-11 L7,-15 L16,-9 L12,-1 L8,-4 L8,13 L-8,13 L-8,-4 L-12,-1 Z" ' +
+    'fill="' + f + '" stroke="rgba(0,0,0,0.3)" stroke-width="1"/>' +
+    '<text y="7" text-anchor="middle" font-size="11" font-weight="700" fill="' + tx + '">' + (p.jersey || '') + '</text>' +
+    '<text y="27" text-anchor="middle" font-size="8" font-weight="600" fill="#fff" ' +
+    'stroke="rgba(0,0,0,0.45)" stroke-width="2.5" paint-order="stroke">' + shortName(p) + '</text></g>';
+  // Spieler-Positionen berechnen
+  let players = '';
+  if (gk) players += shirt(150, 388, gk, gkFill, '#1a1a1a');
+  let idx = 0;
+  const nRows = rows.length;
+  rows.forEach((k, ri) => {
+    const y = nRows > 1 ? 322 - ri * (252 / (nRows - 1)) : 200;
+    for (let j = 0; j < k; j++) {
+      const p = outfield[idx++];
+      if (!p) continue;
+      const x = 300 * (j + 1) / (k + 1);
+      players += shirt(x, y, p, fill, txt);
+    }
+  });
+  // Halbfeld: Rasenstreifen, Linien, Strafraum, Mittelkreis-Bogen oben
+  let stripes = '';
+  for (let i = 0; i < 6; i++) {
+    stripes += '<rect x="0" y="' + (i * 71.7) + '" width="300" height="71.7" fill="' +
+      (i % 2 ? '#379047' : '#3C9A4E') + '"/>';
+  }
+  const pitch =
+    '<svg class="pitch-svg" viewBox="0 0 300 430" xmlns="http://www.w3.org/2000/svg">' +
+    stripes +
+    '<rect x="10" y="10" width="280" height="410" fill="none" stroke="white" stroke-width="2"/>' +
+    '<path d="M 110,10 A 42,42 0 0 0 190,10" fill="none" stroke="white" stroke-width="2"/>' +
+    '<rect x="62" y="348" width="176" height="72" fill="none" stroke="white" stroke-width="2"/>' +
+    '<rect x="105" y="392" width="90" height="28" fill="none" stroke="white" stroke-width="2"/>' +
+    '<circle cx="150" cy="365" r="2.5" fill="white"/>' +
+    players + '</svg>';
   return '<div class="lineup-col"><h4>' + t.flag + ' ' + t.name +
     (ros.formation ? '<span class="formation-badge">' + ros.formation + '</span>' : '') + '</h4>' +
-    '<div class="lineup-list">' + sortPos(starters).map(row).join('') + '</div>' +
+    pitch +
     (bench.length ? '<div class="bench-title">Bank</div><div class="lineup-list" style="opacity:0.7">' +
-      sortPos(bench).slice(0, 12).map(row).join('') + '</div>' : '') +
+      sortPos(bench).slice(0, 12).map(p => '<span style="margin-right:10px;white-space:nowrap;">' +
+        '<span class="nr">' + (p.jersey || '') + '</span>' + shortName(p) + '</span>').join('') +
+      '</div>' : '') +
     '</div>';
 }
 
