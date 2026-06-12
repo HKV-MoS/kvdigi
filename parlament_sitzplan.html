@@ -466,6 +466,55 @@
     text-align: center;
     padding: 10px;
   }
+
+  /* ===== Ständerat: Parteienvergleich SR vs. NR ===== */
+  .pvz-head {
+    display: flex; justify-content: flex-end;
+    font-size: 9px; color: #9CA3AF; margin-bottom: 3px;
+    text-transform: uppercase; letter-spacing: 0.4px;
+  }
+  .pvz-row { display: flex; align-items: center; gap: 7px; margin: 5px 0; }
+  .pvz-name {
+    font-size: 11px; color: #4B5563; width: 60px; flex-shrink: 0;
+    display: flex; align-items: center; gap: 5px;
+    white-space: nowrap; overflow: hidden;
+  }
+  .pvz-dot { width: 9px; height: 9px; border-radius: 3px; flex-shrink: 0; }
+  .pvz-bars { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+  .pvz-track {
+    background: #E5E7EB; height: 9px; border-radius: 3px;
+    overflow: hidden; position: relative;
+  }
+  .pvz-fill { height: 100%; border-radius: 3px; transition: width 0.3s ease; }
+  .pvz-fill.nr { opacity: 0.42; }
+  .pvz-vals {
+    width: 50px; flex-shrink: 0; text-align: right;
+    font-size: 11px; line-height: 1.25; color: #1F4E78; font-weight: 700;
+  }
+  .pvz-vals .nrv { color: #9CA3AF; font-weight: 600; display: block; font-size: 10px; }
+
+  /* ===== Ständerat: Kantonskarte ===== */
+  .sr-map-box { margin-top: 12px; }
+  #sr-map svg { width: 100%; max-width: 560px; height: auto; display: block; margin: 0 auto; }
+  .sr-map-seat { transition: opacity 0.25s; }
+  .sr-map-seat.dimmed { opacity: 0.13; }
+  .sr-tile { cursor: pointer; }
+  .sr-tile-label {
+    font-size: 2.7px; font-weight: 700; fill: #fff;
+    paint-order: stroke; stroke: rgba(0,0,0,0.38); stroke-width: 0.38px;
+    pointer-events: none; text-anchor: middle; dominant-baseline: central;
+    letter-spacing: 0.02em;
+  }
+  .sr-map-hint { font-size: 10px; color: #9CA3AF; margin-top: 8px; font-style: italic; }
+  .sr-map-tt {
+    position: fixed; z-index: 60; background: #1F2937; color: #fff;
+    border-radius: 8px; padding: 9px 12px; font-size: 12px; line-height: 1.5;
+    pointer-events: none; opacity: 0; transition: opacity 0.12s;
+    max-width: 260px; box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  }
+  .sr-map-tt.show { opacity: 1; }
+  .sr-map-tt b { display: block; font-size: 12.5px; margin-bottom: 2px; }
+  .sr-map-tt .d { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; }
 </style>
 </head>
 <body>
@@ -510,7 +559,7 @@
     <div class="bar-charts">
       <div class="bar-chart">
         <div class="bar-chart-title">
-          <span>Top 5 Kantone</span>
+          <span id="bc-title">Top 5 Kantone</span>
           <span class="bc-tab" id="bc-context">Nationalrat</span>
         </div>
         <div id="bar-chart-content"></div>
@@ -522,6 +571,16 @@
         </div>
         <div id="bar-gender-content"></div>
       </div>
+    </div>
+
+    <div class="bar-chart sr-map-box" id="sr-map-box" style="display:none">
+      <div class="bar-chart-title">
+        <span>Wer vertritt welchen Kanton?</span>
+        <span class="bc-tab">2 Sitze pro Kanton · 6 Kantone mit halber Standesstimme: 1 Sitz</span>
+      </div>
+      <div id="sr-map"></div>
+      <div class="sr-map-hint">Jede Kachelhälfte ist ein Sitz. Mit der Maus über einen Kanton fahren – die Filter links wirken auch hier.</div>
+      <div class="sr-map-tt" id="sr-map-tt"></div>
     </div>
   </div>
   
@@ -911,14 +970,25 @@ function applyFilter() {
   
   document.getElementById('stat-visible').textContent = visible;
   document.getElementById('stat-total').textContent = data.length;
-  updateBarChart(cnt.kanton);
+  updateBarChart(cnt.kanton, cnt.partei);
   updateGenderChart(cnt.gender);
+  updateSrExtras();
 }
 
-function updateBarChart(cantonCounts) {
+function updateBarChart(cantonCounts, partyCounts) {
   const ctxLabels = {
     nr: "Nationalrat", sr: "Ständerat", vb: "Verein. Bundesvers."
   };
+
+  // Im Ständerat hat jeder Kanton gleich viele Sitze – ein «Top 5» wäre sinnlos.
+  // Stattdessen: Parteistärke im Vergleich der beiden Kammern.
+  if (currentCouncil === "sr") {
+    document.getElementById('bc-title').textContent = "Parteien: Ständerat vs. Nationalrat";
+    document.getElementById('bc-context').textContent = "Sitze im Vergleich";
+    renderPartyCompare(partyCounts || {});
+    return;
+  }
+  document.getElementById('bc-title').textContent = "Top 5 Kantone";
   document.getElementById('bc-context').textContent = ctxLabels[currentCouncil];
   
   const sorted = Object.entries(cantonCounts || {})
@@ -1166,6 +1236,157 @@ document.getElementById('reset-btn').addEventListener('click', () => {
   });
   applyFilter();
 });
+
+/* ============================================================
+   STÄNDERAT-EXTRAS: Parteienvergleich & Kantonskarte
+   ============================================================ */
+
+// Gesamtsitze pro Partei in beiden Kammern (direkt aus den Daten gezählt)
+const NR_PARTY_TOTALS = {};
+NR_DATA.forEach(m => { NR_PARTY_TOTALS[m.partei] = (NR_PARTY_TOTALS[m.partei] || 0) + 1; });
+const SR_PARTY_TOTALS = {};
+SR_DATA.forEach(m => { SR_PARTY_TOTALS[m.partei] = (SR_PARTY_TOTALS[m.partei] || 0) + 1; });
+
+// Reihenfolge: nach Sitzzahl im Ständerat absteigend
+const PVZ_ORDER = Object.keys(SR_PARTY_TOTALS).sort((a, b) => SR_PARTY_TOTALS[b] - SR_PARTY_TOTALS[a]);
+
+function renderPartyCompare(srVisible) {
+  const container = document.getElementById('bar-chart-content');
+  const srTotal = SR_DATA.length, nrTotal = NR_DATA.length;
+
+  // NR-Parteien ohne Ständeratssitz als «Übrige» zusammenfassen
+  let nrUebrige = 0;
+  Object.keys(NR_PARTY_TOTALS).forEach(p => {
+    if (!(p in SR_PARTY_TOTALS)) nrUebrige += NR_PARTY_TOTALS[p];
+  });
+
+  // Balkenskala: grösster Sitzanteil in einer der beiden Kammern
+  let maxPct = 0;
+  PVZ_ORDER.forEach(p => {
+    maxPct = Math.max(maxPct, (SR_PARTY_TOTALS[p] || 0) / srTotal, (NR_PARTY_TOTALS[p] || 0) / nrTotal);
+  });
+  maxPct = Math.max(maxPct, nrUebrige / nrTotal) || 1;
+
+  let html = '<div class="pvz-head"><span>oben SR (46) · unten hell NR (200)</span></div>';
+  PVZ_ORDER.forEach(p => {
+    const srCur = srVisible[p] || 0;
+    const srTot = SR_PARTY_TOTALS[p] || 0;
+    const nrTot = NR_PARTY_TOTALS[p] || 0;
+    const col = PARTY_COLORS[p] || '#999';
+    const srW = (srCur / srTotal) / maxPct * 100;
+    const nrW = (nrTot / nrTotal) / maxPct * 100;
+    const srLabel = (srCur === srTot) ? srTot : (srCur + '/' + srTot);
+    html += `
+      <div class="pvz-row">
+        <span class="pvz-name"><span class="pvz-dot" style="background:${col}"></span>${p}</span>
+        <div class="pvz-bars">
+          <div class="pvz-track"><div class="pvz-fill" style="width:${srW}%;background:${col}"></div></div>
+          <div class="pvz-track"><div class="pvz-fill nr" style="width:${nrW}%;background:${col}"></div></div>
+        </div>
+        <span class="pvz-vals">${srLabel}<span class="nrv">${nrTot}</span></span>
+      </div>`;
+  });
+  if (nrUebrige > 0) {
+    const nrW = (nrUebrige / nrTotal) / maxPct * 100;
+    html += `
+      <div class="pvz-row">
+        <span class="pvz-name"><span class="pvz-dot" style="background:#9CA3AF"></span>Übrige</span>
+        <div class="pvz-bars">
+          <div class="pvz-track"></div>
+          <div class="pvz-track"><div class="pvz-fill nr" style="width:${nrW}%;background:#9CA3AF"></div></div>
+        </div>
+        <span class="pvz-vals">–<span class="nrv">${nrUebrige}</span></span>
+      </div>`;
+  }
+  container.innerHTML = html;
+}
+
+// ---- Kantonskarte: Kacheln, ungefähr geografisch angeordnet ----
+// Kachelpositionen, abgestimmt auf die echte Landesgrenze (Projektion s. CH_OUTLINE)
+const SR_TILE_POS = {
+  GE: [8.2, 51.5], VD: [12.5, 39.8], NE: [16, 32],    JU: [24.6, 23.7], FR: [21.8, 38.5],
+  BE: [31, 30.5],  SO: [29.5, 17],   BS: [40.8, 12.4], BL: [38.2, 19.2], AG: [49.8, 12],
+  ZH: [58.8, 15.4],SH: [59.3, 8.1],  TG: [68.5, 8.7],  AR: [74.3, 15.1], SG: [73.5, 22.5],
+  GL: [73.6, 29.3],SZ: [64.8, 21.8], ZG: [56.2, 22.2], LU: [47.5, 21.5], NW: [55.6, 29.3],
+  OW: [46.5, 28.6],UR: [61, 35.8],   AI: [82.3, 32.5], GR: [82, 40],     TI: [63, 51.5],
+  VS: [33, 52.5]
+};
+
+// Vereinfachte Schweizer Landesgrenze (Polygon, an die Kachelpositionen angepasst)
+const CH_OUTLINE = "98.7,30.7 98.5,32.0 97.9,32.8 98.2,34.2 97.5,34.8 97.4,35.9 96.9,36.8 97.5,37.9 98.4,38.0 98.8,38.4 99.0,39.8 98.5,41.1 95.3,40.7 94.9,40.2 94.0,39.9 93.9,38.5 93.0,38.3 90.8,39.0 90.4,40.2 89.6,41.2 89.5,42.8 89.8,43.3 89.4,44.0 89.8,44.4 91.8,45.0 91.9,45.4 90.9,47.4 91.1,48.3 92.3,49.8 92.0,50.4 91.4,50.8 89.8,51.2 89.5,49.9 88.4,48.7 88.1,46.9 87.1,46.4 85.7,46.5 83.8,47.4 82.8,47.0 82.5,48.3 81.8,48.9 78.8,48.7 78.1,48.0 77.6,46.8 76.8,46.2 76.6,42.4 75.5,43.4 74.8,42.8 74.8,42.4 74.3,42.2 73.3,42.4 72.9,42.8 72.3,44.3 72.8,44.9 73.1,47.6 72.0,50.8 71.1,51.7 70.7,52.7 69.1,53.8 68.7,54.4 68.4,56.2 67.2,56.9 67.5,58.4 66.7,59.3 67.4,60.5 68.3,60.8 68.5,61.4 67.9,63.0 67.2,63.9 65.8,63.4 65.0,63.7 65.2,61.9 64.3,59.8 62.8,58.8 62.1,58.7 63.5,56.1 63.0,55.3 61.6,55.2 61.1,54.7 60.1,55.1 58.5,54.3 56.5,51.6 54.9,50.7 54.6,49.4 55.1,45.1 54.7,43.9 54.1,43.8 52.3,44.4 51.6,45.3 51.9,45.9 51.5,46.4 50.7,46.9 49.6,48.4 47.7,49.1 47.3,49.5 47.0,50.1 48.2,51.9 48.3,53.1 47.8,54.1 46.9,55.0 46.0,55.3 45.6,57.2 45.1,58.2 43.2,58.7 42.7,59.5 42.6,60.1 42.2,60.1 41.8,60.9 38.8,60.4 37.7,59.2 35.5,58.7 34.6,59.5 33.5,59.9 31.6,61.1 29.9,60.9 27.0,62.1 25.7,62.0 25.2,61.6 24.0,60.3 23.4,58.4 21.9,56.6 21.4,56.4 20.9,56.8 20.5,56.6 20.4,55.5 20.9,54.6 20.5,54.3 18.8,53.9 18.6,53.4 18.8,52.3 20.0,49.6 18.3,47.2 19.0,46.1 19.1,45.0 18.6,44.5 15.3,43.7 12.5,43.9 10.6,45.2 8.5,45.6 7.8,46.3 6.6,48.1 7.1,49.7 7.5,49.9 8.0,49.8 8.1,50.5 4.3,53.8 3.6,53.4 2.6,53.5 1.1,54.0 1.6,52.7 1.0,51.8 1.1,51.4 2.9,50.5 3.9,50.3 4.2,48.6 4.9,46.8 4.3,45.6 3.2,44.9 3.5,44.4 3.4,43.2 5.2,40.7 4.5,39.6 7.8,36.6 9.3,35.7 11.3,34.0 11.4,33.2 11.0,32.7 11.7,30.9 11.3,29.3 11.6,28.2 15.0,26.9 16.4,25.8 16.9,25.0 16.7,24.4 17.0,23.9 18.2,23.1 18.2,22.6 18.8,22.4 21.3,19.7 22.8,18.6 22.8,17.2 24.5,16.0 24.7,15.6 23.8,14.7 20.8,15.2 21.2,14.3 22.1,13.5 22.1,12.9 23.0,12.6 23.5,12.1 23.1,10.9 23.9,10.6 24.9,10.9 26.0,10.7 27.6,10.9 27.2,11.8 27.4,12.3 28.9,13.2 30.4,12.7 31.9,12.8 32.5,12.5 33.0,11.7 32.7,10.9 33.9,11.1 34.2,10.8 34.1,10.1 34.6,10.0 34.7,9.5 34.2,9.2 35.7,8.2 37.5,7.5 38.0,7.5 37.8,8.3 37.0,8.5 38.5,9.2 40.4,8.8 41.5,7.5 43.2,7.8 43.5,8.6 46.3,8.6 47.3,8.4 49.3,6.9 50.5,6.7 51.7,6.9 52.1,7.6 53.1,8.0 55.2,7.9 55.5,7.2 56.8,6.7 57.6,7.7 58.0,7.4 58.0,6.2 58.3,6.0 58.5,6.3 58.6,5.6 57.8,5.4 55.4,6.1 53.9,5.3 53.9,4.2 54.9,3.5 55.5,2.2 57.4,1.7 57.2,1.2 57.5,1.0 58.5,1.2 58.8,2.4 59.4,1.3 60.2,2.4 60.9,2.4 61.1,2.7 60.6,3.5 61.0,4.4 62.1,4.4 62.0,4.2 62.2,3.5 62.8,3.6 64.0,4.5 63.6,4.8 64.6,5.6 66.0,5.7 67.5,4.9 71.1,5.2 71.4,5.6 73.1,5.8 79.0,9.5 79.8,11.2 81.3,12.1 81.0,13.9 80.2,15.0 79.9,16.0 78.1,18.7 77.7,19.8 77.7,20.8 78.3,23.0 77.5,24.4 79.3,24.8 81.7,24.6 85.8,25.9 85.7,26.3 86.0,26.5 85.9,28.3 86.2,28.7 89.0,29.9 89.8,30.7 91.3,31.3 93.2,30.6 94.0,28.9 95.3,28.9 95.7,27.6 96.2,26.9 97.1,26.6 98.8,28.4 98.7,30.7";
+
+function renderSrMap() {
+  const TILE_W = 8, TILE_H = 5.8, RX = 1.0;
+  const byCanton = {};
+  SR_DATA.forEach(m => { (byCanton[m.kt] = byCanton[m.kt] || []).push(m); });
+  Object.values(byCanton).forEach(a => a.sort((x, y) => (x.partei + x.name).localeCompare(y.partei + y.name)));
+
+  let svg = '<svg viewBox="0 0 100 66" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ständeratssitze nach Kanton"><defs>';
+  Object.keys(SR_TILE_POS).forEach(kt => {
+    const [x, y] = SR_TILE_POS[kt];
+    svg += `<clipPath id="srclip-${kt}"><rect x="${x - TILE_W / 2}" y="${y - TILE_H / 2}" width="${TILE_W}" height="${TILE_H}" rx="${RX}"/></clipPath>`;
+  });
+  svg += '</defs>';
+  // Landesgrenze zuerst zeichnen, damit die Kacheln darüber liegen
+  svg += `<polygon points="${CH_OUTLINE}" fill="#FFFFFF" fill-opacity="0.6" stroke="#9CA3AF" stroke-width="0.45" stroke-linejoin="round"/>`;
+  Object.keys(SR_TILE_POS).forEach(kt => {
+    const [x, y] = SR_TILE_POS[kt];
+    const x0 = x - TILE_W / 2, y0 = y - TILE_H / 2;
+    const seats = byCanton[kt] || [];
+    svg += `<g class="sr-tile" data-kt="${kt}" clip-path="url(#srclip-${kt})">`;
+    seats.forEach((m, i) => {
+      const w = seats.length === 2 ? TILE_W / 2 : TILE_W;
+      svg += `<rect class="sr-map-seat" data-partei="${m.partei}" data-fraktion="${m.fraktion}" data-kt="${m.kt}" data-gender="${m.gender}" data-lang="${m.lang}" data-stadtland="${m.stadtland}" x="${x0 + i * TILE_W / 2}" y="${y0}" width="${w}" height="${TILE_H}" fill="${PARTY_COLORS[m.partei] || '#999'}"/>`;
+    });
+    if (seats.length === 2) {
+      svg += `<line x1="${x}" y1="${y0}" x2="${x}" y2="${y0 + TILE_H}" stroke="rgba(255,255,255,0.85)" stroke-width="0.35"/>`;
+    }
+    svg += `</g><text class="sr-tile-label" x="${x}" y="${y}">${kt}</text>`;
+  });
+  svg += '</svg>';
+  document.getElementById('sr-map').innerHTML = svg;
+
+  // Tooltip mit Namen und Parteien des Kantons
+  const mtt = document.getElementById('sr-map-tt');
+  function moveMapTT(ev) {
+    const pad = 14;
+    let tx = ev.clientX + pad, ty = ev.clientY + pad;
+    const r = mtt.getBoundingClientRect();
+    if (tx + r.width > window.innerWidth - 8) tx = ev.clientX - r.width - pad;
+    if (ty + r.height > window.innerHeight - 8) ty = ev.clientY - r.height - pad;
+    mtt.style.left = tx + 'px';
+    mtt.style.top = ty + 'px';
+  }
+  document.querySelectorAll('#sr-map .sr-tile').forEach(tile => {
+    const kt = tile.dataset.kt;
+    const seats = byCanton[kt] || [];
+    const lines = seats.map(m => `<span class="d" style="background:${PARTY_COLORS[m.partei] || '#999'}"></span>${m.name} (${m.partei})`).join('<br>');
+    const head = `${KANTONS_FULL[kt] || kt} · ${seats.length === 1 ? '1 Sitz' : '2 Sitze'}`;
+    tile.addEventListener('mouseenter', ev => { mtt.innerHTML = `<b>${head}</b>${lines}`; mtt.classList.add('show'); moveMapTT(ev); });
+    tile.addEventListener('mousemove', moveMapTT);
+    tile.addEventListener('mouseleave', () => mtt.classList.remove('show'));
+  });
+}
+
+// Karte ein-/ausblenden und Filter darauf anwenden (aus applyFilter() aufgerufen)
+function updateSrExtras() {
+  const box = document.getElementById('sr-map-box');
+  if (!box) return;
+  box.style.display = (currentCouncil === "sr") ? "" : "none";
+  if (currentCouncil !== "sr") return;
+  document.querySelectorAll('#sr-map .sr-map-seat').forEach(s => {
+    const ok =
+      filterState.fraktion.has(s.dataset.fraktion) &&
+      filterState.partei.has(s.dataset.partei) &&
+      filterState.kanton.has(s.dataset.kt) &&
+      filterState.gender.has(s.dataset.gender) &&
+      filterState.lang.has(s.dataset.lang) &&
+      filterState.stadtland.has(s.dataset.stadtland);
+    s.classList.toggle('dimmed', !ok);
+  });
+}
+
+renderSrMap();
 
 initFilters();
 renderSeats();
