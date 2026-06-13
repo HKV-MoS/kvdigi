@@ -362,68 +362,76 @@
   const DATA = {
     ch: {
       name:"Schweiz", flag:"🇨🇭",
-      src:"Quelle: Schweizerische Gesellschaft für Ernährung (SGE) / BLV",
-      info:"",
+      src:"Quelle: Schweizerische Gesellschaft für Ernährung (SGE) / BLV (Stand 2024)",
+      info:"Die Schweizer Pyramide wurde 2024 überarbeitet: «Nüsse & Samen» bilden neu eine eigene Gruppe, pflanzliche Proteine und Hülsenfrüchte werden stärker betont, und Alkohol wird nicht mehr in der Pyramide dargestellt.",
       principles:[
-        {icon:"🖐️",title:"Portionen mit der Hand messen",text:"1 Portion Gemüse oder Früchte entspricht etwa einer Handvoll – so schätzt du Mengen ganz ohne Waage."},
-        {icon:"🥗",title:"«5 am Tag»",text:"Drei Portionen Gemüse und zwei Portionen Früchte pro Tag – in möglichst vielen verschiedenen Farben."},
-        {icon:"💧",title:"Genug trinken",text:"1–2 Liter ungezuckert über den Tag verteilt: Hahnenwasser oder ungezuckerter Tee."},
-        {icon:"🍽️",title:"Regelmässig & ausgewogen",text:"Über den Tag verteilte Mahlzeiten, abwechslungsreich zusammengestellt und in Ruhe gegessen."},
-        {icon:"🚶",title:"Bewegung & Genuss",text:"Tägliche Bewegung und bewusstes Geniessen gehören für die SGE zu einer gesunden Ernährung dazu."}
+        {icon:"🖐️",title:"Portionen mit der Hand messen",text:"1 Portion Gemüse oder Früchte entspricht etwa einer Handvoll (rund 120 g) – so schätzt du Mengen ganz ohne Waage."},
+        {icon:"🥗",title:"«5 am Tag»",text:"Drei Portionen Gemüse und zwei Portionen Früchte pro Tag – möglichst bunt und saisonal."},
+        {icon:"🫘",title:"Öfter pflanzlich",text:"Mindestens einmal pro Woche Hülsenfrüchte; tierische Proteine öfter durch pflanzliche ersetzen, Fleisch höchstens 2–3× pro Woche."},
+        {icon:"💧",title:"Genug trinken",text:"1–2 Liter ungezuckert über den Tag verteilt: am besten Hahnenwasser oder ungezuckerter Tee."},
+        {icon:"🌱",title:"Saisonal & nachhaltig",text:"Neu seit 2024 berücksichtigt: regionale, saisonale Lebensmittel bevorzugen und stark verarbeitete Produkte einschränken."}
       ],
       levels:[
-        { color:"#D6342C", icon:"🍫🥨🍷", title:"Süsses, Salziges & Alkohol", portion:"mit Mass",
-          tip:"In kleinen Mengen geniessen – nicht täglich.",
+        { color:"#D6342C", icon:"🥤🍫", title:"Süssgetränke & Snacks", portion:"optional · 0–1/Tag",
+          tip:"Nur in kleinen Mengen. Alkoholische Getränke nicht täglich.",
           items:[
-            {icon:"🍫",name:"Süssigkeiten",note:"Schokolade, Bonbons – bewusst und selten."},
-            {icon:"🍰",name:"Gebäck & Kuchen",note:"Feines Gebäck nur gelegentlich."},
-            {icon:"🥨",name:"Salziges",note:"Chips und Salzgebäck sparsam."},
-            {icon:"🥤",name:"Süsse Getränke",note:"Limonaden enthalten viel Zucker."},
-            {icon:"🍷",name:"Alkohol",note:"Wenn überhaupt, nur in kleinen Mengen."}
+            {icon:"🥤",name:"Süssgetränke",note:"Cola, Eistee, Energy Drinks, Sirup – 1 Portion = 2 dl."},
+            {icon:"🍫",name:"Süsses",note:"Schokolade, Süssgebäck – 1 Portion = 20 g."},
+            {icon:"🥨",name:"Salzige Snacks",note:"Chips, Apérogebäck, gesalzene Nüsse – 20 g."},
+            {icon:"🍷",name:"Alkohol",note:"Nicht täglich – wird in der Pyramide nicht mehr abgebildet."}
           ]},
-        { color:"#E8841A", icon:"🫒🥜", title:"Öle, Fette & Nüsse", portion:"täglich kleine Mengen",
-          tip:"Hochwertige Pflanzenöle bevorzugen.",
+        { color:"#E8841A", icon:"🫒🧈", title:"Öle & Fette", portion:"2 EL/Tag",
+          tip:"Pflanzliche Öle bevorzugen, davon mind. 1 EL Rapsöl. Butter & Margarine sparsam.",
           items:[
-            {icon:"🌻",name:"Rapsöl",note:"Das Allroundöl: ideal zum Kochen und Anrichten, gutes Fettsäureprofil."},
-            {icon:"🫒",name:"Olivenöl",note:"Für die kalte Küche und mediterrane Gerichte."},
-            {icon:"🌰",name:"Andere Pflanzenöle",note:"Sonnenblumen- oder Baumnussöl für Abwechslung."},
-            {icon:"🧈",name:"Butter",note:"Sparsam, vor allem für den Geschmack."},
-            {icon:"🥜",name:"Nüsse & Samen",note:"1 Portion (20–30 g) ungesalzen pro Tag."}
+            {icon:"🌻",name:"Rapsöl",note:"Mindestens 1 EL pro Tag – ideales Fettsäureprofil."},
+            {icon:"🫒",name:"Olivenöl & andere Pflanzenöle",note:"Für die kalte Küche und zum Kochen."},
+            {icon:"🧈",name:"Butter & Margarine",note:"Sparsam – maximal 10 g pro Tag."}
           ]},
-        { color:"#F2B705", icon:"🥛🍗🥚", title:"Milchprodukte, Fleisch, Fisch, Eier & Tofu", portion:"3 + 1 Portionen/Tag",
-          tip:"3 Portionen Milchprodukte täglich, dazu 1 Portion eiweissreiche Lebensmittel.",
+        { color:"#E8A33D", icon:"🥜🌰", title:"Nüsse & Samen", portion:"1 kleine Handvoll/Tag",
+          tip:"15–30 g ungesalzen. Seit 2024 eine eigene Gruppe.",
           items:[
-            {icon:"🥛",name:"Milch",note:"Teil der 3 täglichen Portionen Milchprodukte."},
-            {icon:"🧀",name:"Käse",note:"Zählt zu den Milchprodukten."},
-            {icon:"🍶",name:"Joghurt & Quark",note:"Ungezuckert bevorzugen."},
-            {icon:"🥩",name:"Fleisch",note:"Teil der 1 Portion Eiweiss pro Tag, rotes Fleisch dosieren."},
-            {icon:"🐟",name:"Fisch",note:"1–2× pro Woche, liefert wertvolle Fettsäuren."},
-            {icon:"🥚",name:"Eier",note:"Eine Eiweissquelle unter mehreren."},
-            {icon:"🫛",name:"Tofu & Hülsenfrüchte",note:"Pflanzliche Eiweissquelle als Alternative."}
+            {icon:"🥜",name:"Baumnüsse & Mandeln",note:"Ungesalzen, eine kleine Handvoll."},
+            {icon:"🌰",name:"Haselnüsse",note:"Teil der täglichen Portion."},
+            {icon:"🌻",name:"Samen",note:"Leinsamen, Sonnenblumenkerne."}
           ]},
-        { color:"#9CC02B", icon:"🍞🥔🫘", title:"Getreideprodukte, Kartoffeln & Hülsenfrüchte", portion:"3 Portionen/Tag",
-          tip:"Vollkornprodukte bevorzugen – sie sättigen länger.",
+        { color:"#F2B705", icon:"🫘🥚🐟", title:"Hülsenfrüchte, Eier, Fleisch & Weitere", portion:"1 Portion/Tag",
+          tip:"Zwischen den Quellen abwechseln, regelmässig Hülsenfrüchte. Fleisch max. 2–3×/Woche.",
+          items:[
+            {icon:"🫘",name:"Hülsenfrüchte",note:"Linsen, Kichererbsen, Bohnen – mindestens 1×/Woche."},
+            {icon:"🌱",name:"Tofu & pflanzliche Proteine",note:"Tofu, Tempeh, Seitan."},
+            {icon:"🥚",name:"Eier",note:"2–3 Eier entsprechen 1 Portion."},
+            {icon:"🥩",name:"Fleisch",note:"Höchstens 2–3× pro Woche, inkl. Geflügel & verarbeitetem Fleisch."},
+            {icon:"🐟",name:"Fisch",note:"Liefert wertvolle Fettsäuren."}
+          ]},
+        { color:"#C9D24A", icon:"🥛🧀", title:"Milchprodukte", portion:"2–3 Portionen/Tag",
+          tip:"Am besten ungezuckert.",
+          items:[
+            {icon:"🥛",name:"Milch",note:"2 dl entsprechen 1 Portion."},
+            {icon:"🍶",name:"Joghurt & Quark",note:"150–200 g = 1 Portion, ungezuckert."},
+            {icon:"🧀",name:"Käse",note:"30 g Hartkäse oder 60 g Weichkäse = 1 Portion."}
+          ]},
+        { color:"#9CC02B", icon:"🍞🥔", title:"Getreideprodukte & Kartoffeln", portion:"3 Portionen/Tag",
+          tip:"Mindestens die Hälfte als Vollkorn.",
           items:[
             {icon:"🍞",name:"Brot",note:"Vollkornbrot bevorzugen."},
             {icon:"🍝",name:"Teigwaren",note:"Als Vollkorn besonders sättigend."},
             {icon:"🍚",name:"Reis",note:"Auch als Naturreis (Vollkorn)."},
-            {icon:"🥔",name:"Kartoffeln",note:"Vielseitige Sättigungsbeilage."},
-            {icon:"🫘",name:"Hülsenfrüchte",note:"Linsen und Bohnen – auch eine Eiweissquelle."}
+            {icon:"🥔",name:"Kartoffeln",note:"200–300 g entsprechen 1 Portion."}
           ]},
         { color:"#5BA829", icon:"🥦🍎", title:"Gemüse & Früchte", portion:"5 am Tag",
-          tip:"Verschiedene Farben über den Tag verteilt – «5 am Tag».",
+          tip:"3 Portionen Gemüse, 2 Portionen Früchte – bunt und saisonal. 1 Portion = 120 g.",
           items:[
-            {icon:"🥦",name:"Gemüse",note:"3 Portionen täglich (1 Portion = ca. 120 g)."},
+            {icon:"🥦",name:"Gemüse",note:"3 Portionen täglich."},
             {icon:"🥗",name:"Salat",note:"Zählt zum Gemüse."},
             {icon:"🍎",name:"Früchte",note:"2 Portionen täglich."},
-            {icon:"🫐",name:"Beeren",note:"Farbenfroh, vitamin- und ballaststoffreich."}
+            {icon:"🫐",name:"Beeren",note:"Saisonal und farbenfroh."}
           ]},
         { color:"#2E8BC0", icon:"💧", title:"Getränke", portion:"1–2 Liter/Tag",
-          tip:"Über den ganzen Tag verteilt und ungezuckert trinken.",
+          tip:"Regelmässig über den Tag, am besten Wasser. Kaffee und Tee in moderaten Mengen.",
           items:[
             {icon:"💧",name:"Hahnenwasser",note:"Der ideale Durstlöscher – immer verfügbar."},
-            {icon:"🍵",name:"Ungezuckerter Tee",note:"Kräuter- oder Früchtetee ohne Zucker."},
-            {icon:"☕",name:"Kaffee",note:"Mit Mass, zählt zur Flüssigkeitszufuhr."}
+            {icon:"🍵",name:"Kräuter- & Früchtetee",note:"Ungezuckert."},
+            {icon:"☕",name:"Kaffee",note:"Moderat, bis etwa 3 Tassen pro Tag."}
           ]}
       ]
     },
