@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die Ernährungspyramide im Ländervergleich</title>
+<style>
+  :root{--hkv:#1F4E78;--hkv-dark:#163a5a;--hkv-light:#E8EFF6;--ink:#1b2733;--muted:#64748b;
+    --line:#dbe3ec;--bg:#F5F7FA;--card:#fff;--shadow:0 10px 30px rgba(20,40,70,.10);}
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{font-family:"Aptos","Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);
+    color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1080px;margin:0 auto;padding:20px 18px 40px;}
+
+  header.top{text-align:center;padding:8px 0 16px;}
+  .eyebrow{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--hkv);
+    font-weight:700;margin:0 0 6px;}
+  h1{font-size:clamp(26px,4.5vw,40px);line-height:1.08;margin:0;font-weight:800;
+    letter-spacing:-.8px;color:var(--ink);}
+  h1 .accent{color:var(--hkv);}
+  .lead{color:var(--muted);margin:10px auto 0;max-width:600px;font-size:15px;}
+
+  .switch{display:flex;justify-content:center;gap:8px;margin:22px 0 0;flex-wrap:wrap;}
+  .switch button{border:1.5px solid var(--line);background:var(--card);color:var(--ink);
+    font:inherit;font-weight:700;font-size:15px;cursor:pointer;padding:9px 18px;border-radius:999px;
+    display:flex;align-items:center;gap:8px;transition:border-color .18s,color .18s,background .18s,box-shadow .18s,transform .12s;}
+  .switch button .fl{font-size:19px;line-height:1;}
+  .switch button:hover{border-color:var(--hkv);transform:translateY(-1px);}
+  .switch button[aria-pressed="true"]{background:var(--hkv);border-color:var(--hkv);color:#fff;
+    box-shadow:0 6px 16px rgba(31,78,120,.30);}
+  .switch-note{text-align:center;color:var(--muted);font-size:12.5px;margin:8px 0 0;}
+  .switch-note b{color:var(--hkv);}
+
+  .stage{display:grid;grid-template-columns:1.2fr .8fr;gap:22px;margin-top:18px;align-items:start;}
+  @media (max-width:780px){.stage{grid-template-columns:1fr;}}
+
+  .pyramid-card{background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:22px 18px 18px;box-shadow:var(--shadow);}
+  .pyramid-head{display:flex;align-items:baseline;justify-content:space-between;margin:0 0 14px;
+    gap:10px;flex-wrap:wrap;}
+  .pyramid-head .country{font-weight:800;font-size:18px;color:var(--hkv);}
+  .pyramid-head .src{font-size:11.5px;color:var(--muted);}
+
+  .pyramid{width:100%;max-width:640px;margin:0 auto;height:clamp(380px,52vh,480px);
+    display:flex;flex-direction:column;}
+  .band{flex:1;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;
+    animation:bandIn .42s ease forwards;
+    transition:filter .2s ease,transform .2s ease,background .45s ease,color .45s ease;position:relative;}
+  @keyframes bandIn{from{opacity:0;}to{opacity:1;}}
+  .band:hover{filter:brightness(1.06);transform:translateY(-2px);}
+  .pyramid.has-active .band{filter:brightness(.78) saturate(.85);}
+  .pyramid.has-active .band.active{filter:brightness(1.08);transform:translateY(-1px);}
+  .band-inner{display:flex;align-items:center;gap:12px;padding:0 14px;max-width:92%;text-align:left;}
+  .band-icon{font-size:clamp(17px,2.4vw,23px);white-space:nowrap;line-height:1;text-shadow:0 1px 2px rgba(0,0,0,.18);}
+  .band-text{display:flex;flex-direction:column;min-width:0;}
+  .band-title{font-weight:700;font-size:clamp(12px,1.7vw,15px);line-height:1.15;text-shadow:0 1px 2px rgba(0,0,0,.16);}
+  .pyramid.has-active .band.active .band-title{font-weight:800;}
+  .band-portion{font-size:clamp(10px,1.4vw,12px);opacity:.92;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,.14);}
+  .band.apex .band-inner{flex-direction:column;gap:1px;align-self:flex-end;padding-bottom:5px;text-align:center;max-width:96%;}
+  .band.apex .band-text{align-items:center;}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;
+    box-shadow:var(--shadow);min-height:240px;}
+  .panel .ph-dot{width:13px;height:13px;border-radius:50%;display:inline-block;margin-right:8px;vertical-align:middle;}
+  .panel h2{font-size:19px;margin:0 0 2px;font-weight:800;letter-spacing:-.3px;}
+  .panel .en{font-size:12.5px;color:var(--muted);font-style:italic;margin:0 0 12px;}
+  .panel .portion-badge{display:inline-block;background:var(--hkv-light);color:var(--hkv);
+    font-weight:700;font-size:13px;padding:4px 12px;border-radius:999px;margin-bottom:14px;}
+  .panel .k{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:700;margin:14px 0 7px;}
+  .panel .v{font-size:14px;margin:0;}
+  .panel .tip{background:#FFF8E6;border:1px solid #F4E2A8;border-radius:12px;padding:10px 12px;font-size:13.5px;}
+  .panel .tip b{color:#9A6B00;}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;}
+  .chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 11px;font:inherit;
+    font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;color:var(--ink);
+    transition:border-color .15s,background .15s,transform .1s;}
+  .chip:hover{border-color:var(--hkv);background:var(--hkv-light);transform:translateY(-1px);}
+  .chip .ci{font-size:15px;}
+  .back{border:none;background:none;color:var(--hkv);font:inherit;font-weight:700;font-size:13px;
+    cursor:pointer;padding:0 0 10px;display:inline-flex;align-items:center;gap:5px;}
+  .back:hover{text-decoration:underline;}
+  .item-icon{font-size:34px;display:block;margin:2px 0 6px;}
+
+  .panel.intro .hint{color:var(--muted);font-size:14.5px;margin:0 0 18px;}
+  .legend{border-top:1px dashed var(--line);padding-top:14px;margin-top:4px;}
+  .legend .lt{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:700;margin:0 0 8px;}
+  .legend .ramp{height:12px;border-radius:6px;margin-bottom:6px;
+    background:linear-gradient(90deg,#2E8BC0,#5BA829,#9CC02B,#F2B705,#E8841A,#D6342C);}
+  .legend .ends{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);}
+  .info-banner{background:var(--hkv-light);border:1px solid #cfe0ef;border-radius:12px;padding:11px 13px;
+    font-size:13.5px;color:var(--hkv-dark);margin-top:14px;display:none;}
+  .info-banner.show{display:block;}
+  .info-banner b{color:var(--hkv);}
+
+  .principles-wrap{margin-top:30px;}
+  .sec-title{font-size:18px;font-weight:800;color:var(--ink);margin:0 0 14px;letter-spacing:-.3px;}
+  .principles{display:grid;grid-template-columns:repeat(auto-fit,minmax(225px,1fr));gap:14px;}
+  .pcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px;
+    box-shadow:0 4px 14px rgba(20,40,70,.05);}
+  .pcard-h{display:flex;align-items:center;gap:9px;font-weight:700;font-size:14.5px;color:var(--hkv);margin-bottom:7px;}
+  .pcard-h .pic{font-size:20px;}
+  .pcard-t{margin:0;font-size:13.5px;color:var(--ink);}
+  .plate-card{grid-column:1/-1;}
+  .plate-row{display:flex;gap:18px;align-items:center;flex-wrap:wrap;}
+  .plate{max-width:270px;width:100%;flex:0 0 auto;}
+  .plate-side{flex:1;min-width:210px;}
+  .plate-desc{font-size:14.5px;margin:0;color:var(--ink);}
+  .seg{cursor:pointer;stroke:#fff;stroke-width:3;transition:opacity .15s;}
+  .seg:hover{opacity:.82;}
+  .seg-l{fill:#fff;font-family:inherit;font-weight:700;font-size:13px;pointer-events:none;}
+
+  footer.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:28px;padding-top:14px;border-top:1px solid var(--line);}
+  @media (prefers-reduced-motion:reduce){.band{animation:none;opacity:1;}.band,.switch button{transition:none;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">Gesundheit &amp; Ernährung · ABU</p>
+    <h1>Die <span class="accent">Ernährungspyramide</span><br>im Ländervergleich</h1>
+    <p class="lead">Die Schweizer Lebensmittelpyramide (SGE) ist die Grundlage – Deutschland,
+      Österreich und die USA zeigen sie zum Vergleich. Tippe auf eine Stufe und dann auf einzelne
+      Lebensmittel. Unten breit heisst «täglich reichlich», oben schmal heisst «nur sparsam».</p>
+  </header>
+
+  <div class="switch" id="switch" role="group" aria-label="Land wählen">
+    <button data-c="ch" aria-pressed="true"><span class="fl">🇨🇭</span> Schweiz</button>
+    <button data-c="de" aria-pressed="false"><span class="fl">🇩🇪</span> Deutschland</button>
+    <button data-c="at" aria-pressed="false"><span class="fl">🇦🇹</span> Österreich</button>
+    <button data-c="us" aria-pressed="false"><span class="fl">🇺🇸</span> USA</button>
+  </div>
+  <p class="switch-note">🇨🇭 <b>Schweiz</b> ist die Referenz für den Unterricht – die anderen Länder dienen zum Vergleich.</p>
+
+  <div class="stage">
+    <div class="pyramid-card">
+      <div class="pyramid-head">
+        <span class="country" id="country-name">Schweiz</span>
+        <span class="src" id="country-src"></span>
+      </div>
+      <div class="pyramid" id="pyramid" aria-label="Ernährungspyramide"></div>
+    </div>
+    <div class="panel intro" id="panel"></div>
+  </div>
+
+  <section class="principles-wrap">
+    <h3 class="sec-title" id="sec-title">Ernährungsprinzipien</h3>
+    <div class="principles" id="principles"></div>
+  </section>
+
+  <footer class="foot" id="foot"></footer>
+</div>
+
+<script>
+  const DATA = {
+    ch: {
+      name:"Schweiz", flag:"🇨🇭",
+      src:"Quelle: Schweizerische Gesellschaft für Ernährung (SGE) / BLV",
+      info:"",
+      principles:[
+        {icon:"🖐️",title:"Portionen mit der Hand messen",text:"1 Portion Gemüse oder Früchte entspricht etwa einer Handvoll – so schätzt du Mengen ganz ohne Waage."},
+        {icon:"🥗",title:"«5 am Tag»",text:"Drei Portionen Gemüse und zwei Portionen Früchte pro Tag – in möglichst vielen verschiedenen Farben."},
+        {icon:"💧",title:"Genug trinken",text:"1–2 Liter ungezuckert über den Tag verteilt: Hahnenwasser oder ungezuckerter Tee."},
+        {icon:"🍽️",title:"Regelmässig & ausgewogen",text:"Über den Tag verteilte Mahlzeiten, abwechslungsreich zusammengestellt und in Ruhe gegessen."},
+        {icon:"🚶",title:"Bewegung & Genuss",text:"Tägliche Bewegung und bewusstes Geniessen gehören für die SGE zu einer gesunden Ernährung dazu."}
+      ],
+      levels:[
+        { color:"#D6342C", icon:"🍫🥨🍷", title:"Süsses, Salziges & Alkohol", portion:"mit Mass",
+          tip:"In kleinen Mengen geniessen – nicht täglich.",
+          items:[
+            {icon:"🍫",name:"Süssigkeiten",note:"Schokolade, Bonbons – bewusst und selten."},
+            {icon:"🍰",name:"Gebäck & Kuchen",note:"Feines Gebäck nur gelegentlich."},
+            {icon:"🥨",name:"Salziges",note:"Chips und Salzgebäck sparsam."},
+            {icon:"🥤",name:"Süsse Getränke",note:"Limonaden enthalten viel Zucker."},
+            {icon:"🍷",name:"Alkohol",note:"Wenn überhaupt, nur in kleinen Mengen."}
+          ]},
+        { color:"#E8841A", icon:"🫒🥜", title:"Öle, Fette & Nüsse", portion:"täglich kleine Mengen",
+          tip:"Hochwertige Pflanzenöle bevorzugen.",
+          items:[
+            {icon:"🌻",name:"Rapsöl",note:"Das Allroundöl: ideal zum Kochen und Anrichten, gutes Fettsäureprofil."},
+            {icon:"🫒",name:"Olivenöl",note:"Für die kalte Küche und mediterrane Gerichte."},
+            {icon:"🌰",name:"Andere Pflanzenöle",note:"Sonnenblumen- oder Baumnussöl für Abwechslung."},
+            {icon:"🧈",name:"Butter",note:"Sparsam, vor allem für den Geschmack."},
+            {icon:"🥜",name:"Nüsse & Samen",note:"1 Portion (20–30 g) ungesalzen pro Tag."}
+          ]},
+        { color:"#F2B705", icon:"🥛🍗🥚", title:"Milchprodukte, Fleisch, Fisch, Eier & Tofu", portion:"3 + 1 Portionen/Tag",
+          tip:"3 Portionen Milchprodukte täglich, dazu 1 Portion eiweissreiche Lebensmittel.",
+          items:[
+            {icon:"🥛",name:"Milch",note:"Teil der 3 täglichen Portionen Milchprodukte."},
+            {icon:"🧀",name:"Käse",note:"Zählt zu den Milchprodukten."},
+            {icon:"🍶",name:"Joghurt & Quark",note:"Ungezuckert bevorzugen."},
+            {icon:"🥩",name:"Fleisch",note:"Teil der 1 Portion Eiweiss pro Tag, rotes Fleisch dosieren."},
+            {icon:"🐟",name:"Fisch",note:"1–2× pro Woche, liefert wertvolle Fettsäuren."},
+            {icon:"🥚",name:"Eier",note:"Eine Eiweissquelle unter mehreren."},
+            {icon:"🫛",name:"Tofu & Hülsenfrüchte",note:"Pflanzliche Eiweissquelle als Alternative."}
+          ]},
+        { color:"#9CC02B", icon:"🍞🥔🫘", title:"Getreideprodukte, Kartoffeln & Hülsenfrüchte", portion:"3 Portionen/Tag",
+          tip:"Vollkornprodukte bevorzugen – sie sättigen länger.",
+          items:[
+            {icon:"🍞",name:"Brot",note:"Vollkornbrot bevorzugen."},
+            {icon:"🍝",name:"Teigwaren",note:"Als Vollkorn besonders sättigend."},
+            {icon:"🍚",name:"Reis",note:"Auch als Naturreis (Vollkorn)."},
+            {icon:"🥔",name:"Kartoffeln",note:"Vielseitige Sättigungsbeilage."},
+            {icon:"🫘",name:"Hülsenfrüchte",note:"Linsen und Bohnen – auch eine Eiweissquelle."}
+          ]},
+        { color:"#5BA829", icon:"🥦🍎", title:"Gemüse & Früchte", portion:"5 am Tag",
+          tip:"Verschiedene Farben über den Tag verteilt – «5 am Tag».",
+          items:[
+            {icon:"🥦",name:"Gemüse",note:"3 Portionen täglich (1 Portion = ca. 120 g)."},
+            {icon:"🥗",name:"Salat",note:"Zählt zum Gemüse."},
+            {icon:"🍎",name:"Früchte",note:"2 Portionen täglich."},
+            {icon:"🫐",name:"Beeren",note:"Farbenfroh, vitamin- und ballaststoffreich."}
+          ]},
+        { color:"#2E8BC0", icon:"💧", title:"Getränke", portion:"1–2 Liter/Tag",
+          tip:"Über den ganzen Tag verteilt und ungezuckert trinken.",
+          items:[
+            {icon:"💧",name:"Hahnenwasser",note:"Der ideale Durstlöscher – immer verfügbar."},
+            {icon:"🍵",name:"Ungezuckerter Tee",note:"Kräuter- oder Früchtetee ohne Zucker."},
+            {icon:"☕",name:"Kaffee",note:"Mit Mass, zählt zur Flüssigkeitszufuhr."}
+          ]}
+      ]
+    },
+
+    de: {
+      name:"Deutschland", flag:"🇩🇪",
+      src:"Quelle: aid / Bundeszentrum für Ernährung (BZfE)",
+      info:"",
+      principles:[
+        {icon:"🚦",title:"Ampel-Prinzip",text:"Grün reichlich, gelb mässig, rot sparsam – die Farben zeigen, wie viel von jeder Gruppe empfohlen ist."},
+        {icon:"🖐️",title:"Mengen mit Hand & Faust",text:"Portionen werden mit der eigenen Hand gemessen, zum Beispiel eine Faust voll Gemüse."},
+        {icon:"🥗",title:"«5 am Tag»",text:"Fünf Portionen Gemüse und Obst pro Tag bilden die Basis einer ausgewogenen Ernährung."},
+        {icon:"🌾",title:"Vollkorn bevorzugen",text:"Bei Brot, Nudeln und Reis möglichst zur Vollkornvariante greifen."}
+      ],
+      levels:[
+        { color:"#D6342C", icon:"🍫🍷", title:"Süsses, Snacks & Alkohol", portion:"max. 1 Portion",
+          tip:"Bewusst geniessen statt täglich – kleine Mengen genügen.",
+          items:[
+            {icon:"🍫",name:"Süsses",note:"Schokolade und Gebäck nur gelegentlich."},
+            {icon:"🥨",name:"Snacks",note:"Chips und Salziges sparsam."},
+            {icon:"🥤",name:"Limonade",note:"Süsse Getränke enthalten viel Zucker."},
+            {icon:"🍷",name:"Alkohol",note:"Nur in kleinen Mengen."}
+          ]},
+        { color:"#E8841A", icon:"🫒", title:"Öle & Fette", portion:"2 Portionen",
+          tip:"Pflanzliche Öle bevorzugen, sparsam dosieren.",
+          items:[
+            {icon:"🌻",name:"Rapsöl",note:"Vielseitiges Öl mit gutem Fettsäureprofil."},
+            {icon:"🫒",name:"Olivenöl",note:"Für Salate und die kalte Küche."},
+            {icon:"🧈",name:"Butter",note:"Sparsam, für den Geschmack."}
+          ]},
+        { color:"#F2B705", icon:"🥛🥩", title:"Milchprodukte, Fleisch, Fisch & Eier", portion:"3 + 1 Portionen",
+          tip:"Fisch 1–2× pro Woche, Fleisch in Massen.",
+          items:[
+            {icon:"🥛",name:"Milch",note:"Teil der täglichen Milchprodukte."},
+            {icon:"🧀",name:"Käse",note:"Zählt zu den Milchprodukten."},
+            {icon:"🥩",name:"Fleisch",note:"In Massen, mageres bevorzugen."},
+            {icon:"🐟",name:"Fisch",note:"Ein- bis zweimal pro Woche."},
+            {icon:"🥚",name:"Eier",note:"Eiweissquelle in Massen."}
+          ]},
+        { color:"#9CC02B", icon:"🍞🥔", title:"Getreide, Brot & Kartoffeln", portion:"4 Portionen",
+          tip:"Vollkorn sättigt länger und liefert Ballaststoffe.",
+          items:[
+            {icon:"🍞",name:"Vollkornbrot",note:"Bevorzugt gegenüber Weissbrot."},
+            {icon:"🍝",name:"Nudeln",note:"Als Vollkorn besonders sättigend."},
+            {icon:"🍚",name:"Reis",note:"Naturreis bevorzugen."},
+            {icon:"🥔",name:"Kartoffeln",note:"Sättigende Beilage."}
+          ]},
+        { color:"#5BA829", icon:"🥦🍎", title:"Gemüse & Obst", portion:"5 Portionen",
+          tip:"Möglichst bunt: verschiedene Farben, verschiedene Nährstoffe.",
+          items:[
+            {icon:"🥦",name:"Gemüse",note:"Drei Portionen täglich."},
+            {icon:"🍎",name:"Obst",note:"Zwei Portionen täglich."}
+          ]},
+        { color:"#2E8BC0", icon:"🥤", title:"Getränke", portion:"6 Portionen (ca. 1,5 L)",
+          tip:"Über den ganzen Tag verteilt trinken.",
+          items:[
+            {icon:"🥤",name:"Wasser",note:"Der wichtigste Durstlöscher."},
+            {icon:"🍵",name:"Tee",note:"Ungesüsst, zählt zur Flüssigkeit."}
+          ]}
+      ]
+    },
+
+    at: {
+      name:"Österreich", flag:"🇦🇹",
+      src:"Quelle: Österreichische Ernährungspyramide (BMSGPK / AGES)",
+      info:"",
+      principles:[
+        {icon:"🪜",title:"Sieben Stufen",text:"Die österreichische Pyramide unterscheidet fein zwischen sieben Ebenen – von Getränken bis Süssem."},
+        {icon:"🥗",title:"«5 am Tag»",text:"Drei Portionen Gemüse oder Hülsenfrüchte und zwei Portionen Obst pro Tag."},
+        {icon:"💧",title:"1,5 Liter trinken",text:"Alkoholfreie Getränke, am besten Wasser, über den ganzen Tag verteilt."},
+        {icon:"🐟",title:"Fisch & Fleisch dosieren",text:"Fisch ein- bis zweimal pro Woche, Fleisch und Wurst höchstens dreimal."}
+      ],
+      levels:[
+        { color:"#D6342C", icon:"🍰🧂", title:"Fettes, Süsses & Salziges", portion:"selten",
+          tip:"Nur gelegentlich und in kleinen Mengen.",
+          items:[
+            {icon:"🍰",name:"Mehlspeisen",note:"Kuchen und Süssspeisen nur selten."},
+            {icon:"🍫",name:"Süsses",note:"Süssigkeiten bewusst geniessen."},
+            {icon:"🥨",name:"Salziges",note:"Salzige Snacks sparsam."}
+          ]},
+        { color:"#E8841A", icon:"🧈🫒", title:"Fette & Öle", portion:"sparsam",
+          tip:"Pflanzliche Öle bevorzugen, tierische Fette einschränken.",
+          items:[
+            {icon:"🫒",name:"Pflanzenöle",note:"Raps- und Olivenöl bevorzugen."},
+            {icon:"🧈",name:"Streichfette",note:"Butter und Margarine sparsam."}
+          ]},
+        { color:"#F2C94C", icon:"🐟🍗🥚", title:"Fisch, Fleisch, Wurst & Eier", portion:"1–3×/Woche",
+          tip:"Fisch 1–2×/Woche, Fleisch & Wurst höchstens 3×/Woche.",
+          items:[
+            {icon:"🐟",name:"Fisch",note:"Ein- bis zweimal pro Woche."},
+            {icon:"🍗",name:"Fleisch",note:"Mageres bevorzugen, dosieren."},
+            {icon:"🌭",name:"Wurst",note:"Nur gelegentlich."},
+            {icon:"🥚",name:"Eier",note:"Eine Eiweissquelle unter mehreren."}
+          ]},
+        { color:"#C9D24A", icon:"🥛🧀", title:"Milch & Milchprodukte", portion:"3 Portionen/Tag",
+          tip:"Fettarme Varianten wählen.",
+          items:[
+            {icon:"🥛",name:"Milch",note:"Teil der täglichen Portionen."},
+            {icon:"🧀",name:"Käse",note:"Zählt zu den Milchprodukten."},
+            {icon:"🍶",name:"Topfen & Joghurt",note:"Ungezuckert bevorzugen."}
+          ]},
+        { color:"#9CC02B", icon:"🍝🥔", title:"Getreide, Brot, Nudeln, Reis & Erdäpfel", portion:"4–5 Portionen",
+          tip:"Vollkorn statt Weissmehl bevorzugen.",
+          items:[
+            {icon:"🍞",name:"Brot",note:"Vollkornbrot bevorzugen."},
+            {icon:"🍝",name:"Nudeln",note:"Als Vollkorn besonders sättigend."},
+            {icon:"🍚",name:"Reis",note:"Naturreis bevorzugen."},
+            {icon:"🥔",name:"Erdäpfel",note:"Vielseitige Sättigungsbeilage."}
+          ]},
+        { color:"#5BA829", icon:"🥬🫛", title:"Gemüse, Hülsenfrüchte & Obst", portion:"5 Portionen",
+          tip:"Täglich «5 am Tag» – frisch oder tiefgekühlt.",
+          items:[
+            {icon:"🥬",name:"Gemüse",note:"Drei Portionen täglich."},
+            {icon:"🫛",name:"Hülsenfrüchte",note:"Linsen und Bohnen, auch als Eiweiss."},
+            {icon:"🍏",name:"Obst",note:"Zwei Portionen täglich."}
+          ]},
+        { color:"#2E8BC0", icon:"💧", title:"Alkoholfreie Getränke", portion:"1,5 L/Tag",
+          tip:"Über den Tag verteilt, ungesüsst.",
+          items:[
+            {icon:"💧",name:"Wasser",note:"Der ideale Durstlöscher."},
+            {icon:"🍵",name:"Tee",note:"Ungezuckert, zählt zur Flüssigkeit."}
+          ]}
+      ]
+    },
+
+    us: {
+      name:"USA", flag:"🇺🇸",
+      src:"Quelle: USDA «Food Guide Pyramid» (1992, historisch)",
+      info:"Dies ist die historische «Food Guide Pyramid» (USDA, 1992). Seit 2011 nutzen die USA stattdessen «MyPlate» – einen aufgeteilten Teller statt einer Pyramide (siehe unten).",
+      plate:true,
+      plateInfo:{
+        "Gemüse":"Vegetables – die grösste Fläche. Zusammen mit den Früchten die Hälfte des Tellers.",
+        "Früchte":"Fruits – verschiedene Sorten, frisch oder als Snack.",
+        "Getreide":"Grains – mindestens zur Hälfte als Vollkorn (whole grains).",
+        "Eiweiss":"Protein – Fleisch, Fisch, Eier, Bohnen und Nüsse abwechseln.",
+        "Milch":"Dairy – fettarme Milchprodukte als Begleitung."
+      },
+      principles:[
+        {icon:"🥦",title:"Half your plate",text:"Die Hälfte des Tellers besteht aus Gemüse und Früchten."},
+        {icon:"🌾",title:"Whole grains",text:"Mindestens die Hälfte der Getreideprodukte als Vollkorn wählen."},
+        {icon:"🍗",title:"Vary your protein",text:"Eiweissquellen abwechseln: Fleisch, Fisch, Eier, Bohnen, Nüsse."},
+        {icon:"🥛",title:"Low-fat dairy",text:"Fettarme Milchprodukte bevorzugen."}
+      ],
+      levels:[
+        { color:"#D6342C", icon:"🧈🍬", title:"Fette, Öle & Süsses", en:"Fats, Oils & Sweets", portion:"sparsam verwenden",
+          tip:"«Use sparingly» – ganz an der Spitze, also am wenigsten.",
+          items:[
+            {icon:"🧈",name:"Fette",note:"Butter und feste Fette sparsam."},
+            {icon:"🫒",name:"Öle",note:"Pflanzenöle in kleinen Mengen."},
+            {icon:"🍬",name:"Süsses",note:"Zucker und Süssigkeiten nur selten."}
+          ]},
+        { color:"#F2B705", icon:"🥛🍗", title:"Milch- & Fleischgruppe", en:"Milk group & Meat group", portion:"je 2–3 Portionen",
+          tip:"Zwei Eiweissgruppen auf einer Ebene.",
+          items:[
+            {icon:"🥛",name:"Milk group",note:"Milch, Joghurt, Käse – 2–3 Portionen."},
+            {icon:"🍗",name:"Meat group",note:"Fleisch, Geflügel, Fisch, Bohnen, Eier, Nüsse – 2–3 Portionen."}
+          ]},
+        { color:"#5BA829", icon:"🥦🍎", title:"Gemüse & Früchte", en:"Vegetables & Fruits", portion:"3–5 / 2–4 Portionen",
+          tip:"Gemüse leicht häufiger als Obst.",
+          items:[
+            {icon:"🥦",name:"Vegetables",note:"3–5 Portionen pro Tag."},
+            {icon:"🍎",name:"Fruits",note:"2–4 Portionen pro Tag."}
+          ]},
+        { color:"#C99A3B", icon:"🍞🍚", title:"Brot, Getreide, Reis & Nudeln", en:"Bread, Cereal, Rice & Pasta", portion:"6–11 Portionen",
+          tip:"Bildet die breite Basis – die grösste Menge.",
+          items:[
+            {icon:"🍞",name:"Bread",note:"Brot als Grundnahrungsmittel."},
+            {icon:"🌾",name:"Cereal",note:"Frühstücksflocken, möglichst Vollkorn."},
+            {icon:"🍚",name:"Rice",note:"Reis als Sättigungsbeilage."},
+            {icon:"🍝",name:"Pasta",note:"Nudeln als Sättigungsbeilage."}
+          ]}
+      ]
+    }
+  };
+
+  let current="ch", activeTier=null;
+
+  function textOn(hex){
+    const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+    return (0.299*r+0.587*g+0.114*b)>150?"#26303a":"#ffffff";
+  }
+
+  function buildPyramid(){
+    const d=DATA[current], N=d.levels.length;
+    const pyr=document.getElementById("pyramid");
+    pyr.classList.remove("has-active");
+    pyr.innerHTML="";
+    const hw=y=>9+41*y;   // breite Basis (100%), abgestumpfte Spitze (~18%)
+    d.levels.forEach((lv,k)=>{
+      const topHalf=hw(k/N), botHalf=hw((k+1)/N);
+      const clip="polygon("+(50-topHalf)+"% 0, "+(50+topHalf)+"% 0, "+(50+botHalf)+"% 100%, "+(50-botHalf)+"% 100%)";
+      const band=document.createElement("div");
+      band.className="band"+(k===0?" apex":"");
+      band.style.clipPath=clip; band.style.webkitClipPath=clip;
+      band.style.background=lv.color; band.style.color=textOn(lv.color);
+      band.style.animationDelay=(k*55)+"ms";
+      band.dataset.i=k;
+      band.setAttribute("role","button"); band.setAttribute("tabindex","0");
+      band.setAttribute("aria-label",lv.title+", "+lv.portion);
+      band.innerHTML='<div class="band-inner"><span class="band-icon">'+lv.icon+'</span>'+
+        '<span class="band-text"><span class="band-title">'+lv.title+'</span>'+
+        '<span class="band-portion">'+lv.portion+'</span></span></div>';
+      band.addEventListener("click",()=>selectTier(k));
+      band.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();selectTier(k);}});
+      pyr.appendChild(band);
+    });
+    document.getElementById("country-name").textContent=d.name;
+    document.getElementById("country-src").textContent=d.src;
+    activeTier=null;
+    renderIntro();
+    buildPrinciples();
+  }
+
+  function markActive(k){
+    const pyr=document.getElementById("pyramid");
+    pyr.classList.add("has-active");
+    pyr.querySelectorAll(".band").forEach(b=>b.classList.toggle("active",+b.dataset.i===k));
+  }
+
+  function selectTier(k){
+    activeTier=k; markActive(k);
+    const lv=DATA[current].levels[k];
+    const chips=lv.items.map((it,i)=>
+      '<button class="chip" onclick="selectItem('+k+','+i+')"><span class="ci">'+it.icon+'</span>'+it.name+'</button>'
+    ).join("");
+    const panel=document.getElementById("panel");
+    panel.className="panel";
+    panel.innerHTML=
+      '<h2><span class="ph-dot" style="background:'+lv.color+'"></span>'+lv.title+'</h2>'+
+      (lv.en?'<p class="en">'+lv.en+'</p>':'')+
+      '<span class="portion-badge">Empfehlung: '+lv.portion+'</span>'+
+      '<div class="tip"><b>Tipp:</b> '+lv.tip+'</div>'+
+      '<p class="k">Lebensmittel – tippen für Details</p>'+
+      '<div class="chips">'+chips+'</div>';
+  }
+
+  function selectItem(k,i){
+    const lv=DATA[current].levels[k];
+    const it=lv.items[i];
+    const panel=document.getElementById("panel");
+    panel.className="panel";
+    panel.innerHTML=
+      '<button class="back" onclick="selectTier('+k+')">← '+lv.title+'</button>'+
+      '<span class="item-icon">'+it.icon+'</span>'+
+      '<h2>'+it.name+'</h2>'+
+      '<p class="v">'+it.note+'</p>'+
+      '<p class="k" style="margin-top:16px;">Gehört zu</p>'+
+      '<p class="v"><span class="ph-dot" style="background:'+lv.color+'"></span>'+lv.title+' · '+lv.portion+'</p>';
+  }
+
+  function renderIntro(){
+    const d=DATA[current];
+    const panel=document.getElementById("panel");
+    panel.className="panel intro";
+    panel.innerHTML=
+      '<p class="hint">Tippe auf eine Stufe der Pyramide. Dann erscheinen die einzelnen Lebensmittel – jedes ist anklickbar.</p>'+
+      '<div class="legend"><p class="lt">So liest du die Pyramide</p>'+
+      '<div class="ramp"></div>'+
+      '<div class="ends"><span>Basis · reichlich</span><span>Spitze · sparsam</span></div></div>'+
+      '<div class="info-banner'+(d.info?' show':'')+'">'+(d.info?'<b>Hinweis:</b> '+d.info:'')+'</div>';
+  }
+
+  function plateSVG(){
+    const cx=130,cy=130,R=118;
+    const xy=(t,f)=>[cx+(f||1)*R*Math.sin(t*Math.PI/180), cy-(f||1)*R*Math.cos(t*Math.PI/180)];
+    const segs=[["Getreide","#E8841A",0,108],["Eiweiss","#7D4F9E",108,180],["Gemüse","#5BA829",180,306],["Früchte","#D6342C",306,360]];
+    let s="";
+    segs.forEach(seg=>{
+      const a0=seg[2],a1=seg[3];
+      const p0=xy(a0,1),p1=xy(a1,1),pm=xy((a0+a1)/2,0.6);
+      const large=(a1-a0)>180?1:0;
+      s+='<path class="seg" data-g="'+seg[0]+'" d="M'+cx+','+cy+' L'+p0[0].toFixed(1)+','+p0[1].toFixed(1)+
+        ' A'+R+','+R+' 0 '+large+' 1 '+p1[0].toFixed(1)+','+p1[1].toFixed(1)+' Z" fill="'+seg[1]+'"/>';
+      s+='<text class="seg-l" data-g="'+seg[0]+'" x="'+pm[0].toFixed(1)+'" y="'+(pm[1]+4).toFixed(1)+'" text-anchor="middle">'+seg[0]+'</text>';
+    });
+    const dx=cx+R*0.96, dy=cy-R*0.78;
+    s+='<circle class="seg" data-g="Milch" cx="'+dx.toFixed(1)+'" cy="'+dy.toFixed(1)+'" r="29" fill="#2E8BC0"/>';
+    s+='<text class="seg-l" data-g="Milch" x="'+dx.toFixed(1)+'" y="'+(dy+4).toFixed(1)+'" text-anchor="middle">Milch</text>';
+    return '<svg viewBox="0 0 300 268" class="plate" xmlns="http://www.w3.org/2000/svg">'+
+      '<circle cx="'+cx+'" cy="'+cy+'" r="'+(R+5)+'" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>'+s+'</svg>';
+  }
+
+  function buildPrinciples(){
+    const d=DATA[current];
+    document.getElementById("sec-title").textContent="Ernährungsprinzipien: "+d.name;
+    let html="";
+    if(d.plate){
+      html+='<div class="pcard plate-card"><div class="pcard-h"><span class="pic">🍽️</span>'+
+        '<span>«MyPlate» – der Teller (seit 2011)</span></div>'+
+        '<div class="plate-row">'+plateSVG()+
+        '<div class="plate-side"><p class="plate-desc" id="plate-desc">Tippe auf einen Tellerbereich. '+
+        'Die Hälfte des Tellers besteht aus Gemüse &amp; Früchten, die andere Hälfte aus Getreide &amp; Eiweiss.</p></div></div></div>';
+    }
+    d.principles.forEach(p=>{
+      html+='<div class="pcard"><div class="pcard-h"><span class="pic">'+p.icon+'</span><span>'+p.title+'</span></div>'+
+        '<p class="pcard-t">'+p.text+'</p></div>';
+    });
+    document.getElementById("principles").innerHTML=html;
+  }
+
+  document.getElementById("switch").addEventListener("click",e=>{
+    const btn=e.target.closest("button"); if(!btn) return;
+    current=btn.dataset.c;
+    document.querySelectorAll("#switch button").forEach(b=>b.setAttribute("aria-pressed",b===btn?"true":"false"));
+    buildPyramid();
+  });
+
+  document.getElementById("principles").addEventListener("click",e=>{
+    const seg=e.target.closest(".seg"); if(!seg) return;
+    const info=(DATA.us.plateInfo||{})[seg.dataset.g];
+    const desc=document.getElementById("plate-desc");
+    if(desc&&info) desc.textContent=info;
+  });
+
+  document.getElementById("foot").textContent="Interaktive Lernfolie · erstellt für den ABU-Unterricht · HKV Aarau";
+
+  buildPyramid();
+</script>
+</body>
+</html>
