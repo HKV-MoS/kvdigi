@@ -59,6 +59,8 @@
   .band-portion{font-size:clamp(10px,1.4vw,12px);opacity:.92;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,.14);}
   .band.apex .band-inner{flex-direction:column;gap:1px;align-self:flex-end;padding-bottom:5px;text-align:center;max-width:96%;}
   .band.apex .band-text{align-items:center;}
+  .pyramid.inv .band.apex .band-inner{align-self:flex-start;padding:6px 0 0;padding-bottom:0;}
+  .pyr-caption{text-align:center;font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5;}
 
   .panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;
     box-shadow:var(--shadow);min-height:240px;}
@@ -199,7 +201,7 @@
     <p class="eyebrow">Gesundheit &amp; Ernährung · ABU</p>
     <h1>Die <span class="accent">Ernährungspyramide</span><br>im Ländervergleich</h1>
     <p class="lead">Die Schweizer Lebensmittelpyramide (SGE) ist die Grundlage – Deutschland,
-      Österreich und die USA zeigen sie zum Vergleich. Tippe auf eine Stufe und dann auf einzelne
+      Österreich, die USA und Japan zeigen sie zum Vergleich (Japan sogar als «Kreisel»). Tippe auf eine Stufe und dann auf einzelne
       Lebensmittel. Unten breit heisst «täglich reichlich», oben schmal heisst «nur sparsam».</p>
   </header>
 
@@ -208,6 +210,7 @@
     <button data-c="de" aria-pressed="false"><span class="fl">🇩🇪</span> Deutschland</button>
     <button data-c="at" aria-pressed="false"><span class="fl">🇦🇹</span> Österreich</button>
     <button data-c="us" aria-pressed="false"><span class="fl">🇺🇸</span> USA</button>
+    <button data-c="jp" aria-pressed="false"><span class="fl">🇯🇵</span> Japan</button>
   </div>
   <p class="switch-note">🇨🇭 <b>Schweiz</b> ist die Referenz für den Unterricht – die anderen Länder dienen zum Vergleich.</p>
 
@@ -218,6 +221,7 @@
         <span class="src" id="country-src"></span>
       </div>
       <div class="pyramid" id="pyramid" aria-label="Ernährungspyramide"></div>
+      <div class="pyr-caption" id="pyr-caption"></div>
     </div>
     <div class="panel intro" id="panel"></div>
   </div>
@@ -568,6 +572,50 @@
             {icon:"🍝",name:"Pasta",note:"Nudeln als Sättigungsbeilage."}
           ]}
       ]
+    },
+
+    jp: {
+      name:"Japan", flag:"🇯🇵",
+      src:"Quelle: Food Guide Spinning Top / 食事バランスガイド (MHLW & MAFF, 2005)",
+      shape:"top",
+      caption:"🏃 Bewegung hält den Kreisel am Drehen · 💧 Achse: Wasser & Tee · 🍡 «Schnur»: Süsses in Massen",
+      info:"Japan nutzt keine Pyramide, sondern den «Spinning Top» (Kreisel). Zuoberst und am breitesten steht Getreide. Der Kreisel dreht sich auf der Achse Wasser & Tee, eine rennende Figur oben steht für Bewegung, und Süssigkeiten bilden die «Schnur» – in Massen.",
+      principles:[
+        {icon:"🏃",title:"Bewegung hält den Kreisel am Drehen",text:"Ohne körperliche Aktivität kippt der Kreisel – Bewegung gehört zur Ernährung dazu."},
+        {icon:"💧",title:"Wasser & Tee als Achse",text:"Sie bilden den Kern, um den sich beim Kreisel alles dreht."},
+        {icon:"🍱",title:"Washoku – ausgewogen japanisch",text:"Reis, Fisch, Gemüse und Sojaprodukte; traditionell wenig gesättigtes Fett."},
+        {icon:"🍡",title:"Snacks als «Schnur»",text:"Süssigkeiten und süsse Getränke werden nur in Massen genossen."}
+      ],
+      levels:[
+        { color:"#E8A33D", icon:"🍚🍜", title:"Getreide", portion:"5–7 Portionen",
+          tip:"Hauptenergiequelle – steht beim Kreisel zuoberst (am meisten).",
+          items:[
+            {icon:"🍚",name:"Reis",note:"Das Grundnahrungsmittel der japanischen Küche."},
+            {icon:"🍜",name:"Nudeln",note:"Soba, Udon oder Ramen."},
+            {icon:"🍞",name:"Brot",note:"Ebenfalls eine Getreidequelle."}
+          ]},
+        { color:"#5BA829", icon:"🥗", title:"Gemüsegerichte", portion:"5–6 Portionen",
+          tip:"Viele kleine Gemüsegerichte – auch Pilze und Algen.",
+          items:[
+            {icon:"🥬",name:"Gemüse",note:"Frisch, gedämpft oder eingelegt."},
+            {icon:"🍄",name:"Pilze",note:"Shiitake und andere – häufig in der Küche."},
+            {icon:"🌿",name:"Seetang",note:"Algen wie Nori und Wakame."}
+          ]},
+        { color:"#D6342C", icon:"🐟🍗", title:"Fisch-, Fleisch-, Ei- & Sojagerichte", portion:"3–5 Portionen",
+          tip:"Eiweissquellen – traditionell viel Fisch und Soja.",
+          items:[
+            {icon:"🐟",name:"Fisch",note:"Zentrale Eiweissquelle, oft roh oder gegrillt."},
+            {icon:"🍗",name:"Fleisch",note:"In kleineren Mengen als im Westen."},
+            {icon:"🥚",name:"Eier",note:"Vielseitige Eiweissquelle."},
+            {icon:"🫛",name:"Soja & Tofu",note:"Tofu, Natto, Edamame – wichtige pflanzliche Eiweisse."}
+          ]},
+        { color:"#2E8BC0", icon:"🥛🍎", title:"Milch & Früchte", portion:"je 2 Portionen",
+          tip:"Am schmalen unteren Ende des Kreisels – kleinere Mengen.",
+          items:[
+            {icon:"🥛",name:"Milch",note:"Milch und Milchprodukte."},
+            {icon:"🍎",name:"Früchte",note:"Frisches Obst, zwei Portionen täglich."}
+          ]}
+      ]
     }
   };
 
@@ -583,12 +631,14 @@
     const pyr=document.getElementById("pyramid");
     pyr.classList.remove("has-active");
     pyr.innerHTML="";
-    const hw=y=>9+41*y;   // breite Basis (100%), abgestumpfte Spitze (~18%)
+    const inverted=d.shape==="top";
+    pyr.classList.toggle("inv",inverted);
+    const hw=inverted ? (y=>9+41*(1-y)) : (y=>9+41*y);   // Kreisel: breit oben → schmal unten
     d.levels.forEach((lv,k)=>{
       const topHalf=hw(k/N), botHalf=hw((k+1)/N);
       const clip="polygon("+(50-topHalf)+"% 0, "+(50+topHalf)+"% 0, "+(50+botHalf)+"% 100%, "+(50-botHalf)+"% 100%)";
       const band=document.createElement("div");
-      band.className="band"+(k===0?" apex":"");
+      band.className="band"+((inverted?k===N-1:k===0)?" apex":"");
       band.style.clipPath=clip; band.style.webkitClipPath=clip;
       band.style.background=lv.color; band.style.color=textOn(lv.color);
       band.style.animationDelay=(k*55)+"ms";
@@ -604,6 +654,7 @@
     });
     document.getElementById("country-name").textContent=d.name;
     document.getElementById("country-src").textContent=d.src;
+    document.getElementById("pyr-caption").textContent=d.caption||"";
     activeTier=null;
     renderIntro();
     buildPrinciples();
@@ -648,13 +699,15 @@
 
   function renderIntro(){
     const d=DATA[current];
+    const top=d.shape==="top";
+    const legend = top
+      ? '<p class="lt">So liest du den Kreisel</p><p style="font-size:13px;margin:0;color:var(--muted);">Anders als bei der Pyramide steht die <b>Hauptenergiequelle (Getreide) zuoberst</b>. Der Kreisel dreht sich auf der Achse Wasser &amp; Tee; Bewegung hält ihn am Drehen.</p>'
+      : '<p class="lt">So liest du die Pyramide</p><div class="ramp"></div><div class="ends"><span>Basis · reichlich</span><span>Spitze · sparsam</span></div>';
     const panel=document.getElementById("panel");
     panel.className="panel intro";
     panel.innerHTML=
-      '<p class="hint">Tippe auf eine Stufe der Pyramide. Dann erscheinen die einzelnen Lebensmittel – jedes ist anklickbar.</p>'+
-      '<div class="legend"><p class="lt">So liest du die Pyramide</p>'+
-      '<div class="ramp"></div>'+
-      '<div class="ends"><span>Basis · reichlich</span><span>Spitze · sparsam</span></div></div>'+
+      '<p class="hint">Tippe auf eine '+(top?"Schicht des Kreisels":"Stufe der Pyramide")+'. Dann erscheinen die einzelnen Lebensmittel – jedes ist anklickbar.</p>'+
+      '<div class="legend">'+legend+'</div>'+
       '<div class="info-banner'+(d.info?' show':'')+'">'+(d.info?'<b>Hinweis:</b> '+d.info:'')+'</div>';
   }
 
