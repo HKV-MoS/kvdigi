@@ -110,6 +110,34 @@
   .seg:hover{opacity:.82;}
   .seg-l{fill:#fff;font-family:inherit;font-weight:700;font-size:13px;pointer-events:none;}
 
+  .vit-wrap{margin-top:30px;}
+  .vit-intro{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+  .vit-tag{font-size:12.5px;font-weight:700;padding:6px 12px;border-radius:999px;}
+  .vit-tag.fat{background:#FCEED9;color:#9A5B12;}
+  .vit-tag.water{background:#E1F0F8;color:#155E84;}
+  .vit-groups{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media (max-width:680px){.vit-groups{grid-template-columns:1fr;}}
+  .vit-group{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;
+    box-shadow:0 4px 14px rgba(20,40,70,.05);}
+  .vit-group h4{margin:0 0 4px;font-size:15px;color:var(--hkv);}
+  .vit-note{margin:0 0 12px;font-size:12.5px;color:var(--muted);}
+  .vit-pills{display:flex;flex-wrap:wrap;gap:7px;}
+  .vit-pill{border:none;border-radius:10px;padding:8px 13px;font:inherit;font-weight:800;font-size:14px;
+    cursor:pointer;color:#fff;transition:transform .1s,filter .15s,box-shadow .15s;}
+  .vit-pill:hover{transform:translateY(-2px);filter:brightness(1.07);}
+  .vit-pill.fat{background:#E8841A;}
+  .vit-pill.water{background:#2E8BC0;}
+  .vit-pill.active{box-shadow:0 0 0 3px rgba(0,0,0,.18);}
+  .vit-detail{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:18px;box-shadow:0 4px 14px rgba(20,40,70,.05);min-height:92px;}
+  .vit-detail h4{margin:0 0 2px;font-size:18px;font-weight:800;}
+  .vit-detail .vd-type{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin:0 0 12px;}
+  .vit-detail .vd-type.fat{color:#9A5B12;}
+  .vit-detail .vd-type.water{color:#155E84;}
+  .vit-detail .vd-row{margin:0 0 10px;}
+  .vit-detail .vd-row .k{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:700;margin:0 0 2px;}
+  .vit-detail .vd-row .v{font-size:14px;margin:0;}
+
   footer.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:28px;padding-top:14px;border-top:1px solid var(--line);}
   @media (prefers-reduced-motion:reduce){.band{animation:none;opacity:1;}.band,.switch button{transition:none;}}
 </style>
@@ -146,6 +174,27 @@
   <section class="principles-wrap">
     <h3 class="sec-title" id="sec-title">Ernährungsprinzipien</h3>
     <div class="principles" id="principles"></div>
+  </section>
+
+  <section class="vit-wrap">
+    <h3 class="sec-title">Vitamine – fettlöslich &amp; wasserlöslich</h3>
+    <div class="vit-intro">
+      <span class="vit-tag fat">🧈 Fettlöslich: A · D · E · K</span>
+      <span class="vit-tag water">💧 Wasserlöslich: B-Gruppe &amp; C</span>
+    </div>
+    <div class="vit-groups">
+      <div class="vit-group">
+        <h4>Fettlöslich – Merkhilfe «ADEK»</h4>
+        <p class="vit-note">Brauchen Nahrungsfett zur Aufnahme und werden im Körper gespeichert – eine Überdosierung ist möglich.</p>
+        <div class="vit-pills" id="vit-fat"></div>
+      </div>
+      <div class="vit-group">
+        <h4>Wasserlöslich – B-Gruppe &amp; C</h4>
+        <p class="vit-note">Werden kaum gespeichert und müssen täglich zugeführt werden. Empfindlich gegenüber Hitze und Wasser (Kochverluste).</p>
+        <div class="vit-pills" id="vit-water"></div>
+      </div>
+    </div>
+    <div class="vit-detail" id="vit-detail"></div>
   </section>
 
   <footer class="foot" id="foot"></footer>
@@ -531,9 +580,55 @@
     if(desc&&info) desc.textContent=info;
   });
 
+  const VITAMINS = {
+    fat:[
+      {k:"A", name:"Vitamin A (Retinol)", fn:"Sehen (vor allem Nachtsehen), Haut und Schleimhäute, Immunsystem.", src:"Leber, Eier, Milchprodukte; als Beta-Carotin in Karotten, Spinat und rot-orangem Gemüse."},
+      {k:"D", name:"Vitamin D (Calciferol)", fn:"Knochenaufbau (lagert Calcium ein), Immunsystem. Wird mit Sonnenlicht in der Haut selbst gebildet.", src:"Fetter Fisch (Lachs, Hering), Eigelb – Hauptquelle ist aber das Sonnenlicht."},
+      {k:"E", name:"Vitamin E (Tocopherol)", fn:"Zellschutz als Antioxidans – schützt die Zellmembranen.", src:"Pflanzenöle, Nüsse, Samen, Vollkornprodukte."},
+      {k:"K", name:"Vitamin K (Phyllochinon)", fn:"Blutgerinnung und Knochenstoffwechsel.", src:"Grünes Blattgemüse wie Spinat, Brokkoli und Kohl."}
+    ],
+    water:[
+      {k:"B1", name:"Vitamin B1 (Thiamin)", fn:"Energiestoffwechsel der Kohlenhydrate, Nervenfunktion.", src:"Vollkornprodukte, Schweinefleisch, Hülsenfrüchte."},
+      {k:"B2", name:"Vitamin B2 (Riboflavin)", fn:"Energiestoffwechsel, Haut und Schleimhäute.", src:"Milchprodukte, Eier, Vollkorn."},
+      {k:"B3", name:"Vitamin B3 (Niacin)", fn:"Energiestoffwechsel, Haut und Nerven.", src:"Fleisch, Fisch, Vollkorn, Erdnüsse."},
+      {k:"B5", name:"Vitamin B5 (Pantothensäure)", fn:"Energiestoffwechsel – an sehr vielen Reaktionen beteiligt.", src:"Weit verbreitet: Fleisch, Vollkorn, Gemüse."},
+      {k:"B6", name:"Vitamin B6 (Pyridoxin)", fn:"Eiweissstoffwechsel, Nerven, Blutbildung.", src:"Fleisch, Fisch, Vollkorn, Bananen, Kartoffeln."},
+      {k:"B7", name:"Vitamin B7 (Biotin)", fn:"Haut, Haare und Stoffwechsel.", src:"Eigelb, Nüsse, Haferflocken, Leber."},
+      {k:"B9", name:"Vitamin B9 (Folsäure)", fn:"Zellteilung und Blutbildung – besonders wichtig in der Schwangerschaft.", src:"Grünes Blattgemüse, Hülsenfrüchte, Vollkorn."},
+      {k:"B12", name:"Vitamin B12 (Cobalamin)", fn:"Blutbildung und Nervensystem.", src:"Fast nur in tierischen Lebensmitteln: Fleisch, Fisch, Eier, Milch. Für Veganerinnen und Veganer kritisch – ein Supplement ist nötig."},
+      {k:"C", name:"Vitamin C (Ascorbinsäure)", fn:"Immunsystem, Zellschutz (Antioxidans), Eisenaufnahme, Bindegewebe.", src:"Zitrusfrüchte, Paprika, Beeren, Kartoffeln, frisches Gemüse."}
+    ]
+  };
+
+  function vitDetail(group, v){
+    document.getElementById("vit-detail").innerHTML=
+      '<h4>'+v.name+'</h4>'+
+      '<p class="vd-type '+group+'">'+(group==="fat"?"fettlöslich":"wasserlöslich")+'</p>'+
+      '<div class="vd-row"><p class="k">Funktion</p><p class="v">'+v.fn+'</p></div>'+
+      '<div class="vd-row"><p class="k">Vorkommen</p><p class="v">'+v.src+'</p></div>';
+    document.querySelectorAll(".vit-pill").forEach(p=>
+      p.classList.toggle("active", p.dataset.k===v.k && p.dataset.g===group));
+  }
+
+  function buildVitamins(){
+    const mk=(group,box)=>{ box.innerHTML=VITAMINS[group].map(v=>
+      '<button class="vit-pill '+group+'" data-g="'+group+'" data-k="'+v.k+'">'+v.k+'</button>').join(""); };
+    mk("fat",document.getElementById("vit-fat"));
+    mk("water",document.getElementById("vit-water"));
+    document.querySelector(".vit-wrap").addEventListener("click",e=>{
+      const p=e.target.closest(".vit-pill"); if(!p) return;
+      const g=p.dataset.g;
+      vitDetail(g, VITAMINS[g].find(x=>x.k===p.dataset.k));
+    });
+    document.getElementById("vit-detail").innerHTML=
+      '<p class="v" style="color:var(--muted);margin:0;">Tippe auf ein Vitamin, um Funktion und Vorkommen zu sehen. '+
+      '<b>Merkhilfe:</b> «ADEK» sind die vier fettlöslichen Vitamine – alle anderen sind wasserlöslich.</p>';
+  }
+
   document.getElementById("foot").textContent="Interaktive Lernfolie · erstellt für den ABU-Unterricht · HKV Aarau";
 
   buildPyramid();
+  buildVitamins();
 </script>
 </body>
 </html>
