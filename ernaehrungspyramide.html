@@ -32,7 +32,7 @@
   .switch-note{text-align:center;color:var(--muted);font-size:12.5px;margin:8px 0 0;}
   .switch-note b{color:var(--hkv);}
 
-  .stage{display:grid;grid-template-columns:1.2fr .8fr;gap:22px;margin-top:18px;align-items:start;}
+  .stage{display:grid;grid-template-columns:1.3fr .7fr;gap:22px;margin-top:18px;align-items:start;}
   @media (max-width:780px){.stage{grid-template-columns:1fr;}}
 
   .pyramid-card{background:var(--card);border:1px solid var(--line);border-radius:18px;
@@ -42,13 +42,14 @@
   .pyramid-head .country{font-weight:800;font-size:18px;color:var(--hkv);}
   .pyramid-head .src{font-size:11.5px;color:var(--muted);}
 
-  .pyramid{width:100%;max-width:640px;margin:0 auto;height:clamp(380px,52vh,480px);
+  .pyramid{width:100%;max-width:700px;margin:0 auto;height:clamp(400px,56vh,540px);
     display:flex;flex-direction:column;}
   .band{flex:1;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;
     animation:bandIn .42s ease forwards;
-    transition:filter .2s ease,transform .2s ease,background .45s ease,color .45s ease;position:relative;}
+    transition:filter .18s ease,transform .18s ease,background .45s ease,color .45s ease;position:relative;}
   @keyframes bandIn{from{opacity:0;}to{opacity:1;}}
-  .band:hover{filter:brightness(1.06);transform:translateY(-2px);}
+  .band:hover{filter:brightness(1.14) saturate(1.05);transform:translateY(-3px);z-index:2;}
+  .pyramid:hover .band:not(:hover){filter:brightness(.66) saturate(.8);}
   .pyramid.has-active .band{filter:brightness(.78) saturate(.85);}
   .pyramid.has-active .band.active{filter:brightness(1.08);transform:translateY(-1px);}
   .band-inner{display:flex;align-items:center;gap:12px;padding:0 14px;max-width:92%;text-align:left;}
@@ -255,6 +256,29 @@
       </div>
     </div>
     <p class="macro-note">Zum Vergleich: <b>Alkohol</b> liefert 7 kcal/g (29 kJ/g) – fast so viel wie Fett, aber ohne Nährwert.</p>
+  </section>
+
+  <section class="macro-wrap">
+    <h3 class="sec-title">Genauer hinschauen: Fettsäuren &amp; Zusatzstoffe</h3>
+    <p class="sec-intro">Nicht jedes Fett ist gleich – und in stark verarbeiteten Lebensmitteln stecken oft ungünstige Fette und Zusatzstoffe.</p>
+    <div class="macro-grid">
+      <div class="mcard" style="border-top-color:#E8841A;">
+        <div class="mc-h"><span class="mc-i">🧈</span><span>Gesättigte Fettsäuren</span></div>
+        <p class="mc-fn">Vor allem in tierischen Fetten (Butter, Fleisch, Wurst, Käse) sowie in Kokos- und Palmöl. Bei Zimmertemperatur meist fest. Im Übermass ungünstig für die Blutfette – <b>massvoll</b> konsumieren.</p>
+      </div>
+      <div class="mcard" style="border-top-color:#5BA829;">
+        <div class="mc-h"><span class="mc-i">🫒</span><span>Ungesättigte Fettsäuren</span></div>
+        <p class="mc-fn">In Pflanzenölen (Raps, Oliven), Nüssen, Avocado und fettem Fisch. Meist flüssig; dazu gehören die Omega-3- und Omega-6-Fettsäuren. <b>Günstig</b> – sie sollten den Hauptteil der Fette ausmachen.</p>
+      </div>
+      <div class="mcard" style="border-top-color:#D6342C;">
+        <div class="mc-h"><span class="mc-i">🍟</span><span>Transfette</span></div>
+        <p class="mc-fn">Entstehen beim industriellen Härten von Ölen und stecken in <b>stark verarbeiteten Lebensmitteln</b> (Frittiertes, Backwaren, Fast Food). Sie erhöhen das «schlechte» und senken das «gute» Cholesterin – so weit wie möglich <b>meiden</b>.</p>
+      </div>
+      <div class="mcard" style="border-top-color:#7D4F9E;">
+        <div class="mc-h"><span class="mc-i">🧂</span><span>Glutamat (E 621)</span></div>
+        <p class="mc-fn">Ein Geschmacksverstärker, der den herzhaften Umami-Geschmack betont – oft in Fertiggerichten, Chips und Saucen, von Natur aus auch in Tomaten, Käse und Sojasauce. In üblichen Mengen gilt es als unbedenklich, kann aber dazu verleiten, mehr stark verarbeitete Produkte zu essen.</p>
+      </div>
+    </div>
   </section>
 
   <section class="energy-wrap">
@@ -633,19 +657,22 @@
     pyr.innerHTML="";
     const inverted=d.shape==="top";
     pyr.classList.toggle("inv",inverted);
-    const hw=inverted ? (y=>9+41*(1-y)) : (y=>9+41*y);   // Kreisel: breit oben → schmal unten
+    const hw=inverted ? (y=>11+39*(1-y)) : (y=>11+39*y);   // breite Basis (100%), Spitze ~22%
     d.levels.forEach((lv,k)=>{
       const topHalf=hw(k/N), botHalf=hw((k+1)/N);
       const clip="polygon("+(50-topHalf)+"% 0, "+(50+topHalf)+"% 0, "+(50+botHalf)+"% 100%, "+(50-botHalf)+"% 100%)";
+      const isApex=(inverted?k===N-1:k===0);
+      const yEff = isApex ? (inverted?(k+0.30)/N:(k+0.70)/N) : (inverted?(k+0.72)/N:(k+0.28)/N);
+      const maxW = Math.max(2*hw(yEff)-5, 24);   // Inhalt auf sichtbare Trapezbreite begrenzen
       const band=document.createElement("div");
-      band.className="band"+((inverted?k===N-1:k===0)?" apex":"");
+      band.className="band"+(isApex?" apex":"");
       band.style.clipPath=clip; band.style.webkitClipPath=clip;
       band.style.background=lv.color; band.style.color=textOn(lv.color);
       band.style.animationDelay=(k*55)+"ms";
       band.dataset.i=k;
       band.setAttribute("role","button"); band.setAttribute("tabindex","0");
       band.setAttribute("aria-label",lv.title+", "+lv.portion);
-      band.innerHTML='<div class="band-inner"><span class="band-icon">'+lv.icon+'</span>'+
+      band.innerHTML='<div class="band-inner" style="max-width:'+maxW.toFixed(1)+'%"><span class="band-icon">'+lv.icon+'</span>'+
         '<span class="band-text"><span class="band-title">'+lv.title+'</span>'+
         '<span class="band-portion">'+lv.portion+'</span></span></div>';
       band.addEventListener("click",()=>selectTier(k));
