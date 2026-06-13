@@ -138,6 +138,32 @@
   .vit-detail .vd-row .k{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:700;margin:0 0 2px;}
   .vit-detail .vd-row .v{font-size:14px;margin:0;}
 
+  .sec-intro{color:var(--muted);font-size:13.5px;margin:0 0 14px;max-width:700px;}
+  .srule-wrap{margin-top:30px;}
+  .srule-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:12px;}
+  .scard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px;
+    box-shadow:0 4px 14px rgba(20,40,70,.05);border-top:4px solid #E8841A;}
+  .scard .sbig{font-size:17px;font-weight:800;color:var(--hkv);margin:0 0 4px;}
+  .scard .ssub{font-size:13px;font-weight:600;color:var(--ink);margin:0 0 6px;}
+  .scard .sfolge{font-size:12.5px;color:var(--muted);margin:0;}
+  .scard .sfolge b{color:#9A5B12;}
+
+  .dis-wrap{margin-top:30px;}
+  .dis-list{display:flex;flex-direction:column;gap:8px;}
+  .dis-item{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;
+    box-shadow:0 4px 14px rgba(20,40,70,.05);}
+  .dis-head{display:flex;align-items:center;gap:10px;padding:13px 15px;cursor:pointer;
+    font-weight:700;font-size:14.5px;color:var(--ink);}
+  .dis-head .di{font-size:19px;}
+  .dis-head .dn{flex:1;}
+  .dis-head .dx{color:var(--hkv);font-weight:700;font-size:18px;transition:transform .2s;}
+  .dis-item.open .dx{transform:rotate(45deg);}
+  .dis-body{display:none;padding:0 15px 14px;}
+  .dis-item.open .dis-body{display:block;}
+  .dis-body .k{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:700;margin:10px 0 2px;}
+  .dis-body .v{font-size:13.5px;margin:0;}
+  .dis-note{background:#FFF8E6;border:1px solid #F4E2A8;border-radius:10px;padding:9px 11px;font-size:12.5px;margin-top:10px;}
+
   footer.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:28px;padding-top:14px;border-top:1px solid var(--line);}
   @media (prefers-reduced-motion:reduce){.band{animation:none;opacity:1;}.band,.switch button{transition:none;}}
 </style>
@@ -195,6 +221,18 @@
       </div>
     </div>
     <div class="vit-detail" id="vit-detail"></div>
+  </section>
+
+  <section class="srule-wrap">
+    <h3 class="sec-title">Die 5 S – häufige Ernährungsfehler</h3>
+    <p class="sec-intro">Es gibt keine streng genormte Liste. Gängig ist der Dreiklang «zu süss, zu salzig, zu fett» (Zucker, Salz, Fett); als Merkregel kommen Verhaltens-S wie «zu schnell» und «zu spät» dazu.</p>
+    <div class="srule-grid" id="srule-grid"></div>
+  </section>
+
+  <section class="dis-wrap">
+    <h3 class="sec-title">Top 10 ernährungsbedingte Krankheiten</h3>
+    <p class="sec-intro">Tippe auf eine Krankheit, um Ursache und Symptome zu sehen. Diese Übersicht dient dem Unterricht und ersetzt keine ärztliche Beratung.</p>
+    <div class="dis-list" id="dis-list"></div>
   </section>
 
   <footer class="foot" id="foot"></footer>
@@ -625,10 +663,53 @@
       '<b>Merkhilfe:</b> «ADEK» sind die vier fettlöslichen Vitamine – alle anderen sind wasserlöslich.</p>';
   }
 
-  document.getElementById("foot").textContent="Interaktive Lernfolie · erstellt für den ABU-Unterricht · HKV Aarau";
+  const SRULE=[
+    {s:"zu süss", what:"Zu viel Zucker – Süssgetränke, Süssigkeiten, Gebäck.", folge:"Karies, Übergewicht, Diabetes Typ 2."},
+    {s:"zu salzig", what:"Zu viel Salz – vor allem aus Fertigprodukten und Snacks.", folge:"Bluthochdruck."},
+    {s:"zu schwer", what:"Zu fett und zu üppig – Frittiertes, grosse Portionen.", folge:"Übergewicht, erhöhtes Cholesterin."},
+    {s:"zu schnell", what:"Hastig gegessen und schlecht gekaut.", folge:"Die Sättigung kommt zu spät – man isst zu viel."},
+    {s:"zu spät", what:"Grosse, schwere Mahlzeiten spät am Abend.", folge:"Belastet Verdauung und Schlaf."}
+  ];
+
+  const DISEASES=[
+    {icon:"🧍",name:"Adipositas (Übergewicht)", ursache:"Dauerhaft mehr Energie aufgenommen als verbraucht – zu süss, zu fett, zu wenig Bewegung.", symptome:"Stark erhöhtes Körpergewicht, Kurzatmigkeit bei Anstrengung, Gelenkbeschwerden. Erhöht das Risiko für viele Folgekrankheiten."},
+    {icon:"🩸",name:"Diabetes mellitus Typ 2", ursache:"Häufig Folge von Übergewicht – der Körper spricht schlechter auf Insulin an.", symptome:"Starker Durst, häufiges Wasserlassen, Müdigkeit, schlecht heilende Wunden."},
+    {icon:"❤️",name:"Herz-Kreislauf-Erkrankungen", ursache:"Arteriosklerose durch zu viel gesättigtes Fett, Übergewicht und Bluthochdruck.", symptome:"Brustenge, Atemnot, Leistungsabfall. Risiko für Herzinfarkt und Schlaganfall."},
+    {icon:"🫀",name:"Bluthochdruck (Hypertonie)", ursache:"Unter anderem zu viel Salz, Übergewicht und Alkohol.", symptome:"Oft keine Beschwerden – manchmal Kopfschmerzen, Schwindel oder Nasenbluten."},
+    {icon:"🦶",name:"Gicht", ursache:"Zu viele Purine (viel Fleisch, Innereien, Alkohol) lassen die Harnsäure ansteigen.", symptome:"Plötzliche, sehr starke Gelenkschmerzen (oft an der Grosszehe), Rötung und Schwellung."},
+    {icon:"🦷",name:"Karies", ursache:"Zucker und Bakterien bilden Säure, die den Zahnschmelz angreift.", symptome:"Zahnschmerzen, empfindliche Zähne, sichtbare Löcher im Zahn."},
+    {icon:"🦴",name:"Osteoporose", ursache:"Zu wenig Calcium und Vitamin D – die Knochen verlieren an Dichte.", symptome:"Knochenbrüche schon bei kleinen Belastungen, Rückenschmerzen, Abnahme der Körpergrösse."},
+    {icon:"🫁",name:"Eisenmangel-Anämie", ursache:"Zu wenig Eisen, oft durch einseitige Ernährung.", symptome:"Müdigkeit, Blässe, Konzentrationsschwäche, Kurzatmigkeit."},
+    {icon:"🧈",name:"Erhöhtes Cholesterin", ursache:"Zu viel gesättigtes Fett, Übergewicht und erbliche Veranlagung.", symptome:"Meist keine spürbaren Beschwerden – fördert still die Arteriosklerose."},
+    {icon:"🧠",name:"Essstörungen", ursache:"Komplexe Ursachen (psychisch, sozial, gesellschaftlicher Druck) – nicht allein ernährungsbedingt. Formen: Magersucht, Ess-Brech-Sucht und Binge-Eating.", symptome:"Gestörtes Essverhalten und ein verzerrtes Verhältnis zum eigenen Körper.", note:"Essstörungen sind ernsthafte Erkrankungen, die ärztliche und therapeutische Hilfe brauchen."}
+  ];
+
+  function buildSrule(){
+    document.getElementById("srule-grid").innerHTML=SRULE.map(s=>
+      '<div class="scard"><p class="sbig">'+s.s+'</p><p class="ssub">'+s.what+'</p>'+
+      '<p class="sfolge"><b>Folge:</b> '+s.folge+'</p></div>').join("");
+  }
+
+  function buildDiseases(){
+    const list=document.getElementById("dis-list");
+    list.innerHTML=DISEASES.map((d,i)=>
+      '<div class="dis-item" data-i="'+i+'"><div class="dis-head"><span class="di">'+d.icon+'</span>'+
+      '<span class="dn">'+(i+1)+'. '+d.name+'</span><span class="dx">+</span></div>'+
+      '<div class="dis-body"><p class="k">Ursache</p><p class="v">'+d.ursache+'</p>'+
+      '<p class="k">Symptome</p><p class="v">'+d.symptome+'</p>'+
+      (d.note?'<div class="dis-note">'+d.note+'</div>':'')+'</div></div>').join("");
+    list.addEventListener("click",e=>{
+      const head=e.target.closest(".dis-head"); if(!head) return;
+      head.parentNode.classList.toggle("open");
+    });
+  }
+
+  document.getElementById("foot").textContent="Interaktive Lernfolie · erstellt von S. Mollet · ABU · HKV Aarau · © 2026";
 
   buildPyramid();
   buildVitamins();
+  buildSrule();
+  buildDiseases();
 </script>
 </body>
 </html>
