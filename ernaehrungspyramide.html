@@ -42,9 +42,9 @@
   .pyramid-head .country{font-weight:800;font-size:18px;color:var(--hkv);}
   .pyramid-head .src{font-size:11.5px;color:var(--muted);}
 
-  .pyramid{width:100%;max-width:760px;margin:0 auto;height:clamp(400px,56vh,560px);
+  .pyramid{width:100%;max-width:760px;margin:0 auto;aspect-ratio:1.25;min-height:400px;
     display:flex;flex-direction:column;}
-  .band{flex:1;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;
+  .band{flex:1 1 0;min-height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;
     animation:bandIn .42s ease forwards;
     transition:filter .18s ease,transform .18s ease,background .45s ease,color .45s ease;position:relative;}
   @keyframes bandIn{from{opacity:0;}to{opacity:1;}}
@@ -389,7 +389,7 @@
         {icon:"🌱",title:"Saisonal & nachhaltig",text:"Neu seit 2024 berücksichtigt: regionale, saisonale Lebensmittel bevorzugen und stark verarbeitete Produkte einschränken."}
       ],
       levels:[
-        { color:"#D6342C", icon:"🥤🍫", title:"Süssgetränke & Snacks", portion:"optional · 0–1/Tag",
+        { color:"#D6342C", icon:"🥤🍫", title:"Süssgetränke & Snacks", short:"Snacks", portion:"optional · 0–1/Tag",
           tip:"Nur in kleinen Mengen. Alkoholische Getränke nicht täglich.",
           items:[
             {icon:"🥤",name:"Süssgetränke",note:"Cola, Eistee, Energy Drinks, Sirup – 1 Portion = 2 dl."},
@@ -464,7 +464,7 @@
         {icon:"🌾",title:"Vollkorn bevorzugen",text:"Bei Brot, Nudeln und Reis möglichst zur Vollkornvariante greifen."}
       ],
       levels:[
-        { color:"#D6342C", icon:"🍫🍷", title:"Süsses, Snacks & Alkohol", portion:"max. 1 Portion",
+        { color:"#D6342C", icon:"🍫🍷", title:"Süsses, Snacks & Alkohol", short:"Süsses & Snacks", portion:"max. 1 Portion",
           tip:"Bewusst geniessen statt täglich – kleine Mengen genügen.",
           items:[
             {icon:"🍫",name:"Süsses",note:"Schokolade und Gebäck nur gelegentlich."},
@@ -522,7 +522,7 @@
         {icon:"🐟",title:"Fisch & Fleisch dosieren",text:"Fisch ein- bis zweimal pro Woche, Fleisch und Wurst höchstens dreimal."}
       ],
       levels:[
-        { color:"#D6342C", icon:"🍰🧂", title:"Fettes, Süsses & Salziges", portion:"selten",
+        { color:"#D6342C", icon:"🍰🧂", title:"Fettes, Süsses & Salziges", short:"Fettes & Süsses", portion:"selten",
           tip:"Nur gelegentlich und in kleinen Mengen.",
           items:[
             {icon:"🍰",name:"Mehlspeisen",note:"Kuchen und Süssspeisen nur selten."},
@@ -593,7 +593,7 @@
         {icon:"🥛",title:"Low-fat dairy",text:"Fettarme Milchprodukte bevorzugen."}
       ],
       levels:[
-        { color:"#D6342C", icon:"🧈🍬", title:"Fette, Öle & Süsses", en:"Fats, Oils & Sweets", portion:"sparsam verwenden",
+        { color:"#D6342C", icon:"🧈🍬", title:"Fette, Öle & Süsses", short:"Fette & Süsses", en:"Fats, Oils & Sweets", portion:"sparsam verwenden",
           tip:"«Use sparingly» – ganz an der Spitze, also am wenigsten.",
           items:[
             {icon:"🧈",name:"Fette",note:"Butter und feste Fette sparsam."},
@@ -682,13 +682,13 @@
     pyr.innerHTML="";
     const inverted=d.shape==="top";
     pyr.classList.toggle("inv",inverted);
-    const hw=inverted ? (y=>11+39*(1-y)) : (y=>11+39*y);   // breite Basis (100%), Spitze ~22%
+    const hw=inverted ? (y=>4+46*(1-y)) : (y=>4+46*y);   // gleichseitig & spitz: Spitze ~8%, Basis 100%
     d.levels.forEach((lv,k)=>{
       const topHalf=hw(k/N), botHalf=hw((k+1)/N);
       const clip="polygon("+(50-topHalf)+"% 0, "+(50+topHalf)+"% 0, "+(50+botHalf)+"% 100%, "+(50-botHalf)+"% 100%)";
       const isApex=(inverted?k===N-1:k===0);
       const yEff = isApex ? (inverted?(k+0.30)/N:(k+0.70)/N) : (inverted?(k+0.72)/N:(k+0.28)/N);
-      const maxW = Math.max(2*hw(yEff)-5, 24);   // Inhalt auf sichtbare Trapezbreite begrenzen
+      const maxW = Math.max(2*hw(yEff)-5, 14);   // Inhalt auf sichtbare Trapezbreite begrenzen
       const band=document.createElement("div");
       band.className="band"+(isApex?" apex":"");
       band.style.clipPath=clip; band.style.webkitClipPath=clip;
@@ -698,7 +698,7 @@
       band.setAttribute("role","button"); band.setAttribute("tabindex","0");
       band.setAttribute("aria-label",lv.title+", "+lv.portion);
       band.innerHTML='<div class="band-inner" style="max-width:'+maxW.toFixed(1)+'%"><span class="band-icon">'+lv.icon+'</span>'+
-        '<span class="band-text"><span class="band-title">'+lv.title+'</span>'+
+        '<span class="band-text"><span class="band-title">'+(lv.short||lv.title)+'</span>'+
         '<span class="band-portion">'+lv.portion+'</span></span></div>';
       band.addEventListener("click",()=>selectTier(k));
       band.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();selectTier(k);}});
