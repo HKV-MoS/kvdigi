@@ -288,9 +288,9 @@ footer { margin-top: 22px; padding: 14px; text-align: center; color: var(--muted
     <select id="follow-select" class="follow-select" onchange="setFollow(this.value)">
       <option value="">⭐ Team verfolgen…</option>
     </select>
-    <div class="live-toggle" id="live-toggle" onclick="toggleLive()">
+    <div class="live-toggle" id="live-toggle" onclick="toggleLive()" title="An: gespielte Spiele zählen mit dem echten (Live-)Resultat in Gruppentabellen UND KO-Baum; noch nicht gespielte mit deinen Tipps. Aus: nur deine Tipps.">
       <div class="switch"></div>
-      <span>Echte Resultate in Tipps</span>
+      <span>🔴 Live: Tabelle &amp; KO-Baum</span>
     </div>
     <span class="live-status" id="live-status">lädt…</span>
     <button class="reset" onclick="simulateAll()" title="Realistische Zufallsresultate nach FIFA-Rangliste — inkl. KO-Baum bis zum Weltmeister">🎲 Simulieren</button>
@@ -310,7 +310,7 @@ footer { margin-top: 22px; padding: 14px; text-align: center; color: var(--muted
 <div class="tab-content active" id="tab-groups">
   <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:11px;margin-bottom:14px;font-size:13px;">
     💡 <strong>Tippen:</strong> Resultat eingeben → Tabelle aktualisiert sich. Grün = Top 2, Gelb = unter den 8 besten Dritten.
-    Schalter <strong>«Echte Resultate in Tipps»</strong>: gespielte Partien werden mit dem echten Resultat fixiert (grün) —
+    Schalter <strong>«🔴 Live: Tabelle &amp; KO-Baum»</strong> (standardmässig an): gespielte Partien werden mit dem echten Resultat fixiert (grün) —
     offene Spiele tippst du weiter: «Was wäre wenn» ab dem echten Stand.
     🔗 Flagge = Land · Teamname = Fussballverband (Wikipedia).
   </div>
@@ -323,6 +323,7 @@ footer { margin-top: 22px; padding: 14px; text-align: center; color: var(--muted
     Teams erscheinen automatisch aus der Gruppenphase. <strong>Klicke auf ein Team, um es als Sieger weiterzuschicken.</strong>
     <br>📍 <strong>Die Position eines Teams hängt von seinem Gruppenrang ab</strong> — z.B. spielt der Sieger der Gruppe B (1B)
     unten rechts, der Gruppenzweite (2B) oben links. Ändert sich der Tabellenstand, wandert das Team im Baum.
+    <br>🔴 <strong>Live:</strong> Mit eingeschaltetem Live-Schalter fliessen die echten Gruppenresultate alle 60 Sekunden automatisch ein — der Baum füllt sich von selbst.
   </div>
   <div class="bracket-wrap"><div class="bracket" id="bracket"></div></div>
 </div>
@@ -400,7 +401,7 @@ const JERSEY = {"MEX": ["#006847", "#FFFFFF"], "RSA": ["#FFB612", "#007749"], "K
 // ═══ STATE ═══
 let tips = {};
 let koPicks = {};
-let liveInTips = false;   // Kippschalter: echte Resultate in Tipp-Tabellen
+let liveInTips = true;   // Kippschalter: echte Resultate in Tabellen & KO-Baum (Standard: an)
 let liveResults = {};     // immer befüllt (Spielplan nutzt es immer)
 let liveSchedule = {};    // echte Anstosszeiten aus OpenLigaDB (auch für künftige Spiele)
 let scorerStats = {};     // Spielername → {goals, pens, team}
@@ -511,7 +512,8 @@ function updateMapHighlights() {
 try {
   tips = JSON.parse(localStorage.getItem('wm2026_tips') || '{}');
   koPicks = JSON.parse(localStorage.getItem('wm2026_kopicks') || '{}');
-  liveInTips = localStorage.getItem('wm2026_liveintips') === '1';
+  const _lit = localStorage.getItem('wm2026_liveintips');
+  liveInTips = _lit === null ? true : _lit === '1';
 } catch (e) {}
 
 function persist() {
