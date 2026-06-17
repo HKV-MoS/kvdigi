@@ -178,6 +178,10 @@ header .reset:hover { background: rgba(255,255,255,0.3); }
 .scorer-table .rank { font-weight: 700; color: var(--hkv-blue); width: 36px; }
 .scorer-table .player { font-weight: 600; }
 .scorer-table .goals-num { font-weight: 700; font-size: 15px; color: var(--hkv-blue); }
+.scorer-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
+  max-width: 1120px; margin: 0 auto; align-items: start; }
+.scorer-cols .scorer-card { max-width: none; margin: 0; }
+@media (max-width: 760px) { .scorer-cols { grid-template-columns: 1fr; } }
 
 footer { margin-top: 22px; padding: 14px; text-align: center; color: var(--muted);
   font-size: 12px; border-top: 1px solid var(--border); }
@@ -337,16 +341,24 @@ footer { margin-top: 22px; padding: 14px; text-align: center; color: var(--muted
 </div>
 
 <div class="tab-content" id="tab-scorers">
-  <div class="scorer-card">
-    <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:11px;margin-bottom:14px;font-size:13px;">
-      ⚽ <strong>Torschützenliste</strong> — aggregiert live aus allen gespielten Partien, Aktualisierung jede Minute.
-      Elfmetertore sind mit (P) gekennzeichnet, Eigentore zählen nicht.
+  <div class="scorer-cols">
+    <div class="scorer-card">
+      <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:11px;margin-bottom:14px;font-size:13px;">
+        ⚽ <strong>WM 2026 — live</strong> — aggregiert aus allen gespielten Partien, Aktualisierung jede Minute.
+        Elfmetertore mit (P) gekennzeichnet, Eigentore zählen nicht.
+      </div>
+      <div id="scorer-list"></div>
+      <details style="margin-top:14px;font-size:12px;color:var(--muted);">
+        <summary style="cursor:pointer;">🔧 Datenquellen-Diagnose</summary>
+        <div id="scorer-diag" style="padding:8px 4px;line-height:1.7;"></div>
+      </details>
     </div>
-    <div id="scorer-list"></div>
-    <details style="margin-top:14px;font-size:12px;color:var(--muted);">
-      <summary style="cursor:pointer;">🔧 Datenquellen-Diagnose</summary>
-      <div id="scorer-diag" style="padding:8px 4px;line-height:1.7;"></div>
-    </details>
+    <div class="scorer-card">
+      <div style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:8px;padding:11px;margin-bottom:14px;font-size:13px;">
+        🏆 <strong>Ewige Bestenliste</strong> — meiste WM-Tore aller Zeiten (seit 1930), automatisch ergänzt um die Tore der WM 2026 (rot: <span style="color:#dc2626;font-weight:700;">+x</span>).
+      </div>
+      <div id="eternal-list"></div>
+    </div>
   </div>
 </div>
 
@@ -1376,6 +1388,56 @@ function renderScorers() {
     }).join('') + '</tbody></table>';
 }
 
+// ═══ EWIGE WM-TORSCHÜTZENLISTE (historisch bis 2022 + Live-Merge WM 2026) ═══
+const ETERNAL = [
+  { name:'Miroslav Klose',    flag:'🇩🇪', land:'Deutschland', base:16 },
+  { name:'Ronaldo',           flag:'🇧🇷', land:'Brasilien',   base:15 },
+  { name:'Gerd Müller',       flag:'🇩🇪', land:'Deutschland', base:14 },
+  { name:'Just Fontaine',     flag:'🇫🇷', land:'Frankreich',  base:13 },
+  { name:'Lionel Messi',      flag:'🇦🇷', land:'Argentinien', base:13, live:['messi'] },
+  { name:'Pelé',              flag:'🇧🇷', land:'Brasilien',   base:12 },
+  { name:'Kylian Mbappé',     flag:'🇫🇷', land:'Frankreich',  base:12, live:['mbappe'] },
+  { name:'Sándor Kocsis',     flag:'🇭🇺', land:'Ungarn',      base:11 },
+  { name:'Jürgen Klinsmann',  flag:'🇩🇪', land:'Deutschland', base:11 },
+  { name:'Helmut Rahn',       flag:'🇩🇪', land:'Deutschland', base:10 },
+  { name:'Gary Lineker',      flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', land:'England', base:10 },
+  { name:'Gabriel Batistuta', flag:'🇦🇷', land:'Argentinien', base:10 },
+  { name:'Teófilo Cubillas',  flag:'🇵🇪', land:'Peru',        base:10 },
+  { name:'Thomas Müller',     flag:'🇩🇪', land:'Deutschland', base:10 },
+  { name:'Grzegorz Lato',     flag:'🇵🇱', land:'Polen',       base:10 },
+  { name:'Cristiano Ronaldo', flag:'🇵🇹', land:'Portugal',    base:8, live:['cristiano'] },
+];
+function normName(s) { return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+function renderEternal() {
+  const el = document.getElementById('eternal-list');
+  if (!el) return;
+  // 2026-Tore je aktivem Eintrag aus der Live-Liste (scorerStats) aufsummieren
+  const add = {};
+  for (const [nm, s] of Object.entries(scorerStats)) {
+    const n = normName(nm);
+    for (const e of ETERNAL) {
+      if (e.live && e.live.some(k => n.includes(k))) {
+        add[e.name] = (add[e.name] || 0) + (s.goals || 0);
+      }
+    }
+  }
+  const rows = ETERNAL
+    .map(e => ({ ...e, plus: add[e.name] || 0, total: e.base + (add[e.name] || 0) }))
+    .sort((a, b) => b.total - a.total || b.plus - a.plus || a.name.localeCompare(b.name))
+    .slice(0, 20);
+  let rank = 0, prev = -1;
+  el.innerHTML = '<table class="scorer-table"><thead><tr>' +
+    '<th class="num">#</th><th>Spieler</th><th>Land</th><th class="num">Tore</th></tr></thead><tbody>' +
+    rows.map((r, i) => {
+      if (r.total !== prev) { rank = i + 1; prev = r.total; }
+      const plusTxt = r.plus > 0 ? ' <span style="color:#dc2626;font-size:11px;font-weight:700;">+' + r.plus + '</span>' : '';
+      return '<tr><td class="num rank">' + rank + '</td>' +
+        '<td class="player">' + r.name + '</td>' +
+        '<td>' + r.flag + ' ' + r.land + '</td>' +
+        '<td class="num goals-num">' + r.total + plusTxt + '</td></tr>';
+    }).join('') + '</tbody></table>';
+}
+
 // ═══ MODAL: KADER & SPIEL-DETAILS ═══
 function openModal(title) {
   document.getElementById('modal-title').innerHTML = title;
@@ -1886,7 +1948,7 @@ document.querySelectorAll('.tab').forEach(tab => {
 
 // ═══ INIT — Live läuft IMMER ═══
 MATCHES.forEach(m => GROUP_PAIRS.add([m.heim, m.gast].sort().join('_')));
-function renderAll() { renderGroups(); renderBracket(); renderSchedule(); renderScorers(); updateMapHighlights(); }
+function renderAll() { renderGroups(); renderBracket(); renderSchedule(); renderScorers(); renderEternal(); updateMapHighlights(); }
 // Follow-Dropdown befüllen (alphabetisch)
 (function () {
   const sel = document.getElementById('follow-select');
