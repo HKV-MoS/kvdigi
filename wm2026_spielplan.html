@@ -677,8 +677,7 @@ async function fetchLive() {
       const e4 = j4 && j4.events && j4.events[0];
       if (!e4) continue;
       diag.lookups++;
-      const n = parseGoalDetails(e4.strHomeGoalDetails, ev.c1) +
-                parseGoalDetails(e4.strAwayGoalDetails, ev.c2);
+      const n = applyTsdbScorers(e4.strHomeGoalDetails, e4.strAwayGoalDetails, ev.c1, ev.c2);
       if (n > 0) { scorerCovered[ev.minKey] = true; diag.tsdbDetails += n; }
     } catch (e) {}
   }
@@ -765,8 +764,7 @@ function parseTSDB(events, needDetails) {
     // Torschützen aus Goal-Details — nur wenn dieses Spiel noch nicht gezählt wurde
     const minKey = [c1, c2].sort().join('_');
     if (!scorerCovered[minKey]) {
-      const n = parseGoalDetails(e.strHomeGoalDetails, c1) +
-                parseGoalDetails(e.strAwayGoalDetails, c2);
+      const n = applyTsdbScorers(e.strHomeGoalDetails, e.strAwayGoalDetails, c1, c2);
       if (n > 0) { scorerCovered[minKey] = true; diag.tsdbDetails += n; }
       else if (needDetails && e.idEvent && (+hs + +as) > 0) {
         // Tore gefallen, aber keine Details im Listen-Endpoint → einzeln nachladen
@@ -860,15 +858,17 @@ function parseESPN(events) {
   });
 }
 
-// Parst TSDB-Strings wie "34':J. Musiala;45'+2:K. Havertz (pen);" in scorerStats
-function parseGoalDetails(s, team) {
-  if (!s) return 0;
-  let n = 0;
+// Parst TSDB-Strings wie "34':J. Musiala;45'+2:K. Havertz (pen);" → Tor-Objekte
+function parseGoalDetails(s, side) {
+  const out = [];
+  if (!s) return out;
   s.split(';').forEach(part => {
     const t = part.trim();
     if (!t) return;
-    if (/\bo\.?\s?g\b|own goal|eigentor/i.test(t)) return;  // Eigentore überspringen
+    const og = /\bo\.?\s?g\b|own goal|eigentor/i.test(t);
     const pen = /\bpen|elfmeter|\(p\)/i.test(t);
+    const mm = t.match(/(\d+)\s*'/);
+    const min = mm ? parseInt(mm[1], 10) : null;
     const name = t
       .replace(/\d+\s*'(?:\s*\+\s*\d+)?/g, '')   // Minuten-Angaben raus
       .replace(/\([^)]*\)/g, '')                  // Klammerzusätze raus
@@ -876,12 +876,34 @@ function parseGoalDetails(s, team) {
       .replace(/\s+/g, ' ')
       .trim();
     if (!name || name.length < 2) return;
-    const e2 = scorerStats[name] || (scorerStats[name] = { goals: 0, pens: 0, team });
+    out.push({ min, who: name, pen, og, side });
+  });
+  return out;
+}
+
+// Wendet TSDB-Torschützen an: zählt in scorerStats UND schreibt Anzeige-Tore in liveResults
+function applyTsdbScorers(homeStr, awayStr, c1, c2) {
+  const goals = parseGoalDetails(homeStr, 'h')
+    .concat(parseGoalDetails(awayStr, 'a'))
+    .sort((a, b) => (a.min ?? 999) - (b.min ?? 999));
+  let n = 0;
+  goals.forEach(g => {
+    if (g.og || !g.who) return;  // Eigentore zählen nicht für die Liste
+    const team = g.side === 'h' ? c1 : c2;
+    const e2 = scorerStats[g.who] || (scorerStats[g.who] = { goals: 0, pens: 0, team });
     e2.goals++;
-    if (pen) e2.pens++;
+    if (g.pen) e2.pens++;
     e2.team = team;
     n++;
   });
+  // Anzeige-Tore eintragen, falls dort noch keine Namen stehen
+  const key = c1 + '_' + c2;
+  const cur = liveResults[key];
+  if (cur && goals.length && (!cur.goals.length || !cur.goals.some(x => x.who && String(x.who).trim()))) {
+    cur.goals = goals;
+    const rev = liveResults[c2 + '_' + c1];
+    if (rev) rev.goals = goals.map(g => ({ ...g, side: g.side === 'h' ? 'a' : 'h' }));
+  }
   return n;
 }
 
@@ -1954,7 +1976,41 @@ document.querySelectorAll('.tab').forEach(tab => {
 
 // ═══ INIT — Live läuft IMMER ═══
 MATCHES.forEach(m => GROUP_PAIRS.add([m.heim, m.gast].sort().join('_')));
-function renderAll() { renderGroups(); renderBracket(); renderSchedule(); renderScorers(); renderEternal(); updateMapHighlights(); }
+// scorerStats konsistent aus den ANGEZEIGTEN Toren (liveResults.goals) rekonstruieren —
+// stellt sicher, dass jedes in der Spielzeile gezeigte Tor auch in Statistik & ewiger Liste zählt
+function rebuildScorerStats() {
+  scorerStats = {};
+  const seen = new Set();
+  for (const key of Object.keys(liveResults)) {
+    const us = key.indexOf('_');
+    if (us < 0) continue;
+    const home = key.slice(0, us), away = key.slice(us + 1);
+    const pair = home < away ? home + '_' + away : away + '_' + home;
+    if (seen.has(pair)) continue;
+    seen.add(pair);
+    const lr = liveResults[key];
+    if (!lr || !Array.isArray(lr.goals) || !lr.goals.length) continue;
+    const goals = lr.goals.slice().sort((a, b) => (a.min ?? 999) - (b.min ?? 999));
+    let p1 = 0, p2 = 0;
+    for (const g of goals) {
+      let side = g.side || null;
+      if (!side && g.s1 != null && g.s2 != null) {
+        if (g.s1 > p1) side = 'h'; else if (g.s2 > p2) side = 'a';
+      }
+      if (g.s1 != null) p1 = g.s1;
+      if (g.s2 != null) p2 = g.s2;
+      const name = (g.who || '').trim();
+      if (g.og || !name) continue;  // Eigentore zählen nicht
+      const team = side === 'h' ? home : (side === 'a' ? away : undefined);
+      const e = scorerStats[name] || (scorerStats[name] = { goals: 0, pens: 0, team });
+      e.goals++;
+      if (g.pen) e.pens++;
+      if (team) e.team = team;
+    }
+  }
+}
+
+function renderAll() { rebuildScorerStats(); renderGroups(); renderBracket(); renderSchedule(); renderScorers(); renderEternal(); updateMapHighlights(); }
 // Follow-Dropdown befüllen (alphabetisch)
 (function () {
   const sel = document.getElementById('follow-select');
