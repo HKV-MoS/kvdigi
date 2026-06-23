@@ -418,6 +418,7 @@ let liveResults = {};     // immer befüllt (Spielplan nutzt es immer)
 let liveSchedule = {};    // echte Anstosszeiten aus OpenLigaDB (auch für künftige Spiele)
 let scorerStats = {};     // Spielername → {goals, pens, team}
 let scorerCovered = {};   // Spiel-Key → true, wenn Schützen bereits aus einer Quelle gezählt
+let espnFetchedDays = new Set();  // vergangene ESPN-Tage, die schon vollständig geladen wurden
 let diag = { oldb: '–', oldbGames: 0, oldbGoals: 0, oldbNamed: 0,
              tsdb: '–', tsdbEvents: 0, tsdbScored: 0, tsdbDetails: 0, lookups: 0,
              unmatched: [] };
@@ -686,6 +687,14 @@ async function fetchLive() {
   const espnDays = new Set();
   const todayIso = new Date().toLocaleDateString('sv-SE');
   espnDays.add(todayIso.replace(/-/g, ''));
+  // Alle Turniertage (11. Juni bis heute) abfragen — ESPN hat die kompletten Daten und füllt Feed-Lücken
+  {
+    const startD = new Date('2026-06-11T00:00:00');
+    const todayD = new Date();
+    for (let d = new Date(startD); d <= todayD; d.setDate(d.getDate() + 1)) {
+      espnDays.add(d.toLocaleDateString('sv-SE').replace(/-/g, ''));
+    }
+  }
   MATCHES.forEach(m => {
     const r = liveResults[liveKey(m)];
     if (!r || r.home === null) return;
@@ -708,7 +717,12 @@ async function fetchLive() {
     }
   });
   let espnOk = false;
-  for (const day of Array.from(espnDays).slice(0, 6)) {
+  const todayStr = todayIso.replace(/-/g, '');
+  const ydayStr = new Date(Date.now() - 864e5).toLocaleDateString('sv-SE').replace(/-/g, '');
+  for (const day of Array.from(espnDays).sort()) {
+    // Vergangene Tage nur einmal laden; heute & gestern für Live-Updates jedes Mal
+    const recent = (day === todayStr || day === ydayStr);
+    if (!recent && espnFetchedDays.has(day)) continue;
     try {
       const r5 = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=' + day);
       if (!r5.ok) continue;
@@ -716,6 +730,7 @@ async function fetchLive() {
       if (j5 && Array.isArray(j5.events)) {
         parseESPN(j5.events);
         espnOk = true;
+        espnFetchedDays.add(day);
       }
     } catch (e) {}
   }
@@ -791,6 +806,11 @@ function parseESPN(events) {
     if (home.team && home.team.id) espnTeamIds[c1] = home.team.id;
     if (away.team && away.team.id) espnTeamIds[c2] = away.team.id;
     if (ev.id) espnEventByKey[minKey] = { id: ev.id, dateIso: (ev.date || '').slice(0, 10) };
+    // Anstosszeit aus ESPN übernehmen, falls noch unbekannt (auch Gruppenspiele) — OpenLigaDB hat Vorrang
+    if (ev.date && !liveSchedule[key]) {
+      const ko = new Date(ev.date).getTime();
+      if (ko && !isNaN(ko)) { liveSchedule[key] = ko; liveSchedule[c2 + '_' + c1] = ko; }
+    }
     // KO-Spiel? → registrieren (mit Stadion); Sieger via winner-Flag (auch bei Penaltyschiessen)
     if (!GROUP_PAIRS.has(minKey)) {
       const ko = ev.date ? new Date(ev.date).getTime() : null;
