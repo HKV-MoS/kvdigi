@@ -928,17 +928,25 @@ function applyTsdbScorers(homeStr, awayStr, c1, c2) {
 }
 
 function normName(s) {
-  return (s || '').toLowerCase().replace(/[._]/g, ' ').replace(/\s+/g, ' ').trim();
+  return (s || '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')   // Akzente entfernen: ü→u, é→e, ç→c
+    .toLowerCase()
+    .replace(/['’`]/g, '')                               // Apostrophe entfernen (d'Ivoire→divoire)
+    .replace(/[._\-]/g, ' ')                             // Punkt/Unterstrich/Bindestrich → Leerzeichen
+    .replace(/\s+/g, ' ')
+    .trim();
 }
+let _normAlias = null;  // OLDB_ALIAS mit normalisierten (akzentfreien) Schlüsseln — einmal gebaut
 function codeFor(teamName) {
+  if (!_normAlias) {
+    _normAlias = {};
+    for (const [k, v] of Object.entries(OLDB_ALIAS)) _normAlias[normName(k)] = v;
+  }
   const n = normName(teamName);
   if (!n) return null;
-  const n2 = n.replace(/-/g, ' ');  // "bosnia-herzegovina" → "bosnia herzegovina"
-  if (OLDB_ALIAS[n]) return OLDB_ALIAS[n];
-  if (OLDB_ALIAS[n2]) return OLDB_ALIAS[n2];
-  for (const [alias, code] of Object.entries(OLDB_ALIAS)) {
-    const a2 = alias.replace(/-/g, ' ');
-    if (n.includes(alias) || alias.includes(n) || n2.includes(a2) || a2.includes(n2)) return code;
+  if (_normAlias[n]) return _normAlias[n];
+  for (const [alias, code] of Object.entries(_normAlias)) {
+    if (n.includes(alias) || alias.includes(n)) return code;
   }
   if (!diag.unmatched.includes(n) && diag.unmatched.length < 20) diag.unmatched.push(n);
   return null;
@@ -1455,7 +1463,6 @@ const ETERNAL = [
   { name:'Grzegorz Lato',     flag:'🇵🇱', land:'Polen',       base:10 },
   { name:'Cristiano Ronaldo', flag:'🇵🇹', land:'Portugal',    base:8, live:['cristiano'] },
 ];
-function normName(s) { return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
 function renderEternal() {
   const el = document.getElementById('eternal-list');
   if (!el) return;
