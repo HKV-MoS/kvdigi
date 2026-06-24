@@ -178,10 +178,13 @@ header .reset:hover { background: rgba(255,255,255,0.3); }
 .scorer-table .rank { font-weight: 700; color: var(--hkv-blue); width: 36px; }
 .scorer-table .player { font-weight: 600; }
 .scorer-table .goals-num { font-weight: 700; font-size: 15px; color: var(--hkv-blue); }
-.scorer-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
-  max-width: 1120px; margin: 0 auto; align-items: start; }
-.scorer-cols .scorer-card { max-width: none; margin: 0; }
-@media (max-width: 760px) { .scorer-cols { grid-template-columns: 1fr; } }
+.scorer-head { border: 1px solid; border-radius: 8px; padding: 10px 11px; margin-bottom: 12px;
+  font-size: 12px; line-height: 1.5; }
+.scorer-cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+  margin: 0 auto; align-items: start; }
+.scorer-cols .scorer-card { max-width: none; margin: 0; padding: 12px; }
+@media (max-width: 1240px) { .scorer-cols { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 680px) { .scorer-cols { grid-template-columns: 1fr; } }
 
 footer { margin-top: 22px; padding: 14px; text-align: center; color: var(--muted);
   font-size: 12px; border-top: 1px solid var(--border); }
@@ -342,10 +345,17 @@ footer { margin-top: 22px; padding: 14px; text-align: center; color: var(--muted
 
 <div class="tab-content" id="tab-scorers">
   <div class="scorer-cols">
+    <!-- 1) Ewige Bestenliste Tore -->
     <div class="scorer-card">
-      <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:11px;margin-bottom:14px;font-size:13px;">
-        ⚽ <strong>WM 2026 — live</strong> — aggregiert aus allen gespielten Partien, Aktualisierung jede Minute.
-        Elfmetertore mit (P) gekennzeichnet, Eigentore zählen nicht.
+      <div class="scorer-head" style="background:#FEF3C7;border-color:#FDE68A;">
+        🏆 <strong>Ewige Bestenliste — Tore</strong><br>Meiste WM-Tore aller Zeiten (seit 1930), inkl. WM 2026 (<span style="color:#dc2626;font-weight:700;">+x</span>).
+      </div>
+      <div id="eternal-list"></div>
+    </div>
+    <!-- 2) Tore WM 2026 -->
+    <div class="scorer-card">
+      <div class="scorer-head" style="background:#EFF6FF;border-color:#BFDBFE;">
+        ⚽ <strong>Tore WM 2026</strong><br>Live aus allen Partien. (P) = Elfmeter, Eigentore zählen nicht.
       </div>
       <div id="scorer-list"></div>
       <details style="margin-top:14px;font-size:12px;color:var(--muted);">
@@ -353,11 +363,19 @@ footer { margin-top: 22px; padding: 14px; text-align: center; color: var(--muted
         <div id="scorer-diag" style="padding:8px 4px;line-height:1.7;"></div>
       </details>
     </div>
+    <!-- 3) Assists WM 2026 -->
     <div class="scorer-card">
-      <div style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:8px;padding:11px;margin-bottom:14px;font-size:13px;">
-        🏆 <strong>Ewige Bestenliste</strong> — meiste WM-Tore aller Zeiten (seit 1930), automatisch ergänzt um die Tore der WM 2026 (rot: <span style="color:#dc2626;font-weight:700;">+x</span>).
+      <div class="scorer-head" style="background:#ECFDF5;border-color:#A7F3D0;">
+        🅰️ <strong>Assists WM 2026</strong><br>Vorlagen, soweit in den Spieldetails (ESPN) erfasst.
       </div>
-      <div id="eternal-list"></div>
+      <div id="assist-list"></div>
+    </div>
+    <!-- 4) Kombinierte Scorerpunkte -->
+    <div class="scorer-card">
+      <div class="scorer-head" style="background:#F5F3FF;border-color:#DDD6FE;">
+        ⭐ <strong>Scorerpunkte</strong><br>Tore + Vorlagen kombiniert (T = Tore, V = Vorlagen).
+      </div>
+      <div id="combined-list"></div>
     </div>
   </div>
 </div>
@@ -417,6 +435,7 @@ let liveInTips = true;   // Kippschalter: echte Resultate in Tabellen & KO-Baum 
 let liveResults = {};     // immer befüllt (Spielplan nutzt es immer)
 let liveSchedule = {};    // echte Anstosszeiten aus OpenLigaDB (auch für künftige Spiele)
 let scorerStats = {};     // Spielername → {goals, pens, team}
+let assistStats = {};     // Spielername → {assists, team} (aus ESPN-Spieldetails)
 let scorerCovered = {};   // Spiel-Key → true, wenn Schützen bereits aus einer Quelle gezählt
 let espnFetchedDays = new Set();  // vergangene ESPN-Tage, die schon vollständig geladen wurden
 let diag = { oldb: '–', oldbGames: 0, oldbGoals: 0, oldbNamed: 0,
@@ -847,7 +866,8 @@ function parseESPN(events) {
       const isGoal = d.scoringPlay === true || /goal/i.test(txt);
       if (!isGoal) return;
       if (/missed|shootout/i.test(txt)) return;          // verschossene Penaltys / Penaltyschiessen
-      const ath = d.athletesInvolved && d.athletesInvolved[0];
+      const aths = d.athletesInvolved || [];
+      const ath = aths[0];
       const name = ath && (ath.displayName || ath.fullName);
       if (!name) return;
       const teamId = d.team && d.team.id;
@@ -855,8 +875,15 @@ function parseESPN(events) {
       const og = /own goal/i.test(txt);
       const pen = /penalty/i.test(txt);
       const min = parseInt((d.clock && d.clock.displayValue) || '', 10) || null;
+      // Assist (best effort): ESPN führt den Vorlagengeber meist als 2. beteiligten Spieler;
+      // bei Eigentor/Elfmeter gibt es keine reguläre Vorlage
+      let assist = null;
+      if (!og && !pen && aths.length > 1 && aths[1]) {
+        const an = aths[1].displayName || aths[1].fullName;
+        if (an && an !== name) assist = an;
+      }
       // Eigentor: Schütze gehört zum Gegner des begünstigten Teams
-      matchGoals.push({ min, who: name, pen, og, side: (og ? !sideHome : sideHome) ? 'h' : 'a' });
+      matchGoals.push({ min, who: name, pen, og, assist, side: (og ? !sideHome : sideHome) ? 'h' : 'a' });
       if (og || !needScorers) return;                    // Eigentore zählen nicht; keine Doppelzählung
       const team = sideHome ? c1 : c2;
       const e2 = scorerStats[name] || (scorerStats[name] = { goals: 0, pens: 0, team });
@@ -869,10 +896,23 @@ function parseESPN(events) {
     // Schützen-Namen in die Spiel-Einträge übernehmen, wenn dort keine Namen vorhanden
     if (matchGoals.length) {
       const cur = liveResults[key];
+      const rev = liveResults[c2 + '_' + c1];
       if (cur && (!cur.goals.length || !cur.goals.some(g => g.who && String(g.who).trim()))) {
         cur.goals = matchGoals;
-        const rev = liveResults[c2 + '_' + c1];
         if (rev) rev.goals = matchGoals.map(g => ({ ...g, side: g.side === 'h' ? 'a' : 'h' }));
+      } else if (cur) {
+        // Tore existieren bereits (andere Quelle) → nur Assists nachtragen (Minute/Schütze matchen)
+        const enrich = (arr) => {
+          if (!Array.isArray(arr)) return;
+          arr.forEach(g => {
+            if (g.assist) return;
+            const mg = matchGoals.find(x => x.assist && ((g.min != null && x.min === g.min) ||
+              (g.who && x.who && normName(g.who) === normName(x.who))));
+            if (mg) g.assist = mg.assist;
+          });
+        };
+        enrich(cur.goals);
+        enrich(rev && rev.goals);
       }
     }
   });
@@ -1493,6 +1533,72 @@ function renderEternal() {
     }).join('') + '</tbody></table>';
 }
 
+// ═══ ASSISTS WM 2026 (aus ESPN-Spieldetails) ═══
+function renderAssists() {
+  const el = document.getElementById('assist-list');
+  if (!el) return;
+  const list = Object.entries(assistStats)
+    .map(([name, s]) => ({ name, ...s }))
+    .sort((a, b) => b.assists - a.assists || a.name.localeCompare(b.name))
+    .slice(0, 30);
+  if (list.length === 0) {
+    el.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:12px;text-align:center;">' +
+      'Vorlagen erscheinen, sobald sie in den Spieldetails erfasst sind.</div>';
+    return;
+  }
+  let rank = 0, prev = -1;
+  el.innerHTML = '<table class="scorer-table"><thead><tr>' +
+    '<th class="num">#</th><th>Spieler</th><th>Team</th><th class="num">Vorl.</th></tr></thead><tbody>' +
+    list.map((s, i) => {
+      if (s.assists !== prev) { rank = i + 1; prev = s.assists; }
+      const teamHtml = TEAMS[s.team] ? flagLink(s.team) + ' ' + nameLink(s.team) : '–';
+      return '<tr><td class="num rank">' + rank + '</td>' +
+        '<td class="player">' + s.name + '</td>' +
+        '<td>' + teamHtml + '</td>' +
+        '<td class="num goals-num">' + s.assists + '</td></tr>';
+    }).join('') + '</tbody></table>';
+}
+
+// ═══ KOMBINIERTE SCORERPUNKTE (Tore + Vorlagen) ═══
+function renderCombined() {
+  const el = document.getElementById('combined-list');
+  if (!el) return;
+  const map = {};
+  for (const [nm, s] of Object.entries(scorerStats)) {
+    const m = map[nm] || (map[nm] = { goals: 0, assists: 0, team: s.team });
+    m.goals = s.goals || 0;
+    if (s.team) m.team = s.team;
+  }
+  for (const [nm, a] of Object.entries(assistStats)) {
+    const m = map[nm] || (map[nm] = { goals: 0, assists: 0, team: a.team });
+    m.assists = a.assists || 0;
+    if (a.team && !m.team) m.team = a.team;
+  }
+  const list = Object.entries(map)
+    .map(([name, v]) => ({ name, ...v, pts: (v.goals || 0) + (v.assists || 0) }))
+    .filter(v => v.pts > 0)
+    .sort((a, b) => b.pts - a.pts || b.goals - a.goals || a.name.localeCompare(b.name))
+    .slice(0, 30);
+  if (list.length === 0) {
+    el.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:12px;text-align:center;">' +
+      'Die Liste füllt sich automatisch, sobald Spiele gespielt sind.</div>';
+    return;
+  }
+  let rank = 0, prev = -1;
+  el.innerHTML = '<table class="scorer-table"><thead><tr>' +
+    '<th class="num">#</th><th>Spieler</th><th>Team</th><th class="num">Pkt</th></tr></thead><tbody>' +
+    list.map((v, i) => {
+      if (v.pts !== prev) { rank = i + 1; prev = v.pts; }
+      const teamHtml = TEAMS[v.team] ? flagLink(v.team) + ' ' + nameLink(v.team) : '–';
+      const bd = '<span style="color:var(--muted);font-size:10px;font-weight:600;white-space:nowrap;"> ' +
+        v.goals + 'T+' + v.assists + 'V</span>';
+      return '<tr><td class="num rank">' + rank + '</td>' +
+        '<td class="player">' + v.name + '</td>' +
+        '<td>' + teamHtml + '</td>' +
+        '<td class="num goals-num">' + v.pts + bd + '</td></tr>';
+    }).join('') + '</tbody></table>';
+}
+
 // ═══ MODAL: KADER & SPIEL-DETAILS ═══
 function openModal(title) {
   document.getElementById('modal-title').innerHTML = title;
@@ -2007,6 +2113,7 @@ MATCHES.forEach(m => GROUP_PAIRS.add([m.heim, m.gast].sort().join('_')));
 // stellt sicher, dass jedes in der Spielzeile gezeigte Tor auch in Statistik & ewiger Liste zählt
 function rebuildScorerStats() {
   scorerStats = {};
+  assistStats = {};
   const seen = new Set();
   for (const key of Object.keys(liveResults)) {
     const us = key.indexOf('_');
@@ -2027,8 +2134,17 @@ function rebuildScorerStats() {
       if (g.s1 != null) p1 = g.s1;
       if (g.s2 != null) p2 = g.s2;
       const name = (g.who || '').trim();
-      if (g.og || !name) continue;  // Eigentore zählen nicht
       const team = side === 'h' ? home : (side === 'a' ? away : undefined);
+      // Assist zählen (Vorlage zählt zur Mannschaft des Torschützen; Eigentore haben keine Vorlage)
+      if (g.assist && !g.og) {
+        const an = String(g.assist).trim();
+        if (an) {
+          const ae = assistStats[an] || (assistStats[an] = { assists: 0, team });
+          ae.assists++;
+          if (team) ae.team = team;
+        }
+      }
+      if (g.og || !name) continue;  // Eigentore zählen beim Torschützen nicht
       const e = scorerStats[name] || (scorerStats[name] = { goals: 0, pens: 0, team });
       e.goals++;
       if (g.pen) e.pens++;
@@ -2037,7 +2153,7 @@ function rebuildScorerStats() {
   }
 }
 
-function renderAll() { rebuildScorerStats(); renderGroups(); renderBracket(); renderSchedule(); renderScorers(); renderEternal(); updateMapHighlights(); }
+function renderAll() { rebuildScorerStats(); renderGroups(); renderBracket(); renderSchedule(); renderScorers(); renderEternal(); renderAssists(); renderCombined(); updateMapHighlights(); }
 // Follow-Dropdown befüllen (alphabetisch)
 (function () {
   const sel = document.getElementById('follow-select');
