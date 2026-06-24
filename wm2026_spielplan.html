@@ -445,6 +445,8 @@ let espnTeamIds = {};     // Teamcode → ESPN-Team-ID (für Kader-Abruf)
 let espnEventByKey = {};  // minKey → {id, dateIso} (für Aufstellungs-Abruf)
 let rosterCache = {};     // Teamcode → Roster-Daten
 let summaryCache = {};    // eventId → Summary-Daten
+let assistFetched = new Set();  // eventId → Assists final geholt (beendete Spiele)
+let enrichRunning = false;      // verhindert überlappende Assist-Durchläufe
 let koLiveMatches = {};   // minKey → dynamisches KO-Spiel aus den Live-Quellen
 let koWinners = {};       // minKey → Siegercode (echte KO-Resultate)
 
@@ -1451,7 +1453,8 @@ function renderScorers() {
       '<strong>TheSportsDB:</strong> ' + diag.tsdb +
       ' · ' + diag.tsdbEvents + ' Endrunden-Events gematcht · ' + diag.tsdbScored + ' mit Resultat · ' +
       diag.tsdbDetails + ' Schützen aus Details · ' + diag.lookups + ' Einzel-Nachladungen<br>' +
-      '<strong>ESPN:</strong> ' + diag.espn + ' · ' + diag.espnGoals + ' Schützen erfasst<br>' +
+      '<strong>ESPN:</strong> ' + diag.espn + ' · ' + diag.espnGoals + ' Schützen erfasst · ' +
+      Object.values(assistStats).reduce((s, a) => s + (a.assists || 0), 0) + ' Vorlagen (aus Spiel-Details)<br>' +
       '<strong>Nicht erkannte Teamnamen:</strong> ' +
       (diag.unmatched.length ? diag.unmatched.join(', ') : 'keine');
   }
@@ -1728,7 +1731,76 @@ async function fetchSummary(eventId) {
   } catch (e) { return null; }
 }
 
-// Ballbesitz beider Teams aus dem Summary (für Stats & Heatmap-Verschiebung)
+// ═══ ASSISTS aus dem ESPN-Match-Summary (keyEvents → Vorlagengeber) ═══
+// Das Scoreboard liefert nur Torschützen; das Summary jedes Spiels enthält die Vorlagen.
+function assistsFromSummary(sum) {
+  if (!sum) return [];
+  const evs = sum.keyEvents || sum.commentary || sum.plays || [];
+  const nameOf = x => x && (x.displayName || x.fullName || (x.athlete && x.athlete.displayName));
+  const out = [];
+  (Array.isArray(evs) ? evs : []).forEach(e => {
+    const ttxt = (e.type && (e.type.text || e.type.name)) || '';
+    const txt = e.text || e.shortText || '';
+    const isGoal = e.scoringPlay === true || /goal/i.test(ttxt) || /^goal!/i.test(txt);
+    if (!isGoal) return;
+    if (/own goal|missed|saved|disallowed|no goal|penalty.*miss/i.test(txt + ' ' + ttxt)) return;
+    const min = parseInt((e.clock && e.clock.displayValue) || '', 10) || null;
+    const aths = e.athletesInvolved || e.participants || [];
+    const scorer = (nameOf(aths[0]) || '').trim();
+    // Vorlage: zuverlässig aus dem Klartext «Assisted by …», sonst 2. beteiligter Spieler
+    let assist = null;
+    const tm = txt.match(/assisted by ([^.,;\n]+)/i);
+    if (tm) assist = tm[1].split(/\s+with\s+/i)[0].trim();
+    if (!assist && aths[1]) { const a2 = nameOf(aths[1]); if (a2 && a2 !== scorer) assist = a2.trim(); }
+    if (assist) out.push({ min, scorer, assist });
+  });
+  return out;
+}
+function goalsForPair(sortedPair) {
+  const us = sortedPair.indexOf('_');
+  if (us < 0) return null;
+  const a = sortedPair.slice(0, us), b = sortedPair.slice(us + 1);
+  return liveResults[a + '_' + b] || liveResults[b + '_' + a] || null;
+}
+function applyAssists(sortedPair, as) {
+  const us = sortedPair.indexOf('_');
+  const a = sortedPair.slice(0, us), b = sortedPair.slice(us + 1);
+  let changed = false;
+  [liveResults[a + '_' + b], liveResults[b + '_' + a]].forEach(rr => {
+    if (!rr || !Array.isArray(rr.goals)) return;
+    rr.goals.forEach(g => {
+      if (g.og) return;                                  // Eigentore haben keine Vorlage
+      const hit = as.find(x => x.assist && ((g.min != null && x.min === g.min) ||
+        (g.who && x.scorer && normName(g.who) === normName(x.scorer))));
+      if (hit && g.assist !== hit.assist) { g.assist = hit.assist; changed = true; }
+    });
+  });
+  return changed;
+}
+// Im Hintergrund alle Spiele mit Toren durchgehen und Vorlagen aus dem Summary nachladen
+async function enrichAssists() {
+  if (enrichRunning) return;
+  enrichRunning = true;
+  try {
+    for (const minKey of Object.keys(espnEventByKey)) {
+      const ev = espnEventByKey[minKey];
+      if (!ev || !ev.id) continue;
+      const lr = goalsForPair(minKey);
+      if (!lr || !Array.isArray(lr.goals) || !lr.goals.length) continue;  // keine Tore → nichts zu holen
+      const finished = !!lr.finished;
+      const resolved = lr.goals.every(g => g.assist || g.og || g.pen);    // jedes Tor geklärt
+      if (finished && (assistFetched.has(ev.id) || resolved)) { assistFetched.add(ev.id); continue; }
+      if (!finished) delete summaryCache[ev.id];        // Live: frische Daten erzwingen
+      const sum = await fetchSummary(ev.id);
+      if (finished) assistFetched.add(ev.id);
+      if (sum) {
+        const as = assistsFromSummary(sum);
+        if (as.length && applyAssists(minKey, as)) renderAll();            // progressiv aktualisieren
+      }
+      await new Promise(res => setTimeout(res, 400));   // API schonen
+    }
+  } finally { enrichRunning = false; }
+}
 function getPoss(sum, m) {
   const bx = sum && sum.boxscore && sum.boxscore.teams;
   if (!bx || bx.length < 2) return null;
@@ -2271,8 +2343,8 @@ updateMapHighlights();
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
-fetchLive().then(() => renderAll());
-setInterval(() => fetchLive().then(() => renderAll()), 60000);
+fetchLive().then(() => { renderAll(); enrichAssists(); });
+setInterval(() => fetchLive().then(() => { renderAll(); enrichAssists(); }), 60000);
 </script>
 </body>
 </html>
