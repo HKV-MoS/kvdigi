@@ -129,7 +129,7 @@ header .reset:hover { background: rgba(255,255,255,0.3); }
 
 /* ── SPIELPLAN ── */
 .day-section { background: white; border: 1px solid var(--border); border-radius: 10px;
-  padding: 13px; margin-bottom: 11px; }
+  padding: 13px; margin-bottom: 11px; scroll-margin-top: 16px; }
 .day-header { font-weight: 700; color: var(--hkv-blue); margin-bottom: 9px; font-size: 14px; }
 .day-header.today { color: var(--live-red); }
 .day-matches { display: flex; flex-direction: column; gap: 5px; }
@@ -1388,10 +1388,14 @@ function renderSchedule() {
     'Spiel um Platz 3: 18. Juli (Miami) · 🏆 Finale: 19. Juli (MetLife Stadium, New York/New Jersey)<br>' +
     '<span style="color:var(--muted);font-size:12px;">Die KO-Partien erscheinen hier automatisch mit Datum, ' +
     'Stadion und Live-Resultat, sobald die Paarungen feststehen.</span></div></div>';
-  list.innerHTML = Object.keys(byDate).sort().map(d => {
+  const dates = Object.keys(byDate).sort();
+  // Anker = heutiger Spieltag, sonst der nächste künftige, sonst der letzte (alles Vergangenheit)
+  const anchorDate = dates.find(d => d >= today) || dates[dates.length - 1] || null;
+  list.innerHTML = dates.map(d => {
     const matches = byDate[d].sort((a, b) => sortTime(a).localeCompare(sortTime(b)));
     const isToday = d === today;
-    return '<div class="day-section">' +
+    const anchor = d === anchorDate ? ' id="schedule-anchor"' : '';
+    return '<div class="day-section"' + anchor + '>' +
       '<div class="day-header ' + (isToday ? 'today' : '') + '">' + formatDate(d, true) +
       (isToday ? ' · HEUTE' : '') + '</div>' +
       '<div class="day-matches">' + matches.map(m => matchRow(m, false, true)).join('') + '</div></div>';
@@ -2176,6 +2180,13 @@ document.querySelectorAll('.tab').forEach(tab => {
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     tab.classList.add('active');
     document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    // «Spielplan live» direkt zum heutigen Spieltag springen (kein Scrollen durch Vergangenes)
+    if (tab.dataset.tab === 'schedule') {
+      requestAnimationFrame(() => {
+        const a = document.getElementById('schedule-anchor');
+        if (a) a.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
   });
 });
 
