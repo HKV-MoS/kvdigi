@@ -78,7 +78,7 @@
   .row-h.notimportant{ grid-row:3; grid-column:1; }
 
   .quad{
-    border-radius:14px; padding:12px; min-height:185px; display:flex; flex-direction:column; gap:8px;
+    border-radius:14px; padding:12px; min-height:125px; display:flex; flex-direction:column; gap:8px;
     border:2px solid transparent; transition:box-shadow .15s ease, border-color .15s ease, transform .15s ease;
   }
   /* Koordinaten-Anordnung: rechts = dringend, oben = wichtig */
@@ -100,6 +100,20 @@
   .tray{ margin-top:18px; background:#fff; border-radius:14px; box-shadow:0 2px 10px rgba(20,50,80,.08); padding:14px 16px; }
   .tray-title{ font-size:12px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; color:#2C6BAA; margin-bottom:10px; }
   .cards{ display:flex; flex-wrap:wrap; gap:10px; min-height:54px; }
+
+  /* ---- Zwei-Spalten-Layout: Matrix links, Aufgaben rechts ---- */
+  .layout{ display:flex; gap:20px; align-items:flex-start; }
+  .layout .matrix-stage{ flex:1 1 auto; max-width:640px; min-width:0; }
+  .layout .tray{ flex:0 0 320px; margin-top:0; }
+  .layout .cards{ flex-direction:column; flex-wrap:nowrap; }
+  .layout .tray .card{ max-width:none; }
+  @media (max-width:820px){
+    .layout{ flex-direction:column; }
+    .layout .matrix-stage{ max-width:none; }
+    .layout .tray{ flex:1 1 auto; width:100%; }
+    .layout .cards{ flex-direction:row; flex-wrap:wrap; }
+    .layout .tray .card{ max-width:300px; }
+  }
 
   .card{
     background:#fff; border:1.5px solid #D9E3EC; border-left:5px solid #1F4E78; border-radius:10px;
@@ -165,6 +179,7 @@
 
   <div class="axis-note">Wie ein Koordinatensystem lesen: <b>Dringlichkeit</b> nimmt nach rechts zu →, <b>Wichtigkeit</b> nach oben ↑. Oben rechts = wichtig <i>und</i> dringend.</div>
 
+  <div class="layout">
   <div class="matrix-stage">
   <div class="matrix" id="matrix">
     <div class="corner"></div>
@@ -199,6 +214,7 @@
   <div class="tray">
     <div class="tray-title">Aufgaben · ziehen oder Karte anklicken und Zifferntaste 1–4 drücken</div>
     <div class="cards" id="tray"></div>
+  </div>
   </div>
 
   <div class="done-banner" id="done">
