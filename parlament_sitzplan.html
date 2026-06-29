@@ -565,6 +565,15 @@
   .brw-result { margin-top:12px; padding:12px 14px; border-radius:10px; font-weight:700; font-size:14px; }
   .brw-result.win { background:#E7F5EC; border:1px solid #BCE0C8; color:#1d7a4a; }
   .brw-result.again { background:#FDEEEE; border:1px solid #F3C5C5; color:#b23b3b; }
+  .brw-menu { display:flex; flex-direction:column; gap:8px; margin:14px 0 4px; }
+  .brw-scen-btn { text-align:left; font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; border:1.5px solid #DCE6F0; background:#fff; color:#1F4E78; padding:10px 14px; border-radius:10px; transition:all .15s; }
+  .brw-scen-btn:hover { border-color:#1F4E78; background:#EAF1F8; }
+  .brw-scen-btn .brw-scen-sub { display:block; font-weight:600; font-size:11.5px; color:#7B8794; margin-top:2px; }
+  .brw-badge { display:inline-block; font-size:10.5px; font-weight:800; padding:3px 10px; border-radius:999px; margin-bottom:10px; text-transform:uppercase; letter-spacing:.4px; }
+  .brw-badge.gesamt { background:#E7F0EC; color:#3f8a5f; }
+  .brw-badge.ersatz { background:#EAF1F8; color:#1F4E78; }
+  .lm-back { font-family:inherit; font-size:12.5px; font-weight:700; cursor:pointer; border:0; background:transparent; color:#1F4E78; padding:6px 2px; }
+  .lm-back:hover { text-decoration:underline; }
 
   /* Gesetz im Parlament */
   .ges-steps { display:flex; flex-wrap:wrap; gap:6px; margin:4px 0 14px; }
@@ -1503,61 +1512,159 @@ renderSeats();
 
   let step = 0;
   let mehrState = { rat:'nr', art:'absolut' };
+  let brwView = 'menu';
+  let brwStep = 0;
 
-  // ---------- Bundesratswahl ----------
-  function brwChart(rows){
-    const TOTAL=246, MAJ=124, majPct=(MAJ/TOTAL*100).toFixed(1);
-    let h = '<div class="brw-caption"><span class="brw-cdash"></span>124 Stimmen = absolutes Mehr</div>';
+  const C = { SP:'#E63946', SPalt:'#B23B3B', SVP:'#3D7A2C', SVPalt:'#2E5F2E', FDP:'#2563EB', Mitte:'#F4A024', x:'#9CA3AF' };
+
+  // ---------- Wahlchart ----------
+  function brwChart(rows, total, maj){
+    const majPct=(maj/total*100).toFixed(1);
+    let h = '<div class="brw-caption"><span class="brw-cdash"></span>'+maj+' Stimmen = absolutes Mehr (von '+total+' gültigen)</div>';
     h += '<div class="brw-chart">';
     rows.forEach(function(r){
-      const w=(r.votes/TOTAL*100).toFixed(1);
-      h += '<div class="brw-row"><span class="brw-name">'+r.name+' <em>'+r.party+'</em></span>'
+      const w=(r.votes/total*100).toFixed(1);
+      const sub = r.party ? ' <em>'+r.party+'</em>' : '';
+      h += '<div class="brw-row"><span class="brw-name">'+r.name+sub+'</span>'
         +  '<div class="brw-track"><div class="brw-fill" style="width:'+w+'%;background:'+r.color+'"></div><div class="brw-mark" style="left:'+majPct+'%"></div></div>'
         +  '<span class="brw-num">'+r.votes+'</span></div>';
     });
     h += '</div>';
     return h;
   }
-  const cBerg='#F4A024', cTanner='#2563EB', cSpreng='#3D7A2C';
-  const BRW = { steps: [
-    { next:'Ausgangslage →', html:
-      '<p class="lead">Die <strong>Vereinigte Bundesversammlung</strong> – Nationalrat (200) und Ständerat (46), zusammen <strong>246 Mitglieder</strong> – wählt die sieben Mitglieder des Bundesrates.</p>'
-      +'<ul class="lm-list">'
-      +'<li>Jeder Sitz wird <strong>einzeln</strong> gewählt, in der Reihenfolge des Amtsalters der Bisherigen.</li>'
-      +'<li>Gewählt ist, wer das <strong>absolute Mehr</strong> erreicht – mehr als die Hälfte der gültigen Stimmen.</li>'
-      +'<li>Oft braucht es <strong>mehrere Wahlgänge</strong>, bis jemand dieses Mehr erreicht.</li>'
-      +'</ul>'
-      +'<div class="lm-callout">In diesem Beispiel nehmen wir der Einfachheit halber an, dass alle 246 gültig stimmen. Das absolute Mehr liegt damit bei <strong>124</strong>.</div>' },
-    { next:'1. Wahlgang →', html:
-      '<p>Ein Bundesratssitz wird <strong>frei</strong> (Rücktritt). Zur Wahl stellen sich:</p>'
-      +'<ul class="lm-list">'
-      +'<li><strong>A. Berg</strong> und <strong>B. Tanner</strong> – das offizielle Zweier-Ticket der Fraktion.</li>'
-      +'<li><strong>C. Sprenger</strong> – eine <strong>Sprengkandidatin</strong> aus einer anderen Fraktion.</li>'
-      +'</ul>'
-      +'<div class="lm-rule">⚠️ Im <strong>1. Wahlgang</strong> sind alle wählbar – auch Personen, die gar nicht vorgeschlagen wurden.</div>' },
-    { next:'2. Wahlgang →', html:
-      '<div class="ges-stage-title">1. Wahlgang</div>'
-      + brwChart([{name:'A. Berg',party:'Mitte',color:cBerg,votes:110},{name:'B. Tanner',party:'FDP',color:cTanner,votes:78},{name:'C. Sprenger',party:'SVP',color:cSpreng,votes:58}])
-      +'<div class="brw-result again">Niemand erreicht 124 Stimmen → es kommt zum 2. Wahlgang.</div>'
-      +'<div class="lm-rule">Ab dem 2. Wahlgang sind <strong>keine neuen Kandidaturen</strong> mehr möglich.</div>' },
-    { next:'3. Wahlgang →', html:
-      '<div class="ges-stage-title">2. Wahlgang</div>'
-      + brwChart([{name:'A. Berg',party:'Mitte',color:cBerg,votes:119},{name:'B. Tanner',party:'FDP',color:cTanner,votes:85},{name:'C. Sprenger',party:'SVP',color:cSpreng,votes:42}])
-      +'<div class="brw-result again">Wieder erreicht niemand das absolute Mehr → 3. Wahlgang.</div>'
-      +'<div class="lm-rule">Ab dem 3. Wahlgang <strong>scheidet aus</strong>, wer am wenigsten Stimmen hat – hier <strong>C. Sprenger</strong>.</div>' },
-    { next:'Fazit →', html:
-      '<div class="ges-stage-title">3. Wahlgang</div>'
-      + brwChart([{name:'A. Berg',party:'Mitte',color:cBerg,votes:138},{name:'B. Tanner',party:'FDP',color:cTanner,votes:108}])
-      +'<div class="brw-result win">A. Berg erreicht 138 Stimmen – mehr als 124. <strong>A. Berg ist gewählt!</strong> 🎉</div>' },
-    { next:null, html:
-      '<p>So funktioniert die Bundesratswahl zusammengefasst:</p>'
-      +'<ul class="lm-list">'
-      +'<li>Wahl durch die <strong>Vereinigte Bundesversammlung</strong> (246 Mitglieder).</li>'
-      +'<li><strong>Absolutes Mehr</strong> nötig (in diesem Beispiel 124).</li>'
-      +'<li>Mehrere <strong>Wahlgänge</strong>: ab dem 2. keine neuen Namen, ab dem 3. scheidet die schwächste Person aus.</li>'
-      +'<li>Die <strong>Zauberformel</strong> (Stand 2024: 2 SVP, 2 SP, 2 FDP, 1 Mitte) verteilt die sieben Sitze nach Parteistärke – eine politische Konvention, keine gesetzliche Vorschrift.</li>'
-      +'</ul>' }
-  ]};
+
+  // ---------- Bundesratswahl: Szenarien ----------
+  const SCEN_ORDER = ['demo','s1983','s1984','s2007','s2022','s2023'];
+  const SCEN = {
+    demo: { label:'🎲 Beispiel (fiktiv)', sub:'Schritt für Schritt mit erfundenen Namen', steps:[
+      { next:'1. Wahlgang →', html:
+        '<span class="brw-badge ersatz">Beispiel · Ersatzwahl</span>'
+        +'<p>Ein Sitz wird frei. Es kandidieren <strong>A. Berg</strong> und <strong>B. Tanner</strong> (offizielles Ticket) sowie <strong>C. Sprenger</strong> (Sprengkandidatin).</p>'
+        +'<div class="lm-rule">⚠️ Im 1. Wahlgang sind alle wählbar – auch nicht Vorgeschlagene. Ab dem 2. keine neuen Namen, ab dem 3. scheidet die schwächste Person aus.</div>' },
+      { next:'2. Wahlgang →', html:
+        '<div class="ges-stage-title">1. Wahlgang</div>'
+        + brwChart([{name:'A. Berg',party:'Mitte',color:C.Mitte,votes:110},{name:'B. Tanner',party:'FDP',color:C.FDP,votes:78},{name:'C. Sprenger',party:'SVP',color:C.SVP,votes:58}], 246, 124)
+        +'<div class="brw-result again">Niemand erreicht 124 → 2. Wahlgang.</div>' },
+      { next:'3. Wahlgang →', html:
+        '<div class="ges-stage-title">2. Wahlgang</div>'
+        + brwChart([{name:'A. Berg',party:'Mitte',color:C.Mitte,votes:119},{name:'B. Tanner',party:'FDP',color:C.FDP,votes:85},{name:'C. Sprenger',party:'SVP',color:C.SVP,votes:42}], 246, 124)
+        +'<div class="brw-result again">Wieder kein absolutes Mehr → C. Sprenger (am wenigsten Stimmen) scheidet aus.</div>' },
+      { next:null, html:
+        '<div class="ges-stage-title">3. Wahlgang</div>'
+        + brwChart([{name:'A. Berg',party:'Mitte',color:C.Mitte,votes:138},{name:'B. Tanner',party:'FDP',color:C.FDP,votes:108}], 246, 124)
+        +'<div class="brw-result win">A. Berg erreicht 138 Stimmen – gewählt! 🎉</div>' }
+    ]},
+    s1983: { label:'1983 · Otto Stich', sub:'Sprengkandidat schlägt offizielle Kandidatin', steps:[
+      { next:'Wahlgang →', html:
+        '<span class="brw-badge ersatz">Ersatzwahl</span>'
+        +'<p><strong>1983</strong> – Nachfolge des verstorbenen Willi Ritschard (SP). Die SP nominierte <strong>Lilian Uchtenhagen</strong>; sie wäre die <strong>erste Bundesrätin</strong> geworden. Bürgerliche Kreise bauten über Nacht den nicht offiziellen SP-Mann <strong>Otto Stich</strong> auf.</p>'
+        +'<div class="lm-rule">Aus dieser Nacht stammt der Begriff «Nacht der langen Messer».</div>' },
+      { next:'Fazit →', html:
+        '<div class="ges-stage-title">1. Wahlgang · 7. Dezember 1983</div>'
+        + brwChart([{name:'Otto Stich',party:'SP · Sprengk.',color:C.SPalt,votes:124},{name:'Lilian Uchtenhagen',party:'SP · offiziell',color:C.SP,votes:96},{name:'Übrige',party:'',color:C.x,votes:2}], 222, 112)
+        +'<div class="brw-result win">Stich erreicht 124 Stimmen (absolutes Mehr 112) und ist schon im 1. Wahlgang gewählt.</div>' },
+      { next:null, html:
+        '<p>Erstmals wurde eine Gegenkandidatur <strong>über Nacht</strong> organisiert. Uchtenhagen wäre die erste Frau im Bundesrat gewesen – das gelang erst <strong>ein Jahr später</strong> (➜ Wahl 1984).</p>' }
+    ]},
+    s1984: { label:'1984 · Elisabeth Kopp', sub:'Die erste Frau im Bundesrat', steps:[
+      { next:'Wahlgang →', html:
+        '<span class="brw-badge ersatz">Ersatzwahl</span>'
+        +'<p><strong>1984</strong> – Nachfolge von Rudolf Friedrich (FDP, Rücktritt). Die FDP stellte ein Doppelticket: <strong>Elisabeth Kopp</strong> und Parteipräsident Bruno Hunziker – nur ein Jahr nach Uchtenhagens Nichtwahl.</p>' },
+      { next:'Fazit →', html:
+        '<div class="ges-stage-title">1. Wahlgang · 2. Oktober 1984</div>'
+        + brwChart([{name:'Elisabeth Kopp',party:'FDP',color:C.FDP,votes:124},{name:'Übrige Stimmen',party:'',color:C.x,votes:120}], 244, 123)
+        +'<div class="brw-result win">Kopp wird im 1. Wahlgang mit 124 von 244 Stimmen gewählt – als <strong>erste Frau im Bundesrat</strong>.</div>' },
+      { next:null, html:
+        '<p>13 Jahre nach Einführung des Frauenstimmrechts sass erstmals eine Frau in der Landesregierung.</p>' }
+    ]},
+    s2007: { label:'2007 · Abwahl Blocher', sub:'Ein bisheriger Bundesrat wird abgewählt', steps:[
+      { next:'1. Wahlgang →', html:
+        '<span class="brw-badge gesamt">Gesamterneuerungswahl</span>'
+        +'<p><strong>2007</strong> – Beim Sitz von <strong>Christoph Blocher</strong> (SVP, bisher) lancierte Mitte-Links überraschend dessen Parteikollegin <strong>Eveline Widmer-Schlumpf</strong>.</p>' },
+      { next:'2. Wahlgang →', html:
+        '<div class="ges-stage-title">1. Wahlgang</div>'
+        + brwChart([{name:'E. Widmer-Schlumpf',party:'SVP',color:C.SVP,votes:116},{name:'Christoph Blocher',party:'SVP · bisher',color:C.SVPalt,votes:111},{name:'Übrige',party:'',color:C.x,votes:11}], 238, 120)
+        +'<div class="brw-result again">Niemand erreicht das absolute Mehr (120) → 2. Wahlgang.</div>' },
+      { next:'Fazit →', html:
+        '<div class="ges-stage-title">2. Wahlgang</div>'
+        + brwChart([{name:'E. Widmer-Schlumpf',party:'SVP',color:C.SVP,votes:125},{name:'Christoph Blocher',party:'SVP · bisher',color:C.SVPalt,votes:115},{name:'Übrige',party:'',color:C.x,votes:2}], 242, 122)
+        +'<div class="brw-result win">Widmer-Schlumpf erreicht 125 Stimmen – Blocher (115) ist <strong>nicht wiedergewählt</strong>.</div>' },
+      { next:null, html:
+        '<p>Eine Gesamterneuerungswahl kann auch <strong>Amtierende absetzen</strong> – das ist sehr selten. Widmer-Schlumpf nahm die Wahl an und gründete später die BDP.</p>' }
+    ]},
+    s2022: { label:'2022 · Baume-Schneider', sub:'Überraschung über drei Wahlgänge', steps:[
+      { next:'1. Wahlgang →', html:
+        '<span class="brw-badge ersatz">Ersatzwahl</span>'
+        +'<p><strong>2022</strong> – Nachfolge von Simonetta Sommaruga (SP). Offizielles SP-Frauenticket: <strong>Eva Herzog</strong> (Favoritin) und <strong>Elisabeth Baume-Schneider</strong>. Dazu der nicht offizielle <strong>Daniel Jositsch</strong>.</p>' },
+      { next:'2. Wahlgang →', html:
+        '<div class="ges-stage-title">1. Wahlgang</div>'
+        + brwChart([{name:'E. Baume-Schneider',party:'SP',color:C.SP,votes:96},{name:'Eva Herzog',party:'SP · Favoritin',color:C.SPalt,votes:83},{name:'Daniel Jositsch',party:'SP · wild',color:C.x,votes:58},{name:'Übrige',party:'',color:C.x,votes:6}], 243, 122)
+        +'<div class="brw-result again">Kein absolutes Mehr (122) → 2. Wahlgang.</div>' },
+      { next:'3. Wahlgang →', html:
+        '<div class="ges-stage-title">2. Wahlgang</div>'
+        + brwChart([{name:'E. Baume-Schneider',party:'SP',color:C.SP,votes:112},{name:'Eva Herzog',party:'SP',color:C.SPalt,votes:105},{name:'Daniel Jositsch',party:'SP · wild',color:C.x,votes:28}], 245, 123)
+        +'<div class="brw-result again">Immer noch offen → 3. Wahlgang. Danach scheidet Jositsch (am wenigsten) aus.</div>' },
+      { next:'Fazit →', html:
+        '<div class="ges-stage-title">3. Wahlgang</div>'
+        + brwChart([{name:'E. Baume-Schneider',party:'SP',color:C.SP,votes:123},{name:'Eva Herzog',party:'SP',color:C.SPalt,votes:116},{name:'Daniel Jositsch',party:'SP · wild',color:C.x,votes:6}], 245, 123)
+        +'<div class="brw-result win">Baume-Schneider erreicht <strong>exakt 123</strong> Stimmen – das absolute Mehr – und ist gewählt.</div>' },
+      { next:null, html:
+        '<p>Die Favoritin Eva Herzog unterlag knapp. Mit Baume-Schneider stellt der Kanton <strong>Jura erstmals</strong> ein Bundesratsmitglied.</p>' }
+    ]},
+    s2023: { label:'2023 · Beat Jans', sub:'Wilder Kandidat vor dem offiziellen', steps:[
+      { next:'1. Wahlgang →', html:
+        '<span class="brw-badge gesamt">Gesamterneuerungswahl</span>'
+        +'<p><strong>2023</strong> – Freier SP-Sitz (Nachfolge Alain Berset). Offizielles SP-Ticket: <strong>Beat Jans</strong> und <strong>Jon Pult</strong>. Bürgerliche unterstützten den wilden <strong>Daniel Jositsch</strong>.</p>' },
+      { next:'3. Wahlgang →', html:
+        '<div class="ges-stage-title">1. Wahlgang</div>'
+        + brwChart([{name:'Beat Jans',party:'SP',color:C.SP,votes:89},{name:'Daniel Jositsch',party:'SP · wild',color:C.x,votes:63},{name:'Jon Pult',party:'SP · offiziell',color:C.SPalt,votes:49}], 245, 123)
+        +'<div class="brw-result again">Kein absolutes Mehr. Auch der 2. Wahlgang entscheidet nicht (Jans 112). → 3. Wahlgang.</div>' },
+      { next:'Fazit →', html:
+        '<div class="ges-stage-title">3. Wahlgang · Entscheidung</div>'
+        + brwChart([{name:'Beat Jans',party:'SP',color:C.SP,votes:134},{name:'Daniel Jositsch',party:'SP · wild',color:C.x,votes:68},{name:'Jon Pult',party:'SP · offiziell',color:C.SPalt,votes:43}], 245, 123)
+        +'<div class="brw-result win">Beat Jans erreicht 134 Stimmen und ist gewählt.</div>' },
+      { next:null, html:
+        '<p>Pikant: Der wilde Kandidat Jositsch (68) lag vor dem offiziellen Pult (43). Trotzdem setzte sich mit Jans ein offizieller SP-Kandidat durch – Basel stellt nach 50 Jahren wieder einen Bundesrat.</p>' }
+    ]}
+  };
+
+  function brwMenu(){
+    let h = '<p class="lead">Die <strong>Vereinigte Bundesversammlung</strong> (National- und Ständerat, zusammen <strong>246 Mitglieder</strong>) wählt den Bundesrat – jeden Sitz <strong>einzeln</strong>. Gewählt ist, wer das <strong>absolute Mehr</strong> erreicht.</p>';
+    h += '<div class="ges-diagram" style="margin:12px 0">'
+       + '<div class="ges-box hot"><div class="ges-bt">Gesamterneuerungswahl</div><div class="ges-bs">Alle 4 Jahre nach den Nationalratswahlen. Alle 7 Sitze werden neu gewählt – Bisherige können auch abgewählt werden.</div></div>'
+       + '<div class="ges-box hot"><div class="ges-bt">Ersatzwahl</div><div class="ges-bs">Tritt ein Mitglied während der Amtszeit zurück, wird nur dieser eine Sitz neu besetzt.</div></div>'
+       + '</div>';
+    h += '<p style="font-weight:700;color:#1F4E78;margin:14px 0 0">Wähle eine Wahl zum Nachspielen:</p>';
+    h += '<div class="brw-menu">';
+    SCEN_ORDER.forEach(function(k){
+      const s=SCEN[k];
+      h += '<button class="brw-scen-btn" data-scen="'+k+'">'+s.label+'<span class="brw-scen-sub">'+s.sub+'</span></button>';
+    });
+    h += '</div>';
+    bodyEl.innerHTML = h;
+    bodyEl.scrollTop = 0;
+    footEl.innerHTML = '<span class="lm-step-ind">«Beispiel» ist fiktiv · die datierten Wahlen sind echt</span><div class="lm-nav"><button class="lm-next">Schliessen</button></div>';
+    footEl.querySelector('.lm-next').addEventListener('click', close);
+    bodyEl.querySelectorAll('.brw-scen-btn').forEach(function(b){
+      b.addEventListener('click', function(){ brwView=b.dataset.scen; brwStep=0; brwScenario(); });
+    });
+  }
+  function brwScenario(){
+    const sc = SCEN[brwView];
+    const s = sc.steps[brwStep];
+    bodyEl.innerHTML = s.html;
+    bodyEl.scrollTop = 0;
+    let foot = '<button class="lm-back">↩ Auswahl</button><div class="lm-nav">';
+    foot += '<button class="lm-prev"'+(brwStep===0?' disabled':'')+'>&larr; Zurück</button>';
+    foot += '<button class="lm-next">'+(s.next?s.next:'Fertig')+'</button></div>';
+    footEl.innerHTML = foot;
+    footEl.querySelector('.lm-back').addEventListener('click', function(){ brwView='menu'; brwMenu(); });
+    footEl.querySelector('.lm-prev').addEventListener('click', function(){ if(brwStep>0){ brwStep--; brwScenario(); } });
+    footEl.querySelector('.lm-next').addEventListener('click', function(){
+      if(s.next){ brwStep++; brwScenario(); } else { brwView='menu'; brwMenu(); }
+    });
+  }
+  function renderBRW(){ if(brwView==='menu') brwMenu(); else brwScenario(); }
 
   // ---------- Gesetz im Parlament ----------
   const GES_LABELS = ['Bundesrat','Erstrat','Zweitrat','Differenzen','Einigung','Schlussabst.','Referendum','Inkrafttreten'];
@@ -1660,7 +1767,7 @@ renderSeats();
     h += '<div class="mehr-ref"><h4>Die vier Mehrheiten im Überblick</h4><dl>'
       + '<dt>Einfaches (relatives) Mehr</dt><dd>Mehr Ja als Nein – Normalfall bei Sachabstimmungen im Rat.</dd>'
       + '<dt>Absolutes Mehr</dt><dd>Mehr als die Hälfte der gültigen Stimmen – z. B. bei Wahlen.</dd>'
-      + '<dt>Qualifiziertes Mehr (Mitglieder­mehr)</dt><dd>Mehrheit aller Mitglieder – Ausgabenbremse &amp; Dringlicherklärung (NR 101, SR 24).</dd>'
+      + '<dt>Qualifiziertes Mehr (Mitgliedermehr)</dt><dd>Mehrheit aller Mitglieder – Ausgabenbremse &amp; Dringlicherklärung (NR 101, SR 24).</dd>'
       + '<dt>Volks- und Ständemehr</dt><dd>Nicht im Parlament, sondern bei <strong>Volksabstimmungen</strong> über Verfassungsänderungen: Ja von Volk <em>und</em> Mehrheit der Kantone.</dd>'
       + '</dl></div>';
     return h;
@@ -1685,8 +1792,7 @@ renderSeats();
     foot += '<button class="lm-prev"'+(step===0?' disabled':'')+'>&larr; Zurück</button>';
     foot += '<button class="lm-next">'+(s.next?s.next:'Schliessen')+'</button></div>';
     footEl.innerHTML = foot;
-    const prev = footEl.querySelector('.lm-prev');
-    prev.addEventListener('click', function(){ if(step>0){ step--; renderStepped(mod); } });
+    footEl.querySelector('.lm-prev').addEventListener('click', function(){ if(step>0){ step--; renderStepped(mod); } });
     footEl.querySelector('.lm-next').addEventListener('click', function(){
       if(s.next){ step++; renderStepped(mod); } else { close(); }
     });
@@ -1700,7 +1806,7 @@ renderSeats();
   }
   function open(key){
     step = 0;
-    if(key==='brw'){ titleEl.textContent='🗳️ Bundesratswahl'; renderStepped(BRW); }
+    if(key==='brw'){ titleEl.textContent='🗳️ Bundesratswahl'; brwView='menu'; brwStep=0; renderBRW(); }
     else if(key==='gesetz'){ titleEl.textContent='📜 Gesetz im Parlament (NR ↔ SR)'; renderStepped(GES); }
     else if(key==='mehr'){ titleEl.textContent='⚖️ Mehrheiten im Parlament'; mehrState={rat:'nr',art:'absolut'}; renderMehr(); }
     overlay.hidden = false;
