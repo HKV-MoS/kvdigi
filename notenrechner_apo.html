@@ -138,7 +138,7 @@
           </table>
         </div>
 
-        <div class="fnote"><span class="lab">Fachnote Erfahrungsnote = Schule × 0.7 + ÜK × 0.3</span><span class="val none" id="fn-erf">–</span></div>
+        <div class="fnote"><span class="lab">Fachnote Erfahrungsnote = Schule × 0.7 + ÜK × 0.3 → eine Dezimalstelle</span><span class="val none" id="fn-erf">–</span></div>
       </div>
 
       <!-- ALLGEMEINBILDUNG -->
@@ -156,24 +156,27 @@
         </div>
         <div class="inputrow" style="margin-top:12px;"><label>Vertiefungsarbeit<small>Prüfungsnote</small></label><select class="s" id="abuVA"></select></div>
         <div class="inputrow"><label>Schlussprüfung ABU<small>Prüfungsnote</small></label><select class="s" id="abuSP"></select></div>
-        <div class="fnote"><span class="lab">Fachnote Allgemeinbildung = (Erfahrung + VA + Schlussprüfung) ÷ 3</span><span class="val none" id="fn-abu">–</span></div>
+        <div class="fnote"><span class="lab">Fachnote Allgemeinbildung = (Erfahrung + VA + Schlussprüfung) ÷ 3 → eine Dezimalstelle</span><span class="val none" id="fn-abu">–</span></div>
       </div>
 
       <!-- BERUFSKENNTNISSE -->
       <div class="card">
         <div class="sec-head"><h2>Berufskenntnisse</h2><span class="wbadge">20 %</span></div>
-        <p class="sec-note">Fallnote aus der Abschlussprüfung. HKB A/B/C zählt 0.8, HKB D/E zählt 0.2. Halbnoten.</p>
-        <div class="inputrow"><label>HKB A/B/C<small>Prüfung · Gewicht 0.8</small></label><select class="s" id="bkABC"></select></div>
-        <div class="inputrow"><label>HKB D/E<small>Prüfung · Gewicht 0.2</small></label><select class="s" id="bkDE"></select></div>
-        <div class="fnote"><span class="lab">Fachnote Berufskenntnisse = ABC × 0.8 + DE × 0.2</span><span class="val none" id="fn-bk">–</span></div>
+        <p class="sec-note">Fallnote aus der schriftlichen Abschlussprüfung – zwei Positionen, je ganze oder halbe Note. Die Fachnote wird auf eine Dezimalstelle gerundet.</p>
+        <div class="inputrow"><label>Position 1 · HKB A/B/C<small>Prüfung · Gewicht 0.8</small></label><select class="s" id="bkABC"></select></div>
+        <div class="inputrow"><label>Position 2 · HKB D/E<small>Prüfung · Gewicht 0.2</small></label><select class="s" id="bkDE"></select></div>
+        <div class="fnote"><span class="lab">Fachnote Berufskenntnisse = P1×0.8 + P2×0.2 → eine Dezimalstelle</span><span class="val none" id="fn-bk">–</span></div>
       </div>
 
-      <!-- PRAKTISCHE ARBEIT -->
+      <!-- PRAKTISCHE ARBEIT (VPA) -->
       <div class="card">
-        <div class="sec-head"><h2>Praktische Arbeit</h2><span class="wbadge">40 %</span></div>
-        <p class="sec-note">Fallnote aus der praktischen Abschlussprüfung. Halbnote.</p>
-        <div class="inputrow"><label>Praktische Arbeit<small>Abschlussprüfung</small></label><select class="s" id="pa"></select></div>
-        <div class="fnote"><span class="lab">Fachnote Praktische Arbeit</span><span class="val none" id="fn-pa">–</span></div>
+        <div class="sec-head"><h2>Praktische Arbeit (VPA)</h2><span class="wbadge">40 %</span></div>
+        <p class="sec-note">Fallnote aus vier Positionen – jede Position als ganze oder halbe Note. Die VPA-Note ist der gewichtete Durchschnitt, gerundet auf eine Dezimalstelle.</p>
+        <div class="inputrow"><label>Position 1 · Beraten und Bedienen<small>HKB a · Gewicht 0.3</small></label><select class="s" id="pa1"></select></div>
+        <div class="inputrow"><label>Position 2 · Abgeben + Administratives<small>HKB b / e1·e2 · Gewicht 0.2</small></label><select class="s" id="pa2"></select></div>
+        <div class="inputrow"><label>Position 3 · Medizinische Abklärungen<small>HKB c · Gewicht 0.2</small></label><select class="s" id="pa3"></select></div>
+        <div class="inputrow"><label>Position 4 · Fachgespräch<small>HKB a–e · Gewicht 0.3</small></label><select class="s" id="pa4"></select></div>
+        <div class="fnote"><span class="lab">Fachnote VPA = P1×0.3 + P2×0.2 + P3×0.2 + P4×0.3 → eine Dezimalstelle</span><span class="val none" id="fn-pa">–</span></div>
       </div>
 
     </div>
@@ -250,19 +253,20 @@
     const hkb=[pA,pB,pC,pD,pE].filter(v=>v!==null);
     const schul=hkb.length?roundHalf(mean(hkb)):null; setAvg('avg-schul',schul);
     const uek=avgHalf(grp('UEK')); setAvg('avg-uek',uek);
-    const vErf=(schul!==null&&uek!==null)?roundHalf(schul*0.7+uek*0.3):null; setFn('fn-erf',vErf);
+    const vErf=(schul!==null&&uek!==null)?round1(schul*0.7+uek*0.3):null; setFn('fn-erf',vErf);
 
     // Allgemeinbildung
     const abuErf=avgHalf(grp('ABU')); setAvg('avg-abu',abuErf);
     const va=val('abuVA'), sp=val('abuSP');
-    const vAbu=(abuErf!==null&&va!==null&&sp!==null)?roundHalf((abuErf+va+sp)/3):null; setFn('fn-abu',vAbu);
+    const vAbu=(abuErf!==null&&va!==null&&sp!==null)?round1((abuErf+va+sp)/3):null; setFn('fn-abu',vAbu);
 
     // Berufskenntnisse
     const abc=val('bkABC'), de=val('bkDE');
-    const vBk=(abc!==null&&de!==null)?roundHalf(abc*0.8+de*0.2):null; setFn('fn-bk',vBk);
+    const vBk=(abc!==null&&de!==null)?round1(abc*0.8+de*0.2):null; setFn('fn-bk',vBk);
 
-    // Praktische Arbeit
-    let vPa=val('pa'); if(vPa!==null) vPa=roundHalf(vPa); setFn('fn-pa',vPa);
+    // Praktische Arbeit (VPA) – vier Positionen, je ganze/halbe Note → Note auf eine Dezimalstelle
+    const p1=val('pa1'), p2=val('pa2'), p3=val('pa3'), p4=val('pa4');
+    const vPa=(p1!==null&&p2!==null&&p3!==null&&p4!==null)?round1(p1*0.3+p2*0.2+p3*0.2+p4*0.3):null; setFn('fn-pa',vPa);
 
     // Ergebnis-Panel Fachnoten
     setRes('r-pa',vPa); setRes('r-bk',vBk); setRes('r-abu',vAbu); setRes('r-erf',vErf);
@@ -294,7 +298,8 @@
     const set=(grpName,vals)=>{ const sel=document.querySelectorAll(`select.g[data-grp="${grpName}"]`); vals.forEach((x,i)=>{ if(sel[i]) sel[i].value=x; }); };
     set('A',[4.5,4.5,4.5,5,5,4.5]); set('B',[4,4,3.5,4,4,3.5]); set('C',[4.5,4.5,4.5,4,5,5]);
     set('D',[4,4]); set('E',[5,4]); set('UEK',[5.5,5.5,5]); set('ABU',[5,5,5,5,5]);
-    $('abuVA').value='5'; $('abuSP').value='4.5'; $('bkABC').value='4.5'; $('bkDE').value='4.5'; $('pa').value='4.5';
+    $('abuVA').value='5'; $('abuSP').value='4.5'; $('bkABC').value='4.5'; $('bkDE').value='4.5';
+    $('pa1').value='4.5'; $('pa2').value='4'; $('pa3').value='4.5'; $('pa4').value='5';
     recompute();
   });
 
