@@ -148,7 +148,7 @@
           <h2>Wenn sich nur der Preis ändert</h2>
           <p class="ziel"><b>Lernziel:</b> Erkennen, wann nur der Preis wechselt und sich deshalb nur der Punkt auf einer bestehenden Kurve bewegt.</p>
           <div class="lead"><b>Kernidee:</b> Ändert sich nur der Preis eines Guts, verschiebt sich nicht die ganze Kurve. Es verändert sich nur der Punkt auf der bestehenden Kurve.</div>
-          <div class="sub-h">Klick ein Beispiel an</div>
+          <div class="sub-h">Klicken Sie ein Beispiel an</div>
           <div class="exgrid" id="punkt-ex"></div>
           <div class="sub-h">Selbst manipulieren</div>
           <div class="ctrl"><div class="ctrl-label"><span>Aktive Kurve</span></div>
@@ -171,7 +171,7 @@
           <h2>Wenn sich die Rahmenbedingungen ändern</h2>
           <p class="ziel"><b>Lernziel:</b> Rahmenbedingungen auf der Nachfrageseite in rechts, links oder bleibt gleich übersetzen.</p>
           <div class="lead"><b>Faustregel:</b> Verschiebt sich die Nachfragekurve, dann wollen Konsumenten bei jedem Preis mehr oder weniger kaufen als vorher. Nur dann entsteht eine neue Kurve.</div>
-          <div class="sub-h">Klick ein Beispiel an</div>
+          <div class="sub-h">Klicken Sie ein Beispiel an</div>
           <div class="exgrid" id="nf-ex"></div>
           <div class="sub-h">Regler für die Nachfrage</div>
           <div class="ctrl"><div class="ctrl-label"><span>Nachfrage verschieben</span><span class="ctrl-val" id="nf-val">0</span></div>
@@ -192,7 +192,7 @@
           <h2>Wenn sich die Produktionsbedingungen ändern</h2>
           <p class="ziel"><b>Lernziel:</b> Rahmenbedingungen auf der Angebotsseite in rechts, links oder bleibt gleich übersetzen.</p>
           <div class="lead"><b>Faustregel:</b> Verschiebt sich die Angebotskurve, dann können oder wollen Anbieter bei jedem Preis mehr oder weniger anbieten als vorher.</div>
-          <div class="sub-h">Klick ein Beispiel an</div>
+          <div class="sub-h">Klicken Sie ein Beispiel an</div>
           <div class="exgrid" id="an-ex"></div>
           <div class="sub-h">Regler für das Angebot</div>
           <div class="ctrl"><div class="ctrl-label"><span>Angebot verschieben</span><span class="ctrl-val" id="an-val">0</span></div>
@@ -213,7 +213,7 @@
           <h2>Die eine Diagnosefrage</h2>
           <p class="ziel"><b>Lernziel:</b> Preisveränderung, Kurvenverschiebung und keine Änderung sauber voneinander trennen.</p>
           <div class="lead"><b>Diagnosefrage:</b> Ändert sich nur der Preis, verändert sich eine Rahmenbedingung oder gar nichts? Diese eine Frage verhindert die meisten Fehler.</div>
-          <p style="font-size:12.5px;color:#46586a;margin:0 0 8px;">Wähle bei jedem Fall die passendste Kategorie: Bewegung auf der Nachfrage- oder Angebotskurve, Nachfrage links/rechts, Angebot links/rechts oder keine Kurvenverschiebung.</p>
+          <p style="font-size:12.5px;color:#46586a;margin:0 0 8px;">Wählen Sie bei jedem Fall die passendste Kategorie: Bewegung auf der Nachfrage- oder Angebotskurve, Nachfrage links/rechts, Angebot links/rechts oder keine Kurvenverschiebung.</p>
           <div id="dg-check"></div>
           <div class="checkrow"><button class="btn" id="dg-checkbtn">Diagnose prüfen</button><span class="score" id="dg-score"></span></div>
         </div>
@@ -238,7 +238,7 @@
           <h2>Beide Seiten gleichzeitig</h2>
           <p class="ziel"><b>Lernziel:</b> Angebot und Nachfrage gleichzeitig verändern und die Wirkung auf Preis und Menge begründen.</p>
           <div class="lead"><b>Marktlabor:</b> Hier wirken beide Regler gleichzeitig. Das Diagramm zeigt die Modellwirkung, die Chips darunter die allgemeine Regel.</div>
-          <div class="sub-h">Klick ein Szenario an</div>
+          <div class="sub-h">Klicken Sie ein Szenario an</div>
           <div class="exgrid" id="lab-ex"></div>
           <div class="sub-h">Regler gleichzeitig steuern</div>
           <div class="ctrl"><div class="ctrl-label"><span>Nachfrage verschieben</span><span class="ctrl-val" id="lab-nf-val">0</span></div>
@@ -246,7 +246,7 @@
           <div class="ctrl"><div class="ctrl-label"><span>Angebot verschieben</span><span class="ctrl-val" id="lab-an-val">0</span></div>
             <input type="range" id="lab-an" min="-25" max="25" step="5" value="0"></div>
           <div class="note" id="lab-note"></div>
-          <ul class="bul"><li>Prüfe zuerst, welche Kurve sich verschiebt und ob eine oder beide Seiten betroffen sind.</li><li>Vergleiche dann im Diagramm P1 mit P0.</li><li>Vergleiche danach M1 mit M0.</li></ul>
+          <ul class="bul"><li>Prüfen Sie zuerst, welche Kurve sich verschiebt und ob eine oder beide Seiten betroffen sind.</li><li>Vergleichen Sie dann im Diagramm P1 mit P0.</li><li>Vergleichen Sie danach M1 mit M0.</li></ul>
           <div class="sub-h">Transfer-Check</div>
           <div id="lab-check"></div>
           <div class="checkrow"><button class="btn" id="lab-checkbtn">Transfer prüfen</button><button class="btn ghost" id="lab-reset">Regler zurück</button><span class="score" id="lab-score"></span></div>
@@ -412,7 +412,7 @@
   $('punkt-slider').addEventListener('input',e=>{ state.punktDelta=+e.target.value; $('punkt-val').textContent=(state.punktDelta>0?'+':'')+state.punktDelta;
     $('punkt-ex').querySelectorAll('.exchip').forEach(x=>x.classList.remove('on')); punktNote(); render(); });
   function punktNote(){ const isD=state.punktCurve==='nachfrage', up=state.punktDelta>0, z=Math.abs(state.punktDelta)<0.1;
-    let t; if(z) t='Bewege den Regler – der Punkt wandert auf der '+(isD?'Nachfragekurve':'Angebotskurve')+'. Die Kurve bleibt gleich.';
+    let t; if(z) t='Bewegen Sie den Regler – der Punkt wandert auf der '+(isD?'Nachfragekurve':'Angebotskurve')+'. Die Kurve bleibt gleich.';
     else if(isD) t=up?'Höherer Preis → kleinere nachgefragte Menge. Der Punkt rutscht die Nachfragekurve hinauf. Die Kurve bleibt gleich.':'Tieferer Preis → grössere nachgefragte Menge. Der Punkt wandert die Nachfragekurve hinunter. Die Kurve bleibt gleich.';
     else t=up?'Höherer Preis → grössere angebotene Menge. Bewegung auf der Angebotskurve nach oben. Die Kurve bleibt gleich.':'Tieferer Preis → kleinere angebotene Menge. Bewegung auf der Angebotskurve nach unten. Die Kurve bleibt gleich.';
     $('punkt-note').textContent=t; }
@@ -433,7 +433,7 @@
   ];
   buildExamples('nf-ex', NF_EX, it=>{ state.nf=it.shift; $('nf-slider').value=it.shift; $('nf-val').textContent=(it.shift>0?'+':'')+it.shift; $('nf-note').textContent=it.note; render(); });
   $('nf-slider').addEventListener('input',e=>{ state.nf=+e.target.value; $('nf-val').textContent=(state.nf>0?'+':'')+state.nf; $('nf-ex').querySelectorAll('.exchip').forEach(x=>x.classList.remove('on')); nfNote(); render(); });
-  function nfNote(){ const r=state.nf>0.1,l=state.nf<-0.1; $('nf-note').textContent=r?'Bei jedem Preis wird mehr nachgefragt. Die Nachfragekurve verschiebt sich nach rechts – im neuen Gleichgewicht steigen Preis und Menge.':l?'Bei jedem Preis wird weniger nachgefragt. Die Nachfragekurve verschiebt sich nach links – im neuen Gleichgewicht sinken Preis und Menge.':'Verschiebe die Nachfrage oder klick ein Beispiel an.'; }
+  function nfNote(){ const r=state.nf>0.1,l=state.nf<-0.1; $('nf-note').textContent=r?'Bei jedem Preis wird mehr nachgefragt. Die Nachfragekurve verschiebt sich nach rechts – im neuen Gleichgewicht steigen Preis und Menge.':l?'Bei jedem Preis wird weniger nachgefragt. Die Nachfragekurve verschiebt sich nach links – im neuen Gleichgewicht sinken Preis und Menge.':'Verschieben Sie die Nachfrage oder klicken Sie ein Beispiel an.'; }
   const NF_OPTS=[['','Bitte wählen'],['r','Nachfrage nach rechts'],['l','Nachfrage nach links'],['g','Nachfrage bleibt gleich']];
   buildCheck('nf-check',[
     {q:'Höheres Einkommen', sub:'Die Kaufkraft der Haushalte steigt.', a:'r', fb:'Eine Rahmenbedingung ändert sich → Nachfrage nach rechts.'},
@@ -452,7 +452,7 @@
   ];
   buildExamples('an-ex', AN_EX, it=>{ state.an=it.shift; $('an-slider').value=it.shift; $('an-val').textContent=(it.shift>0?'+':'')+it.shift; $('an-note').textContent=it.note; render(); });
   $('an-slider').addEventListener('input',e=>{ state.an=+e.target.value; $('an-val').textContent=(state.an>0?'+':'')+state.an; $('an-ex').querySelectorAll('.exchip').forEach(x=>x.classList.remove('on')); anNote(); render(); });
-  function anNote(){ const r=state.an>0.1,l=state.an<-0.1; $('an-note').textContent=r?'Bei jedem Preis wird mehr angeboten. Die Angebotskurve verschiebt sich nach rechts – im neuen Gleichgewicht sinkt der Preis und die Menge steigt.':l?'Bei jedem Preis wird weniger angeboten. Die Angebotskurve verschiebt sich nach links – im neuen Gleichgewicht steigt der Preis und die Menge sinkt.':'Verschiebe das Angebot oder klick ein Beispiel an.'; }
+  function anNote(){ const r=state.an>0.1,l=state.an<-0.1; $('an-note').textContent=r?'Bei jedem Preis wird mehr angeboten. Die Angebotskurve verschiebt sich nach rechts – im neuen Gleichgewicht sinkt der Preis und die Menge steigt.':l?'Bei jedem Preis wird weniger angeboten. Die Angebotskurve verschiebt sich nach links – im neuen Gleichgewicht steigt der Preis und die Menge sinkt.':'Verschieben Sie das Angebot oder klicken Sie ein Beispiel an.'; }
   const AN_OPTS=[['','Bitte wählen'],['r','Angebot nach rechts'],['l','Angebot nach links'],['g','Angebot bleibt gleich']];
   buildCheck('an-check',[
     {q:'Neues Produktionsverfahren', sub:'Die Stückkosten sinken deutlich.', a:'r', fb:'Tiefere Kosten → Angebot nach rechts.'},
@@ -497,7 +497,7 @@
     QUIZ.forEach((qq,qi)=>{ const d=document.createElement('div'); d.className='qcard';
       let h=`<div class="qq">Frage ${qi+1}</div><div class="qtext">${qq.q}</div><div class="opts">`;
       qq.opts.forEach((o,oi)=>{ h+=`<button type="button" class="opt" data-q="${qi}" data-o="${oi}">${o}</button>`; });
-      h+=`</div><div class="casefb show" id="quiz_fb_${qi}" style="background:#F6FAFD;color:#5B6B7A;">Wähle eine Antwort und prüfe danach.</div>`;
+      h+=`</div><div class="casefb show" id="quiz_fb_${qi}" style="background:#F6FAFD;color:#5B6B7A;">Wählen Sie eine Antwort und prüfen Sie danach.</div>`;
       d.innerHTML=h; box.appendChild(d); });
     box.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>{ const qi=+b.dataset.q;
       quizSel[qi]=+b.dataset.o; box.querySelectorAll('.opt[data-q="'+qi+'"]').forEach(x=>{ x.classList.toggle('sel',x===b); x.classList.remove('ok','no'); }); })); }
