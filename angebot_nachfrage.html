@@ -7,19 +7,20 @@
 <style>
   *{ box-sizing:border-box; }
   body{ margin:0; font-family:'Aptos','Segoe UI',system-ui,-apple-system,sans-serif; background:#F4F8FB; color:#1A2B3A; font-size:14px; line-height:1.5; -webkit-user-select:none; user-select:none; }
-  header{ background:linear-gradient(135deg,#1F4E78 0%,#2C6BAA 100%); color:#fff; padding:13px 22px 11px; box-shadow:0 2px 8px rgba(0,0,0,.1); }
+  header{ background:linear-gradient(135deg,#213B42 0%,#3C6E73 100%); color:#fff; padding:13px 22px 11px; box-shadow:0 2px 8px rgba(0,0,0,.1); }
   header h1{ margin:0 0 2px; font-size:19px; font-weight:800; letter-spacing:-.3px; }
   header .sub{ font-size:12px; opacity:.92; }
+  .brand-eyebrow{ font-size:11px; font-weight:800; letter-spacing:2.5px; color:#D8AE66; margin-bottom:3px; text-transform:uppercase; }
   .wrap{ max-width:1240px; margin:0 auto; padding:14px 16px; }
 
   .tabsbar{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
   .tabs{ display:flex; gap:6px; flex-wrap:wrap; }
   .tab{ font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; border:1.5px solid #D4E0EC; background:#fff; color:#3A5876; padding:7px 13px; border-radius:9px; transition:all .15s ease; display:inline-flex; align-items:center; gap:7px; }
-  .tab:hover{ background:#EAF3FB; } .tab.active{ background:#1F4E78; color:#fff; border-color:#1F4E78; }
+  .tab:hover{ background:#EAF3FB; } .tab.active{ background:#213B42; color:#fff; border-color:#213B42; }
   .tab .done{ width:15px; height:15px; border-radius:50%; background:#CBD7E2; color:#fff; font-size:10px; font-weight:900; display:none; align-items:center; justify-content:center; }
   .tab.solved .done{ display:inline-flex; background:#2E9D6B; } .tab.active.solved .done{ background:#7FE3B4; color:#14532d; }
   .tab:focus-visible{ outline:3px solid #9Fd0f5; outline-offset:2px; }
-  .progress{ font-size:13px; font-weight:700; color:#1F4E78; } .progress b{ font-size:16px; }
+  .progress{ font-size:13px; font-weight:700; color:#213B42; } .progress b{ font-size:16px; }
 
   .shell{ display:flex; gap:18px; align-items:flex-start; }
   @media (max-width:920px){ .shell{ flex-direction:column; } }
@@ -33,7 +34,7 @@
   .readout{ display:flex; gap:8px; padding:0 4px 6px; flex-wrap:wrap; }
   .chip{ flex:1 1 0; min-width:118px; background:#F3F8FC; border:1.5px solid #E1EBF3; border-radius:10px; padding:8px 10px; }
   .chip .k{ font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.4px; color:#8AA0B4; }
-  .chip .v{ font-size:13.5px; font-weight:800; color:#1F4E78; }
+  .chip .v{ font-size:13.5px; font-weight:800; color:#213B42; }
   .chip .v.up{ color:#2E9D6B; } .chip .v.down{ color:#E2574C; } .chip .v.same{ color:#5B6B7A; }
   .legend{ display:flex; gap:13px; padding:2px 6px 8px; font-size:11px; color:#5B6B7A; flex-wrap:wrap; }
   .legend i{ display:inline-block; width:17px; height:0; border-top:3px solid; margin-right:5px; vertical-align:middle; }
@@ -41,46 +42,58 @@
   .panel{ display:none; } .panel.active{ display:block; }
   .pcard{ background:#fff; border-radius:14px; box-shadow:0 2px 10px rgba(20,50,80,.08); padding:16px 18px; margin-bottom:14px; }
   .phead{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
-  .eyebrow{ font-size:10.5px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:#2C6BAA; }
-  .pcard h2{ margin:3px 0 8px; font-size:17px; color:#1F4E78; font-weight:800; }
+  .eyebrow{ font-size:10.5px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:#3C6E73; }
+  .pcard h2{ margin:3px 0 8px; font-size:17px; color:#213B42; font-weight:800; }
   .pill{ font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:.4px; padding:3px 9px; border-radius:999px; background:#FFF3D6; color:#9A6B00; white-space:nowrap; }
   .pill.done{ background:#E9F7EF; color:#1d7a4a; }
-  .ziel{ font-size:13px; color:#37485a; margin:0 0 8px; } .ziel b{ color:#1F4E78; }
-  .lead{ background:#EAF3FB; border-left:4px solid #2C6BAA; border-radius:0 10px 10px 0; padding:9px 12px; font-size:13px; color:#26384A; margin:0 0 12px; } .lead b{ color:#1F4E78; }
+  .ziel{ font-size:13px; color:#37485a; margin:0 0 8px; } .ziel b{ color:#213B42; }
+  .lead{ background:#EAF3FB; border-left:4px solid #3C6E73; border-radius:0 10px 10px 0; padding:9px 12px; font-size:13px; color:#26384A; margin:0 0 12px; } .lead b{ color:#213B42; }
 
   .exgrid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:4px 0 6px; }
   @media (max-width:560px){ .exgrid{ grid-template-columns:1fr; } }
   .exchip{ text-align:left; font-family:inherit; border:1.5px solid #E1EBF3; border-radius:10px; padding:9px 11px; background:#FAFCFE; cursor:pointer; transition:all .12s ease; }
   .exchip:hover{ background:#EFF6FC; border-color:#BcD6EC; }
-  .exchip.on{ background:#E7F1FA; border-color:#1F4E78; }
-  .exchip .t{ display:block; font-weight:800; font-size:13px; color:#1F4E78; }
+  .exchip.on{ background:#E7F1FA; border-color:#213B42; }
+  .exchip .t{ display:block; font-weight:800; font-size:13px; color:#213B42; }
   .exchip .d{ display:block; font-size:11.5px; color:#5B6B7A; margin-top:2px; line-height:1.35; }
   .exchip:focus-visible{ outline:3px solid #9Fd0f5; outline-offset:2px; }
 
   .sub-h{ font-size:12px; font-weight:800; color:#28435E; margin:12px 0 4px; }
   .ctrl{ margin:8px 0; }
   .ctrl-label{ display:flex; justify-content:space-between; align-items:baseline; font-size:12.5px; font-weight:700; color:#28435E; margin-bottom:5px; }
-  .ctrl-val{ font-size:13px; font-weight:800; color:#1F4E78; background:#EAF3FB; padding:1px 9px; border-radius:7px; }
-  input[type=range]{ width:100%; accent-color:#1F4E78; height:22px; cursor:pointer; }
+  .ctrl-val{ font-size:13px; font-weight:800; color:#213B42; background:#EAF3FB; padding:1px 9px; border-radius:7px; }
+  input[type=range]{ width:100%; accent-color:#213B42; height:22px; cursor:pointer; }
   .hintline{ font-size:11.5px; color:#7C8B9A; margin-top:3px; }
   .note{ font-size:13px; color:#26384A; background:#F6FAFD; border-radius:9px; padding:9px 11px; margin:8px 0; min-height:18px; }
   ul.bul{ margin:6px 0 2px; padding-left:18px; font-size:12.5px; color:#46586a; } ul.bul li{ margin:2px 0; }
   .seg{ display:inline-flex; background:#EEF4F9; border-radius:10px; padding:3px; gap:3px; }
   .seg button{ font-family:inherit; font-size:12.5px; font-weight:700; border:none; background:transparent; color:#3A5876; padding:6px 14px; border-radius:8px; cursor:pointer; transition:all .15s ease; }
-  .seg button.on{ background:#fff; color:#1F4E78; box-shadow:0 1px 3px rgba(20,50,80,.18); }
+  .seg button.on{ background:#fff; color:#213B42; box-shadow:0 1px 3px rgba(20,50,80,.18); }
 
-  .btn{ font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; border-radius:9px; padding:8px 15px; border:1.5px solid #1F4E78; background:#1F4E78; color:#fff; transition:all .15s ease; }
-  .btn:hover{ background:#163a5a; } .btn.ghost{ background:#fff; color:#1F4E78; } .btn.ghost:hover{ background:#EAF3FB; }
+  .btn{ font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; border-radius:9px; padding:8px 15px; border:1.5px solid #213B42; background:#213B42; color:#fff; transition:all .15s ease; }
+  .btn:hover{ background:#16292B; } .btn.ghost{ background:#fff; color:#213B42; } .btn.ghost:hover{ background:#EAF3FB; }
   .btn:focus-visible{ outline:3px solid #9Fd0f5; outline-offset:2px; }
 
   .case{ border:1.5px solid #E1EBF3; border-radius:11px; padding:11px 12px; margin-bottom:9px; }
   .case .q{ font-weight:700; font-size:13px; color:#26384A; margin-bottom:3px; }
   .case .qsub{ font-size:12px; color:#5B6B7A; margin-bottom:7px; }
   select{ font-family:inherit; font-size:13px; padding:8px 10px; border:1.5px solid #CBD7E2; border-radius:9px; width:100%; background:#fff; color:#26384A; cursor:pointer; }
+  .dualsel{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  @media (max-width:560px){ .dualsel{ grid-template-columns:1fr; } }
   .casefb{ font-size:12px; margin-top:7px; padding:7px 10px; border-radius:8px; display:none; }
   .casefb.show{ display:block; } .casefb.ok{ background:#E9F7EF; color:#14532d; } .casefb.no{ background:#FCEDEC; color:#7f1d1d; }
   .checkrow{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:4px; }
-  .score{ font-size:12.5px; font-weight:700; color:#1F4E78; }
+  .score{ font-size:12.5px; font-weight:700; color:#213B42; }
+  .qcard{ border:1.5px solid #E1EBF3; border-radius:11px; padding:11px 12px; margin-bottom:9px; }
+  .qcard .qq{ font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:.4px; color:#3C6E73; }
+  .qcard .qtext{ font-weight:700; font-size:13px; color:#26384A; margin:2px 0 8px; }
+  .opts{ display:grid; gap:6px; }
+  .opt{ text-align:left; font-family:inherit; font-size:12.5px; color:#26384A; background:#FAFCFE; border:1.5px solid #E1EBF3; border-radius:9px; padding:9px 11px; cursor:pointer; transition:all .12s ease; }
+  .opt:hover{ background:#EFF6FC; border-color:#BcD6EC; }
+  .opt.sel{ background:#E7F1FA; border-color:#213B42; }
+  .opt.ok{ background:#E9F7EF; border-color:#2E9D6B; color:#14532d; font-weight:700; }
+  .opt.no{ background:#FCEDEC; border-color:#E2574C; color:#7f1d1d; font-weight:700; }
+  .opt:focus-visible{ outline:3px solid #9Fd0f5; outline-offset:2px; }
 
   .tabnav{ display:flex; justify-content:space-between; gap:8px; margin-top:2px; }
 
@@ -92,6 +105,7 @@
 <body>
 
 <header>
+  <div class="brand-eyebrow">HKV Aarau</div>
   <h1>Angebot und Nachfrage</h1>
   <div class="sub">Kurven lesen, verschieben und sauber begründen · im Zentrum steht immer das Diagramm · HKV Aarau</div>
 </header>
@@ -208,10 +222,10 @@
       <!-- QUIZ -->
       <div class="panel" data-panel="quiz">
         <div class="pcard">
-          <div class="phead"><div class="eyebrow">Abschluss-Quiz</div><span class="pill" id="pill-quiz">In Bearbeitung</span></div>
-          <h2>Alles gemischt</h2>
-          <p class="ziel"><b>Lernziel:</b> Punkt, Verschiebung und keine Änderung in gemischten Fällen sicher unterscheiden.</p>
-          <p style="font-size:12.5px;color:#46586a;margin:0 0 8px;">Fünf gemischte Fälle. Wähle pro Fall die richtige Diagnose und prüfe am Schluss.</p>
+          <div class="phead"><div class="eyebrow">Quiz und Rückmeldung</div><span class="pill" id="pill-quiz">In Bearbeitung</span></div>
+          <h2>Erst entscheiden, dann prüfen</h2>
+          <p class="ziel"><b>Lernziel:</b> Die typischen Denkfehler zu Angebot, Nachfrage und Gleichgewicht aktiv vermeiden.</p>
+          <div class="lead"><b>Quizlogik:</b> Erst selbst entscheiden, dann prüfen. Nur bei einer richtigen Antwort erscheint die fachliche Erklärung in grün.</div>
           <div id="quiz-check"></div>
           <div class="checkrow"><button class="btn" id="quiz-checkbtn">Quiz auswerten</button><button class="btn ghost" id="quiz-reset">Zurücksetzen</button><span class="score" id="quiz-score"></span></div>
         </div>
@@ -220,16 +234,22 @@
       <!-- LABOR -->
       <div class="panel" data-panel="labor">
         <div class="pcard">
-          <div class="phead"><div class="eyebrow">Labor</div><span class="pill" id="pill-labor">In Bearbeitung</span></div>
-          <h2>Markt frei erkunden</h2>
-          <p class="ziel"><b>Lernziel:</b> Beide Kurven kombinieren und die Wirkung auf Preis und Menge ablesen.</p>
-          <div class="lead">Verschiebe beide Kurven gleichzeitig und beobachte, wie Gleichgewichtspreis und ‑menge wandern.</div>
+          <div class="phead"><div class="eyebrow">Marktlabor mit zwei Reglern</div><span class="pill" id="pill-labor">In Bearbeitung</span></div>
+          <h2>Beide Seiten gleichzeitig</h2>
+          <p class="ziel"><b>Lernziel:</b> Angebot und Nachfrage gleichzeitig verändern und die Wirkung auf Preis und Menge begründen.</p>
+          <div class="lead"><b>Marktlabor:</b> Hier wirken beide Regler gleichzeitig. Das Diagramm zeigt die Modellwirkung, die Chips darunter die allgemeine Regel.</div>
+          <div class="sub-h">Klick ein Szenario an</div>
+          <div class="exgrid" id="lab-ex"></div>
+          <div class="sub-h">Regler gleichzeitig steuern</div>
           <div class="ctrl"><div class="ctrl-label"><span>Nachfrage verschieben</span><span class="ctrl-val" id="lab-nf-val">0</span></div>
             <input type="range" id="lab-nf" min="-25" max="25" step="5" value="0"></div>
           <div class="ctrl"><div class="ctrl-label"><span>Angebot verschieben</span><span class="ctrl-val" id="lab-an-val">0</span></div>
             <input type="range" id="lab-an" min="-25" max="25" step="5" value="0"></div>
           <div class="note" id="lab-note"></div>
-          <button class="btn ghost" id="lab-reset">Auf Ausgangslage zurück</button>
+          <ul class="bul"><li>Prüfe zuerst, welche Kurve sich verschiebt und ob eine oder beide Seiten betroffen sind.</li><li>Vergleiche dann im Diagramm P1 mit P0.</li><li>Vergleiche danach M1 mit M0.</li></ul>
+          <div class="sub-h">Transfer-Check</div>
+          <div id="lab-check"></div>
+          <div class="checkrow"><button class="btn" id="lab-checkbtn">Transfer prüfen</button><button class="btn ghost" id="lab-reset">Regler zurück</button><span class="score" id="lab-score"></span></div>
         </div>
       </div>
 
@@ -252,7 +272,7 @@
   const PL=54,PR=22,PT=20,PB=44,W=560,H=440;
   const pl=PL, pr=W-PR, pt=PT, pb=H-PB, pw=pr-pl, ph=pb-pt;
   const sx=Q=>pl+(Q/100)*pw, sy=P=>pb-(P/100)*ph;
-  const C={dem:'#E2574C', sup:'#2C6BAA', old:'#9AA7B4', guide:'#9AA7B4', ax:'#28435E'};
+  const C={dem:'#E2574C', sup:'#3C6E73', old:'#9AA7B4', guide:'#9AA7B4', ax:'#28435E'};
   const demP=(Q,s=0)=>90-0.8*(Q-s), supP=(Q,s=0)=>10+0.8*(Q-s);
   const demQ=(P,s=0)=>(90-P)/0.8+s, supQ=(P,s=0)=>(P-10)/0.8+s;
   const eq=(sd=0,ss=0)=>({Q:50+0.5*sd+0.5*ss, P:50+0.4*sd-0.4*ss});
@@ -324,19 +344,24 @@
       setReadout([{label:'Angebot',value:word(aD),dir:aD},{label:'Preis',value:word(pD),dir:pD},{label:'Menge',value:word(mD),dir:mD}]);
       legend([{c:C.dem,t:'Nachfrage'},{c:C.sup,t:'Angebot neu'},{c:'#AFC4DA',t:'Angebot alt'}]);
     } else if(state.tab==='labor'){
-      const sd=state.labNf, ss=state.labAn, e0=eq(0,0), e1=eq(sd,ss);
+      const nf=state.labNf, an=state.labAn, e0=eq(0,0), e1=eq(nf,an);
       g+=curve('dem',0,'#E9B7B2',2,'6 5')+curve('sup',0,'#AFC4DA',2,'6 5');
-      g+=curve('dem',sd,C.dem,4,null)+clabel('dem',sd,C.dem,'N');
-      g+=curve('sup',ss,C.sup,4,null)+clabel('sup',ss,C.sup,'A');
+      g+=curve('dem',nf,C.dem,4,null)+clabel('dem',nf,C.dem,Math.abs(nf)>0.1?'N1':'N');
+      g+=curve('sup',an,C.sup,4,null)+clabel('sup',an,C.sup,Math.abs(an)>0.1?'A1':'A');
       g+=point(e0.P,e0.Q,C.old,'P0','M0',true);
-      if(Math.abs(sd)>0.1||Math.abs(ss)>0.1) g+=point(e1.P,e1.Q,'#1F4E78','P1','M1',true);
-      const pD=dir(e1.P-e0.P), mD=dir(e1.Q-e0.Q);
-      setReadout([{label:'Preis',value:word(pD),dir:pD},{label:'Menge',value:word(mD),dir:mD},{label:'Gleichgewicht',value:(Math.abs(sd)<0.1&&Math.abs(ss)<0.1)?'Ausgangslage':'wandert',dir:'none'}]);
+      const moved=Math.abs(nf)>0.1||Math.abs(an)>0.1;
+      if(moved) g+=point(e1.P,e1.Q,'#213B42','P1','M1',true);
+      const both=Math.abs(nf)>0.1&&Math.abs(an)>0.1;
+      const pAmb=both&&((nf>0&&an>0)||(nf<0&&an<0)), qAmb=both&&((nf>0&&an<0)||(nf<0&&an>0));
+      setReadout([
+        {label:'Preis',value:pAmb?'nicht eindeutig':(moved?word(dir(e1.P-e0.P)):'–'),dir:pAmb?'none':dir(e1.P-e0.P)},
+        {label:'Menge',value:qAmb?'nicht eindeutig':(moved?word(dir(e1.Q-e0.Q)):'–'),dir:qAmb?'none':dir(e1.Q-e0.Q)},
+        {label:'Verschiebung',value:!moved?'Ausgangslage':both?'beide Seiten':'eine Seite',dir:'none'}]);
       legend([{c:C.dem,t:'Nachfrage'},{c:C.sup,t:'Angebot'},{c:C.old,t:'Ausgangslage'}]);
     } else { // diagnose, quiz
       g+=curve('sup',0,C.sup,4,null)+clabel('sup',0,C.sup,'A');
       g+=curve('dem',0,C.dem,4,null)+clabel('dem',0,C.dem,'N');
-      const e=eq(0,0); g+=point(e.P,e.Q,'#1F4E78','P*','M*',true);
+      const e=eq(0,0); g+=point(e.P,e.Q,'#213B42','P*','M*',true);
       setReadout([{label:'Diagnosefrage',value:'Punkt, Kurve oder nichts?',dir:'none'},{label:'Preis',value:'?',dir:'none'},{label:'Menge',value:'?',dir:'none'}]);
       legend([{c:C.sup,t:'Angebot'},{c:C.dem,t:'Nachfrage'}]);
     }
@@ -450,25 +475,88 @@
   ], DG_OPTS,'dg-checkbtn','dg-score','diagnose');
 
   // ---------- QUIZ ----------
-  const Q_OPTS=DG_OPTS;
-  function buildQuiz(){ buildCheck('quiz-check',[
-    {q:'Fall 1: Der Benzinpreis steigt, sonst ändert sich nichts.', a:'pn', fb:'Nur der Preis → Bewegung auf der Nachfragekurve.'},
-    {q:'Fall 2: Eine neue Maschine senkt die Herstellungskosten von Velos.', a:'ar', fb:'Tiefere Kosten → Angebot nach rechts.'},
-    {q:'Fall 3: Ein Modetrend macht Sneakers plötzlich sehr begehrt.', a:'nr', fb:'Präferenzen ändern sich → Nachfrage nach rechts.'},
-    {q:'Fall 4: In der Hochsaison steigt der Verkaufspreis von Erdbeeren für die Produzenten.', a:'pa', fb:'Nur der Preis → Bewegung auf der Angebotskurve.'},
-    {q:'Fall 5: Es ändert sich weder der Preis noch eine Rahmenbedingung.', a:'kein', fb:'Nichts ändert sich → keine Verschiebung.'},
-  ], Q_OPTS,'quiz-checkbtn','quiz-score','quiz'); }
+  const QUIZ=[
+    {q:'Was passiert, wenn nur der Preis eines Guts fällt und sich sonst nichts ändert?',
+     opts:['Die Nachfragekurve verschiebt sich nach rechts.','Die Angebotskurve verschiebt sich nach links.','Der Punkt bewegt sich auf der Nachfragekurve.','Es gibt automatisch ein neues Angebot.'],
+     correct:2, fb:'Nur der Preis ändert sich → die Kurve bleibt gleich, der Punkt wandert auf der Nachfragekurve.'},
+    {q:'Ein neues Produktionsverfahren senkt die Stückkosten deutlich. Welche Aussage passt?',
+     opts:['Das Angebot verschiebt sich nach rechts.','Die Nachfrage verschiebt sich nach links.','Der Punkt bewegt sich auf der Nachfragekurve.','Es bleibt alles gleich.'],
+     correct:0, fb:'Tiefere Kosten → bei jedem Preis kann mehr angeboten werden → Angebot nach rechts.'},
+    {q:'Höheres Einkommen der Haushalte führt typischerweise dazu, dass …',
+     opts:['die Nachfrage nach rechts verschoben wird.','das Angebot nach links verschoben wird.','nur der Punkt auf der Angebotskurve wandert.','sich keine Kurve ändert.'],
+     correct:0, fb:'Mehr Kaufkraft → bei jedem Preis wird mehr nachgefragt → Nachfrage nach rechts.'},
+    {q:'Welche Antwort passt zu: «Es gibt keine neue Information zu Kosten, Einkommen oder Präferenzen»?',
+     opts:['Nachfrage nach rechts','Angebot nach links','Keine Kurvenverschiebung','Punkt auf Nachfragekurve'],
+     correct:2, fb:'Keine neue Rahmenbedingung und kein Preiswechsel → keine Kurvenverschiebung.'},
+    {q:'Ein Orkan zerstört Weizenfelder. Welche Folge ist im Modell typisch?',
+     opts:['Angebot nach rechts, Preis sinkt','Angebot nach links, Preis steigt','Nachfrage nach rechts, Preis steigt','Nur der Punkt auf der Nachfragekurve bewegt sich'],
+     correct:1, fb:'Weniger Weizen verfügbar → Angebot nach links → der Preis steigt.'},
+  ];
+  let quizSel=[];
+  function buildQuiz(){ const box=$('quiz-check'); box.innerHTML=''; quizSel=Array(QUIZ.length).fill(-1);
+    QUIZ.forEach((qq,qi)=>{ const d=document.createElement('div'); d.className='qcard';
+      let h=`<div class="qq">Frage ${qi+1}</div><div class="qtext">${qq.q}</div><div class="opts">`;
+      qq.opts.forEach((o,oi)=>{ h+=`<button type="button" class="opt" data-q="${qi}" data-o="${oi}">${o}</button>`; });
+      h+=`</div><div class="casefb show" id="quiz_fb_${qi}" style="background:#F6FAFD;color:#5B6B7A;">Wähle eine Antwort und prüfe danach.</div>`;
+      d.innerHTML=h; box.appendChild(d); });
+    box.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>{ const qi=+b.dataset.q;
+      quizSel[qi]=+b.dataset.o; box.querySelectorAll('.opt[data-q="'+qi+'"]').forEach(x=>{ x.classList.toggle('sel',x===b); x.classList.remove('ok','no'); }); })); }
   buildQuiz();
-  $('quiz-reset').addEventListener('click',()=>{ buildQuiz(); });
+  $('quiz-checkbtn').onclick=()=>{ let ok=0; const box=$('quiz-check');
+    QUIZ.forEach((qq,qi)=>{ const fb=$('quiz_fb_'+qi), sel=quizSel[qi], btns=box.querySelectorAll('.opt[data-q="'+qi+'"]');
+      btns.forEach(x=>x.classList.remove('ok','no'));
+      if(sel<0){ fb.className='casefb show no'; fb.removeAttribute('style'); fb.textContent='Bitte zuerst eine Antwort wählen.'; return; }
+      if(sel===qq.correct){ ok++; btns[sel].classList.add('ok'); fb.className='casefb show ok'; fb.removeAttribute('style'); fb.textContent='Richtig. '+qq.fb; }
+      else { btns[sel].classList.add('no'); fb.className='casefb show no'; fb.removeAttribute('style'); fb.textContent='Noch nicht ganz – überleg nochmal und wähle eine andere Antwort.'; } });
+    $('quiz-score').textContent=ok+' von '+QUIZ.length+' richtig'; if(ok===QUIZ.length) markSolved('quiz'); };
+  $('quiz-reset').addEventListener('click',()=>{ buildQuiz(); $('quiz-score').textContent=''; });
 
   // ---------- LABOR ----------
-  $('lab-nf').addEventListener('input',e=>{ state.labNf=+e.target.value; $('lab-nf-val').textContent=(state.labNf>0?'+':'')+state.labNf; labNote(); render(); markSolved('labor'); });
-  $('lab-an').addEventListener('input',e=>{ state.labAn=+e.target.value; $('lab-an-val').textContent=(state.labAn>0?'+':'')+state.labAn; labNote(); render(); markSolved('labor'); });
-  $('lab-reset').addEventListener('click',()=>{ state.labNf=0; state.labAn=0; $('lab-nf').value=0; $('lab-an').value=0; $('lab-nf-val').textContent='0'; $('lab-an-val').textContent='0'; labNote(); render(); });
-  function labNote(){ const e0=eq(0,0),e1=eq(state.labNf,state.labAn),dp=e1.P-e0.P,dq=e1.Q-e0.Q;
-    if(Math.abs(state.labNf)<0.1&&Math.abs(state.labAn)<0.1){ $('lab-note').textContent='Ausgangslage – verschiebe eine oder beide Kurven.'; return; }
-    const pw=Math.abs(dp)<0.5?'bleibt etwa gleich':dp>0?'steigt':'sinkt', qw=Math.abs(dq)<0.5?'bleibt etwa gleich':dq>0?'steigt':'sinkt';
+  const LAB_EX=[
+    {t:'Helmobligatorium', d:'Gesetz macht Helme obligatorisch → Markt für Schutzhelme untersuchen.', nf:15, an:0,
+     note:'Ein Gesetz macht Schutzhelme beim Skifahren obligatorisch. Untersuche den Markt für Schutzhelme mit dem Diagramm und den Reglern.'},
+    {t:'Höheres Einkommen + Naturkatastrophe', d:'Mehr Einkommen, gleichzeitig fällt ein Teil der Produktion aus.', nf:15, an:-15,
+     note:'Haushalte verfügen über mehr Einkommen, gleichzeitig fällt wegen einer Naturkatastrophe ein Teil der Produktion aus.'},
+    {t:'Technologie + Einkommensboom', d:'Effizientere Produktion und mehr Kaufkraft der Haushalte.', nf:15, an:15,
+     note:'Produzenten werden effizienter, gleichzeitig steigt die Kaufkraft der Haushalte.'},
+    {t:'Keine neue Rahmenbedingung', d:'Keine neue Information zu Einkommen, Kosten, Technologie oder Präferenzen.', nf:0, an:0,
+     note:'Es gibt keine neue Information zu Einkommen, Kosten, Technologie oder Präferenzen.'},
+  ];
+  buildExamples('lab-ex', LAB_EX, it=>{ state.labNf=it.nf; state.labAn=it.an;
+    $('lab-nf').value=it.nf; $('lab-an').value=it.an;
+    $('lab-nf-val').textContent=(it.nf>0?'+':'')+it.nf; $('lab-an-val').textContent=(it.an>0?'+':'')+it.an;
+    $('lab-note').textContent=it.note; render(); });
+  function labSliderChanged(){ $('lab-ex').querySelectorAll('.exchip').forEach(x=>x.classList.remove('on')); labNote(); render(); }
+  $('lab-nf').addEventListener('input',e=>{ state.labNf=+e.target.value; $('lab-nf-val').textContent=(state.labNf>0?'+':'')+state.labNf; labSliderChanged(); });
+  $('lab-an').addEventListener('input',e=>{ state.labAn=+e.target.value; $('lab-an-val').textContent=(state.labAn>0?'+':'')+state.labAn; labSliderChanged(); });
+  $('lab-reset').addEventListener('click',()=>{ state.labNf=0; state.labAn=0; $('lab-nf').value=0; $('lab-an').value=0; $('lab-nf-val').textContent='0'; $('lab-an-val').textContent='0'; labSliderChanged(); });
+  function labNote(){ const nf=state.labNf, an=state.labAn;
+    if(Math.abs(nf)<0.1&&Math.abs(an)<0.1){ $('lab-note').textContent='Ausgangslage – wähle ein Szenario oder verschiebe die Regler.'; return; }
+    const e0=eq(0,0),e1=eq(nf,an),dp=e1.P-e0.P,dq=e1.Q-e0.Q;
+    const both=Math.abs(nf)>0.1&&Math.abs(an)>0.1;
+    const pAmb=both&&((nf>0&&an>0)||(nf<0&&an<0)), qAmb=both&&((nf>0&&an<0)||(nf<0&&an>0));
+    const pw=pAmb?'nicht eindeutig (hängt von der Stärke der Verschiebung ab)':(Math.abs(dp)<0.5?'bleibt etwa gleich':dp>0?'steigt':'sinkt');
+    const qw=qAmb?'nicht eindeutig (hängt von der Stärke der Verschiebung ab)':(Math.abs(dq)<0.5?'bleibt etwa gleich':dq>0?'steigt':'sinkt');
     $('lab-note').textContent='Neues Gleichgewicht: Preis '+pw+', Menge '+qw+'.'; }
+  const LAB_P=[['','Preiswirkung wählen'],['steigt','Preis steigt'],['sinkt','Preis sinkt'],['gleich','Preis bleibt gleich'],['unklar','Preis nicht eindeutig']];
+  const LAB_M=[['','Mengenwirkung wählen'],['steigt','Menge steigt'],['sinkt','Menge sinkt'],['gleich','Menge bleibt gleich'],['unklar','Menge nicht eindeutig']];
+  const LAB_CASES=[
+    {q:'Helmobligatorium', sub:'Ein Gesetz macht Schutzhelme beim Skifahren obligatorisch.', p:'steigt', m:'steigt', fb:'Nur die Nachfrage steigt (rechts) → Preis und Menge steigen.'},
+    {q:'Höheres Einkommen + Naturkatastrophe', sub:'Mehr Einkommen, gleichzeitig fällt ein Teil der Produktion aus.', p:'steigt', m:'unklar', fb:'Nachfrage rechts und Angebot links → der Preis steigt klar, die Menge ist nicht eindeutig.'},
+    {q:'Technologie + Einkommensboom', sub:'Produzenten werden effizienter, die Kaufkraft steigt.', p:'unklar', m:'steigt', fb:'Angebot rechts und Nachfrage rechts → die Menge steigt klar, der Preis ist nicht eindeutig.'},
+    {q:'Keine neue Rahmenbedingung', sub:'Keine neue Information zu Einkommen, Kosten, Technologie oder Präferenzen.', p:'gleich', m:'gleich', fb:'Keine Verschiebung → Preis und Menge bleiben gleich.'},
+  ];
+  (function(){ const box=$('lab-check');
+    LAB_CASES.forEach((c,i)=>{ const d=document.createElement('div'); d.className='case';
+      d.innerHTML=`<div class="q">${c.q}</div><div class="qsub">${c.sub}</div>`+
+        `<div class="dualsel"><select id="lab_p_${i}" aria-label="Preiswirkung Fall ${i+1}">`+LAB_P.map(o=>`<option value="${o[0]}">${o[1]}</option>`).join('')+`</select>`+
+        `<select id="lab_m_${i}" aria-label="Mengenwirkung Fall ${i+1}">`+LAB_M.map(o=>`<option value="${o[0]}">${o[1]}</option>`).join('')+`</select></div>`+
+        `<div class="casefb" id="lab_fb_${i}"></div>`; box.appendChild(d); }); })();
+  $('lab-checkbtn').onclick=()=>{ let ok=0; LAB_CASES.forEach((c,i)=>{ const pv=$('lab_p_'+i).value, mv=$('lab_m_'+i).value, fb=$('lab_fb_'+i);
+    if(pv===''||mv===''){ fb.className='casefb show no'; fb.textContent='Bitte Preis- und Mengenwirkung wählen.'; }
+    else if(pv===c.p&&mv===c.m){ ok++; fb.className='casefb show ok'; fb.textContent='Richtig. '+c.fb; }
+    else { fb.className='casefb show no'; fb.textContent='Noch nicht. '+c.fb; } });
+    $('lab-score').textContent=ok+' von '+LAB_CASES.length+' richtig'; if(ok===LAB_CASES.length) markSolved('labor'); };
 
   // ---------- Init ----------
   punktNote(); nfNote(); anNote(); labNote(); render();
