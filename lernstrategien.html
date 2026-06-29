@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lernstrategien, die wirklich wirken</title>
+<style>
+  *{ box-sizing:border-box; }
+  body{ margin:0; font-family:'Aptos','Segoe UI',system-ui,-apple-system,sans-serif; background:#F4F8FB; color:#1A2B3A; font-size:14px; line-height:1.5; }
+  header{ background:linear-gradient(135deg,#213B42 0%,#3C6E73 100%); color:#fff; padding:13px 22px 12px; box-shadow:0 2px 8px rgba(0,0,0,.12); }
+  .brand-eyebrow{ font-size:11px; font-weight:800; letter-spacing:2.5px; color:#D8AE66; margin-bottom:3px; text-transform:uppercase; }
+  header h1{ margin:0 0 2px; font-size:20px; font-weight:800; letter-spacing:-.3px; }
+  header .sub{ font-size:12.5px; opacity:.93; }
+  .wrap{ max-width:1080px; margin:0 auto; padding:16px; }
+
+  .principle{ background:#fff; border-radius:14px; box-shadow:0 2px 10px rgba(20,50,80,.08); padding:15px 18px; margin-bottom:14px; border-left:5px solid #D8AE66; display:flex; gap:14px; align-items:center; }
+  .principle .big{ font-size:18px; font-weight:800; color:#213B42; line-height:1.3; }
+  .principle .sm{ font-size:12.5px; color:#5B6B7A; margin-top:3px; }
+  .principle .tag{ font-size:11px; font-weight:700; color:#3C6E73; }
+  .principle .star{ flex:0 0 auto; width:46px; height:46px; border-radius:12px; background:#D8AE66; color:#fff; display:flex; align-items:center; justify-content:center; }
+  .principle .star svg{ width:26px; height:26px; }
+
+  .progress-bar{ display:flex; align-items:center; gap:10px; margin:0 2px 12px; }
+  .progress-bar .track{ flex:1; height:8px; background:#E1EBF3; border-radius:99px; overflow:hidden; }
+  .progress-bar .fill{ height:100%; width:0%; background:linear-gradient(90deg,#91B99B,#3C6E73); border-radius:99px; transition:width .4s ease; }
+  .progress-bar .lab{ font-size:12px; font-weight:700; color:#3C6E73; white-space:nowrap; }
+
+  .grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:12px; align-items:start; }
+  .card{ background:#fff; border-radius:14px; box-shadow:0 2px 10px rgba(20,50,80,.08); overflow:hidden; transition:box-shadow .15s ease, transform .15s ease; border:1.5px solid #EAF1F6; }
+  .card:hover{ box-shadow:0 5px 18px rgba(20,50,80,.13); }
+  .card.open{ border-color:#91B99B; }
+  .card-head{ width:100%; text-align:left; font-family:inherit; background:none; border:none; cursor:pointer; padding:13px 14px; display:flex; align-items:flex-start; gap:12px; }
+  .card-head:focus-visible{ outline:3px solid #A7D2CE; outline-offset:-2px; border-radius:12px; }
+  .num{ flex:0 0 auto; width:24px; height:24px; border-radius:50%; background:#213B42; color:#fff; font-size:12px; font-weight:900; display:flex; align-items:center; justify-content:center; margin-top:2px; }
+  .icon{ flex:0 0 auto; width:42px; height:42px; border-radius:11px; background:#E7F0EA; display:flex; align-items:center; justify-content:center; color:#2C5A50; }
+  .icon svg{ width:23px; height:23px; }
+  .ttl{ flex:1; min-width:0; }
+  .term{ font-size:10px; font-weight:800; letter-spacing:.4px; text-transform:uppercase; color:#A8B6B2; }
+  .ttl h3{ margin:1px 0 2px; font-size:15.5px; color:#213B42; font-weight:800; }
+  .kurz{ margin:0; font-size:12.5px; color:#5B6B7A; line-height:1.4; }
+  .chev{ flex:0 0 auto; color:#9FB4B0; font-size:18px; transition:transform .3s ease; margin-top:2px; }
+  .card.open .chev{ transform:rotate(180deg); color:#3C6E73; }
+
+  .detail{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .3s ease; }
+  .card.open .detail{ grid-template-rows:1fr; }
+  .detail-in{ overflow:hidden; }
+  .detail-pad{ padding:0 14px 14px 50px; }
+  .sogeht{ margin:0 0 9px; font-size:13px; color:#33485a; } .sogeht b{ color:#213B42; }
+  .bsp{ background:#F2F8F4; border-left:3px solid #91B99B; border-radius:0 9px 9px 0; padding:8px 11px; font-size:12.5px; color:#2c4a3c; }
+  .bsp .bt{ display:inline-block; font-size:9.5px; font-weight:800; letter-spacing:.5px; text-transform:uppercase; color:#fff; background:#7FA889; padding:1px 7px; border-radius:5px; margin-right:7px; vertical-align:1px; }
+
+  .less{ background:#fff; border-radius:14px; box-shadow:0 2px 10px rgba(20,50,80,.08); padding:13px 16px; margin-top:14px; border-left:5px solid #C9D2D9; }
+  .less .lh{ font-size:13px; font-weight:800; color:#6B7B8A; margin-bottom:4px; }
+  .less .li{ font-size:12.5px; color:#7C8B9A; } .less .li s{ color:#9AA7B4; }
+  .less .note{ font-size:12px; color:#94A3B0; margin-top:5px; font-style:italic; }
+
+  .controls{ display:flex; justify-content:flex-end; margin:0 2px 10px; }
+  .btn{ font-family:inherit; font-size:12.5px; font-weight:700; cursor:pointer; border-radius:9px; padding:7px 13px; border:1.5px solid #CBD7E2; background:#fff; color:#3C6E73; transition:all .15s ease; }
+  .btn:hover{ background:#EAF3F2; } .btn:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
+
+  .footer{ max-width:1080px; margin:6px auto 22px; padding:0 18px; }
+  .footer .cr{ color:#94A3B0; font-size:11px; }
+  @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand-eyebrow">HKV Aarau</div>
+  <h1>Lernstrategien, die wirklich wirken</h1>
+  <div class="sub">Sechs Strategien aus der Lernforschung – mit Beispielen aus dem Apothekenalltag. Karten antippen.</div>
+</header>
+
+<div class="wrap">
+  <div class="principle">
+    <span class="star"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+    <div>
+      <div class="big">Was beim Lernen anstrengt, wirkt meistens am besten.</div>
+      <div class="sm">Diese Strategien fühlen sich anstrengender an als reines Durchlesen – genau deshalb bleiben sie hängen. <span class="tag">Fachbegriff: «desirable difficulties»</span></div>
+    </div>
+  </div>
+
+  <div class="progress-bar">
+    <div class="track"><div class="fill" id="fill"></div></div>
+    <div class="lab" id="plab">0 / 6 angeschaut</div>
+  </div>
+
+  <div class="controls"><button class="btn" id="toggle-all">Alle aufklappen</button></div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="less">
+    <div class="lh">Wirkt weniger, als viele denken</div>
+    <div class="li">Nur <s>durchlesen</s>, <s>markieren</s> und <s>unterstreichen</s> – fühlt sich nach Arbeit an, bleibt aber zu nebenbei.</div>
+    <div class="note">Faustregel: Was beim Lernen anstrengt, wirkt meistens am besten.</div>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="cr">© 2026 Samuel Mollet · HKV Aarau · realisiert mit Claude (Anthropic)</div>
+</div>
+
+<script>
+  const ic={
+    abruf:'<path d="M3 12a9 9 0 1 0 3-6.7"/><polyline points="3 3 3 8 8 8"/>',
+    verteilt:'<rect x="3" y="4.5" width="18" height="16" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2.5" x2="8" y2="6"/><line x1="16" y1="2.5" x2="16" y2="6"/><circle cx="8" cy="13" r="1"/><circle cx="12" cy="13" r="1"/><circle cx="16" cy="13" r="1"/><circle cx="8" cy="17" r="1"/>',
+    mischen:'<polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/>',
+    erklaeren:'<path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z"/>',
+    beispiel:'<path d="M9 18h6"/><path d="M10 21.5h4"/><path d="M15.1 14c.2-1 .65-1.75 1.4-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.2 1.5 3.5.75.75 1.2 1.5 1.4 2.5"/>',
+    bilder:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.6"/><polyline points="21 15 16 10 5 21"/>'
+  };
+  const STRAT=[
+    {term:'Retrieval Practice', t:'Aus dem Kopf abrufen', i:ic.abruf,
+     k:'Stoff aktiv aus dem Gedächtnis holen statt nur nochmals lesen.',
+     s:'Rufen Sie den Stoff aktiv aus dem Gedächtnis ab, statt ihn ein weiteres Mal zu lesen. Jeder Abruf festigt das Wissen.',
+     b:'Klappen Sie das Buch zu und schreiben Sie auf, was Sie über die drei Lernorte noch wissen. Erst dann vergleichen Sie.'},
+    {term:'Spacing', t:'Über mehrere Tage verteilen', i:ic.verteilt,
+     k:'In kleinen Portionen über die Woche statt alles am Schluss.',
+     s:'Lernen Sie in kleinen Portionen über mehrere Tage, statt alles am Abend vor der Prüfung.',
+     b:'Statt drei Stunden am Stück lernen Sie an drei Tagen je eine Stunde.'},
+    {term:'Interleaving', t:'Themen mischen', i:ic.mischen,
+     k:'Verschiedene Themen abwechselnd üben statt blockweise.',
+     s:'Üben Sie verschiedene Themen abwechselnd, statt lange beim gleichen zu bleiben. So lernen Sie jedes Mal neu zu erkennen, worum es geht.',
+     b:'Üben Sie Rechtsfragen und Fachrechnen im Wechsel – nicht erst alles vom einen, dann alles vom anderen.'},
+    {term:'Elaboration', t:'In eigenen Worten erklären', i:ic.erklaeren,
+     k:'Den Stoff erklären, als würden Sie ihn jemandem beibringen.',
+     s:'Erklären Sie den Stoff so, als würden Sie ihn jemandem beibringen. Fragen Sie sich «Warum ist das so?». Verstandenes bleibt besser haften als Auswendiggelerntes.',
+     b:'Erklären Sie einer Kollegin in eigenen Worten, warum es drei Lernorte gibt.'},
+    {term:'Concrete Examples', t:'Eigene Beispiele suchen', i:ic.beispiel,
+     k:'Einen Begriff mit einem eigenen Alltagsbeispiel verbinden.',
+     s:'Verbinden Sie einen Begriff mit einem eigenen Beispiel aus Ihrem Alltag. Eigene Beispiele verankern abstrakte Begriffe.',
+     b:'Zum Begriff «Sorgfaltspflicht» überlegen Sie, wo Sie in der Apotheke besonders genau arbeiten müssen.'},
+    {term:'Dual Coding', t:'Bilder dazunehmen', i:ic.bilder,
+     k:'Text mit einer einfachen Skizze oder Zeichnung verbinden.',
+     s:'Verbinden Sie Text mit einer einfachen Zeichnung oder Skizze. Das Bild merken Sie sich zusätzlich zum Wort.',
+     b:'Zeichnen Sie die drei Lernorte als Dreieck mit Pfeilen dazwischen.'}
+  ];
+
+  const grid=document.getElementById('grid');
+  const seen=new Set();
+  STRAT.forEach((x,i)=>{
+    const card=document.createElement('div'); card.className='card'; card.dataset.i=i;
+    card.innerHTML=`
+      <button class="card-head" aria-expanded="false">
+        <span class="num">${i+1}</span>
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${x.i}</svg></span>
+        <span class="ttl"><span class="term">${x.term}</span><h3>${x.t}</h3><p class="kurz">${x.k}</p></span>
+        <span class="chev">⌄</span>
+      </button>
+      <div class="detail"><div class="detail-in"><div class="detail-pad">
+        <p class="sogeht"><b>So geht's:</b> ${x.s}</p>
+        <div class="bsp"><span class="bt">Beispiel</span>${x.b}</div>
+      </div></div></div>`;
+    grid.appendChild(card);
+    const head=card.querySelector('.card-head');
+    head.addEventListener('click',()=>{
+      const open=card.classList.toggle('open');
+      head.setAttribute('aria-expanded', open?'true':'false');
+      if(open){ seen.add(i); updateProgress(); }
+      syncToggleLabel();
+    });
+  });
+
+  function updateProgress(){
+    const pct=Math.round(seen.size/STRAT.length*100);
+    document.getElementById('fill').style.width=pct+'%';
+    document.getElementById('plab').textContent=seen.size+' / '+STRAT.length+' angeschaut';
+  }
+  const toggleAll=document.getElementById('toggle-all');
+  function syncToggleLabel(){
+    const cards=[...document.querySelectorAll('.card')];
+    const allOpen=cards.every(c=>c.classList.contains('open'));
+    toggleAll.textContent=allOpen?'Alle zuklappen':'Alle aufklappen';
+  }
+  toggleAll.addEventListener('click',()=>{
+    const cards=[...document.querySelectorAll('.card')];
+    const allOpen=cards.every(c=>c.classList.contains('open'));
+    cards.forEach((c,i)=>{ const head=c.querySelector('.card-head');
+      if(allOpen){ c.classList.remove('open'); head.setAttribute('aria-expanded','false'); }
+      else { c.classList.add('open'); head.setAttribute('aria-expanded','true'); seen.add(i); } });
+    if(!allOpen) updateProgress();
+    syncToggleLabel();
+  });
+</script>
+</body>
+</html>
