@@ -1534,7 +1534,7 @@ renderSeats();
   }
 
   // ---------- Bundesratswahl: Szenarien ----------
-  const SCEN_ORDER = ['demo','s1983','s1984','s2007','s2022','s2023'];
+  const SCEN_ORDER = ['demo','s1983','s1984','s2003','s2007','s2022','s2023'];
   const SCEN = {
     demo: { label:'🎲 Beispiel (fiktiv)', sub:'Schritt für Schritt mit erfundenen Namen', steps:[
       { next:'1. Wahlgang →', html:
@@ -1576,6 +1576,25 @@ renderSeats();
         +'<div class="brw-result win">Kopp wird im 1. Wahlgang mit 124 von 244 Stimmen gewählt – als <strong>erste Frau im Bundesrat</strong>.</div>' },
       { next:null, html:
         '<p>13 Jahre nach Einführung des Frauenstimmrechts sass erstmals eine Frau in der Landesregierung.</p>' }
+    ]},
+    s2003: { label:'2003 · Abwahl Metzler', sub:'Blocher erobert den 2. SVP-Sitz', steps:[
+      { next:'1. Wahlgang →', html:
+        '<span class="brw-badge gesamt">Gesamterneuerungswahl</span>'
+        +'<p><strong>2003</strong> – Die SVP wurde stärkste Partei und forderte einen <strong>zweiten Sitz</strong> (Christoph Blocher) auf Kosten der CVP. Zuerst zur Wahl stand der Sitz der amtierenden CVP-Bundesrätin <strong>Ruth Metzler</strong>.</p>' },
+      { next:'2. Wahlgang →', html:
+        '<div class="ges-stage-title">1. Wahlgang</div>'
+        + brwChart([{name:'Christoph Blocher',party:'SVP',color:C.SVP,votes:116},{name:'Ruth Metzler',party:'CVP · bisher',color:C.Mitte,votes:116},{name:'Übrige',party:'',color:C.x,votes:4}], 236, 119)
+        +'<div class="brw-result again">Patt – beide 116 Stimmen, niemand erreicht das absolute Mehr (119). → 2. Wahlgang.</div>' },
+      { next:'3. Wahlgang →', html:
+        '<div class="ges-stage-title">2. Wahlgang</div>'
+        + brwChart([{name:'Christoph Blocher',party:'SVP',color:C.SVP,votes:119},{name:'Ruth Metzler',party:'CVP · bisher',color:C.Mitte,votes:117},{name:'Übrige',party:'',color:C.x,votes:2}], 238, 120)
+        +'<div class="brw-result again">Blocher zieht vorbei, verfehlt das absolute Mehr (120) aber um eine Stimme. → 3. Wahlgang.</div>' },
+      { next:'Fazit →', html:
+        '<div class="ges-stage-title">3. Wahlgang · Entscheidung</div>'
+        + brwChart([{name:'Christoph Blocher',party:'SVP',color:C.SVP,votes:121},{name:'Ruth Metzler',party:'CVP · bisher',color:C.Mitte,votes:116}], 237, 119)
+        +'<div class="brw-result win">Blocher erreicht 121 Stimmen (absolutes Mehr 119) und ist gewählt. Ruth Metzler ist <strong>abgewählt</strong>.</div>' },
+      { next:null, html:
+        '<p>Erstmals seit <strong>1872</strong> wurde ein amtierendes Mitglied des Bundesrats abgewählt. Die <strong>Zauberformel</strong> von 1959 (2 FDP, 2 CVP, 2 SP, 1 SVP) wurde geändert: neu 2 SVP, 2 FDP, 2 SP, 1 CVP. Vier Jahre später traf es Blocher selbst (➜ Wahl 2007).</p>' }
     ]},
     s2007: { label:'2007 · Abwahl Blocher', sub:'Ein bisheriger Bundesrat wird abgewählt', steps:[
       { next:'1. Wahlgang →', html:
