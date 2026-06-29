@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Angebot und Nachfrage – interaktive Folie</title>
+<style>
+  *{ box-sizing:border-box; }
+  body{ margin:0; font-family:'Aptos','Segoe UI',system-ui,-apple-system,sans-serif; background:#F4F8FB; color:#1A2B3A; font-size:14px; line-height:1.5; -webkit-user-select:none; user-select:none; }
+  header{ background:linear-gradient(135deg,#1F4E78 0%,#2C6BAA 100%); color:#fff; padding:13px 22px 11px; box-shadow:0 2px 8px rgba(0,0,0,.1); }
+  header h1{ margin:0 0 2px; font-size:19px; font-weight:800; letter-spacing:-.3px; }
+  header .sub{ font-size:12px; opacity:.92; }
+  .wrap{ max-width:1240px; margin:0 auto; padding:14px 16px; }
+
+  .tabsbar{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
+  .tabs{ display:flex; gap:6px; flex-wrap:wrap; }
+  .tab{ font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; border:1.5px solid #D4E0EC; background:#fff; color:#3A5876; padding:7px 13px; border-radius:9px; transition:all .15s ease; display:inline-flex; align-items:center; gap:7px; }
+  .tab:hover{ background:#EAF3FB; } .tab.active{ background:#1F4E78; color:#fff; border-color:#1F4E78; }
+  .tab .done{ width:15px; height:15px; border-radius:50%; background:#CBD7E2; color:#fff; font-size:10px; font-weight:900; display:none; align-items:center; justify-content:center; }
+  .tab.solved .done{ display:inline-flex; background:#2E9D6B; } .tab.active.solved .done{ background:#7FE3B4; color:#14532d; }
+  .tab:focus-visible{ outline:3px solid #9Fd0f5; outline-offset:2px; }
+  .progress{ font-size:13px; font-weight:700; color:#1F4E78; } .progress b{ font-size:16px; }
+
+  .shell{ display:flex; gap:18px; align-items:flex-start; }
+  @media (max-width:920px){ .shell{ flex-direction:column; } }
+  .diagram-col{ flex:0 0 470px; max-width:470px; position:sticky; top:12px; }
+  @media (max-width:920px){ .diagram-col{ flex:1 1 auto; max-width:none; width:100%; position:static; } }
+  .panel-col{ flex:1 1 auto; min-width:0; }
+
+  .card{ background:#fff; border-radius:14px; box-shadow:0 2px 10px rgba(20,50,80,.08); }
+  .diagram-card{ padding:12px 12px 8px; }
+  svg.chart{ display:block; width:100%; height:auto; }
+  .readout{ display:flex; gap:8px; padding:0 4px 6px; flex-wrap:wrap; }
+  .chip{ flex:1 1 0; min-width:118px; background:#F3F8FC; border:1.5px solid #E1EBF3; border-radius:10px; padding:8px 10px; }
+  .chip .k{ font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.4px; color:#8AA0B4; }
+  .chip .v{ font-size:13.5px; font-weight:800; color:#1F4E78; }
+  .chip .v.up{ color:#2E9D6B; } .chip .v.down{ color:#E2574C; } .chip .v.same{ color:#5B6B7A; }
+  .legend{ display:flex; gap:13px; padding:2px 6px 8px; font-size:11px; color:#5B6B7A; flex-wrap:wrap; }
+  .legend i{ display:inline-block; width:17px; height:0; border-top:3px solid; margin-right:5px; vertical-align:middle; }
+
+  .panel{ display:none; } .panel.active{ display:block; }
+  .pcard{ background:#fff; border-radius:14px; box-shadow:0 2px 10px rgba(20,50,80,.08); padding:16px 18px; margin-bottom:14px; }
+  .phead{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .eyebrow{ font-size:10.5px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:#2C6BAA; }
+  .pcard h2{ margin:3px 0 8px; font-size:17px; color:#1F4E78; font-weight:800; }
+  .pill{ font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:.4px; padding:3px 9px; border-radius:999px; background:#FFF3D6; color:#9A6B00; white-space:nowrap; }
+  .pill.done{ background:#E9F7EF; color:#1d7a4a; }
+  .ziel{ font-size:13px; color:#37485a; margin:0 0 8px; } .ziel b{ color:#1F4E78; }
+  .lead{ background:#EAF3FB; border-left:4px solid #2C6BAA; border-radius:0 10px 10px 0; padding:9px 12px; font-size:13px; color:#26384A; margin:0 0 12px; } .lead b{ color:#1F4E78; }
+
+  .exgrid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:4px 0 6px; }
+  @media (max-width:560px){ .exgrid{ grid-template-columns:1fr; } }
+  .exchip{ text-align:left; font-family:inherit; border:1.5px solid #E1EBF3; border-radius:10px; padding:9px 11px; background:#FAFCFE; cursor:pointer; transition:all .12s ease; }
+  .exchip:hover{ background:#EFF6FC; border-color:#BcD6EC; }
+  .exchip.on{ background:#E7F1FA; border-color:#1F4E78; }
+  .exchip .t{ display:block; font-weight:800; font-size:13px; color:#1F4E78; }
+  .exchip .d{ display:block; font-size:11.5px; color:#5B6B7A; margin-top:2px; line-height:1.35; }
+  .exchip:focus-visible{ outline:3px solid #9Fd0f5; outline-offset:2px; }
+
+  .sub-h{ font-size:12px; font-weight:800; color:#28435E; margin:12px 0 4px; }
+  .ctrl{ margin:8px 0; }
+  .ctrl-label{ display:flex; justify-content:space-between; align-items:baseline; font-size:12.5px; font-weight:700; color:#28435E; margin-bottom:5px; }
+  .ctrl-val{ font-size:13px; font-weight:800; color:#1F4E78; background:#EAF3FB; padding:1px 9px; border-radius:7px; }
+  input[type=range]{ width:100%; accent-color:#1F4E78; height:22px; cursor:pointer; }
+  .hintline{ font-size:11.5px; color:#7C8B9A; margin-top:3px; }
+  .note{ font-size:13px; color:#26384A; background:#F6FAFD; border-radius:9px; padding:9px 11px; margin:8px 0; min-height:18px; }
+  ul.bul{ margin:6px 0 2px; padding-left:18px; font-size:12.5px; color:#46586a; } ul.bul li{ margin:2px 0; }
+  .seg{ display:inline-flex; background:#EEF4F9; border-radius:10px; padding:3px; gap:3px; }
+  .seg button{ font-family:inherit; font-size:12.5px; font-weight:700; border:none; background:transparent; color:#3A5876; padding:6px 14px; border-radius:8px; cursor:pointer; transition:all .15s ease; }
+  .seg button.on{ background:#fff; color:#1F4E78; box-shadow:0 1px 3px rgba(20,50,80,.18); }
+
+  .btn{ font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; border-radius:9px; padding:8px 15px; border:1.5px solid #1F4E78; background:#1F4E78; color:#fff; transition:all .15s ease; }
+  .btn:hover{ background:#163a5a; } .btn.ghost{ background:#fff; color:#1F4E78; } .btn.ghost:hover{ background:#EAF3FB; }
+  .btn:focus-visible{ outline:3px solid #9Fd0f5; outline-offset:2px; }
+
+  .case{ border:1.5px solid #E1EBF3; border-radius:11px; padding:11px 12px; margin-bottom:9px; }
+  .case .q{ font-weight:700; font-size:13px; color:#26384A; margin-bottom:3px; }
+  .case .qsub{ font-size:12px; color:#5B6B7A; margin-bottom:7px; }
+  select{ font-family:inherit; font-size:13px; padding:8px 10px; border:1.5px solid #CBD7E2; border-radius:9px; width:100%; background:#fff; color:#26384A; cursor:pointer; }
+  .casefb{ font-size:12px; margin-top:7px; padding:7px 10px; border-radius:8px; display:none; }
+  .casefb.show{ display:block; } .casefb.ok{ background:#E9F7EF; color:#14532d; } .casefb.no{ background:#FCEDEC; color:#7f1d1d; }
+  .checkrow{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:4px; }
+  .score{ font-size:12.5px; font-weight:700; color:#1F4E78; }
+
+  .tabnav{ display:flex; justify-content:space-between; gap:8px; margin-top:2px; }
+
+  .footer{ max-width:1240px; margin:6px auto 24px; padding:0 18px; color:#5B6B7A; font-size:11px; }
+  .footer .cr{ margin-top:8px; color:#94A3B0; }
+  @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Angebot und Nachfrage</h1>
+  <div class="sub">Kurven lesen, verschieben und sauber begründen · im Zentrum steht immer das Diagramm · HKV Aarau</div>
+</header>
+
+<div class="wrap">
+  <div class="tabsbar">
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-tab="punkt"><span class="done">✓</span>Punkt</button>
+      <button class="tab" data-tab="nachfrage"><span class="done">✓</span>Nachfrage</button>
+      <button class="tab" data-tab="angebot"><span class="done">✓</span>Angebot</button>
+      <button class="tab" data-tab="diagnose"><span class="done">✓</span>Diagnose</button>
+      <button class="tab" data-tab="quiz"><span class="done">✓</span>Quiz</button>
+      <button class="tab" data-tab="labor"><span class="done">✓</span>Labor</button>
+    </div>
+    <div class="progress"><b id="solvedN">0</b> / 6 Bereiche gelöst</div>
+  </div>
+
+  <div class="shell">
+    <div class="diagram-col">
+      <div class="card diagram-card">
+        <svg class="chart" id="chart" viewBox="0 0 560 440" role="img" aria-label="Preis-Mengen-Diagramm">
+          <defs><clipPath id="plotclip"><rect x="54" y="20" width="484" height="376"/></clipPath></defs>
+          <g id="scene"></g>
+        </svg>
+        <div class="legend" id="legend"></div>
+        <div class="readout">
+          <div class="chip"><div class="k" id="r-k1">–</div><div class="v" id="r-v1">–</div></div>
+          <div class="chip"><div class="k" id="r-k2">–</div><div class="v" id="r-v2">–</div></div>
+          <div class="chip"><div class="k" id="r-k3">–</div><div class="v" id="r-v3">–</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-col">
+
+      <!-- PUNKT -->
+      <div class="panel active" data-panel="punkt">
+        <div class="pcard">
+          <div class="phead"><div class="eyebrow">Punkt auf der Kurve</div><span class="pill" id="pill-punkt">In Bearbeitung</span></div>
+          <h2>Wenn sich nur der Preis ändert</h2>
+          <p class="ziel"><b>Lernziel:</b> Erkennen, wann nur der Preis wechselt und sich deshalb nur der Punkt auf einer bestehenden Kurve bewegt.</p>
+          <div class="lead"><b>Kernidee:</b> Ändert sich nur der Preis eines Guts, verschiebt sich nicht die ganze Kurve. Es verändert sich nur der Punkt auf der bestehenden Kurve.</div>
+          <div class="sub-h">Klick ein Beispiel an</div>
+          <div class="exgrid" id="punkt-ex"></div>
+          <div class="sub-h">Selbst manipulieren</div>
+          <div class="ctrl"><div class="ctrl-label"><span>Aktive Kurve</span></div>
+            <div class="seg" id="punkt-curve"><button data-c="nachfrage">Nachfrage</button><button class="on" data-c="angebot">Angebot</button></div></div>
+          <div class="ctrl"><div class="ctrl-label"><span>Preisveränderung</span><span class="ctrl-val" id="punkt-val">+15</span></div>
+            <input type="range" id="punkt-slider" min="-40" max="40" step="5" value="15">
+            <div class="hintline">Negativ = Preis sinkt, positiv = Preis steigt.</div></div>
+          <div class="note" id="punkt-note"></div>
+          <ul class="bul"><li>P0 / P1 markieren den alten und neuen Preis.</li><li>M0 / M1 markieren die alte und neue Menge.</li><li>Die Kurve bleibt gleich, nur der Punkt wandert.</li></ul>
+          <div class="sub-h">Mini-Check</div>
+          <div id="punkt-check"></div>
+          <div class="checkrow"><button class="btn" id="punkt-checkbtn">Mini-Check ausführen</button><span class="score" id="punkt-score"></span></div>
+        </div>
+      </div>
+
+      <!-- NACHFRAGE -->
+      <div class="panel" data-panel="nachfrage">
+        <div class="pcard">
+          <div class="phead"><div class="eyebrow">Nachfragekurve verschieben</div><span class="pill" id="pill-nachfrage">In Bearbeitung</span></div>
+          <h2>Wenn sich die Rahmenbedingungen ändern</h2>
+          <p class="ziel"><b>Lernziel:</b> Rahmenbedingungen auf der Nachfrageseite in rechts, links oder bleibt gleich übersetzen.</p>
+          <div class="lead"><b>Faustregel:</b> Verschiebt sich die Nachfragekurve, dann wollen Konsumenten bei jedem Preis mehr oder weniger kaufen als vorher. Nur dann entsteht eine neue Kurve.</div>
+          <div class="sub-h">Klick ein Beispiel an</div>
+          <div class="exgrid" id="nf-ex"></div>
+          <div class="sub-h">Regler für die Nachfrage</div>
+          <div class="ctrl"><div class="ctrl-label"><span>Nachfrage verschieben</span><span class="ctrl-val" id="nf-val">0</span></div>
+            <input type="range" id="nf-slider" min="-25" max="25" step="5" value="0">
+            <div class="hintline">Negativ = nach links, positiv = nach rechts, null = bleibt gleich.</div></div>
+          <div class="note" id="nf-note"></div>
+          <ul class="bul"><li>Rechtsverschiebung: Bei jedem Preis wird mehr nachgefragt.</li><li>Linksverschiebung: Bei jedem Preis wird weniger nachgefragt.</li><li>Nur der Preis des Guts selbst? Dann bleibt die Kurve gleich.</li></ul>
+          <div class="sub-h">Mini-Check</div>
+          <div id="nf-check"></div>
+          <div class="checkrow"><button class="btn" id="nf-checkbtn">Mini-Check ausführen</button><span class="score" id="nf-score"></span></div>
+        </div>
+      </div>
+
+      <!-- ANGEBOT -->
+      <div class="panel" data-panel="angebot">
+        <div class="pcard">
+          <div class="phead"><div class="eyebrow">Angebotskurve verschieben</div><span class="pill" id="pill-angebot">In Bearbeitung</span></div>
+          <h2>Wenn sich die Produktionsbedingungen ändern</h2>
+          <p class="ziel"><b>Lernziel:</b> Rahmenbedingungen auf der Angebotsseite in rechts, links oder bleibt gleich übersetzen.</p>
+          <div class="lead"><b>Faustregel:</b> Verschiebt sich die Angebotskurve, dann können oder wollen Anbieter bei jedem Preis mehr oder weniger anbieten als vorher.</div>
+          <div class="sub-h">Klick ein Beispiel an</div>
+          <div class="exgrid" id="an-ex"></div>
+          <div class="sub-h">Regler für das Angebot</div>
+          <div class="ctrl"><div class="ctrl-label"><span>Angebot verschieben</span><span class="ctrl-val" id="an-val">0</span></div>
+            <input type="range" id="an-slider" min="-25" max="25" step="5" value="0">
+            <div class="hintline">Negativ = nach links, positiv = nach rechts, null = bleibt gleich.</div></div>
+          <div class="note" id="an-note"></div>
+          <ul class="bul"><li>Rechtsverschiebung: Bei jedem Preis wird mehr angeboten.</li><li>Linksverschiebung: Bei jedem Preis wird weniger angeboten.</li><li>Nur der Marktpreis selbst? Dann wandert nur der Punkt auf der Angebotskurve.</li></ul>
+          <div class="sub-h">Mini-Check</div>
+          <div id="an-check"></div>
+          <div class="checkrow"><button class="btn" id="an-checkbtn">Mini-Check ausführen</button><span class="score" id="an-score"></span></div>
+        </div>
+      </div>
+
+      <!-- DIAGNOSE -->
+      <div class="panel" data-panel="diagnose">
+        <div class="pcard">
+          <div class="phead"><div class="eyebrow">Bewegung, Verschiebung oder keine Änderung?</div><span class="pill" id="pill-diagnose">In Bearbeitung</span></div>
+          <h2>Die eine Diagnosefrage</h2>
+          <p class="ziel"><b>Lernziel:</b> Preisveränderung, Kurvenverschiebung und keine Änderung sauber voneinander trennen.</p>
+          <div class="lead"><b>Diagnosefrage:</b> Ändert sich nur der Preis, verändert sich eine Rahmenbedingung oder gar nichts? Diese eine Frage verhindert die meisten Fehler.</div>
+          <p style="font-size:12.5px;color:#46586a;margin:0 0 8px;">Wähle bei jedem Fall die passendste Kategorie: Bewegung auf der Nachfrage- oder Angebotskurve, Nachfrage links/rechts, Angebot links/rechts oder keine Kurvenverschiebung.</p>
+          <div id="dg-check"></div>
+          <div class="checkrow"><button class="btn" id="dg-checkbtn">Diagnose prüfen</button><span class="score" id="dg-score"></span></div>
+        </div>
+      </div>
+
+      <!-- QUIZ -->
+      <div class="panel" data-panel="quiz">
+        <div class="pcard">
+          <div class="phead"><div class="eyebrow">Abschluss-Quiz</div><span class="pill" id="pill-quiz">In Bearbeitung</span></div>
+          <h2>Alles gemischt</h2>
+          <p class="ziel"><b>Lernziel:</b> Punkt, Verschiebung und keine Änderung in gemischten Fällen sicher unterscheiden.</p>
+          <p style="font-size:12.5px;color:#46586a;margin:0 0 8px;">Fünf gemischte Fälle. Wähle pro Fall die richtige Diagnose und prüfe am Schluss.</p>
+          <div id="quiz-check"></div>
+          <div class="checkrow"><button class="btn" id="quiz-checkbtn">Quiz auswerten</button><button class="btn ghost" id="quiz-reset">Zurücksetzen</button><span class="score" id="quiz-score"></span></div>
+        </div>
+      </div>
+
+      <!-- LABOR -->
+      <div class="panel" data-panel="labor">
+        <div class="pcard">
+          <div class="phead"><div class="eyebrow">Labor</div><span class="pill" id="pill-labor">In Bearbeitung</span></div>
+          <h2>Markt frei erkunden</h2>
+          <p class="ziel"><b>Lernziel:</b> Beide Kurven kombinieren und die Wirkung auf Preis und Menge ablesen.</p>
+          <div class="lead">Verschiebe beide Kurven gleichzeitig und beobachte, wie Gleichgewichtspreis und ‑menge wandern.</div>
+          <div class="ctrl"><div class="ctrl-label"><span>Nachfrage verschieben</span><span class="ctrl-val" id="lab-nf-val">0</span></div>
+            <input type="range" id="lab-nf" min="-25" max="25" step="5" value="0"></div>
+          <div class="ctrl"><div class="ctrl-label"><span>Angebot verschieben</span><span class="ctrl-val" id="lab-an-val">0</span></div>
+            <input type="range" id="lab-an" min="-25" max="25" step="5" value="0"></div>
+          <div class="note" id="lab-note"></div>
+          <button class="btn ghost" id="lab-reset">Auf Ausgangslage zurück</button>
+        </div>
+      </div>
+
+      <div class="tabnav">
+        <button class="btn ghost" id="nav-prev">← Zurück</button>
+        <button class="btn" id="nav-next">Nächster Bereich →</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  Interaktive Lernfolie zu Angebot und Nachfrage · Bewegung auf der Kurve vs. Verschiebung der Kurve.
+  <div class="cr">© 2026 Samuel Mollet · HKV Aarau · realisiert mit Claude (Anthropic)</div>
+</div>
+
+<script>
+  // ---------- Diagramm-Engine ----------
+  const PL=54,PR=22,PT=20,PB=44,W=560,H=440;
+  const pl=PL, pr=W-PR, pt=PT, pb=H-PB, pw=pr-pl, ph=pb-pt;
+  const sx=Q=>pl+(Q/100)*pw, sy=P=>pb-(P/100)*ph;
+  const C={dem:'#E2574C', sup:'#2C6BAA', old:'#9AA7B4', guide:'#9AA7B4', ax:'#28435E'};
+  const demP=(Q,s=0)=>90-0.8*(Q-s), supP=(Q,s=0)=>10+0.8*(Q-s);
+  const demQ=(P,s=0)=>(90-P)/0.8+s, supQ=(P,s=0)=>(P-10)/0.8+s;
+  const eq=(sd=0,ss=0)=>({Q:50+0.5*sd+0.5*ss, P:50+0.4*sd-0.4*ss});
+  const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+  function ln(x1,y1,x2,y2,col,w,dash){ return `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${col}" stroke-width="${w}" ${dash?`stroke-dasharray="${dash}"`:''} stroke-linecap="round" clip-path="url(#plotclip)"/>`; }
+  function curve(type,s,col,w,dash){ const f=type==='dem'?demP:supP; return ln(sx(0),sy(f(0,s)),sx(100),sy(f(100,s)),col,w,dash); }
+  function clabel(type,s,col,txt){ const f=type==='dem'?demP:supP; let Q=type==='dem'?12:88; let P=cl(f(Q,s),12,96); Q=type==='dem'?cl((90-P)/0.8+s,2,42):cl((P-10)/0.8+s,58,98); return `<text x="${sx(Q).toFixed(1)}" y="${(sy(P)-7).toFixed(1)}" font-size="13" font-weight="800" fill="${col}">${txt}</text>`; }
+  function point(P,Q,col,lp,lm,solid){ const x=sx(cl(Q,0,100)),y=sy(cl(P,0,100)); let s='';
+    s+=`<line x1="${pl}" y1="${y.toFixed(1)}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="${C.guide}" stroke-width="1.3" stroke-dasharray="4 4"/>`;
+    s+=`<line x1="${x.toFixed(1)}" y1="${y.toFixed(1)}" x2="${x.toFixed(1)}" y2="${pb}" stroke="${C.guide}" stroke-width="1.3" stroke-dasharray="4 4"/>`;
+    s+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5.3" fill="${solid?col:'#fff'}" stroke="${col}" stroke-width="2.4"/>`;
+    s+=`<text x="${pl-7}" y="${(y+4).toFixed(1)}" text-anchor="end" font-size="11" font-weight="800" fill="${col}">${lp}</text>`;
+    s+=`<text x="${x.toFixed(1)}" y="${pb+16}" text-anchor="middle" font-size="11" font-weight="800" fill="${col}">${lm}</text>`; return s; }
+  function axes(){ let s='';
+    s+=`<line x1="${pl}" y1="${pb}" x2="${pr+8}" y2="${pb}" stroke="${C.ax}" stroke-width="2"/>`;
+    s+=`<line x1="${pl}" y1="${pb}" x2="${pl}" y2="${pt-8}" stroke="${C.ax}" stroke-width="2"/>`;
+    s+=`<path d="M${pr+8},${pb} l-9,-4.5 l0,9 z" fill="${C.ax}"/><path d="M${pl},${pt-8} l-4.5,9 l9,0 z" fill="${C.ax}"/>`;
+    s+=`<text x="${pr+4}" y="${pb+28}" text-anchor="end" font-size="12.5" font-weight="800" fill="${C.ax}">Menge</text>`;
+    s+=`<text x="${pl}" y="${pt-14}" text-anchor="middle" font-size="12.5" font-weight="800" fill="${C.ax}">Preis</text>`; return s; }
+  function dir(v){ return v>0.4?'up':(v<-0.4?'down':'same'); }
+
+  const $=id=>document.getElementById(id);
+  const scene=$('scene'), legendEl=$('legend');
+  function legend(items){ legendEl.innerHTML=items.map(it=>`<span><i style="border-color:${it.c}"></i>${it.t}</span>`).join(''); }
+  function setReadout(items){ const ids=[['r-k1','r-v1'],['r-k2','r-v2'],['r-k3','r-v3']];
+    items.forEach((it,i)=>{ $(ids[i][0]).textContent=it.label; const v=$(ids[i][1]); const d=it.dir||'none';
+      v.className='v '+(d==='up'?'up':d==='down'?'down':'same'); v.innerHTML=(d==='up'?'▲ ':d==='down'?'▼ ':d==='same'?'■ ':'')+it.value; }); }
+  const word=d=>d==='up'?'steigt':d==='down'?'sinkt':'gleich';
+
+  // ---------- Zustand ----------
+  const state={ tab:'punkt', punktCurve:'angebot', punktDelta:15, nf:0, an:0, labNf:0, labAn:0 };
+  const solved=new Set();
+  function markSolved(tab){ if(solved.has(tab))return; solved.add(tab);
+    const el=document.querySelector('.tab[data-tab="'+tab+'"]'); if(el) el.classList.add('solved');
+    const p=$('pill-'+tab); if(p){ p.textContent='✓ Gelöst'; p.classList.add('done'); }
+    $('solvedN').textContent=solved.size; }
+
+  // ---------- Render ----------
+  function render(){
+    let g=axes();
+    if(state.tab==='punkt'){
+      const isD=state.punktCurve==='nachfrage', col=isD?C.dem:C.sup, type=isD?'dem':'sup';
+      const P0=50, P1=cl(P0+state.punktDelta,8,92), Q0=isD?demQ(P0):supQ(P0), Q1=isD?demQ(P1):supQ(P1);
+      g+=curve(isD?'sup':'dem',0,'#D7E0E8',2.5,null);
+      g+=curve(type,0,col,4,null)+clabel(type,0,col,isD?'N':'A');
+      g+=point(P0,Q0,C.old,'P0','M0',true);
+      if(Math.abs(state.punktDelta)>0.1) g+=point(P1,Q1,col,'P1','M1',true);
+      const pD=dir(state.punktDelta), mD=dir(isD?-state.punktDelta:state.punktDelta);
+      setReadout([{label:'Preis',value:word(pD),dir:pD},{label:'Menge auf der Kurve',value:word(mD),dir:mD},{label:'Kurve',value:'bleibt gleich',dir:'same'}]);
+      legend([{c:col,t:isD?'Nachfrage':'Angebot'},{c:C.old,t:'alte Lage'}]);
+    } else if(state.tab==='nachfrage'){
+      const sd=state.nf, e0=eq(0,0), e1=eq(sd,0);
+      g+=curve('sup',0,C.sup,4,null)+clabel('sup',0,C.sup,'A');
+      g+=curve('dem',0,'#E9B7B2',2.5,'7 5');
+      g+=curve('dem',sd,C.dem,4,null)+clabel('dem',sd,C.dem,'N1');
+      g+=point(e0.P,e0.Q,C.old,'P0','M0',true);
+      if(Math.abs(sd)>0.1) g+=point(e1.P,e1.Q,C.dem,'P1','M1',true);
+      const nD=dir(sd), pD=dir(e1.P-e0.P), mD=dir(e1.Q-e0.Q);
+      setReadout([{label:'Nachfrage',value:word(nD),dir:nD},{label:'Preis',value:word(pD),dir:pD},{label:'Menge',value:word(mD),dir:mD}]);
+      legend([{c:C.sup,t:'Angebot'},{c:C.dem,t:'Nachfrage neu'},{c:'#E9B7B2',t:'Nachfrage alt'}]);
+    } else if(state.tab==='angebot'){
+      const ss=state.an, e0=eq(0,0), e1=eq(0,ss);
+      g+=curve('dem',0,C.dem,4,null)+clabel('dem',0,C.dem,'N');
+      g+=curve('sup',0,'#AFC4DA',2.5,'7 5');
+      g+=curve('sup',ss,C.sup,4,null)+clabel('sup',ss,C.sup,'A1');
+      g+=point(e0.P,e0.Q,C.old,'P0','M0',true);
+      if(Math.abs(ss)>0.1) g+=point(e1.P,e1.Q,C.sup,'P1','M1',true);
+      const aD=dir(ss), pD=dir(e1.P-e0.P), mD=dir(e1.Q-e0.Q);
+      setReadout([{label:'Angebot',value:word(aD),dir:aD},{label:'Preis',value:word(pD),dir:pD},{label:'Menge',value:word(mD),dir:mD}]);
+      legend([{c:C.dem,t:'Nachfrage'},{c:C.sup,t:'Angebot neu'},{c:'#AFC4DA',t:'Angebot alt'}]);
+    } else if(state.tab==='labor'){
+      const sd=state.labNf, ss=state.labAn, e0=eq(0,0), e1=eq(sd,ss);
+      g+=curve('dem',0,'#E9B7B2',2,'6 5')+curve('sup',0,'#AFC4DA',2,'6 5');
+      g+=curve('dem',sd,C.dem,4,null)+clabel('dem',sd,C.dem,'N');
+      g+=curve('sup',ss,C.sup,4,null)+clabel('sup',ss,C.sup,'A');
+      g+=point(e0.P,e0.Q,C.old,'P0','M0',true);
+      if(Math.abs(sd)>0.1||Math.abs(ss)>0.1) g+=point(e1.P,e1.Q,'#1F4E78','P1','M1',true);
+      const pD=dir(e1.P-e0.P), mD=dir(e1.Q-e0.Q);
+      setReadout([{label:'Preis',value:word(pD),dir:pD},{label:'Menge',value:word(mD),dir:mD},{label:'Gleichgewicht',value:(Math.abs(sd)<0.1&&Math.abs(ss)<0.1)?'Ausgangslage':'wandert',dir:'none'}]);
+      legend([{c:C.dem,t:'Nachfrage'},{c:C.sup,t:'Angebot'},{c:C.old,t:'Ausgangslage'}]);
+    } else { // diagnose, quiz
+      g+=curve('sup',0,C.sup,4,null)+clabel('sup',0,C.sup,'A');
+      g+=curve('dem',0,C.dem,4,null)+clabel('dem',0,C.dem,'N');
+      const e=eq(0,0); g+=point(e.P,e.Q,'#1F4E78','P*','M*',true);
+      setReadout([{label:'Diagnosefrage',value:'Punkt, Kurve oder nichts?',dir:'none'},{label:'Preis',value:'?',dir:'none'},{label:'Menge',value:'?',dir:'none'}]);
+      legend([{c:C.sup,t:'Angebot'},{c:C.dem,t:'Nachfrage'}]);
+    }
+    scene.innerHTML=g;
+  }
+
+  // ---------- Tabs + Navigation ----------
+  const ORDER=['punkt','nachfrage','angebot','diagnose','quiz','labor'];
+  function showTab(t){ state.tab=t;
+    document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===t));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.dataset.panel===t));
+    render(); }
+  document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>showTab(t.dataset.tab)));
+  $('nav-prev').addEventListener('click',()=>{ const i=ORDER.indexOf(state.tab); showTab(ORDER[(i-1+ORDER.length)%ORDER.length]); });
+  $('nav-next').addEventListener('click',()=>{ const i=ORDER.indexOf(state.tab); showTab(ORDER[(i+1)%ORDER.length]); });
+
+  // ---------- generische Bausteine ----------
+  function buildExamples(boxId, items, onPick){ const box=$(boxId); box.innerHTML='';
+    items.forEach((it,i)=>{ const b=document.createElement('button'); b.className='exchip'; b.type='button';
+      b.innerHTML=`<span class="t">${it.t}</span><span class="d">${it.d}</span>`;
+      b.addEventListener('click',()=>{ box.querySelectorAll('.exchip').forEach(x=>x.classList.remove('on')); b.classList.add('on'); onPick(it); });
+      box.appendChild(b); }); }
+  function buildCheck(boxId, cases, opts, btnId, scoreId, tabKey){ const box=$(boxId); box.innerHTML='';
+    cases.forEach((c,i)=>{ const d=document.createElement('div'); d.className='case';
+      d.innerHTML=`<div class="q">${c.q}</div>`+(c.sub?`<div class="qsub">${c.sub}</div>`:'')+
+        `<select id="${boxId}_${i}" aria-label="Antwort Fall ${i+1}">`+opts.map(o=>`<option value="${o[0]}">${o[1]}</option>`).join('')+`</select>`+
+        `<div class="casefb" id="${boxId}_fb_${i}"></div>`; box.appendChild(d); });
+    $(btnId).onclick=()=>{ let ok=0; cases.forEach((c,i)=>{ const v=$(`${boxId}_${i}`).value, fb=$(`${boxId}_fb_${i}`);
+      if(v===''){ fb.className='casefb show no'; fb.textContent='Bitte zuerst eine Antwort wählen.'; }
+      else if(v===c.a){ ok++; fb.className='casefb show ok'; fb.textContent='Richtig. '+(c.fb||''); }
+      else { fb.className='casefb show no'; fb.textContent='Noch nicht. '+(c.fb||''); } });
+      if(scoreId) $(scoreId).textContent=ok+' von '+cases.length+' richtig';
+      if(ok===cases.length) markSolved(tabKey); }; }
+
+  // ---------- PUNKT ----------
+  const PUNKT_EX=[
+    {t:'Kaffee wird billiger', d:'Preis sinkt → nachgefragte Menge steigt. Nachfragekurve bleibt gleich.', curve:'nachfrage', delta:-15},
+    {t:'Kaffee wird teurer', d:'Preis steigt → nachgefragte Menge sinkt. Punkt auf der Nachfragekurve.', curve:'nachfrage', delta:15},
+    {t:'Marktpreis steigt für Anbieter', d:'Preis steigt → angebotene Menge steigt. Bewegung auf der Angebotskurve.', curve:'angebot', delta:15},
+    {t:'Marktpreis sinkt für Anbieter', d:'Preis sinkt → angebotene Menge sinkt. Angebotskurve bleibt gleich.', curve:'angebot', delta:-15},
+  ];
+  buildExamples('punkt-ex', PUNKT_EX, it=>{ state.punktCurve=it.curve; state.punktDelta=it.delta;
+    $('punkt-curve').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x.dataset.c===it.curve));
+    $('punkt-slider').value=it.delta; $('punkt-val').textContent=(it.delta>0?'+':'')+it.delta;
+    $('punkt-note').textContent=it.d; render(); });
+  $('punkt-curve').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b)return; state.punktCurve=b.dataset.c;
+    $('punkt-curve').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b)); punktNote(); render(); });
+  $('punkt-slider').addEventListener('input',e=>{ state.punktDelta=+e.target.value; $('punkt-val').textContent=(state.punktDelta>0?'+':'')+state.punktDelta;
+    $('punkt-ex').querySelectorAll('.exchip').forEach(x=>x.classList.remove('on')); punktNote(); render(); });
+  function punktNote(){ const isD=state.punktCurve==='nachfrage', up=state.punktDelta>0, z=Math.abs(state.punktDelta)<0.1;
+    let t; if(z) t='Bewege den Regler – der Punkt wandert auf der '+(isD?'Nachfragekurve':'Angebotskurve')+'. Die Kurve bleibt gleich.';
+    else if(isD) t=up?'Höherer Preis → kleinere nachgefragte Menge. Der Punkt rutscht die Nachfragekurve hinauf. Die Kurve bleibt gleich.':'Tieferer Preis → grössere nachgefragte Menge. Der Punkt wandert die Nachfragekurve hinunter. Die Kurve bleibt gleich.';
+    else t=up?'Höherer Preis → grössere angebotene Menge. Bewegung auf der Angebotskurve nach oben. Die Kurve bleibt gleich.':'Tieferer Preis → kleinere angebotene Menge. Bewegung auf der Angebotskurve nach unten. Die Kurve bleibt gleich.';
+    $('punkt-note').textContent=t; }
+  const PUNKT_OPTS=[['','Bitte wählen'],['pn','Punkt auf Nachfragekurve'],['pa','Punkt auf Angebotskurve'],['shift','Kurve verschiebt sich'],['nichts','Gar nichts ändert sich']];
+  buildCheck('punkt-check',[
+    {q:'Fall 1: Der Preis eines Sneakers sinkt, Einkommen und Mode bleiben gleich.', a:'pn', fb:'Nur der Preis ändert sich → Bewegung auf der Nachfragekurve.'},
+    {q:'Fall 2: Der Marktpreis für Produzenten steigt, die Produktionskosten bleiben gleich.', a:'pa', fb:'Nur der Preis ändert sich → Bewegung auf der Angebotskurve.'},
+    {q:'Fall 3: Weder Preis noch Rahmenbedingungen verändern sich.', a:'nichts', fb:'Kein Punkt wandert, keine Kurve verschiebt sich.'},
+  ], PUNKT_OPTS, 'punkt-checkbtn','punkt-score','punkt');
+
+  // ---------- NACHFRAGE ----------
+  const NF_EX=[
+    {t:'Höheres Einkommen', d:'Mehr Kaufkraft → Nachfrage nach rechts.', shift:15, note:'Mehr Kaufkraft → bei jedem Preis wird mehr gekauft. Nachfrage nach rechts.'},
+    {t:'Butter wird teurer', d:'Substitutionsgut → Nachfrage nach rechts.', shift:15, note:'Das Konkurrenzprodukt wird teurer → man weicht aus. Nachfrage nach rechts.'},
+    {t:'Wohnkosten steigen', d:'Budgetdruck → Nachfrage nach links.', shift:-15, note:'Weniger Budget übrig → bei jedem Preis wird weniger gekauft. Nachfrage nach links.'},
+    {t:'Preis des Guts steigt', d:'Nur Preiswechsel → Kurve bleibt gleich.', shift:0, note:'Nur der Preis des Guts ändert sich → die Kurve bleibt gleich, nur der Punkt wandert.'},
+    {t:'Rahmenbedingungen bleiben gleich', d:'Keine neue Information → bleibt gleich.', shift:0, note:'Keine neue Rahmenbedingung → die Nachfragekurve bleibt gleich.'},
+  ];
+  buildExamples('nf-ex', NF_EX, it=>{ state.nf=it.shift; $('nf-slider').value=it.shift; $('nf-val').textContent=(it.shift>0?'+':'')+it.shift; $('nf-note').textContent=it.note; render(); });
+  $('nf-slider').addEventListener('input',e=>{ state.nf=+e.target.value; $('nf-val').textContent=(state.nf>0?'+':'')+state.nf; $('nf-ex').querySelectorAll('.exchip').forEach(x=>x.classList.remove('on')); nfNote(); render(); });
+  function nfNote(){ const r=state.nf>0.1,l=state.nf<-0.1; $('nf-note').textContent=r?'Bei jedem Preis wird mehr nachgefragt. Die Nachfragekurve verschiebt sich nach rechts – im neuen Gleichgewicht steigen Preis und Menge.':l?'Bei jedem Preis wird weniger nachgefragt. Die Nachfragekurve verschiebt sich nach links – im neuen Gleichgewicht sinken Preis und Menge.':'Verschiebe die Nachfrage oder klick ein Beispiel an.'; }
+  const NF_OPTS=[['','Bitte wählen'],['r','Nachfrage nach rechts'],['l','Nachfrage nach links'],['g','Nachfrage bleibt gleich']];
+  buildCheck('nf-check',[
+    {q:'Höheres Einkommen', sub:'Die Kaufkraft der Haushalte steigt.', a:'r', fb:'Eine Rahmenbedingung ändert sich → Nachfrage nach rechts.'},
+    {q:'Preis des betrachteten Guts steigt', sub:'Es gibt keine neue Information ausser dem Preis.', a:'g', fb:'Nur der Preis → die Kurve bleibt gleich, der Punkt wandert.'},
+    {q:'Wohnkosten steigen stark', sub:'Haushalte sparen bei Restaurantbesuchen.', a:'l', fb:'Weniger Budget → Nachfrage nach links.'},
+    {q:'Keine Änderung bei Einkommen, Trends oder Erwartungen', sub:'Es liegt keine neue Rahmenbedingung vor.', a:'g', fb:'Keine neue Rahmenbedingung → die Kurve bleibt gleich.'},
+  ], NF_OPTS,'nf-checkbtn','nf-score','nachfrage');
+
+  // ---------- ANGEBOT ----------
+  const AN_EX=[
+    {t:'Neues Produktionsverfahren', d:'Tiefere Kosten → Angebot nach rechts.', shift:15, note:'Günstiger produzieren → bei jedem Preis wird mehr angeboten. Angebot nach rechts.'},
+    {t:'Rekordernte bei Äpfeln', d:'Mehr Verfügbarkeit → Angebot nach rechts.', shift:15, note:'Mehr Verfügbarkeit → bei jedem Preis wird mehr angeboten. Angebot nach rechts.'},
+    {t:'Energiepreise steigen', d:'Höhere Kosten → Angebot nach links.', shift:-15, note:'Teurer produzieren → bei jedem Preis wird weniger angeboten. Angebot nach links.'},
+    {t:'Marktpreis steigt', d:'Nur Preiswechsel → Punkt wandert.', shift:0, note:'Nur der Marktpreis ändert sich → die Kurve bleibt gleich, nur der Punkt wandert.'},
+    {t:'Rahmenbedingungen bleiben gleich', d:'Keine neue Information → bleibt gleich.', shift:0, note:'Keine neue Rahmenbedingung → die Angebotskurve bleibt gleich.'},
+  ];
+  buildExamples('an-ex', AN_EX, it=>{ state.an=it.shift; $('an-slider').value=it.shift; $('an-val').textContent=(it.shift>0?'+':'')+it.shift; $('an-note').textContent=it.note; render(); });
+  $('an-slider').addEventListener('input',e=>{ state.an=+e.target.value; $('an-val').textContent=(state.an>0?'+':'')+state.an; $('an-ex').querySelectorAll('.exchip').forEach(x=>x.classList.remove('on')); anNote(); render(); });
+  function anNote(){ const r=state.an>0.1,l=state.an<-0.1; $('an-note').textContent=r?'Bei jedem Preis wird mehr angeboten. Die Angebotskurve verschiebt sich nach rechts – im neuen Gleichgewicht sinkt der Preis und die Menge steigt.':l?'Bei jedem Preis wird weniger angeboten. Die Angebotskurve verschiebt sich nach links – im neuen Gleichgewicht steigt der Preis und die Menge sinkt.':'Verschiebe das Angebot oder klick ein Beispiel an.'; }
+  const AN_OPTS=[['','Bitte wählen'],['r','Angebot nach rechts'],['l','Angebot nach links'],['g','Angebot bleibt gleich']];
+  buildCheck('an-check',[
+    {q:'Neues Produktionsverfahren', sub:'Die Stückkosten sinken deutlich.', a:'r', fb:'Tiefere Kosten → Angebot nach rechts.'},
+    {q:'Marktpreis steigt', sub:'Es gibt keine neue Information zu Kosten oder Technik.', a:'g', fb:'Nur der Preis → die Kurve bleibt gleich, der Punkt wandert.'},
+    {q:'Energiepreise steigen stark', sub:'Die Produktion wird teurer.', a:'l', fb:'Höhere Kosten → Angebot nach links.'},
+    {q:'Keine Änderung bei Kosten, Ernte oder Anzahl Anbieter', sub:'Es liegt keine neue Rahmenbedingung vor.', a:'g', fb:'Keine neue Rahmenbedingung → die Kurve bleibt gleich.'},
+  ], AN_OPTS,'an-checkbtn','an-score','angebot');
+
+  // ---------- DIAGNOSE ----------
+  const DG_OPTS=[['','Bitte wählen'],['pn','Punkt auf Nachfragekurve'],['pa','Punkt auf Angebotskurve'],['nr','Nachfrage nach rechts'],['nl','Nachfrage nach links'],['ar','Angebot nach rechts'],['al','Angebot nach links'],['kein','Keine Kurvenverschiebung']];
+  buildCheck('dg-check',[
+    {q:'Situation 1: Der Preis eines Smartphones sinkt, Einkommen und Präferenzen bleiben gleich.', a:'pn', fb:'Nur der Preis → Bewegung auf der Nachfragekurve.'},
+    {q:'Situation 2: Der Marktpreis für Erdbeeren steigt, die Produktionskosten bleiben gleich.', a:'pa', fb:'Nur der Preis → Bewegung auf der Angebotskurve.'},
+    {q:'Situation 3: Eine Werbekampagne macht Schutzhelme deutlich beliebter.', a:'nr', fb:'Präferenzen ändern sich → Nachfrage nach rechts.'},
+    {q:'Situation 4: Strom und Gas verteuern die Produktion von Brot.', a:'al', fb:'Höhere Kosten → Angebot nach links.'},
+    {q:'Situation 5: Es gibt keine neue Information zu Einkommen, Kosten, Erwartungen oder Präferenzen.', a:'kein', fb:'Nichts ändert sich → keine Verschiebung.'},
+    {q:'Situation 6: Einfuhrregeln für einen wichtigen Rohstoff werden gelockert.', a:'ar', fb:'Rohstoff leichter verfügbar → günstiger produzieren → Angebot nach rechts.'},
+    {q:'Situation 7: Drucker werden billiger, deshalb steigt die Nachfrage nach Druckerpatronen.', a:'nr', fb:'Komplementärgut wird günstiger → Nachfrage nach den Patronen nach rechts.'},
+    {q:'Situation 8: Höhere Wohnkosten zwingen Haushalte, bei Restaurantbesuchen zu sparen.', a:'nl', fb:'Weniger Budget → Nachfrage nach links.'},
+  ], DG_OPTS,'dg-checkbtn','dg-score','diagnose');
+
+  // ---------- QUIZ ----------
+  const Q_OPTS=DG_OPTS;
+  function buildQuiz(){ buildCheck('quiz-check',[
+    {q:'Fall 1: Der Benzinpreis steigt, sonst ändert sich nichts.', a:'pn', fb:'Nur der Preis → Bewegung auf der Nachfragekurve.'},
+    {q:'Fall 2: Eine neue Maschine senkt die Herstellungskosten von Velos.', a:'ar', fb:'Tiefere Kosten → Angebot nach rechts.'},
+    {q:'Fall 3: Ein Modetrend macht Sneakers plötzlich sehr begehrt.', a:'nr', fb:'Präferenzen ändern sich → Nachfrage nach rechts.'},
+    {q:'Fall 4: In der Hochsaison steigt der Verkaufspreis von Erdbeeren für die Produzenten.', a:'pa', fb:'Nur der Preis → Bewegung auf der Angebotskurve.'},
+    {q:'Fall 5: Es ändert sich weder der Preis noch eine Rahmenbedingung.', a:'kein', fb:'Nichts ändert sich → keine Verschiebung.'},
+  ], Q_OPTS,'quiz-checkbtn','quiz-score','quiz'); }
+  buildQuiz();
+  $('quiz-reset').addEventListener('click',()=>{ buildQuiz(); });
+
+  // ---------- LABOR ----------
+  $('lab-nf').addEventListener('input',e=>{ state.labNf=+e.target.value; $('lab-nf-val').textContent=(state.labNf>0?'+':'')+state.labNf; labNote(); render(); markSolved('labor'); });
+  $('lab-an').addEventListener('input',e=>{ state.labAn=+e.target.value; $('lab-an-val').textContent=(state.labAn>0?'+':'')+state.labAn; labNote(); render(); markSolved('labor'); });
+  $('lab-reset').addEventListener('click',()=>{ state.labNf=0; state.labAn=0; $('lab-nf').value=0; $('lab-an').value=0; $('lab-nf-val').textContent='0'; $('lab-an-val').textContent='0'; labNote(); render(); });
+  function labNote(){ const e0=eq(0,0),e1=eq(state.labNf,state.labAn),dp=e1.P-e0.P,dq=e1.Q-e0.Q;
+    if(Math.abs(state.labNf)<0.1&&Math.abs(state.labAn)<0.1){ $('lab-note').textContent='Ausgangslage – verschiebe eine oder beide Kurven.'; return; }
+    const pw=Math.abs(dp)<0.5?'bleibt etwa gleich':dp>0?'steigt':'sinkt', qw=Math.abs(dq)<0.5?'bleibt etwa gleich':dq>0?'steigt':'sinkt';
+    $('lab-note').textContent='Neues Gleichgewicht: Preis '+pw+', Menge '+qw+'.'; }
+
+  // ---------- Init ----------
+  punktNote(); nfNote(); anNote(); labNote(); render();
+</script>
+</body>
+</html>
