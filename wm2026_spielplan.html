@@ -348,7 +348,7 @@ footer { margin-top: 22px; padding: 14px; text-align: center; color: var(--muted
     <!-- 1) Ewige Bestenliste Tore -->
     <div class="scorer-card">
       <div class="scorer-head" style="background:#FEF3C7;border-color:#FDE68A;">
-        🏆 <strong>Ewige Bestenliste — Tore</strong><br>Meiste WM-Tore aller Zeiten (seit 1930), inkl. WM 2026 (<span style="color:#dc2626;font-weight:700;">+x</span>). <span style="color:#16a34a;font-weight:700;">● aktiv</span> = noch im Turnier dabei.
+        🏆 <strong>Ewige Bestenliste — Tore</strong><br>Meiste WM-Tore aller Zeiten (seit 1930), inkl. WM 2026 (<span style="color:#dc2626;font-weight:700;">+x</span>). <span style="color:#16a34a;font-weight:700;">● aktiv</span> = noch im Turnier dabei · <span style="color:#9aa3b0;font-weight:600;">(Zahl)</span> = Alter, <span style="color:#9aa3b0;font-weight:600;">†&nbsp;Jahr</span> = verstorben.
       </div>
       <div id="eternal-list"></div>
     </div>
@@ -1517,22 +1517,23 @@ function renderScorers() {
 
 // ═══ EWIGE WM-TORSCHÜTZENLISTE (historisch bis 2022 + Live-Merge WM 2026) ═══
 const ETERNAL = [
-  { name:'Miroslav Klose',    flag:'🇩🇪', land:'Deutschland', base:16 },
-  { name:'Ronaldo',           flag:'🇧🇷', land:'Brasilien',   base:15 },
-  { name:'Gerd Müller',       flag:'🇩🇪', land:'Deutschland', base:14 },
-  { name:'Just Fontaine',     flag:'🇫🇷', land:'Frankreich',  base:13 },
-  { name:'Lionel Messi',      flag:'🇦🇷', land:'Argentinien', base:13, live:['messi'], active:true },
-  { name:'Pelé',              flag:'🇧🇷', land:'Brasilien',   base:12 },
-  { name:'Kylian Mbappé',     flag:'🇫🇷', land:'Frankreich',  base:12, live:['mbappe'], active:true },
-  { name:'Sándor Kocsis',     flag:'🇭🇺', land:'Ungarn',      base:11 },
-  { name:'Jürgen Klinsmann',  flag:'🇩🇪', land:'Deutschland', base:11 },
-  { name:'Helmut Rahn',       flag:'🇩🇪', land:'Deutschland', base:10 },
-  { name:'Gary Lineker',      flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', land:'England', base:10 },
-  { name:'Gabriel Batistuta', flag:'🇦🇷', land:'Argentinien', base:10 },
-  { name:'Teófilo Cubillas',  flag:'🇵🇪', land:'Peru',        base:10 },
-  { name:'Thomas Müller',     flag:'🇩🇪', land:'Deutschland', base:10 },
-  { name:'Grzegorz Lato',     flag:'🇵🇱', land:'Polen',       base:10 },
-  { name:'Cristiano Ronaldo', flag:'🇵🇹', land:'Portugal',    base:8, live:['cristiano'], active:true },
+  { name:'Miroslav Klose',    flag:'🇩🇪', land:'Deutschland', base:16, age:48 },
+  { name:'Ronaldo',           flag:'🇧🇷', land:'Brasilien',   base:15, age:49 },
+  { name:'Gerd Müller',       flag:'🇩🇪', land:'Deutschland', base:14, died:2021 },
+  { name:'Just Fontaine',     flag:'🇫🇷', land:'Frankreich',  base:13, died:2023 },
+  { name:'Lionel Messi',      flag:'🇦🇷', land:'Argentinien', base:13, age:39, live:['messi'], active:true },
+  { name:'Pelé',              flag:'🇧🇷', land:'Brasilien',   base:12, died:2022 },
+  { name:'Kylian Mbappé',     flag:'🇫🇷', land:'Frankreich',  base:12, age:27, live:['mbappe'], active:true },
+  { name:'Harry Kane',        flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', land:'England', base:8, age:32, live:['kane'], active:true },
+  { name:'Sándor Kocsis',     flag:'🇭🇺', land:'Ungarn',      base:11, died:1979 },
+  { name:'Jürgen Klinsmann',  flag:'🇩🇪', land:'Deutschland', base:11, age:61 },
+  { name:'Helmut Rahn',       flag:'🇩🇪', land:'Deutschland', base:10, died:2003 },
+  { name:'Gary Lineker',      flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', land:'England', base:10, age:65 },
+  { name:'Gabriel Batistuta', flag:'🇦🇷', land:'Argentinien', base:10, age:57 },
+  { name:'Teófilo Cubillas',  flag:'🇵🇪', land:'Peru',        base:10, age:77 },
+  { name:'Thomas Müller',     flag:'🇩🇪', land:'Deutschland', base:10, age:36 },
+  { name:'Grzegorz Lato',     flag:'🇵🇱', land:'Polen',       base:10, age:76 },
+  { name:'Cristiano Ronaldo', flag:'🇵🇹', land:'Portugal',    base:8, age:41, live:['cristiano'], active:true },
 ];
 function renderEternal() {
   const el = document.getElementById('eternal-list');
@@ -1558,8 +1559,9 @@ function renderEternal() {
       if (r.total !== prev) { rank = i + 1; prev = r.total; }
       const plusTxt = r.plus > 0 ? ' <span style="color:#dc2626;font-size:11px;font-weight:700;">+' + r.plus + '</span>' : '';
       const activeTxt = r.active ? ' <span style="color:#16a34a;font-size:10.5px;font-weight:700;white-space:nowrap;" title="noch aktiv — kann an der WM 2026 weitere Tore erzielen">● aktiv</span>' : '';
+      const infoTxt = r.died ? ' <span style="color:#9aa3b0;font-size:11.5px;font-weight:600;white-space:nowrap;" title="verstorben ' + r.died + '">(† ' + r.died + ')</span>' : (r.age ? ' <span style="color:#9aa3b0;font-size:11.5px;font-weight:600;">(' + r.age + ')</span>' : '');
       return '<tr><td class="num rank">' + rank + '</td>' +
-        '<td class="player">' + r.name + activeTxt + '</td>' +
+        '<td class="player">' + r.name + infoTxt + activeTxt + '</td>' +
         '<td>' + r.flag + ' ' + r.land + '</td>' +
         '<td class="num goals-num">' + r.total + plusTxt + '</td></tr>';
     }).join('') + '</tbody></table>';
