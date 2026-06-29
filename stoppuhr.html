@@ -21,7 +21,7 @@
     background:radial-gradient(ellipse at center, rgba(60,45,10,.38) 0%, rgba(60,45,10,0) 70%);
     filter:blur(3px); z-index:0; pointer-events:none;
   }
-  .tilt{ width:100%; transform:rotateX(9deg); transition:transform .12s ease-out; will-change:transform; z-index:1; }
+  .tilt{ width:100%; z-index:1; }
   .watch-wrap{ width:100%; line-height:0; transform-style:preserve-3d;
     filter:drop-shadow(0 20px 28px rgba(60,45,10,.32)); }
   .watch-wrap.done{ animation:ring 1.1s ease-in-out 0s 3; }
@@ -167,6 +167,8 @@
           <ellipse cx="158" cy="196" rx="132" ry="86" fill="url(#glass)"/>
           <path d="M 96 168 A 150 150 0 0 1 286 130" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.4" stroke-linecap="round"/>
         </g>
+        <!-- Klickfläche zum Einstellen der Zeit -->
+        <circle id="setarea" cx="210" cy="272" r="158" fill="transparent" style="cursor:pointer;touch-action:none"/>
       </svg>
     </div>
   </div>
@@ -191,7 +193,7 @@
 </div>
 
 <div class="credit">© 2026 Samuel Mollet · HKV Aarau · realisiert mit Claude (Anthropic)<br>
-Leertaste = Start/Pause · R = Zurücksetzen · Klick auf die Krone = Start/Pause</div>
+Klick ins Zifferblatt = Restzeit einstellen · Dauer über die Chips · Krone / Leertaste = Start/Pause · R = Zurücksetzen</div>
 
 <script>
 (function(){
@@ -209,6 +211,8 @@ Leertaste = Start/Pause · R = Zurücksetzen · Klick auf die Krone = Start/Paus
   var tickBtn=document.getElementById('tickBtn');
   var gongBtn=document.getElementById('gongBtn');
   var crown=document.getElementById('crown');
+  var svg=document.querySelector('svg');
+  var setarea=document.getElementById('setarea');
 
   (function(){
     var t='', n='';
@@ -275,7 +279,8 @@ Leertaste = Start/Pause · R = Zurücksetzen · Klick auf die Krone = Start/Paus
   function reset(){ running=false; cancelAnimationFrame(raf); remainingMs=durationMs; lastSec=null; ended=false;
     wrap.classList.remove('done'); doneLabel.setAttribute('opacity','0'); draw(); updateBtns(); }
   function setDur(min){ durationMs=min*60000; running=false; cancelAnimationFrame(raf); remainingMs=durationMs; lastSec=null; ended=false;
-    wrap.classList.remove('done'); doneLabel.setAttribute('opacity','0'); draw(); updateBtns(); }
+    wrap.classList.remove('done'); doneLabel.setAttribute('opacity','0'); draw(); updateBtns(); syncChips(min); }
+  function syncChips(min){ document.querySelectorAll('.chip').forEach(function(x){ x.classList.toggle('on', parseInt(x.dataset.min,10)===min); }); }
   function onEnd(){ running=false; cancelAnimationFrame(raf);
     if(!ended){ ended=true; if(gongOn) meow(); }
     doneLabel.setAttribute('opacity','1'); wrap.classList.add('done'); updateBtns(); }
@@ -359,15 +364,35 @@ Leertaste = Start/Pause · R = Zurücksetzen · Klick auf die Krone = Start/Paus
     o.start(t); o.stop(t+dur+0.03);
   }
 
-  // ----- 3D-Parallaxe -----
-  var baseRX=9;
-  scene.addEventListener('mousemove', function(e){
-    var r=scene.getBoundingClientRect();
-    var dx=(e.clientX-(r.left+r.width/2))/(r.width/2);
-    var dy=(e.clientY-(r.top+r.height/2))/(r.height/2);
-    tilt.style.transform='rotateX('+(baseRX-dy*7).toFixed(2)+'deg) rotateY('+(dx*9).toFixed(2)+'deg)';
+  // ----- Zeit per Klick/Ziehen aufs Zifferblatt einstellen -----
+  function angleFromEvent(evt){
+    var pt=svg.createSVGPoint(); pt.x=evt.clientX; pt.y=evt.clientY;
+    var m=svg.getScreenCTM(); if(!m) return null;
+    var loc=pt.matrixTransform(m.inverse());
+    var dx=loc.x-CX, dy=loc.y-CY;
+    if(Math.abs(dx)<0.01 && Math.abs(dy)<0.01) return null;
+    var ang=Math.atan2(dx,-dy)*180/Math.PI;     // 0 = oben (12 Uhr), im Uhrzeigersinn
+    if(ang<0) ang+=360;
+    return ang;
+  }
+  function setFromEvent(evt){
+    var ang=angleFromEvent(evt); if(ang===null) return;
+    var frac=1-ang/360;                         // Restanteil: oben=voll, rechts=¾, unten=½, links=¼
+    if(frac<0) frac=0; if(frac>1) frac=1;
+    running=false; cancelAnimationFrame(raf);
+    remainingMs=durationMs*frac; lastSec=null; ended=false;
+    wrap.classList.remove('done'); doneLabel.setAttribute('opacity','0');
+    draw(); updateBtns();
+  }
+  var setting=false;
+  setarea.addEventListener('pointerdown', function(e){
+    e.preventDefault(); setting=true;
+    try{ setarea.setPointerCapture(e.pointerId); }catch(err){}
+    setFromEvent(e);
   });
-  scene.addEventListener('mouseleave', function(){ tilt.style.transform='rotateX('+baseRX+'deg) rotateY(0deg)'; });
+  setarea.addEventListener('pointermove', function(e){ if(setting) setFromEvent(e); });
+  setarea.addEventListener('pointerup', function(e){ setting=false; try{ setarea.releasePointerCapture(e.pointerId); }catch(err){} });
+  setarea.addEventListener('pointercancel', function(){ setting=false; });
 
   // ----- Events -----
   startBtn.addEventListener('click', toggle);
@@ -382,10 +407,7 @@ Leertaste = Start/Pause · R = Zurücksetzen · Klick auf die Krone = Start/Paus
     gongBtn.textContent=(gongOn?'🐱':'🔇')+' Miau'; if(gongOn) ensureAudio();
   });
   document.querySelectorAll('.chip').forEach(function(c){
-    c.addEventListener('click', function(){
-      document.querySelectorAll('.chip').forEach(function(x){ x.classList.remove('on'); });
-      c.classList.add('on'); setDur(parseInt(c.dataset.min,10));
-    });
+    c.addEventListener('click', function(){ setDur(parseInt(c.dataset.min,10)); });
   });
   document.addEventListener('keydown', function(e){
     if(e.code==='Space'){ e.preventDefault(); toggle(); }
