@@ -517,6 +517,88 @@
   .sr-map-tt.show { opacity: 1; }
   .sr-map-tt b { display: block; font-size: 12.5px; margin-bottom: 2px; }
   .sr-map-tt .d { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; }
+
+  /* ===== Lernmodule (Bundesratswahl · Gesetz · Mehrheiten) ===== */
+  .lernmodule-bar { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:6px 0 14px; padding:10px 12px; background:#F0F5FA; border:1px solid #DCE6F0; border-radius:10px; }
+  .lm-label { font-size:12.5px; font-weight:700; color:#1F4E78; margin-right:2px; }
+  .lm-btn { font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; border:1.5px solid #1F4E78; background:#fff; color:#1F4E78; padding:8px 14px; border-radius:999px; transition:all .15s; }
+  .lm-btn:hover { background:#1F4E78; color:#fff; }
+  .lm-btn:focus-visible { outline:3px solid #9CC2E6; outline-offset:2px; }
+
+  .lm-overlay { position:fixed; inset:0; background:rgba(20,38,60,.55); display:flex; align-items:center; justify-content:center; padding:18px; z-index:1000; }
+  .lm-overlay[hidden] { display:none; }
+  .lm-modal { background:#fff; width:100%; max-width:740px; max-height:92vh; border-radius:16px; box-shadow:0 18px 50px rgba(0,0,0,.32); display:flex; flex-direction:column; overflow:hidden; }
+  .lm-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 18px; background:linear-gradient(135deg,#1F4E78 0%,#2C6BAA 100%); color:#fff; }
+  .lm-head h2 { margin:0; font-size:17px; font-weight:800; }
+  .lm-close { background:rgba(255,255,255,.18); border:0; color:#fff; width:30px; height:30px; border-radius:8px; font-size:15px; cursor:pointer; line-height:1; transition:background .15s; }
+  .lm-close:hover { background:rgba(255,255,255,.34); }
+  .lm-body { padding:18px; overflow-y:auto; font-size:14px; line-height:1.5; color:#243240; }
+  .lm-body p { margin:0 0 10px; }
+  .lm-body .lead { font-size:14.5px; }
+  .lm-body strong { color:#1F4E78; }
+  .lm-foot { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 18px; border-top:1px solid #E6EBF0; background:#F7F9FB; }
+  .lm-step-ind { font-size:12px; color:#7B8794; font-weight:700; }
+  .lm-nav { display:flex; gap:8px; }
+  .lm-nav button { font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; border-radius:9px; padding:8px 16px; border:1.5px solid #1F4E78; transition:all .15s; }
+  .lm-prev { background:#fff; color:#1F4E78; }
+  .lm-prev:hover { background:#EaF1F8; }
+  .lm-prev:disabled { opacity:.4; cursor:default; }
+  .lm-next { background:#1F4E78; color:#fff; }
+  .lm-next:hover { background:#163a5c; }
+
+  .lm-callout { background:#F0F5FA; border-left:4px solid #1F4E78; border-radius:0 8px 8px 0; padding:10px 14px; margin:10px 0; font-size:13px; }
+  .lm-rule { background:#FFF8E8; border:1px solid #F2DFA8; border-radius:8px; padding:8px 12px; margin:8px 0; font-size:12.5px; color:#7a5a13; }
+  .lm-list { margin:6px 0; padding-left:18px; }
+  .lm-list li { margin:4px 0; }
+
+  /* Bundesratswahl */
+  .brw-chart { margin:8px 0 6px; }
+  .brw-caption { display:flex; align-items:center; gap:6px; font-size:11px; font-weight:800; color:#C0392B; margin:10px 0 2px; }
+  .brw-cdash { display:inline-block; width:16px; border-top:2.5px dashed #C0392B; }
+  .brw-row { display:flex; align-items:center; gap:10px; margin:9px 0; }
+  .brw-name { flex:0 0 150px; font-size:12.5px; font-weight:700; color:#2a3a49; text-align:right; }
+  .brw-name em { font-weight:600; color:#7B8794; font-style:normal; font-size:11px; }
+  .brw-track { position:relative; flex:1 1 auto; height:26px; background:#EEF2F6; border-radius:6px; overflow:hidden; }
+  .brw-fill { height:100%; border-radius:6px 0 0 6px; transition:width .5s ease; }
+  .brw-num { flex:0 0 38px; font-size:13px; font-weight:800; color:#1F4E78; }
+  .brw-mark { position:absolute; top:0; bottom:0; width:0; border-left:2.5px dashed #C0392B; z-index:2; }
+  .brw-result { margin-top:12px; padding:12px 14px; border-radius:10px; font-weight:700; font-size:14px; }
+  .brw-result.win { background:#E7F5EC; border:1px solid #BCE0C8; color:#1d7a4a; }
+  .brw-result.again { background:#FDEEEE; border:1px solid #F3C5C5; color:#b23b3b; }
+
+  /* Gesetz im Parlament */
+  .ges-steps { display:flex; flex-wrap:wrap; gap:6px; margin:4px 0 14px; }
+  .ges-chip { font-size:11px; font-weight:700; padding:4px 9px; border-radius:999px; background:#EEF2F6; color:#8794A1; border:1px solid transparent; }
+  .ges-chip.done { background:#E7F0EC; color:#3f8a5f; }
+  .ges-chip.active { background:#1F4E78; color:#fff; }
+  .ges-diagram { display:flex; align-items:stretch; gap:10px; margin:14px 0; }
+  .ges-box { flex:1; border:2px solid #DCE6F0; border-radius:12px; padding:12px; text-align:center; background:#F7F9FB; transition:all .2s; }
+  .ges-box.hot { border-color:#1F4E78; background:#EAF1F8; box-shadow:0 2px 10px rgba(31,78,120,.14); }
+  .ges-box .ges-bt { font-size:13px; font-weight:800; color:#1F4E78; }
+  .ges-box .ges-bs { font-size:11px; color:#7B8794; margin-top:2px; }
+  .ges-card { display:inline-block; margin-top:8px; font-size:11px; font-weight:700; color:#fff; background:#C0392B; padding:3px 10px; border-radius:6px; }
+  .ges-mid { flex:0 0 30px; display:flex; align-items:center; justify-content:center; font-size:20px; color:#9CB0C4; }
+  .ges-stage-title { font-size:15px; font-weight:800; color:#1F4E78; margin:2px 0 8px; }
+
+  /* Mehrheiten */
+  .mehr-seg-wrap { display:flex; flex-wrap:wrap; gap:18px; margin:6px 0 14px; }
+  .mehr-seg-group { }
+  .mehr-seg-lbl { font-size:11px; font-weight:800; color:#7B8794; text-transform:uppercase; letter-spacing:.5px; margin-bottom:5px; }
+  .mehr-seg { display:inline-flex; border:1.5px solid #1F4E78; border-radius:9px; overflow:hidden; }
+  .mehr-seg button { font-family:inherit; font-size:12.5px; font-weight:700; padding:7px 13px; border:0; background:#fff; color:#1F4E78; cursor:pointer; transition:all .12s; }
+  .mehr-seg button + button { border-left:1.5px solid #1F4E78; }
+  .mehr-seg button.on { background:#1F4E78; color:#fff; }
+  .mehr-result { background:#F7F9FB; border:1px solid #E6EBF0; border-radius:12px; padding:14px 16px; margin:6px 0 12px; }
+  .mehr-big { font-size:15px; font-weight:800; color:#1F4E78; margin-bottom:6px; }
+  .mehr-barwrap { position:relative; height:30px; background:#EEF2F6; border-radius:7px; overflow:hidden; margin:10px 0 4px; }
+  .mehr-barfill { height:100%; background:linear-gradient(90deg,#2C6BAA,#1F4E78); width:0; transition:width .4s ease; }
+  .mehr-line { position:absolute; top:0; bottom:0; width:0; border-left:2.5px dashed #C0392B; }
+  .mehr-linelbl { position:absolute; top:-18px; transform:translateX(-50%); font-size:10.5px; font-weight:800; color:#C0392B; white-space:nowrap; }
+  .mehr-ref { margin-top:6px; border-top:1px solid #E6EBF0; padding-top:10px; }
+  .mehr-ref h4 { margin:0 0 6px; font-size:12px; color:#7B8794; text-transform:uppercase; letter-spacing:.5px; }
+  .mehr-ref dl { margin:0; }
+  .mehr-ref dt { font-size:13px; font-weight:800; color:#1F4E78; margin-top:8px; }
+  .mehr-ref dd { margin:2px 0 0; font-size:12.5px; color:#465463; }
 </style>
 </head>
 <body>
@@ -533,6 +615,13 @@
       <button class="tab" data-council="sr">Ständerat <span class="badge">46</span></button>
       <button class="tab" data-council="vb">Vereinigte Bundesversammlung <span class="badge">246</span></button>
     </div>
+    <div class="lernmodule-bar">
+      <span class="lm-label">Lernmodule durchspielen:</span>
+      <button class="lm-btn" data-modul="brw">🗳️ Bundesratswahl</button>
+      <button class="lm-btn" data-modul="gesetz">📜 Gesetz im Parlament</button>
+      <button class="lm-btn" data-modul="mehr">⚖️ Mehrheiten</button>
+    </div>
+
     
     <div class="stats-bar">
       <div><strong id="stat-visible">200</strong> von <span id="stat-total">200</span> Sitzen angezeigt</div>
@@ -638,6 +727,17 @@
 </div>
 
 <div id="tooltip"></div>
+
+<div class="lm-overlay" id="lm-overlay" hidden>
+  <div class="lm-modal" role="dialog" aria-modal="true" aria-labelledby="lm-title">
+    <div class="lm-head">
+      <h2 id="lm-title">Lernmodul</h2>
+      <button class="lm-close" id="lm-close" aria-label="Schliessen">✕</button>
+    </div>
+    <div class="lm-body" id="lm-body"></div>
+    <div class="lm-foot" id="lm-foot"></div>
+  </div>
+</div>
 
 <div class="footer">
   <strong>Stand: 10. Juni 2026</strong> · Datenquellen: <a href="https://www.parlament.ch/de/organe/nationalrat/sitzordnung-nr" target="_blank" rel="noopener">parlament.ch</a>, Wikipedia · Erstellt für den ABU-Unterricht an der HKV Aarau<br>
@@ -1392,6 +1492,232 @@ renderSrMap();
 
 initFilters();
 renderSeats();
+
+/* ===================== Lernmodule ===================== */
+(function(){
+  const overlay = document.getElementById('lm-overlay');
+  const titleEl = document.getElementById('lm-title');
+  const bodyEl  = document.getElementById('lm-body');
+  const footEl  = document.getElementById('lm-foot');
+  if(!overlay) return;
+
+  let step = 0;
+  let mehrState = { rat:'nr', art:'absolut' };
+
+  // ---------- Bundesratswahl ----------
+  function brwChart(rows){
+    const TOTAL=246, MAJ=124, majPct=(MAJ/TOTAL*100).toFixed(1);
+    let h = '<div class="brw-caption"><span class="brw-cdash"></span>124 Stimmen = absolutes Mehr</div>';
+    h += '<div class="brw-chart">';
+    rows.forEach(function(r){
+      const w=(r.votes/TOTAL*100).toFixed(1);
+      h += '<div class="brw-row"><span class="brw-name">'+r.name+' <em>'+r.party+'</em></span>'
+        +  '<div class="brw-track"><div class="brw-fill" style="width:'+w+'%;background:'+r.color+'"></div><div class="brw-mark" style="left:'+majPct+'%"></div></div>'
+        +  '<span class="brw-num">'+r.votes+'</span></div>';
+    });
+    h += '</div>';
+    return h;
+  }
+  const cBerg='#F4A024', cTanner='#2563EB', cSpreng='#3D7A2C';
+  const BRW = { steps: [
+    { next:'Ausgangslage →', html:
+      '<p class="lead">Die <strong>Vereinigte Bundesversammlung</strong> – Nationalrat (200) und Ständerat (46), zusammen <strong>246 Mitglieder</strong> – wählt die sieben Mitglieder des Bundesrates.</p>'
+      +'<ul class="lm-list">'
+      +'<li>Jeder Sitz wird <strong>einzeln</strong> gewählt, in der Reihenfolge des Amtsalters der Bisherigen.</li>'
+      +'<li>Gewählt ist, wer das <strong>absolute Mehr</strong> erreicht – mehr als die Hälfte der gültigen Stimmen.</li>'
+      +'<li>Oft braucht es <strong>mehrere Wahlgänge</strong>, bis jemand dieses Mehr erreicht.</li>'
+      +'</ul>'
+      +'<div class="lm-callout">In diesem Beispiel nehmen wir der Einfachheit halber an, dass alle 246 gültig stimmen. Das absolute Mehr liegt damit bei <strong>124</strong>.</div>' },
+    { next:'1. Wahlgang →', html:
+      '<p>Ein Bundesratssitz wird <strong>frei</strong> (Rücktritt). Zur Wahl stellen sich:</p>'
+      +'<ul class="lm-list">'
+      +'<li><strong>A. Berg</strong> und <strong>B. Tanner</strong> – das offizielle Zweier-Ticket der Fraktion.</li>'
+      +'<li><strong>C. Sprenger</strong> – eine <strong>Sprengkandidatin</strong> aus einer anderen Fraktion.</li>'
+      +'</ul>'
+      +'<div class="lm-rule">⚠️ Im <strong>1. Wahlgang</strong> sind alle wählbar – auch Personen, die gar nicht vorgeschlagen wurden.</div>' },
+    { next:'2. Wahlgang →', html:
+      '<div class="ges-stage-title">1. Wahlgang</div>'
+      + brwChart([{name:'A. Berg',party:'Mitte',color:cBerg,votes:110},{name:'B. Tanner',party:'FDP',color:cTanner,votes:78},{name:'C. Sprenger',party:'SVP',color:cSpreng,votes:58}])
+      +'<div class="brw-result again">Niemand erreicht 124 Stimmen → es kommt zum 2. Wahlgang.</div>'
+      +'<div class="lm-rule">Ab dem 2. Wahlgang sind <strong>keine neuen Kandidaturen</strong> mehr möglich.</div>' },
+    { next:'3. Wahlgang →', html:
+      '<div class="ges-stage-title">2. Wahlgang</div>'
+      + brwChart([{name:'A. Berg',party:'Mitte',color:cBerg,votes:119},{name:'B. Tanner',party:'FDP',color:cTanner,votes:85},{name:'C. Sprenger',party:'SVP',color:cSpreng,votes:42}])
+      +'<div class="brw-result again">Wieder erreicht niemand das absolute Mehr → 3. Wahlgang.</div>'
+      +'<div class="lm-rule">Ab dem 3. Wahlgang <strong>scheidet aus</strong>, wer am wenigsten Stimmen hat – hier <strong>C. Sprenger</strong>.</div>' },
+    { next:'Fazit →', html:
+      '<div class="ges-stage-title">3. Wahlgang</div>'
+      + brwChart([{name:'A. Berg',party:'Mitte',color:cBerg,votes:138},{name:'B. Tanner',party:'FDP',color:cTanner,votes:108}])
+      +'<div class="brw-result win">A. Berg erreicht 138 Stimmen – mehr als 124. <strong>A. Berg ist gewählt!</strong> 🎉</div>' },
+    { next:null, html:
+      '<p>So funktioniert die Bundesratswahl zusammengefasst:</p>'
+      +'<ul class="lm-list">'
+      +'<li>Wahl durch die <strong>Vereinigte Bundesversammlung</strong> (246 Mitglieder).</li>'
+      +'<li><strong>Absolutes Mehr</strong> nötig (in diesem Beispiel 124).</li>'
+      +'<li>Mehrere <strong>Wahlgänge</strong>: ab dem 2. keine neuen Namen, ab dem 3. scheidet die schwächste Person aus.</li>'
+      +'<li>Die <strong>Zauberformel</strong> (Stand 2024: 2 SVP, 2 SP, 2 FDP, 1 Mitte) verteilt die sieben Sitze nach Parteistärke – eine politische Konvention, keine gesetzliche Vorschrift.</li>'
+      +'</ul>' }
+  ]};
+
+  // ---------- Gesetz im Parlament ----------
+  const GES_LABELS = ['Bundesrat','Erstrat','Zweitrat','Differenzen','Einigung','Schlussabst.','Referendum','Inkrafttreten'];
+  function gesChips(active){
+    let h='<div class="ges-steps">';
+    GES_LABELS.forEach(function(l,i){
+      const cls = i<active?'done':(i===active?'active':'');
+      h += '<span class="ges-chip '+cls+'">'+(i+1)+'. '+l+'</span>';
+    });
+    h += '</div>';
+    return h;
+  }
+  function gesDiagram(where){
+    const nrHot=(where==='nr'||where==='both')?' hot':'';
+    const srHot=(where==='sr'||where==='both')?' hot':'';
+    const nrCard=nrHot?'<div class="ges-card">Vorlage</div>':'';
+    const srCard=srHot?'<div class="ges-card">Vorlage</div>':'';
+    return '<div class="ges-diagram">'
+      +'<div class="ges-box'+nrHot+'"><div class="ges-bt">Nationalrat</div><div class="ges-bs">200 · Volksvertretung</div>'+nrCard+'</div>'
+      +'<div class="ges-mid">&#8596;</div>'
+      +'<div class="ges-box'+srHot+'"><div class="ges-bt">Ständerat</div><div class="ges-bs">46 · Kantonsvertretung</div>'+srCard+'</div>'
+      +'</div>';
+  }
+  const GES = { steps: [
+    { next:'Weiter →', html: gesChips(0)
+      +'<div class="ges-stage-title">Bundesrat: Botschaft &amp; Entwurf</div>'
+      +'<p>Der Bundesrat arbeitet einen Gesetzesentwurf aus und erklärt ihn in einer <strong>Botschaft</strong> ans Parlament. Vorher läuft die <strong>Vernehmlassung</strong>: Kantone, Parteien und Verbände nehmen Stellung.</p>'
+      +'<div class="lm-callout">Die Vorlage geht zuerst an einen der beiden Räte – den <strong>Erstrat</strong>.</div>' },
+    { next:'Weiter →', html: gesChips(1)
+      +'<div class="ges-stage-title">Erstrat (z. B. Nationalrat)</div>'
+      +'<p>Der Erstrat behandelt die Vorlage: zuerst <strong>Eintreten</strong> (will man überhaupt beraten?), dann die <strong>Detailberatung</strong> Artikel für Artikel, schliesslich die <strong>Gesamtabstimmung</strong>. Oft beschliesst der Rat <strong>Änderungen</strong>.</p>'
+      + gesDiagram('nr')
+      +'<p style="font-size:12.5px;color:#7B8794">Welcher Rat zuerst dran ist, wechselt von Vorlage zu Vorlage.</p>' },
+    { next:'Weiter →', html: gesChips(2)
+      +'<div class="ges-stage-title">Zweitrat (der andere Rat)</div>'
+      +'<p>Nun behandelt der zweite Rat dieselbe Vorlage. Beschliesst er <strong>genau denselben Text</strong>, ist das Gesetz bereit. Weicht er ab, entstehen <strong>Differenzen</strong>.</p>'
+      + gesDiagram('sr') },
+    { next:'Weiter →', html: gesChips(3)
+      +'<div class="ges-stage-title">Differenzbereinigung</div>'
+      +'<p>Die Vorlage <strong>pendelt</strong> zwischen den Räten hin und her. Jeder Rat behandelt nur noch die <strong>offenen Differenzen</strong> – so lange, bis beide denselben Text haben (höchstens dreimal pro Rat).</p>'
+      + gesDiagram('both') },
+    { next:'Weiter →', html: gesChips(4)
+      +'<div class="ges-stage-title">Einigungskonferenz</div>'
+      +'<p>Bleiben nach drei Runden noch Differenzen, sucht eine <strong>Einigungskonferenz</strong> (je 13 Mitglieder aus beiden Räten) einen Kompromiss. Lehnen beide Räte den Einigungsantrag ab, ist die Vorlage <strong>gescheitert</strong>.</p>' },
+    { next:'Weiter →', html: gesChips(5)
+      +'<div class="ges-stage-title">Schlussabstimmung</div>'
+      +'<p>Haben beide Räte denselben Text, stimmen sie am <strong>gleichen Tag</strong> definitiv ab. Nur wenn <strong>beide</strong> zustimmen, ist das Gesetz beschlossen.</p>'
+      + gesDiagram('both') },
+    { next:'Weiter →', html: gesChips(6)
+      +'<div class="ges-stage-title">Referendum</div>'
+      +'<p>Nach der Schlussabstimmung läuft die <strong>Referendumsfrist</strong>: innert <strong>100 Tagen</strong> können <strong>50 000</strong> Stimmberechtigte (oder 8 Kantone) das <strong>fakultative Referendum</strong> ergreifen – dann entscheidet das <strong>Volk</strong>.</p>'
+      +'<div class="lm-rule">Bei Änderungen der <strong>Bundesverfassung</strong> ist die Volksabstimmung <strong>obligatorisch</strong> – nötig sind dann Volks- <em>und</em> Ständemehr.</div>' },
+    { next:null, html: gesChips(7)
+      +'<div class="ges-stage-title">Inkrafttreten</div>'
+      +'<p>Kommt kein Referendum zustande – oder nimmt das Volk die Vorlage an – tritt das Gesetz auf einen festgelegten Termin <strong>in Kraft</strong> und gilt für alle.</p>'
+      +'<div class="lm-callout">Kurz: <strong>Bundesrat → Erstrat → Zweitrat → Differenzbereinigung → (Einigungskonferenz) → Schlussabstimmung → Referendum → Inkrafttreten.</strong></div>' }
+  ]};
+
+  // ---------- Mehrheiten ----------
+  function mehrData(s){
+    const total = s.rat==='nr'?200:46;
+    const ratName = s.rat==='nr'?'Nationalrat':'Ständerat';
+    if(s.art==='einfach'){
+      return { big:'Einfaches (relatives) Mehr', total, line:null, fill:55,
+        desc:'Es zählt nur: <strong>mehr Ja- als Nein-Stimmen</strong>. Enthaltungen und Abwesende zählen nicht mit. Das ist der <strong>Normalfall</strong> bei Abstimmungen im Rat.',
+        example:'Beispiel: 70 Ja, 65 Nein, 10 Enthaltungen &rarr; <strong>angenommen</strong> (70 &gt; 65).' };
+    }
+    const t = Math.floor(total/2)+1;
+    const pct = (t/total*100);
+    if(s.art==='absolut'){
+      return { big:'Absolutes Mehr: mind. '+t+' Stimmen', total, line:pct, fill:pct,
+        desc:'Mehr als die <strong>Hälfte der gültigen Stimmen</strong>. Nötig z. B. bei <strong>Wahlen</strong> – etwa im 1. Wahlgang der Bundesratswahl (124 von 246).',
+        example:'Bei voller Beteiligung im '+ratName+' ('+total+'): mind. <strong>'+t+'</strong> Stimmen.' };
+    }
+    return { big:'Qualifiziertes Mehr: mind. '+t+' Stimmen', total, line:pct, fill:pct,
+      desc:'Mehrheit <strong>aller Mitglieder</strong> eines Rates – egal, wie viele anwesend sind. Nötig z. B. für die <strong>Ausgabenbremse</strong> (Art. 159 Abs. 3 BV) und die <strong>Dringlicherklärung</strong> von Gesetzen.',
+      example:'Im '+ratName+' ('+total+' Mitglieder): mind. <strong>'+t+'</strong> Stimmen.' };
+  }
+  function segBtn(group, val, cur, label){
+    return '<button data-grp="'+group+'" data-val="'+val+'" class="'+(cur===val?'on':'')+'">'+label+'</button>';
+  }
+  function mehrHTML(s){
+    const d = mehrData(s);
+    let line = '';
+    if(d.line!==null){
+      const lp = d.line.toFixed(1);
+      line = '<div class="mehr-line" style="left:'+lp+'%"></div><div class="mehr-linelbl" style="left:'+lp+'%">'+Math.floor(d.total/2+1)+'</div>';
+    }
+    let h='';
+    h += '<p class="lead">Im Parlament gibt es nicht <em>ein</em> Mehr, sondern verschiedene – je nachdem, worüber abgestimmt wird.</p>';
+    h += '<div class="mehr-seg-wrap">';
+    h += '<div class="mehr-seg-group"><div class="mehr-seg-lbl">Rat</div><div class="mehr-seg">'
+      + segBtn('rat','nr',s.rat,'Nationalrat (200)') + segBtn('rat','sr',s.rat,'Ständerat (46)') + '</div></div>';
+    h += '<div class="mehr-seg-group"><div class="mehr-seg-lbl">Art des Mehrs</div><div class="mehr-seg">'
+      + segBtn('art','einfach',s.art,'Einfaches') + segBtn('art','absolut',s.art,'Absolutes') + segBtn('art','qualifiziert',s.art,'Qualifiziertes') + '</div></div>';
+    h += '</div>';
+    h += '<div class="mehr-result"><div class="mehr-big">'+d.big+'</div><div>'+d.desc+'</div>';
+    h += '<div class="mehr-barwrap"><div class="mehr-barfill" style="width:'+d.fill.toFixed(1)+'%"></div>'+line+'</div>';
+    h += '<div style="font-size:12px;color:#7B8794">'+d.example+'</div></div>';
+    h += '<div class="mehr-ref"><h4>Die vier Mehrheiten im Überblick</h4><dl>'
+      + '<dt>Einfaches (relatives) Mehr</dt><dd>Mehr Ja als Nein – Normalfall bei Sachabstimmungen im Rat.</dd>'
+      + '<dt>Absolutes Mehr</dt><dd>Mehr als die Hälfte der gültigen Stimmen – z. B. bei Wahlen.</dd>'
+      + '<dt>Qualifiziertes Mehr (Mitglieder­mehr)</dt><dd>Mehrheit aller Mitglieder – Ausgabenbremse &amp; Dringlicherklärung (NR 101, SR 24).</dd>'
+      + '<dt>Volks- und Ständemehr</dt><dd>Nicht im Parlament, sondern bei <strong>Volksabstimmungen</strong> über Verfassungsänderungen: Ja von Volk <em>und</em> Mehrheit der Kantone.</dd>'
+      + '</dl></div>';
+    return h;
+  }
+  function wireMehr(){
+    bodyEl.querySelectorAll('.mehr-seg button').forEach(function(b){
+      b.addEventListener('click', function(){
+        mehrState[b.dataset.grp] = b.dataset.val;
+        bodyEl.innerHTML = mehrHTML(mehrState);
+        wireMehr();
+      });
+    });
+  }
+
+  // ---------- Steuerung ----------
+  function renderStepped(mod){
+    const s = mod.steps[step];
+    bodyEl.innerHTML = s.html;
+    bodyEl.scrollTop = 0;
+    const total = mod.steps.length;
+    let foot = '<span class="lm-step-ind">Schritt '+(step+1)+' / '+total+'</span><div class="lm-nav">';
+    foot += '<button class="lm-prev"'+(step===0?' disabled':'')+'>&larr; Zurück</button>';
+    foot += '<button class="lm-next">'+(s.next?s.next:'Schliessen')+'</button></div>';
+    footEl.innerHTML = foot;
+    const prev = footEl.querySelector('.lm-prev');
+    prev.addEventListener('click', function(){ if(step>0){ step--; renderStepped(mod); } });
+    footEl.querySelector('.lm-next').addEventListener('click', function(){
+      if(s.next){ step++; renderStepped(mod); } else { close(); }
+    });
+  }
+  function renderMehr(){
+    bodyEl.innerHTML = mehrHTML(mehrState);
+    bodyEl.scrollTop = 0;
+    footEl.innerHTML = '<span class="lm-step-ind">Rat und Art frei wählen</span><div class="lm-nav"><button class="lm-next">Schliessen</button></div>';
+    footEl.querySelector('.lm-next').addEventListener('click', close);
+    wireMehr();
+  }
+  function open(key){
+    step = 0;
+    if(key==='brw'){ titleEl.textContent='🗳️ Bundesratswahl'; renderStepped(BRW); }
+    else if(key==='gesetz'){ titleEl.textContent='📜 Gesetz im Parlament (NR ↔ SR)'; renderStepped(GES); }
+    else if(key==='mehr'){ titleEl.textContent='⚖️ Mehrheiten im Parlament'; mehrState={rat:'nr',art:'absolut'}; renderMehr(); }
+    overlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+  function close(){
+    overlay.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll('.lm-btn').forEach(function(b){
+    b.addEventListener('click', function(){ open(b.dataset.modul); });
+  });
+  document.getElementById('lm-close').addEventListener('click', close);
+  overlay.addEventListener('click', function(e){ if(e.target===overlay) close(); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape' && !overlay.hidden) close(); });
+})();
 </script>
 </body>
 </html>
