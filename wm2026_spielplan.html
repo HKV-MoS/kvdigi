@@ -348,7 +348,7 @@ footer { margin-top: 22px; padding: 14px; text-align: center; color: var(--muted
     <!-- 1) Ewige Bestenliste Tore -->
     <div class="scorer-card">
       <div class="scorer-head" style="background:#FEF3C7;border-color:#FDE68A;">
-        🏆 <strong>Ewige Bestenliste — Tore</strong><br>Meiste WM-Tore aller Zeiten (seit 1930), inkl. WM 2026 (<span style="color:#dc2626;font-weight:700;">+x</span>).
+        🏆 <strong>Ewige Bestenliste — Tore</strong><br>Meiste WM-Tore aller Zeiten (seit 1930), inkl. WM 2026 (<span style="color:#dc2626;font-weight:700;">+x</span>). <span style="color:#16a34a;font-weight:700;">● aktiv</span> = noch im Turnier dabei.
       </div>
       <div id="eternal-list"></div>
     </div>
@@ -1521,9 +1521,9 @@ const ETERNAL = [
   { name:'Ronaldo',           flag:'🇧🇷', land:'Brasilien',   base:15 },
   { name:'Gerd Müller',       flag:'🇩🇪', land:'Deutschland', base:14 },
   { name:'Just Fontaine',     flag:'🇫🇷', land:'Frankreich',  base:13 },
-  { name:'Lionel Messi',      flag:'🇦🇷', land:'Argentinien', base:13, live:['messi'] },
+  { name:'Lionel Messi',      flag:'🇦🇷', land:'Argentinien', base:13, live:['messi'], active:true },
   { name:'Pelé',              flag:'🇧🇷', land:'Brasilien',   base:12 },
-  { name:'Kylian Mbappé',     flag:'🇫🇷', land:'Frankreich',  base:12, live:['mbappe'] },
+  { name:'Kylian Mbappé',     flag:'🇫🇷', land:'Frankreich',  base:12, live:['mbappe'], active:true },
   { name:'Sándor Kocsis',     flag:'🇭🇺', land:'Ungarn',      base:11 },
   { name:'Jürgen Klinsmann',  flag:'🇩🇪', land:'Deutschland', base:11 },
   { name:'Helmut Rahn',       flag:'🇩🇪', land:'Deutschland', base:10 },
@@ -1532,7 +1532,7 @@ const ETERNAL = [
   { name:'Teófilo Cubillas',  flag:'🇵🇪', land:'Peru',        base:10 },
   { name:'Thomas Müller',     flag:'🇩🇪', land:'Deutschland', base:10 },
   { name:'Grzegorz Lato',     flag:'🇵🇱', land:'Polen',       base:10 },
-  { name:'Cristiano Ronaldo', flag:'🇵🇹', land:'Portugal',    base:8, live:['cristiano'] },
+  { name:'Cristiano Ronaldo', flag:'🇵🇹', land:'Portugal',    base:8, live:['cristiano'], active:true },
 ];
 function renderEternal() {
   const el = document.getElementById('eternal-list');
@@ -1557,8 +1557,9 @@ function renderEternal() {
     rows.map((r, i) => {
       if (r.total !== prev) { rank = i + 1; prev = r.total; }
       const plusTxt = r.plus > 0 ? ' <span style="color:#dc2626;font-size:11px;font-weight:700;">+' + r.plus + '</span>' : '';
+      const activeTxt = r.active ? ' <span style="color:#16a34a;font-size:10.5px;font-weight:700;white-space:nowrap;" title="noch aktiv — kann an der WM 2026 weitere Tore erzielen">● aktiv</span>' : '';
       return '<tr><td class="num rank">' + rank + '</td>' +
-        '<td class="player">' + r.name + '</td>' +
+        '<td class="player">' + r.name + activeTxt + '</td>' +
         '<td>' + r.flag + ' ' + r.land + '</td>' +
         '<td class="num goals-num">' + r.total + plusTxt + '</td></tr>';
     }).join('') + '</tbody></table>';
