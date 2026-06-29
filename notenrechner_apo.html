@@ -37,6 +37,8 @@
   td.empty{ color:#CBD7E2; font-size:13px; }
   .avg{ font-weight:800; font-size:13.5px; color:#3C6E73; background:#EEF6F4; border-radius:7px; min-width:42px; }
   .avg.none{ color:#C2CDD6; background:transparent; font-weight:700; }
+  tr.semavg td{ border-top:2px solid #E1EBF3; padding-top:7px; }
+  tr.semavg td.lbl{ color:#3C6E73; }
 
   select.g, select.s{ font-family:inherit; font-size:12.5px; padding:5px 3px; border:1.5px solid #CBD7E2; border-radius:8px; background:#fff; color:#26384A; cursor:pointer; width:49px; text-align:center; }
   select.s{ width:auto; min-width:84px; padding:7px 10px; text-align:left; }
@@ -101,32 +103,29 @@
       <!-- ERFAHRUNGSNOTE -->
       <div class="card">
         <div class="sec-head"><h2>Erfahrungsnote</h2><span class="wbadge">20 %</span></div>
-        <p class="sec-note">Schulische HKB-Noten (Gewicht 0.7) und überbetriebliche Kurse (Gewicht 0.3). Halbnoten pro Semester.</p>
+        <p class="sec-note">Pro Semester wird über die HKB gemittelt (= Semesterzeugnisnote, Halbnote). Die schulische Erfahrungsnote ist der Durchschnitt der sechs Semesterzeugnisnoten (Gewicht 0.7), dazu die überbetrieblichen Kurse (Gewicht 0.3).</p>
 
         <div class="subhead">Schulische Erfahrungsnote <span class="w">Gewicht 0.7</span></div>
         <div class="gridwrap">
           <table class="grid">
-            <thead><tr><th class="lbl">Handlungskompetenzbereich</th><th>1.&nbsp;Sem</th><th>2.&nbsp;Sem</th><th>3.&nbsp;Sem</th><th>4.&nbsp;Sem</th><th>5.&nbsp;Sem</th><th>6.&nbsp;Sem</th><th>Ø</th></tr></thead>
+            <thead><tr><th class="lbl">Handlungskompetenzbereich</th><th>1.&nbsp;Sem</th><th>2.&nbsp;Sem</th><th>3.&nbsp;Sem</th><th>4.&nbsp;Sem</th><th>5.&nbsp;Sem</th><th>6.&nbsp;Sem</th></tr></thead>
             <tbody>
               <tr><td class="lbl">HKB A<span>Beraten und Bedienen</span></td>
-                <td><select class="g" data-grp="A"></select></td><td><select class="g" data-grp="A"></select></td><td><select class="g" data-grp="A"></select></td><td><select class="g" data-grp="A"></select></td><td><select class="g" data-grp="A"></select></td><td><select class="g" data-grp="A"></select></td>
-                <td class="avg none" id="avg-A">–</td></tr>
+                <td><select class="g" data-grp="A" data-sem="1"></select></td><td><select class="g" data-grp="A" data-sem="2"></select></td><td><select class="g" data-grp="A" data-sem="3"></select></td><td><select class="g" data-grp="A" data-sem="4"></select></td><td><select class="g" data-grp="A" data-sem="5"></select></td><td><select class="g" data-grp="A" data-sem="6"></select></td></tr>
               <tr><td class="lbl">HKB B<span>Abgeben von Heilmitteln</span></td>
-                <td><select class="g" data-grp="B"></select></td><td><select class="g" data-grp="B"></select></td><td><select class="g" data-grp="B"></select></td><td><select class="g" data-grp="B"></select></td><td><select class="g" data-grp="B"></select></td><td><select class="g" data-grp="B"></select></td>
-                <td class="avg none" id="avg-B">–</td></tr>
+                <td><select class="g" data-grp="B" data-sem="1"></select></td><td><select class="g" data-grp="B" data-sem="2"></select></td><td><select class="g" data-grp="B" data-sem="3"></select></td><td><select class="g" data-grp="B" data-sem="4"></select></td><td><select class="g" data-grp="B" data-sem="5"></select></td><td><select class="g" data-grp="B" data-sem="6"></select></td></tr>
               <tr><td class="lbl">HKB C<span>Medizinische Abklärungen</span></td>
-                <td><select class="g" data-grp="C"></select></td><td><select class="g" data-grp="C"></select></td><td><select class="g" data-grp="C"></select></td><td><select class="g" data-grp="C"></select></td><td><select class="g" data-grp="C"></select></td><td><select class="g" data-grp="C"></select></td>
-                <td class="avg none" id="avg-C">–</td></tr>
+                <td><select class="g" data-grp="C" data-sem="1"></select></td><td><select class="g" data-grp="C" data-sem="2"></select></td><td><select class="g" data-grp="C" data-sem="3"></select></td><td><select class="g" data-grp="C" data-sem="4"></select></td><td><select class="g" data-grp="C" data-sem="5"></select></td><td><select class="g" data-grp="C" data-sem="6"></select></td></tr>
               <tr><td class="lbl">HKB D<span>Bewirtschaften</span></td>
-                <td><select class="g" data-grp="D"></select></td><td><select class="g" data-grp="D"></select></td><td class="empty">·</td><td class="empty">·</td><td class="empty">·</td><td class="empty">·</td>
-                <td class="avg none" id="avg-D">–</td></tr>
+                <td><select class="g" data-grp="D" data-sem="1"></select></td><td><select class="g" data-grp="D" data-sem="2"></select></td><td class="empty">·</td><td class="empty">·</td><td class="empty">·</td><td class="empty">·</td></tr>
               <tr><td class="lbl">HKB E<span>Administrative Arbeiten</span></td>
-                <td class="empty">·</td><td><select class="g" data-grp="E"></select></td><td><select class="g" data-grp="E"></select></td><td class="empty">·</td><td class="empty">·</td><td class="empty">·</td>
-                <td class="avg none" id="avg-E">–</td></tr>
+                <td class="empty">·</td><td><select class="g" data-grp="E" data-sem="2"></select></td><td><select class="g" data-grp="E" data-sem="3"></select></td><td class="empty">·</td><td class="empty">·</td><td class="empty">·</td></tr>
+              <tr class="semavg"><td class="lbl">Ø Semester<span>Zeugnisnote · Halbnote</span></td>
+                <td class="avg none" id="sem-1">–</td><td class="avg none" id="sem-2">–</td><td class="avg none" id="sem-3">–</td><td class="avg none" id="sem-4">–</td><td class="avg none" id="sem-5">–</td><td class="avg none" id="sem-6">–</td></tr>
             </tbody>
           </table>
         </div>
-        <div class="fnote" style="border-left-color:#91B99B;"><span class="lab">Schulische Erfahrungsnote (Ø HKB A–E, Halbnote)</span><span class="val none" id="avg-schul">–</span></div>
+        <div class="fnote" style="border-left-color:#91B99B;"><span class="lab">Schulische Erfahrungsnote = Ø der sechs Semesterzeugnisnoten (Halbnote)</span><span class="val none" id="avg-schul">–</span></div>
 
         <div class="subhead">Überbetriebliche Kurse (ÜK) <span class="w">Gewicht 0.3</span></div>
         <div class="gridwrap">
@@ -138,7 +137,7 @@
           </table>
         </div>
 
-        <div class="fnote"><span class="lab">Fachnote Erfahrungsnote = Schule × 0.7 + ÜK × 0.3</span><span class="val none" id="fn-erf">–</span></div>
+        <div class="fnote"><span class="lab">Fachnote Erfahrungsnote = Schule × 0.7 + ÜK × 0.3 → eine Dezimalstelle</span><span class="val none" id="fn-erf">–</span></div>
       </div>
 
       <!-- ALLGEMEINBILDUNG -->
@@ -156,24 +155,27 @@
         </div>
         <div class="inputrow" style="margin-top:12px;"><label>Vertiefungsarbeit<small>Prüfungsnote</small></label><select class="s" id="abuVA"></select></div>
         <div class="inputrow"><label>Schlussprüfung ABU<small>Prüfungsnote</small></label><select class="s" id="abuSP"></select></div>
-        <div class="fnote"><span class="lab">Fachnote Allgemeinbildung = (Erfahrung + VA + Schlussprüfung) ÷ 3</span><span class="val none" id="fn-abu">–</span></div>
+        <div class="fnote"><span class="lab">Fachnote Allgemeinbildung = (Erfahrung + VA + Schlussprüfung) ÷ 3 → eine Dezimalstelle</span><span class="val none" id="fn-abu">–</span></div>
       </div>
 
       <!-- BERUFSKENNTNISSE -->
       <div class="card">
         <div class="sec-head"><h2>Berufskenntnisse</h2><span class="wbadge">20 %</span></div>
-        <p class="sec-note">Fallnote aus der Abschlussprüfung. HKB A/B/C zählt 0.8, HKB D/E zählt 0.2. Halbnoten.</p>
-        <div class="inputrow"><label>HKB A/B/C<small>Prüfung · Gewicht 0.8</small></label><select class="s" id="bkABC"></select></div>
-        <div class="inputrow"><label>HKB D/E<small>Prüfung · Gewicht 0.2</small></label><select class="s" id="bkDE"></select></div>
-        <div class="fnote"><span class="lab">Fachnote Berufskenntnisse = ABC × 0.8 + DE × 0.2</span><span class="val none" id="fn-bk">–</span></div>
+        <p class="sec-note">Fallnote aus der schriftlichen Abschlussprüfung – zwei Positionen, je ganze oder halbe Note. Die Fachnote wird auf eine Dezimalstelle gerundet.</p>
+        <div class="inputrow"><label>Position 1 · HKB A/B/C<small>Prüfung · Gewicht 0.8</small></label><select class="s" id="bkABC"></select></div>
+        <div class="inputrow"><label>Position 2 · HKB D/E<small>Prüfung · Gewicht 0.2</small></label><select class="s" id="bkDE"></select></div>
+        <div class="fnote"><span class="lab">Fachnote Berufskenntnisse = P1×0.8 + P2×0.2 → eine Dezimalstelle</span><span class="val none" id="fn-bk">–</span></div>
       </div>
 
-      <!-- PRAKTISCHE ARBEIT -->
+      <!-- PRAKTISCHE ARBEIT (VPA) -->
       <div class="card">
-        <div class="sec-head"><h2>Praktische Arbeit</h2><span class="wbadge">40 %</span></div>
-        <p class="sec-note">Fallnote aus der praktischen Abschlussprüfung. Halbnote.</p>
-        <div class="inputrow"><label>Praktische Arbeit<small>Abschlussprüfung</small></label><select class="s" id="pa"></select></div>
-        <div class="fnote"><span class="lab">Fachnote Praktische Arbeit</span><span class="val none" id="fn-pa">–</span></div>
+        <div class="sec-head"><h2>Praktische Arbeit (VPA)</h2><span class="wbadge">40 %</span></div>
+        <p class="sec-note">Fallnote aus vier Positionen – jede Position als ganze oder halbe Note. Die VPA-Note ist der gewichtete Durchschnitt, gerundet auf eine Dezimalstelle.</p>
+        <div class="inputrow"><label>Position 1 · Beraten und Bedienen<small>HKB a · Gewicht 0.3</small></label><select class="s" id="pa1"></select></div>
+        <div class="inputrow"><label>Position 2 · Abgeben + Administratives<small>HKB b / e1·e2 · Gewicht 0.2</small></label><select class="s" id="pa2"></select></div>
+        <div class="inputrow"><label>Position 3 · Medizinische Abklärungen<small>HKB c · Gewicht 0.2</small></label><select class="s" id="pa3"></select></div>
+        <div class="inputrow"><label>Position 4 · Fachgespräch<small>HKB a–e · Gewicht 0.3</small></label><select class="s" id="pa4"></select></div>
+        <div class="fnote"><span class="lab">Fachnote VPA = P1×0.3 + P2×0.2 + P3×0.2 + P4×0.3 → eine Dezimalstelle</span><span class="val none" id="fn-pa">–</span></div>
       </div>
 
     </div>
@@ -244,25 +246,26 @@
     else el.textContent='•'; }
 
   function recompute(){
-    // Schulische Erfahrungsnote (HKB A–E)
-    const pA=avgHalf(grp('A')), pB=avgHalf(grp('B')), pC=avgHalf(grp('C')), pD=avgHalf(grp('D')), pE=avgHalf(grp('E'));
-    setAvg('avg-A',pA); setAvg('avg-B',pB); setAvg('avg-C',pC); setAvg('avg-D',pD); setAvg('avg-E',pE);
-    const hkb=[pA,pB,pC,pD,pE].filter(v=>v!==null);
-    const schul=hkb.length?roundHalf(mean(hkb)):null; setAvg('avg-schul',schul);
+    // Schulische Erfahrungsnote: pro Semester Ø über die HKB (= Semesterzeugnisnote, Halbnote),
+    // dann Ø der sechs Semesterzeugnisnoten (BiVo Art. 19 Abs. 4).
+    const semNote=s=>{ const v=Array.from(document.querySelectorAll('select.g[data-sem="'+s+'"]')).map(x=>x.value).filter(x=>x!=='').map(Number); return v.length?roundHalf(mean(v)):null; };
+    const sems=[]; for(let s=1;s<=6;s++){ const sv=semNote(s); setAvg('sem-'+s,sv); if(sv!==null) sems.push(sv); }
+    const schul=sems.length?roundHalf(mean(sems)):null; setAvg('avg-schul',schul);
     const uek=avgHalf(grp('UEK')); setAvg('avg-uek',uek);
-    const vErf=(schul!==null&&uek!==null)?roundHalf(schul*0.7+uek*0.3):null; setFn('fn-erf',vErf);
+    const vErf=(schul!==null&&uek!==null)?round1(schul*0.7+uek*0.3):null; setFn('fn-erf',vErf);
 
     // Allgemeinbildung
     const abuErf=avgHalf(grp('ABU')); setAvg('avg-abu',abuErf);
     const va=val('abuVA'), sp=val('abuSP');
-    const vAbu=(abuErf!==null&&va!==null&&sp!==null)?roundHalf((abuErf+va+sp)/3):null; setFn('fn-abu',vAbu);
+    const vAbu=(abuErf!==null&&va!==null&&sp!==null)?round1((abuErf+va+sp)/3):null; setFn('fn-abu',vAbu);
 
     // Berufskenntnisse
     const abc=val('bkABC'), de=val('bkDE');
-    const vBk=(abc!==null&&de!==null)?roundHalf(abc*0.8+de*0.2):null; setFn('fn-bk',vBk);
+    const vBk=(abc!==null&&de!==null)?round1(abc*0.8+de*0.2):null; setFn('fn-bk',vBk);
 
-    // Praktische Arbeit
-    let vPa=val('pa'); if(vPa!==null) vPa=roundHalf(vPa); setFn('fn-pa',vPa);
+    // Praktische Arbeit (VPA) – vier Positionen, je ganze/halbe Note → Note auf eine Dezimalstelle
+    const p1=val('pa1'), p2=val('pa2'), p3=val('pa3'), p4=val('pa4');
+    const vPa=(p1!==null&&p2!==null&&p3!==null&&p4!==null)?round1(p1*0.3+p2*0.2+p3*0.2+p4*0.3):null; setFn('fn-pa',vPa);
 
     // Ergebnis-Panel Fachnoten
     setRes('r-pa',vPa); setRes('r-bk',vBk); setRes('r-abu',vAbu); setRes('r-erf',vErf);
@@ -294,7 +297,8 @@
     const set=(grpName,vals)=>{ const sel=document.querySelectorAll(`select.g[data-grp="${grpName}"]`); vals.forEach((x,i)=>{ if(sel[i]) sel[i].value=x; }); };
     set('A',[4.5,4.5,4.5,5,5,4.5]); set('B',[4,4,3.5,4,4,3.5]); set('C',[4.5,4.5,4.5,4,5,5]);
     set('D',[4,4]); set('E',[5,4]); set('UEK',[5.5,5.5,5]); set('ABU',[5,5,5,5,5]);
-    $('abuVA').value='5'; $('abuSP').value='4.5'; $('bkABC').value='4.5'; $('bkDE').value='4.5'; $('pa').value='4.5';
+    $('abuVA').value='5'; $('abuSP').value='4.5'; $('bkABC').value='4.5'; $('bkDE').value='4.5';
+    $('pa1').value='4.5'; $('pa2').value='4'; $('pa3').value='4.5'; $('pa4').value='5';
     recompute();
   });
 
