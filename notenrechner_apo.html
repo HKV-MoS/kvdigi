@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notenrechner Fachleute Apotheke EFZ</title>
+<style>
+  *{ box-sizing:border-box; }
+  body{ margin:0; font-family:'Aptos','Segoe UI',system-ui,-apple-system,sans-serif; background:#F4F8FB; color:#1A2B3A; font-size:14px; line-height:1.5; }
+  header{ background:linear-gradient(135deg,#213B42 0%,#3C6E73 100%); color:#fff; padding:14px 22px 12px; box-shadow:0 2px 8px rgba(0,0,0,.12); }
+  .brand-eyebrow{ font-size:11px; font-weight:800; letter-spacing:2.5px; color:#D8AE66; margin-bottom:3px; text-transform:uppercase; }
+  header h1{ margin:0 0 2px; font-size:20px; font-weight:800; letter-spacing:-.3px; }
+  header .sub{ font-size:12.5px; opacity:.93; }
+  .wrap{ max-width:1240px; margin:0 auto; padding:16px; }
+
+  .shell{ display:flex; gap:18px; align-items:flex-start; }
+  @media (max-width:940px){ .shell{ flex-direction:column; } }
+  .col-in{ flex:1 1 auto; min-width:0; }
+  .col-res{ flex:0 0 320px; max-width:320px; position:sticky; top:14px; }
+  @media (max-width:940px){ .col-res{ flex:1 1 auto; max-width:none; width:100%; position:static; } }
+
+  .card{ background:#fff; border-radius:14px; box-shadow:0 2px 10px rgba(20,50,80,.08); padding:15px 17px; margin-bottom:14px; }
+  .sec-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:4px; }
+  .sec-head h2{ margin:0; font-size:16px; color:#213B42; font-weight:800; }
+  .wbadge{ font-size:11px; font-weight:800; background:#91B99B; color:#16292B; padding:3px 10px; border-radius:999px; white-space:nowrap; }
+  .sec-note{ font-size:12px; color:#5B6B7A; margin:0 0 10px; }
+  .subhead{ font-size:11.5px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; color:#3C6E73; margin:12px 0 6px; display:flex; align-items:center; gap:8px; }
+  .subhead .w{ font-size:10.5px; font-weight:800; color:#8AA0B4; background:#EEF4F6; padding:1px 7px; border-radius:6px; }
+
+  .gridwrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  table.grid{ border-collapse:collapse; width:100%; min-width:430px; }
+  table.grid th, table.grid td{ padding:4px 4px; text-align:center; }
+  table.grid thead th{ font-size:10.5px; font-weight:800; color:#8AA0B4; border-bottom:1.5px solid #E1EBF3; padding-bottom:6px; }
+  table.grid th.lbl, table.grid td.lbl{ text-align:left; min-width:118px; }
+  td.lbl{ font-weight:700; font-size:12.5px; color:#28435E; }
+  td.lbl span{ display:block; font-weight:500; font-size:10.5px; color:#94A3B0; line-height:1.25; }
+  td.empty{ color:#CBD7E2; font-size:13px; }
+  .avg{ font-weight:800; font-size:13.5px; color:#3C6E73; background:#EEF6F4; border-radius:7px; min-width:42px; }
+  .avg.none{ color:#C2CDD6; background:transparent; font-weight:700; }
+
+  select.g, select.s{ font-family:inherit; font-size:13px; padding:6px 4px; border:1.5px solid #CBD7E2; border-radius:8px; background:#fff; color:#26384A; cursor:pointer; width:54px; text-align:center; }
+  select.s{ width:auto; min-width:84px; padding:7px 10px; text-align:left; }
+  select.g:focus-visible, select.s:focus-visible{ outline:3px solid #A7D2CE; outline-offset:1px; }
+
+  .inputrow{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:7px 0; }
+  .inputrow label{ font-size:13px; font-weight:700; color:#28435E; min-width:160px; }
+  .inputrow label small{ display:block; font-weight:500; font-size:10.5px; color:#94A3B0; }
+  .semrow{ display:flex; gap:6px; flex-wrap:wrap; align-items:flex-end; }
+  .semcell{ text-align:center; } .semcell .t{ font-size:10px; font-weight:800; color:#8AA0B4; margin-bottom:2px; }
+
+  .fnote{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:11px; padding:9px 12px; background:#F3F8FC; border-radius:10px; border-left:4px solid #3C6E73; }
+  .fnote .lab{ font-size:12.5px; font-weight:800; color:#28435E; }
+  .fnote .val{ font-size:17px; font-weight:900; color:#213B42; }
+  .fnote .val.ok{ color:#1d7a4a; } .fnote .val.bad{ color:#c0392b; } .fnote .val.none{ color:#C2CDD6; }
+
+  /* Ergebnis */
+  .res{ background:linear-gradient(160deg,#213B42 0%,#2E5054 100%); color:#fff; border-radius:16px; padding:16px 17px; box-shadow:0 4px 16px rgba(20,50,80,.18); }
+  .res .rlabel{ font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:#D8AE66; }
+  .gesamt{ font-size:52px; font-weight:900; line-height:1; margin:4px 0 2px; letter-spacing:-1px; }
+  .gesamt.none{ color:#7C949A; font-size:34px; }
+  .gesamt small{ font-size:15px; font-weight:700; color:#A9C3C8; }
+  .verdict{ display:inline-flex; align-items:center; gap:7px; font-size:14px; font-weight:800; padding:6px 14px; border-radius:999px; margin-top:6px; }
+  .verdict.pass{ background:#2E9D6B; color:#fff; } .verdict.fail{ background:#E2574C; color:#fff; } .verdict.pend{ background:#41595E; color:#C6D4D6; }
+
+  .fnlist{ margin:14px 0 4px; border-top:1px solid rgba(255,255,255,.16); padding-top:10px; }
+  .fnrow{ display:flex; align-items:center; justify-content:space-between; gap:8px; padding:4px 0; font-size:13px; }
+  .fnrow .n{ color:#D5E2E4; } .fnrow .n b{ color:#fff; font-weight:700; } .fnrow .n .ww{ color:#8FB0B5; font-size:11px; }
+  .fnrow .v{ font-weight:800; font-size:15px; color:#fff; min-width:42px; text-align:right; }
+  .fnrow .v.none{ color:#6E888E; }
+
+  .crit{ margin-top:12px; border-top:1px solid rgba(255,255,255,.16); padding-top:10px; }
+  .crit .ct{ font-size:11px; font-weight:800; letter-spacing:.5px; text-transform:uppercase; color:#A9C3C8; margin-bottom:6px; }
+  .critrow{ display:flex; align-items:center; gap:9px; font-size:12.5px; color:#E0EAEC; padding:3px 0; }
+  .ic{ width:18px; height:18px; border-radius:50%; flex:0 0 18px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:900; background:#41595E; color:#9FB6BA; }
+  .ic.ok{ background:#2E9D6B; color:#fff; } .ic.no{ background:#E2574C; color:#fff; }
+
+  .actions{ display:flex; gap:8px; margin-top:14px; }
+  .btn{ font-family:inherit; font-size:12.5px; font-weight:700; cursor:pointer; border-radius:9px; padding:8px 13px; border:1.5px solid rgba(255,255,255,.4); background:rgba(255,255,255,.1); color:#fff; transition:all .15s ease; flex:1; }
+  .btn:hover{ background:rgba(255,255,255,.2); }
+  .btn:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
+
+  .footer{ max-width:1240px; margin:4px auto 22px; padding:0 18px; }
+  .footer .cr{ color:#94A3B0; font-size:11px; }
+  @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand-eyebrow">HKV Aarau</div>
+  <h1>Notenrechner · Fachfrau/Fachmann Apotheke EFZ</h1>
+  <div class="sub">Erfahrungs- und Prüfungsnoten eingeben – Fachnoten, Gesamtnote und Bestehen werden laufend berechnet.</div>
+</header>
+
+<div class="wrap">
+  <div class="shell">
+
+    <!-- EINGABEN -->
+    <div class="col-in">
+
+      <!-- ERFAHRUNGSNOTE -->
+      <div class="card">
+        <div class="sec-head"><h2>Erfahrungsnote</h2><span class="wbadge">20 %</span></div>
+        <p class="sec-note">Schulische HKB-Noten (Gewicht 0.7) und überbetriebliche Kurse (Gewicht 0.3). Halbnoten pro Semester.</p>
+
+        <div class="subhead">Schulische Erfahrungsnote <span class="w">Gewicht 0.7</span></div>
+        <div class="gridwrap">
+          <table class="grid">
+            <thead><tr><th class="lbl">Handlungskompetenzbereich</th><th>1.&nbsp;Sem</th><th>2.&nbsp;Sem</th><th>3.&nbsp;Sem</th><th>4.&nbsp;Sem</th><th>5.&nbsp;Sem</th><th>6.&nbsp;Sem</th><th>Ø</th></tr></thead>
+            <tbody>
+              <tr><td class="lbl">HKB A<span>Beraten und Bedienen</span></td>
+                <td><select class="g" data-grp="A"></select></td><td><select class="g" data-grp="A"></select></td><td><select class="g" data-grp="A"></select></td><td><select class="g" data-grp="A"></select></td><td><select class="g" data-grp="A"></select></td><td><select class="g" data-grp="A"></select></td>
+                <td class="avg none" id="avg-A">–</td></tr>
+              <tr><td class="lbl">HKB B<span>Abgeben von Heilmitteln</span></td>
+                <td><select class="g" data-grp="B"></select></td><td><select class="g" data-grp="B"></select></td><td><select class="g" data-grp="B"></select></td><td><select class="g" data-grp="B"></select></td><td><select class="g" data-grp="B"></select></td><td><select class="g" data-grp="B"></select></td>
+                <td class="avg none" id="avg-B">–</td></tr>
+              <tr><td class="lbl">HKB C<span>Medizinische Abklärungen</span></td>
+                <td><select class="g" data-grp="C"></select></td><td><select class="g" data-grp="C"></select></td><td><select class="g" data-grp="C"></select></td><td><select class="g" data-grp="C"></select></td><td><select class="g" data-grp="C"></select></td><td><select class="g" data-grp="C"></select></td>
+                <td class="avg none" id="avg-C">–</td></tr>
+              <tr><td class="lbl">HKB D<span>Bewirtschaften</span></td>
+                <td><select class="g" data-grp="D"></select></td><td><select class="g" data-grp="D"></select></td><td class="empty">·</td><td class="empty">·</td><td class="empty">·</td><td class="empty">·</td>
+                <td class="avg none" id="avg-D">–</td></tr>
+              <tr><td class="lbl">HKB E<span>Administrative Arbeiten</span></td>
+                <td class="empty">·</td><td><select class="g" data-grp="E"></select></td><td><select class="g" data-grp="E"></select></td><td class="empty">·</td><td class="empty">·</td><td class="empty">·</td>
+                <td class="avg none" id="avg-E">–</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="fnote" style="border-left-color:#91B99B;"><span class="lab">Schulische Erfahrungsnote (Ø HKB A–E, Halbnote)</span><span class="val none" id="avg-schul">–</span></div>
+
+        <div class="subhead">Überbetriebliche Kurse (ÜK) <span class="w">Gewicht 0.3</span></div>
+        <div class="gridwrap">
+          <table class="grid">
+            <thead><tr><th class="lbl">Bildung in ÜK</th><th>2.&nbsp;Sem</th><th>3.&nbsp;Sem</th><th>5.&nbsp;Sem</th><th>Ø</th></tr></thead>
+            <tbody><tr><td class="lbl">Erfahrungsnote ÜK</td>
+              <td><select class="g" data-grp="UEK"></select></td><td><select class="g" data-grp="UEK"></select></td><td><select class="g" data-grp="UEK"></select></td>
+              <td class="avg none" id="avg-uek">–</td></tr></tbody>
+          </table>
+        </div>
+
+        <div class="fnote"><span class="lab">Fachnote Erfahrungsnote = Schule × 0.7 + ÜK × 0.3</span><span class="val none" id="fn-erf">–</span></div>
+      </div>
+
+      <!-- ALLGEMEINBILDUNG -->
+      <div class="card">
+        <div class="sec-head"><h2>Allgemeinbildung</h2><span class="wbadge">20 %</span></div>
+        <p class="sec-note">Erfahrungsnote (Ø der Semester 1–5), Vertiefungsarbeit und Schlussprüfung – je zu einem Drittel.</p>
+        <div class="subhead">Erfahrungsnote ABU <span class="w">Ø Semester 1–5</span></div>
+        <div class="semrow">
+          <div class="semcell"><div class="t">1.&nbsp;Sem</div><select class="g" data-grp="ABU"></select></div>
+          <div class="semcell"><div class="t">2.&nbsp;Sem</div><select class="g" data-grp="ABU"></select></div>
+          <div class="semcell"><div class="t">3.&nbsp;Sem</div><select class="g" data-grp="ABU"></select></div>
+          <div class="semcell"><div class="t">4.&nbsp;Sem</div><select class="g" data-grp="ABU"></select></div>
+          <div class="semcell"><div class="t">5.&nbsp;Sem</div><select class="g" data-grp="ABU"></select></div>
+          <div class="semcell"><div class="t">Ø</div><span class="avg none" id="avg-abu" style="display:inline-block;padding:6px 4px;">–</span></div>
+        </div>
+        <div class="inputrow" style="margin-top:12px;"><label>Vertiefungsarbeit<small>Prüfungsnote</small></label><select class="s" id="abuVA"></select></div>
+        <div class="inputrow"><label>Schlussprüfung ABU<small>Prüfungsnote</small></label><select class="s" id="abuSP"></select></div>
+        <div class="fnote"><span class="lab">Fachnote Allgemeinbildung = (Erfahrung + VA + Schlussprüfung) ÷ 3</span><span class="val none" id="fn-abu">–</span></div>
+      </div>
+
+      <!-- BERUFSKENNTNISSE -->
+      <div class="card">
+        <div class="sec-head"><h2>Berufskenntnisse</h2><span class="wbadge">20 %</span></div>
+        <p class="sec-note">Fallnote aus der Abschlussprüfung. HKB A/B/C zählt 0.8, HKB D/E zählt 0.2. Halbnoten.</p>
+        <div class="inputrow"><label>HKB A/B/C<small>Prüfung · Gewicht 0.8</small></label><select class="s" id="bkABC"></select></div>
+        <div class="inputrow"><label>HKB D/E<small>Prüfung · Gewicht 0.2</small></label><select class="s" id="bkDE"></select></div>
+        <div class="fnote"><span class="lab">Fachnote Berufskenntnisse = ABC × 0.8 + DE × 0.2</span><span class="val none" id="fn-bk">–</span></div>
+      </div>
+
+      <!-- PRAKTISCHE ARBEIT -->
+      <div class="card">
+        <div class="sec-head"><h2>Praktische Arbeit</h2><span class="wbadge">40 %</span></div>
+        <p class="sec-note">Fallnote aus der praktischen Abschlussprüfung. Halbnote.</p>
+        <div class="inputrow"><label>Praktische Arbeit<small>Abschlussprüfung</small></label><select class="s" id="pa"></select></div>
+        <div class="fnote"><span class="lab">Fachnote Praktische Arbeit</span><span class="val none" id="fn-pa">–</span></div>
+      </div>
+
+    </div>
+
+    <!-- ERGEBNIS -->
+    <div class="col-res">
+      <div class="res">
+        <div class="rlabel">Gesamtnote (Zehntelnote)</div>
+        <div class="gesamt none" id="gesamt">–</div>
+        <div class="verdict pend" id="verdict"><span id="verdict-ic">•</span><span id="verdict-tx">Noch unvollständig</span></div>
+
+        <div class="fnlist">
+          <div class="fnrow"><span class="n"><b>Praktische Arbeit</b> <span class="ww">40 %</span></span><span class="v none" id="r-pa">–</span></div>
+          <div class="fnrow"><span class="n"><b>Berufskenntnisse</b> <span class="ww">20 %</span></span><span class="v none" id="r-bk">–</span></div>
+          <div class="fnrow"><span class="n"><b>Allgemeinbildung</b> <span class="ww">20 %</span></span><span class="v none" id="r-abu">–</span></div>
+          <div class="fnrow"><span class="n"><b>Erfahrungsnote</b> <span class="ww">20 %</span></span><span class="v none" id="r-erf">–</span></div>
+        </div>
+
+        <div class="crit">
+          <div class="ct">Bestehenskriterien</div>
+          <div class="critrow"><span class="ic" id="ic-ges">•</span>Gesamtnote mindestens 4.0</div>
+          <div class="critrow"><span class="ic" id="ic-pa">•</span>Praktische Arbeit mindestens 4.0</div>
+          <div class="critrow"><span class="ic" id="ic-bk">•</span>Berufskenntnisse mindestens 4.0</div>
+        </div>
+
+        <div class="actions">
+          <button class="btn" id="btn-demo">Beispiel</button>
+          <button class="btn" id="btn-reset">Zurücksetzen</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer">
+  <div class="cr">Notenrechner erstellt von Jasmin Hürlimann · integriert von Samuel Mollet · HKV Aarau · realisiert mit Claude (Anthropic)</div>
+</div>
+
+<script>
+  const $=id=>document.getElementById(id);
+  const GRADES=[6,5.5,5,4.5,4,3.5,3,2.5,2,1.5,1];
+  const fmtHalf=x=>(Math.round(x*2)%2===0)?String(x):x.toFixed(1);
+  const fmt1=x=>x.toFixed(1);
+  const roundHalf=x=>Math.round(x*2+1e-9)/2;
+  const round1=x=>Math.round(x*10+1e-9)/10;
+
+  // Selects befüllen
+  document.querySelectorAll('select.g, select.s').forEach(s=>{
+    s.innerHTML='<option value="">–</option>'+GRADES.map(g=>`<option value="${g}">${fmtHalf(g)}</option>`).join('');
+    s.addEventListener('change', recompute);
+  });
+
+  const grp=name=>Array.from(document.querySelectorAll(`select.g[data-grp="${name}"]`)).map(s=>s.value).filter(v=>v!=='').map(Number);
+  const val=id=>{ const v=$(id).value; return v===''?null:Number(v); };
+  const avgHalf=arr=>arr.length?roundHalf(arr.reduce((a,b)=>a+b,0)/arr.length):null;
+  const mean=arr=>arr.length?arr.reduce((a,b)=>a+b,0)/arr.length:null;
+
+  function setAvg(id,v){ const el=$(id); if(v===null){ el.textContent='–'; el.classList.add('none'); } else { el.textContent=fmt1(v); el.classList.remove('none'); } }
+  function setFn(id,v){ const el=$(id); el.classList.remove('ok','bad','none');
+    if(v===null){ el.textContent='–'; el.classList.add('none'); }
+    else { el.textContent=fmt1(v); el.classList.add(v>=4?'ok':'bad'); } }
+  function setRes(id,v){ const el=$(id); el.classList.remove('none');
+    if(v===null){ el.textContent='–'; el.classList.add('none'); } else el.textContent=fmt1(v); }
+  function setIc(id,state){ const el=$(id); el.classList.remove('ok','no'); 
+    if(state===true){ el.classList.add('ok'); el.textContent='✓'; }
+    else if(state===false){ el.classList.add('no'); el.textContent='✕'; }
+    else el.textContent='•'; }
+
+  function recompute(){
+    // Schulische Erfahrungsnote (HKB A–E)
+    const pA=avgHalf(grp('A')), pB=avgHalf(grp('B')), pC=avgHalf(grp('C')), pD=avgHalf(grp('D')), pE=avgHalf(grp('E'));
+    setAvg('avg-A',pA); setAvg('avg-B',pB); setAvg('avg-C',pC); setAvg('avg-D',pD); setAvg('avg-E',pE);
+    const hkb=[pA,pB,pC,pD,pE].filter(v=>v!==null);
+    const schul=hkb.length?roundHalf(mean(hkb)):null; setAvg('avg-schul',schul);
+    const uek=avgHalf(grp('UEK')); setAvg('avg-uek',uek);
+    const vErf=(schul!==null&&uek!==null)?roundHalf(schul*0.7+uek*0.3):null; setFn('fn-erf',vErf);
+
+    // Allgemeinbildung
+    const abuErf=avgHalf(grp('ABU')); setAvg('avg-abu',abuErf);
+    const va=val('abuVA'), sp=val('abuSP');
+    const vAbu=(abuErf!==null&&va!==null&&sp!==null)?roundHalf((abuErf+va+sp)/3):null; setFn('fn-abu',vAbu);
+
+    // Berufskenntnisse
+    const abc=val('bkABC'), de=val('bkDE');
+    const vBk=(abc!==null&&de!==null)?roundHalf(abc*0.8+de*0.2):null; setFn('fn-bk',vBk);
+
+    // Praktische Arbeit
+    let vPa=val('pa'); if(vPa!==null) vPa=roundHalf(vPa); setFn('fn-pa',vPa);
+
+    // Ergebnis-Panel Fachnoten
+    setRes('r-pa',vPa); setRes('r-bk',vBk); setRes('r-abu',vAbu); setRes('r-erf',vErf);
+
+    // Gesamtnote
+    let gesamt=null;
+    if(vErf!==null&&vAbu!==null&&vBk!==null&&vPa!==null){
+      gesamt=round1(vErf*0.2+vAbu*0.2+vBk*0.2+vPa*0.4);
+    }
+    const gEl=$('gesamt');
+    if(gesamt===null){ gEl.textContent='–'; gEl.classList.add('none'); }
+    else { gEl.innerHTML=fmt1(gesamt); gEl.classList.remove('none'); }
+
+    // Bestehenskriterien
+    setIc('ic-ges', gesamt===null?null:gesamt>=4);
+    setIc('ic-pa', vPa===null?null:vPa>=4);
+    setIc('ic-bk', vBk===null?null:vBk>=4);
+
+    // Verdikt
+    const v=$('verdict'), vic=$('verdict-ic'), vtx=$('verdict-tx'); v.classList.remove('pass','fail','pend');
+    if(gesamt===null){ v.classList.add('pend'); vic.textContent='•'; vtx.textContent='Noch unvollständig'; }
+    else if(gesamt>=4 && vPa>=4 && vBk>=4){ v.classList.add('pass'); vic.textContent='✓'; vtx.textContent='Bestanden'; }
+    else { v.classList.add('fail'); vic.textContent='✕'; vtx.textContent='Nicht bestanden'; }
+  }
+
+  // Buttons
+  $('btn-reset').addEventListener('click',()=>{ document.querySelectorAll('select.g, select.s').forEach(s=>s.value=''); recompute(); });
+  $('btn-demo').addEventListener('click',()=>{
+    const set=(grpName,vals)=>{ const sel=document.querySelectorAll(`select.g[data-grp="${grpName}"]`); vals.forEach((x,i)=>{ if(sel[i]) sel[i].value=x; }); };
+    set('A',[4.5,4.5,4.5,5,5,4.5]); set('B',[4,4,3.5,4,4,3.5]); set('C',[4.5,4.5,4.5,4,5,5]);
+    set('D',[4,4]); set('E',[5,4]); set('UEK',[5.5,5.5,5]); set('ABU',[5,5,5,5,5]);
+    $('abuVA').value='5'; $('abuSP').value='4.5'; $('bkABC').value='4.5'; $('bkDE').value='4.5'; $('pa').value='4.5';
+    recompute();
+  });
+
+  recompute();
+</script>
+</body>
+</html>
