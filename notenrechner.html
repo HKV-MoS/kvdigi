@@ -11,10 +11,17 @@
   .brand-eyebrow{ font-size:11px; font-weight:800; letter-spacing:2.5px; color:#D8AE66; margin-bottom:3px; text-transform:uppercase; }
   header h1{ margin:0 0 2px; font-size:20px; font-weight:800; letter-spacing:-.3px; }
   header .sub{ font-size:12.5px; opacity:.93; }
-  .profsel{ margin-top:11px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-  .profsel label{ font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#D8AE66; }
-  .profsel select{ font-family:inherit; font-size:13.5px; font-weight:700; padding:7px 12px; border-radius:9px; border:1.5px solid rgba(255,255,255,.4); background:rgba(255,255,255,.96); color:#213B42; cursor:pointer; max-width:100%; }
-  .profsel select:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
+  .profsel{ margin-top:12px; display:flex; flex-direction:column; gap:7px; }
+  .pgroup{ display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+  .plabel{ font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#D8AE66; min-width:118px; }
+  @media (max-width:600px){ .plabel{ min-width:0; width:100%; margin-bottom:-2px; } }
+  .pbtns{ display:flex; gap:6px; flex-wrap:wrap; }
+  .pbtn{ display:inline-flex; align-items:center; gap:6px; font-family:inherit; font-size:12.5px; font-weight:600; padding:6px 11px; border-radius:8px; border:1.5px solid rgba(255,255,255,.3); background:rgba(255,255,255,.10); color:#EAF1F2; cursor:pointer; transition:background .14s ease,border-color .14s ease,color .14s ease; }
+  .pbtn svg{ width:15px; height:15px; flex:0 0 auto; opacity:.85; }
+  .pbtn:hover{ background:rgba(255,255,255,.2); border-color:rgba(255,255,255,.5); }
+  .pbtn.active{ background:#fff; color:#213B42; border-color:#fff; font-weight:800; box-shadow:0 2px 7px rgba(0,0,0,.18); }
+  .pbtn.active svg{ opacity:1; }
+  .pbtn:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
   .basis{ font-size:11px; color:#A9C3C8; }
   .wrap{ max-width:1240px; margin:0 auto; padding:16px; }
 
@@ -87,11 +94,8 @@
   <div class="brand-eyebrow">HKV Aarau</div>
   <h1 id="h-title">Notenrechner</h1>
   <div class="sub" id="h-sub">Erfahrungs- und Prüfungsnoten eingeben – Fachnoten, Gesamtnote und Bestehen werden laufend berechnet.</div>
-  <div class="profsel">
-    <label for="prof">Beruf</label>
-    <select id="prof"></select>
-    <span class="basis" id="h-basis"></span>
-  </div>
+  <div class="profsel" id="profbar"></div>
+  <div class="basis" id="h-basis" style="margin-top:9px;"></div>
 </header>
 
 <div class="wrap">
@@ -447,15 +451,45 @@ function recompute(){
 }
 
 /* ---------- Steuerung ---------- */
-$('prof').innerHTML=CONFIGS.map((c,i)=>`<option value="${i}">${esc(c.label)}</option>`).join('');
-$('prof').addEventListener('change',()=>renderConfig(CONFIGS[+$('prof').value]));
+const _svg=p=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const IC_APO=_svg('<path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/>');
+const IC_DH=_svg('<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>');
+const IC_KV=_svg('<rect width="20" height="14" x="2" y="6" rx="2"/><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>');
+const PROF_GROUPS=[
+  { name:'Fachleute EFZ', icon:IC_APO, items:[
+      {id:'apo', btn:'Apotheke'},
+  ]},
+  { name:'Detailhandel', icon:IC_DH, items:[
+      {id:'dhf_auto',        btn:'EFZ · Lebensmittel/Auto/Landi'},
+      {id:'dhf_ueb',         btn:'EFZ · übrige Branchen'},
+      {id:'dh_efz_bm1_auto', btn:'EFZ + BM1 · Lebensmittel/Auto/Landi'},
+      {id:'dh_efz_bm1_ueb',  btn:'EFZ + BM1 · übrige Branchen'},
+      {id:'dha_auto',        btn:'EBA · Lebensmittel/Auto/Landi'},
+      {id:'dha_ueb',         btn:'EBA · übrige Branchen'},
+  ]},
+  { name:'Kaufleute / Büro', icon:IC_KV, items:[
+      {id:'kv_efz',     btn:'Kaufleute EFZ'},
+      {id:'kv_efz_bm1', btn:'Kaufleute EFZ + BM1'},
+      {id:'kv_eba',     btn:'Büroassistent/in EBA'},
+  ]},
+];
+const cfgIndex=id=>CONFIGS.findIndex(c=>c.id===id);
+function renderProfBar(){
+  $('profbar').innerHTML=PROF_GROUPS.map(g=>`<div class="pgroup"><span class="plabel">${esc(g.name)}</span><div class="pbtns">`+g.items.map(it=>`<button type="button" class="pbtn" data-i="${cfgIndex(it.id)}">${g.icon}${esc(it.btn)}</button>`).join('')+`</div></div>`).join('');
+  $('profbar').querySelectorAll('.pbtn').forEach(b=>b.addEventListener('click',()=>selectProf(+b.dataset.i)));
+}
+function selectProf(i){
+  $('profbar').querySelectorAll('.pbtn').forEach(b=>b.classList.toggle('active', +b.dataset.i===i));
+  renderConfig(CONFIGS[i]);
+}
 $('btn-reset').addEventListener('click',()=>{ $('form').querySelectorAll('select').forEach(s=>s.value=''); recompute(); });
 $('btn-demo').addEventListener('click',()=>{
   const demo=['5','4.5','5','4.5','4','5.5','4.5','5','4'];
   let i=0; $('form').querySelectorAll('select').forEach(s=>{ s.value=demo[i%demo.length]; i++; }); recompute();
 });
 
-renderConfig(CONFIGS[0]);
+renderProfBar();
+selectProf(0);
 </script>
 </body>
 </html>
