@@ -128,7 +128,7 @@ const mean=a=>a.length?a.reduce((p,c)=>p+c,0)/a.length:null;
 const roundBy=(m,x)=>m==='half'?roundHalf(x):round1(x);
 
 /* ---------- Beruf-Konfigurationen ---------- */
-const erf=(label,sub,weight,sems,hint)=>({kind:'erfahrung',label,sub,hint,weight,sems});
+const erf=(label,sub,weight,sems,hint,slotLabel,raw)=>({kind:'erfahrung',label,sub,hint,weight,sems,slotLabel,raw});
 const exam=(label,sub,weight)=>({kind:'exam',label,sub,weight});
 
 // Detailhandel: Berufskenntnisse + ABU + Erfahrungsnote sind bei EFZ/EBA gleich aufgebaut
@@ -256,6 +256,106 @@ const CONFIGS=[
   ],
   pass:['PA'],
 },
+{
+  id:'kv_efz', label:'Kauffrau/Kaufmann EFZ',
+  sub:'Kaufleute EFZ – nach Bildungsverordnung 2023', basis:'BiVo Kaufleute 2023',
+  bereiche:[
+    {key:'ERF',name:'Erfahrungsnote',weight:0.40,round:'tenth',positions:[
+      erf('Bildung in beruflicher Praxis (Betrieb)','Betriebliche Kompetenznachweise · 25 %',0.25,[1,2,3,4,5,6],null,'Betr.KN'),
+      erf('Überbetrieblicher Kurs (üK)','üK-Kompetenznachweise · 25 %',0.25,[1,2],null,'üK'),
+      erf('Berufskenntnisse & Allgemeinbildung (Schule)','Semesterzeugnisnoten · 50 %',0.50,[1,2,3,4,5,6],null,'Sem'),
+    ]},
+    {key:'PA',name:'Praktische Arbeit',weight:0.30,round:'tenth',fallnote:true,positions:[
+      exam('Praktische Arbeit','Fallnote · halbe/ganze Note',1.0),
+    ]},
+    {key:'BKABU',name:'Berufskenntnisse & Allgemeinbildung',weight:0.30,round:'tenth',fallnote:true,positions:[
+      exam('HKB A','Präsentation und aktive Anwendung · 20 %',0.20),
+      exam('HKB B','Fallarbeit mit Teilaufgaben · 20 %',0.20),
+      exam('HKB C','Handlungssimulationen (+Fremdsprache) · 20 %',0.20),
+      exam('HKB D','Rollenspiele und aktive Anwendung · 20 %',0.20),
+      exam('HKB E','Fallarbeit mit Teilaufgaben · 20 %',0.20),
+    ]},
+  ],
+  pass:['PA','BKABU'],
+},
+{
+  id:'kv_eba', label:'Büroassistent/in EBA',
+  sub:'Büroassistenz EBA – nach Bildungsverordnung 2023', basis:'BiVo Büroassistenz 2023',
+  bereiche:[
+    {key:'ERF',name:'Erfahrungsnote',weight:0.40,round:'tenth',positions:[
+      erf('Bildung in beruflicher Praxis (Betrieb)','Betriebliche Kompetenznachweise · 25 %',0.25,[1,2,3,4],null,'Betr.KN'),
+      erf('Überbetrieblicher Kurs (üK)','üK-Kompetenznachweise · 25 %',0.25,[1,2],null,'üK'),
+      erf('Berufskenntnisse & Allgemeinbildung (Schule)','Semesterzeugnisnoten · 50 %',0.50,[1,2,3,4],null,'Sem'),
+    ]},
+    {key:'PA',name:'Praktische Arbeit',weight:0.30,round:'tenth',fallnote:true,positions:[
+      exam('HKB a','Postkorbübung · 25 %',0.25),
+      exam('HKB b','Rollenspiel · 25 %',0.25),
+      exam('HKB c–e','Handlungssituationen beschreiben/begründen · 50 %',0.50),
+    ]},
+    {key:'BKABU',name:'Berufskenntnisse & Allgemeinbildung',weight:0.30,round:'tenth',positions:[
+      exam('HKB a','Präsentation und aktive Anwendung · 25 %',0.25),
+      exam('HKB b','Rollenspiel und Critical Incidents · 25 %',0.25),
+      exam('HKB c–e','Drei Handlungssimulationen (inkl. Fremdsprache) · 50 %',0.50),
+    ]},
+  ],
+  pass:['PA'],
+},
+{
+  id:'kv_efz_bm1', label:'Kauffrau/Kaufmann EFZ mit BM1',
+  sub:'Kaufleute EFZ mit lehrbegleitender Berufsmaturität · BiVo 2023', basis:'BiVo Kaufleute 2023 · mit BM1',
+  bereiche:[
+    {key:'ERF',name:'Erfahrungsnote',weight:0.40,round:'tenth',positions:[
+      erf('Bildung in beruflicher Praxis (Betrieb)','Betriebliche Kompetenznachweise · 50 %',0.50,[1,2,3,4,5,6],null,'Betr.KN'),
+      erf('Überbetrieblicher Kurs (üK)','üK-Kompetenznachweise · 50 %',0.50,[1,2],null,'üK'),
+    ]},
+    {key:'PA',name:'Praktische Arbeit',weight:0.30,round:'tenth',fallnote:true,positions:[
+      exam('Praktische Arbeit','Fallnote · halbe/ganze Note',1.0),
+    ]},
+    {key:'BKABU',name:'Berufskenntnisse & Allgemeinbildung',weight:0.30,round:'tenth',fallnote:true,positions:[
+      exam('HKB B','Fallarbeit mit Teilaufgaben · 25 %',0.25),
+      exam('HKB C','Handlungssimulationen (+Fremdsprache) · 25 %',0.25),
+      exam('HKB D','Rollenspiele und aktive Anwendung · 25 %',0.25),
+      exam('HKB E','Fallarbeit mit Teilaufgaben · 25 %',0.25),
+    ]},
+  ],
+  pass:['PA','BKABU'],
+},
+{
+  id:'dh_efz_bm1_ueb', label:'Detailhandelsfachfrau/-mann EFZ mit BM1 – übrige Branchen',
+  sub:'EFZ mit Berufsmaturität (ohne Allgemeinbildung, drei Bereiche je ⅓) · übrige Branchen', basis:'BiVo DHF 18.05.2021 · mit BM1 · ab QV 2025',
+  bereiche:[
+    {key:'PA',name:'Praktische Arbeit',weight:1/3,round:'tenth',fallnote:true,positions:[
+      exam('Kundenbeziehungen (HKB A) & Produkte-/DL-Kenntnisse (HKB C)','Prüfung · 50 %',0.50),
+      exam('Bewirtschaften und Präsentieren (HKB B)','Prüfung · 20 %',0.20),
+      exam('Einkaufserlebnisse (HKB E) oder Online-Shops (HKB F)','Prüfung · 30 %',0.30),
+    ]},
+    DH_BK(),
+    {key:'ERF',name:'Erfahrungsnote',weight:1/3,round:'tenth',positions:[
+      erf('Bildung in beruflicher Praxis','25 %',0.25,[1,2,3,4,5,6],null,null,true),
+      erf('Unterricht in den Berufskenntnissen','50 %',0.50,[1,2,3,4,5,6],null,null,true),
+      erf('Überbetriebliche Kurse (ÜK)','25 %',0.25,[1,2,3,4,5,6],null,null,true),
+    ]},
+  ],
+  pass:['PA'],
+},
+{
+  id:'dh_efz_bm1_auto', label:'Detailhandelsfachfrau/-mann EFZ mit BM1 – Automobil/Landi/Lebensmittel',
+  sub:'EFZ mit Berufsmaturität (ohne Allgemeinbildung, drei Bereiche je ⅓) · Branchen Automobil/Landi/Lebensmittel', basis:'BiVo DHF 18.05.2021 · mit BM1 · ab QV 2025',
+  bereiche:[
+    {key:'PA',name:'Praktische Arbeit',weight:1/3,round:'tenth',fallnote:true,positions:[
+      exam('Kundenbeziehungen (HKB A) & Produkte-/DL-Kenntnisse (HKB C)','Prüfung · 35 %',0.35),
+      exam('Bewirtschaften und Präsentieren (HKB B)','Prüfung · 35 %',0.35),
+      exam('Einkaufserlebnisse (HKB E) oder Online-Shops (HKB F)','Prüfung · 30 %',0.30),
+    ]},
+    DH_BK(),
+    {key:'ERF',name:'Erfahrungsnote',weight:1/3,round:'tenth',positions:[
+      erf('Bildung in beruflicher Praxis','25 %',0.25,[1,2,3,4,5,6],null,null,true),
+      erf('Unterricht in den Berufskenntnissen','50 %',0.50,[1,2,3,4,5,6],null,null,true),
+      erf('Überbetriebliche Kurse (ÜK)','25 %',0.25,[1,2,3,4,5,6],null,null,true),
+    ]},
+  ],
+  pass:['PA'],
+},
 ];
 
 /* ---------- Rendering ---------- */
@@ -270,7 +370,7 @@ function posHTML(p){
   if(p.kind==='erfahrung'){
     p._inIds=[];
     let cells='';
-    p.sems.forEach(s=>{ const id='i'+(uid++); p._inIds.push(id); cells+=`<div class="semcell"><div class="t">${s}.&nbsp;Sem</div><select class="g" id="${id}"></select></div>`; });
+    p.sems.forEach(s=>{ const id='i'+(uid++); p._inIds.push(id); const slab=p.slotLabel?`${esc(p.slotLabel)}&nbsp;${s}`:`${s}.&nbsp;Sem`; cells+=`<div class="semcell"><div class="t">${slab}</div><select class="g" id="${id}"></select></div>`; });
     const oid='o'+(uid++); p._outId=oid;
     cells+=`<div class="semcell"><div class="t">Ø</div><span class="avg none" id="${oid}">–</span></div>`;
     const small=p.sub?esc(p.sub):(p.hint?esc(p.hint):'');
@@ -316,7 +416,7 @@ function setIc(el,state){ if(!el) return; el.classList.remove('ok','no');
 function evalNode(node){
   let v=null;
   if(node.kind==='exam'){ const x=node._inputs[0].value; v=x===''?null:Number(x); }
-  else if(node.kind==='erfahrung'){ const a=node._inputs.map(s=>s.value).filter(x=>x!=='').map(Number); v=a.length?roundHalf(mean(a)):null; }
+  else if(node.kind==='erfahrung'){ const a=node._inputs.map(s=>s.value).filter(x=>x!=='').map(Number); v=a.length?(node.raw?mean(a):roundHalf(mean(a))):null; }
   else {
     const subs=node.positions.map(evalNode);
     const mode=node.combine||'weightedAll';
