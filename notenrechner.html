@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notenrechner QV – HKV Aarau</title>
+<style>
+  *{ box-sizing:border-box; }
+  body{ margin:0; font-family:'Aptos','Segoe UI',system-ui,-apple-system,sans-serif; background:#F4F8FB; color:#1A2B3A; font-size:14px; line-height:1.5; }
+  header{ background:linear-gradient(135deg,#213B42 0%,#3C6E73 100%); color:#fff; padding:14px 22px 14px; box-shadow:0 2px 8px rgba(0,0,0,.12); }
+  .brand-eyebrow{ font-size:11px; font-weight:800; letter-spacing:2.5px; color:#D8AE66; margin-bottom:3px; text-transform:uppercase; }
+  header h1{ margin:0 0 2px; font-size:20px; font-weight:800; letter-spacing:-.3px; }
+  header .sub{ font-size:12.5px; opacity:.93; }
+  .profsel{ margin-top:11px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .profsel label{ font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#D8AE66; }
+  .profsel select{ font-family:inherit; font-size:13.5px; font-weight:700; padding:7px 12px; border-radius:9px; border:1.5px solid rgba(255,255,255,.4); background:rgba(255,255,255,.96); color:#213B42; cursor:pointer; max-width:100%; }
+  .profsel select:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
+  .basis{ font-size:11px; color:#A9C3C8; }
+  .wrap{ max-width:1240px; margin:0 auto; padding:16px; }
+
+  .shell{ display:flex; gap:18px; align-items:flex-start; }
+  @media (max-width:940px){ .shell{ flex-direction:column; } }
+  .col-in{ flex:1 1 auto; min-width:0; }
+  .col-res{ flex:0 0 320px; max-width:320px; position:sticky; top:14px; }
+  @media (max-width:940px){ .col-res{ flex:1 1 auto; max-width:none; width:100%; position:static; } }
+
+  .card{ background:#fff; border-radius:14px; box-shadow:0 2px 10px rgba(20,50,80,.08); padding:15px 17px; margin-bottom:14px; }
+  .sec-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:4px; }
+  .sec-head h2{ margin:0; font-size:16px; color:#213B42; font-weight:800; }
+  .wbadge{ font-size:11px; font-weight:800; background:#91B99B; color:#16292B; padding:3px 10px; border-radius:999px; white-space:nowrap; }
+  .sec-note{ font-size:12px; color:#5B6B7A; margin:0 0 10px; }
+  .subhead{ font-size:11.5px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; color:#3C6E73; margin:13px 0 6px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .subhead .w{ font-size:10.5px; font-weight:800; color:#8AA0B4; background:#EEF4F6; padding:1px 7px; border-radius:6px; text-transform:none; letter-spacing:0; }
+
+  select.g, select.s{ font-family:inherit; font-size:13px; padding:6px 4px; border:1.5px solid #CBD7E2; border-radius:8px; background:#fff; color:#26384A; cursor:pointer; width:54px; text-align:center; }
+  select.s{ width:auto; min-width:84px; padding:7px 10px; text-align:left; }
+  select.g:focus-visible, select.s:focus-visible{ outline:3px solid #A7D2CE; outline-offset:1px; }
+  .avg{ font-weight:800; font-size:13.5px; color:#3C6E73; background:#EEF6F4; border-radius:7px; min-width:42px; display:inline-block; padding:6px 6px; text-align:center; }
+  .avg.none{ color:#C2CDD6; background:transparent; font-weight:700; }
+
+  .inputrow{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:7px 0; }
+  .inputrow label{ font-size:13px; font-weight:700; color:#28435E; min-width:240px; flex:1 1 240px; }
+  .inputrow label small{ display:block; font-weight:500; font-size:10.5px; color:#94A3B0; }
+  .erow{ margin:9px 0 4px; }
+  .elabel{ font-size:13px; font-weight:700; color:#28435E; margin-bottom:5px; }
+  .elabel small{ display:block; font-weight:500; font-size:10.5px; color:#94A3B0; }
+  .semrow{ display:flex; gap:6px; flex-wrap:wrap; align-items:flex-end; }
+  .semcell{ text-align:center; } .semcell .t{ font-size:10px; font-weight:800; color:#8AA0B4; margin-bottom:2px; white-space:nowrap; }
+
+  .fnote{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:11px; padding:9px 12px; background:#F3F8FC; border-radius:10px; border-left:4px solid #3C6E73; }
+  .fnote .lab{ font-size:12.5px; font-weight:800; color:#28435E; }
+  .fnote .val{ font-size:17px; font-weight:900; color:#213B42; }
+  .fnote .val.ok{ color:#1d7a4a; } .fnote .val.bad{ color:#c0392b; } .fnote .val.none{ color:#C2CDD6; }
+
+  .res{ background:linear-gradient(160deg,#213B42 0%,#2E5054 100%); color:#fff; border-radius:16px; padding:16px 17px; box-shadow:0 4px 16px rgba(20,50,80,.18); }
+  .res .rlabel{ font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:#D8AE66; }
+  .gesamt{ font-size:52px; font-weight:900; line-height:1; margin:4px 0 2px; letter-spacing:-1px; }
+  .gesamt.none{ color:#7C949A; font-size:34px; }
+  .verdict{ display:inline-flex; align-items:center; gap:7px; font-size:14px; font-weight:800; padding:6px 14px; border-radius:999px; margin-top:6px; }
+  .verdict.pass{ background:#2E9D6B; color:#fff; } .verdict.fail{ background:#E2574C; color:#fff; } .verdict.pend{ background:#41595E; color:#C6D4D6; }
+
+  .fnlist{ margin:14px 0 4px; border-top:1px solid rgba(255,255,255,.16); padding-top:10px; }
+  .fnrow{ display:flex; align-items:center; justify-content:space-between; gap:8px; padding:4px 0; font-size:13px; }
+  .fnrow .n{ color:#D5E2E4; } .fnrow .n b{ color:#fff; font-weight:700; } .fnrow .n .ww{ color:#8FB0B5; font-size:11px; }
+  .fnrow .v{ font-weight:800; font-size:15px; color:#fff; min-width:42px; text-align:right; }
+  .fnrow .v.none{ color:#6E888E; }
+
+  .crit{ margin-top:12px; border-top:1px solid rgba(255,255,255,.16); padding-top:10px; }
+  .crit .ct{ font-size:11px; font-weight:800; letter-spacing:.5px; text-transform:uppercase; color:#A9C3C8; margin-bottom:6px; }
+  .critrow{ display:flex; align-items:center; gap:9px; font-size:12.5px; color:#E0EAEC; padding:3px 0; }
+  .ic{ width:18px; height:18px; border-radius:50%; flex:0 0 18px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:900; background:#41595E; color:#9FB6BA; }
+  .ic.ok{ background:#2E9D6B; color:#fff; } .ic.no{ background:#E2574C; color:#fff; }
+
+  .actions{ display:flex; gap:8px; margin-top:14px; }
+  .btn{ font-family:inherit; font-size:12.5px; font-weight:700; cursor:pointer; border-radius:9px; padding:8px 13px; border:1.5px solid rgba(255,255,255,.4); background:rgba(255,255,255,.1); color:#fff; transition:all .15s ease; flex:1; }
+  .btn:hover{ background:rgba(255,255,255,.2); }
+  .btn:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
+
+  .footer{ max-width:1240px; margin:4px auto 22px; padding:0 18px; }
+  .footer .cr{ color:#94A3B0; font-size:11px; }
+  @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand-eyebrow">HKV Aarau</div>
+  <h1 id="h-title">Notenrechner</h1>
+  <div class="sub" id="h-sub">Erfahrungs- und Prüfungsnoten eingeben – Fachnoten, Gesamtnote und Bestehen werden laufend berechnet.</div>
+  <div class="profsel">
+    <label for="prof">Beruf</label>
+    <select id="prof"></select>
+    <span class="basis" id="h-basis"></span>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="shell">
+    <div class="col-in" id="form"></div>
+    <div class="col-res">
+      <div class="res">
+        <div class="rlabel">Gesamtnote (Zehntelnote)</div>
+        <div class="gesamt none" id="gesamt">–</div>
+        <div class="verdict pend" id="verdict"><span id="verdict-ic">•</span><span id="verdict-tx">Noch unvollständig</span></div>
+        <div class="fnlist" id="fnlist"></div>
+        <div class="crit"><div class="ct">Bestehenskriterien</div><div id="crit-rows"></div></div>
+        <div class="actions">
+          <button class="btn" id="btn-demo">Beispiel</button>
+          <button class="btn" id="btn-reset">Zurücksetzen</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="cr" id="cr-line">APO-Rechner von Jasmin Hürlimann · Detailhandel-Strukturen nach offiziellen Notenrechnern (BDS) · integriert von Samuel Mollet · HKV Aarau · realisiert mit Claude (Anthropic)</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const GRADES=[6,5.5,5,4.5,4,3.5,3,2.5,2,1.5,1];
+const fmtHalf=x=>(Math.round(x*2)%2===0)?String(x):x.toFixed(1);
+const fmt1=x=>x.toFixed(1);
+const roundHalf=x=>Math.round(x*2+1e-9)/2;
+const round1=x=>Math.round(x*10+1e-9)/10;
+const mean=a=>a.length?a.reduce((p,c)=>p+c,0)/a.length:null;
+const roundBy=(m,x)=>m==='half'?roundHalf(x):round1(x);
+
+/* ---------- Beruf-Konfigurationen ---------- */
+const erf=(label,sub,weight,sems,hint)=>({kind:'erfahrung',label,sub,hint,weight,sems});
+const exam=(label,sub,weight)=>({kind:'exam',label,sub,weight});
+
+// Detailhandel: Berufskenntnisse + ABU + Erfahrungsnote sind bei EFZ/EBA gleich aufgebaut
+const DH_BK=()=>({key:'BK',name:'Berufskenntnisse',weight:0.30,round:'tenth',positions:[
+  exam('Gestalten von Kundenbeziehungen (HKB A)','Prüfung · 50 %',0.50),
+  exam('Bewirtschaften und Präsentieren (HKB B)','Prüfung · 25 %',0.25),
+  exam('Interagieren im Betrieb und in der Branche (HKB D)','Prüfung · 25 %',0.25),
+]});
+
+const CONFIGS=[
+{
+  id:'apo', label:'Fachfrau/Fachmann Apotheke EFZ',
+  sub:'QV Apotheke EFZ – Erfahrungs- und Prüfungsnoten', basis:'QV Apotheke EFZ',
+  bereiche:[
+    {key:'ERF',name:'Erfahrungsnote',weight:0.20,round:'half',positions:[
+      {kind:'group',label:'Schulische Erfahrungsnote',hint:'Ø HKB A–E · Gewicht 0.7',weight:0.7,round:'half',combine:'meanFilled',positions:[
+        erf('HKB A','Beraten und Bedienen',0.2,[1,2,3,4,5,6]),
+        erf('HKB B','Abgeben von Heilmitteln',0.2,[1,2,3,4,5,6]),
+        erf('HKB C','Medizinische Abklärungen',0.2,[1,2,3,4,5,6]),
+        erf('HKB D','Bewirtschaften',0.2,[1,2]),
+        erf('HKB E','Administrative Arbeiten',0.2,[2,3]),
+      ]},
+      erf('Überbetriebliche Kurse (ÜK)',null,0.3,[2,3,5],'Gewicht 0.3'),
+    ]},
+    {key:'ABU',name:'Allgemeinbildung',weight:0.20,round:'half',positions:[
+      erf('Erfahrungsnote ABU',null,1/3,[1,2,3,4,5],'Ø Sem 1–5'),
+      exam('Vertiefungsarbeit','Prüfungsnote',1/3),
+      exam('Schlussprüfung ABU','Prüfungsnote',1/3),
+    ]},
+    {key:'BK',name:'Berufskenntnisse',weight:0.20,round:'half',positions:[
+      exam('HKB A/B/C','Prüfung · Gewicht 0.8',0.8),
+      exam('HKB D/E','Prüfung · Gewicht 0.2',0.2),
+    ]},
+    {key:'PA',name:'Praktische Arbeit',weight:0.40,round:'half',fallnote:true,positions:[
+      exam('Praktische Arbeit','Abschlussprüfung',1.0),
+    ]},
+  ],
+  pass:['PA','BK'],
+},
+{
+  id:'dhf_ueb', label:'Detailhandelsfachfrau/-mann EFZ – übrige Branchen',
+  sub:'Alle Branchen ausser Automobil After-Sales, Landi, Nahrungs-/Genussmittel', basis:'BiVo DHF 18.05.2021 · ab QV 2025',
+  bereiche:[
+    {key:'PA',name:'Praktische Arbeit',weight:0.30,round:'tenth',fallnote:true,positions:[
+      exam('Kundenbeziehungen (HKB A) & Produkte-/DL-Kenntnisse (HKB C)','Prüfung · 50 %',0.50),
+      exam('Bewirtschaften und Präsentieren (HKB B)','Prüfung · 20 %',0.20),
+      exam('Einkaufserlebnisse (HKB E) oder Online-Shops (HKB F)','Prüfung · 30 %',0.30),
+    ]},
+    DH_BK(),
+    {key:'ABU',name:'Allgemeinbildung',weight:0.10,round:'tenth',positions:[
+      erf('Erfahrungsnote',null,1/3,[1,2,3,4,5],'Ø Sem 1–5'),
+      exam('Vertiefungsarbeit','Prüfung',1/3),
+      exam('Schlussprüfung (mündlich)','Prüfung',1/3),
+    ]},
+    {key:'ERF',name:'Erfahrungsnote',weight:0.30,round:'tenth',positions:[
+      erf('Bildung in beruflicher Praxis','25 %',0.25,[1,2,3,4,5,6]),
+      erf('Unterricht in den Berufskenntnissen','50 %',0.50,[1,2,3,4,5,6]),
+      erf('Überbetriebliche Kurse (ÜK)','25 %',0.25,[1,2,3,4,5,6]),
+    ]},
+  ],
+  pass:['PA'],
+},
+{
+  id:'dhf_auto', label:'Detailhandelsfachfrau/-mann EFZ – Automobil/Landi/Lebensmittel',
+  sub:'Branchen Automobil After-Sales, Landi, Lebensmittel', basis:'BiVo DHF 18.05.2021 · ab QV 2025',
+  bereiche:[
+    {key:'PA',name:'Praktische Arbeit',weight:0.30,round:'tenth',fallnote:true,positions:[
+      exam('Kundenbeziehungen (HKB A) & Produkte-/DL-Kenntnisse (HKB C)','Prüfung · 35 %',0.35),
+      exam('Bewirtschaften und Präsentieren (HKB B)','Prüfung · 35 %',0.35),
+      exam('Einkaufserlebnisse (HKB E) oder Online-Shops (HKB F)','Prüfung · 30 %',0.30),
+    ]},
+    DH_BK(),
+    {key:'ABU',name:'Allgemeinbildung',weight:0.10,round:'tenth',positions:[
+      erf('Erfahrungsnote',null,1/3,[1,2,3,4,5],'Ø Sem 1–5'),
+      exam('Vertiefungsarbeit','Prüfung',1/3),
+      exam('Schlussprüfung (mündlich)','Prüfung',1/3),
+    ]},
+    {key:'ERF',name:'Erfahrungsnote',weight:0.30,round:'tenth',positions:[
+      erf('Bildung in beruflicher Praxis','25 %',0.25,[1,2,3,4,5,6]),
+      erf('Unterricht in den Berufskenntnissen','50 %',0.50,[1,2,3,4,5,6]),
+      erf('Überbetriebliche Kurse (ÜK)','25 %',0.25,[1,2,3,4,5,6]),
+    ]},
+  ],
+  pass:['PA'],
+},
+{
+  id:'dha_ueb', label:'Detailhandelsassistent/in EBA – übrige Branchen',
+  sub:'Alle Branchen ausser Automobil After-Sales, Landi, Nahrungs-/Genussmittel', basis:'BiVo DHA 18.05.2021 · ab QV 2024',
+  bereiche:[
+    {key:'PA',name:'Praktische Arbeit',weight:0.30,round:'tenth',fallnote:true,positions:[
+      exam('Kundenbeziehungen (HKB A) & Produkte-/DL-Kenntnisse (HKB C)','Prüfung · 70 %',0.70),
+      exam('Bewirtschaften und Präsentieren (HKB B)','Prüfung · 30 %',0.30),
+    ]},
+    DH_BK(),
+    {key:'ABU',name:'Allgemeinbildung',weight:0.10,round:'tenth',positions:[
+      erf('Erfahrungsnote',null,0.5,[1,2,3],'Ø Sem 1–3'),
+      exam('Vertiefungsarbeit','Prüfung · 50 %',0.5),
+    ]},
+    {key:'ERF',name:'Erfahrungsnote',weight:0.30,round:'tenth',positions:[
+      erf('Bildung in beruflicher Praxis','25 %',0.25,[2,3]),
+      erf('Unterricht in den Berufskenntnissen','50 %',0.50,[1,2,3,4]),
+      erf('Überbetriebliche Kurse (ÜK)','25 %',0.25,[1,2,3,4]),
+    ]},
+  ],
+  pass:['PA'],
+},
+{
+  id:'dha_auto', label:'Detailhandelsassistent/in EBA – Automobil/Landi/Lebensmittel',
+  sub:'Branchen Automobil After-Sales, Landi, Lebensmittel', basis:'BiVo DHA 18.05.2021 · ab QV 2024',
+  bereiche:[
+    {key:'PA',name:'Praktische Arbeit',weight:0.30,round:'tenth',fallnote:true,positions:[
+      exam('Kundenbeziehungen (HKB A) & Produkte-/DL-Kenntnisse (HKB C)','Prüfung · 50 %',0.50),
+      exam('Bewirtschaften und Präsentieren (HKB B)','Prüfung · 50 %',0.50),
+    ]},
+    DH_BK(),
+    {key:'ABU',name:'Allgemeinbildung',weight:0.10,round:'tenth',positions:[
+      erf('Erfahrungsnote',null,0.5,[1,2,3],'Ø Sem 1–3'),
+      exam('Vertiefungsarbeit','Prüfung · 50 %',0.5),
+    ]},
+    {key:'ERF',name:'Erfahrungsnote',weight:0.30,round:'tenth',positions:[
+      erf('Bildung in beruflicher Praxis','25 %',0.25,[2,3]),
+      erf('Unterricht in den Berufskenntnissen','50 %',0.50,[1,2,3,4]),
+      erf('Überbetriebliche Kurse (ÜK)','25 %',0.25,[1,2,3,4]),
+    ]},
+  ],
+  pass:['PA'],
+},
+];
+
+/* ---------- Rendering ---------- */
+let uid=0, ACTIVE=null;
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+function posHTML(p){
+  if(p.kind==='exam'){
+    const id='i'+(uid++); p._inIds=[id];
+    return `<div class="inputrow"><label>${esc(p.label)}${p.sub?`<small>${esc(p.sub)}</small>`:''}</label><select class="s" id="${id}"></select></div>`;
+  }
+  if(p.kind==='erfahrung'){
+    p._inIds=[];
+    let cells='';
+    p.sems.forEach(s=>{ const id='i'+(uid++); p._inIds.push(id); cells+=`<div class="semcell"><div class="t">${s}.&nbsp;Sem</div><select class="g" id="${id}"></select></div>`; });
+    const oid='o'+(uid++); p._outId=oid;
+    cells+=`<div class="semcell"><div class="t">Ø</div><span class="avg none" id="${oid}">–</span></div>`;
+    const small=p.sub?esc(p.sub):(p.hint?esc(p.hint):'');
+    return `<div class="erow"><div class="elabel">${esc(p.label)}${small?`<small>${small}</small>`:''}</div><div class="semrow">${cells}</div></div>`;
+  }
+  if(p.kind==='group'){
+    const inner=p.positions.map(posHTML).join('');
+    const oid='o'+(uid++); p._outId=oid;
+    return `<div class="subhead">${esc(p.label)}${p.hint?`<span class="w">${esc(p.hint)}</span>`:''}</div>${inner}<div class="fnote" style="border-left-color:#91B99B;"><span class="lab">${esc(p.label)} (Halbnote)</span><span class="val none" id="${oid}">–</span></div>`;
+  }
+}
+function bereichHTML(b){
+  const inner=b.positions.map(posHTML).join('');
+  const oid='o'+(uid++); b._outId=oid; b._isBereich=true;
+  const pct=Math.round(b.weight*100);
+  return `<div class="card"><div class="sec-head"><h2>${esc(b.name)}</h2><span class="wbadge">${pct} %</span></div>${b.fallnote?`<p class="sec-note">Fallnote – muss zum Bestehen mindestens 4.0 betragen.</p>`:''}${inner}<div class="fnote"><span class="lab">Fachnote ${esc(b.name)}</span><span class="val none" id="${oid}">–</span></div></div>`;
+}
+
+function renderConfig(cfg){
+  ACTIVE=cfg; uid=0;
+  $('form').innerHTML=cfg.bereiche.map(bereichHTML).join('');
+  $('fnlist').innerHTML=cfg.bereiche.map(b=>`<div class="fnrow"><span class="n"><b>${esc(b.name)}</b> <span class="ww">${Math.round(b.weight*100)} %</span></span><span class="v none" id="r_${b.key}">–</span></div>`).join('');
+  let crit=`<div class="critrow"><span class="ic" id="ic_ges">•</span>Gesamtnote mindestens 4.0</div>`;
+  cfg.pass.forEach(k=>{ const b=cfg.bereiche.find(x=>x.key===k); crit+=`<div class="critrow"><span class="ic" id="ic_${k}">•</span>${esc(b.name)} mindestens 4.0</div>`; });
+  $('crit-rows').innerHTML=crit;
+  $('form').querySelectorAll('select.g, select.s').forEach(s=>{ s.innerHTML='<option value="">–</option>'+GRADES.map(g=>`<option value="${g}">${fmtHalf(g)}</option>`).join(''); s.addEventListener('change', recompute); });
+  cfg.bereiche.forEach(function resolve(n){ if(n.kind==='exam'||n.kind==='erfahrung') n._inputs=n._inIds.map(id=>$(id)); if(n._outId) n._out=$(n._outId); if(n.positions) n.positions.forEach(resolve); });
+  $('h-title').textContent='Notenrechner · '+cfg.label.split(' – ')[0];
+  $('h-sub').textContent=cfg.sub;
+  $('h-basis').textContent=cfg.basis?('Basis: '+cfg.basis):'';
+  recompute();
+}
+
+/* ---------- Berechnung ---------- */
+function setDisp(el,v,kind){ if(!el) return; el.classList.remove('ok','bad','none');
+  if(v===null){ el.textContent='–'; el.classList.add('none'); }
+  else { el.textContent=fmt1(v); if(kind==='fn') el.classList.add(v>=4?'ok':'bad'); } }
+function setIc(el,state){ if(!el) return; el.classList.remove('ok','no');
+  if(state===true){ el.classList.add('ok'); el.textContent='✓'; }
+  else if(state===false){ el.classList.add('no'); el.textContent='✕'; }
+  else el.textContent='•'; }
+
+function evalNode(node){
+  let v=null;
+  if(node.kind==='exam'){ const x=node._inputs[0].value; v=x===''?null:Number(x); }
+  else if(node.kind==='erfahrung'){ const a=node._inputs.map(s=>s.value).filter(x=>x!=='').map(Number); v=a.length?roundHalf(mean(a)):null; }
+  else {
+    const subs=node.positions.map(evalNode);
+    const mode=node.combine||'weightedAll';
+    if(mode==='meanFilled'){ const f=subs.filter(x=>x!==null); v=f.length?mean(f):null; }
+    else { v=subs.some(x=>x===null)?null:node.positions.reduce((s,p,i)=>s+p.weight*subs[i],0); }
+    if(v!==null) v=roundBy(node.round||'tenth',v);
+  }
+  if(node._out) setDisp(node._out, v, node._isBereich?'fn':'avg');
+  return v;
+}
+
+function recompute(){
+  const cfg=ACTIVE; if(!cfg) return;
+  const notes=cfg.bereiche.map(evalNode);
+  cfg.bereiche.forEach((b,i)=>{ const el=$('r_'+b.key); if(!el) return; el.classList.remove('none');
+    if(notes[i]===null){ el.textContent='–'; el.classList.add('none'); } else el.textContent=fmt1(notes[i]); });
+  let gesamt=null;
+  if(notes.every(n=>n!==null)) gesamt=round1(cfg.bereiche.reduce((s,b,i)=>s+b.weight*notes[i],0));
+  const gEl=$('gesamt');
+  if(gesamt===null){ gEl.textContent='–'; gEl.classList.add('none'); } else { gEl.textContent=fmt1(gesamt); gEl.classList.remove('none'); }
+  setIc($('ic_ges'), gesamt===null?null:gesamt>=4);
+  cfg.pass.forEach(k=>{ const n=notes[cfg.bereiche.findIndex(b=>b.key===k)]; setIc($('ic_'+k), n===null?null:n>=4); });
+  const allPass = gesamt!==null && gesamt>=4 && cfg.pass.every(k=>{ const n=notes[cfg.bereiche.findIndex(b=>b.key===k)]; return n>=4; });
+  const v=$('verdict'),vic=$('verdict-ic'),vtx=$('verdict-tx'); v.classList.remove('pass','fail','pend');
+  if(gesamt===null){ v.classList.add('pend'); vic.textContent='•'; vtx.textContent='Noch unvollständig'; }
+  else if(allPass){ v.classList.add('pass'); vic.textContent='✓'; vtx.textContent='Bestanden'; }
+  else { v.classList.add('fail'); vic.textContent='✕'; vtx.textContent='Nicht bestanden'; }
+}
+
+/* ---------- Steuerung ---------- */
+$('prof').innerHTML=CONFIGS.map((c,i)=>`<option value="${i}">${esc(c.label)}</option>`).join('');
+$('prof').addEventListener('change',()=>renderConfig(CONFIGS[+$('prof').value]));
+$('btn-reset').addEventListener('click',()=>{ $('form').querySelectorAll('select').forEach(s=>s.value=''); recompute(); });
+$('btn-demo').addEventListener('click',()=>{
+  const demo=['5','4.5','5','4.5','4','5.5','4.5','5','4'];
+  let i=0; $('form').querySelectorAll('select').forEach(s=>{ s.value=demo[i%demo.length]; i++; }); recompute();
+});
+
+renderConfig(CONFIGS[0]);
+</script>
+</body>
+</html>
