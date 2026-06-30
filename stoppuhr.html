@@ -189,7 +189,6 @@
     <span class="lbl">Min</span>
   </div>
   <button class="toggle on" id="tickBtn">🔊 Ticken</button>
-  <button class="toggle on" id="gongBtn">🐱 Miau</button>
 </div>
 
 <div class="credit">© 2026 Samuel Mollet · HKV Aarau · realisiert mit Claude (Anthropic)<br>
@@ -209,7 +208,6 @@ Klick ins Zifferblatt = Restzeit · Chips = Dauer · Leertaste/Krone = Start · 
   var startBtn=document.getElementById('startBtn');
   var resetBtn=document.getElementById('resetBtn');
   var tickBtn=document.getElementById('tickBtn');
-  var gongBtn=document.getElementById('gongBtn');
   var crown=document.getElementById('crown');
   var svg=document.querySelector('svg');
   var setarea=document.getElementById('setarea');
@@ -232,7 +230,7 @@ Klick ins Zifferblatt = Restzeit · Chips = Dauer · Leertaste/Krone = Start · 
   var durationMs=5*60000, remainingMs=durationMs;
   var running=false, endTime=0, raf=0;
   var actx=null, lastSec=null, ended=false, tickFlip=false;
-  var tickOn=true, gongOn=true;
+  var tickOn=true;
 
   function pad(x){ return (x<10?'0':'')+x; }
   function fmt(ms){ var s=Math.max(0,Math.ceil(ms/1000)); return pad(Math.floor(s/60))+':'+pad(s%60); }
@@ -282,7 +280,7 @@ Klick ins Zifferblatt = Restzeit · Chips = Dauer · Leertaste/Krone = Start · 
     wrap.classList.remove('done'); doneLabel.setAttribute('opacity','0'); draw(); updateBtns(); syncChips(min); }
   function syncChips(min){ document.querySelectorAll('.chip').forEach(function(x){ x.classList.toggle('on', parseInt(x.dataset.min,10)===min); }); }
   function onEnd(){ running=false; cancelAnimationFrame(raf);
-    if(!ended){ ended=true; if(gongOn) meow(); }
+    ended=true;
     doneLabel.setAttribute('opacity','1'); wrap.classList.add('done'); updateBtns(); }
 
   // ----- Ton -----
@@ -328,41 +326,6 @@ Klick ins Zifferblatt = Restzeit · Chips = Dauer · Leertaste/Krone = Start · 
     ssrc.connect(shp); shp.connect(sbpf); sbpf.connect(sg); sg.connect(actx.destination);
     ssrc.start(t+0.006);
   }
-  function meow(){
-    if(!actx) return;
-    var t=actx.currentTime, dur=0.65;
-    // stimmhafter Grundton (Sägezahn) mit Tonhöhenbogen mi–au
-    var o=actx.createOscillator(); o.type='sawtooth';
-    o.frequency.setValueAtTime(380,t);
-    o.frequency.linearRampToValueAtTime(820,t+0.18);
-    o.frequency.linearRampToValueAtTime(480,t+0.45);
-    o.frequency.linearRampToValueAtTime(340,t+dur);
-    // leichtes Vibrato
-    var lfo=actx.createOscillator(), lfoG=actx.createGain();
-    lfo.frequency.value=16; lfoG.gain.value=18;
-    lfo.connect(lfoG); lfoG.connect(o.frequency); lfo.start(t); lfo.stop(t+dur);
-    // zwei Formanten: Vokal wandert von "i" (mi) nach "au"
-    var f1=actx.createBiquadFilter(); f1.type='bandpass'; f1.Q.value=5;
-    f1.frequency.setValueAtTime(320,t);
-    f1.frequency.linearRampToValueAtTime(760,t+0.22);
-    f1.frequency.linearRampToValueAtTime(400,t+dur);
-    var f2=actx.createBiquadFilter(); f2.type='bandpass'; f2.Q.value=8;
-    f2.frequency.setValueAtTime(2300,t);
-    f2.frequency.linearRampToValueAtTime(1200,t+0.25);
-    f2.frequency.linearRampToValueAtTime(900,t+dur);
-    var g1=actx.createGain(); g1.gain.value=0.9;
-    var g2=actx.createGain(); g2.gain.value=0.5;
-    // Huellkurve: weicher Anschlag, Ausklang
-    var env=actx.createGain();
-    env.gain.setValueAtTime(0.0001,t);
-    env.gain.exponentialRampToValueAtTime(0.5,t+0.05);
-    env.gain.setValueAtTime(0.5,t+0.42);
-    env.gain.exponentialRampToValueAtTime(0.0001,t+dur);
-    o.connect(f1); f1.connect(g1); g1.connect(env);
-    o.connect(f2); f2.connect(g2); g2.connect(env);
-    env.connect(actx.destination);
-    o.start(t); o.stop(t+dur+0.03);
-  }
 
   // ----- Zeit per Klick/Ziehen aufs Zifferblatt einstellen -----
   function angleFromEvent(evt){
@@ -401,10 +364,6 @@ Klick ins Zifferblatt = Restzeit · Chips = Dauer · Leertaste/Krone = Start · 
   tickBtn.addEventListener('click', function(){
     tickOn=!tickOn; tickBtn.classList.toggle('on',tickOn); tickBtn.classList.toggle('off',!tickOn);
     tickBtn.textContent=(tickOn?'🔊':'🔇')+' Ticken'; if(tickOn) ensureAudio();
-  });
-  gongBtn.addEventListener('click', function(){
-    gongOn=!gongOn; gongBtn.classList.toggle('on',gongOn); gongBtn.classList.toggle('off',!gongOn);
-    gongBtn.textContent=(gongOn?'🐱':'🔇')+' Miau'; if(gongOn) ensureAudio();
   });
   document.querySelectorAll('.chip').forEach(function(c){
     c.addEventListener('click', function(){ setDur(parseInt(c.dataset.min,10)); });
