@@ -11,10 +11,13 @@
   .brand-eyebrow{ font-size:11px; font-weight:800; letter-spacing:2.5px; color:#D8AE66; margin-bottom:3px; text-transform:uppercase; }
   header h1{ margin:0 0 2px; font-size:20px; font-weight:800; letter-spacing:-.3px; }
   header .sub{ font-size:12.5px; opacity:.93; }
-  .profsel{ margin-top:12px; display:flex; flex-direction:column; gap:7px; }
-  .pgroup{ display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
-  .plabel{ font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#D8AE66; min-width:118px; }
-  @media (max-width:600px){ .plabel{ min-width:0; width:100%; margin-bottom:-2px; } }
+  .profsel{ margin-top:12px; display:flex; flex-direction:column; gap:9px; }
+  .pgroup{ background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.10); border-radius:10px; padding:9px 12px 10px; }
+  .plabel{ display:block; font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#D8AE66; margin-bottom:8px; }
+  .psubs{ display:flex; gap:12px; flex-wrap:wrap; }
+  .psub{ display:flex; flex-direction:column; }
+  .psub + .psub{ border-left:1px solid rgba(255,255,255,.13); padding-left:12px; }
+  .psublabel{ font-size:10px; font-weight:700; letter-spacing:.5px; color:#8FB3B8; margin-bottom:5px; }
   .pbtns{ display:flex; gap:6px; flex-wrap:wrap; }
   .pbtn{ display:inline-flex; align-items:center; gap:6px; font-family:inherit; font-size:12.5px; font-weight:600; padding:6px 11px; border-radius:8px; border:1.5px solid rgba(255,255,255,.3); background:rgba(255,255,255,.10); color:#EAF1F2; cursor:pointer; transition:background .14s ease,border-color .14s ease,color .14s ease; }
   .pbtn svg{ width:15px; height:15px; flex:0 0 auto; opacity:.85; }
@@ -23,6 +26,9 @@
   .pbtn.active svg{ opacity:1; }
   .pbtn:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
   .basis{ font-size:11px; color:#A9C3C8; }
+  .dlbtn{ display:inline-flex; align-items:center; gap:6px; margin-top:11px; font-family:inherit; font-size:12.5px; font-weight:700; text-decoration:none; padding:7px 14px; border-radius:9px; border:1.5px solid #D8AE66; background:rgba(216,174,102,.16); color:#F4E4C6; transition:background .14s ease; }
+  .dlbtn:hover{ background:rgba(216,174,102,.30); }
+  .dlbtn:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
   .wrap{ max-width:1240px; margin:0 auto; padding:16px; }
 
   .shell{ display:flex; gap:18px; align-items:flex-start; }
@@ -96,6 +102,7 @@
   <div class="sub" id="h-sub">Erfahrungs- und Prüfungsnoten eingeben – Fachnoten, Gesamtnote und Bestehen werden laufend berechnet.</div>
   <div class="profsel" id="profbar"></div>
   <div class="basis" id="h-basis" style="margin-top:9px;"></div>
+  <a id="dlbtn" class="dlbtn" href="#" download>⬇&nbsp; Leere Excel-Vorlage für diesen Beruf herunterladen</a>
 </header>
 
 <div class="wrap">
@@ -362,6 +369,12 @@ const CONFIGS=[
 },
 ];
 
+// --- DH-BM1: alle drei Bereiche je 1/3 (DH_BK liefert 0.30; bei BM1 korrigieren) ---
+['dh_efz_bm1_ueb','dh_efz_bm1_auto'].forEach(cid=>{const c=CONFIGS.find(x=>x.id===cid); if(c) c.bereiche.forEach(b=>{ if(b.key==='BK') b.weight=1/3; });});
+
+// --- Zuordnung Beruf -> leere Excel-Vorlage (Ordner /notenrechner/) ---
+const XLSX_FILES={apo:'Notenrechner_Apotheke_EFZ_leer.xlsx',dhf_ueb:'Notenrechner_Detailhandel_EFZ_uebrige_leer.xlsx',dhf_auto:'Notenrechner_Detailhandel_EFZ_Auto-Landi-Lebensmittel_leer.xlsx',dha_ueb:'Notenrechner_Detailhandel_EBA_uebrige_leer.xlsx',dha_auto:'Notenrechner_Detailhandel_EBA_Auto-Landi-Lebensmittel_leer.xlsx',kv_efz:'Notenrechner_Kaufleute_EFZ_leer.xlsx',kv_eba:'Notenrechner_Bueroassistent_EBA_leer.xlsx',kv_efz_bm1:'Notenrechner_Kaufleute_EFZ_BM1_leer.xlsx',dh_efz_bm1_ueb:'Notenrechner_Detailhandel_EFZ_BM1_uebrige_leer.xlsx',dh_efz_bm1_auto:'Notenrechner_Detailhandel_EFZ_BM1_Auto-Landi-Lebensmittel_leer.xlsx'};
+
 /* ---------- Rendering ---------- */
 let uid=0, ACTIVE=null;
 function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
@@ -405,6 +418,7 @@ function renderConfig(cfg){
   $('h-title').textContent='Notenrechner · '+cfg.label.split(' – ')[0];
   $('h-sub').textContent=cfg.sub;
   $('h-basis').textContent=cfg.basis?('Basis: '+cfg.basis):'';
+  { const dl=$('dlbtn'), fn=XLSX_FILES[cfg.id]; if(dl&&fn){ dl.href='notenrechner/'+fn; dl.setAttribute('download',fn); dl.style.display='inline-flex'; } else if(dl){ dl.style.display='none'; } }
   recompute();
 }
 
@@ -459,13 +473,19 @@ const PROF_GROUPS=[
   { name:'Fachleute EFZ', icon:IC_APO, items:[
       {id:'apo', btn:'Apotheke'},
   ]},
-  { name:'Detailhandel', icon:IC_DH, items:[
-      {id:'dhf_auto',        btn:'EFZ · Lebensmittel/Auto/Landi'},
-      {id:'dhf_ueb',         btn:'EFZ · übrige Branchen'},
-      {id:'dh_efz_bm1_auto', btn:'EFZ + BM1 · Lebensmittel/Auto/Landi'},
-      {id:'dh_efz_bm1_ueb',  btn:'EFZ + BM1 · übrige Branchen'},
-      {id:'dha_auto',        btn:'EBA · Lebensmittel/Auto/Landi'},
-      {id:'dha_ueb',         btn:'EBA · übrige Branchen'},
+  { name:'Detailhandel', icon:IC_DH, subgroups:[
+      { sub:'EFZ', items:[
+          {id:'dhf_ueb',  btn:'Übrige Branchen'},
+          {id:'dhf_auto', btn:'Lebensmittel/Auto/Landi'},
+      ]},
+      { sub:'EFZ + BM1', items:[
+          {id:'dh_efz_bm1_ueb',  btn:'Übrige Branchen'},
+          {id:'dh_efz_bm1_auto', btn:'Lebensmittel/Auto/Landi'},
+      ]},
+      { sub:'EBA', items:[
+          {id:'dha_ueb',  btn:'Übrige Branchen'},
+          {id:'dha_auto', btn:'Lebensmittel/Auto/Landi'},
+      ]},
   ]},
   { name:'Kaufleute / Büro', icon:IC_KV, items:[
       {id:'kv_efz',     btn:'Kaufleute EFZ'},
@@ -474,8 +494,19 @@ const PROF_GROUPS=[
   ]},
 ];
 const cfgIndex=id=>CONFIGS.findIndex(c=>c.id===id);
+function profBtns(items){
+  return items.map(it=>`<button type="button" class="pbtn" data-i="${cfgIndex(it.id)}">${esc(it.btn)}</button>`).join('');
+}
 function renderProfBar(){
-  $('profbar').innerHTML=PROF_GROUPS.map(g=>`<div class="pgroup"><span class="plabel">${esc(g.name)}</span><div class="pbtns">`+g.items.map(it=>`<button type="button" class="pbtn" data-i="${cfgIndex(it.id)}">${g.icon}${esc(it.btn)}</button>`).join('')+`</div></div>`).join('');
+  $('profbar').innerHTML=PROF_GROUPS.map(g=>{
+    let inner;
+    if(g.subgroups){
+      inner=`<div class="psubs">`+g.subgroups.map(sg=>`<div class="psub"><span class="psublabel">${esc(sg.sub)}</span><div class="pbtns">${profBtns(sg.items)}</div></div>`).join('')+`</div>`;
+    } else {
+      inner=`<div class="pbtns">${g.items.map(it=>`<button type="button" class="pbtn" data-i="${cfgIndex(it.id)}">${g.icon}${esc(it.btn)}</button>`).join('')}</div>`;
+    }
+    return `<div class="pgroup"><span class="plabel">${esc(g.name)}</span>${inner}</div>`;
+  }).join('');
   $('profbar').querySelectorAll('.pbtn').forEach(b=>b.addEventListener('click',()=>selectProf(+b.dataset.i)));
 }
 function selectProf(i){
