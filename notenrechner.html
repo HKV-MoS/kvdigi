@@ -13,7 +13,8 @@
   header .sub{ font-size:12.5px; opacity:.93; }
   .profsel{ margin-top:12px; display:flex; flex-direction:column; gap:9px; }
   .pgroup{ background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.10); border-radius:10px; padding:9px 12px 10px; }
-  .plabel{ display:block; font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#D8AE66; margin-bottom:8px; }
+  .plabel{ display:flex; align-items:center; gap:6px; font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#D8AE66; margin-bottom:8px; }
+  .plabel svg{ width:15px; height:15px; flex:0 0 auto; }
   .psubs{ display:flex; gap:12px; flex-wrap:wrap; }
   .psub{ display:flex; flex-direction:column; }
   .psub + .psub{ border-left:1px solid rgba(255,255,255,.13); padding-left:12px; }
@@ -467,8 +468,8 @@ function recompute(){
 /* ---------- Steuerung ---------- */
 const _svg=p=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
 const IC_APO=_svg('<path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/>');
-const IC_DH=_svg('<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>');
-const IC_KV=_svg('<rect width="20" height="14" x="2" y="6" rx="2"/><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>');
+const IC_DH=_svg('<rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/>');
+const IC_KV=_svg('<path d="M4 12v-1a8 8 0 0 1 16 0v1"/><path d="M2 14a2 2 0 0 1 2-2h1a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4a2 2 0 0 1-2-2Z"/><path d="M22 14a2 2 0 0 0-2-2h-1a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1 3 3 0 0 0 3-3Z"/><path d="M18 19a3 3 0 0 1-3 3h-2"/>');
 const PROF_GROUPS=[
   { name:'Fachleute EFZ', icon:IC_APO, items:[
       {id:'apo', btn:'Apotheke'},
@@ -503,9 +504,9 @@ function renderProfBar(){
     if(g.subgroups){
       inner=`<div class="psubs">`+g.subgroups.map(sg=>`<div class="psub"><span class="psublabel">${esc(sg.sub)}</span><div class="pbtns">${profBtns(sg.items)}</div></div>`).join('')+`</div>`;
     } else {
-      inner=`<div class="pbtns">${g.items.map(it=>`<button type="button" class="pbtn" data-i="${cfgIndex(it.id)}">${g.icon}${esc(it.btn)}</button>`).join('')}</div>`;
+      inner=`<div class="pbtns">${profBtns(g.items)}</div>`;
     }
-    return `<div class="pgroup"><span class="plabel">${esc(g.name)}</span>${inner}</div>`;
+    return `<div class="pgroup"><span class="plabel">${g.icon||''}${esc(g.name)}</span>${inner}</div>`;
   }).join('');
   $('profbar').querySelectorAll('.pbtn').forEach(b=>b.addEventListener('click',()=>selectProf(+b.dataset.i)));
 }
