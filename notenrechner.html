@@ -227,6 +227,48 @@ const CONFIGS=[
   pass:['PA'],
 },
 {
+  id:'dhf_art32_ueb', label:'Detailhandelsfachfrau/-mann EFZ · Art. 32 – übrige Branchen',
+  sub:'Nachholbildung Erwachsene (Art. 32 BBV) · alle Branchen ausser Automobil/Landi/Lebensmittel', basis:'BiVo DHF 18.05.2021 · Art. 23 Spezialfall · ohne Erfahrungsnote',
+  bereiche:[
+    {key:'PA',name:'Praktische Arbeit',weight:0.45,round:'tenth',fallnote:true,positions:[
+      exam('Kundenbeziehungen (HKB A) & Produkte-/DL-Kenntnisse (HKB C)','Prüfung · 50 %',0.50),
+      exam('Bewirtschaften und Präsentieren (HKB B)','Prüfung · 20 %',0.20),
+      exam('Einkaufserlebnisse (HKB E) oder Online-Shops (HKB F)','Prüfung · 30 %',0.30),
+    ]},
+    {key:'BK',name:'Berufskenntnisse',weight:0.45,round:'tenth',positions:[
+      exam('Kundenbeziehungen (HKB A)','schriftlich & mündlich · 50 %',0.50),
+      exam('Bewirtschaften und Präsentieren (HKB B)','schriftlich & mündlich · 25 %',0.25),
+      exam('Interagieren im Betrieb und in der Branche (HKB D)','schriftlich & mündlich · 25 %',0.25),
+    ]},
+    {key:'ABU',name:'Allgemeinbildung',weight:0.10,round:'tenth',positions:[
+      exam('Vertiefungsarbeit','Prüfungsnote · ½',0.50),
+      exam('Schlussprüfung (mündlich)','Prüfungsnote · ½',0.50),
+    ]},
+  ],
+  pass:['PA'],
+},
+{
+  id:'dhf_art32_auto', label:'Detailhandelsfachfrau/-mann EFZ · Art. 32 – Automobil/Landi/Lebensmittel',
+  sub:'Nachholbildung Erwachsene (Art. 32 BBV) · Branchen Automobil After-Sales, Landi, Lebensmittel', basis:'BiVo DHF 18.05.2021 · Art. 23 Spezialfall · ohne Erfahrungsnote',
+  bereiche:[
+    {key:'PA',name:'Praktische Arbeit',weight:0.45,round:'tenth',fallnote:true,positions:[
+      exam('Kundenbeziehungen (HKB A) & Produkte-/DL-Kenntnisse (HKB C)','Prüfung · 35 %',0.35),
+      exam('Bewirtschaften und Präsentieren (HKB B)','Prüfung · 35 %',0.35),
+      exam('Einkaufserlebnisse (HKB E) oder Online-Shops (HKB F)','Prüfung · 30 %',0.30),
+    ]},
+    {key:'BK',name:'Berufskenntnisse',weight:0.45,round:'tenth',positions:[
+      exam('Kundenbeziehungen (HKB A)','schriftlich & mündlich · 50 %',0.50),
+      exam('Bewirtschaften und Präsentieren (HKB B)','schriftlich & mündlich · 25 %',0.25),
+      exam('Interagieren im Betrieb und in der Branche (HKB D)','schriftlich & mündlich · 25 %',0.25),
+    ]},
+    {key:'ABU',name:'Allgemeinbildung',weight:0.10,round:'tenth',positions:[
+      exam('Vertiefungsarbeit','Prüfungsnote · ½',0.50),
+      exam('Schlussprüfung (mündlich)','Prüfungsnote · ½',0.50),
+    ]},
+  ],
+  pass:['PA'],
+},
+{
   id:'dha_ueb', label:'Detailhandelsassistent/in EBA – übrige Branchen',
   sub:'Alle Branchen ausser Automobil After-Sales, Landi, Nahrungs-/Genussmittel', basis:'BiVo DHA 18.05.2021 · ab QV 2024',
   bereiche:[
@@ -281,6 +323,23 @@ const CONFIGS=[
       exam('Praktische Arbeit','Fallnote · halbe/ganze Note',1.0),
     ]},
     {key:'BKABU',name:'Berufskenntnisse & Allgemeinbildung',weight:0.30,round:'tenth',fallnote:true,positions:[
+      exam('HKB A','Präsentation und aktive Anwendung · 20 %',0.20),
+      exam('HKB B','Fallarbeit mit Teilaufgaben · 20 %',0.20),
+      exam('HKB C','Handlungssimulationen (+Fremdsprache) · 20 %',0.20),
+      exam('HKB D','Rollenspiele und aktive Anwendung · 20 %',0.20),
+      exam('HKB E','Fallarbeit mit Teilaufgaben · 20 %',0.20),
+    ]},
+  ],
+  pass:['PA','BKABU'],
+},
+{
+  id:'kv_efz_art32', label:'Kauffrau/Kaufmann EFZ · Art. 32',
+  sub:'Kaufleute EFZ – Nachholbildung Erwachsene (Art. 32 BBV, ohne Erfahrungsnote)', basis:'BiVo Kaufleute 2023 · Art. 26 Spezialfall',
+  bereiche:[
+    {key:'PA',name:'Praktische Arbeit',weight:0.50,round:'tenth',fallnote:true,positions:[
+      exam('Praktische Arbeit','Fallnote · halbe/ganze Note',1.0),
+    ]},
+    {key:'BKABU',name:'Berufskenntnisse & Allgemeinbildung',weight:0.50,round:'tenth',fallnote:true,positions:[
       exam('HKB A','Präsentation und aktive Anwendung · 20 %',0.20),
       exam('HKB B','Fallarbeit mit Teilaufgaben · 20 %',0.20),
       exam('HKB C','Handlungssimulationen (+Fremdsprache) · 20 %',0.20),
@@ -479,19 +538,23 @@ const PROF_GROUPS=[
           {id:'dhf_auto', btn:'Lebensmittel/Auto/Landi'},
           {id:'dhf_ueb',  btn:'Übrige Branchen'},
       ]},
-      { sub:'EFZ + BM1', items:[
-          {id:'dh_efz_bm1_auto', btn:'Lebensmittel/Auto/Landi'},
-          {id:'dh_efz_bm1_ueb',  btn:'Übrige Branchen'},
+      { sub:'EFZ · Art. 32', items:[
+          {id:'dhf_art32_auto', btn:'Lebensmittel/Auto/Landi'},
+          {id:'dhf_art32_ueb',  btn:'Übrige Branchen'},
       ]},
       { sub:'EBA', items:[
           {id:'dha_auto', btn:'Lebensmittel/Auto/Landi'},
           {id:'dha_ueb',  btn:'Übrige Branchen'},
       ]},
   ]},
-  { name:'Kaufleute / Büro', icon:IC_KV, items:[
-      {id:'kv_efz',     btn:'Kaufleute EFZ'},
-      {id:'kv_efz_bm1', btn:'Kaufleute EFZ + BM1'},
-      {id:'kv_eba',     btn:'Büroassistent/in EBA'},
+  { name:'Kaufleute / Büro', icon:IC_KV, subgroups:[
+      { sub:'EFZ', items:[
+          {id:'kv_efz',     btn:'Kaufleute EFZ'},
+          {id:'kv_efz_bm1', btn:'Kaufleute EFZ + BM1'},
+      ]},
+      { sub:'Art. 32', items:[
+          {id:'kv_efz_art32', btn:'Kaufleute EFZ'},
+      ]},
   ]},
 ];
 const cfgIndex=id=>CONFIGS.findIndex(c=>c.id===id);
