@@ -12,7 +12,14 @@
   header h1{ margin:0 0 2px; font-size:20px; font-weight:800; letter-spacing:-.3px; }
   header .sub{ font-size:12.5px; opacity:.93; }
   .profsel{ margin-top:12px; display:flex; flex-direction:column; gap:9px; }
-  .pgroup{ background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.10); border-radius:10px; padding:9px 12px 10px; }
+  .pgroup{ background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.10); border-radius:10px; padding:9px 12px 10px; transition:background .14s ease,border-color .14s ease; }
+  .pgroup.active{ background:#fff; border-color:#fff; }
+  .pgroup.active .plabel{ color:#2E9D6B; }
+  .pgroup.active .psublabel{ color:#4A6B62; }
+  .pgroup.active .psub + .psub{ border-left-color:rgba(0,0,0,.12); }
+  .pgroup.active .pbtn{ background:rgba(46,157,107,.10); border-color:rgba(46,157,107,.35); color:#265C48; }
+  .pgroup.active .pbtn:hover{ background:rgba(46,157,107,.18); border-color:rgba(46,157,107,.55); }
+  .pgroup.active .pbtn.active{ background:#E8892B; border-color:#E8892B; color:#fff; }
   .plabel{ display:flex; align-items:center; gap:6px; font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#D8AE66; margin-bottom:8px; }
   .plabel svg{ width:15px; height:15px; flex:0 0 auto; }
   .psubs{ display:flex; gap:12px; flex-wrap:wrap; }
@@ -620,7 +627,9 @@ function renderProfBar(){
   $('profbar').querySelectorAll('.pbtn').forEach(b=>b.addEventListener('click',()=>selectProf(+b.dataset.i)));
 }
 function selectProf(i){
-  $('profbar').querySelectorAll('.pbtn').forEach(b=>b.classList.toggle('active', +b.dataset.i===i));
+  const bar=$('profbar');
+  bar.querySelectorAll('.pgroup').forEach(g=>g.classList.remove('active'));
+  bar.querySelectorAll('.pbtn').forEach(b=>{ const on=+b.dataset.i===i; b.classList.toggle('active',on); if(on){ const g=b.closest('.pgroup'); if(g) g.classList.add('active'); } });
   renderConfig(CONFIGS[i]);
 }
 $('btn-reset').addEventListener('click',()=>{ $('form').querySelectorAll('select').forEach(s=>s.value=''); recompute(); });
