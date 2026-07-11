@@ -150,6 +150,17 @@ const DH_BK=()=>({key:'BK',name:'Berufskenntnisse',weight:0.30,round:'tenth',pos
   exam('Interagieren im Betrieb und in der Branche (HKB D)','Prüfung · 25 %',0.25),
 ]});
 
+// Berufsmaturität: jedes Fach zählt 1/9 zur BM-Gesamtnote.
+// Grundlagen/Schwerpunkt: Erfahrungsnote (Ø Semester) 50% + Prüfung 50%.
+const bmFach=(key,name,sems,tag)=>({key,name:name+(tag?' ('+tag+')':''),weight:1/9,round:'tenth',positions:[
+  erf('Erfahrungsnote','Ø Semesterzeugnisnoten · 50 %',0.50,sems,null,null,true),
+  exam('Abschlussprüfung','Prüfungsnote · 50 %',0.50),
+]});
+// Ergänzungsbereich: nur Erfahrungsnote (Ø Semester), keine Prüfung.
+const bmErg=(key,name,sems)=>({key,name:name+' (E)',weight:1/9,round:'tenth',positions:[
+  erf('Erfahrungsnote','Ø Semesterzeugnisnoten · 100 %',1.0,sems,null,null,true),
+]});
+
 const CONFIGS=[
 {
   id:'apo', label:'Fachfrau/Fachmann Apotheke EFZ',
@@ -427,6 +438,27 @@ const CONFIGS=[
   ],
   pass:['PA'],
 },
+{
+  id:'bm_wdw', label:'Berufsmaturität Wirtschaft & Dienstleistungen · Typ Wirtschaft (WD-W)',
+  sub:'BM-Gesamtnote · 9 Fachnoten je 1/9 · gültig für BM1 (lehrbegleitend) und BM2 (nach der Lehre)', basis:'BMV · RLP BM Wirtschaft, Typ Wirtschaft',
+  gesamtRound:'tenth',
+  bereiche:[
+    bmFach('D','Deutsch',[1,2,3,4,5,6],'G'),
+    bmFach('F','Französisch',[1,2,3,4,5,6],'G'),
+    bmFach('E','Englisch',[1,2,3,4,5,6],'G'),
+    bmFach('M','Mathematik',[1,2,3,4,5,6],'G'),
+    bmFach('FRW','Finanz- und Rechnungswesen',[1,2,3,4,5,6],'S'),
+    bmFach('WUR','Wirtschaft und Recht',[1,2,3,4,5,6],'S'),
+    bmErg('GP','Geschichte und Politik',[3,4,5,6]),
+    bmErg('TU','Technik und Umwelt',[3,4]),
+    {key:'IDA',name:'Interdisziplinäres Arbeiten (IDA)',weight:1/9,round:'tenth',positions:[
+      erf('IDAF','Ø der interdisziplinären Fach-Einheiten · 50 %',0.50,[1,2,3,4],null,'IDAF',true),
+      exam('IDPA','Interdisziplinäre Projektarbeit · 50 %',0.50),
+    ]},
+  ],
+  pass:[],
+  bmBestehen:true,
+},
 ];
 
 // --- DH-BM1: alle drei Bereiche je 1/3 (DH_BK liefert 0.30; bei BM1 korrigieren) ---
@@ -517,9 +549,20 @@ function recompute(){
   if(gesamt===null){ gEl.textContent='–'; gEl.classList.add('none'); } else { gEl.textContent=fmt1(gesamt); gEl.classList.remove('none'); }
   setIc($('ic_ges'), gesamt===null?null:gesamt>=4);
   cfg.pass.forEach(k=>{ const n=notes[cfg.bereiche.findIndex(b=>b.key===k)]; setIc($('ic_'+k), n===null?null:n>=4); });
-  const allPass = gesamt!==null && gesamt>=4 && cfg.pass.every(k=>{ const n=notes[cfg.bereiche.findIndex(b=>b.key===k)]; return n>=4; });
+  let allPass;
+  if(cfg.bmBestehen){
+    // BM: Ø ≥ 4.0 · höchstens 2 ungenügende Fachnoten · Summe der Minuspunkte ≤ 2.0
+    if(notes.some(n=>n===null)){ allPass=null; }
+    else {
+      const unter=notes.filter(n=>n<4);
+      const minus=unter.reduce((s,n)=>s+(4-n),0);
+      allPass = gesamt>=4 && unter.length<=2 && minus<=2.0;
+    }
+  } else {
+    allPass = gesamt!==null && gesamt>=4 && cfg.pass.every(k=>{ const n=notes[cfg.bereiche.findIndex(b=>b.key===k)]; return n>=4; });
+  }
   const v=$('verdict'),vic=$('verdict-ic'),vtx=$('verdict-tx'); v.classList.remove('pass','fail','pend');
-  if(gesamt===null){ v.classList.add('pend'); vic.textContent='•'; vtx.textContent='Noch unvollständig'; }
+  if(gesamt===null || allPass===null){ v.classList.add('pend'); vic.textContent='•'; vtx.textContent='Noch unvollständig'; }
   else if(allPass){ v.classList.add('pass'); vic.textContent='✓'; vtx.textContent='Bestanden'; }
   else { v.classList.add('fail'); vic.textContent='✕'; vtx.textContent='Nicht bestanden'; }
 }
@@ -554,6 +597,9 @@ const PROF_GROUPS=[
       ]},
       { sub:'Art. 32', items:[
           {id:'kv_efz_art32', btn:'Kaufleute EFZ'},
+      ]},
+      { sub:'Berufsmaturität', items:[
+          {id:'bm_wdw', btn:'BM Wirtschaft (WD-W)'},
       ]},
   ]},
 ];
