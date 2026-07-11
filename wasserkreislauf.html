@@ -240,8 +240,8 @@
         <!-- Himmel -->
         <rect id="sky-rect" x="0" y="0" width="1000" height="440" fill="url(#sky)"/>
 
-        <!-- Sonne -->
-        <g transform="translate(862,86)">
+        <!-- Sonne über dem Meer (treibt die Verdunstung an) -->
+        <g transform="translate(140,96)">
           <circle class="sun-glow" r="62" fill="#FFE08A"/>
           <g class="sun-rays">
             <g fill="none" stroke="#FFC83D" stroke-width="4" stroke-linecap="round" opacity=".75">
@@ -378,7 +378,7 @@
 
         <!-- Störungs-Hotspots (nur im gestörten Modus) -->
         <g id="stoer-hotspots" class="stoer-only">
-          <g class="hotspot stoer-hs" data-stoer="1" tabindex="0" role="button" aria-label="Störfaktor 1: Klimaerwärmung" transform="translate(150,110)">
+          <g class="hotspot stoer-hs" data-stoer="1" tabindex="0" role="button" aria-label="Störfaktor 1: Klimaerwärmung" transform="translate(240,150)">
             <circle class="hs-ring" r="17"/><circle class="hs-dot" r="17"/><text class="hs-num warnsym-t">!</text>
           </g>
           <g class="hotspot stoer-hs" data-stoer="2" tabindex="0" role="button" aria-label="Störfaktor 2: Luftverschmutzung" transform="translate(560,90)">
@@ -485,6 +485,8 @@
   const chipsBox = document.getElementById('chips');
 
   // Chips aufbauen (abhängig vom Modus)
+  let active = null;
+  let mode = 'normal';
   let chips = [];
   function buildChips(){
     chipsBox.innerHTML = '';
@@ -499,8 +501,6 @@
   }
   buildChips();
 
-  let active = null;
-  let mode = 'normal';
   const qbox = document.getElementById('qbox');
   const pQuestion = document.getElementById('p-question');
   const prevBtn = document.getElementById('prev-btn');
