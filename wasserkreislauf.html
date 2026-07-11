@@ -160,6 +160,43 @@
   .warnsym{ opacity:0; transition:opacity .4s ease; }
   body.stoer .warnsym{ opacity:1; }
 
+  /* ---- Szenen-Objekte: Tiere ---- */
+  @keyframes ibexHop{ 0%,70%,100%{ transform:translateY(0);} 78%{ transform:translateY(-13px);} 86%{ transform:translateY(-3px);} 92%{ transform:translateY(-7px);} }
+  @keyframes whaleSwim{ 0%,100%{ transform:translate(0,0) rotate(0deg);} 50%{ transform:translate(14px,-7px) rotate(-3deg);} }
+  @keyframes whaleBlow{ 0%,72%{ opacity:0; transform:translateY(6px) scale(.6);} 78%{ opacity:.9; transform:translateY(0) scale(1);} 92%{ opacity:.35; transform:translateY(-12px) scale(1.3);} 100%{ opacity:0; transform:translateY(-20px) scale(1.5);} }
+  .ibex-hop{ transform-box:fill-box; transform-origin:center bottom; animation:ibexHop 4.5s ease-in-out infinite; }
+  .whale-swim{ transform-box:fill-box; animation:whaleSwim 9s ease-in-out infinite; }
+  .whale-blow{ transform-box:fill-box; animation:whaleBlow 9s ease-in-out infinite; }
+
+  /* ---- Gletscher ---- */
+  .glacier-full{ opacity:.95; transition:opacity .6s ease; }
+  .glacier-melt{ opacity:0; transition:opacity .6s ease; }
+  .meltwater{ opacity:0; transition:opacity .6s ease; }
+  body.stoer .glacier-full{ opacity:0; }
+  body.stoer .glacier-melt{ opacity:.95; }
+  body.stoer .meltwater{ opacity:.9; animation:flow 3s linear infinite; }
+
+  /* ---- Störungs-Objekte ---- */
+  @keyframes planeFly{ 0%{ transform:translate(290px,58px);} 100%{ transform:translate(660px,58px);} }
+  @keyframes contrailFade{ 0%{ opacity:0;} 30%{ opacity:.55;} 100%{ opacity:0;} }
+  @keyframes puffRise{ 0%{ transform:translate(0,0) scale(.5); opacity:.85;} 100%{ transform:translate(16px,-58px) scale(1.7); opacity:0;} }
+  @keyframes tractorMove{ 0%,100%{ transform:translateX(0);} 50%{ transform:translateX(-46px);} }
+  @keyframes sprayFall{ 0%{ transform:translateY(0); opacity:.9;} 100%{ transform:translateY(14px); opacity:0;} }
+  @keyframes seepDown{ to{ stroke-dashoffset:-24; } }
+  @keyframes pumpArm{ 0%,100%{ transform:rotate(-9deg);} 50%{ transform:rotate(9deg);} }
+  @keyframes suckUp{ to{ stroke-dashoffset:-20; } }
+  @keyframes runoffFlow{ to{ stroke-dashoffset:-34; } }
+
+  .plane-fly{ transform-box:fill-box; animation:planeFly 16s linear infinite; }
+  .contrail{ stroke-dasharray:0 1000; animation:contrailFade 16s linear infinite; }
+  .puff{ transform-box:fill-box; animation:puffRise 4s ease-out infinite; }
+  .tractor-move{ transform-box:fill-box; animation:tractorMove 11s ease-in-out infinite; }
+  .spray circle{ transform-box:fill-box; animation:sprayFall 1.4s ease-in infinite; }
+  .seep path{ stroke-dasharray:5 7; animation:seepDown 2.4s linear infinite; }
+  .pump-arm{ transform-box:fill-box; transform-origin:center; animation:pumpArm 1.8s ease-in-out infinite; }
+  .suck path{ stroke-dasharray:5 6; animation:suckUp 1.6s linear infinite; }
+  .runoff{ animation:runoffFlow 2.6s linear infinite; }
+
   /* ---- Overlay / Vergleich + Quiz ---- */
   .overlay{ position:fixed; inset:0; background:rgba(20,35,50,.55); display:none; align-items:center; justify-content:center; padding:18px; z-index:50; }
   .overlay.open{ display:flex; }
@@ -189,8 +226,12 @@
   .footer .copyright{ margin-top:8px; color:#94A3B0; }
 
   @media (prefers-reduced-motion: reduce){
-    .sun-glow,.sun-rays,.cloud,.vapor,.drop,.waves,.river-flow,.gw-flow,.hotspot.active .hs-ring{ animation:none !important; }
+    .sun-glow,.sun-rays,.cloud,.vapor,.drop,.waves,.river-flow,.gw-flow,.hotspot.active .hs-ring,
+    .ibex-hop,.whale-swim,.whale-blow,.plane-fly,.contrail,.puff,.tractor-move,.spray circle,
+    .seep path,.pump-arm,.suck path,.runoff,.meltwater{ animation:none !important; }
     .vapor,.drop{ opacity:.55; }
+    .whale-blow{ opacity:0; }
+    .plane-fly{ transform:translate(430px,58px); }
   }
 </style>
 </head>
@@ -245,10 +286,16 @@
           <circle class="sun-glow" r="62" fill="#FFE08A"/>
           <g class="sun-rays">
             <g fill="none" stroke="#FFC83D" stroke-width="4" stroke-linecap="round" opacity=".75">
-              <line x1="0" y1="-54" x2="0" y2="-70"/><line x1="0" y1="54" x2="0" y2="70"/>
-              <line x1="-54" y1="0" x2="-70" y2="0"/><line x1="54" y1="0" x2="70" y2="0"/>
-              <line x1="-38" y1="-38" x2="-50" y2="-50"/><line x1="38" y1="38" x2="50" y2="50"/>
-              <line x1="-38" y1="38" x2="-50" y2="50"/><line x1="38" y1="-38" x2="50" y2="-50"/>
+              <line x1="0" y1="-54" x2="0" y2="-74"/><line x1="0" y1="54" x2="0" y2="74"/>
+              <line x1="-54" y1="0" x2="-74" y2="0"/><line x1="54" y1="0" x2="74" y2="0"/>
+              <line x1="-38" y1="-38" x2="-52" y2="-52"/><line x1="38" y1="38" x2="52" y2="52"/>
+              <line x1="-38" y1="38" x2="-52" y2="52"/><line x1="38" y1="-38" x2="52" y2="-52"/>
+            </g>
+            <g fill="none" stroke="#FFC83D" stroke-width="3" stroke-linecap="round" opacity=".55">
+              <line x1="-21" y1="-50" x2="-28" y2="-67"/><line x1="21" y1="50" x2="28" y2="67"/>
+              <line x1="21" y1="-50" x2="28" y2="-67"/><line x1="-21" y1="50" x2="-28" y2="67"/>
+              <line x1="-50" y1="-21" x2="-67" y2="-28"/><line x1="50" y1="21" x2="67" y2="28"/>
+              <line x1="50" y1="-21" x2="67" y2="-28"/><line x1="-50" y1="21" x2="-67" y2="28"/>
             </g>
           </g>
           <circle r="44" fill="url(#sunfill)"/>
@@ -258,8 +305,27 @@
         <path d="M520,440 L640,250 L720,330 L820,210 L920,330 L1000,290 L1000,440 Z" fill="url(#mtn)"/>
         <path d="M520,440 L1000,440 L1000,520 L520,520 Z" fill="#6BA368"/>
         <!-- Schneekappen -->
-        <path d="M820,210 L800,238 L842,238 Z" fill="#fff" opacity=".9"/>
         <path d="M640,250 L626,275 L658,275 Z" fill="#fff" opacity=".85"/>
+
+        <!-- Gletscher am Hauptgipfel: gross (normal) / geschmolzen (gestört) -->
+        <g id="gletscher">
+          <path class="glacier-full" d="M820,210 L795,244 L800,268 L830,272 L852,246 L842,238 Z" fill="#E8F6FF" stroke="#A9D8F0" stroke-width="2" opacity=".95"/>
+          <path class="glacier-full" d="M812,232 L806,258 M828,230 L834,256" stroke="#BFE4F7" stroke-width="2.5" fill="none" opacity=".9"/>
+          <path class="glacier-melt" d="M820,210 L808,232 L826,236 L834,228 Z" fill="#E8F6FF" stroke="#A9D8F0" stroke-width="2" opacity=".95"/>
+          <!-- Schmelzwasser-Rinnsal nur im gestörten Modus -->
+          <path class="meltwater" d="M822,238 C818,262 826,286 812,312" fill="none" stroke="#6FC3EE" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 7" opacity=".9"/>
+        </g>
+
+        <!-- Steinbock auf dem Grat (hüpft) -->
+        <g id="steinbock" transform="translate(690,318)">
+          <g class="ibex-hop">
+            <path d="M-13,0 L-13,-11 L11,-11 L11,0 L7,0 L7,-5 L-9,-5 L-9,0 Z" fill="#8B6F4E"/>
+            <circle cx="14" cy="-15" r="5" fill="#8B6F4E"/>
+            <path d="M12,-19 C9,-27 4,-31 1,-30" fill="none" stroke="#5E4A31" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M16,-19 C14,-27 9,-32 6,-31" fill="none" stroke="#5E4A31" stroke-width="2.2" stroke-linecap="round"/>
+            <circle cx="16" cy="-16" r="1.1" fill="#2B2116"/>
+          </g>
+        </g>
 
         <!-- Erde / Untergrund -->
         <rect x="0" y="520" width="1000" height="100" fill="#B98C5A"/>
@@ -275,6 +341,25 @@
         <!-- Meer links -->
         <g>
           <rect x="0" y="430" width="470" height="190" fill="url(#watergrad)"/>
+
+          <!-- Buckelwal -->
+          <g id="wal" transform="translate(300,505)">
+            <g class="whale-swim">
+              <path d="M-52,0 C-40,-20 -6,-26 20,-16 C34,-11 42,-3 48,4 C36,10 12,16 -12,12 C-32,9 -46,6 -52,0 Z" fill="#2F4A63"/>
+              <path d="M-52,0 C-40,-6 -14,2 -6,11 C-28,11 -44,6 -52,0 Z" fill="#4A6A85" opacity=".85"/>
+              <path d="M48,4 C56,-4 66,-8 72,-4 C66,2 60,8 56,10 C60,14 62,18 60,21 C54,18 48,10 48,4 Z" fill="#2F4A63"/>
+              <path d="M-8,10 C-2,20 10,24 18,20 C10,16 2,12 -8,10 Z" fill="#3D5C78"/>
+              <circle cx="-40" cy="-5" r="2" fill="#EAF4FA"/>
+              <path d="M-30,-14 q6,-4 12,-1 M-14,-19 q7,-3 13,0" stroke="#5C7C96" stroke-width="1.6" fill="none" opacity=".7"/>
+            </g>
+            <!-- Blas -->
+            <g class="whale-blow" opacity="0">
+              <ellipse cx="-34" cy="-30" rx="4" ry="7" fill="#DFF1FB" opacity=".85"/>
+              <ellipse cx="-38" cy="-42" rx="3" ry="5" fill="#DFF1FB" opacity=".6"/>
+              <ellipse cx="-30" cy="-44" rx="2.6" ry="4.4" fill="#DFF1FB" opacity=".5"/>
+            </g>
+          </g>
+
           <g class="waves" opacity=".55">
             <path d="M-80,436 q20,-8 40,0 t40,0 t40,0 t40,0 t40,0 t40,0 t40,0 t40,0 t40,0 t40,0 t40,0 t40,0 t40,0"
                   fill="none" stroke="#BfE6Fb" stroke-width="3"/>
@@ -354,6 +439,98 @@
           <text class="lbl" x="40" y="470" style="fill:#1B5E8A">Meer</text>
         </g>
 
+        <!-- Störungs-Objekte (nur im gestörten Modus sichtbar) -->
+        <g id="stoer-objekte" class="stoer-only">
+
+          <!-- Flugzeug mit Kondensstreifen (Luftverschmutzung) -->
+          <g id="flugzeug">
+            <path class="contrail" d="M300,64 L560,64" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".55" fill="none"/>
+            <g class="plane-fly">
+              <path d="M0,0 L26,-3 L34,0 L26,3 Z" fill="#5B6B7A"/>
+              <path d="M10,0 L2,-11 L8,-11 L18,-2 Z" fill="#7B8B9A"/>
+              <path d="M10,0 L2,11 L8,11 L18,2 Z" fill="#6B7B8A"/>
+              <path d="M28,0 L24,-6 L27,-6 L31,-1 Z" fill="#7B8B9A"/>
+            </g>
+          </g>
+
+          <!-- Fabrik mit CO2-Rauch (Klimaerwärmung) -->
+          <g id="fabrik" transform="translate(880,382)">
+            <rect x="-34" y="-4" width="68" height="42" fill="#8A97A3"/>
+            <path d="M-34,-4 L-34,-16 L-16,-8 L-16,-20 L2,-10 L2,-4 Z" fill="#7A8793"/>
+            <rect x="14" y="-38" width="11" height="42" fill="#6E7B87"/>
+            <rect x="-28" y="8" width="10" height="10" fill="#C9D4DC"/>
+            <rect x="-12" y="8" width="10" height="10" fill="#C9D4DC"/>
+            <rect x="4" y="8" width="10" height="10" fill="#C9D4DC"/>
+            <g class="smoke">
+              <circle class="puff" cx="19" cy="-44" r="7" fill="#9AA6B1" opacity=".8" style="animation-delay:0s"/>
+              <circle class="puff" cx="19" cy="-44" r="9" fill="#A8B3BD" opacity=".7" style="animation-delay:1.3s"/>
+              <circle class="puff" cx="19" cy="-44" r="6" fill="#8E9AA6" opacity=".75" style="animation-delay:2.6s"/>
+            </g>
+          </g>
+
+          <!-- Versiegelte Stadt / Strasse (Bodenversiegelung) -->
+          <g id="stadt" transform="translate(560,470)">
+            <rect x="-56" y="30" width="150" height="12" fill="#5E6970"/>
+            <g stroke="#E4E9EC" stroke-width="2.4" stroke-dasharray="10 8">
+              <line x1="-52" y1="36" x2="90" y2="36"/>
+            </g>
+            <rect x="-50" y="-16" width="26" height="46" fill="#8FA0AE"/>
+            <rect x="-18" y="-32" width="30" height="62" fill="#7C8D9C"/>
+            <rect x="18" y="-6" width="24" height="36" fill="#93A4B2"/>
+            <rect x="48" y="-22" width="28" height="52" fill="#8596A5"/>
+            <g fill="#DCE6EC">
+              <rect x="-45" y="-9" width="6" height="7"/><rect x="-35" y="-9" width="6" height="7"/>
+              <rect x="-12" y="-25" width="7" height="8"/><rect x="0" y="-25" width="7" height="8"/>
+              <rect x="-12" y="-10" width="7" height="8"/><rect x="0" y="-10" width="7" height="8"/>
+              <rect x="23" y="2" width="6" height="7"/><rect x="33" y="2" width="6" height="7"/>
+              <rect x="54" y="-14" width="7" height="8"/><rect x="65" y="-14" width="7" height="8"/>
+            </g>
+            <!-- Abfliessendes Wasser auf versiegelter Fläche -->
+            <path class="runoff" d="M-52,44 L88,44" stroke="#6FA8CC" stroke-width="4" stroke-linecap="round" stroke-dasharray="8 9" fill="none" opacity=".9"/>
+          </g>
+
+          <!-- Traktor bringt Pestizide aus (Wasserverschmutzung) -->
+          <g id="traktor" transform="translate(700,492)">
+            <g class="tractor-move">
+              <rect x="-16" y="-16" width="20" height="14" rx="2" fill="#C0392B"/>
+              <rect x="-22" y="-4" width="34" height="10" rx="2" fill="#D9503A"/>
+              <circle cx="-14" cy="8" r="7" fill="#33404A"/><circle cx="-14" cy="8" r="2.6" fill="#8A97A3"/>
+              <circle cx="7" cy="9" r="5" fill="#33404A"/><circle cx="7" cy="9" r="2" fill="#8A97A3"/>
+              <rect x="12" y="-2" width="16" height="4" rx="2" fill="#6E7B87"/>
+              <g class="spray">
+                <circle cx="20" cy="6" r="2.2" fill="#A9C64C" opacity=".9" style="animation-delay:0s"/>
+                <circle cx="26" cy="6" r="1.8" fill="#A9C64C" opacity=".9" style="animation-delay:.5s"/>
+                <circle cx="32" cy="6" r="2" fill="#A9C64C" opacity=".9" style="animation-delay:1s"/>
+              </g>
+            </g>
+            <!-- Pestizide sickern in den Boden -->
+            <g class="seep" stroke="#A9C64C" stroke-width="2.6" stroke-linecap="round" fill="none" opacity=".85">
+              <path d="M6,20 L4,44"/><path d="M22,20 L24,44"/><path d="M38,20 L36,44"/>
+            </g>
+          </g>
+
+          <!-- Staumauer am Fluss + Grundwasserpumpe (Übernutzung) -->
+          <g id="staumauer" transform="translate(628,392)">
+            <path d="M-11,-30 L11,-30 L17,34 L-17,34 Z" fill="#9AA6B1" stroke="#7A8794" stroke-width="2"/>
+            <rect x="-11" y="-34" width="22" height="6" rx="2" fill="#8A97A3"/>
+            <g stroke="#8794A0" stroke-width="1.3" opacity=".7">
+              <line x1="-12" y1="-12" x2="12" y2="-12"/><line x1="-14" y1="6" x2="14" y2="6"/><line x1="-16" y1="24" x2="16" y2="24"/>
+            </g>
+          </g>
+          <!-- Grundwasserpumpe auf dem Land -->
+          <g id="pumpe" transform="translate(880,478)">
+            <rect x="-9" y="0" width="18" height="26" fill="#6E7B87"/>
+            <rect x="-3" y="26" width="6" height="42" fill="#5E6970"/>
+            <g class="pump-arm">
+              <rect x="-17" y="-8" width="34" height="6" rx="3" fill="#C0392B"/>
+            </g>
+            <g class="suck" stroke="#6FC3EE" stroke-width="2.6" stroke-linecap="round" fill="none" opacity=".9">
+              <path d="M0,84 L0,66"/>
+            </g>
+          </g>
+
+        </g>
+
         <!-- Hotspots (klickbar) -->
         <g id="hotspots">
           <g class="hotspot" data-stage="1" tabindex="0" role="button" aria-label="Station 1: Verdunstung" transform="translate(245,360)">
@@ -378,19 +555,19 @@
 
         <!-- Störungs-Hotspots (nur im gestörten Modus) -->
         <g id="stoer-hotspots" class="stoer-only">
-          <g class="hotspot stoer-hs" data-stoer="1" tabindex="0" role="button" aria-label="Störfaktor 1: Klimaerwärmung" transform="translate(240,150)">
+          <g class="hotspot stoer-hs" data-stoer="1" tabindex="0" role="button" aria-label="Störfaktor 1: Klimaerwärmung" transform="translate(930,344)">
             <circle class="hs-ring" r="17"/><circle class="hs-dot" r="17"/><text class="hs-num warnsym-t">!</text>
           </g>
-          <g class="hotspot stoer-hs" data-stoer="2" tabindex="0" role="button" aria-label="Störfaktor 2: Luftverschmutzung" transform="translate(560,90)">
+          <g class="hotspot stoer-hs" data-stoer="2" tabindex="0" role="button" aria-label="Störfaktor 2: Luftverschmutzung" transform="translate(430,96)">
             <circle class="hs-ring" r="17"/><circle class="hs-dot" r="17"/><text class="hs-num">!</text>
           </g>
-          <g class="hotspot stoer-hs" data-stoer="3" tabindex="0" role="button" aria-label="Störfaktor 3: Bodenversiegelung" transform="translate(560,430)">
+          <g class="hotspot stoer-hs" data-stoer="3" tabindex="0" role="button" aria-label="Störfaktor 3: Bodenversiegelung" transform="translate(500,432)">
             <circle class="hs-ring" r="17"/><circle class="hs-dot" r="17"/><text class="hs-num">!</text>
           </g>
-          <g class="hotspot stoer-hs" data-stoer="4" tabindex="0" role="button" aria-label="Störfaktor 4: Wasserverschmutzung" transform="translate(680,380)">
+          <g class="hotspot stoer-hs" data-stoer="4" tabindex="0" role="button" aria-label="Störfaktor 4: Wasserverschmutzung" transform="translate(742,470)">
             <circle class="hs-ring" r="17"/><circle class="hs-dot" r="17"/><text class="hs-num">!</text>
           </g>
-          <g class="hotspot stoer-hs" data-stoer="5" tabindex="0" role="button" aria-label="Störfaktor 5: Übernutzung des Grundwassers" transform="translate(400,545)">
+          <g class="hotspot stoer-hs" data-stoer="5" tabindex="0" role="button" aria-label="Störfaktor 5: Übernutzung des Grundwassers" transform="translate(930,472)">
             <circle class="hs-ring" r="17"/><circle class="hs-dot" r="17"/><text class="hs-num">!</text>
           </g>
         </g>
