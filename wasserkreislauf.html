@@ -111,6 +111,80 @@
   .progress span{ flex:1; height:4px; border-radius:3px; background:#E2EBF2; transition:background .3s ease; }
   .progress span.done{ background:#2C6BAA; }
 
+  /* ---- Modus-Umschalter ---- */
+  .modeswitch{ display:inline-flex; background:#EAF0F5; border-radius:10px; padding:3px; gap:2px; }
+  .mode-opt{ font-family:inherit; font-size:12.5px; font-weight:700; padding:7px 12px; border:none; background:transparent; color:#5B6B7A; border-radius:8px; cursor:pointer; transition:all .15s ease; }
+  .mode-opt.active{ background:#1F4E78; color:#fff; }
+  .mode-opt:focus-visible{ outline:3px solid #9Fd0f5; outline-offset:2px; }
+  body.stoer .mode-opt.active{ background:#C24B1E; }
+
+  .btn.sm{ padding:6px 12px; font-size:12.5px; }
+
+  /* ---- Mini-Frage ---- */
+  .qbox{ background:#EAF3FB; border-left:4px solid #2C6BAA; border-radius:0 10px 10px 0; padding:10px 13px; margin:0 0 14px; font-size:13px; color:#28455f; }
+  .qbox .qlabel{ display:block; font-size:10.5px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; color:#2C6BAA; margin-bottom:3px; }
+  body.stoer .qbox{ background:#FBEEE6; border-left-color:#C24B1E; color:#7a3a1e; }
+  body.stoer .qbox .qlabel{ color:#C24B1E; }
+
+  .nav{ display:flex; gap:8px; margin-bottom:14px; }
+  .nav .btn{ flex:1; justify-content:center; }
+  .btn:disabled{ opacity:.45; cursor:not-allowed; }
+
+  /* ---- Gestörter Modus ---- */
+  body.stoer{ background:#FBF4EE; }
+  body.stoer header{ background:linear-gradient(135deg,#A6431B 0%,#D2762E 100%); }
+  body.stoer #sky-rect{ fill:url(#sky-dry); }
+  body.stoer .cloud.c3{ opacity:.3; }
+  body.stoer .cloud.c2{ opacity:.5; }
+  body.stoer .sun-glow{ fill:#FFB03A; }
+  body.stoer .river-flow{ opacity:.45; }
+  .gw-low{ opacity:0; transition:opacity .5s ease; }
+  body.stoer .gw-low{ opacity:.85; }
+  body.stoer .chip.active{ border-color:#C24B1E; background:#FBEEE6; }
+  body.stoer .chip .num{ background:#C24B1E; }
+  body.stoer .panel .eyebrow, body.stoer .panel h2{ color:#C24B1E; }
+  body.stoer .progress span.done{ background:#C24B1E; }
+  body.stoer .hotspot .hs-dot{ stroke:#C24B1E; }
+  body.stoer .hotspot .hs-num{ fill:#C24B1E; }
+  body.stoer .hotspot.active .hs-dot{ fill:#C24B1E; }
+  body.stoer .hotspot.active .hs-num{ fill:#fff; }
+  body.stoer .hotspot .hs-ring{ stroke:#C24B1E; }
+  body.stoer .btn{ border-color:#C24B1E; background:#C24B1E; }
+  body.stoer .btn:hover{ background:#A6431B; box-shadow:0 4px 12px rgba(194,75,30,.25); }
+  body.stoer .btn.ghost{ background:#fff; color:#C24B1E; }
+  body.stoer .btn.ghost[aria-pressed="true"]{ background:#C24B1E; color:#fff; }
+
+  .stoer-only{ display:none; }
+  body.stoer .stoer-only{ display:block; }
+  body.stoer .normal-only{ display:none; }
+  .warnsym{ opacity:0; transition:opacity .4s ease; }
+  body.stoer .warnsym{ opacity:1; }
+
+  /* ---- Overlay / Vergleich + Quiz ---- */
+  .overlay{ position:fixed; inset:0; background:rgba(20,35,50,.55); display:none; align-items:center; justify-content:center; padding:18px; z-index:50; }
+  .overlay.open{ display:flex; }
+  .modal{ background:#fff; border-radius:16px; max-width:660px; width:100%; max-height:88vh; overflow:auto; padding:22px 24px; box-shadow:0 20px 60px rgba(0,0,0,.3); }
+  .modal h3{ margin:0 0 4px; font-size:20px; color:#1F4E78; font-weight:800; }
+  .modal .msub{ font-size:13px; color:#5B6B7A; margin-bottom:16px; }
+  .modal-x{ float:right; font-size:22px; line-height:1; border:none; background:transparent; cursor:pointer; color:#5B6B7A; padding:0 4px; }
+  table.cmp{ width:100%; border-collapse:collapse; font-size:13px; }
+  table.cmp th, table.cmp td{ text-align:left; padding:9px 10px; border-bottom:1px solid #EAF0F5; vertical-align:top; }
+  table.cmp th{ font-weight:800; color:#1F4E78; }
+  table.cmp td.norm{ color:#2C6BAA; }
+  table.cmp td.stoer{ color:#C24B1E; }
+  table.cmp tr td:first-child{ font-weight:700; color:#1A2B3A; }
+
+  .qgroup-title{ font-size:14px; font-weight:800; color:#1F4E78; margin:16px 0 8px; }
+  .quiz-q{ margin-bottom:14px; }
+  .quiz-q .qtext{ font-size:13.5px; font-weight:700; margin-bottom:7px; }
+  .quiz-opt{ display:block; width:100%; text-align:left; font-family:inherit; font-size:13px; padding:8px 11px; margin-bottom:5px; border:1.5px solid #E2EBF2; border-radius:9px; background:#fff; cursor:pointer; transition:all .12s ease; }
+  .quiz-opt:hover{ background:#F3F8FC; }
+  .quiz-opt.correct{ background:#E4F5EA; border-color:#3E9D63; color:#1e5c37; font-weight:700; }
+  .quiz-opt.wrong{ background:#FBE9E7; border-color:#D9534F; color:#8a2a26; }
+  .quiz-opt:disabled{ cursor:default; }
+  .quiz-feedback{ font-size:12.5px; margin-top:4px; font-weight:700; }
+  .quiz-result{ margin-top:14px; padding:12px 14px; border-radius:10px; background:#EAF3FB; font-size:14px; font-weight:700; color:#1F4E78; text-align:center; }
+
   .footer{ max-width:1320px; margin:4px auto 24px; padding:0 18px; color:#5B6B7A; font-size:11.5px; }
   .footer .copyright{ margin-top:8px; color:#94A3B0; }
 
@@ -131,8 +205,14 @@
   <div class="stage-card">
     <div class="scene-head">
       <div class="controls">
+        <div class="modeswitch" role="tablist" aria-label="Modus wählen">
+          <button class="mode-opt active" id="mode-normal" role="tab" aria-selected="true">Normaler Kreislauf</button>
+          <button class="mode-opt" id="mode-stoer" role="tab" aria-selected="false">Gestörter Kreislauf</button>
+        </div>
         <button class="btn" id="tour-btn">▶ Tour starten</button>
         <button class="btn ghost" id="lbl-btn" aria-pressed="true">Beschriftungen</button>
+        <button class="btn ghost" id="compare-btn" hidden>Vergleichen</button>
+        <button class="btn ghost" id="quiz-btn">Quiz</button>
       </div>
       <div style="font-size:12px;color:#7C8B9A;">Tipp: Zahlen ① – ⑤ anklicken</div>
     </div>
@@ -152,10 +232,13 @@
           <radialGradient id="sunfill" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stop-color="#FFE9A8"/><stop offset="70%" stop-color="#FFC83D"/><stop offset="100%" stop-color="#FFB100"/>
           </radialGradient>
+          <linearGradient id="sky-dry" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FBEAD2"/><stop offset="100%" stop-color="#E8C79A"/>
+          </linearGradient>
         </defs>
 
         <!-- Himmel -->
-        <rect x="0" y="0" width="1000" height="440" fill="url(#sky)"/>
+        <rect id="sky-rect" x="0" y="0" width="1000" height="440" fill="url(#sky)"/>
 
         <!-- Sonne -->
         <g transform="translate(862,86)">
@@ -184,7 +267,8 @@
 
         <!-- Grundwasser-Band + Fluss-Pfeile (Station 5) -->
         <g id="g-grundwasser" class="litgroup" data-stage="5">
-          <rect x="0" y="530" width="1000" height="22" fill="#7FB8E6" opacity=".55"/>
+          <rect class="gw-normal" x="0" y="530" width="1000" height="22" fill="#7FB8E6" opacity=".55"/>
+          <rect class="gw-low" x="0" y="546" width="1000" height="8" fill="#B98C5A" opacity=".85"/>
           <path class="gw-flow" d="M940,541 L60,541" fill="none" stroke="#Dff1ff" stroke-width="5" stroke-linecap="round" opacity=".9"/>
         </g>
 
@@ -284,8 +368,30 @@
           <g class="hotspot" data-stage="4" tabindex="0" role="button" aria-label="Station 4: Abfluss und Versickerung" transform="translate(560,430)">
             <circle class="hs-ring" r="17"/><circle class="hs-dot" r="17"/><text class="hs-num">4</text>
           </g>
-          <g class="hotspot" data-stage="5" tabindex="0" role="button" aria-label="Station 5: Grundwasser" transform="translate(730,560)">
+          <g class="hotspot" data-stage="5" tabindex="0" role="button" aria-label="Station 5: Versickerung und Grundwasser" transform="translate(730,560)">
             <circle class="hs-ring" r="17"/><circle class="hs-dot" r="17"/><text class="hs-num">5</text>
+          </g>
+          <g class="hotspot" data-stage="6" tabindex="0" role="button" aria-label="Station 6: Sammlung und Meer" transform="translate(90,455)">
+            <circle class="hs-ring" r="17"/><circle class="hs-dot" r="17"/><text class="hs-num">6</text>
+          </g>
+        </g>
+
+        <!-- Störungs-Hotspots (nur im gestörten Modus) -->
+        <g id="stoer-hotspots" class="stoer-only">
+          <g class="hotspot stoer-hs" data-stoer="1" tabindex="0" role="button" aria-label="Störfaktor 1: Klimaerwärmung" transform="translate(150,110)">
+            <circle class="hs-ring" r="17"/><circle class="hs-dot" r="17"/><text class="hs-num warnsym-t">!</text>
+          </g>
+          <g class="hotspot stoer-hs" data-stoer="2" tabindex="0" role="button" aria-label="Störfaktor 2: Luftverschmutzung" transform="translate(560,90)">
+            <circle class="hs-ring" r="17"/><circle class="hs-dot" r="17"/><text class="hs-num">!</text>
+          </g>
+          <g class="hotspot stoer-hs" data-stoer="3" tabindex="0" role="button" aria-label="Störfaktor 3: Bodenversiegelung" transform="translate(560,430)">
+            <circle class="hs-ring" r="17"/><circle class="hs-dot" r="17"/><text class="hs-num">!</text>
+          </g>
+          <g class="hotspot stoer-hs" data-stoer="4" tabindex="0" role="button" aria-label="Störfaktor 4: Wasserverschmutzung" transform="translate(680,380)">
+            <circle class="hs-ring" r="17"/><circle class="hs-dot" r="17"/><text class="hs-num">!</text>
+          </g>
+          <g class="hotspot stoer-hs" data-stoer="5" tabindex="0" role="button" aria-label="Störfaktor 5: Übernutzung des Grundwassers" transform="translate(400,545)">
+            <circle class="hs-ring" r="17"/><circle class="hs-dot" r="17"/><text class="hs-num">!</text>
           </g>
         </g>
       </svg>
@@ -296,26 +402,78 @@
   <aside class="panel">
     <div class="eyebrow" id="p-eyebrow">Übersicht</div>
     <h2 id="p-title">Wasser in Bewegung</h2>
-    <p id="p-text">Wasser verschwindet nie – es wandelt nur ständig seine Form und seinen Ort. Angetrieben von der Sonne durchläuft es immer wieder denselben Kreislauf. Klicken Sie auf eine Zahl oder starten Sie die Tour, um die fünf Stationen zu entdecken.</p>
+    <p id="p-text">Wasser verschwindet nie – es wandelt nur ständig seine Form und seinen Ort. Angetrieben von der Sonne durchläuft es immer wieder denselben Kreislauf. Klicken Sie auf eine Zahl oder starten Sie die Tour, um die sechs Stationen zu entdecken.</p>
+    <div class="qbox" id="qbox" hidden><span class="qlabel">Zum Nachdenken</span><span id="p-question"></span></div>
+    <div class="nav" id="nav">
+      <button class="btn ghost sm" id="prev-btn" disabled>← Zurück</button>
+      <button class="btn ghost sm" id="next-btn">Weiter →</button>
+    </div>
     <div class="chips" id="chips"></div>
-    <div class="progress" id="progress" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="progress" id="progress" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
   </aside>
 </div>
 
 <div class="footer">
-  Interaktive Lernfolie zum Wasserkreislauf · die Sonne treibt den Kreislauf an: Verdunstung → Kondensation → Niederschlag → Abfluss → Grundwasser.
+  Interaktive Lernfolie zum Wasserkreislauf · die Sonne treibt den Kreislauf an: Verdunstung → Kondensation → Niederschlag → Abfluss → Versickerung → Sammlung.
   <div class="copyright">© 2026 Samuel Mollet · HKV Aarau · realisiert mit Claude (Anthropic)</div>
+</div>
+
+<!-- Vergleich-Overlay -->
+<div class="overlay" id="cmp-overlay" role="dialog" aria-modal="true" aria-label="Vergleich normal und gestört">
+  <div class="modal">
+    <button class="modal-x" id="cmp-x" aria-label="Schliessen">×</button>
+    <h3>Normal vs. gestört</h3>
+    <p class="msub">Wie menschliche Eingriffe den natürlichen Wasserkreislauf verändern.</p>
+    <table class="cmp">
+      <tr><th>Faktor</th><th>Natürlicher Kreislauf</th><th>Gestörter Kreislauf</th></tr>
+      <tr><td>Klima</td><td class="norm">Ausgeglichene Temperaturen, stabile Verdunstung.</td><td class="stoer">Erwärmung verstärkt Verdunstung und Wetterextreme.</td></tr>
+      <tr><td>Luft</td><td class="norm">Saubere Luft, klare Wolkenbildung.</td><td class="stoer">Schadstoffe beeinflussen Wolken und führen zu saurem Regen.</td></tr>
+      <tr><td>Boden</td><td class="norm">Wasser versickert und speist das Grundwasser.</td><td class="stoer">Versiegelte Flächen verhindern Versickerung, mehr Oberflächenabfluss und Hochwasser.</td></tr>
+      <tr><td>Gewässer</td><td class="norm">Sauberes Wasser in Flüssen und Seen.</td><td class="stoer">Verschmutzung belastet Gewässer und Grundwasser.</td></tr>
+      <tr><td>Grundwasser</td><td class="norm">Pegel bleibt durch natürliche Neubildung stabil.</td><td class="stoer">Übernutzung senkt den Grundwasserspiegel.</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- Quiz-Overlay -->
+<div class="overlay" id="quiz-overlay" role="dialog" aria-modal="true" aria-label="Quiz zum Wasserkreislauf">
+  <div class="modal">
+    <button class="modal-x" id="quiz-x" aria-label="Schliessen">×</button>
+    <h3>Quiz: Wasserkreislauf</h3>
+    <p class="msub">Prüfen Sie Ihr Wissen – sechs Fragen zum natürlichen und gestörten Kreislauf.</p>
+    <div id="quiz-body" class="quiz-sec"></div>
+    <div class="quiz-result" id="quiz-result" hidden></div>
+  </div>
 </div>
 
 <script>
   const stages = [
-    { id:1, eyebrow:'Station 1', title:'Verdunstung', text:'Die Sonne erwärmt das Wasser in Meeren, Seen und Flüssen. Ein Teil verdunstet und steigt als unsichtbarer Wasserdampf nach oben. Auch Pflanzen geben Wasser an die Luft ab.' },
-    { id:2, eyebrow:'Station 2', title:'Kondensation', text:'In der kühleren Höhe kühlt der Wasserdampf ab und wird wieder flüssig: Er kondensiert zu winzigen Tröpfchen. Unzählige Tröpfchen zusammen bilden die Wolken.' },
-    { id:3, eyebrow:'Station 3', title:'Niederschlag', text:'Werden die Tröpfchen in der Wolke zu schwer, fallen sie als Niederschlag zu Boden – je nach Temperatur als Regen, Schnee oder Hagel.' },
-    { id:4, eyebrow:'Station 4', title:'Abfluss & Versickerung', text:'Das Wasser sammelt sich und fliesst oberirdisch in Bächen und Flüssen zurück zum Meer. Ein Teil versickert im Boden.' },
-    { id:5, eyebrow:'Station 5', title:'Grundwasser', text:'Versickertes Wasser sammelt sich als Grundwasser und fliesst langsam unterirdisch zurück Richtung Meer und Seen. Dort beginnt der Kreislauf von vorn.' },
+    { id:1, eyebrow:'Station 1 von 6', title:'Verdunstung', text:'Die Sonne erwärmt das Wasser in Meeren, Seen und Flüssen. Ein Teil verdunstet und steigt als unsichtbarer Wasserdampf nach oben. Auch Pflanzen geben Wasser an die Luft ab.', q:'Wo können Sie Verdunstung im Alltag beobachten?' },
+    { id:2, eyebrow:'Station 2 von 6', title:'Kondensation', text:'In der kühleren Höhe kühlt der Wasserdampf ab und wird wieder flüssig: Er kondensiert zu winzigen Tröpfchen. Unzählige Tröpfchen zusammen bilden die Wolken.', q:'Warum beschlägt ein Spiegel nach dem Duschen?' },
+    { id:3, eyebrow:'Station 3 von 6', title:'Niederschlag', text:'Werden die Tröpfchen in der Wolke zu schwer, fallen sie als Niederschlag zu Boden – je nach Temperatur als Regen, Schnee oder Hagel.', q:'Welche Formen von Niederschlag kennen Sie?' },
+    { id:4, eyebrow:'Station 4 von 6', title:'Abfluss', text:'Ein Teil des Wassers fliesst oberirdisch in Bächen und Flüssen zurück Richtung See oder Meer.', q:'Was passiert mit Regenwasser auf Strassen?' },
+    { id:5, eyebrow:'Station 5 von 6', title:'Versickerung & Grundwasser', text:'Ein anderer Teil versickert im Boden und sammelt sich als Grundwasser. Es fliesst langsam unterirdisch weiter.', q:'Warum ist sauberer Boden wichtig für unser Trinkwasser?' },
+    { id:6, eyebrow:'Station 6 von 6', title:'Sammlung & Meer', text:'Wasser sammelt sich in Seen, Flüssen und Meeren. Von dort steigt es durch Verdunstung wieder auf – der Kreislauf beginnt von vorn.', q:'Warum spricht man von einem Kreislauf und nicht von einem Ablauf?' },
   ];
-  const intro = { eyebrow:'Übersicht', title:'Wasser in Bewegung', text:'Wasser verschwindet nie – es wandelt nur ständig seine Form und seinen Ort. Angetrieben von der Sonne durchläuft es immer wieder denselben Kreislauf. Klicken Sie auf eine Zahl oder starten Sie die Tour, um die fünf Stationen zu entdecken.' };
+  const intro = { eyebrow:'Übersicht', title:'Wasser in Bewegung', text:'Wasser verschwindet nie – es wandelt nur ständig seine Form und seinen Ort. Angetrieben von der Sonne durchläuft es immer wieder denselben Kreislauf. Klicken Sie auf eine Zahl oder starten Sie die Tour, um die sechs Stationen zu entdecken.' };
+  const merksatz = { eyebrow:'Merksatz', title:'Der Wasserkreislauf', text:'Wasser geht nie verloren – es wechselt nur ständig Form und Ort. Angetrieben von der Sonne durchläuft es immer wieder dieselben Stationen. Der Kreislauf ist kein gerader Ablauf: Wasser nimmt gleichzeitig mehrere Wege (Abfluss, Versickerung, Verdunstung).' };
+
+  const stoerStages = [
+    { id:1, eyebrow:'Störfaktor 1', title:'Klimaerwärmung', text:'Höhere Temperaturen lassen mehr Wasser verdunsten. Der Kreislauf beschleunigt sich, Wetterextreme wie Dürren und Starkregen nehmen zu.', q:'Wie verändert mehr Verdunstung das Wetter?' },
+    { id:2, eyebrow:'Störfaktor 2', title:'Luftverschmutzung', text:'Schadstoffe in der Luft beeinflussen die Wolkenbildung und können sauren Regen verursachen, der Böden und Gewässer belastet.', q:'Was ist saurer Regen und woher kommt er?' },
+    { id:3, eyebrow:'Störfaktor 3', title:'Bodenversiegelung', text:'Strassen, Gebäude und Plätze versiegeln den Boden. Regenwasser kann nicht mehr versickern, fliesst oberirdisch ab – das Hochwasserrisiko steigt, das Grundwasser wird weniger gespeist.', q:'Warum überschwemmen Städte bei Starkregen schneller?' },
+    { id:4, eyebrow:'Störfaktor 4', title:'Wasserverschmutzung', text:'Abwässer, Dünger und Chemikalien gelangen in Flüsse, Seen und ins Grundwasser. Die Wasserqualität sinkt, die Aufbereitung wird aufwändiger.', q:'Wie gelangt Dünger ins Grundwasser?' },
+    { id:5, eyebrow:'Störfaktor 5', title:'Übernutzung des Grundwassers', text:'Wird mehr Grundwasser entnommen als neu gebildet wird, sinkt der Grundwasserspiegel. Brunnen versiegen, Böden trocknen aus.', q:'Was passiert, wenn zu viel Grundwasser entnommen wird?' },
+  ];
+
+  const quizData = [
+    { grp:'Natürlicher Kreislauf', q:'Was treibt den Wasserkreislauf an?', opts:['Der Wind','Die Sonne','Die Schwerkraft allein'], correct:1, fb:'Die Sonnenenergie erwärmt das Wasser und startet die Verdunstung.' },
+    { grp:'Natürlicher Kreislauf', q:'Wie nennt man den Übergang von Wasserdampf zu flüssigen Tröpfchen?', opts:['Verdunstung','Kondensation','Versickerung'], correct:1, fb:'Bei der Kondensation wird gasförmiger Dampf wieder flüssig – so entstehen Wolken.' },
+    { grp:'Natürlicher Kreislauf', q:'Wohin fliesst versickertes Wasser?', opts:['Ins Grundwasser','Direkt in die Wolken','Es verschwindet'], correct:0, fb:'Versickertes Wasser sammelt sich als Grundwasser und fliesst langsam weiter.' },
+    { grp:'Gestörter Kreislauf', q:'Welche Folge hat Bodenversiegelung?', opts:['Mehr Versickerung','Weniger Oberflächenabfluss','Höheres Hochwasserrisiko'], correct:2, fb:'Versiegelte Flächen verhindern das Versickern – das Wasser fliesst oberirdisch ab.' },
+    { grp:'Gestörter Kreislauf', q:'Was bewirkt die Klimaerwärmung im Wasserkreislauf?', opts:['Weniger Verdunstung','Mehr Verdunstung und Wetterextreme','Keine Veränderung'], correct:1, fb:'Höhere Temperaturen verstärken die Verdunstung und die Wetterextreme.' },
+    { grp:'Gestörter Kreislauf', q:'Warum sinkt der Grundwasserspiegel bei Übernutzung?', opts:['Es wird mehr entnommen als neu gebildet','Es regnet zu viel','Der Boden ist zu locker'], correct:0, fb:'Wird mehr Grundwasser entnommen als sich neu bildet, sinkt der Pegel.' },
+  ];
 
   const svg = document.querySelector('.scene-svg');
   const hotspots = Array.from(document.querySelectorAll('.hotspot'));
@@ -326,42 +484,101 @@
   const progress = Array.from(document.querySelectorAll('#progress span'));
   const chipsBox = document.getElementById('chips');
 
-  // Chips aufbauen
-  stages.forEach(s => {
-    const b = document.createElement('button');
-    b.className = 'chip'; b.dataset.stage = s.id;
-    b.innerHTML = '<span class="num">'+s.id+'</span><span>'+s.title+'</span>';
-    b.addEventListener('click', () => setActive(s.id, true));
-    chipsBox.appendChild(b);
-  });
-  const chips = Array.from(document.querySelectorAll('.chip'));
+  // Chips aufbauen (abhängig vom Modus)
+  let chips = [];
+  function buildChips(){
+    chipsBox.innerHTML = '';
+    currentStages().forEach(s => {
+      const b = document.createElement('button');
+      b.className = 'chip'; b.dataset.stage = s.id;
+      b.innerHTML = '<span class="num">'+s.id+'</span><span>'+s.title+'</span>';
+      b.addEventListener('click', () => setActive(s.id, true));
+      chipsBox.appendChild(b);
+    });
+    chips = Array.from(chipsBox.querySelectorAll('.chip'));
+  }
+  buildChips();
 
   let active = null;
+  let mode = 'normal';
+  const qbox = document.getElementById('qbox');
+  const pQuestion = document.getElementById('p-question');
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  function currentStages(){ return mode === 'stoer' ? stoerStages : stages; }
+
+  function showQuestion(s){
+    if (s && s.q){ pQuestion.textContent = s.q; qbox.hidden = false; }
+    else qbox.hidden = true;
+  }
 
   function setActive(id, stopTourFlag){
     if (stopTourFlag) stopTour();
     active = id;
-    const s = stages.find(x => x.id === id);
+    const list = currentStages();
+    const s = list.find(x => x.id === id);
+    if (!s) return;
     pEye.textContent = s.eyebrow; pTit.textContent = s.title; pTxt.textContent = s.text;
-    hotspots.forEach(h => h.classList.toggle('active', +h.dataset.stage === id));
+    showQuestion(s);
+    if (mode === 'normal'){
+      hotspots.forEach(h => h.classList.toggle('active', !h.classList.contains('stoer-hs') && +h.dataset.stage === id));
+      litgroups.forEach(g => g.classList.toggle('lit', +g.dataset.stage === id));
+    } else {
+      hotspots.forEach(h => h.classList.toggle('active', h.classList.contains('stoer-hs') && +h.dataset.stoer === id));
+      litgroups.forEach(g => g.classList.remove('lit'));
+    }
     chips.forEach(c => c.classList.toggle('active', +c.dataset.stage === id));
-    litgroups.forEach(g => g.classList.toggle('lit', +g.dataset.stage === id));
     progress.forEach((p,i) => p.classList.toggle('done', i < id));
+    prevBtn.disabled = id <= 1;
+    nextBtn.textContent = id >= list.length ? 'Merksatz →' : 'Weiter →';
   }
 
   function clearActive(){
     active = null;
-    pEye.textContent = intro.eyebrow; pTit.textContent = intro.title; pTxt.textContent = intro.text;
+    const it = mode === 'stoer'
+      ? { eyebrow:'Gestörter Kreislauf', title:'Wenn der Mensch eingreift', text:'Menschliche Eingriffe verändern den natürlichen Wasserkreislauf. Klicken Sie auf ein Warnzeichen, um die fünf wichtigsten Störfaktoren zu entdecken.' }
+      : intro;
+    pEye.textContent = it.eyebrow; pTit.textContent = it.title; pTxt.textContent = it.text;
+    qbox.hidden = true;
     hotspots.forEach(h => h.classList.remove('active'));
     chips.forEach(c => c.classList.remove('active'));
     litgroups.forEach(g => g.classList.remove('lit'));
     progress.forEach(p => p.classList.remove('done'));
+    prevBtn.disabled = true;
+    nextBtn.textContent = 'Weiter →';
   }
 
-  hotspots.forEach(h => {
+  function showMerksatz(){
+    stopTour();
+    active = null;
+    pEye.textContent = merksatz.eyebrow; pTit.textContent = merksatz.title; pTxt.textContent = merksatz.text;
+    qbox.hidden = true;
+    hotspots.forEach(h => h.classList.remove('active'));
+    chips.forEach(c => c.classList.remove('active'));
+    litgroups.forEach(g => g.classList.remove('lit'));
+    progress.forEach(p => p.classList.add('done'));
+    prevBtn.disabled = false;
+    nextBtn.textContent = 'Weiter →';
+  }
+
+  prevBtn.addEventListener('click', () => {
+    const list = currentStages();
+    if (active == null){ setActive(list.length, true); return; }
+    if (active > 1) setActive(active - 1, true);
+    else clearActive();
+  });
+  nextBtn.addEventListener('click', () => {
+    const list = currentStages();
+    if (active == null){ setActive(1, true); return; }
+    if (active >= list.length){ if (mode === 'normal') showMerksatz(); else clearActive(); return; }
+    setActive(active + 1, true);
+  });
+
+  hotspots.filter(h => !h.classList.contains('stoer-hs')).forEach(h => {
     const id = +h.dataset.stage;
-    h.addEventListener('click', () => setActive(id, true));
-    h.addEventListener('keydown', e => { if (e.key==='Enter' || e.key===' '){ e.preventDefault(); setActive(id, true); } });
+    h.addEventListener('click', () => { if (mode === 'normal') setActive(id, true); });
+    h.addEventListener('keydown', e => { if ((e.key==='Enter' || e.key===' ') && mode === 'normal'){ e.preventDefault(); setActive(id, true); } });
   });
 
   // Beschriftungen umschalten
@@ -378,9 +595,10 @@
   function startTour(){
     tourBtn.textContent = '⏸ Tour stoppen';
     tourStep = 0;
+    const len = currentStages().length;
     const run = () => {
       tourStep++;
-      if (tourStep > stages.length){ stopTour(); clearActive(); return; }
+      if (tourStep > len){ stopTour(); if (mode === 'normal') showMerksatz(); else clearActive(); return; }
       setActive(tourStep, false);
       tourTimer = setTimeout(run, 3400);
     };
@@ -395,6 +613,90 @@
   // Klick ins Leere schliesst die Hervorhebung
   svg.addEventListener('click', e => {
     if (!e.target.closest('.hotspot') && !tourTimer) clearActive();
+  });
+
+  // Störungs-Hotspots verdrahten
+  const stoerHotspots = Array.from(document.querySelectorAll('.stoer-hs'));
+  stoerHotspots.forEach(h => {
+    const id = +h.dataset.stoer;
+    h.addEventListener('click', () => setActive(id, true));
+    h.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' '){ e.preventDefault(); setActive(id, true); } });
+  });
+
+  // ---- Modus-Umschaltung ----
+  const modeNormalBtn = document.getElementById('mode-normal');
+  const modeStoerBtn = document.getElementById('mode-stoer');
+  const compareBtn = document.getElementById('compare-btn');
+  function setMode(m){
+    if (mode === m) return;
+    stopTour();
+    mode = m;
+    document.body.classList.toggle('stoer', m === 'stoer');
+    modeNormalBtn.classList.toggle('active', m === 'normal');
+    modeStoerBtn.classList.toggle('active', m === 'stoer');
+    modeNormalBtn.setAttribute('aria-selected', String(m === 'normal'));
+    modeStoerBtn.setAttribute('aria-selected', String(m === 'stoer'));
+    compareBtn.hidden = (m !== 'stoer');
+    buildChips();
+    clearActive();
+  }
+  modeNormalBtn.addEventListener('click', () => setMode('normal'));
+  modeStoerBtn.addEventListener('click', () => setMode('stoer'));
+
+  // ---- Vergleich-Overlay ----
+  const cmpOverlay = document.getElementById('cmp-overlay');
+  compareBtn.addEventListener('click', () => cmpOverlay.classList.add('open'));
+  document.getElementById('cmp-x').addEventListener('click', () => cmpOverlay.classList.remove('open'));
+  cmpOverlay.addEventListener('click', e => { if (e.target === cmpOverlay) cmpOverlay.classList.remove('open'); });
+
+  // ---- Quiz ----
+  const quizOverlay = document.getElementById('quiz-overlay');
+  const quizBody = document.getElementById('quiz-body');
+  const quizResult = document.getElementById('quiz-result');
+  const quizBtn = document.getElementById('quiz-btn');
+  let answered = 0, correctCount = 0;
+
+  function buildQuiz(){
+    quizBody.innerHTML = ''; answered = 0; correctCount = 0;
+    quizResult.hidden = true;
+    let lastGrp = '';
+    quizData.forEach((item, qi) => {
+      if (item.grp !== lastGrp){
+        const t = document.createElement('div'); t.className = 'qgroup-title'; t.textContent = item.grp;
+        quizBody.appendChild(t); lastGrp = item.grp;
+      }
+      const wrap = document.createElement('div'); wrap.className = 'quiz-q';
+      const qt = document.createElement('div'); qt.className = 'qtext'; qt.textContent = (qi+1)+'. '+item.q;
+      wrap.appendChild(qt);
+      const fb = document.createElement('div'); fb.className = 'quiz-feedback'; fb.hidden = true;
+      item.opts.forEach((opt, oi) => {
+        const b = document.createElement('button'); b.className = 'quiz-opt'; b.textContent = opt;
+        b.addEventListener('click', () => {
+          if (wrap.dataset.done) return;
+          wrap.dataset.done = '1'; answered++;
+          const optButtons = wrap.querySelectorAll('.quiz-opt');
+          optButtons.forEach((ob,idx) => { ob.disabled = true; if (idx === item.correct) ob.classList.add('correct'); });
+          if (oi === item.correct){ correctCount++; fb.style.color = '#1e5c37'; fb.textContent = '✓ Richtig. '+item.fb; }
+          else { b.classList.add('wrong'); fb.style.color = '#8a2a26'; fb.textContent = '✗ '+item.fb; }
+          fb.hidden = false;
+          if (answered === quizData.length){
+            quizResult.hidden = false;
+            quizResult.textContent = 'Ergebnis: '+correctCount+' von '+quizData.length+' richtig.';
+          }
+        });
+        wrap.appendChild(b);
+      });
+      wrap.appendChild(fb);
+      quizBody.appendChild(wrap);
+    });
+  }
+  quizBtn.addEventListener('click', () => { buildQuiz(); quizOverlay.classList.add('open'); });
+  document.getElementById('quiz-x').addEventListener('click', () => quizOverlay.classList.remove('open'));
+  quizOverlay.addEventListener('click', e => { if (e.target === quizOverlay) quizOverlay.classList.remove('open'); });
+
+  // ESC schliesst Overlays
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape'){ cmpOverlay.classList.remove('open'); quizOverlay.classList.remove('open'); }
   });
 </script>
 </body>
