@@ -3,476 +3,801 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Wirtschaftskreislauf – interaktiv</title>
+<title>Der Wirtschaftskreislauf – interaktive Folie</title>
 <style>
   *{ box-sizing:border-box; margin:0; padding:0; }
   :root{
-    --ink:#1F3A40; --muted:#5B7178; --line:#DCE6E8; --bg:#F4F8F9; --card:#FFFFFF;
-    --hh:#2E86C1;      /* Haushalte  – blau */
-    --un:#E67E22;      /* Unternehmen – orange */
-    --bank:#8E44AD;    /* Banken – violett */
-    --staat:#C0392B;   /* Staat – rot */
-    --aus:#16A085;     /* Ausland – petrol/grün */
-    --geld:#2E9D6B;    /* Geldstrom – grün */
-    --real:#B9770F;    /* Real-/Güterstrom – ocker */
+    --geld:#1E9E62; --geld-dk:#14764A;      /* Geldstrom  – grün  */
+    --real:#C08A1E; --real-dk:#8F6412;      /* Realstrom  – ocker */
+    --aktiv:#1F6F8B;                        /* Petrol – aktive Elemente */
+    --ink:#1B2A35; --muted:#5F7480;
+    --line:#E3EAEE; --bg:#F6F8F9; --card:#FFFFFF;
   }
-  html,body{ height:100%; }
-  body{ font-family:'Aptos Narrow','Segoe UI',system-ui,sans-serif; color:var(--ink); background:var(--bg); padding:14px; -webkit-font-smoothing:antialiased; }
-  .frame{ max-width:1080px; margin:0 auto; }
-  header{ margin-bottom:12px; }
-  .eyebrow{ font-size:11px; font-weight:800; letter-spacing:2.5px; text-transform:uppercase; color:var(--un); }
-  h1{ font-size:24px; font-weight:800; letter-spacing:-.4px; margin-top:2px; }
-  .lead{ font-size:14px; color:var(--muted); margin-top:3px; max-width:640px; }
+  body{ font-family:'Aptos','Segoe UI',system-ui,-apple-system,sans-serif; background:var(--bg);
+        color:var(--ink); font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased; }
 
-  .controls{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:14px 0; }
-  .seg{ display:inline-flex; background:var(--card); border:1px solid var(--line); border-radius:11px; padding:3px; gap:2px; }
-  .seg button{ font:inherit; font-size:13px; font-weight:700; padding:7px 15px; border:none; background:transparent; color:var(--muted); border-radius:8px; cursor:pointer; transition:all .15s; }
-  .seg button.on{ background:var(--ink); color:#fff; }
+  header{ background:linear-gradient(135deg,#1F4E78 0%,#2C6BAA 100%); color:#fff; padding:16px 24px 14px; }
+  header h1{ font-size:23px; font-weight:800; letter-spacing:-.3px; }
+  header .sub{ font-size:13.5px; opacity:.93; margin-top:2px; }
+
+  .wrap{ max-width:1560px; margin:0 auto; padding:16px; display:grid; grid-template-columns:1fr 350px; gap:16px; }
+  @media (max-width:1080px){ .wrap{ grid-template-columns:1fr; } }
+
+  /* ---------- Bühne + Steuerung ---------- */
+  .stage-card{ background:var(--card); border-radius:16px; box-shadow:0 2px 12px rgba(20,50,80,.07); overflow:hidden; }
+  .toolbar{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:12px 14px; border-bottom:1px solid var(--line); }
+  .modeswitch{ display:inline-flex; background:#EDF2F4; border-radius:11px; padding:3px; gap:2px; }
+  .mode-opt{ font:inherit; font-size:13.5px; font-weight:700; padding:9px 15px; border:none; background:transparent;
+             color:var(--muted); border-radius:9px; cursor:pointer; transition:all .15s; min-height:42px; }
+  .mode-opt.active{ background:var(--aktiv); color:#fff; }
   .spacer{ flex:1; }
-  .toggle{ font:inherit; font-size:12.5px; font-weight:700; padding:7px 12px; border-radius:9px; border:1.5px solid var(--line); background:var(--card); color:var(--muted); cursor:pointer; display:inline-flex; align-items:center; gap:7px; transition:all .15s; }
-  .toggle .dot{ width:11px; height:11px; border-radius:50%; background:currentColor; opacity:.35; transition:opacity .15s; }
-  .toggle[data-actor="bank"]{ color:var(--bank); } .toggle[data-actor="staat"]{ color:var(--staat); } .toggle[data-actor="aus"]{ color:var(--aus); }
-  .toggle.on{ border-color:currentColor; background:color-mix(in srgb, currentColor 10%, #fff); }
+
+  .btn{ font:inherit; font-size:13.5px; font-weight:700; cursor:pointer; border-radius:10px; padding:9px 15px;
+        border:1.5px solid var(--aktiv); background:var(--aktiv); color:#fff; transition:all .15s;
+        display:inline-flex; align-items:center; gap:7px; min-height:42px; }
+  .btn:hover:enabled{ filter:brightness(.92); }
+  .btn.ghost{ background:#fff; color:var(--aktiv); }
+  .btn.ghost:hover:enabled{ background:#EAF3F6; }
+  .btn:disabled{ opacity:.4; cursor:not-allowed; }
+  .btn.sm{ padding:7px 12px; min-height:40px; font-size:13px; }
+  .btn:focus-visible, .mode-opt:focus-visible, .toggle:focus-visible,
+  .actor:focus-visible, .flow:focus-visible{ outline:3px solid #9BC9DA; outline-offset:2px; }
+
+  .toggles{ display:flex; gap:8px; flex-wrap:wrap; padding:10px 14px; border-bottom:1px solid var(--line); align-items:center; }
+  .toggles .tlabel{ font-size:12px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; color:var(--muted); }
+  .toggle{ font:inherit; font-size:13.5px; font-weight:700; padding:8px 13px; border-radius:10px; min-height:42px;
+           border:1.5px solid var(--line); background:#fff; color:var(--muted); cursor:pointer;
+           display:inline-flex; align-items:center; gap:8px; transition:all .15s; }
+  .toggle .dot{ width:11px; height:11px; border-radius:50%; background:currentColor; opacity:.3; }
+  .toggle.on{ border-color:var(--aktiv); color:var(--aktiv); background:#EAF3F6; }
   .toggle.on .dot{ opacity:1; }
   .toggle:disabled{ opacity:.4; cursor:not-allowed; }
 
-  .stage{ position:relative; background:var(--card); border:1px solid var(--line); border-radius:18px; padding:10px; box-shadow:0 6px 22px rgba(31,58,64,.06); }
-  svg{ display:block; width:100%; height:auto; }
+  .scene{ padding:6px; }
+  svg.board{ display:block; width:100%; height:auto; }
 
-  /* Akteur-Knoten */
-  .node rect{ transition:opacity .35s, transform .35s; }
-  .node text{ font-weight:800; fill:#fff; }
-  .node .role{ font-weight:600; font-size:11px; opacity:.9; }
-  .node{ cursor:pointer; }
-  .node.hidden{ display:none; }
-  .node.dim{ opacity:.28; }
+  /* ---------- Akteurskarten ---------- */
+  .actor{ cursor:pointer; }
+  .actor .cardbg{ fill:#fff; stroke:var(--line); stroke-width:2;
+                  filter:drop-shadow(0 3px 8px rgba(20,50,80,.10)); transition:stroke .18s, filter .18s; }
+  .actor .aname{ font-size:26px; font-weight:800; fill:var(--ink); }
+  .actor .arole{ font-size:15px; font-weight:600; fill:var(--muted); }
+  .actor:hover .cardbg{ stroke:#B9CBD4; }
+  .actor.active .cardbg{ stroke:var(--aktiv); stroke-width:3.5; filter:drop-shadow(0 4px 14px rgba(31,111,139,.28)); }
+  .actor.visited .cardbg{ stroke:#BCD6DF; }
+  .actor.dim{ opacity:.3; }
+  .actor .icon{ fill:none; stroke:var(--aktiv); stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round; }
+  .actor.hidden, .flow.hidden, .flowlabel.hidden{ display:none; }
 
-  /* Ströme */
-  .flow{ fill:none; stroke-width:7; stroke-linecap:round; transition:opacity .35s; }
-  .flow.hidden{ opacity:0; }
-  .flow-wrap.hidden{ display:none; }
-  .flow.dim{ opacity:.12; }
-  .flow.geld{ stroke:var(--geld); }
-  .flow.real{ stroke:var(--real); }
-  .dash{ stroke-dasharray:2 15; stroke-linecap:round; animation:march 1.1s linear infinite; }
-  .paused .dash{ animation-play-state:paused; }
-  @keyframes march{ to{ stroke-dashoffset:-17; } }
-  .flowlabel{ font-size:11px; font-weight:700; fill:var(--ink); }
-  .flowlabel.bg{ fill:#fff; stroke:#fff; stroke-width:5; stroke-linejoin:round; paint-order:stroke; }
-  .flowlabel.hidden{ display:none; }
-  .flowlabel.dim{ opacity:0; }
-  .floatsym{ pointer-events:none; }
-  .floatsym text{ pointer-events:none; }
-  .actoricon{ pointer-events:none; }
+  /* ---------- Ströme ---------- */
+  .flow{ cursor:pointer; }
+  .flow .line{ fill:none; stroke-width:5; stroke-linecap:round; stroke-linejoin:round; transition:stroke-width .18s; }
+  .flow.geld .line{ stroke:var(--geld); }
+  .flow.real .line{ stroke:var(--real); stroke-dasharray:16 9; }
+  .flow .hit{ fill:none; stroke:transparent; stroke-width:28; }
+  .flow.active .line{ stroke-width:8; }
+  .flow.active.geld .line{ stroke:var(--geld-dk); }
+  .flow.active.real .line{ stroke:var(--real-dk); }
+  .flow.dim{ opacity:.15; }
+
+  .dot{ r:5.5; }
+  .flow.geld .dot{ fill:var(--geld-dk); }
+  .flow.real .dot{ fill:var(--real-dk); }
+
+  .flowlabel{ font-size:15px; font-weight:700; fill:var(--ink); pointer-events:none;
+              paint-order:stroke; stroke:#fff; stroke-width:5px; stroke-linejoin:round; }
+  .flowlabel.active{ fill:var(--aktiv); }
+  .flowlabel.dim{ opacity:.15; }
+
+  /* ---------- Legende ---------- */
+  .legend{ display:flex; align-items:center; gap:18px; flex-wrap:wrap; padding:11px 16px;
+           border-top:1px solid var(--line); font-size:13.5px; }
+  .legend .item{ display:inline-flex; align-items:center; gap:8px; font-weight:700; }
+  .legend .swatch{ width:34px; height:5px; border-radius:3px; }
+  .legend .sw-geld{ background:var(--geld); }
+  .legend .sw-real{ background:repeating-linear-gradient(90deg,var(--real) 0 9px,transparent 9px 14px); }
+  .legend .note{ color:var(--muted); font-weight:600; }
+
+  /* ---------- Panel ---------- */
+  .panel{ background:var(--card); border-radius:16px; box-shadow:0 2px 12px rgba(20,50,80,.07);
+          padding:18px; align-self:start; position:sticky; top:16px; }
+  .panel .eyebrow{ font-size:11.5px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--aktiv); }
+  .panel h2{ margin:4px 0 6px; font-size:20px; font-weight:800; }
+  .panel .fromto{ font-size:13.5px; font-weight:700; color:var(--muted); margin-bottom:8px; }
+  .panel p{ color:#3a4d59; margin-bottom:12px; font-size:14.5px; }
+  .badge{ display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:800;
+          padding:4px 10px; border-radius:20px; margin-bottom:9px; }
+  .badge.geld{ background:#E4F3EB; color:var(--geld-dk); }
+  .badge.real{ background:#FBF0DA; color:var(--real-dk); }
+
+  .qbox{ background:#F2F6F8; border-left:4px solid var(--aktiv); border-radius:0 10px 10px 0;
+         padding:11px 13px; font-size:13.5px; color:#33505d; }
+  .qbox .ql{ display:block; font-size:10.5px; font-weight:800; letter-spacing:.7px;
+             text-transform:uppercase; color:var(--aktiv); margin-bottom:3px; }
+
+  .merksatz{ margin:14px 0 0; padding:13px 16px; background:#EAF3F6; border-left:5px solid var(--aktiv);
+             border-radius:0 12px 12px 0; font-size:14.5px; font-weight:700; color:#1a4d5f; }
+  .merksatz .ml{ display:block; font-size:11px; font-weight:800; letter-spacing:.8px;
+                 text-transform:uppercase; color:var(--aktiv); margin-bottom:3px; }
+
+  .tour{ margin-top:14px; padding-top:14px; border-top:1px solid var(--line); }
+  .tour .tstep{ font-size:12.5px; font-weight:800; color:var(--muted); text-align:center; margin-bottom:8px; }
+  .tour .tnav{ display:flex; gap:7px; }
+  .tour .tnav .btn{ flex:1; justify-content:center; }
+  .progress{ display:flex; gap:4px; margin-top:11px; }
+  .progress span{ flex:1; height:5px; border-radius:3px; background:#E5EBEE; transition:background .3s; }
+  .progress span.done{ background:var(--aktiv); }
+
+  /* ---------- Quiz ---------- */
+  .overlay{ position:fixed; inset:0; background:rgba(20,35,45,.55); display:none;
+            align-items:center; justify-content:center; padding:18px; z-index:50; }
+  .overlay.open{ display:flex; }
+  .modal{ background:#fff; border-radius:18px; max-width:640px; width:100%; max-height:88vh; overflow:auto; padding:24px 26px; }
+  .modal h3{ font-size:21px; font-weight:800; margin-bottom:4px; }
+  .modal .msub{ font-size:14px; color:var(--muted); margin-bottom:16px; }
+  .modal-x{ float:right; font-size:26px; line-height:1; border:none; background:transparent; cursor:pointer; color:var(--muted); }
+  .quiz-q{ margin-bottom:16px; }
+  .quiz-q .qt{ font-size:14.5px; font-weight:700; margin-bottom:8px; }
+  .quiz-opt{ display:block; width:100%; text-align:left; font:inherit; font-size:14px; padding:11px 13px;
+             margin-bottom:6px; border:1.5px solid var(--line); border-radius:10px; background:#fff;
+             cursor:pointer; transition:all .12s; min-height:46px; }
+  .quiz-opt:hover:enabled{ background:#F2F6F8; }
+  .quiz-opt.correct{ background:#E4F3EB; border-color:var(--geld); color:var(--geld-dk); font-weight:700; }
+  .quiz-opt.wrong{ background:#FBEAE8; border-color:#C0392B; color:#93291D; }
+  .quiz-fb{ font-size:13px; font-weight:700; margin-top:5px; }
+  .quiz-result{ margin-top:16px; padding:13px; border-radius:11px; background:#EAF3F6;
+                font-size:15px; font-weight:800; color:var(--aktiv); text-align:center; }
+
+  .footer{ max-width:1560px; margin:6px auto 22px; padding:0 16px; color:var(--muted); font-size:12px; }
+  .footer .cr{ margin-top:6px; color:#9DB0BA; }
+
   @media (prefers-reduced-motion:reduce){
-    .floatsym, .actoricon *{ animation:none !important; }
+    .dot{ display:none; }
+    *{ transition:none !important; }
   }
-
-  .legend{ display:flex; flex-wrap:wrap; gap:16px; margin-top:12px; font-size:12.5px; color:var(--muted); align-items:center; }
-  .legend span{ display:inline-flex; align-items:center; gap:6px; }
-  .legend i{ width:22px; height:5px; border-radius:3px; display:inline-block; }
-  .legend .pause{ margin-left:auto; font:inherit; font-size:12.5px; font-weight:700; border:1.5px solid var(--line); background:var(--card); color:var(--muted); border-radius:9px; padding:6px 12px; cursor:pointer; }
-
-  /* Info-Panel */
-  .info{ margin-top:12px; background:var(--card); border:1px solid var(--line); border-left:5px solid var(--un); border-radius:12px; padding:13px 16px; min-height:60px; transition:border-color .2s; }
-  .info h3{ font-size:15px; margin-bottom:3px; display:flex; align-items:center; gap:8px; }
-  .info p{ font-size:13.5px; color:var(--muted); line-height:1.55; }
-  .info .hint{ color:var(--muted); font-style:italic; }
-
-  @media (max-width:620px){ h1{ font-size:20px; } .lead{ font-size:13px; } .seg button{ padding:6px 11px; } }
-  @media (prefers-reduced-motion:reduce){ .dash{ animation:none; } }
 </style>
 </head>
 <body>
-<div class="frame">
-  <header>
-    <div class="eyebrow">Volkswirtschaft · ABU</div>
-    <h1>Der Wirtschaftskreislauf</h1>
-    <p class="lead">Beginnen Sie mit dem einfachen Kreislauf und schalten Sie weitere Akteure hinzu. Klicken Sie auf einen Akteur oder einen Pfeil, um mehr zu erfahren.</p>
-  </header>
 
-  <div class="controls">
-    <div class="seg" id="seg">
-      <button data-mode="einfach" class="on">Einfacher Kreislauf</button>
-      <button data-mode="erweitert">Erweiterter Kreislauf</button>
+<header>
+  <h1>Der Wirtschaftskreislauf</h1>
+  <div class="sub">Interaktive Folie · Klicken Sie auf einen Akteur oder einen Pfeil · ABU-Unterricht HKV Aarau</div>
+</header>
+
+<div class="wrap">
+  <div class="stage-card">
+
+    <div class="toolbar">
+      <div class="modeswitch" role="tablist" aria-label="Modus wählen">
+        <button class="mode-opt active" id="m-einfach" role="tab" aria-selected="true">Einfacher Kreislauf</button>
+        <button class="mode-opt" id="m-erweitert" role="tab" aria-selected="false">Erweiterter Kreislauf</button>
+      </div>
+      <div class="spacer"></div>
+      <button class="btn ghost sm" id="pause-btn" aria-pressed="false">⏸ Animation pausieren</button>
+      <button class="btn ghost sm" id="quiz-btn">Quiz</button>
     </div>
-    <div class="spacer"></div>
-    <button class="toggle" data-actor="bank">
-      <span class="dot"></span>Banken</button>
-    <button class="toggle" data-actor="staat">
-      <span class="dot"></span>Staat</button>
-    <button class="toggle" data-actor="aus">
-      <span class="dot"></span>Ausland</button>
+
+    <div class="toggles">
+      <span class="tlabel">Akteure zuschalten</span>
+      <button class="toggle" data-actor="staat" disabled aria-pressed="false"><span class="dot"></span>Staat</button>
+      <button class="toggle" data-actor="bank" disabled aria-pressed="false"><span class="dot"></span>Banken</button>
+      <button class="toggle" data-actor="aus" disabled aria-pressed="false"><span class="dot"></span>Ausland</button>
+    </div>
+
+    <div class="scene">
+      <svg class="board" id="board" viewBox="0 0 1600 900" role="img" aria-label="Diagramm des Wirtschaftskreislaufs">
+        <defs>
+          <marker id="ah-geld" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#1E9E62"/></marker>
+          <marker id="ah-geld-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#14764A"/></marker>
+          <marker id="ah-real" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#C08A1E"/></marker>
+          <marker id="ah-real-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#8F6412"/></marker>
+        </defs>
+        <g id="flows"></g>
+        <g id="labels"></g>
+        <g id="actors"></g>
+      </svg>
+    </div>
+
+    <div class="legend">
+      <span class="item"><span class="swatch sw-geld"></span>Geldstrom (durchgezogen)</span>
+      <span class="item"><span class="swatch sw-real"></span>Güter-/Leistungsstrom (gestrichelt)</span>
+      <span class="note">Die Pfeilspitze zeigt die Richtung.</span>
+    </div>
   </div>
 
-  <div class="stage">
-    <svg id="svg" viewBox="0 0 1000 640" role="img" aria-label="Diagramm des Wirtschaftskreislaufs">
-      <!-- Ströme werden vor die Knoten gezeichnet -->
-      <g id="flows"></g>
-      <g id="labels"></g>
-      <g id="nodes"></g>
-    </svg>
-  </div>
+  <aside class="panel">
+    <div class="eyebrow" id="p-eyebrow">Einfacher Kreislauf</div>
+    <h2 id="p-title">Wer gibt wem was?</h2>
+    <div class="fromto" id="p-fromto" hidden></div>
+    <div class="badge" id="p-badge" hidden></div>
+    <p id="p-text">Haushalte und Unternehmen tauschen Arbeit und Güter gegen Lohn und Konsumausgaben. Klicken Sie auf einen Akteur oder einen Pfeil.</p>
+    <div class="qbox" id="p-qbox" hidden><span class="ql">Mini-Frage</span><span id="p-question"></span></div>
 
-  <div class="legend">
-    <span><i style="background:var(--geld)"></i>Geldströme (Fr.)</span>
-    <span><i style="background:var(--real)"></i>Güter- &amp; Leistungsströme</span>
-    <button class="pause" id="pause">⏸ Animation pausieren</button>
-  </div>
+    <div class="merksatz">
+      <span class="ml">Merksatz</span>
+      Geld fliesst meist in die Gegenrichtung zu Gütern und Leistungen.
+    </div>
 
-  <div class="info" id="info">
-    <h3>Willkommen im Wirtschaftskreislauf</h3>
-    <p class="hint">Wählen Sie oben eine Stufe oder schalten Sie Akteure zu. Jeder Pfeil zeigt, wer wem etwas gibt – Geld (grün) oder reale Leistungen (ocker).</p>
+    <div class="tour">
+      <div class="tstep" id="t-step">Geführte Tour</div>
+      <div class="tnav">
+        <button class="btn ghost sm" id="t-prev" disabled>← Zurück</button>
+        <button class="btn sm" id="t-start">▶ Tour starten</button>
+        <button class="btn ghost sm" id="t-next" disabled>Weiter →</button>
+      </div>
+      <button class="btn ghost sm" id="t-reset" style="width:100%;margin-top:7px;justify-content:center;">Tour zurücksetzen</button>
+      <div class="progress" id="progress" aria-hidden="true"></div>
+    </div>
+  </aside>
+</div>
+
+<div class="footer">
+  Interaktive Lernfolie zum Wirtschaftskreislauf · Grün = Geldstrom · Ocker = Güter- und Leistungsstrom.
+  <div class="cr">© 2026 Samuel Mollet · HKV Aarau · realisiert mit Claude (Anthropic)</div>
+</div>
+
+<div class="overlay" id="quiz-ov" role="dialog" aria-modal="true" aria-label="Quiz zum Wirtschaftskreislauf">
+  <div class="modal">
+    <button class="modal-x" id="quiz-x" aria-label="Quiz schliessen">×</button>
+    <h3>Quiz: Wirtschaftskreislauf</h3>
+    <p class="msub">Vier Fragen zum einfachen Kreislauf.</p>
+    <div id="quiz-body"></div>
+    <div class="quiz-result" id="quiz-result" hidden></div>
   </div>
 </div>
 
 <script>
-(function(){
-  const SVG='http://www.w3.org/2000/svg';
-  const nodesG=document.getElementById('nodes');
-  const flowsG=document.getElementById('flows');
-  const labelsG=document.getElementById('labels');
-  const info=document.getElementById('info');
+/* ==========================================================================
+   1. AKTEURE – festes Raster. Die Positionen sind so gewählt, dass jeder
+      Pfeil einen eigenen Korridor bekommt und keine Kreuzungen entstehen.
+      ========================================================================== */
+const A = {
+  staat: { x:800,  y:110, w:260, h:110, name:'Staat',       role:'Steuern · Leistungen', core:false },
+  hh:    { x:250,  y:450, w:280, h:130, name:'Haushalte',   role:'Arbeit · Konsum',      core:true  },
+  un:    { x:1050, y:450, w:280, h:130, name:'Unternehmen', role:'Produktion · Löhne',   core:true  },
+  bank:  { x:650,  y:780, w:260, h:110, name:'Banken',      role:'Sparen · Kredite',     core:false },
+  aus:   { x:1420, y:760, w:240, h:110, name:'Ausland',     role:'Import · Export',      core:false },
+};
+const E = k => { const a=A[k]; return { l:a.x-a.w/2, r:a.x+a.w/2, t:a.y-a.h/2, b:a.y+a.h/2 }; };
+const hh=E('hh'), un=E('un'), st=E('staat'), bk=E('bank'), au=E('aus');
 
-  // --- Akteur-Positionen (Zentren) ---
-  const A={
-    hh:   {x:200, y:250, w:250, h:104, color:'var(--hh)',   name:'Haushalte',   role:'Konsum · Arbeit', core:true},
-    un:   {x:800, y:250, w:250, h:104, color:'var(--un)',   name:'Unternehmen', role:'Produktion · Lohn', core:true},
-    bank: {x:500, y:66,  w:210, h:84,  color:'var(--bank)', name:'Banken',      role:'Vermögensänderung', actor:'bank'},
-    staat:{x:440, y:440, w:230, h:92,  color:'var(--staat)',name:'Staat',       role:'Steuern · Leistung', actor:'staat'},
-    aus:  {x:820, y:470, w:180, h:84,  color:'var(--aus)',  name:'Ausland',     role:'Import · Export', actor:'aus'},
-  };
+/* ==========================================================================
+   2. STRÖME – jeder Pfeil läuft auf einer EIGENEN Spur (orthogonale Pfade).
+      Gegenläufige Pfeile liegen nie übereinander.
+      Einfacher Kreislauf: 4 horizontale Spuren zwischen Haushalten und
+      Unternehmen – oben die Realströme, unten die Geldströme. So wird die
+      Gegenläufigkeit (Merksatz) unmittelbar sichtbar.
+      ========================================================================== */
+const F = [
+  { id:'arbeit', type:'real', core:true, from:'hh', to:'un',
+    d:`M${hh.r},398 L${un.l},398`, lx:720, ly:384, anchor:'middle',
+    title:'Arbeit', ft:'Haushalte → Unternehmen',
+    text:'Die Haushalte stellen den Unternehmen ihre Arbeitskraft zur Verfügung. Sie ist die Grundlage jeder Produktion.',
+    q:'Welche Arbeit leisten Sie oder Ihre Familie für ein Unternehmen?' },
 
-  // --- Ströme: from→to, Typ (geld/real), Label, gebogen(offset), Akteur-Voraussetzung ---
-  const F=[
-    // Einfacher Kreislauf (Haushalte ↔ Unternehmen)
-    {id:'f1', sym:'coin', from:'hh', to:'un', type:'geld', label:'Konsumausgaben', bend:64,  core:true,
-      title:'Konsumausgaben', text:'Die Haushalte bezahlen für Güter und Dienstleistungen. Dieses Geld fliesst als Umsatz zu den Unternehmen.'},
-    {id:'f2', sym:'bag', from:'un', to:'hh', type:'real', label:'Güter & Dienstleistungen', bend:130, core:true,
-      title:'Güter & Dienstleistungen', text:'Die Unternehmen liefern Produkte und Dienstleistungen an die Haushalte – der reale Gegenwert zum bezahlten Geld.'},
-    {id:'f3', sym:'worker', from:'hh', to:'un', type:'real', label:'Arbeitskraft', bend:-130, core:true,
-      title:'Arbeitskraft', text:'Die Haushalte stellen ihre Arbeitskraft zur Verfügung. Sie ist die Grundlage der Produktion.'},
-    {id:'f4', sym:'coin', from:'un', to:'hh', type:'geld', label:'Löhne, Gehälter', bend:-64, core:true,
-      title:'Löhne & Gehälter', text:'Für die geleistete Arbeit zahlen die Unternehmen Löhne und Gehälter. Dieses Einkommen finanziert den Konsum der Haushalte.'},
+  { id:'lohn', type:'geld', core:true, from:'un', to:'hh',
+    d:`M${un.l},434 L${hh.r},434`, lx:720, ly:425, anchor:'middle',
+    title:'Lohn', ft:'Unternehmen → Haushalte',
+    text:'Für die geleistete Arbeit zahlen die Unternehmen Löhne. Dieses Einkommen finanziert den Konsum der Haushalte.',
+    q:'Wofür geben Sie Ihren Lohn oder Ihr Lehrlingsgehalt aus?' },
 
-    // Banken – beidseitig verbunden mit Haushalten und Unternehmen
-    {id:'b1', sym:'piggy', from:'hh', to:'bank', type:'geld', label:'Spareinlagen, Kreditzinsen', bend:22, actor:'bank',
-      title:'Spareinlagen & Kreditzinsen (Haushalte → Banken)', text:'Haushalte legen Ersparnisse bei den Banken an und zahlen Zinsen für aufgenommene Kredite.'},
-    {id:'b2', sym:'coin', from:'bank', to:'hh', type:'geld', label:'Kredite, Guthabenzinsen', bend:22, actor:'bank',
-      title:'Kredite & Guthabenzinsen (Banken → Haushalte)', text:'Die Banken vergeben Kredite an Haushalte und zahlen Zinsen auf deren Guthaben.'},
-    {id:'b3', sym:'coin', from:'un', to:'bank', type:'geld', label:'Bankguthaben, Kreditzinsen', bend:22, actor:'bank',
-      title:'Bankguthaben & Kreditzinsen (Unternehmen → Banken)', text:'Unternehmen halten Guthaben bei den Banken und zahlen Zinsen für ihre Kredite.'},
-    {id:'b4', sym:'coin', from:'bank', to:'un', type:'geld', label:'Kredite, Guthabenzinsen', bend:22, actor:'bank',
-      title:'Kredite & Guthabenzinsen (Banken → Unternehmen)', text:'Die Banken finanzieren Investitionen der Unternehmen mit Krediten und zahlen Guthabenzinsen.'},
+  { id:'gueter', type:'real', core:true, from:'un', to:'hh',
+    d:`M${un.l},470 L${hh.r},470`, lx:720, ly:492, anchor:'middle',
+    title:'Güter & Dienstleistungen', ft:'Unternehmen → Haushalte',
+    text:'Die Unternehmen liefern Produkte und Dienstleistungen an die Haushalte – der reale Gegenwert zum bezahlten Geld.',
+    q:'Welche Dienstleistung haben Sie zuletzt genutzt?' },
 
-    // Staat – Steuern, Subventionen, Leistungen, sowie Verbindung zu Banken
-    {id:'s1', sym:'coin', from:'hh', to:'staat', type:'geld', label:'Steuern, Gebühren', bend:26, actor:'staat',
-      title:'Steuern & Gebühren (Haushalte → Staat)', text:'Haushalte zahlen Einkommenssteuern, Gebühren und Abgaben an den Staat.'},
-    {id:'s2', sym:'gov', from:'staat', to:'hh', type:'real', label:'Löhne, Soziale Leist.', bend:-58, actor:'staat',
-      title:'Löhne & soziale Leistungen (Staat → Haushalte)', text:'Der Staat zahlt Löhne an Staatsangestellte und erbringt soziale Leistungen (Renten, Sozialhilfe, Bildung).'},
-    {id:'s3', sym:'coin', from:'un', to:'staat', type:'geld', label:'Steuern', bend:-26, actor:'staat',
-      title:'Steuern (Unternehmen → Staat)', text:'Unternehmen führen Steuern und Abgaben an den Staat ab.'},
-    {id:'s4', sym:'gov', from:'staat', to:'un', type:'real', label:'Subventionen', bend:58, actor:'staat',
-      title:'Subventionen (Staat → Unternehmen)', text:'Der Staat unterstützt Unternehmen mit Subventionen und öffentlichen Aufträgen.'},
+  { id:'konsum', type:'geld', core:true, from:'hh', to:'un',
+    d:`M${hh.r},506 L${un.l},506`, lx:720, ly:532, anchor:'middle',
+    title:'Konsumausgaben', ft:'Haushalte → Unternehmen',
+    text:'Haushalte bezahlen Unternehmen für Güter und Dienstleistungen. Dieses Geld ist der Umsatz der Unternehmen.',
+    q:'Was haben Sie diese Woche gekauft, das zu diesem Strom passt?' },
 
-    // Ausland – Export/Import und Transferzahlungen mit dem Staat
-    {id:'a1', sym:'ship', from:'aus', to:'un', type:'real', label:'Export­erlöse', bend:26, actor:'aus',
-      title:'Exporterlöse (Ausland → Unternehmen)', text:'Für exportierte Güter fliessen Erlöse aus dem Ausland zu den inländischen Unternehmen.'},
-    {id:'a2', sym:'coin', from:'un', to:'aus', type:'geld', label:'Import­vergütung', bend:26, actor:'aus',
-      title:'Importvergütung (Unternehmen → Ausland)', text:'Für importierte Güter und Vorleistungen zahlen die Unternehmen Vergütungen ans Ausland.'},
-    {id:'a3', sym:'coin', from:'staat', to:'aus', type:'geld', label:'Transferzahlungen', bend:0, actor:'aus', needs:'staat',
-      title:'Transferzahlungen (Staat ↔ Ausland)', text:'Der Staat leistet Transferzahlungen ins Ausland (z. B. Entwicklungshilfe, internationale Beiträge) und erhält solche.'},
-  ];
+  /* ---- STAAT (oben) – gestaffelte Spuren.
+     Regel: je weiter aussen die vertikale Spur, desto höher das waagrechte
+     Segment. Dadurch kreuzt kein Pfeil einen anderen.                     ---- */
+  { id:'st-hh-steuern', type:'geld', actor:'staat', from:'hh', to:'staat',
+    d:`M340,${hh.t} L340,250 L${st.l},250`, lx:334, ly:330, anchor:'end',
+    title:'Steuern', ft:'Haushalte → Staat',
+    text:'Haushalte zahlen Einkommenssteuern und Abgaben an den Staat.',
+    q:'Welche Steuern zahlen Erwachsene in der Schweiz?' },
 
-  // Zustand
-  const state={ mode:'einfach', bank:false, staat:false, aus:false, paused:false };
+  { id:'st-hh-transfer', type:'geld', actor:'staat', from:'staat', to:'hh',
+    d:`M${st.l},140 L270,140 L270,${hh.t}`, lx:264, ly:270, anchor:'end',
+    title:'Transferzahlungen', ft:'Staat → Haushalte',
+    text:'Der Staat zahlt Renten, Sozialhilfe und Stipendien an die Haushalte zurück.',
+    q:'Welche Transferzahlungen kennen Sie?' },
 
-  // --- Geometrie: Randpunkt eines Rechtecks Richtung Ziel ---
-  function edgePoint(n, tx, ty){
-    const dx=tx-n.x, dy=ty-n.y;
-    const hw=n.w/2, hh=n.h/2;
-    const sx = dx===0?Infinity:Math.abs(hw/dx);
-    const sy = dy===0?Infinity:Math.abs(hh/dy);
-    const s=Math.min(sx,sy);
-    return {x:n.x+dx*s, y:n.y+dy*s};
-  }
-  // Quadratische Bezier mit seitlichem Versatz (bend)
-  function pathFor(f){
-    const a=A[f.from], b=A[f.to];
-    const p0=edgePoint(a,b.x,b.y), p1=edgePoint(b,a.x,a.y);
-    const mx=(p0.x+p1.x)/2, my=(p0.y+p1.y)/2;
-    const dx=p1.x-p0.x, dy=p1.y-p0.y, len=Math.hypot(dx,dy)||1;
-    const nx=-dy/len, ny=dx/len;
-    const cx=mx+nx*f.bend, cy=my+ny*f.bend;
-    return {d:`M ${p0.x} ${p0.y} Q ${cx} ${cy} ${p1.x} ${p1.y}`, cx, cy, p1};
-  }
+  { id:'st-hh-leist', type:'real', actor:'staat', from:'staat', to:'hh',
+    d:`M${st.l},95 L190,95 L190,${hh.t}`, lx:184, ly:180, anchor:'end',
+    title:'Öffentliche Leistungen', ft:'Staat → Haushalte',
+    text:'Bildung, Sicherheit, Strassen: Der Staat erbringt Leistungen, die alle nutzen können.',
+    q:'Welche öffentliche Leistung nutzen Sie täglich?' },
 
-  // --- Marker (Pfeilspitzen) einmalig ---
-  const defs=document.createElementNS(SVG,'defs');
-  [['ah-geld','var(--geld)'],['ah-real','var(--real)']].forEach(([id,col])=>{
-    const m=document.createElementNS(SVG,'marker');
-    m.setAttribute('id',id); m.setAttribute('viewBox','0 0 10 10');
-    m.setAttribute('refX','8'); m.setAttribute('refY','5');
-    m.setAttribute('markerWidth','6'); m.setAttribute('markerHeight','6');
-    m.setAttribute('orient','auto-start-reverse');
-    const p=document.createElementNS(SVG,'path');
-    p.setAttribute('d','M0,0 L10,5 L0,10 z'); p.setAttribute('fill',col);
-    m.appendChild(p); defs.appendChild(m);
-  });
-  document.getElementById('svg').prepend(defs);
+  { id:'st-un-steuern', type:'geld', actor:'staat', from:'un', to:'staat',
+    d:`M960,${un.t} L960,250 L${st.r},250`, lx:966, ly:330, anchor:'start',
+    title:'Steuern / Abgaben', ft:'Unternehmen → Staat',
+    text:'Unternehmen führen Gewinnsteuern und Abgaben an den Staat ab.',
+    q:'Warum zahlen auch Unternehmen Steuern?' },
 
-  // --- Ströme zeichnen ---
-  const flowEls={};
-  // --- Symbol-Bibliothek für fliessende Icons ---
-  function makeSym(kind){
-    const g=document.createElementNS(SVG,'g');
-    g.setAttribute('class','floatsym');
-    if(kind==='coin'){
-      const c=document.createElementNS(SVG,'circle');
-      c.setAttribute('r','11'); c.setAttribute('fill','#F4C430'); c.setAttribute('stroke','#C9930A'); c.setAttribute('stroke-width','2');
-      const t=document.createElementNS(SVG,'text'); t.setAttribute('text-anchor','middle'); t.setAttribute('y','4.5'); t.setAttribute('font-size','13'); t.setAttribute('font-weight','800'); t.setAttribute('fill','#8A6400'); t.textContent='$';
-      g.appendChild(c); g.appendChild(t);
-    } else if(kind==='bag'){
-      const p=document.createElementNS(SVG,'path'); p.setAttribute('d','M-8,-4 L8,-4 L10,10 L-10,10 Z'); p.setAttribute('fill','#E67E22'); p.setAttribute('stroke','#A85B12'); p.setAttribute('stroke-width','1.5');
-      const h=document.createElementNS(SVG,'path'); h.setAttribute('d','M-5,-4 a5,6 0 0 1 10,0'); h.setAttribute('fill','none'); h.setAttribute('stroke','#A85B12'); h.setAttribute('stroke-width','2');
-      g.appendChild(p); g.appendChild(h);
-    } else if(kind==='worker'){
-      const c=document.createElementNS(SVG,'circle'); c.setAttribute('r','5'); c.setAttribute('cy','-5'); c.setAttribute('fill','#2E86C1');
-      const b=document.createElementNS(SVG,'path'); b.setAttribute('d','M-6,10 L-6,2 a6,6 0 0 1 12,0 L6,10 Z'); b.setAttribute('fill','#2E86C1');
-      g.appendChild(b); g.appendChild(c);
-    } else if(kind==='piggy'){
-      const e=document.createElementNS(SVG,'ellipse'); e.setAttribute('rx','11'); e.setAttribute('ry','8'); e.setAttribute('fill','#EC7FA9');
-      const ear=document.createElementNS(SVG,'path'); ear.setAttribute('d','M4,-7 l4,-4 l1,5 z'); ear.setAttribute('fill','#D45C8A');
-      const eye=document.createElementNS(SVG,'circle'); eye.setAttribute('r','1.4'); eye.setAttribute('cx','5'); eye.setAttribute('cy','-1'); eye.setAttribute('fill','#5A2138');
-      const slot=document.createElementNS(SVG,'rect'); slot.setAttribute('x','-4'); slot.setAttribute('y','-8'); slot.setAttribute('width','7'); slot.setAttribute('height','2'); slot.setAttribute('fill','#B84A76');
-      g.appendChild(e); g.appendChild(ear); g.appendChild(slot); g.appendChild(eye);
-    } else if(kind==='gov'){
-      const p=document.createElementNS(SVG,'path'); p.setAttribute('d','M-9,10 L9,10 L9,6 L-9,6 Z M-7,6 L-7,-3 M-2.5,6 L-2.5,-3 M2.5,6 L2.5,-3 M7,6 L7,-3'); p.setAttribute('stroke','#C0392B'); p.setAttribute('stroke-width','2.4'); p.setAttribute('fill','none');
-      const roof=document.createElementNS(SVG,'path'); roof.setAttribute('d','M-11,-3 L0,-10 L11,-3 Z'); roof.setAttribute('fill','#C0392B');
-      g.appendChild(p); g.appendChild(roof);
-    } else if(kind==='ship'){
-      const hull=document.createElementNS(SVG,'path'); hull.setAttribute('d','M-11,3 L11,3 L8,10 L-8,10 Z'); hull.setAttribute('fill','#16A085');
-      const box1=document.createElementNS(SVG,'rect'); box1.setAttribute('x','-7'); box1.setAttribute('y','-5'); box1.setAttribute('width','6'); box1.setAttribute('height','7'); box1.setAttribute('fill','#E67E22');
-      const box2=document.createElementNS(SVG,'rect'); box2.setAttribute('x','1'); box2.setAttribute('y','-5'); box2.setAttribute('width','6'); box2.setAttribute('height','7'); box2.setAttribute('fill','#2E86C1');
-      g.appendChild(hull); g.appendChild(box1); g.appendChild(box2);
-    }
-    return g;
-  }
-  function attachFlowSyms(f, dstr){
-    const wrap=document.createElementNS(SVG,'g'); wrap.setAttribute('class','symlayer');
-    const N=2;
-    for(let k=0;k<N;k++){
-      const sym=makeSym(f.sym);
-      const mp=document.createElementNS(SVG,'animateMotion');
-      mp.setAttribute('dur','3.6s'); mp.setAttribute('repeatCount','indefinite');
-      mp.setAttribute('path',dstr);
-      mp.setAttribute('begin',`${(k*3.6/N).toFixed(2)}s`);
-      sym.appendChild(mp);
-      wrap.appendChild(sym);
-    }
-    return wrap;
-  }
+  { id:'st-un-subv', type:'geld', actor:'staat', from:'staat', to:'un',
+    d:`M${st.r},140 L1030,140 L1030,${un.t}`, lx:1036, ly:270, anchor:'start',
+    title:'Aufträge / Subventionen', ft:'Staat → Unternehmen',
+    text:'Der Staat vergibt öffentliche Aufträge und unterstützt Unternehmen mit Subventionen.',
+    q:'Warum unterstützt der Staat gewisse Branchen?' },
 
+  { id:'st-un-leist', type:'real', actor:'staat', from:'staat', to:'un',
+    d:`M${st.r},95 L1110,95 L1110,${un.t}`, lx:1118, ly:180, anchor:'start',
+    title:'Öffentliche Leistungen', ft:'Staat → Unternehmen',
+    text:'Auch Unternehmen profitieren von Infrastruktur, Rechtssicherheit und ausgebildeten Fachkräften.',
+    q:'Welche Infrastruktur braucht ein Unternehmen?' },
+
+  /* ---- BANKEN (unten) – gleiche Staffelungsregel, nach unten gespiegelt ---- */
+  { id:'bk-hh-sparen', type:'geld', actor:'bank', from:'hh', to:'bank',
+    d:`M190,${hh.b} L190,815 L${bk.l},815`, lx:184, ly:700, anchor:'end',
+    title:'Sparen', ft:'Haushalte → Banken',
+    text:'Haushalte legen einen Teil ihres Einkommens bei den Banken an, statt ihn auszugeben.',
+    q:'Warum sparen Menschen überhaupt?' },
+
+  { id:'bk-hh-zins', type:'geld', actor:'bank', from:'bank', to:'hh',
+    d:`M${bk.l},745 L340,745 L340,${hh.b}`, lx:346, ly:640, anchor:'start',
+    title:'Zinsen', ft:'Banken → Haushalte',
+    text:'Für das angelegte Geld erhalten die Haushalte Zinsen von der Bank.',
+    q:'Was ist ein Zins – einfach erklärt?' },
+
+  { id:'bk-un-kredit', type:'geld', actor:'bank', from:'bank', to:'un',
+    d:`M${bk.r},745 L960,745 L960,${un.b}`, lx:954, ly:640, anchor:'end',
+    title:'Kredite', ft:'Banken → Unternehmen',
+    text:'Die Banken stellen den Unternehmen Kapital als Kredit zur Verfügung. Damit werden Investitionen finanziert.',
+    q:'Wofür braucht ein Unternehmen einen Kredit?' },
+
+  { id:'bk-un-zins', type:'geld', actor:'bank', from:'un', to:'bank',
+    d:`M1110,${un.b} L1110,815 L${bk.r},815`, lx:1118, ly:700, anchor:'start',
+    title:'Zinsen / Rückzahlung', ft:'Unternehmen → Banken',
+    text:'Die Unternehmen zahlen den Kredit zurück und entrichten dafür Zinsen.',
+    q:'Warum verlangt eine Bank Zinsen?' },
+
+  /* ---- AUSLAND (unten rechts) – eigene Spuren zu den Unternehmen ---- */
+  { id:'au-export', type:'real', actor:'aus', from:'un', to:'aus',
+    d:`M${un.r},414 L1520,414 L1520,${au.t}`, lx:1528, ly:380, anchor:'end',
+    title:'Exporte', ft:'Unternehmen → Ausland',
+    text:'Schweizer Unternehmen verkaufen Güter und Dienstleistungen ins Ausland.',
+    q:'Welche Schweizer Produkte sind im Ausland gefragt?' },
+
+  { id:'au-exporterloes', type:'geld', actor:'aus', from:'aus', to:'un',
+    d:`M1450,${au.t} L1450,458 L${un.r},458`, lx:1442, ly:560, anchor:'end',
+    title:'Exporterlöse', ft:'Ausland → Unternehmen',
+    text:'Für die Exporte fliesst Geld aus dem Ausland zurück zu den Unternehmen.',
+    q:'Warum ist der Export für die Schweiz wichtig?' },
+
+  { id:'au-import', type:'real', actor:'aus', from:'aus', to:'un',
+    d:`M${au.l},735 L1210,735 L1210,${un.b}`, lx:1218, ly:755, anchor:'start',
+    title:'Importe', ft:'Ausland → Unternehmen',
+    text:'Unternehmen beziehen Waren und Vorleistungen aus dem Ausland.',
+    q:'Welches Produkt in Ihrem Alltag wurde importiert?' },
+
+  { id:'au-importzahl', type:'geld', actor:'aus', from:'un', to:'aus',
+    d:`M1160,${un.b} L1160,790 L${au.l},790`, lx:1168, ly:610, anchor:'start',
+    title:'Importzahlungen', ft:'Unternehmen → Ausland',
+    text:'Für die importierten Güter fliesst Geld ins Ausland ab.',
+    q:'Warum importiert die Schweiz überhaupt?' },
+];
+
+/* ==========================================================================
+   3. ZUSTAND
+   ========================================================================== */
+const state = { mode:'einfach', staat:false, bank:false, aus:false, paused:false };
+let tourOn = false, tourIdx = 0, inTourStep = false;
+const visited = new Set();
+
+const NS = 'http://www.w3.org/2000/svg';
+const el = id => document.getElementById(id);
+const flowsG = el('flows'), labelsG = el('labels'), actorsG = el('actors');
+
+/* ==========================================================================
+   4. ICONS
+   ========================================================================== */
+function icon(kind){
+  const g = document.createElementNS(NS,'g');
+  g.setAttribute('class','icon');
+  const p = d => { const e=document.createElementNS(NS,'path'); e.setAttribute('d',d); g.appendChild(e); };
+  if(kind==='hh'){ p('M-14,2 L0,-11 L14,2'); p('M-10,2 L-10,14 L10,14 L10,2'); p('M-3,14 L-3,6 L3,6 L3,14'); }
+  if(kind==='un'){ p('M-14,14 L-14,-2 L-4,3 L-4,-2 L6,3 L6,-9 L14,-9 L14,14 Z'); p('M-9,8 L-9,11 M0,8 L0,11 M9,4 L9,11'); }
+  if(kind==='staat'){ p('M-14,-2 L0,-12 L14,-2'); p('M-11,-2 L-11,10 M-4,-2 L-4,10 M4,-2 L4,10 M11,-2 L11,10'); p('M-14,14 L14,14'); }
+  if(kind==='bank'){ p('M-13,-4 L0,-12 L13,-4'); p('M-13,13 L13,13'); p('M-9,-4 L-9,9 M0,-4 L0,9 M9,-4 L9,9'); }
+  if(kind==='aus'){ const c=document.createElementNS(NS,'circle'); c.setAttribute('r','13'); g.appendChild(c);
+                    p('M-13,0 L13,0'); p('M0,-13 C6,-7 6,7 0,13 C-6,7 -6,-7 0,-13'); }
+  return g;
+}
+
+/* ==========================================================================
+   5. AKTEURSKARTEN ZEICHNEN
+   ========================================================================== */
+const actorEls = {};
+Object.entries(A).forEach(([key,a])=>{
+  const g = document.createElementNS(NS,'g');
+  g.setAttribute('class','actor');
+  g.setAttribute('tabindex','0');
+  g.setAttribute('role','button');
+  g.setAttribute('aria-label','Akteur '+a.name+', '+a.role);
+
+  const r = document.createElementNS(NS,'rect');
+  r.setAttribute('class','cardbg');
+  r.setAttribute('x',a.x-a.w/2); r.setAttribute('y',a.y-a.h/2);
+  r.setAttribute('width',a.w);   r.setAttribute('height',a.h);
+  r.setAttribute('rx','18');
+  g.appendChild(r);
+
+  const ic = icon(key);
+  ic.setAttribute('transform','translate('+(a.x-a.w/2+40)+','+a.y+')');
+  g.appendChild(ic);
+
+  const tx = a.x - a.w/2 + 72;
+  const t1 = document.createElementNS(NS,'text');
+  t1.setAttribute('class','aname'); t1.setAttribute('x',tx); t1.setAttribute('y',a.y-4);
+  t1.textContent = a.name; g.appendChild(t1);
+  const t2 = document.createElementNS(NS,'text');
+  t2.setAttribute('class','arole'); t2.setAttribute('x',tx); t2.setAttribute('y',a.y+20);
+  t2.textContent = a.role; g.appendChild(t2);
+
+  g.addEventListener('click', ()=> selectActor(key, true));
+  g.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); selectActor(key, true); } });
+
+  actorsG.appendChild(g);
+  actorEls[key] = g;
+});
+
+/* ==========================================================================
+   6. PFEILE ZEICHNEN (Linie + unsichtbare Klickfläche + fliessender Punkt)
+   ========================================================================== */
+const flowEls = {};
+F.forEach(f=>{
+  const g = document.createElementNS(NS,'g');
+  g.setAttribute('class','flow '+f.type);
+  g.setAttribute('tabindex','0');
+  g.setAttribute('role','button');
+  const art = f.type==='geld' ? 'Geldstrom' : 'Güter- und Leistungsstrom';
+  g.setAttribute('aria-label', f.title+', '+art+', '+f.ft);
+
+  const line = document.createElementNS(NS,'path');
+  line.setAttribute('class','line');
+  line.setAttribute('d', f.d);
+  line.setAttribute('marker-end','url(#ah-'+f.type+')');
+  g.appendChild(line);
+
+  const hit = document.createElementNS(NS,'path');
+  hit.setAttribute('class','hit');
+  hit.setAttribute('d', f.d);
+  g.appendChild(hit);
+
+  const dot = document.createElementNS(NS,'circle');
+  dot.setAttribute('class','dot');
+  const mo = document.createElementNS(NS,'animateMotion');
+  mo.setAttribute('dur', f.type==='geld' ? '5s' : '6s');
+  mo.setAttribute('repeatCount','indefinite');
+  mo.setAttribute('path', f.d);
+  dot.appendChild(mo);
+  g.appendChild(dot);
+
+  g.addEventListener('click', ()=> selectFlow(f.id, true));
+  g.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); selectFlow(f.id, true); } });
+
+  flowsG.appendChild(g);
+
+  const lab = document.createElementNS(NS,'text');
+  lab.setAttribute('class','flowlabel');
+  lab.setAttribute('x', f.lx); lab.setAttribute('y', f.ly);
+  lab.setAttribute('text-anchor', f.anchor || 'middle');
+  lab.textContent = f.title;
+  labelsG.appendChild(lab);
+
+  flowEls[f.id] = { g, line, label:lab, data:f };
+});
+
+/* ==========================================================================
+   7. SICHTBARKEIT
+   ========================================================================== */
+const actorVisible = k => A[k].core || (state.mode==='erweitert' && state[k]);
+const flowVisible  = f => f.core ? true : (state.mode==='erweitert' && !!state[f.actor]);
+
+function applyVisibility(){
+  Object.keys(A).forEach(k=> actorEls[k].classList.toggle('hidden', !actorVisible(k)));
   F.forEach(f=>{
-    const g=pathFor(f);
-    // Basislinie
-    const base=document.createElementNS(SVG,'path');
-    base.setAttribute('d',g.d);
-    base.setAttribute('class',`flow ${f.type}`);
-    base.setAttribute('marker-end',`url(#${f.type==='geld'?'ah-geld':'ah-real'})`);
-    base.style.opacity='.9';
-    // animierte Punktlinie darüber
-    const dash=document.createElementNS(SVG,'path');
-    dash.setAttribute('d',g.d);
-    dash.setAttribute('class',`flow ${f.type} dash`);
-    dash.style.stroke='#fff'; dash.style.strokeWidth='2.6'; dash.style.opacity='.6';
-    // Klickfläche
-    const hit=document.createElementNS(SVG,'path');
-    hit.setAttribute('d',g.d);
-    hit.setAttribute('fill','none'); hit.setAttribute('stroke','transparent');
-    hit.setAttribute('stroke-width','20'); hit.style.cursor='pointer';
-    hit.addEventListener('click',()=>showInfo(f, f.type));
-    const symlayer=attachFlowSyms(f, g.d);
-    const wrap=document.createElementNS(SVG,'g');
-    wrap.setAttribute('class','flow-wrap');
-    wrap.appendChild(base); wrap.appendChild(dash); wrap.appendChild(hit); wrap.appendChild(symlayer);
-    flowsG.appendChild(wrap);
-    flowEls[f.id]={wrap, base, dash, symlayer};
+    const vis = flowVisible(f);
+    flowEls[f.id].g.classList.toggle('hidden', !vis);
+    flowEls[f.id].label.classList.toggle('hidden', !vis);
+  });
+  document.querySelectorAll('.toggle').forEach(b=>{
+    const a = b.dataset.actor;
+    b.disabled = state.mode!=='erweitert';
+    b.classList.toggle('on', state.mode==='erweitert' && state[a]);
+    b.setAttribute('aria-pressed', String(state.mode==='erweitert' && !!state[a]));
+  });
+  const svg = el('board');
+  if(state.paused) svg.pauseAnimations(); else svg.unpauseAnimations();
+}
 
-    // Label
-    const t=document.createElementNS(SVG,'text');
-    const tb=document.createElementNS(SVG,'text');
-    const lx=g.cx, ly=g.cy;
-    [tb,t].forEach(el=>{ el.setAttribute('x',lx); el.setAttribute('y',ly); el.setAttribute('text-anchor','middle'); el.setAttribute('dominant-baseline','middle'); el.textContent=f.label; });
-    tb.setAttribute('class','flowlabel bg'); t.setAttribute('class','flowlabel');
-    labelsG.appendChild(tb); labelsG.appendChild(t);
-    flowEls[f.id].label=[tb,t];
+/* ==========================================================================
+   8. AUSWAHL UND INFOKARTE
+   ========================================================================== */
+function clearHighlight(){
+  Object.values(actorEls).forEach(g=> g.classList.remove('active','dim'));
+  Object.values(flowEls).forEach(o=>{
+    o.g.classList.remove('active','dim');
+    o.label.classList.remove('active','dim');
+    o.line.setAttribute('marker-end','url(#ah-'+o.data.type+')');
+  });
+}
+function markVisited(){
+  Object.keys(A).forEach(k=> actorEls[k].classList.toggle('visited', visited.has('a-'+k)));
+}
+
+// byUser=true bedeutet: Klick der Lernenden -> laufende Tour anhalten
+function selectFlow(id, byUser){
+  if(byUser && !inTourStep) stopTour();
+  const o = flowEls[id], f = o.data;
+  if(!flowVisible(f)) return;
+  visited.add(f.id);
+  clearHighlight();
+  Object.entries(flowEls).forEach(([k,x])=>{
+    if(k===id){ x.g.classList.add('active'); x.label.classList.add('active');
+                x.line.setAttribute('marker-end','url(#ah-'+f.type+'-a)'); }
+    else { x.g.classList.add('dim'); x.label.classList.add('dim'); }
+  });
+  Object.keys(A).forEach(k=>{ if(k!==f.from && k!==f.to && actorVisible(k)) actorEls[k].classList.add('dim'); });
+
+  el('p-eyebrow').textContent = 'Strom';
+  el('p-title').textContent   = f.title;
+  el('p-fromto').textContent  = f.ft;  el('p-fromto').hidden = false;
+  const b = el('p-badge');
+  b.className = 'badge '+f.type;
+  // Form UND Text unterscheiden die Stromart – nicht nur die Farbe
+  b.textContent = f.type==='geld' ? '● Geldstrom' : '▬ ▬ Güter-/Leistungsstrom';
+  b.hidden = false;
+  el('p-text').textContent = f.text;
+  el('p-question').textContent = f.q;  el('p-qbox').hidden = false;
+  markVisited();
+}
+
+function selectActor(key, byUser){
+  if(byUser && !inTourStep) stopTour();
+  if(!actorVisible(key)) return;
+  visited.add('a-'+key);
+  clearHighlight();
+  actorEls[key].classList.add('active');
+  Object.keys(A).forEach(k=>{ if(k!==key && actorVisible(k)) actorEls[k].classList.add('dim'); });
+  F.forEach(f=>{
+    const rel = (f.from===key || f.to===key) && flowVisible(f);
+    if(!rel){ flowEls[f.id].g.classList.add('dim'); flowEls[f.id].label.classList.add('dim'); }
   });
 
-  // --- Knoten zeichnen ---
-  // --- Animierte Akteur-Icons (weiss, im Knoten) ---
-  function svgEl(tag,attrs){ const e=document.createElementNS(SVG,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); return e; }
-  function anim(parent,attrs){ const a=document.createElementNS(SVG,'animateTransform'); a.setAttribute('attributeName','transform'); a.setAttribute('type',attrs.type); a.setAttribute('values',attrs.values); a.setAttribute('dur',attrs.dur); a.setAttribute('repeatCount','indefinite'); if(attrs.additive)a.setAttribute('additive','sum'); if(attrs.begin)a.setAttribute('begin',attrs.begin); parent.appendChild(a); }
-  function makeActorIcon(key){
-    const g=svgEl('g',{class:'actoricon',fill:'#fff'});
-    if(key==='hh'){ // Haus mit wackelnder Tür
-      g.appendChild(svgEl('path',{d:'M-15,4 L0,-12 L15,4 Z',fill:'#fff'}));
-      g.appendChild(svgEl('rect',{x:-11,y:4,width:22,height:12,fill:'#fff'}));
-      const door=svgEl('rect',{x:-4,y:7,width:8,height:9,fill:'var(--hh)'});
-      const dw=svgEl('g',{}); dw.appendChild(door); anim(dw,{type:'rotate',values:'0;-14;0',dur:'1.6s'}); dw.style.transformOrigin='4px 7px';
-      g.appendChild(dw);
-    } else if(key==='un'){ // Fabrik mit Rauch
-      g.appendChild(svgEl('rect',{x:-14,y:0,width:28,height:16,fill:'#fff'}));
-      g.appendChild(svgEl('path',{d:'M-14,0 L-14,-6 L-6,-2 L-6,-8 L2,-2 L2,-8 L10,0 Z',fill:'#fff'}));
-      [-9,-1,7].forEach((cx,i)=>{ const s=svgEl('circle',{cx:cx,cy:-8,r:2.4,fill:'#fff',opacity:.55}); anim(s,{type:'translate',values:'0,0;'+(cx>0?3:-3)+',-14',dur:'2.2s',begin:(i*0.5)+'s'}); const sa=document.createElementNS(SVG,'animate'); sa.setAttribute('attributeName','opacity'); sa.setAttribute('values','0.6;0'); sa.setAttribute('dur','2.2s'); sa.setAttribute('repeatCount','indefinite'); sa.setAttribute('begin',(i*0.5)+'s'); s.appendChild(sa); g.appendChild(s); });
-    } else if(key==='bank'){ // Säulen + rotierende Münze
-      g.appendChild(svgEl('path',{d:'M-14,-4 L0,-11 L14,-4 Z',fill:'#fff'}));
-      g.appendChild(svgEl('rect',{x:-14,y:10,width:28,height:4,fill:'#fff'}));
-      [-10,-3,4,10].forEach(cx=>g.appendChild(svgEl('rect',{x:cx-1.5,y:-4,width:3,height:14,fill:'#fff'})));
-      const coin=svgEl('ellipse',{rx:5,ry:5,cx:0,cy:2,fill:'#F4C430',stroke:'#C9930A','stroke-width':1.5});
-      anim(coin,{type:'scale',values:'1,1;0.15,1;1,1',dur:'2s'}); coin.style.transformOrigin='0 2px';
-      g.appendChild(coin);
-    } else if(key==='staat'){ // Richterhammer, der zuschlägt
-      g.appendChild(svgEl('rect',{x:-13,y:12,width:26,height:3,fill:'#fff'})); // Block
-      const mallet=svgEl('g',{});
-      mallet.appendChild(svgEl('rect',{x:-2,y:-2,width:16,height:6,rx:2,fill:'#fff'})); // Kopf
-      mallet.appendChild(svgEl('rect',{x:-14,y:-1,width:14,height:3,rx:1.5,fill:'#fff'})); // Stiel
-      anim(mallet,{type:'rotate',values:'-32;6;-32;-32',dur:'1.5s'}); mallet.style.transformOrigin='-10px 0px';
-      g.appendChild(mallet);
-    } else if(key==='aus'){ // Schiff, das schaukelt + Zollschranke
-      const ship=svgEl('g',{});
-      ship.appendChild(svgEl('path',{d:'M-14,2 L10,2 L7,9 L-11,9 Z',fill:'#fff'}));
-      ship.appendChild(svgEl('rect',{x:-9,y:-5,width:6,height:7,fill:'#fff'}));
-      ship.appendChild(svgEl('rect',{x:-1,y:-5,width:6,height:7,fill:'#fff'}));
-      anim(ship,{type:'rotate',values:'-4;4;-4',dur:'2.4s'}); ship.style.transformOrigin='-2px 4px';
-      g.appendChild(ship);
-      // Zollschranke rechts
-      g.appendChild(svgEl('rect',{x:11,y:-8,width:2.5,height:18,fill:'#fff'}));
-      const bar=svgEl('rect',{x:11,y:-8,width:14,height:3,fill:'#fff'});
-      const bg=svgEl('g',{}); bg.appendChild(bar); anim(bg,{type:'rotate',values:'0;-70;-70;0;0',dur:'3s'}); bg.style.transformOrigin='12px -7px';
-      g.appendChild(bg);
-    }
-    return g;
-  }
+  const texte = {
+    hh:'Die Haushalte stellen Arbeitskraft bereit und verwenden ihr Einkommen für Konsum, Sparen und Steuern.',
+    un:'Die Unternehmen produzieren Güter und Dienstleistungen, beschäftigen Menschen und zahlen Löhne.',
+    staat:'Der Staat erhält Steuern und Abgaben. Damit finanziert er öffentliche Leistungen, Transferzahlungen, Aufträge und Subventionen.',
+    bank:'Banken sammeln Ersparnisse und stellen Kapital als Kredite zur Verfügung. Dafür erhalten sie Zinsen.',
+    aus:'Das Ausland erweitert den Kreislauf: Waren, Dienstleistungen und Geld fliessen über die Landesgrenze hinaus.',
+  };
+  const fragen = {
+    hh:'Welche Rolle nehmen Sie selbst als Haushalt ein?',
+    un:'Nennen Sie ein Unternehmen aus Ihrer Region.',
+    staat:'Wofür soll der Staat Ihrer Meinung nach Geld ausgeben?',
+    bank:'Warum braucht eine Wirtschaft Banken?',
+    aus:'Was würde fehlen, wenn die Schweiz keinen Aussenhandel hätte?',
+  };
+  const a = A[key];
+  el('p-eyebrow').textContent = 'Akteur';
+  el('p-title').textContent   = a.name;
+  el('p-fromto').textContent  = a.role;  el('p-fromto').hidden = false;
+  el('p-badge').hidden = true;
+  el('p-text').textContent = texte[key];
+  el('p-question').textContent = fragen[key];  el('p-qbox').hidden = false;
+  markVisited();
+}
 
-  const nodeEls={};
-  Object.entries(A).forEach(([key,n])=>{
-    const g=document.createElementNS(SVG,'g');
-    g.setAttribute('class','node');
-    const r=document.createElementNS(SVG,'rect');
-    r.setAttribute('x',n.x-n.w/2); r.setAttribute('y',n.y-n.h/2);
-    r.setAttribute('width',n.w); r.setAttribute('height',n.h);
-    r.setAttribute('rx',16); r.setAttribute('fill',n.color);
-    // animiertes Akteur-Icon (links im Knoten)
-    const icon=makeActorIcon(key);
-    icon.setAttribute('transform',`translate(${n.x-n.w/2+30},${n.y})`);
-    // Texte (rechts vom Icon)
-    const tx=n.x-n.w/2+58;
-    const t=document.createElementNS(SVG,'text');
-    t.setAttribute('x',tx); t.setAttribute('y',n.y-4); t.setAttribute('text-anchor','start'); t.setAttribute('font-size','18'); t.textContent=n.name;
-    const rl=document.createElementNS(SVG,'text');
-    rl.setAttribute('x',tx); rl.setAttribute('y',n.y+15); rl.setAttribute('text-anchor','start'); rl.setAttribute('class','role'); rl.textContent=n.role;
-    g.appendChild(r); g.appendChild(icon); g.appendChild(t); g.appendChild(rl);
-    g.addEventListener('click',()=>showNode(key,n));
-    nodesG.appendChild(g);
-    nodeEls[key]=g;
+function resetPanel(){
+  clearHighlight();
+  el('p-eyebrow').textContent = state.mode==='einfach' ? 'Einfacher Kreislauf' : 'Erweiterter Kreislauf';
+  el('p-title').textContent   = state.mode==='einfach' ? 'Wer gibt wem was?' : 'Staat, Banken und Ausland';
+  el('p-fromto').hidden = true;
+  el('p-badge').hidden  = true;
+  el('p-text').textContent = state.mode==='einfach'
+    ? 'Haushalte und Unternehmen tauschen Arbeit und Güter gegen Lohn und Konsumausgaben. Klicken Sie auf einen Akteur oder einen Pfeil.'
+    : 'Schalten Sie Staat, Banken und Ausland zu und beobachten Sie, welche neuen Ströme entstehen.';
+  el('p-qbox').hidden = true;
+  markVisited();
+}
+
+el('board').addEventListener('click', e=>{
+  if(!e.target.closest('.actor') && !e.target.closest('.flow') && !tourOn) resetPanel();
+});
+
+/* ==========================================================================
+   9. MODUS UND TOGGLES
+   ========================================================================== */
+function applyMode(m){
+  state.mode = m;
+  el('m-einfach').classList.toggle('active', m==='einfach');
+  el('m-erweitert').classList.toggle('active', m==='erweitert');
+  el('m-einfach').setAttribute('aria-selected', String(m==='einfach'));
+  el('m-erweitert').setAttribute('aria-selected', String(m==='erweitert'));
+  if(m==='einfach'){ state.staat=state.bank=state.aus=false; }
+  else { state.staat=state.bank=state.aus=true; }
+  applyVisibility();
+}
+function setMode(m){
+  if(state.mode===m) return;
+  stopTour();
+  applyMode(m);
+  resetPanel();
+}
+el('m-einfach').addEventListener('click', ()=> setMode('einfach'));
+el('m-erweitert').addEventListener('click', ()=> setMode('erweitert'));
+
+document.querySelectorAll('.toggle').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    if(state.mode!=='erweitert') return;
+    stopTour();
+    const a = b.dataset.actor;
+    state[a] = !state[a];
+    applyVisibility();
+    resetPanel();
   });
+});
 
-  // --- Sichtbarkeit berechnen ---
-  function flowVisible(f){
-    if(f.core) return true;
-    if(state.mode!=='erweitert') return false;      // Zusatzströme nur im erweiterten Modus
-    if(f.actor && !state[f.actor]) return false;
-    if(f.needs && !state[f.needs]) return false;     // benötigt zusätzlichen Akteur
-    return true;
-  }
-  function nodeVisible(key){
-    const n=A[key];
-    if(n.core) return true;
-    if(state.mode==='einfach') return false;
-    if(n.actor) return state[n.actor];
-    return true;
-  }
+el('pause-btn').addEventListener('click', function(){
+  state.paused = !state.paused;
+  this.textContent = state.paused ? '▶ Animation fortsetzen' : '⏸ Animation pausieren';
+  this.setAttribute('aria-pressed', String(state.paused));
+  applyVisibility();
+});
 
-  function apply(){
-    // Toggles nur im erweiterten Modus aktiv
-    document.querySelectorAll('.toggle').forEach(btn=>{
-      const act=btn.dataset.actor;
-      btn.disabled = state.mode!=='erweitert';
-      btn.classList.toggle('on', state[act] && state.mode==='erweitert');
+/* ==========================================================================
+   10. GEFÜHRTE TOUR – erst der einfache, dann der erweiterte Kreislauf
+   ========================================================================== */
+const TOUR = [
+  { kind:'mode',  value:'einfach',   title:'Der einfache Kreislauf',
+    text:'Wir starten mit den zwei Grundakteuren: den Haushalten und den Unternehmen.' },
+  { kind:'actor', value:'hh' },
+  { kind:'actor', value:'un' },
+  { kind:'flow',  value:'arbeit' },
+  { kind:'flow',  value:'lohn' },
+  { kind:'flow',  value:'gueter' },
+  { kind:'flow',  value:'konsum' },
+  { kind:'mode',  value:'erweitert', title:'Der erweiterte Kreislauf',
+    text:'Nun kommen Staat, Banken und Ausland dazu. Beobachten Sie, welche neuen Ströme entstehen.' },
+  { kind:'actor', value:'staat' },
+  { kind:'actor', value:'bank' },
+  { kind:'actor', value:'aus' },
+  { kind:'end',   title:'Zusammenfassung',
+    text:'Geld fliesst meist in die Gegenrichtung zu Gütern und Leistungen. Staat, Banken und Ausland erweitern diesen Grundkreislauf – am Prinzip ändert sich nichts.' },
+];
+
+const progressBox = el('progress');
+TOUR.forEach(()=> progressBox.appendChild(document.createElement('span')));
+const progSpans = Array.from(progressBox.querySelectorAll('span'));
+
+function panelPlain(title, text){
+  clearHighlight();
+  el('p-eyebrow').textContent = 'Tour';
+  el('p-title').textContent   = title;
+  el('p-fromto').hidden = true;
+  el('p-badge').hidden  = true;
+  el('p-text').textContent = text;
+  el('p-qbox').hidden = true;
+}
+
+function renderTourStep(){
+  const step = TOUR[tourIdx];
+  el('t-step').textContent = 'Schritt '+(tourIdx+1)+' von '+TOUR.length;
+  progSpans.forEach((s,i)=> s.classList.toggle('done', i<=tourIdx));
+  el('t-prev').disabled = tourIdx===0;
+  el('t-next').disabled = tourIdx===TOUR.length-1;
+
+  inTourStep = true;   // verhindert, dass select* die Tour stoppt
+  if(step.kind==='mode'){ applyMode(step.value); panelPlain(step.title, step.text); }
+  else if(step.kind==='actor'){ selectActor(step.value, false); }
+  else if(step.kind==='flow'){  selectFlow(step.value, false); }
+  else if(step.kind==='end'){   panelPlain(step.title, step.text); }
+  inTourStep = false;
+}
+
+function stopTour(){
+  if(!tourOn) return;
+  tourOn = false;
+  el('t-start').textContent = '▶ Tour starten';
+  el('t-prev').disabled = true;
+  el('t-next').disabled = true;
+}
+
+el('t-start').addEventListener('click', ()=>{
+  if(tourOn){ stopTour(); return; }
+  tourOn = true; tourIdx = 0;
+  el('t-start').textContent = '⏹ Tour beenden';
+  renderTourStep();
+});
+el('t-next').addEventListener('click', ()=>{ if(tourOn && tourIdx<TOUR.length-1){ tourIdx++; renderTourStep(); } });
+el('t-prev').addEventListener('click', ()=>{ if(tourOn && tourIdx>0){ tourIdx--; renderTourStep(); } });
+el('t-reset').addEventListener('click', ()=>{
+  stopTour();
+  tourIdx = 0;
+  progSpans.forEach(s=> s.classList.remove('done'));
+  el('t-step').textContent = 'Geführte Tour';
+  visited.clear();
+  applyMode('einfach');
+  resetPanel();
+});
+
+/* ==========================================================================
+   11. QUIZ
+   ========================================================================== */
+const QUIZ = [
+  { q:'Wer bietet im einfachen Wirtschaftskreislauf Arbeit an?',
+    o:['Die Unternehmen','Die Haushalte','Der Staat'], c:1,
+    fb:'Die Haushalte stellen ihre Arbeitskraft den Unternehmen zur Verfügung.' },
+  { q:'Wie nennt man das Geld, das Unternehmen an Haushalte für Arbeit zahlen?',
+    o:['Lohn','Konsumausgaben','Subvention'], c:0,
+    fb:'Der Lohn ist die Gegenleistung der Unternehmen für die geleistete Arbeit.' },
+  { q:'Was bezahlen Haushalte an Unternehmen, wenn sie Produkte kaufen?',
+    o:['Steuern','Zinsen','Konsumausgaben'], c:2,
+    fb:'Konsumausgaben sind das Geld, das Haushalte für Güter und Dienstleistungen bezahlen.' },
+  { q:'Warum fliesst Geld oft in die Gegenrichtung zu Gütern und Leistungen?',
+    o:['Weil eine Seite etwas erhält und dafür bezahlt','Weil Geld schneller ist','Das ist reiner Zufall'], c:0,
+    fb:'Jeder Leistung steht eine Bezahlung gegenüber – deshalb laufen die beiden Ströme gegenläufig.' },
+];
+
+function buildQuiz(){
+  const body = el('quiz-body');
+  body.innerHTML = '';
+  el('quiz-result').hidden = true;
+  let done = 0, right = 0;
+
+  QUIZ.forEach((item,i)=>{
+    const w = document.createElement('div'); w.className = 'quiz-q';
+    const t = document.createElement('div'); t.className = 'qt';
+    t.textContent = (i+1)+'. '+item.q; w.appendChild(t);
+    const fb = document.createElement('div'); fb.className = 'quiz-fb'; fb.hidden = true;
+
+    item.o.forEach((opt,oi)=>{
+      const b = document.createElement('button');
+      b.className = 'quiz-opt'; b.textContent = opt;
+      b.addEventListener('click', ()=>{
+        if(w.dataset.done) return;
+        w.dataset.done = '1'; done++;
+        w.querySelectorAll('.quiz-opt').forEach((ob,ix)=>{
+          ob.disabled = true;
+          if(ix===item.c) ob.classList.add('correct');
+        });
+        if(oi===item.c){ right++; fb.style.color='#14764A'; fb.textContent='✓ Richtig. '+item.fb; }
+        else { b.classList.add('wrong'); fb.style.color='#93291D'; fb.textContent='✗ '+item.fb; }
+        fb.hidden = false;
+        if(done===QUIZ.length){
+          const r = el('quiz-result');
+          r.hidden = false;
+          r.textContent = 'Ergebnis: '+right+' von '+QUIZ.length+' richtig.'
+            + (right===QUIZ.length ? ' Sehr gut!' : ' Schauen Sie sich die Ströme nochmals an.');
+        }
+      });
+      w.appendChild(b);
     });
-    Object.keys(A).forEach(k=>{
-      nodeEls[k].classList.toggle('hidden', !nodeVisible(k));
-    });
-    F.forEach(f=>{
-      const vis=flowVisible(f);
-      flowEls[f.id].wrap.classList.toggle('hidden',!vis);
-      flowEls[f.id].label.forEach(l=>l.classList.toggle('hidden',!vis));
-    });
-    document.getElementById('flows').classList.toggle('paused',state.paused);
-    const svgEl=document.getElementById('svg');
-    if(state.paused){ svgEl.pauseAnimations(); } else { svgEl.unpauseAnimations(); }
-  }
-
-  // --- Info-Panel ---
-  function setBorder(col){ info.style.borderLeftColor=col; }
-  function showInfo(f, type){
-    clearDim();
-    setBorder(type==='geld'?'var(--geld)':'var(--real)');
-    // Hebe diesen Strom hervor
-    F.forEach(o=>{ if(o.id!==f.id){ flowEls[o.id].wrap.classList.add('dim'); flowEls[o.id].label.forEach(l=>l.classList.add('dim')); } });
-    const kind=type==='geld'?'Geldstrom':'Realstrom';
-    info.innerHTML=`<h3><span style="color:${type==='geld'?'var(--geld)':'var(--real)'}">●</span> ${f.title} <span style="font-size:11px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 7px;margin-left:4px;">${kind}</span></h3><p>${f.text}</p>`;
-  }
-  function showNode(key,n){
-    clearDim();
-    setBorder(n.color);
-    Object.keys(A).forEach(k=>{ if(k!==key && nodeVisible(k)) nodeEls[k].classList.add('dim'); });
-    // zugehörige Ströme hervorheben
-    F.forEach(o=>{ const rel=(o.from===key||o.to===key)&&flowVisible(o); if(!rel){ flowEls[o.id].wrap.classList.add('dim'); flowEls[o.id].label.forEach(l=>l.classList.add('dim')); } });
-    const texts={
-      hh:'Die Haushalte stellen Arbeitskraft bereit und verwenden ihr Einkommen für Konsum, Sparen und Steuern. Sie sind die Konsumenten der Volkswirtschaft.',
-      un:'Die Unternehmen produzieren Güter und Dienstleistungen, beschäftigen Arbeitskräfte und zahlen Löhne. Sie investieren und exportieren.',
-      bank:'Die Banken sammeln Ersparnisse und geben sie als Kredite weiter. Sie verbinden Sparen und Investieren.',
-      staat:'Der Staat erhebt Steuern und erbringt dafür öffentliche Leistungen wie Bildung, Sicherheit und Infrastruktur.',
-      aus:'Das Ausland kauft inländische Exporte und liefert Importe. Es verbindet die Binnenwirtschaft mit der Weltwirtschaft.'
-    };
-    info.innerHTML=`<h3><span style="color:${n.color}">■</span> ${n.name} <span style="font-size:11px;font-weight:600;color:var(--muted);margin-left:4px;">${n.role}</span></h3><p>${texts[key]}</p>`;
-  }
-  function clearDim(){
-    Object.values(nodeEls).forEach(e=>e.classList.remove('dim'));
-    F.forEach(o=>{ flowEls[o.id].wrap.classList.remove('dim'); flowEls[o.id].label.forEach(l=>l.classList.remove('dim')); });
-  }
-
-  // Klick ins Leere → Dim zurücksetzen
-  document.getElementById('svg').addEventListener('click',e=>{ if(e.target.id==='svg') clearDim(); });
-
-  // --- Steuerung ---
-  document.getElementById('seg').addEventListener('click',e=>{
-    const b=e.target.closest('button'); if(!b) return;
-    state.mode=b.dataset.mode;
-    document.querySelectorAll('#seg button').forEach(x=>x.classList.toggle('on',x===b));
-    if(state.mode==='einfach'){ state.bank=state.staat=state.aus=false; }
-    else { state.bank=state.staat=state.aus=true; }   // erweitert zeigt zuerst alles, dann abwählbar
-    clearDim(); apply(); resetInfo();
+    w.appendChild(fb);
+    body.appendChild(w);
   });
-  document.querySelectorAll('.toggle').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      if(state.mode!=='erweitert') return;
-      const a=btn.dataset.actor; state[a]=!state[a]; clearDim(); apply();
-    });
-  });
-  document.getElementById('pause').addEventListener('click',function(){
-    state.paused=!state.paused; apply();
-    this.textContent = state.paused ? '▶ Animation starten' : '⏸ Animation pausieren';
-  });
-  function resetInfo(){
-    info.style.borderLeftColor='var(--un)';
-    info.innerHTML='<h3>'+(state.mode==='einfach'?'Einfacher Wirtschaftskreislauf':'Erweiterter Wirtschaftskreislauf')+'</h3><p class="hint">'+(state.mode==='einfach'?'Haushalte und Unternehmen tauschen Arbeit und Güter gegen Löhne und Konsumausgaben. Klicken Sie auf einen Pfeil oder Akteur für Details.':'Schalten Sie Banken, Staat und Ausland über die Schalter oben zu oder ab. Klicken Sie auf einen Akteur oder Pfeil für Details.')+'</p>';
-  }
+}
+el('quiz-btn').addEventListener('click', ()=>{ buildQuiz(); el('quiz-ov').classList.add('open'); });
+el('quiz-x').addEventListener('click', ()=> el('quiz-ov').classList.remove('open'));
+el('quiz-ov').addEventListener('click', e=>{ if(e.target===el('quiz-ov')) el('quiz-ov').classList.remove('open'); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') el('quiz-ov').classList.remove('open'); });
 
-  apply();
-})();
+/* ==========================================================================
+   12. START
+   ========================================================================== */
+applyVisibility();
+resetPanel();
 </script>
 </body>
 </html>
