@@ -53,8 +53,9 @@
   .toggle.on .dot{ opacity:1; }
   .toggle:disabled{ opacity:.4; cursor:not-allowed; }
 
-  .scene{ padding:6px; }
-  svg.board{ display:block; width:100%; height:auto; }
+  .scene{ padding:8px; }
+  /* Die Bühne bleibt vollständig sichtbar: Höhe begrenzt, Seitenverhältnis erhalten. */
+  svg.board{ display:block; width:100%; height:auto; max-height:calc(100vh - 260px); }
 
   /* ---------- Akteurskarten ---------- */
   .actor{ cursor:pointer; }
@@ -138,16 +139,16 @@
 
   /* ---------- Ströme als breite Bänder ---------- */
   .flow{ cursor:pointer; }
-  .flow .line{ fill:none; stroke-width:22; stroke-linecap:round; stroke-linejoin:round;
+  .flow .line{ fill:none; stroke-width:30; stroke-linecap:round; stroke-linejoin:round;
                transition:stroke-width .18s; }
   .flow.geld .line{ stroke:url(#gr-geld); }
-  .flow.real .line{ stroke:url(#gr-real); stroke-dasharray:34 16; }
-  .flow .hit{ fill:none; stroke:transparent; stroke-width:34; }
-  .flow.active .line{ stroke-width:28; }
+  .flow.real .line{ stroke:url(#gr-real); stroke-dasharray:42 20; }
+  .flow .hit{ fill:none; stroke:transparent; stroke-width:42; }
+  .flow.active .line{ stroke-width:37; }
   .flow.active.geld .line{ stroke:url(#gr-geld-a); }
   .flow.active.real .line{ stroke:url(#gr-real-a); }
   /* Gegenstrom: kräftiger als abgeblendet, schwächer als der aktive Pfeil */
-  .flow.pair .line{ stroke-width:25; }
+  .flow.pair .line{ stroke-width:34; }
   .flow.pair.geld .line{ stroke:url(#gr-geld-a); }
   .flow.pair.real .line{ stroke:url(#gr-real-a); }
   .flow.dim{ opacity:.15; }
@@ -157,7 +158,7 @@
   .flow.dim .flowsym{ opacity:0; }
 
   /* Labels sitzen weiss AUF dem Band */
-  .flowlabel{ font-size:15px; font-weight:800; fill:#fff; pointer-events:none;
+  .flowlabel{ font-size:16px; font-weight:800; fill:#fff; pointer-events:none;
               paint-order:stroke; stroke:none; }
   .flowlabel.outside{ fill:var(--ink); stroke:#fff; stroke-width:5px; stroke-linejoin:round; }
   .flowlabel.active{ fill:#fff; }
@@ -364,8 +365,8 @@
       ========================================================================== */
 const A = {
   staat: { x:800,  y:110, w:260, h:110, name:'Staat',       role:'Steuern · Leistungen', core:false },
-  hh:    { x:250,  y:450, w:280, h:150, name:'Haushalte',   role:'Arbeit · Konsum',      core:true  },
-  un:    { x:1050, y:450, w:280, h:150, name:'Unternehmen', role:'Produktion · Löhne',   core:true  },
+  hh:    { x:250,  y:450, w:290, h:184, name:'Haushalte',   role:'Arbeit · Konsum',      core:true  },
+  un:    { x:1050, y:450, w:290, h:184, name:'Unternehmen', role:'Produktion · Löhne',   core:true  },
   bank:  { x:650,  y:780, w:260, h:110, name:'Banken',      role:'Sparen · Kredite',     core:false },
   aus:   { x:1420, y:760, w:240, h:110, name:'Ausland',     role:'Import · Export',      core:false },
 };
@@ -381,25 +382,25 @@ const hh=E('hh'), un=E('un'), st=E('staat'), bk=E('bank'), au=E('aus');
       ========================================================================== */
 const F = [
   { id:'arbeit', sym:'arm', pair:'lohn', pairText:'Die Haushalte geben Arbeit – die Unternehmen bezahlen dafür Lohn.', type:'real', core:true, from:'hh', to:'un',
-    d:`M${hh.r},390 L${un.l},390`, lx:720, ly:396, anchor:'middle', onband:true,
+    d:`M${hh.r},378 L${un.l},378`, lx:720, ly:385, anchor:'middle', onband:true,
     title:'Arbeit', ft:'Haushalte → Unternehmen',
     text:'Die Haushalte stellen den Unternehmen ihre Arbeitskraft zur Verfügung. Sie ist die Grundlage jeder Produktion.',
     q:'Welche Arbeit leisten Sie oder Ihre Familie für ein Unternehmen?' },
 
   { id:'lohn', pair:'arbeit', pairText:'Die Haushalte geben Arbeit – die Unternehmen bezahlen dafür Lohn.', type:'geld', core:true, from:'un', to:'hh',
-    d:`M${un.l},430 L${hh.r},430`, lx:720, ly:436, anchor:'middle', onband:true,
+    d:`M${un.l},426 L${hh.r},426`, lx:720, ly:433, anchor:'middle', onband:true,
     title:'Lohn', ft:'Unternehmen → Haushalte',
     text:'Für die geleistete Arbeit zahlen die Unternehmen Löhne. Dieses Einkommen finanziert den Konsum der Haushalte.',
     q:'Wofür geben Sie Ihren Lohn oder Ihr Lehrlingsgehalt aus?' },
 
   { id:'gueter', sym:'paket', pair:'konsum', pairText:'Die Unternehmen liefern Güter – die Haushalte bezahlen dafür mit Konsumausgaben.', type:'real', core:true, from:'un', to:'hh',
-    d:`M${un.l},470 L${hh.r},470`, lx:720, ly:476, anchor:'middle', onband:true,
+    d:`M${un.l},474 L${hh.r},474`, lx:720, ly:481, anchor:'middle', onband:true,
     title:'Güter & Dienstleistungen', ft:'Unternehmen → Haushalte',
     text:'Die Unternehmen liefern Produkte und Dienstleistungen an die Haushalte – der reale Gegenwert zum bezahlten Geld.',
     q:'Welche Dienstleistung haben Sie zuletzt genutzt?' },
 
   { id:'konsum', pair:'gueter', pairText:'Die Unternehmen liefern Güter – die Haushalte bezahlen dafür mit Konsumausgaben.', type:'geld', core:true, from:'hh', to:'un',
-    d:`M${hh.r},510 L${un.l},510`, lx:720, ly:516, anchor:'middle', onband:true,
+    d:`M${hh.r},522 L${un.l},522`, lx:720, ly:529, anchor:'middle', onband:true,
     title:'Konsumausgaben', ft:'Haushalte → Unternehmen',
     text:'Haushalte bezahlen Unternehmen für Güter und Dienstleistungen. Dieses Geld ist der Umsatz der Unternehmen.',
     q:'Was haben Sie diese Woche gekauft, das zu diesem Strom passt?' },
@@ -655,34 +656,37 @@ function flowIcon(f){
   };
 
   if(f.type === 'geld'){
-    // Banknote (grün)
-    el('rect',{x:-11,y:-7,width:22,height:14,rx:2.5,fill:'#2FA96F',stroke:'#0B6339','stroke-width':1.6});
-    el('circle',{cx:0,cy:0,r:4,fill:'none',stroke:'#0B6339','stroke-width':1.6});
-    el('path',{d:'M0,-2.6 L0,2.6 M-1.6,-1.2 h3.2 M-1.6,1.2 h3.2',stroke:'#0B6339','stroke-width':1.3,fill:'none','stroke-linecap':'round'});
+    // Banknote (grün) – gut sichtbar auf dem Band
+    el('rect',{x:-17,y:-11,width:34,height:22,rx:3.5,fill:'#3FBF80',stroke:'#0B6339','stroke-width':2.4});
+    el('circle',{cx:0,cy:0,r:6.5,fill:'#EAF7F0',stroke:'#0B6339','stroke-width':2});
+    el('path',{d:'M0,-4 L0,4 M-2.6,-2 h5.2 M-2.6,2 h5.2',stroke:'#0B6339','stroke-width':1.9,fill:'none','stroke-linecap':'round'});
+    el('path',{d:'M-13,-7 v14 M13,-7 v14',stroke:'#0B6339','stroke-width':1.5,'stroke-linecap':'round'});
     return g;
   }
 
   // Realströme
   if(f.sym === 'arm'){
     // Bizeps – gebeugter Arm
-    el('path',{d:'M-10,4 L-10,-1 C-10,-5 -6,-7 -2,-6 L3,-5',
+    el('path',{d:'M-15,7 L-15,-1 C-15,-8 -9,-11 -3,-9 L4,-7',
+               fill:'none',stroke:'#FBEFD8','stroke-width':7,'stroke-linecap':'round'});
+    el('path',{d:'M-15,7 L-15,-1 C-15,-8 -9,-11 -3,-9 L4,-7',
                fill:'none',stroke:'#8F6412','stroke-width':4,'stroke-linecap':'round'});
-    el('path',{d:'M3,-5 C8,-4 11,0 10,4 C9,7 5,8 2,6 C-1,4 -1,0 1,-2',
-               fill:'#C08A1E',stroke:'#8F6412','stroke-width':1.6});
-    el('rect',{x:-13,y:1,width:6,height:7,rx:1.5,fill:'#8F6412'});
+    el('path',{d:'M4,-7 C12,-6 16,0 14,6 C12,11 5,12 1,9 C-3,6 -2,0 2,-3',
+               fill:'#E3AC44',stroke:'#8F6412','stroke-width':2.4});
+    el('rect',{x:-19,y:2,width:9,height:11,rx:2.5,fill:'#8F6412'});
     return g;
   }
   if(f.sym === 'gov'){
     // Amtsgebäude (öffentliche Leistungen)
-    el('path',{d:'M-10,-2 L0,-9 L10,-2 Z',fill:'#C08A1E',stroke:'#8F6412','stroke-width':1.4});
-    el('rect',{x:-10,y:5,width:20,height:3,rx:1,fill:'#8F6412'});
-    ['-7','-2.5','2','6.5'].forEach(x=>
-      el('rect',{x:x,y:-2,width:2.4,height:7,fill:'#C08A1E',stroke:'#8F6412','stroke-width':.9}));
+    el('path',{d:'M-15,-3 L0,-14 L15,-3 Z',fill:'#E3AC44',stroke:'#8F6412','stroke-width':2.2});
+    el('rect',{x:-15,y:8,width:30,height:4.5,rx:1.5,fill:'#8F6412'});
+    [-11,-4,3,10].forEach(x=>
+      el('rect',{x:x,y:-3,width:3.6,height:11,fill:'#E3AC44',stroke:'#8F6412','stroke-width':1.4}));
     return g;
   }
-  // Standard-Realstrom: Paket / Warenkiste (Güter, Import, Export)
-  el('rect',{x:-9,y:-7,width:18,height:14,rx:2,fill:'#D9A43A',stroke:'#8F6412','stroke-width':1.6});
-  el('path',{d:'M-9,-2 h18 M0,-7 v14',stroke:'#8F6412','stroke-width':1.4});
+  // Standard-Realstrom: Warenkiste (Güter, Import, Export)
+  el('rect',{x:-14,y:-11,width:28,height:22,rx:3,fill:'#E3AC44',stroke:'#8F6412','stroke-width':2.4});
+  el('path',{d:'M-14,-3 h28 M0,-11 v22',stroke:'#8F6412','stroke-width':2.2});
   return g;
 }
 
