@@ -157,11 +157,11 @@
   .flowsym{ pointer-events:none; filter:drop-shadow(0 1px 2px rgba(0,0,0,.28)); }
   .flow.dim .flowsym{ opacity:0; }
 
-  /* Labels sitzen weiss AUF dem Band */
-  .flowlabel{ font-size:16px; font-weight:800; fill:#fff; pointer-events:none;
+  /* Labels: dunkle Schrift, da die Bänder jetzt hell sind */
+  .flowlabel{ font-size:16px; font-weight:800; fill:var(--ink); pointer-events:none;
               paint-order:stroke; stroke:none; }
   .flowlabel.outside{ fill:var(--ink); stroke:#fff; stroke-width:5px; stroke-linejoin:round; }
-  .flowlabel.active{ fill:#fff; }
+  .flowlabel.active{ fill:#0F3D4E; }
   .flowlabel.outside.active{ fill:var(--aktiv); }
   .flowlabel.pair{ font-weight:800; }
   .flowlabel.dim{ opacity:.15; }
@@ -275,29 +275,30 @@
       <svg class="board" id="board" viewBox="0 0 1600 900" role="img" aria-label="Diagramm des Wirtschaftskreislaufs">
         <defs>
           <!-- Farbverläufe: userSpaceOnUse, da gerade Linien eine Bounding-Box
-               ohne Höhe haben und objectBoundingBox-Gradienten dort nicht rendern. -->
+               ohne Höhe haben und objectBoundingBox-Gradienten dort nicht rendern.
+               Helle Töne, damit Icons und Beschriftungen gut lesbar bleiben. -->
           <linearGradient id="gr-geld" gradientUnits="userSpaceOnUse" x1="150" y1="0" x2="1500" y2="0">
-            <stop offset="0%" stop-color="#3FBF80"/><stop offset="100%" stop-color="#12844F"/>
+            <stop offset="0%" stop-color="#A8E3C4"/><stop offset="100%" stop-color="#7FD1A8"/>
           </linearGradient>
           <linearGradient id="gr-real" gradientUnits="userSpaceOnUse" x1="150" y1="0" x2="1500" y2="0">
-            <stop offset="0%" stop-color="#E3AC44"/><stop offset="100%" stop-color="#A5720E"/>
+            <stop offset="0%" stop-color="#F3DCA8"/><stop offset="100%" stop-color="#E8C787"/>
           </linearGradient>
           <linearGradient id="gr-geld-a" gradientUnits="userSpaceOnUse" x1="150" y1="0" x2="1500" y2="0">
-            <stop offset="0%" stop-color="#2AA96A"/><stop offset="100%" stop-color="#0B6339"/>
+            <stop offset="0%" stop-color="#6FCB9B"/><stop offset="100%" stop-color="#43B37F"/>
           </linearGradient>
           <linearGradient id="gr-real-a" gradientUnits="userSpaceOnUse" x1="150" y1="0" x2="1500" y2="0">
-            <stop offset="0%" stop-color="#D19B2E"/><stop offset="100%" stop-color="#855A08"/>
+            <stop offset="0%" stop-color="#E8C787"/><stop offset="100%" stop-color="#D6AC5C"/>
           </linearGradient>
 
-          <!-- Grosse, satte Pfeilspitzen passend zur Bandbreite -->
+          <!-- Pfeilspitzen bleiben kräftig, damit die Richtung klar erkennbar ist -->
           <marker id="ah-geld" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse">
-            <path d="M1,1 L11,6 L1,11 L3,6 Z" fill="#12844F"/></marker>
+            <path d="M1,1 L11,6 L1,11 L3,6 Z" fill="#2FA96F"/></marker>
           <marker id="ah-geld-a" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse">
-            <path d="M1,1 L11,6 L1,11 L3,6 Z" fill="#0B6339"/></marker>
+            <path d="M1,1 L11,6 L1,11 L3,6 Z" fill="#14764A"/></marker>
           <marker id="ah-real" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse">
-            <path d="M1,1 L11,6 L1,11 L3,6 Z" fill="#A5720E"/></marker>
+            <path d="M1,1 L11,6 L1,11 L3,6 Z" fill="#C99A3C"/></marker>
           <marker id="ah-real-a" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse">
-            <path d="M1,1 L11,6 L1,11 L3,6 Z" fill="#855A08"/></marker>
+            <path d="M1,1 L11,6 L1,11 L3,6 Z" fill="#8F6412"/></marker>
         </defs>
         <g id="flows"></g>
         <g id="labels"></g>
@@ -657,7 +658,7 @@ function flowIcon(f){
 
   if(f.type === 'geld'){
     // Banknote (grün) – gut sichtbar auf dem Band
-    el('rect',{x:-17,y:-11,width:34,height:22,rx:3.5,fill:'#3FBF80',stroke:'#0B6339','stroke-width':2.4});
+    el('rect',{x:-17,y:-11,width:34,height:22,rx:3.5,fill:'#1E9E62',stroke:'#0B6339','stroke-width':2.4});
     el('circle',{cx:0,cy:0,r:6.5,fill:'#EAF7F0',stroke:'#0B6339','stroke-width':2});
     el('path',{d:'M0,-4 L0,4 M-2.6,-2 h5.2 M-2.6,2 h5.2',stroke:'#0B6339','stroke-width':1.9,fill:'none','stroke-linecap':'round'});
     el('path',{d:'M-13,-7 v14 M13,-7 v14',stroke:'#0B6339','stroke-width':1.5,'stroke-linecap':'round'});
@@ -667,21 +668,21 @@ function flowIcon(f){
   // Realströme
   if(f.sym === 'arm'){
     // Person – die Haushalte stellen Arbeitskraft (Menschen) zur Verfügung
-    el('circle',{cx:0,cy:-8,r:5.5,fill:'#E3AC44',stroke:'#8F6412','stroke-width':2.2});
+    el('circle',{cx:0,cy:-8,r:5.5,fill:'#C08A1E',stroke:'#7A5510','stroke-width':2.2});
     el('path',{d:'M-9,11 L-9,1 C-9,-2.5 -5,-4.5 0,-4.5 C5,-4.5 9,-2.5 9,1 L9,11 Z',
-               fill:'#E3AC44',stroke:'#8F6412','stroke-width':2.2,'stroke-linejoin':'round'});
+               fill:'#C08A1E',stroke:'#7A5510','stroke-width':2.2,'stroke-linejoin':'round'});
     return g;
   }
   if(f.sym === 'gov'){
     // Amtsgebäude (öffentliche Leistungen)
-    el('path',{d:'M-15,-3 L0,-14 L15,-3 Z',fill:'#E3AC44',stroke:'#8F6412','stroke-width':2.2});
+    el('path',{d:'M-15,-3 L0,-14 L15,-3 Z',fill:'#C08A1E',stroke:'#7A5510','stroke-width':2.2});
     el('rect',{x:-15,y:8,width:30,height:4.5,rx:1.5,fill:'#8F6412'});
     [-11,-4,3,10].forEach(x=>
-      el('rect',{x:x,y:-3,width:3.6,height:11,fill:'#E3AC44',stroke:'#8F6412','stroke-width':1.4}));
+      el('rect',{x:x,y:-3,width:3.6,height:11,fill:'#C08A1E',stroke:'#7A5510','stroke-width':1.4}));
     return g;
   }
   // Standard-Realstrom: Warenkiste (Güter, Import, Export)
-  el('rect',{x:-14,y:-11,width:28,height:22,rx:3,fill:'#E3AC44',stroke:'#8F6412','stroke-width':2.4});
+  el('rect',{x:-14,y:-11,width:28,height:22,rx:3,fill:'#C08A1E',stroke:'#7A5510','stroke-width':2.4});
   el('path',{d:'M-14,-3 h28 M0,-11 v22',stroke:'#8F6412','stroke-width':2.2});
   return g;
 }
