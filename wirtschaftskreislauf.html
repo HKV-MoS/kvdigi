@@ -74,32 +74,24 @@
   /* Die fx-Elemente sind unsichtbar und spielen nur ab,
      wenn die Karte kurz die Klasse .pop trägt.                  */
   .fx{ opacity:0; }
+  .fx-globe{ transform-box:fill-box; transform-origin:center; }
 
   /* Karte hüpft kurz */
   @keyframes cardPop{ 0%,100%{ transform:translateY(0); } 35%{ transform:translateY(-6px); } 70%{ transform:translateY(-1px); } }
   .actor.pop .cardbg{ animation:cardPop .5s ease-out; }
 
-  /* Licht geht an (Haushalte) */
-  @keyframes lightOn{
-    0%{ opacity:0; }
-    15%{ opacity:1; }
-    30%{ opacity:.45; }
-    45%{ opacity:1; }
-    80%{ opacity:1; }
-    100%{ opacity:0; }
-  }
-  .actor.pop .fx-light{ animation:lightOn 1.5s ease-out forwards; }
-  .actor.pop .fx-light.fx-2{ animation-delay:.18s; }
-
-  /* Rauchwölkchen (Unternehmen) */
+  /* Rauchwölkchen (Haushalte: Kamin, Unternehmen: Fabrikschlot) */
   @keyframes puff{
     0%{ opacity:0; transform:translate(0,0) scale(.4); }
     25%{ opacity:.75; transform:translate(2px,-6px) scale(1); }
     100%{ opacity:0; transform:translate(7px,-22px) scale(1.7); }
   }
   .actor.pop .fx-puff{ transform-box:fill-box; animation:puff 1.15s ease-out forwards; }
-  .actor.pop .fx-puff.fx-2{ animation-delay:.2s; }
-  .actor.pop .fx-puff.fx-3{ animation-delay:.4s; }
+  .actor.pop .fx-puff.fx-2{ animation-delay:.16s; }
+  .actor.pop .fx-puff.fx-3{ animation-delay:.32s; }
+  .actor.pop .fx-puff.fx-4{ animation-delay:.48s; }
+  .actor.pop .fx-puff.fx-5{ animation-delay:.64s; }
+  .actor.pop .fx-puff.fx-6{ animation-delay:.80s; }
 
   /* Richterhammer (Staat) */
   @keyframes gavel{
@@ -125,8 +117,9 @@
   .actor.pop .fx-coin.fx-2{ animation-delay:.22s; }
   .actor.pop .fx-coin.fx-3{ animation-delay:.44s; }
 
-  /* Schiff umrundet den Globus (Ausland) – Bewegung via animateMotion */
-  .actor.pop .fx-ship{ opacity:1; transition:opacity .2s; }
+  /* Globus dreht sich (Ausland) */
+  @keyframes spin{ 0%{ transform:scaleX(1); } 50%{ transform:scaleX(-1); } 100%{ transform:scaleX(1); } }
+  .actor.pop .fx-globe{ animation:spin 1.1s ease-in-out; }
 
   /* ---------- Ströme als breite Bänder ---------- */
   .flow{ cursor:pointer; }
@@ -228,8 +221,8 @@
   @media (prefers-reduced-motion:reduce){
     .dot{ display:none; }
     .actor.pop .cardbg, .actor.pop .fx-puff, .actor.pop .fx-gavel,
-    .actor.pop .fx-coin, .actor.pop .fx-light{ animation:none !important; }
-    .fx, .actor.pop .fx-ship{ opacity:0 !important; }
+    .actor.pop .fx-coin, .actor.pop .fx-globe{ animation:none !important; }
+    .fx{ opacity:0 !important; }
     *{ transition:none !important; }
   }
 </style>
@@ -512,19 +505,22 @@ function icon(kind){
 
   if(kind==='hh'){
     p('M-14,2 L0,-11 L14,2'); p('M-10,2 L-10,14 L10,14 L10,2'); p('M-3,14 L-3,6 L3,6 L3,14');
-    // Fenster – leuchtet beim Klick auf
-    add('rect',{x:-8,y:4,width:5,height:5,fill:'none','stroke-width':1.8});
-    add('rect',{x:-8,y:4,width:5,height:5,fill:'#FFC83D',stroke:'none'},'fx fx-light fx-1');
-    add('rect',{x:3,y:4,width:5,height:5,fill:'none','stroke-width':1.8});
-    add('rect',{x:3,y:4,width:5,height:5,fill:'#FFC83D',stroke:'none'},'fx fx-light fx-2');
+    add('rect',{x:5,y:-9,width:4,height:7,fill:'none'});                 // Kamin
+    // Rauchwölkchen aus dem Kamin (nur beim Klick)
+    add('circle',{cx:7,cy:-12,r:2.6,fill:'currentColor',stroke:'none'},'fx fx-puff fx-1');
+    add('circle',{cx:7,cy:-12,r:2.2,fill:'currentColor',stroke:'none'},'fx fx-puff fx-2');
+    add('circle',{cx:7,cy:-12,r:2.4,fill:'currentColor',stroke:'none'},'fx fx-puff fx-3');
   }
   if(kind==='un'){
     p('M-14,14 L-14,-2 L-4,3 L-4,-2 L6,3 L6,-9 L14,-9 L14,14 Z');
     p('M-9,8 L-9,11 M0,8 L0,11 M9,4 L9,11');
-    // Wölkchen aus dem Fabrikschlot
-    add('circle',{cx:10,cy:-13,r:3,fill:'currentColor',stroke:'none'},'fx fx-puff fx-1');
-    add('circle',{cx:10,cy:-13,r:2.4,fill:'currentColor',stroke:'none'},'fx fx-puff fx-2');
-    add('circle',{cx:10,cy:-13,r:2,fill:'currentColor',stroke:'none'},'fx fx-puff fx-3');
+    // Kräftiger Rauch aus dem Fabrikschlot – sechs Wölkchen
+    add('circle',{cx:10,cy:-13,r:3.2,fill:'currentColor',stroke:'none'},'fx fx-puff fx-1');
+    add('circle',{cx:10,cy:-13,r:2.6,fill:'currentColor',stroke:'none'},'fx fx-puff fx-2');
+    add('circle',{cx:10,cy:-13,r:3,  fill:'currentColor',stroke:'none'},'fx fx-puff fx-3');
+    add('circle',{cx:10,cy:-13,r:2.4,fill:'currentColor',stroke:'none'},'fx fx-puff fx-4');
+    add('circle',{cx:10,cy:-13,r:2.9,fill:'currentColor',stroke:'none'},'fx fx-puff fx-5');
+    add('circle',{cx:10,cy:-13,r:2.2,fill:'currentColor',stroke:'none'},'fx fx-puff fx-6');
   }
   if(kind==='staat'){
     p('M-14,-2 L0,-12 L14,-2'); p('M-11,-2 L-11,10 M-4,-2 L-4,10 M4,-2 L4,10 M11,-2 L11,10'); p('M-14,14 L14,14');
@@ -550,26 +546,9 @@ function icon(kind){
   if(kind==='aus'){
     const c=document.createElementNS(NS,'circle'); c.setAttribute('r','13'); g.appendChild(c);
     p('M-13,0 L13,0');
-    p('M0,-13 C6,-7 6,7 0,13 C-6,7 -6,-7 0,-13');
-    // Kleines Schiff, das beim Klick einmal um den Globus fährt
-    const ship = document.createElementNS(NS,'g');
-    ship.setAttribute('class','fx fx-ship');
-    const hull = document.createElementNS(NS,'path');
-    hull.setAttribute('d','M-4,1 L4,1 L2.6,4 L-2.6,4 Z');
-    hull.setAttribute('fill','currentColor'); hull.setAttribute('stroke','none');
-    const mast = document.createElementNS(NS,'path');
-    mast.setAttribute('d','M0,1 L0,-3 M0,-3 L3,-1 L0,0');
-    mast.setAttribute('fill','none'); mast.setAttribute('stroke','currentColor'); mast.setAttribute('stroke-width','1.4');
-    ship.appendChild(hull); ship.appendChild(mast);
-    // Kreisbahn um den Globus (Radius 18)
-    const mo = document.createElementNS(NS,'animateMotion');
-    mo.setAttribute('dur','1.6s');
-    mo.setAttribute('repeatCount','1');
-    mo.setAttribute('begin','indefinite');       // startet erst per JS beim Klick
-    mo.setAttribute('rotate','auto');
-    mo.setAttribute('path','M0,-18 A18,18 0 1 1 -0.1,-18 A18,18 0 1 1 0,-18');
-    ship.appendChild(mo);
-    g.appendChild(ship);
+    // Meridian dreht sich beim Klick
+    const mer=p('M0,-13 C6,-7 6,7 0,13 C-6,7 -6,-7 0,-13');
+    mer.setAttribute('class','fx-globe');
   }
   return g;
 }
@@ -708,13 +687,8 @@ function playPop(key){
   g.classList.remove('pop');
   void g.getBoundingClientRect();   // Reflow erzwingen -> Animation startet neu
   g.classList.add('pop');
-  // Beim Ausland fährt ein Schiff um den Globus (SMIL-Bewegung explizit starten)
-  const motion = g.querySelector('.fx-ship animateMotion');
-  if(motion && typeof motion.beginElement === 'function'){
-    try{ motion.beginElement(); }catch(e){ /* ältere Browser ignorieren das */ }
-  }
   clearTimeout(popTimer);
-  popTimer = setTimeout(()=> g.classList.remove('pop'), 1700);
+  popTimer = setTimeout(()=> g.classList.remove('pop'), 2100);
 }
 
 // byUser=true bedeutet: Klick der Lernenden -> laufende Tour anhalten
