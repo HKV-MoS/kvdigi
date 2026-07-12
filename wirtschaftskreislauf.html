@@ -137,8 +137,9 @@
   .flow.pair.real .line{ stroke:url(#gr-real-a); }
   .flow.dim{ opacity:.15; }
 
-  .dot{ r:5; fill:#fff; opacity:.85; }
-  .flow.real .dot{ opacity:0; }   /* gestrichelte Bänder zeigen den Fluss bereits */
+  /* Fliessende Symbole auf den Bändern (Banknote, Bizeps, Paket, Amtsgebäude) */
+  .flowsym{ pointer-events:none; filter:drop-shadow(0 1px 2px rgba(0,0,0,.28)); }
+  .flow.dim .flowsym{ opacity:0; }
 
   /* Labels sitzen weiss AUF dem Band */
   .flowlabel{ font-size:15px; font-weight:800; fill:#fff; pointer-events:none;
@@ -219,7 +220,7 @@
   .footer .cr{ margin-top:6px; color:#9DB0BA; }
 
   @media (prefers-reduced-motion:reduce){
-    .dot{ display:none; }
+    .flowsym{ display:none; }
     .actor.pop .cardbg, .actor.pop .fx-puff, .actor.pop .fx-gavel,
     .actor.pop .fx-coin, .actor.pop .fx-globe{ animation:none !important; }
     .fx{ opacity:0 !important; }
@@ -364,7 +365,7 @@ const hh=E('hh'), un=E('un'), st=E('staat'), bk=E('bank'), au=E('aus');
       Gegenläufigkeit (Merksatz) unmittelbar sichtbar.
       ========================================================================== */
 const F = [
-  { id:'arbeit', pair:'lohn', pairText:'Die Haushalte geben Arbeit – die Unternehmen bezahlen dafür Lohn.', type:'real', core:true, from:'hh', to:'un',
+  { id:'arbeit', sym:'arm', pair:'lohn', pairText:'Die Haushalte geben Arbeit – die Unternehmen bezahlen dafür Lohn.', type:'real', core:true, from:'hh', to:'un',
     d:`M${hh.r},390 L${un.l},390`, lx:720, ly:396, anchor:'middle', onband:true,
     title:'Arbeit', ft:'Haushalte → Unternehmen',
     text:'Die Haushalte stellen den Unternehmen ihre Arbeitskraft zur Verfügung. Sie ist die Grundlage jeder Produktion.',
@@ -376,7 +377,7 @@ const F = [
     text:'Für die geleistete Arbeit zahlen die Unternehmen Löhne. Dieses Einkommen finanziert den Konsum der Haushalte.',
     q:'Wofür geben Sie Ihren Lohn oder Ihr Lehrlingsgehalt aus?' },
 
-  { id:'gueter', pair:'konsum', pairText:'Die Unternehmen liefern Güter – die Haushalte bezahlen dafür mit Konsumausgaben.', type:'real', core:true, from:'un', to:'hh',
+  { id:'gueter', sym:'paket', pair:'konsum', pairText:'Die Unternehmen liefern Güter – die Haushalte bezahlen dafür mit Konsumausgaben.', type:'real', core:true, from:'un', to:'hh',
     d:`M${un.l},470 L${hh.r},470`, lx:720, ly:476, anchor:'middle', onband:true,
     title:'Güter & Dienstleistungen', ft:'Unternehmen → Haushalte',
     text:'Die Unternehmen liefern Produkte und Dienstleistungen an die Haushalte – der reale Gegenwert zum bezahlten Geld.',
@@ -403,7 +404,7 @@ const F = [
     text:'Der Staat zahlt Renten, Sozialhilfe und Stipendien an die Haushalte zurück.',
     q:'Welche Transferzahlungen kennen Sie?' },
 
-  { id:'st-hh-leist', pair:'st-hh-steuern', pairText:'Der Staat erbringt Leistungen – die Haushalte finanzieren sie mit Steuern.', type:'real', actor:'staat', from:'staat', to:'hh',
+  { id:'st-hh-leist', sym:'gov', pair:'st-hh-steuern', pairText:'Der Staat erbringt Leistungen – die Haushalte finanzieren sie mit Steuern.', type:'real', actor:'staat', from:'staat', to:'hh',
     d:`M${st.l},95 L190,95 L190,${hh.t}`, lx:184, ly:180, anchor:'end',
     title:'Öffentliche Leistungen', ft:'Staat → Haushalte',
     text:'Bildung, Sicherheit, Strassen: Der Staat erbringt Leistungen, die alle nutzen können.',
@@ -421,7 +422,7 @@ const F = [
     text:'Der Staat vergibt öffentliche Aufträge und unterstützt Unternehmen mit Subventionen.',
     q:'Warum unterstützt der Staat gewisse Branchen?' },
 
-  { id:'st-un-leist', pair:'st-un-steuern', pairText:'Der Staat erbringt Leistungen – die Unternehmen finanzieren sie mit Steuern und Abgaben.', type:'real', actor:'staat', from:'staat', to:'un',
+  { id:'st-un-leist', sym:'gov', pair:'st-un-steuern', pairText:'Der Staat erbringt Leistungen – die Unternehmen finanzieren sie mit Steuern und Abgaben.', type:'real', actor:'staat', from:'staat', to:'un',
     d:`M${st.r},95 L1110,95 L1110,${un.t}`, lx:1118, ly:180, anchor:'start',
     title:'Öffentliche Leistungen', ft:'Staat → Unternehmen',
     text:'Auch Unternehmen profitieren von Infrastruktur, Rechtssicherheit und ausgebildeten Fachkräften.',
@@ -453,7 +454,7 @@ const F = [
     q:'Warum verlangt eine Bank Zinsen?' },
 
   /* ---- AUSLAND (unten rechts) – eigene Spuren zu den Unternehmen ---- */
-  { id:'au-export', pair:'au-exporterloes', pairText:'Die Unternehmen liefern Güter ins Ausland – dafür fliessen Exporterlöse zurück.', type:'real', actor:'aus', from:'un', to:'aus',
+  { id:'au-export', sym:'paket', pair:'au-exporterloes', pairText:'Die Unternehmen liefern Güter ins Ausland – dafür fliessen Exporterlöse zurück.', type:'real', actor:'aus', from:'un', to:'aus',
     d:`M${un.r},414 L1520,414 L1520,${au.t}`, lx:1528, ly:380, anchor:'end',
     title:'Exporte', ft:'Unternehmen → Ausland',
     text:'Schweizer Unternehmen verkaufen Güter und Dienstleistungen ins Ausland.',
@@ -465,7 +466,7 @@ const F = [
     text:'Für die Exporte fliesst Geld aus dem Ausland zurück zu den Unternehmen.',
     q:'Warum ist der Export für die Schweiz wichtig?' },
 
-  { id:'au-import', pair:'au-importzahl', pairText:'Das Ausland liefert Güter – die Unternehmen bezahlen dafür.', type:'real', actor:'aus', from:'aus', to:'un',
+  { id:'au-import', sym:'paket', pair:'au-importzahl', pairText:'Das Ausland liefert Güter – die Unternehmen bezahlen dafür.', type:'real', actor:'aus', from:'aus', to:'un',
     d:`M${au.l},735 L1210,735 L1210,${un.b}`, lx:1218, ly:755, anchor:'start',
     title:'Importe', ft:'Ausland → Unternehmen',
     text:'Unternehmen beziehen Waren und Vorleistungen aus dem Ausland.',
@@ -591,8 +592,52 @@ Object.entries(A).forEach(([key,a])=>{
 });
 
 /* ==========================================================================
-   6. PFEILE ZEICHNEN (Linie + unsichtbare Klickfläche + fliessender Punkt)
+   6. PFEILE ZEICHNEN (Band + Klickfläche + fliessendes Icon)
    ========================================================================== */
+
+/* Kleine Symbole, die dem Band entlang wandern.
+   Geldströme: Banknote. Realströme: je nach Inhalt Bizeps, Paket, Amtsgebäude. */
+function flowIcon(f){
+  const g = document.createElementNS(NS,'g');
+  g.setAttribute('class','flowsym');
+  const el = (tag,attrs) => {
+    const e = document.createElementNS(NS,tag);
+    for(const k in attrs) e.setAttribute(k,attrs[k]);
+    g.appendChild(e); return e;
+  };
+
+  if(f.type === 'geld'){
+    // Banknote (grün)
+    el('rect',{x:-11,y:-7,width:22,height:14,rx:2.5,fill:'#2FA96F',stroke:'#0B6339','stroke-width':1.6});
+    el('circle',{cx:0,cy:0,r:4,fill:'none',stroke:'#0B6339','stroke-width':1.6});
+    el('path',{d:'M0,-2.6 L0,2.6 M-1.6,-1.2 h3.2 M-1.6,1.2 h3.2',stroke:'#0B6339','stroke-width':1.3,fill:'none','stroke-linecap':'round'});
+    return g;
+  }
+
+  // Realströme
+  if(f.sym === 'arm'){
+    // Bizeps – gebeugter Arm
+    el('path',{d:'M-10,4 L-10,-1 C-10,-5 -6,-7 -2,-6 L3,-5',
+               fill:'none',stroke:'#8F6412','stroke-width':4,'stroke-linecap':'round'});
+    el('path',{d:'M3,-5 C8,-4 11,0 10,4 C9,7 5,8 2,6 C-1,4 -1,0 1,-2',
+               fill:'#C08A1E',stroke:'#8F6412','stroke-width':1.6});
+    el('rect',{x:-13,y:1,width:6,height:7,rx:1.5,fill:'#8F6412'});
+    return g;
+  }
+  if(f.sym === 'gov'){
+    // Amtsgebäude (öffentliche Leistungen)
+    el('path',{d:'M-10,-2 L0,-9 L10,-2 Z',fill:'#C08A1E',stroke:'#8F6412','stroke-width':1.4});
+    el('rect',{x:-10,y:5,width:20,height:3,rx:1,fill:'#8F6412'});
+    ['-7','-2.5','2','6.5'].forEach(x=>
+      el('rect',{x:x,y:-2,width:2.4,height:7,fill:'#C08A1E',stroke:'#8F6412','stroke-width':.9}));
+    return g;
+  }
+  // Standard-Realstrom: Paket / Warenkiste (Güter, Import, Export)
+  el('rect',{x:-9,y:-7,width:18,height:14,rx:2,fill:'#D9A43A',stroke:'#8F6412','stroke-width':1.6});
+  el('path',{d:'M-9,-2 h18 M0,-7 v14',stroke:'#8F6412','stroke-width':1.4});
+  return g;
+}
+
 const flowEls = {};
 F.forEach(f=>{
   const g = document.createElementNS(NS,'g');
@@ -613,14 +658,14 @@ F.forEach(f=>{
   hit.setAttribute('d', f.d);
   g.appendChild(hit);
 
-  const dot = document.createElementNS(NS,'circle');
-  dot.setAttribute('class','dot');
+  // Fliessendes Symbol statt Punkt: wandert dem Band entlang
+  const sym = flowIcon(f);
   const mo = document.createElementNS(NS,'animateMotion');
-  mo.setAttribute('dur', f.type==='geld' ? '5s' : '6s');
+  mo.setAttribute('dur', f.type==='geld' ? '6s' : '7s');
   mo.setAttribute('repeatCount','indefinite');
   mo.setAttribute('path', f.d);
-  dot.appendChild(mo);
-  g.appendChild(dot);
+  sym.appendChild(mo);
+  g.appendChild(sym);
 
   g.addEventListener('click', ()=> selectFlow(f.id, true));
   g.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); selectFlow(f.id, true); } });
