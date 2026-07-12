@@ -78,6 +78,10 @@
   .flow.active .line{ stroke-width:8; }
   .flow.active.geld .line{ stroke:var(--geld-dk); }
   .flow.active.real .line{ stroke:var(--real-dk); }
+  /* Gegenstrom: kräftiger als abgeblendet, schwächer als der aktive Pfeil */
+  .flow.pair .line{ stroke-width:6.5; }
+  .flow.pair.geld .line{ stroke:var(--geld-dk); }
+  .flow.pair.real .line{ stroke:var(--real-dk); }
   .flow.dim{ opacity:.15; }
 
   .dot{ r:5.5; }
@@ -87,7 +91,15 @@
   .flowlabel{ font-size:15px; font-weight:700; fill:var(--ink); pointer-events:none;
               paint-order:stroke; stroke:#fff; stroke-width:5px; stroke-linejoin:round; }
   .flowlabel.active{ fill:var(--aktiv); }
+  .flowlabel.pair{ fill:var(--ink); font-weight:800; }
   .flowlabel.dim{ opacity:.15; }
+
+  /* Gegenstrom-Hinweis in der Infokarte */
+  .pairbox{ background:#FFF9EC; border-left:4px solid var(--real); border-radius:0 10px 10px 0;
+            padding:10px 13px; margin-bottom:12px; font-size:13.5px; color:#6b5216; }
+  .pairbox .pl{ display:block; font-size:10.5px; font-weight:800; letter-spacing:.7px;
+                text-transform:uppercase; color:var(--real-dk); margin-bottom:3px; }
+  .pairbox .pname{ font-weight:800; }
 
   /* ---------- Legende ---------- */
   .legend{ display:flex; align-items:center; gap:18px; flex-wrap:wrap; padding:11px 16px;
@@ -215,6 +227,11 @@
     <div class="fromto" id="p-fromto" hidden></div>
     <div class="badge" id="p-badge" hidden></div>
     <p id="p-text">Haushalte und Unternehmen tauschen Arbeit und Güter gegen Lohn und Konsumausgaben. Klicken Sie auf einen Akteur oder einen Pfeil.</p>
+    <div class="pairbox" id="p-pairbox" hidden>
+      <span class="pl">Gegenstrom</span>
+      <span id="p-pairname" class="pname"></span>
+      <span id="p-pairtext"></span>
+    </div>
     <div class="qbox" id="p-qbox" hidden><span class="ql">Mini-Frage</span><span id="p-question"></span></div>
 
     <div class="merksatz">
@@ -273,25 +290,25 @@ const hh=E('hh'), un=E('un'), st=E('staat'), bk=E('bank'), au=E('aus');
       Gegenläufigkeit (Merksatz) unmittelbar sichtbar.
       ========================================================================== */
 const F = [
-  { id:'arbeit', type:'real', core:true, from:'hh', to:'un',
+  { id:'arbeit', pair:'lohn', pairText:'Die Haushalte geben Arbeit – die Unternehmen bezahlen dafür Lohn.', type:'real', core:true, from:'hh', to:'un',
     d:`M${hh.r},398 L${un.l},398`, lx:720, ly:384, anchor:'middle',
     title:'Arbeit', ft:'Haushalte → Unternehmen',
     text:'Die Haushalte stellen den Unternehmen ihre Arbeitskraft zur Verfügung. Sie ist die Grundlage jeder Produktion.',
     q:'Welche Arbeit leisten Sie oder Ihre Familie für ein Unternehmen?' },
 
-  { id:'lohn', type:'geld', core:true, from:'un', to:'hh',
+  { id:'lohn', pair:'arbeit', pairText:'Die Haushalte geben Arbeit – die Unternehmen bezahlen dafür Lohn.', type:'geld', core:true, from:'un', to:'hh',
     d:`M${un.l},434 L${hh.r},434`, lx:720, ly:425, anchor:'middle',
     title:'Lohn', ft:'Unternehmen → Haushalte',
     text:'Für die geleistete Arbeit zahlen die Unternehmen Löhne. Dieses Einkommen finanziert den Konsum der Haushalte.',
     q:'Wofür geben Sie Ihren Lohn oder Ihr Lehrlingsgehalt aus?' },
 
-  { id:'gueter', type:'real', core:true, from:'un', to:'hh',
+  { id:'gueter', pair:'konsum', pairText:'Die Unternehmen liefern Güter – die Haushalte bezahlen dafür mit Konsumausgaben.', type:'real', core:true, from:'un', to:'hh',
     d:`M${un.l},470 L${hh.r},470`, lx:720, ly:492, anchor:'middle',
     title:'Güter & Dienstleistungen', ft:'Unternehmen → Haushalte',
     text:'Die Unternehmen liefern Produkte und Dienstleistungen an die Haushalte – der reale Gegenwert zum bezahlten Geld.',
     q:'Welche Dienstleistung haben Sie zuletzt genutzt?' },
 
-  { id:'konsum', type:'geld', core:true, from:'hh', to:'un',
+  { id:'konsum', pair:'gueter', pairText:'Die Unternehmen liefern Güter – die Haushalte bezahlen dafür mit Konsumausgaben.', type:'geld', core:true, from:'hh', to:'un',
     d:`M${hh.r},506 L${un.l},506`, lx:720, ly:532, anchor:'middle',
     title:'Konsumausgaben', ft:'Haushalte → Unternehmen',
     text:'Haushalte bezahlen Unternehmen für Güter und Dienstleistungen. Dieses Geld ist der Umsatz der Unternehmen.',
@@ -300,87 +317,87 @@ const F = [
   /* ---- STAAT (oben) – gestaffelte Spuren.
      Regel: je weiter aussen die vertikale Spur, desto höher das waagrechte
      Segment. Dadurch kreuzt kein Pfeil einen anderen.                     ---- */
-  { id:'st-hh-steuern', type:'geld', actor:'staat', from:'hh', to:'staat',
+  { id:'st-hh-steuern', pair:'st-hh-leist', pairText:'Der Staat erbringt Leistungen – die Haushalte finanzieren sie mit Steuern.', type:'geld', actor:'staat', from:'hh', to:'staat',
     d:`M340,${hh.t} L340,250 L${st.l},250`, lx:334, ly:330, anchor:'end',
     title:'Steuern', ft:'Haushalte → Staat',
     text:'Haushalte zahlen Einkommenssteuern und Abgaben an den Staat.',
     q:'Welche Steuern zahlen Erwachsene in der Schweiz?' },
 
-  { id:'st-hh-transfer', type:'geld', actor:'staat', from:'staat', to:'hh',
+  { id:'st-hh-transfer', soloText:'Transferzahlungen sind eine Leistung ohne direkte Gegenleistung – der Staat verteilt um.', type:'geld', actor:'staat', from:'staat', to:'hh',
     d:`M${st.l},140 L270,140 L270,${hh.t}`, lx:264, ly:270, anchor:'end',
     title:'Transferzahlungen', ft:'Staat → Haushalte',
     text:'Der Staat zahlt Renten, Sozialhilfe und Stipendien an die Haushalte zurück.',
     q:'Welche Transferzahlungen kennen Sie?' },
 
-  { id:'st-hh-leist', type:'real', actor:'staat', from:'staat', to:'hh',
+  { id:'st-hh-leist', pair:'st-hh-steuern', pairText:'Der Staat erbringt Leistungen – die Haushalte finanzieren sie mit Steuern.', type:'real', actor:'staat', from:'staat', to:'hh',
     d:`M${st.l},95 L190,95 L190,${hh.t}`, lx:184, ly:180, anchor:'end',
     title:'Öffentliche Leistungen', ft:'Staat → Haushalte',
     text:'Bildung, Sicherheit, Strassen: Der Staat erbringt Leistungen, die alle nutzen können.',
     q:'Welche öffentliche Leistung nutzen Sie täglich?' },
 
-  { id:'st-un-steuern', type:'geld', actor:'staat', from:'un', to:'staat',
+  { id:'st-un-steuern', pair:'st-un-leist', pairText:'Der Staat erbringt Leistungen – die Unternehmen finanzieren sie mit Steuern und Abgaben.', type:'geld', actor:'staat', from:'un', to:'staat',
     d:`M960,${un.t} L960,250 L${st.r},250`, lx:966, ly:330, anchor:'start',
     title:'Steuern / Abgaben', ft:'Unternehmen → Staat',
     text:'Unternehmen führen Gewinnsteuern und Abgaben an den Staat ab.',
     q:'Warum zahlen auch Unternehmen Steuern?' },
 
-  { id:'st-un-subv', type:'geld', actor:'staat', from:'staat', to:'un',
+  { id:'st-un-subv', soloText:'Subventionen sind eine Unterstützung ohne direkte Gegenleistung der Unternehmen.', type:'geld', actor:'staat', from:'staat', to:'un',
     d:`M${st.r},140 L1030,140 L1030,${un.t}`, lx:1036, ly:270, anchor:'start',
     title:'Aufträge / Subventionen', ft:'Staat → Unternehmen',
     text:'Der Staat vergibt öffentliche Aufträge und unterstützt Unternehmen mit Subventionen.',
     q:'Warum unterstützt der Staat gewisse Branchen?' },
 
-  { id:'st-un-leist', type:'real', actor:'staat', from:'staat', to:'un',
+  { id:'st-un-leist', pair:'st-un-steuern', pairText:'Der Staat erbringt Leistungen – die Unternehmen finanzieren sie mit Steuern und Abgaben.', type:'real', actor:'staat', from:'staat', to:'un',
     d:`M${st.r},95 L1110,95 L1110,${un.t}`, lx:1118, ly:180, anchor:'start',
     title:'Öffentliche Leistungen', ft:'Staat → Unternehmen',
     text:'Auch Unternehmen profitieren von Infrastruktur, Rechtssicherheit und ausgebildeten Fachkräften.',
     q:'Welche Infrastruktur braucht ein Unternehmen?' },
 
   /* ---- BANKEN (unten) – gleiche Staffelungsregel, nach unten gespiegelt ---- */
-  { id:'bk-hh-sparen', type:'geld', actor:'bank', from:'hh', to:'bank',
+  { id:'bk-hh-sparen', pair:'bk-hh-zins', pairText:'Die Haushalte stellen Geld zur Verfügung – die Bank vergütet es mit Zinsen.', type:'geld', actor:'bank', from:'hh', to:'bank',
     d:`M190,${hh.b} L190,815 L${bk.l},815`, lx:184, ly:700, anchor:'end',
     title:'Sparen', ft:'Haushalte → Banken',
     text:'Haushalte legen einen Teil ihres Einkommens bei den Banken an, statt ihn auszugeben.',
     q:'Warum sparen Menschen überhaupt?' },
 
-  { id:'bk-hh-zins', type:'geld', actor:'bank', from:'bank', to:'hh',
+  { id:'bk-hh-zins', pair:'bk-hh-sparen', pairText:'Die Haushalte stellen Geld zur Verfügung – die Bank vergütet es mit Zinsen.', type:'geld', actor:'bank', from:'bank', to:'hh',
     d:`M${bk.l},745 L340,745 L340,${hh.b}`, lx:346, ly:640, anchor:'start',
     title:'Zinsen', ft:'Banken → Haushalte',
     text:'Für das angelegte Geld erhalten die Haushalte Zinsen von der Bank.',
     q:'Was ist ein Zins – einfach erklärt?' },
 
-  { id:'bk-un-kredit', type:'geld', actor:'bank', from:'bank', to:'un',
+  { id:'bk-un-kredit', pair:'bk-un-zins', pairText:'Die Bank stellt Kapital bereit – die Unternehmen zahlen es mit Zinsen zurück.', type:'geld', actor:'bank', from:'bank', to:'un',
     d:`M${bk.r},745 L960,745 L960,${un.b}`, lx:954, ly:640, anchor:'end',
     title:'Kredite', ft:'Banken → Unternehmen',
     text:'Die Banken stellen den Unternehmen Kapital als Kredit zur Verfügung. Damit werden Investitionen finanziert.',
     q:'Wofür braucht ein Unternehmen einen Kredit?' },
 
-  { id:'bk-un-zins', type:'geld', actor:'bank', from:'un', to:'bank',
+  { id:'bk-un-zins', pair:'bk-un-kredit', pairText:'Die Bank stellt Kapital bereit – die Unternehmen zahlen es mit Zinsen zurück.', type:'geld', actor:'bank', from:'un', to:'bank',
     d:`M1110,${un.b} L1110,815 L${bk.r},815`, lx:1118, ly:700, anchor:'start',
     title:'Zinsen / Rückzahlung', ft:'Unternehmen → Banken',
     text:'Die Unternehmen zahlen den Kredit zurück und entrichten dafür Zinsen.',
     q:'Warum verlangt eine Bank Zinsen?' },
 
   /* ---- AUSLAND (unten rechts) – eigene Spuren zu den Unternehmen ---- */
-  { id:'au-export', type:'real', actor:'aus', from:'un', to:'aus',
+  { id:'au-export', pair:'au-exporterloes', pairText:'Die Unternehmen liefern Güter ins Ausland – dafür fliessen Exporterlöse zurück.', type:'real', actor:'aus', from:'un', to:'aus',
     d:`M${un.r},414 L1520,414 L1520,${au.t}`, lx:1528, ly:380, anchor:'end',
     title:'Exporte', ft:'Unternehmen → Ausland',
     text:'Schweizer Unternehmen verkaufen Güter und Dienstleistungen ins Ausland.',
     q:'Welche Schweizer Produkte sind im Ausland gefragt?' },
 
-  { id:'au-exporterloes', type:'geld', actor:'aus', from:'aus', to:'un',
+  { id:'au-exporterloes', pair:'au-export', pairText:'Die Unternehmen liefern Güter ins Ausland – dafür fliessen Exporterlöse zurück.', type:'geld', actor:'aus', from:'aus', to:'un',
     d:`M1450,${au.t} L1450,458 L${un.r},458`, lx:1442, ly:560, anchor:'end',
     title:'Exporterlöse', ft:'Ausland → Unternehmen',
     text:'Für die Exporte fliesst Geld aus dem Ausland zurück zu den Unternehmen.',
     q:'Warum ist der Export für die Schweiz wichtig?' },
 
-  { id:'au-import', type:'real', actor:'aus', from:'aus', to:'un',
+  { id:'au-import', pair:'au-importzahl', pairText:'Das Ausland liefert Güter – die Unternehmen bezahlen dafür.', type:'real', actor:'aus', from:'aus', to:'un',
     d:`M${au.l},735 L1210,735 L1210,${un.b}`, lx:1218, ly:755, anchor:'start',
     title:'Importe', ft:'Ausland → Unternehmen',
     text:'Unternehmen beziehen Waren und Vorleistungen aus dem Ausland.',
     q:'Welches Produkt in Ihrem Alltag wurde importiert?' },
 
-  { id:'au-importzahl', type:'geld', actor:'aus', from:'un', to:'aus',
+  { id:'au-importzahl', pair:'au-import', pairText:'Das Ausland liefert Güter – die Unternehmen bezahlen dafür.', type:'geld', actor:'aus', from:'un', to:'aus',
     d:`M1160,${un.b} L1160,790 L${au.l},790`, lx:1168, ly:610, anchor:'start',
     title:'Importzahlungen', ft:'Unternehmen → Ausland',
     text:'Für die importierten Güter fliesst Geld ins Ausland ab.',
@@ -527,8 +544,8 @@ function applyVisibility(){
 function clearHighlight(){
   Object.values(actorEls).forEach(g=> g.classList.remove('active','dim'));
   Object.values(flowEls).forEach(o=>{
-    o.g.classList.remove('active','dim');
-    o.label.classList.remove('active','dim');
+    o.g.classList.remove('active','pair','dim');
+    o.label.classList.remove('active','pair','dim');
     o.line.setAttribute('marker-end','url(#ah-'+o.data.type+')');
   });
 }
@@ -543,11 +560,23 @@ function selectFlow(id, byUser){
   if(!flowVisible(f)) return;
   visited.add(f.id);
   clearHighlight();
+
+  // Gegenstrom ermitteln – nur wenn er im aktuellen Modus auch sichtbar ist
+  const pairId  = f.pair && flowEls[f.pair] && flowVisible(flowEls[f.pair].data) ? f.pair : null;
+  const pairDat = pairId ? flowEls[pairId].data : null;
+
   Object.entries(flowEls).forEach(([k,x])=>{
-    if(k===id){ x.g.classList.add('active'); x.label.classList.add('active');
-                x.line.setAttribute('marker-end','url(#ah-'+f.type+'-a)'); }
-    else { x.g.classList.add('dim'); x.label.classList.add('dim'); }
+    if(k===id){                    // aktiver Pfeil: am stärksten
+      x.g.classList.add('active'); x.label.classList.add('active');
+      x.line.setAttribute('marker-end','url(#ah-'+f.type+'-a)');
+    } else if(k===pairId){         // Gegenstrom: kräftig, aber schwächer als aktiv
+      x.g.classList.add('pair');   x.label.classList.add('pair');
+      x.line.setAttribute('marker-end','url(#ah-'+pairDat.type+'-a)');
+    } else {                       // alle übrigen: abgeblendet
+      x.g.classList.add('dim');    x.label.classList.add('dim');
+    }
   });
+  // Akteure des Stroms bleiben normal, die übrigen werden abgeblendet
   Object.keys(A).forEach(k=>{ if(k!==f.from && k!==f.to && actorVisible(k)) actorEls[k].classList.add('dim'); });
 
   el('p-eyebrow').textContent = 'Strom';
@@ -555,10 +584,27 @@ function selectFlow(id, byUser){
   el('p-fromto').textContent  = f.ft;  el('p-fromto').hidden = false;
   const b = el('p-badge');
   b.className = 'badge '+f.type;
-  // Form UND Text unterscheiden die Stromart – nicht nur die Farbe
   b.textContent = f.type==='geld' ? '● Geldstrom' : '▬ ▬ Güter-/Leistungsstrom';
   b.hidden = false;
   el('p-text').textContent = f.text;
+
+  // Gegenstrom-Box: Tauschpaar erklären, oder Hinweis bei Strömen ohne Gegenleistung
+  const pb = el('p-pairbox');
+  if(pairDat){
+    const art = pairDat.type==='geld' ? 'Geldstrom' : 'Güter-/Leistungsstrom';
+    el('p-pairname').textContent = pairDat.title+' ('+art+'). ';
+    el('p-pairtext').textContent = f.pairText || '';
+    pb.style.borderLeftColor = pairDat.type==='geld' ? 'var(--geld)' : 'var(--real)';
+    pb.hidden = false;
+  } else if(f.soloText){
+    el('p-pairname').textContent = 'Kein direkter Gegenstrom. ';
+    el('p-pairtext').textContent = f.soloText;
+    pb.style.borderLeftColor = 'var(--muted)';
+    pb.hidden = false;
+  } else {
+    pb.hidden = true;
+  }
+
   el('p-question').textContent = f.q;  el('p-qbox').hidden = false;
   markVisited();
 }
@@ -594,6 +640,7 @@ function selectActor(key, byUser){
   el('p-title').textContent   = a.name;
   el('p-fromto').textContent  = a.role;  el('p-fromto').hidden = false;
   el('p-badge').hidden = true;
+  el('p-pairbox').hidden = true;
   el('p-text').textContent = texte[key];
   el('p-question').textContent = fragen[key];  el('p-qbox').hidden = false;
   markVisited();
@@ -605,6 +652,7 @@ function resetPanel(){
   el('p-title').textContent   = state.mode==='einfach' ? 'Wer gibt wem was?' : 'Staat, Banken und Ausland';
   el('p-fromto').hidden = true;
   el('p-badge').hidden  = true;
+  el('p-pairbox').hidden = true;
   el('p-text').textContent = state.mode==='einfach'
     ? 'Haushalte und Unternehmen tauschen Arbeit und Güter gegen Lohn und Konsumausgaben. Klicken Sie auf einen Akteur oder einen Pfeil.'
     : 'Schalten Sie Staat, Banken und Ausland zu und beobachten Sie, welche neuen Ströme entstehen.';
@@ -687,6 +735,7 @@ function panelPlain(title, text){
   el('p-title').textContent   = title;
   el('p-fromto').hidden = true;
   el('p-badge').hidden  = true;
+  el('p-pairbox').hidden = true;
   el('p-text').textContent = text;
   el('p-qbox').hidden = true;
 }
