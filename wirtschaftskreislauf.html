@@ -69,29 +69,32 @@
   .actor .icon{ fill:none; stroke:var(--aktiv); stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round; }
   .actor.hidden, .flow.hidden, .flowlabel.hidden{ display:none; }
 
-  /* ---------- Ströme ---------- */
+  /* ---------- Ströme als breite Bänder ---------- */
   .flow{ cursor:pointer; }
-  .flow .line{ fill:none; stroke-width:5; stroke-linecap:round; stroke-linejoin:round; transition:stroke-width .18s; }
-  .flow.geld .line{ stroke:var(--geld); }
-  .flow.real .line{ stroke:var(--real); stroke-dasharray:16 9; }
-  .flow .hit{ fill:none; stroke:transparent; stroke-width:28; }
-  .flow.active .line{ stroke-width:8; }
-  .flow.active.geld .line{ stroke:var(--geld-dk); }
-  .flow.active.real .line{ stroke:var(--real-dk); }
+  .flow .line{ fill:none; stroke-width:22; stroke-linecap:round; stroke-linejoin:round;
+               transition:stroke-width .18s; }
+  .flow.geld .line{ stroke:url(#gr-geld); }
+  .flow.real .line{ stroke:url(#gr-real); stroke-dasharray:34 16; }
+  .flow .hit{ fill:none; stroke:transparent; stroke-width:34; }
+  .flow.active .line{ stroke-width:28; }
+  .flow.active.geld .line{ stroke:url(#gr-geld-a); }
+  .flow.active.real .line{ stroke:url(#gr-real-a); }
   /* Gegenstrom: kräftiger als abgeblendet, schwächer als der aktive Pfeil */
-  .flow.pair .line{ stroke-width:6.5; }
-  .flow.pair.geld .line{ stroke:var(--geld-dk); }
-  .flow.pair.real .line{ stroke:var(--real-dk); }
+  .flow.pair .line{ stroke-width:25; }
+  .flow.pair.geld .line{ stroke:url(#gr-geld-a); }
+  .flow.pair.real .line{ stroke:url(#gr-real-a); }
   .flow.dim{ opacity:.15; }
 
-  .dot{ r:5.5; }
-  .flow.geld .dot{ fill:var(--geld-dk); }
-  .flow.real .dot{ fill:var(--real-dk); }
+  .dot{ r:5; fill:#fff; opacity:.85; }
+  .flow.real .dot{ opacity:0; }   /* gestrichelte Bänder zeigen den Fluss bereits */
 
-  .flowlabel{ font-size:15px; font-weight:700; fill:var(--ink); pointer-events:none;
-              paint-order:stroke; stroke:#fff; stroke-width:5px; stroke-linejoin:round; }
-  .flowlabel.active{ fill:var(--aktiv); }
-  .flowlabel.pair{ fill:var(--ink); font-weight:800; }
+  /* Labels sitzen weiss AUF dem Band */
+  .flowlabel{ font-size:15px; font-weight:800; fill:#fff; pointer-events:none;
+              paint-order:stroke; stroke:none; }
+  .flowlabel.outside{ fill:var(--ink); stroke:#fff; stroke-width:5px; stroke-linejoin:round; }
+  .flowlabel.active{ fill:#fff; }
+  .flowlabel.outside.active{ fill:var(--aktiv); }
+  .flowlabel.pair{ font-weight:800; }
   .flowlabel.dim{ opacity:.15; }
 
   /* Gegenstrom-Hinweis in der Infokarte */
@@ -199,14 +202,29 @@
     <div class="scene">
       <svg class="board" id="board" viewBox="0 0 1600 900" role="img" aria-label="Diagramm des Wirtschaftskreislaufs">
         <defs>
-          <marker id="ah-geld" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
-            <path d="M0,0 L10,5 L0,10 z" fill="#1E9E62"/></marker>
-          <marker id="ah-geld-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
-            <path d="M0,0 L10,5 L0,10 z" fill="#14764A"/></marker>
-          <marker id="ah-real" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
-            <path d="M0,0 L10,5 L0,10 z" fill="#C08A1E"/></marker>
-          <marker id="ah-real-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
-            <path d="M0,0 L10,5 L0,10 z" fill="#8F6412"/></marker>
+          <!-- Farbverläufe innerhalb der Farbfamilie: hell -> satt -->
+          <linearGradient id="gr-geld" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#3FBF80"/><stop offset="100%" stop-color="#12844F"/>
+          </linearGradient>
+          <linearGradient id="gr-real" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#E3AC44"/><stop offset="100%" stop-color="#A5720E"/>
+          </linearGradient>
+          <linearGradient id="gr-geld-a" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#2AA96A"/><stop offset="100%" stop-color="#0B6339"/>
+          </linearGradient>
+          <linearGradient id="gr-real-a" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#D19B2E"/><stop offset="100%" stop-color="#855A08"/>
+          </linearGradient>
+
+          <!-- Grosse, satte Pfeilspitzen passend zur Bandbreite -->
+          <marker id="ah-geld" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse">
+            <path d="M1,1 L11,6 L1,11 L3,6 Z" fill="#12844F"/></marker>
+          <marker id="ah-geld-a" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse">
+            <path d="M1,1 L11,6 L1,11 L3,6 Z" fill="#0B6339"/></marker>
+          <marker id="ah-real" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse">
+            <path d="M1,1 L11,6 L1,11 L3,6 Z" fill="#A5720E"/></marker>
+          <marker id="ah-real-a" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse">
+            <path d="M1,1 L11,6 L1,11 L3,6 Z" fill="#855A08"/></marker>
         </defs>
         <g id="flows"></g>
         <g id="labels"></g>
@@ -274,8 +292,8 @@
       ========================================================================== */
 const A = {
   staat: { x:800,  y:110, w:260, h:110, name:'Staat',       role:'Steuern · Leistungen', core:false },
-  hh:    { x:250,  y:450, w:280, h:130, name:'Haushalte',   role:'Arbeit · Konsum',      core:true  },
-  un:    { x:1050, y:450, w:280, h:130, name:'Unternehmen', role:'Produktion · Löhne',   core:true  },
+  hh:    { x:250,  y:450, w:280, h:150, name:'Haushalte',   role:'Arbeit · Konsum',      core:true  },
+  un:    { x:1050, y:450, w:280, h:150, name:'Unternehmen', role:'Produktion · Löhne',   core:true  },
   bank:  { x:650,  y:780, w:260, h:110, name:'Banken',      role:'Sparen · Kredite',     core:false },
   aus:   { x:1420, y:760, w:240, h:110, name:'Ausland',     role:'Import · Export',      core:false },
 };
@@ -291,25 +309,25 @@ const hh=E('hh'), un=E('un'), st=E('staat'), bk=E('bank'), au=E('aus');
       ========================================================================== */
 const F = [
   { id:'arbeit', pair:'lohn', pairText:'Die Haushalte geben Arbeit – die Unternehmen bezahlen dafür Lohn.', type:'real', core:true, from:'hh', to:'un',
-    d:`M${hh.r},398 L${un.l},398`, lx:720, ly:384, anchor:'middle',
+    d:`M${hh.r},390 L${un.l},390`, lx:720, ly:396, anchor:'middle', onband:true,
     title:'Arbeit', ft:'Haushalte → Unternehmen',
     text:'Die Haushalte stellen den Unternehmen ihre Arbeitskraft zur Verfügung. Sie ist die Grundlage jeder Produktion.',
     q:'Welche Arbeit leisten Sie oder Ihre Familie für ein Unternehmen?' },
 
   { id:'lohn', pair:'arbeit', pairText:'Die Haushalte geben Arbeit – die Unternehmen bezahlen dafür Lohn.', type:'geld', core:true, from:'un', to:'hh',
-    d:`M${un.l},434 L${hh.r},434`, lx:720, ly:425, anchor:'middle',
+    d:`M${un.l},430 L${hh.r},430`, lx:720, ly:436, anchor:'middle', onband:true,
     title:'Lohn', ft:'Unternehmen → Haushalte',
     text:'Für die geleistete Arbeit zahlen die Unternehmen Löhne. Dieses Einkommen finanziert den Konsum der Haushalte.',
     q:'Wofür geben Sie Ihren Lohn oder Ihr Lehrlingsgehalt aus?' },
 
   { id:'gueter', pair:'konsum', pairText:'Die Unternehmen liefern Güter – die Haushalte bezahlen dafür mit Konsumausgaben.', type:'real', core:true, from:'un', to:'hh',
-    d:`M${un.l},470 L${hh.r},470`, lx:720, ly:492, anchor:'middle',
+    d:`M${un.l},470 L${hh.r},470`, lx:720, ly:476, anchor:'middle', onband:true,
     title:'Güter & Dienstleistungen', ft:'Unternehmen → Haushalte',
     text:'Die Unternehmen liefern Produkte und Dienstleistungen an die Haushalte – der reale Gegenwert zum bezahlten Geld.',
     q:'Welche Dienstleistung haben Sie zuletzt genutzt?' },
 
   { id:'konsum', pair:'gueter', pairText:'Die Unternehmen liefern Güter – die Haushalte bezahlen dafür mit Konsumausgaben.', type:'geld', core:true, from:'hh', to:'un',
-    d:`M${hh.r},506 L${un.l},506`, lx:720, ly:532, anchor:'middle',
+    d:`M${hh.r},510 L${un.l},510`, lx:720, ly:516, anchor:'middle', onband:true,
     title:'Konsumausgaben', ft:'Haushalte → Unternehmen',
     text:'Haushalte bezahlen Unternehmen für Güter und Dienstleistungen. Dieses Geld ist der Umsatz der Unternehmen.',
     q:'Was haben Sie diese Woche gekauft, das zu diesem Strom passt?' },
@@ -506,7 +524,9 @@ F.forEach(f=>{
   flowsG.appendChild(g);
 
   const lab = document.createElementNS(NS,'text');
-  lab.setAttribute('class','flowlabel');
+  // Labels der langen Kernpfeile sitzen weiss AUF dem Band,
+  // die kurzen Spuren aussen daneben (dunkel mit weisser Kontur).
+  lab.setAttribute('class', 'flowlabel' + (f.onband ? '' : ' outside'));
   lab.setAttribute('x', f.lx); lab.setAttribute('y', f.ly);
   lab.setAttribute('text-anchor', f.anchor || 'middle');
   lab.textContent = f.title;
