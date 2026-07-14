@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Strom aus den Alpen – das Wasserkraftwerk im Schnittbild</title>
+<style>
+:root{
+  --hkv:#1F4E78; --hkv-tief:#163a5a; --ink:#152332; --muted:#5b6b7d;
+  --papier:#f3f6fa; --card:#ffffff; --line:#e2e8f1; --ocker:#9a6300;
+  --wasser:#39C2E0; --strom:#F2C14E; --gruen:#5BA829;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--papier);
+  color:var(--ink);line-height:1.55;border-top:4px solid var(--hkv);padding:26px clamp(14px,3vw,40px) 40px;}
+header{max-width:1240px;margin:0 auto;text-align:center;}
+h1{font-size:clamp(24px,3.4vw,34px);letter-spacing:-.01em;}
+h1 .accent{color:var(--hkv);}
+.subtitle{color:var(--muted);font-size:15px;margin-top:4px;}
+.lead{max-width:70ch;margin:10px auto 0;color:var(--muted);font-size:14.5px;}
+
+.modus{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:16px auto 4px;}
+.m-btn{font:inherit;font-weight:800;font-size:14.5px;min-height:44px;padding:10px 18px;
+  border:2px solid var(--line);border-radius:999px;background:var(--card);color:var(--muted);cursor:pointer;
+  transition:all .18s;}
+.m-btn:hover{border-color:var(--hkv);color:var(--hkv);}
+.m-btn[aria-pressed="true"]{background:var(--hkv);border-color:var(--hkv);color:#fff;}
+.m-btn:focus-visible{outline:3px solid rgba(31,78,120,.4);outline-offset:2px;}
+.m-text{max-width:76ch;margin:8px auto 0;text-align:center;font-size:13.5px;color:var(--muted);
+  background:var(--card);border:1px solid var(--line);border-left:3px solid var(--strom);
+  border-radius:0 9px 9px 0;padding:8px 14px;}
+
+.stage{max-width:1240px;margin:16px auto 0;display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:start;}
+@media(max-width:980px){.stage{grid-template-columns:1fr;}}
+.buehne{position:relative;border-radius:14px;overflow:hidden;box-shadow:0 10px 30px rgba(21,35,50,.18);}
+.buehne img{display:block;width:100%;height:auto;}
+.buehne svg{position:absolute;inset:0;width:100%;height:100%;}
+
+.spot circle.k{fill:rgba(21,35,50,.55);stroke:#fff;stroke-width:3;cursor:pointer;transition:fill .15s;}
+.spot:hover circle.k, .spot.an circle.k{fill:var(--hkv);}
+.spot text{fill:#fff;font-size:34px;font-weight:800;text-anchor:middle;dominant-baseline:central;pointer-events:none;}
+.leit{stroke:#fff;stroke-width:2.5;opacity:.85;}
+.tafel rect{fill:rgba(21,35,50,.72);rx:8;}
+.tafel text{fill:#fff;font-size:26px;font-weight:700;}
+
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;
+  box-shadow:0 4px 14px rgba(21,35,50,.06);}
+.p-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+.chip{font:inherit;font-size:12.5px;font-weight:700;min-height:36px;padding:6px 11px;border-radius:999px;
+  border:1.5px solid var(--line);background:#fff;color:var(--muted);cursor:pointer;}
+.chip:hover{border-color:var(--hkv);color:var(--hkv);}
+.chip[aria-pressed="true"]{background:var(--hkv);border-color:var(--hkv);color:#fff;}
+.p-nr{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ocker);}
+.p-tit{font-size:19px;font-weight:800;margin:2px 0 6px;color:var(--hkv);}
+.p-txt{font-size:14px;color:var(--ink);}
+.p-hint{margin-top:12px;font-size:12.5px;color:var(--muted);border-top:1px dashed var(--line);padding-top:10px;}
+
+.wissen{max-width:1240px;margin:22px auto 0;display:grid;grid-template-columns:1.2fr .8fr;gap:16px;}
+@media(max-width:980px){.wissen{grid-template-columns:1fr;}}
+.karte{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;
+  box-shadow:0 4px 14px rgba(21,35,50,.06);}
+.k-tit{font-size:17px;font-weight:800;color:var(--ink);margin-bottom:4px;}
+.k-sub{font-size:12.5px;color:var(--muted);margin-bottom:12px;}
+.mix{display:flex;height:46px;border-radius:10px;overflow:hidden;border:1px solid var(--line);}
+.mix div{display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px;white-space:nowrap;}
+.legende{display:flex;flex-wrap:wrap;gap:10px 16px;margin-top:10px;font-size:12.5px;color:var(--muted);}
+.legende span{display:inline-flex;align-items:center;gap:6px;}
+.legende i{width:12px;height:12px;border-radius:3px;display:inline-block;}
+.saison-btns{display:flex;gap:8px;margin-bottom:10px;}
+.s-btn{font:inherit;font-size:13px;font-weight:700;min-height:38px;padding:7px 14px;border-radius:999px;
+  border:1.5px solid var(--line);background:#fff;color:var(--muted);cursor:pointer;}
+.s-btn[aria-pressed="true"]{background:var(--ocker);border-color:var(--ocker);color:#fff;}
+.s-zahl{font-size:30px;font-weight:800;color:var(--hkv);}
+.s-txt{font-size:13.5px;color:var(--muted);margin-top:6px;}
+.quelle{max-width:1240px;margin:14px auto 0;font-size:12px;color:var(--muted);text-align:center;}
+footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid var(--line);
+  font-size:12px;color:var(--muted);text-align:center;}
+@media (prefers-reduced-motion:reduce){ .dreh{display:none;} }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Strom aus den Alpen – <span class="accent">das Wasserkraftwerk im Schnittbild</span></h1>
+  <p class="subtitle">Energiebereitstellung in der Schweiz · Interaktive Folie</p>
+  <p class="lead">Folgen Sie dem Weg des Wassers vom Stausee bis ins Stromnetz:
+    Klicken Sie die Stationen <b>1–8</b> im Bild oder im Seitenpanel an.</p>
+</header>
+
+<div class="modus" role="group" aria-label="Betriebsmodus">
+  <button class="m-btn" id="m-turb" aria-pressed="true">▶ Turbinieren – Strom erzeugen</button>
+  <button class="m-btn" id="m-pump" aria-pressed="false">◀ Pumpen – Energie speichern</button>
+</div>
+<p class="m-text" id="m-text"></p>
+
+<div class="stage">
+  <div class="buehne">
+    <img src="energie_wasserkraft.jpg" alt="Schnittbild eines alpinen Wasserkraftwerks: Stausee, Staumauer, Druckleitung im Fels, Maschinenhaus mit Turbine, Generator und Transformator, Freileitung">
+    <svg viewBox="0 0 2000 1127" aria-hidden="true">
+      <!-- Wasserweg: Turbinieren -->
+      <g id="g-turb">
+        <path id="pfad-druck" d="M 560 800 C 700 880, 850 940, 1000 1000 C 1120 1046, 1230 1064, 1340 1055 L 1405 1035" fill="none" stroke="none"/>
+        <path id="pfad-aus" d="M 1480 1085 C 1530 1112, 1575 1112, 1640 1088" fill="none" stroke="none"/>
+        <g id="tropfen-turb"></g>
+        <!-- Strompulse: Trafo -> Netz -->
+        <path id="pfad-strom" d="M 1610 205 C 1700 175, 1790 155, 1895 140" fill="none" stroke="none"/>
+        <g id="puls-turb"></g>
+      </g>
+      <!-- Wasserweg: Pumpen (umgekehrt) -->
+      <g id="g-pump" style="display:none">
+        <g id="tropfen-pump"></g>
+        <g id="puls-pump"></g>
+      </g>
+      <!-- Dreh-Hinweis Turbine -->
+      <circle class="dreh" cx="1432" cy="985" r="120" fill="none" stroke="#fff" stroke-width="5"
+              stroke-dasharray="40 620" stroke-linecap="round" opacity=".85">
+        <animateTransform attributeName="transform" type="rotate" from="0 1432 985" to="360 1432 985" dur="6s" repeatCount="indefinite"/>
+      </circle>
+      <!-- Stationen -->
+      <g id="spots"></g>
+    </svg>
+  </div>
+
+  <aside class="panel">
+    <div class="p-chips" id="p-chips" role="group" aria-label="Stationen"></div>
+    <div class="p-nr" id="p-nr">Station 1 von 8</div>
+    <div class="p-tit" id="p-tit"></div>
+    <p class="p-txt" id="p-txt"></p>
+    <p class="p-hint">Tipp am Beamer: mit den Tasten <b>1–8</b> durch die Stationen springen.</p>
+  </aside>
+</div>
+
+<div class="wissen">
+  <div class="karte">
+    <div class="k-tit">Der Schweizer Strommix 2024</div>
+    <div class="k-sub">Anteile an der Landeserzeugung von 81,1 TWh – einem Rekordjahr</div>
+    <div class="mix" id="mix" role="img" aria-label="Strommix Schweiz 2024"></div>
+    <div class="legende" id="legende"></div>
+  </div>
+  <div class="karte">
+    <div class="k-tit">Sommer oder Winter?</div>
+    <div class="k-sub">Stromaustausch mit dem Ausland 2024 (Saldo)</div>
+    <div class="saison-btns" role="group" aria-label="Saison wählen">
+      <button class="s-btn" id="s-so" aria-pressed="true">☀️ Sommerhalbjahr</button>
+      <button class="s-btn" id="s-wi" aria-pressed="false">❄️ Winterhalbjahr</button>
+    </div>
+    <div class="s-zahl" id="s-zahl"></div>
+    <p class="s-txt" id="s-txt"></p>
+  </div>
+</div>
+
+<p class="quelle">Bild: KI-generierte Schnittbild-Illustration · Zahlen: Bundesamt für Energie (BFE),
+  Elektrizitätsbilanz 2024 (definitiv) · Aufbereitet für den ABU-Unterricht.</p>
+<footer>© 2026 Samuel Mollet · HKV Aarau · realisiert mit Claude (Anthropic)</footer>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- Stationen (Bildkoordinaten im 2000x1127-Raster) ---------- */
+const STATIONEN = [
+  { n:1, x:300,  y:430,  tit:'Stausee',
+    txt:'Der Speichersee sammelt Schmelz- und Regenwasser aus den Bergen. Je höher das Wasser über der Turbine liegt, desto mehr Energie steckt darin – gespeicherte Lageenergie. Die Schweizer Speicherseen gelten darum als «Batterie der Schweiz».' },
+  { n:2, x:497,  y:790,  tit:'Einlauf mit Rechen',
+    txt:'Hier tritt das Wasser aus dem See in die Anlage ein. Der Rechen – das Gitter – hält Äste, Geröll und Treibgut zurück, damit die Turbine nicht beschädigt wird. Mit Schiebern lässt sich der Zufluss jederzeit stoppen.' },
+  { n:3, x:900,  y:955,  tit:'Druckleitung',
+    txt:'In der Druckleitung schiesst das Wasser durch den Fels talwärts. Die Fallhöhe erzeugt enormen Druck – in grossen Schweizer Anlagen mehrere hundert Meter Wassersäule. Aus Lageenergie wird Bewegungsenergie.' },
+  { n:4, x:1432, y:985,  tit:'Turbine',
+    txt:'Im spiralförmigen Gehäuse trifft das Wasser auf die Schaufeln der Turbine und versetzt sie in Rotation – hier wandelt sich Wasserkraft in Drehbewegung. Der weisse Kreis zeigt die Drehrichtung an.' },
+  { n:5, x:1432, y:585,  tit:'Generator',
+    txt:'Die Welle überträgt die Drehung nach oben in den Generator. In seinen Kupferspulen entsteht durch die Rotation im Magnetfeld elektrische Spannung – das Prinzip der Induktion. Aus Bewegung wird Strom.' },
+  { n:6, x:1520, y:225,  tit:'Transformator',
+    txt:'Der Transformator «spannt» den Strom hoch – auf bis zu 380 000 Volt. Nur so lässt er sich über weite Strecken transportieren, ohne dass unterwegs zu viel Energie als Wärme verloren geht.' },
+  { n:7, x:1885, y:165,  tit:'Übertragungsnetz',
+    txt:'Über die Freileitungen fliesst der Strom dorthin, wo er gebraucht wird – in Städte, Betriebe und Haushalte. Im Netz müssen Erzeugung und Verbrauch jede Sekunde im Gleichgewicht sein.' },
+  { n:8, x:1720, y:940,  tit:'Unterwasser',
+    txt:'Das genutzte Wasser fliesst in den Fluss zurück – es ist nicht verbraucht, nur seine Höhe ist «verbraucht». Beim Pumpbetrieb holt sich das Werk genau dieses Wasser wieder: zurück in den See.' },
+];
+
+const MODUS_TEXT = {
+  turb:'Wasser fliesst bergab durch die Turbine – das Kraftwerk erzeugt Strom genau dann, wenn die Schweiz ihn braucht, zum Beispiel am Morgen und am Abend.',
+  pump:'Ist gerade Strom im Überfluss da – etwa an einem sonnigen Sommermittag –, kehrt das Werk den Fluss um: Es pumpt mit günstigem Strom Wasser zurück in den See. Die Energie ist gespeichert, bis sie gebraucht wird. Darum heissen Pumpspeicherwerke die «Batterie der Schweiz».'
+};
+
+/* ---------- Strommix 2024 (BFE, definitiv) ---------- */
+const MIX = [
+  ['Speicher-Wasserkraft', 35.7, '#1F4E78'],
+  ['Lauf-Wasserkraft',     23.9, '#4FA3D1'],
+  ['Kernkraft',            28.4, '#8a5a00'],
+  ['Photovoltaik',          7.4, '#E0A22E'],
+  ['Thermische Kraftwerke', 4.4, '#9aa7b4'],
+  ['Windkraft',             0.2, '#5BA829'],
+];
+const SAISON = {
+  so:{ zahl:'+12,1 TWh Export', txt:'Im Sommerhalbjahr 2024 produzierte die Schweiz deutlich mehr Strom, als sie brauchte – Schmelzwasser füllt die Seen, die Sonne liefert Solarstrom. Der Überschuss wurde exportiert.' },
+  wi:{ zahl:'+2,3 TWh Export', txt:'Selbst im Winterhalbjahr exportierte die Schweiz 2024 per Saldo Strom – aber nur, weil es ein nasses Rekordjahr war. In trockenen Jahren muss sie im Winter Strom importieren: die «Winterstromlücke». Genau hier helfen die Speicherseen.' },
+};
+
+/* ---------- Bühne: Spots + Beschriftung ---------- */
+const svgNS = 'http://www.w3.org/2000/svg';
+const spots = document.getElementById('spots');
+STATIONEN.forEach((s,i)=>{
+  const g = document.createElementNS(svgNS,'g');
+  g.setAttribute('class','spot'); g.dataset.i = i;
+  const c = document.createElementNS(svgNS,'circle');
+  c.setAttribute('class','k'); c.setAttribute('cx',s.x); c.setAttribute('cy',s.y); c.setAttribute('r',30);
+  const t = document.createElementNS(svgNS,'text');
+  t.setAttribute('x',s.x); t.setAttribute('y',s.y+2); t.textContent = s.n;
+  g.appendChild(c); g.appendChild(t);
+  spots.appendChild(g);
+});
+spots.addEventListener('click', e=>{
+  const g = e.target.closest('.spot');
+  if(g) waehle(Number(g.dataset.i));
+});
+
+/* ---------- Panel ---------- */
+const chips = document.getElementById('p-chips');
+STATIONEN.forEach((s,i)=>{
+  const b = document.createElement('button');
+  b.className='chip'; b.type='button'; b.textContent = s.n+' · '+s.tit;
+  b.setAttribute('aria-pressed', i===0 ? 'true':'false');
+  b.addEventListener('click', ()=>waehle(i));
+  chips.appendChild(b);
+});
+let aktuell = 0;
+function waehle(i){
+  aktuell = i;
+  const s = STATIONEN[i];
+  document.getElementById('p-nr').textContent = 'Station '+s.n+' von '+STATIONEN.length;
+  document.getElementById('p-tit').textContent = s.tit;
+  document.getElementById('p-txt').textContent = s.txt;
+  chips.querySelectorAll('.chip').forEach((c,k)=> c.setAttribute('aria-pressed', String(k===i)));
+  document.querySelectorAll('.spot').forEach((g,k)=> g.classList.toggle('an', k===i));
+}
+document.addEventListener('keydown', e=>{
+  const n = Number(e.key);
+  if(n>=1 && n<=STATIONEN.length) waehle(n-1);
+});
+waehle(0);
+
+/* ---------- Animierte Partikel (SMIL) ---------- */
+function partikel(zielId, pfadId, anzahl, dauer, farbe, r, rueckwaerts){
+  const ziel = document.getElementById(zielId);
+  for(let i=0;i<anzahl;i++){
+    const c = document.createElementNS(svgNS,'circle');
+    c.setAttribute('r', r); c.setAttribute('fill', farbe); c.setAttribute('opacity','.9');
+    const m = document.createElementNS(svgNS,'animateMotion');
+    m.setAttribute('dur', dauer+'s'); m.setAttribute('repeatCount','indefinite');
+    m.setAttribute('begin', (-i*dauer/anzahl)+'s');
+    if(rueckwaerts){ m.setAttribute('keyPoints','1;0'); m.setAttribute('keyTimes','0;1'); m.setAttribute('calcMode','linear'); }
+    const mp = document.createElementNS(svgNS,'mpath');
+    mp.setAttributeNS('http://www.w3.org/1999/xlink','href','#'+pfadId);
+    m.appendChild(mp); c.appendChild(m); ziel.appendChild(c);
+  }
+}
+const reduziert = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(!reduziert){
+  /* Turbinieren: Wasser bergab, Auslauf in den Fluss, Strom ins Netz */
+  partikel('tropfen-turb','pfad-druck', 9, 5.5, 'var(--wasser)', 9, false);
+  partikel('tropfen-turb','pfad-aus',   4, 2.2, 'var(--wasser)', 7, false);
+  partikel('puls-turb',  'pfad-strom',  5, 2.4, 'var(--strom)',  6, false);
+  /* Pumpen: alles rückwärts – Strom fliesst INS Werk */
+  partikel('tropfen-pump','pfad-druck', 9, 5.5, 'var(--wasser)', 9, true);
+  partikel('tropfen-pump','pfad-aus',   4, 2.2, 'var(--wasser)', 7, true);
+  partikel('puls-pump',  'pfad-strom',  5, 2.4, 'var(--strom)',  6, true);
+}
+
+/* ---------- Modus-Schalter ---------- */
+const mTurb = document.getElementById('m-turb'), mPump = document.getElementById('m-pump');
+function setzeModus(pumpen){
+  document.getElementById('g-turb').style.display = pumpen ? 'none' : '';
+  document.getElementById('g-pump').style.display = pumpen ? '' : 'none';
+  mTurb.setAttribute('aria-pressed', String(!pumpen));
+  mPump.setAttribute('aria-pressed', String(pumpen));
+  document.getElementById('m-text').textContent = MODUS_TEXT[pumpen ? 'pump':'turb'];
+}
+mTurb.addEventListener('click', ()=>setzeModus(false));
+mPump.addEventListener('click', ()=>setzeModus(true));
+setzeModus(false);
+
+/* ---------- Strommix ---------- */
+const mix = document.getElementById('mix'), leg = document.getElementById('legende');
+MIX.forEach(([name,proz,farbe])=>{
+  const d = document.createElement('div');
+  d.style.width = proz+'%'; d.style.background = farbe;
+  if(proz >= 7) d.textContent = proz.toLocaleString('de-CH')+'%';
+  d.title = name+' '+proz+'%';
+  mix.appendChild(d);
+  const l = document.createElement('span');
+  l.innerHTML = '<i style="background:'+farbe+'"></i>'+name+' '+proz.toLocaleString('de-CH')+'%';
+  leg.appendChild(l);
+});
+
+/* ---------- Saison ---------- */
+const sSo = document.getElementById('s-so'), sWi = document.getElementById('s-wi');
+function setzeSaison(w){
+  const d = SAISON[w ? 'wi':'so'];
+  document.getElementById('s-zahl').textContent = d.zahl;
+  document.getElementById('s-txt').textContent = d.txt;
+  sSo.setAttribute('aria-pressed', String(!w));
+  sWi.setAttribute('aria-pressed', String(w));
+}
+sSo.addEventListener('click', ()=>setzeSaison(false));
+sWi.addEventListener('click', ()=>setzeSaison(true));
+setzeSaison(false);
+})();
+</script>
+</body>
+</html>
