@@ -191,6 +191,12 @@
     <div class="principles" id="principles"></div>
   </section>
 
+  <section class="mini" aria-label="Mini-Check">
+    <h2 class="mini-t">Mini-Check</h2>
+    <p class="mini-s">Vier kurze Fragen zur Selbstkontrolle – klicken Sie die passende Antwort an.</p>
+    <div id="mini-fragen"></div>
+  </section>
+
   <footer class="foot" id="foot"></footer>
 </div>
 
@@ -200,12 +206,22 @@
       name:"Schweiz", flag:"🇨🇭",
       src:"Quelle: Schweizerische Gesellschaft für Ernährung (SGE) / BLV",
       info:"",
+      plate:true,
+      plateTitle:"Der ausgewogene Teller – die Alltagshilfe",
+      plateHint:"Tippen Sie auf einen Tellerbereich. So sieht eine ausgewogene Hauptmahlzeit aus: 2/5 Gemüse & Früchte, 2/5 stärkehaltige Lebensmittel, 1/5 Proteine – dazu ein Glas Wasser.",
+      plateSegs:[["Gemüse & Früchte","#5BA829",0,144],["Stärke","#C99A3B",144,288],["Proteine","#C0574F",288,360]],
+      plateInfo:{
+        "Gemüse & Früchte":"2/5 des Tellers: Gemüse, Salat und Früchte – möglichst bunt und saisonal.",
+        "Stärke":"2/5 des Tellers: Vollkornprodukte, Kartoffeln, Reis, Teigwaren oder Hülsenfrüchte – sie sättigen.",
+        "Proteine":"1/5 des Tellers: abwechselnd Fleisch, Fisch, Eier, Tofu, Quark oder Käse."
+      },
       principles:[
         {icon:"🖐️",title:"Portionen mit der Hand messen",text:"1 Portion Gemüse oder Früchte entspricht etwa einer Handvoll – so schätzen Sie Mengen ganz ohne Waage."},
         {icon:"🥗",title:"«5 am Tag»",text:"Drei Portionen Gemüse und zwei Portionen Früchte pro Tag – in möglichst vielen verschiedenen Farben."},
         {icon:"💧",title:"Genug trinken",text:"1–2 Liter ungezuckert über den Tag verteilt: Hahnenwasser oder ungezuckerter Tee."},
         {icon:"🍽️",title:"Regelmässig & ausgewogen",text:"Über den Tag verteilte Mahlzeiten, abwechslungsreich zusammengestellt und in Ruhe gegessen."},
-        {icon:"🚶",title:"Bewegung & Genuss",text:"Tägliche Bewegung und bewusstes Geniessen gehören für die SGE zu einer gesunden Ernährung dazu."}
+        {icon:"🚶",title:"Bewegung & Genuss",text:"Tägliche Bewegung und bewusstes Geniessen gehören für die SGE zu einer gesunden Ernährung dazu."},
+        {icon:"🌱",title:"Nachhaltig geniessen",text:"Pflanzenbetont, saisonal und regional einkaufen und Food Waste vermeiden – Ernährung betrifft auch Umwelt, Tierwohl und Kosten."}
       ],
       levels:[
         { color:"#D6342C", icon:"🍫🥨🍷", title:"Süsses, Salziges & Alkohol", portion:"mit Mass",
@@ -393,6 +409,10 @@
       src:"Quelle: USDA «Food Guide Pyramid» (1992, historisch)",
       info:"Dies ist die historische «Food Guide Pyramid» (USDA, 1992). Seit 2011 nutzen die USA stattdessen «MyPlate» – einen aufgeteilten Teller statt einer Pyramide (siehe unten).",
       plate:true,
+      plateTitle:"«MyPlate» – der Teller (seit 2011)",
+      plateHint:"Tippen Sie auf einen Tellerbereich. Die Hälfte des Tellers besteht aus Gemüse & Früchten, die andere Hälfte aus Getreide & Eiweiss.",
+      plateSegs:[["Getreide","#E8841A",0,108],["Eiweiss","#7D4F9E",108,180],["Gemüse","#5BA829",180,306],["Früchte","#D6342C",306,360]],
+      plateDot:{label:"Milch",color:"#2E8BC0"},
       plateInfo:{
         "Gemüse":"Vegetables – die grösste Fläche. Zusammen mit den Früchten die Hälfte des Tellers.",
         "Früchte":"Fruits – verschiedene Sorten, frisch oder als Snack.",
@@ -586,14 +606,14 @@
       '<p class="hint">Tippen Sie auf eine Stufe der Pyramide. Dann erscheinen die einzelnen Lebensmittel – jedes ist anklickbar.</p>'+
       '<div class="legend"><p class="lt">So lesen Sie die Pyramide</p>'+
       '<div class="ramp"></div>'+
-      '<div class="ends"><span>Basis · reichlich</span><span>Spitze · sparsam</span></div></div>'+
+      '<div class="ends"><span>Unten · reichlich</span><span>Mitte · bewusst</span><span>Oben · sparsam</span></div></div>'+
       '<div class="info-banner'+(d.info?' show':'')+'">'+(d.info?'<b>Hinweis:</b> '+d.info:'')+'</div>';
   }
 
-  function plateSVG(){
+  function plateSVG(d){
     const cx=130,cy=130,R=118;
     const xy=(t,f)=>[cx+(f||1)*R*Math.sin(t*Math.PI/180), cy-(f||1)*R*Math.cos(t*Math.PI/180)];
-    const segs=[["Getreide","#E8841A",0,108],["Eiweiss","#7D4F9E",108,180],["Gemüse","#5BA829",180,306],["Früchte","#D6342C",306,360]];
+    const segs=d.plateSegs;
     let s="";
     segs.forEach(seg=>{
       const a0=seg[2],a1=seg[3];
@@ -603,9 +623,11 @@
         ' A'+R+','+R+' 0 '+large+' 1 '+p1[0].toFixed(1)+','+p1[1].toFixed(1)+' Z" fill="'+seg[1]+'"/>';
       s+='<text class="seg-l" data-g="'+seg[0]+'" x="'+pm[0].toFixed(1)+'" y="'+(pm[1]+4).toFixed(1)+'" text-anchor="middle">'+seg[0]+'</text>';
     });
-    const dx=cx+R*0.96, dy=cy-R*0.78;
-    s+='<circle class="seg" data-g="Milch" cx="'+dx.toFixed(1)+'" cy="'+dy.toFixed(1)+'" r="29" fill="#2E8BC0"/>';
-    s+='<text class="seg-l" data-g="Milch" x="'+dx.toFixed(1)+'" y="'+(dy+4).toFixed(1)+'" text-anchor="middle">Milch</text>';
+    if(d.plateDot){
+      const dx=cx+R*0.96, dy=cy-R*0.78;
+      s+='<circle class="seg" data-g="'+d.plateDot.label+'" cx="'+dx.toFixed(1)+'" cy="'+dy.toFixed(1)+'" r="29" fill="'+d.plateDot.color+'"/>';
+      s+='<text class="seg-l" data-g="'+d.plateDot.label+'" x="'+dx.toFixed(1)+'" y="'+(dy+4).toFixed(1)+'" text-anchor="middle">'+d.plateDot.label+'</text>';
+    }
     return '<svg viewBox="0 0 300 268" class="plate" xmlns="http://www.w3.org/2000/svg">'+
       '<circle cx="'+cx+'" cy="'+cy+'" r="'+(R+5)+'" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>'+s+'</svg>';
   }
@@ -616,10 +638,9 @@
     let html="";
     if(d.plate){
       html+='<div class="pcard plate-card"><div class="pcard-h"><span class="pic">🍽️</span>'+
-        '<span>«MyPlate» – der Teller (seit 2011)</span></div>'+
-        '<div class="plate-row">'+plateSVG()+
-        '<div class="plate-side"><p class="plate-desc" id="plate-desc">Tippen Sie auf einen Tellerbereich. '+
-        'Die Hälfte des Tellers besteht aus Gemüse &amp; Früchten, die andere Hälfte aus Getreide &amp; Eiweiss.</p></div></div></div>';
+        '<span>'+d.plateTitle+'</span></div>'+
+        '<div class="plate-row">'+plateSVG(d)+
+        '<div class="plate-side"><p class="plate-desc" id="plate-desc">'+d.plateHint+'</p></div></div></div>';
     }
     d.principles.forEach(p=>{
       html+='<div class="pcard"><div class="pcard-h"><span class="pic">'+p.icon+'</span><span>'+p.title+'</span></div>'+
@@ -638,9 +659,47 @@
 
   document.getElementById("principles").addEventListener("click",e=>{
     const seg=e.target.closest(".seg"); if(!seg) return;
-    const info=(DATA.us.plateInfo||{})[seg.dataset.g];
+    const info=(DATA[current].plateInfo||{})[seg.dataset.g];
     const desc=document.getElementById("plate-desc");
     if(desc&&info) desc.textContent=info;
+  });
+
+  /* ---------- Mini-Check ---------- */
+  const FRAGEN=[
+    { f:"Welche Gruppe steht in der Schweizer Lebensmittelpyramide zuunterst – also «reichlich»?",
+      o:["Ungezuckerte Getränke","Milchprodukte","Süsses & Salziges","Öle & Fette"], r:0,
+      e:"Die Basis bilden die ungezuckerten Getränke – 1–2 Liter über den Tag verteilt." },
+    { f:"Welche Stufe empfiehlt die SGE nur «mit Mass» – sie ist als einzige entbehrlich?",
+      o:["Getreideprodukte","Gemüse & Früchte","Süsses, Salziges & Alkohol","Proteinreiche Lebensmittel"], r:2,
+      e:"Die Spitze ist entbehrlich: kleine Mengen, bewusst geniessen – alle anderen Stufen liefern nötige Nährstoffe." },
+    { f:"Was macht Japan anders als alle anderen Länder im Vergleich?",
+      o:["Es empfiehlt gar kein Getreide","Es nutzt einen Kreisel – das Modell steht auf dem Kopf","Es kennt nur eine einzige Stufe","Es verbietet Süssigkeiten"], r:1,
+      e:"Der «Spinning Top» dreht die Logik um: Getreide steht zuoberst und am breitesten, die Spitze zeigt nach unten." },
+    { f:"Warum ist die Pyramide kein starrer Essplan?",
+      o:["Weil sie jedes Jahr komplett neu erfunden wird","Weil sie nur für Spitzensport gilt","Weil sie Orientierungswerte zeigt – Bedürfnisse unterscheiden sich je nach Person","Weil Mengenangaben grundsätzlich falsch sind"], r:2,
+      e:"Die Mengen sind Orientierungswerte für gesunde Erwachsene – Alter, Aktivität und Gesundheit verändern den Bedarf." }
+  ];
+  const mf=document.getElementById("mini-fragen");
+  FRAGEN.forEach((q,qi)=>{
+    const box=document.createElement("div"); box.className="q";
+    box.innerHTML='<p class="q-t">'+(qi+1)+'. '+q.f+'</p>';
+    q.o.forEach((opt,oi)=>{
+      const b=document.createElement("button");
+      b.type="button"; b.className="qopt"; b.textContent=opt;
+      b.addEventListener("click",()=>{
+        box.querySelectorAll(".qopt").forEach((x,xi)=>{
+          x.disabled=true;
+          if(xi===q.r) x.classList.add("right");
+        });
+        if(oi!==q.r) b.classList.add("wrong");
+        feed.textContent=(oi===q.r?"Richtig! ":"Nicht ganz. ")+q.e;
+        feed.classList.add("show");
+      });
+      box.appendChild(b);
+    });
+    const feed=document.createElement("p"); feed.className="qfeed";
+    box.appendChild(feed);
+    mf.appendChild(box);
   });
 
   document.getElementById("foot").textContent="Interaktive Lernfolie für den ABU-Unterricht · © 2026 Samuel Mollet · HKV Aarau · realisiert mit Claude (Anthropic)";
