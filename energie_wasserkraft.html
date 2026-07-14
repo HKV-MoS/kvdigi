@@ -407,22 +407,28 @@ function baueZone(z, basis){
     if(drin){ idx.push((py*w+px)*4); sw.push(sWert); }
   }
 
-  /* K Zyklus-Frames vorberechnen (die «Palette») */
-  const frames=[];
+  /* K Zyklus-Frames vorberechnen (die «Palette») – als transparente
+     Canvases: nur die Wasserpixel sind gesetzt, alles andere Alpha 0.
+     drawImage komponiert sie dann verlustfrei ÜBER das Bild, ohne
+     benachbarte Zonen zu überstempeln. */
+  const g=grund.data, frames=[];
   for(let k=0;k<z.K;k++){
     const f = bctx.createImageData(w,h);
-    f.data.set(grund.data);
     const d=f.data;
     for(let n=0;n<idx.length;n++){
       const u = ((sw[n]/z.lambda - k/z.K) % 1 + 1) % 1;   // -k: Bänder wandern MIT dem Wasser
       const v = .5 + .5*Math.cos(2*Math.PI*u);
       const faktor = 1 + z.hell*v*v*v - z.dunkel*(1-v)*(1-v)*(1-v);
       const i0=idx[n];
-      d[i0]   = Math.min(255, d[i0]  *faktor);
-      d[i0+1] = Math.min(255, d[i0+1]*faktor);
-      d[i0+2] = Math.min(255, d[i0+2]*faktor);
+      d[i0]   = Math.min(255, g[i0]  *faktor);
+      d[i0+1] = Math.min(255, g[i0+1]*faktor);
+      d[i0+2] = Math.min(255, g[i0+2]*faktor);
+      d[i0+3] = 255;
     }
-    frames.push(f);
+    const cv = document.createElement('canvas');
+    cv.width = w; cv.height = h;
+    cv.getContext('2d').putImageData(f, 0, 0);
+    frames.push(cv);
   }
   return { x0, y0, frames, tick:z.tick, umkehrbar:z.umkehrbar, phase:0, letztes:0, pixel:idx.length };
 }
@@ -435,59 +441,57 @@ const FELDER = [
   { name:'wolken', art:'wolken', K:20, tick:320, phase:0, letztes:0,
     rects:[[473,143,363,132],[913,132,187,88],[1749,66,242,121],[132,165,198,66],[1419,61,101,66]] },
   { name:'schaum', art:'schaum', amp:.26, tick:90, phase:0, letztes:0,
-    rects:[[1782,473,218,297],[1760,770,240,220],[1628,990,372,137],[1265,1078,385,49]] },
+    rects:[[1782,473,218,297],[1760,770,240,220],[1628,990,372,137]] },
 ];
 function baueFeld(f){
-  const xs=f.rects.map(r=>r[0]), ys=f.rects.map(r=>r[1]);
-  const x0=Math.min(...xs), y0=Math.min(...ys);
-  const x1=Math.max(...f.rects.map(r=>r[0]+r[2])), y1=Math.max(...f.rects.map(r=>r[1]+r[3]));
-  const w=Math.min(2000,x1)-x0, h=Math.min(1127,y1)-y0;
-  const grund = bctx.getImageData(x0,y0,w,h);
-  const arbeit = bctx.createImageData(w,h); arbeit.data.set(grund.data);
-  const inRect=(X,Y)=> f.rects.some(r=> X>=r[0]&&X<r[0]+r[2]&&Y>=r[1]&&Y<r[1]+r[3]);
-
-  const idx=[], phi=[], staerke=[], ziel=[];
-  const d=grund.data;
-  /* Himmelsfarbe pro Zeile (Mittel der Nicht-Wolken-Pixel) für «wolken» */
-  const himmelZeile={};
-  let himmelGlobal=[150,190,235];   // heller Rückfallwert
-  if(f.art==='wolken'){
-    let gr=0,gg=0,gb=0,gn=0;
-    for(let py=0;py<h;py++){
-      let r=0,g=0,b=0,n=0;
-      for(let px=0;px<w;px++){
-        const X=x0+px, Y=y0+py; if(!inRect(X,Y)) continue;
-        const i0=(py*w+px)*4, R=d[i0],G=d[i0+1],B=d[i0+2];
-        /* nur eindeutig blauer Himmel zählt – Fels und Wolke bleiben draussen */
-        if(B>150 && B>R+25 && B>=G+6){ r+=R;g+=G;b+=B;n++; gr+=R;gg+=G;gb+=B;gn++; }
-      }
-      if(n>8) himmelZeile[py]=[r/n,g/n,b/n];
-    }
-    if(gn>50) himmelGlobal=[gr/gn,gg/gn,gb/gn];
-  }
-  for(let py=0;py<h;py++) for(let px=0;px<w;px++){
-    const X=x0+px, Y=y0+py; if(!inRect(X,Y)) continue;
-    const i0=(py*w+px)*4, R=d[i0],G=d[i0+1],B=d[i0+2];
-    const hell=(R+G+B)/3;
+  /* Eine Einheit pro Rechteck: kleinere Blits, kein Überstempeln fremder Zonen */
+  return f.rects.map(r=>{
+    const x0=r[0], y0=r[1], w=Math.min(2000,r[0]+r[2])-x0, h=Math.min(1127,r[1]+r[3])-y0;
+    const grund = bctx.getImageData(x0,y0,w,h);
+    const arbeit = bctx.createImageData(w,h);           // nur Treffer, Rest Alpha 0
+    const cv = document.createElement('canvas'); cv.width=w; cv.height=h;
+    const cvx = cv.getContext('2d');
+    const d=grund.data;
+    const idx=[], phi=[], staerke=[], ziel=[];
+    let himmelGlobal=[150,190,235];
+    const himmelZeile={};
     if(f.art==='wolken'){
-      if(hell>180 && Math.min(R,G)>0.8*B && B>170){
-        const hz=himmelZeile[py] || himmelGlobal;
-        idx.push(i0); ziel.push(hz);
-        phi.push(X*0.0045 + 1.3*Math.sin(X*0.004+Y*0.012));
-        staerke.push(Math.min(1,(hell-180)/50));
+      let gr=0,gg=0,gb=0,gn=0;
+      for(let py=0;py<h;py++){
+        let rr=0,gg2=0,bb=0,n=0;
+        for(let px=0;px<w;px++){
+          const i0=(py*w+px)*4, R=d[i0],G=d[i0+1],B=d[i0+2];
+          if(B>150 && B>R+25 && B>=G+6){ rr+=R;gg2+=G;bb+=B;n++; gr+=R;gg+=G;gb+=B;gn++; }
+        }
+        if(n>8) himmelZeile[py]=[rr/n,gg2/n,bb/n];
       }
-    } else {
-      if(hell>185 && Math.max(R,G,B)-Math.min(R,G,B)<48){
-        idx.push(i0); ziel.push(null);
-        phi.push(((X*928371+Y*123457)%1000)/1000*6.2832 + Y*0.03);
-        staerke.push(1);
+      if(gn>50) himmelGlobal=[gr/gn,gg/gn,gb/gn];
+    }
+    for(let py=0;py<h;py++) for(let px=0;px<w;px++){
+      const X=x0+px, Y=y0+py;
+      const i0=(py*w+px)*4, R=d[i0],G=d[i0+1],B=d[i0+2];
+      const hell=(R+G+B)/3;
+      if(f.art==='wolken'){
+        if(hell>180 && Math.min(R,G)>0.8*B && B>170){
+          idx.push(i0); ziel.push(himmelZeile[py] || himmelGlobal);
+          phi.push(X*0.0045 + 1.3*Math.sin(X*0.004+Y*0.012));
+          staerke.push(Math.min(1,(hell-180)/50));
+        }
+      } else {
+        if(hell>185 && Math.max(R,G,B)-Math.min(R,G,B)<48){
+          idx.push(i0); ziel.push(null);
+          /* räumlich glatte Phase: Wellen wandern zusammenhängend flussabwärts */
+          phi.push(X*0.03 + Y*0.055 + 1.2*Math.sin(X*0.012 - Y*0.02));
+          staerke.push(1);
+        }
       }
     }
-  }
-  return { ...f, x0, y0, grund, arbeit, idx, phi, staerke, ziel, pixel:idx.length };
+    return { name:f.name, art:f.art, amp:f.amp, K:f.K, tick:f.tick,
+             phase:0, letztes:0, x0, y0, grund, arbeit, cv, cvx, idx, phi, staerke, ziel, pixel:idx.length };
+  });
 }
 function feldTick(f){
-  f.phase = (f.phase + 1) % (f.art==='wolken' ? f.K : 1000);
+  f.phase = (f.phase + 1) % (f.art==='wolken' ? f.K : 100000);
   const a=f.arbeit.data, g=f.grund.data;
   if(f.art==='wolken'){
     const p = f.phase / f.K;
@@ -497,18 +501,21 @@ function feldTick(f){
       a[i0]   = hz[0] + (g[i0]  -hz[0])*anteil;
       a[i0+1] = hz[1] + (g[i0+1]-hz[1])*anteil;
       a[i0+2] = hz[2] + (g[i0+2]-hz[2])*anteil;
+      a[i0+3] = 255;
     }
   } else {
     const t = f.phase * 0.55;
     for(let n=0;n<f.idx.length;n++){
       const i0=f.idx[n];
-      const fak = 1 + f.amp*Math.cos(t + f.phi[n]);
+      const fak = 1 + f.amp*Math.cos(t - f.phi[n]);   // t − φ: Wellen laufen flussabwärts
       a[i0]   = Math.min(255, g[i0]  *fak);
       a[i0+1] = Math.min(255, g[i0+1]*fak);
       a[i0+2] = Math.min(255, g[i0+2]*fak);
+      a[i0+3] = 255;
     }
   }
-  bctx.putImageData(f.arbeit, f.x0, f.y0);
+  f.cvx.putImageData(f.arbeit, 0, 0);
+  bctx.drawImage(f.cv, f.x0, f.y0);
 }
 
 let zyklen=[], felder=[];
@@ -521,7 +528,7 @@ function zyklusSchritt(zeit){
       z.letztes = zeit;
       const schritt = z.umkehrbar ? richtung : 1;
       z.phase = (z.phase + schritt + z.frames.length) % z.frames.length;
-      bctx.putImageData(z.frames[z.phase], z.x0, z.y0);
+      bctx.drawImage(z.frames[z.phase], z.x0, z.y0);
     }
   });
   requestAnimationFrame(zyklusSchritt);
@@ -548,7 +555,7 @@ function starteBild(){
     requestAnimationFrame(()=>{
       try{
         if(bauplan[i].z) zyklen.push(baueZone(bauplan[i].z, quellbild));
-        else felder.push(baueFeld(bauplan[i].f));
+        else baueFeld(bauplan[i].f).forEach(u=> felder.push(u));
       }catch(err){
         /* file://-Betrieb: Canvas-Pixelzugriff gesperrt -> würdevolles Standbild */
         ladeEl.textContent = 'Animation braucht einen Webserver – auf abu-tools.ch läuft sie.';
