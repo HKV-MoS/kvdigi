@@ -39,6 +39,76 @@
     font-size:13px;font-weight:700;color:var(--hkv);}
   .steps span{background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:6px 13px;}
   .zgruppe{text-align:center;color:var(--muted);font-size:12.5px;margin:10px 4px 0;}
+  /* ---- Wissens-Module (wiederhergestellt) ---- */
+  .vit-wrap{margin-top:30px;}
+  .vit-intro{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+  .vit-tag{font-size:12.5px;font-weight:700;padding:6px 12px;border-radius:999px;}
+  .vit-tag.fat{background:#FCEED9;color:#9A5B12;}
+  .vit-tag.water{background:#E1F0F8;color:#155E84;}
+  .vit-groups{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media (max-width:680px){.vit-groups{grid-template-columns:1fr;}}
+  .vit-group{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;
+    box-shadow:0 4px 14px rgba(20,40,70,.05);}
+  .vit-group h4{margin:0 0 4px;font-size:15px;color:var(--hkv);}
+  .vit-note{margin:0 0 12px;font-size:12.5px;color:var(--muted);}
+  .vit-pills{display:flex;flex-wrap:wrap;gap:7px;}
+  .vit-pill{border:none;border-radius:10px;padding:8px 13px;font:inherit;font-weight:800;font-size:14px;
+    cursor:pointer;color:#fff;transition:transform .1s,filter .15s,box-shadow .15s;}
+  .vit-pill:hover{transform:translateY(-2px);filter:brightness(1.07);}
+  .vit-pill.fat{background:#E8841A;}
+  .vit-pill.water{background:#2E8BC0;}
+  .vit-pill.active{box-shadow:0 0 0 3px rgba(0,0,0,.18);}
+  .vit-detail{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:18px;box-shadow:0 4px 14px rgba(20,40,70,.05);min-height:92px;}
+  .vit-detail h4{margin:0 0 2px;font-size:18px;font-weight:800;}
+  .vit-detail .vd-type{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin:0 0 12px;}
+  .vit-detail .vd-type.fat{color:#9A5B12;}
+  .vit-detail .vd-type.water{color:#155E84;}
+  .vit-detail .vd-row{margin:0 0 10px;}
+  .vit-detail .vd-row .k{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:700;margin:0 0 2px;}
+  .vit-detail .vd-row .v{font-size:14px;margin:0;}
+  .sec-intro{color:var(--muted);font-size:13.5px;margin:0 0 14px;max-width:700px;}
+  .srule-wrap{margin-top:30px;}
+  .srule-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:12px;}
+  .scard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px;
+    box-shadow:0 4px 14px rgba(20,40,70,.05);border-top:4px solid #E8841A;}
+  .scard .sbig{font-size:17px;font-weight:800;color:var(--hkv);margin:0 0 4px;}
+  .scard .ssub{font-size:13px;font-weight:600;color:var(--ink);margin:0 0 6px;}
+  .scard .sfolge{font-size:12.5px;color:var(--muted);margin:0;}
+  .scard .sfolge b{color:#9A5B12;}
+  .dis-wrap{margin-top:30px;}
+  .dis-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:8px;align-items:start;}
+  .dis-item{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;
+    box-shadow:0 4px 14px rgba(20,40,70,.05);}
+  .dis-head{display:flex;align-items:center;gap:10px;padding:13px 15px;cursor:pointer;
+    font-weight:700;font-size:14.5px;color:var(--ink);}
+  .dis-head .di{font-size:19px;}
+  .dis-head .dn{flex:1;}
+  .dis-head .dx{color:var(--hkv);font-weight:700;font-size:18px;transition:transform .2s;}
+  .dis-item.open .dx{transform:rotate(45deg);}
+  .dis-body{display:none;padding:0 15px 14px;}
+  .dis-item.open .dis-body{display:block;}
+  .dis-body .k{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:700;margin:10px 0 2px;}
+  .dis-body .v{font-size:13.5px;margin:0;}
+  .dis-note{background:#FFF8E6;border:1px solid #F4E2A8;border-radius:10px;padding:9px 11px;font-size:12.5px;margin-top:10px;}
+  .macro-wrap,.energy-wrap,.atp-wrap{margin-top:30px;}
+  .macro-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(225px,1fr));gap:14px;}
+  .mc-energy{font-weight:800;font-size:15px;margin:0 0 8px;}
+  .macro-note{margin:14px 0 0;font-size:13px;color:var(--ink);background:#FFF8E6;border:1px solid #F4E2A8;border-radius:10px;padding:10px 12px;}
+  .macro-note b{color:#9A5B12;}
+  .conv{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);
+    border-radius:14px;padding:18px;box-shadow:0 4px 14px rgba(20,40,70,.05);}
+  .conv-field{display:flex;align-items:center;gap:8px;}
+  .conv-field input{width:120px;font:inherit;font-size:20px;font-weight:700;color:var(--hkv);
+    border:1.5px solid var(--line);border-radius:10px;padding:8px 12px;text-align:right;}
+  .conv-field input:focus{outline:none;border-color:var(--hkv);}
+  .conv-u{font-weight:700;font-size:15px;color:var(--muted);}
+  .conv-eq{font-size:22px;font-weight:800;color:var(--muted);}
+  .conv-note{font-size:13px;color:var(--muted);margin:10px 0 0;}
+  .conv-note b{color:var(--hkv);}
+  .atp-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;
+    box-shadow:0 4px 14px rgba(20,40,70,.05);margin-bottom:14px;}
+  .atp-card svg{width:100%;height:auto;display:block;}
   /* Mini-Check */
   .mini{max-width:760px;margin:30px auto 0;}
   .mini-t{font-size:20px;font-weight:800;margin:0 0 4px;color:var(--ink);}
@@ -57,7 +127,7 @@
   .qfeed.show{display:block;}
   .switch-note b{color:var(--hkv);}
 
-  .stage{display:grid;grid-template-columns:1.2fr .8fr;gap:22px;margin-top:18px;align-items:start;}
+  .stage{display:grid;grid-template-columns:1.4fr .6fr;gap:22px;margin-top:18px;align-items:start;}
   @media (max-width:780px){.stage{grid-template-columns:1fr;}}
 
   .pyramid-card{background:var(--card);border:1px solid var(--line);border-radius:18px;
@@ -67,8 +137,9 @@
   .pyramid-head .country{font-weight:800;font-size:18px;color:var(--hkv);}
   .pyramid-head .src{font-size:11.5px;color:var(--muted);}
 
-  .pyramid{width:100%;max-width:640px;margin:0 auto;height:clamp(380px,52vh,480px);
+  .pyramid{width:100%;margin:0 auto;height:clamp(420px,58vh,560px);
     display:flex;flex-direction:column;}
+  .cap{flex:0 0 34px;}
   .band{flex:1;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;
     animation:bandIn .42s ease forwards;
     transition:filter .2s ease,transform .2s ease,background .45s ease,color .45s ease;position:relative;}
@@ -189,6 +260,146 @@
   <section class="principles-wrap">
     <h3 class="sec-title" id="sec-title">Ernährungsprinzipien</h3>
     <div class="principles" id="principles"></div>
+  </section>
+
+  <section class="macro-wrap">
+    <h3 class="sec-title">Die drei Makronährstoffe – woraus Nahrung besteht</h3>
+    <p class="sec-intro">Sie liefern die Energie. Wie viel Energie steckt, zeigt der Wert pro Gramm.</p>
+    <div class="macro-grid">
+      <div class="mcard" style="border-top-color:#9CC02B;">
+        <div class="mc-h"><span class="mc-i">🍞</span><span>Kohlenhydrate</span></div>
+        <div class="mc-energy" style="color:#5a7d12;">4 kcal/g · 17 kJ/g</div>
+        <p class="mc-fn"><b>Funktion:</b> wichtigster, schnell verfügbarer Energielieferant – Glukose für Gehirn und Muskeln.</p>
+        <p class="mc-src"><b>Vorkommen:</b> Brot, Teigwaren, Reis, Kartoffeln, Früchte.</p>
+      </div>
+      <div class="mcard" style="border-top-color:#E8841A;">
+        <div class="mc-h"><span class="mc-i">🫒</span><span>Fett</span></div>
+        <div class="mc-energy" style="color:#9A5B12;">9 kcal/g · 37 kJ/g</div>
+        <p class="mc-fn"><b>Funktion:</b> energiereichster Nährstoff, Energiespeicher, Zellbaustein, Träger der fettlöslichen Vitamine (ADEK).</p>
+        <p class="mc-src"><b>Vorkommen:</b> Öle, Butter, Nüsse, fetter Fisch.</p>
+      </div>
+      <div class="mcard" style="border-top-color:#F2B705;">
+        <div class="mc-h"><span class="mc-i">🥩</span><span>Protein (Eiweiss)</span></div>
+        <div class="mc-energy" style="color:#9a7b00;">4 kcal/g · 17 kJ/g</div>
+        <p class="mc-fn"><b>Funktion:</b> Baustoff für Muskeln, Enzyme, Hormone und Immunsystem – Aufbau und Reparatur.</p>
+        <p class="mc-src"><b>Vorkommen:</b> Fleisch, Fisch, Eier, Milchprodukte, Hülsenfrüchte, Tofu.</p>
+      </div>
+    </div>
+    <p class="macro-note">Zum Vergleich: <b>Alkohol</b> liefert 7 kcal/g (29 kJ/g) – fast so viel wie Fett, aber ohne Nährwert.</p>
+  </section>
+
+  <section class="macro-wrap">
+    <h3 class="sec-title">Genauer hinschauen: Fettsäuren &amp; Zusatzstoffe</h3>
+    <p class="sec-intro">Nicht jedes Fett ist gleich – und in stark verarbeiteten Lebensmitteln stecken oft ungünstige Fette und Zusatzstoffe.</p>
+    <div class="macro-grid">
+      <div class="mcard" style="border-top-color:#E8841A;">
+        <div class="mc-h"><span class="mc-i">🧈</span><span>Gesättigte Fettsäuren</span></div>
+        <p class="mc-fn">Vor allem in tierischen Fetten (Butter, Fleisch, Wurst, Käse) sowie in Kokos- und Palmöl. Bei Zimmertemperatur meist fest. Im Übermass ungünstig für die Blutfette – <b>massvoll</b> konsumieren.</p>
+      </div>
+      <div class="mcard" style="border-top-color:#5BA829;">
+        <div class="mc-h"><span class="mc-i">🫒</span><span>Ungesättigte Fettsäuren</span></div>
+        <p class="mc-fn">In Pflanzenölen (Raps, Oliven), Nüssen, Avocado und fettem Fisch. Meist flüssig; dazu gehören die Omega-3- und Omega-6-Fettsäuren. <b>Günstig</b> – sie sollten den Hauptteil der Fette ausmachen.</p>
+      </div>
+      <div class="mcard" style="border-top-color:#D6342C;">
+        <div class="mc-h"><span class="mc-i">🍟</span><span>Transfette</span></div>
+        <p class="mc-fn">Entstehen beim industriellen Härten von Ölen und stecken in <b>stark verarbeiteten Lebensmitteln</b> (Frittiertes, Backwaren, Fast Food). Sie erhöhen das «schlechte» und senken das «gute» Cholesterin – so weit wie möglich <b>meiden</b>.</p>
+      </div>
+      <div class="mcard" style="border-top-color:#7D4F9E;">
+        <div class="mc-h"><span class="mc-i">🧂</span><span>Glutamat (E 621)</span></div>
+        <p class="mc-fn">Ein Geschmacksverstärker, der den herzhaften Umami-Geschmack betont – oft in Fertiggerichten, Chips und Saucen, von Natur aus auch in Tomaten, Käse und Sojasauce. In üblichen Mengen gilt es als unbedenklich, kann aber dazu verleiten, mehr stark verarbeitete Produkte zu essen.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="macro-wrap">
+    <h3 class="sec-title">Cholesterin: LDL &amp; HDL</h3>
+    <p class="sec-intro">Cholesterin ist ein lebenswichtiger Fettstoff (für Zellen, Hormone und Vitamin D). Im Blut transportieren es zwei «Vehikel» – auf ihr Verhältnis kommt es an.</p>
+    <div class="macro-grid">
+      <div class="mcard" style="border-top-color:#D6342C;">
+        <div class="mc-h"><span class="mc-i">🔴</span><span>LDL – «das schlechte»</span></div>
+        <p class="mc-fn"><b>Low Density Lipoprotein.</b> Bringt Cholesterin von der Leber zu den Zellen. Im Übermass lagert es sich in den Gefässwänden ab → Arteriosklerose, Risiko für Herzinfarkt und Schlaganfall. <b>Gesättigte Fette und Transfette erhöhen das LDL.</b></p>
+        <p class="mc-src">Merkhilfe: <b>L wie liederlich.</b></p>
+      </div>
+      <div class="mcard" style="border-top-color:#5BA829;">
+        <div class="mc-h"><span class="mc-i">🟢</span><span>HDL – «das gute»</span></div>
+        <p class="mc-fn"><b>High Density Lipoprotein.</b> Transportiert überschüssiges Cholesterin aus den Gefässen zurück zur Leber, wo es abgebaut wird – wirkt schützend. <b>Ungesättigte Fette, Bewegung und Ballaststoffe</b> wirken sich günstig aus.</p>
+        <p class="mc-src">Merkhilfe: <b>H wie hilfreich.</b></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="energy-wrap">
+    <h3 class="sec-title">Energie messen: Kalorie &amp; Joule</h3>
+    <p class="sec-intro">Energie wird in Kilokalorien (kcal) oder Kilojoule (kJ) angegeben. Joule ist die offizielle SI-Einheit – auf Verpackungen stehen meist beide.</p>
+    <div class="conv">
+      <div class="conv-field"><input id="kcal" type="number" min="0" value="100"><span class="conv-u">kcal</span></div>
+      <span class="conv-eq">=</span>
+      <div class="conv-field"><input id="kj" type="number" min="0" value="418"><span class="conv-u">kJ</span></div>
+    </div>
+    <p class="conv-note">Umrechnung: <b>1 kcal = 4,184 kJ</b>. Tippen Sie einen Wert ein – der andere rechnet sich automatisch um.</p>
+  </section>
+
+  <section class="atp-wrap">
+    <h3 class="sec-title">Energie in der Zelle: ATP, ADP &amp; Kreatin</h3>
+    <p class="sec-intro">Die Energie aus der Nahrung wird in der Zelle als ATP nutzbar gemacht – die «Energiewährung» des Körpers.</p>
+    <div class="atp-card">
+      <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="24" y="60" width="155" height="80" rx="14" fill="#1F4E78"/>
+        <text x="101" y="98" text-anchor="middle" font-size="23" font-weight="800" fill="#fff">ATP</text>
+        <text x="101" y="120" text-anchor="middle" font-size="11" fill="#cfe0ef">energiereich</text>
+        <rect x="421" y="60" width="155" height="80" rx="14" fill="#64748b"/>
+        <text x="498" y="98" text-anchor="middle" font-size="21" font-weight="800" fill="#fff">ADP + P</text>
+        <text x="498" y="120" text-anchor="middle" font-size="11" fill="#e8eef5">energieärmer</text>
+        <line x1="186" y1="86" x2="414" y2="86" stroke="#2E8BC0" stroke-width="3"/>
+        <polygon points="414,86 403,80 403,92" fill="#2E8BC0"/>
+        <text x="300" y="74" text-anchor="middle" font-size="13" font-weight="700" fill="#155E84">− P  →  Energie frei</text>
+        <line x1="414" y1="114" x2="186" y2="114" stroke="#E8841A" stroke-width="3"/>
+        <polygon points="186,114 197,108 197,120" fill="#E8841A"/>
+        <text x="300" y="134" text-anchor="middle" font-size="12.5" font-weight="700" fill="#9A5B12">+ P  ←  Energie (Nahrung · Kreatinphosphat)</text>
+        <text x="101" y="166" text-anchor="middle" font-size="11" fill="#64748b">treibt Muskelarbeit &amp; Stoffwechsel an</text>
+      </svg>
+    </div>
+    <div class="macro-grid">
+      <div class="mcard" style="border-top-color:#1F4E78;"><div class="mc-h"><span class="mc-i">⚡</span><span>ATP</span></div>
+        <p class="mc-fn">Adenosin<b>tri</b>phosphat – die Energiewährung der Zelle. Wird eine Phosphatgruppe abgespalten, wird Energie frei (für Muskelarbeit und Stoffwechsel). Aus ATP wird dabei ADP.</p></div>
+      <div class="mcard" style="border-top-color:#64748b;"><div class="mc-h"><span class="mc-i">🔋</span><span>ADP</span></div>
+        <p class="mc-fn">Adenosin<b>di</b>phosphat – das «entladene» ATP mit einer Phosphatgruppe weniger. Mit Energie aus der Nahrung wird es wieder zu ATP aufgeladen.</p></div>
+      <div class="mcard" style="border-top-color:#E8841A;"><div class="mc-h"><span class="mc-i">💪</span><span>Kreatinphosphat</span></div>
+        <p class="mc-fn">Schneller Energiespeicher im Muskel: Bei kurzer, intensiver Belastung (Sprint, Maximalkraft) lädt es ADP sofort wieder zu ATP auf – für die ersten Sekunden. Steckt in Fleisch und Fisch, im Kraftsport als Supplement verbreitet.</p></div>
+    </div>
+  </section>
+
+  <section class="vit-wrap">
+    <h3 class="sec-title">Vitamine – fettlöslich &amp; wasserlöslich</h3>
+    <div class="vit-intro">
+      <span class="vit-tag fat">🧈 Fettlöslich: A · D · E · K</span>
+      <span class="vit-tag water">💧 Wasserlöslich: B-Gruppe &amp; C</span>
+    </div>
+    <div class="vit-groups">
+      <div class="vit-group">
+        <h4>Fettlöslich – Merkhilfe «ADEK»</h4>
+        <p class="vit-note">Brauchen Nahrungsfett zur Aufnahme und werden im Körper gespeichert – eine Überdosierung ist möglich.</p>
+        <div class="vit-pills" id="vit-fat"></div>
+      </div>
+      <div class="vit-group">
+        <h4>Wasserlöslich – B-Gruppe &amp; C</h4>
+        <p class="vit-note">Werden kaum gespeichert und müssen täglich zugeführt werden. Empfindlich gegenüber Hitze und Wasser (Kochverluste).</p>
+        <div class="vit-pills" id="vit-water"></div>
+      </div>
+    </div>
+    <div class="vit-detail" id="vit-detail"></div>
+  </section>
+
+  <section class="srule-wrap">
+    <h3 class="sec-title">Die 5 S – häufige Ernährungsfehler</h3>
+    <p class="sec-intro">Es gibt keine streng genormte Liste. Gängig ist der Dreiklang «zu süss, zu salzig, zu fett» (Zucker, Salz, Fett); als Merkregel kommen Verhaltens-S wie «zu schnell» und «zu spät» dazu.</p>
+    <div class="srule-grid" id="srule-grid"></div>
+  </section>
+
+  <section class="dis-wrap">
+    <h3 class="sec-title">Top 12 ernährungsbedingte Krankheiten</h3>
+    <p class="sec-intro">Tippen Sie auf eine Krankheit, um Ursache und Symptome zu sehen. Diese Übersicht dient dem Unterricht und ersetzt keine ärztliche Beratung.</p>
+    <div class="dis-list" id="dis-list"></div>
   </section>
 
   <section class="mini" aria-label="Mini-Check">
@@ -522,12 +733,19 @@
     const pyr=document.getElementById("pyramid");
     pyr.classList.remove("has-active");
     pyr.innerHTML="";
+    const hw=y=>13+37*y;  // breite Basis (100%), Spitzkante 26% – Text bleibt lesbar
     if(inv){
       const run=document.createElement("div");
       run.className="top-runner"; run.textContent="🏃"; run.setAttribute("aria-hidden","true");
       pyr.appendChild(run);
+    } else {
+      const cap=document.createElement("div");
+      cap.className="cap"; cap.setAttribute("aria-hidden","true");
+      cap.style.background=d.levels[0].color;
+      cap.style.clipPath="polygon("+(50-hw(0))+"% 100%, "+(50+hw(0))+"% 100%, 50% 0)";
+      cap.style.webkitClipPath=cap.style.clipPath;
+      pyr.appendChild(cap);
     }
-    const hw=y=>9+41*y;   // breite Basis (100%), abgestumpfte Spitze (~18%)
     d.levels.forEach((lv,k)=>{
       const topHalf=inv?hw(1-k/N):hw(k/N), botHalf=inv?hw(1-(k+1)/N):hw((k+1)/N);
       const clip="polygon("+(50-topHalf)+"% 0, "+(50+topHalf)+"% 0, "+(50+botHalf)+"% 100%, "+(50-botHalf)+"% 100%)";
@@ -539,7 +757,8 @@
       band.dataset.i=k;
       band.setAttribute("role","button"); band.setAttribute("tabindex","0");
       band.setAttribute("aria-label",lv.title+", "+lv.portion);
-      band.innerHTML='<div class="band-inner"><span class="band-icon">'+lv.icon+'</span>'+
+      const innerMax=Math.max(24, 2*Math.min(topHalf,botHalf)-6);
+      band.innerHTML='<div class="band-inner" style="max-width:'+innerMax+'%"><span class="band-icon">'+lv.icon+'</span>'+
         '<span class="band-text"><span class="band-title">'+lv.title+'</span>'+
         '<span class="band-portion">'+lv.portion+'</span></span></div>';
       band.addEventListener("click",()=>selectTier(k));
@@ -547,6 +766,12 @@
       pyr.appendChild(band);
     });
     if(inv){
+      const cap=document.createElement("div");
+      cap.className="cap"; cap.setAttribute("aria-hidden","true");
+      cap.style.background=d.levels[N-1].color;
+      cap.style.clipPath="polygon("+(50-hw(0))+"% 0, "+(50+hw(0))+"% 0, 50% 100%)";
+      cap.style.webkitClipPath=cap.style.clipPath;
+      pyr.appendChild(cap);
       const axis=document.createElement("div");
       axis.className="top-axis"; axis.setAttribute("aria-hidden","true");
       pyr.appendChild(axis);
@@ -663,6 +888,109 @@
     const desc=document.getElementById("plate-desc");
     if(desc&&info) desc.textContent=info;
   });
+
+  /* ---------- Wissens-Module (wiederhergestellt) ---------- */
+  const VITAMINS = {
+    fat:[
+      {k:"A", name:"Vitamin A (Retinol)", fn:"Sehen (vor allem Nachtsehen), Haut und Schleimhäute, Immunsystem.", src:"Leber, Eier, Milchprodukte; als Beta-Carotin in Karotten, Spinat und rot-orangem Gemüse."},
+      {k:"D", name:"Vitamin D (Calciferol)", fn:"Knochenaufbau (lagert Calcium ein), Immunsystem. Wird mit Sonnenlicht in der Haut selbst gebildet.", src:"Fetter Fisch (Lachs, Hering), Eigelb – Hauptquelle ist aber das Sonnenlicht."},
+      {k:"E", name:"Vitamin E (Tocopherol)", fn:"Zellschutz als Antioxidans – schützt die Zellmembranen.", src:"Pflanzenöle, Nüsse, Samen, Vollkornprodukte."},
+      {k:"K", name:"Vitamin K (Phyllochinon)", fn:"Blutgerinnung und Knochenstoffwechsel.", src:"Grünes Blattgemüse wie Spinat, Brokkoli und Kohl."}
+    ],
+    water:[
+      {k:"B1", name:"Vitamin B1 (Thiamin)", fn:"Energiestoffwechsel der Kohlenhydrate, Nervenfunktion.", src:"Vollkornprodukte, Schweinefleisch, Hülsenfrüchte."},
+      {k:"B2", name:"Vitamin B2 (Riboflavin)", fn:"Energiestoffwechsel, Haut und Schleimhäute.", src:"Milchprodukte, Eier, Vollkorn."},
+      {k:"B3", name:"Vitamin B3 (Niacin)", fn:"Energiestoffwechsel, Haut und Nerven.", src:"Fleisch, Fisch, Vollkorn, Erdnüsse."},
+      {k:"B5", name:"Vitamin B5 (Pantothensäure)", fn:"Energiestoffwechsel – an sehr vielen Reaktionen beteiligt.", src:"Weit verbreitet: Fleisch, Vollkorn, Gemüse."},
+      {k:"B6", name:"Vitamin B6 (Pyridoxin)", fn:"Eiweissstoffwechsel, Nerven, Blutbildung.", src:"Fleisch, Fisch, Vollkorn, Bananen, Kartoffeln."},
+      {k:"B7", name:"Vitamin B7 (Biotin)", fn:"Haut, Haare und Stoffwechsel.", src:"Eigelb, Nüsse, Haferflocken, Leber."},
+      {k:"B9", name:"Vitamin B9 (Folsäure)", fn:"Zellteilung und Blutbildung – besonders wichtig in der Schwangerschaft.", src:"Grünes Blattgemüse, Hülsenfrüchte, Vollkorn."},
+      {k:"B12", name:"Vitamin B12 (Cobalamin)", fn:"Blutbildung und Nervensystem.", src:"Fast nur in tierischen Lebensmitteln: Fleisch, Fisch, Eier, Milch. Für Veganerinnen und Veganer kritisch – ein Supplement ist nötig."},
+      {k:"C", name:"Vitamin C (Ascorbinsäure)", fn:"Immunsystem, Zellschutz (Antioxidans), Eisenaufnahme, Bindegewebe.", src:"Zitrusfrüchte, Paprika, Beeren, Kartoffeln, frisches Gemüse."}
+    ]
+  };
+
+  function vitDetail(group, v){
+    document.getElementById("vit-detail").innerHTML=
+      '<h4>'+v.name+'</h4>'+
+      '<p class="vd-type '+group+'">'+(group==="fat"?"fettlöslich":"wasserlöslich")+'</p>'+
+      '<div class="vd-row"><p class="k">Funktion</p><p class="v">'+v.fn+'</p></div>'+
+      '<div class="vd-row"><p class="k">Vorkommen</p><p class="v">'+v.src+'</p></div>';
+    document.querySelectorAll(".vit-pill").forEach(p=>
+      p.classList.toggle("active", p.dataset.k===v.k && p.dataset.g===group));
+  }
+
+  function buildVitamins(){
+    const mk=(group,box)=>{ box.innerHTML=VITAMINS[group].map(v=>
+      '<button class="vit-pill '+group+'" data-g="'+group+'" data-k="'+v.k+'">'+v.k+'</button>').join(""); };
+    mk("fat",document.getElementById("vit-fat"));
+    mk("water",document.getElementById("vit-water"));
+    document.querySelector(".vit-wrap").addEventListener("click",e=>{
+      const p=e.target.closest(".vit-pill"); if(!p) return;
+      const g=p.dataset.g;
+      vitDetail(g, VITAMINS[g].find(x=>x.k===p.dataset.k));
+    });
+    document.getElementById("vit-detail").innerHTML=
+      '<p class="v" style="color:var(--muted);margin:0;">Tippen Sie auf ein Vitamin, um Funktion und Vorkommen zu sehen. '+
+      '<b>Merkhilfe:</b> «ADEK» sind die vier fettlöslichen Vitamine – alle anderen sind wasserlöslich.</p>';
+  }
+
+  const SRULE=[
+    {s:"zu süss", what:"Zu viel Zucker – Süssgetränke, Süssigkeiten, Gebäck.", folge:"Karies, Übergewicht, Diabetes Typ 2."},
+    {s:"zu salzig", what:"Zu viel Salz – vor allem aus Fertigprodukten und Snacks.", folge:"Bluthochdruck."},
+    {s:"zu schwer", what:"Zu fett und zu üppig – Frittiertes, grosse Portionen.", folge:"Übergewicht, erhöhtes Cholesterin."},
+    {s:"zu schnell", what:"Hastig gegessen und schlecht gekaut.", folge:"Die Sättigung kommt zu spät – man isst zu viel."},
+    {s:"zu spät", what:"Grosse, schwere Mahlzeiten spät am Abend.", folge:"Belastet Verdauung und Schlaf."}
+  ];
+
+  const DISEASES=[
+    {icon:"🧍",name:"Adipositas (Übergewicht)", ursache:"Dauerhaft mehr Energie aufgenommen als verbraucht – zu süss, zu fett, zu wenig Bewegung.", symptome:"Stark erhöhtes Körpergewicht, Kurzatmigkeit bei Anstrengung, Gelenkbeschwerden. Erhöht das Risiko für viele Folgekrankheiten."},
+    {icon:"🩸",name:"Diabetes mellitus Typ 2", ursache:"Häufig Folge von Übergewicht – der Körper spricht schlechter auf Insulin an.", symptome:"Starker Durst, häufiges Wasserlassen, Müdigkeit, schlecht heilende Wunden."},
+    {icon:"❤️",name:"Herz-Kreislauf-Erkrankungen", ursache:"Arteriosklerose durch zu viel gesättigtes Fett, Übergewicht und Bluthochdruck.", symptome:"Brustenge, Atemnot, Leistungsabfall. Risiko für Herzinfarkt und Schlaganfall."},
+    {icon:"🫀",name:"Bluthochdruck (Hypertonie)", ursache:"Unter anderem zu viel Salz, Übergewicht und Alkohol.", symptome:"Oft keine Beschwerden – manchmal Kopfschmerzen, Schwindel oder Nasenbluten."},
+    {icon:"🦶",name:"Gicht", ursache:"Zu viele Purine (viel Fleisch, Innereien, Alkohol) lassen die Harnsäure ansteigen.", symptome:"Plötzliche, sehr starke Gelenkschmerzen (oft an der Grosszehe), Rötung und Schwellung."},
+    {icon:"🦷",name:"Karies", ursache:"Zucker und Bakterien bilden Säure, die den Zahnschmelz angreift.", symptome:"Zahnschmerzen, empfindliche Zähne, sichtbare Löcher im Zahn."},
+    {icon:"🦴",name:"Osteoporose", ursache:"Zu wenig Calcium und Vitamin D – die Knochen verlieren an Dichte.", symptome:"Knochenbrüche schon bei kleinen Belastungen, Rückenschmerzen, Abnahme der Körpergrösse."},
+    {icon:"🫁",name:"Eisenmangel-Anämie", ursache:"Zu wenig Eisen, oft durch einseitige Ernährung.", symptome:"Müdigkeit, Blässe, Konzentrationsschwäche, Kurzatmigkeit."},
+    {icon:"🧈",name:"Erhöhtes Cholesterin", ursache:"Zu viel gesättigtes Fett, Übergewicht und erbliche Veranlagung.", symptome:"Meist keine spürbaren Beschwerden – fördert still die Arteriosklerose."},
+    {icon:"🍔",name:"Fettleber (nicht-alkoholisch)", ursache:"Überschüssige Energie – vor allem viel Zucker (z. B. aus Süssgetränken) und Übergewicht – lässt Fett in der Leber einlagern. Nicht durch Alkohol verursacht.", symptome:"Oft lange ohne Beschwerden; manchmal Müdigkeit oder ein Druckgefühl im rechten Oberbauch. Kann die Leber langfristig schädigen."},
+    {icon:"🧂",name:"Jodmangel (Kropf)", ursache:"Zu wenig Jod in der Nahrung – die Schilddrüse vergrössert sich, um den Mangel auszugleichen. In der Schweiz früher weit verbreitet, heute dank jodiertem Speisesalz selten.", symptome:"Sichtbare Schwellung am Hals (Kropf), Müdigkeit; bei starkem Mangel eine gestörte Schilddrüsenfunktion."},
+    {icon:"🧠",name:"Essstörungen", ursache:"Komplexe Ursachen (psychisch, sozial, gesellschaftlicher Druck) – nicht allein ernährungsbedingt. Formen: Magersucht, Ess-Brech-Sucht und Binge-Eating.", symptome:"Gestörtes Essverhalten und ein verzerrtes Verhältnis zum eigenen Körper.", note:"Essstörungen sind ernsthafte Erkrankungen, die ärztliche und therapeutische Hilfe brauchen."}
+  ];
+
+  function buildSrule(){
+    document.getElementById("srule-grid").innerHTML=SRULE.map(s=>
+      '<div class="scard"><p class="sbig">'+s.s+'</p><p class="ssub">'+s.what+'</p>'+
+      '<p class="sfolge"><b>Folge:</b> '+s.folge+'</p></div>').join("");
+  }
+
+  function buildDiseases(){
+    const list=document.getElementById("dis-list");
+    list.innerHTML=DISEASES.map((d,i)=>
+      '<div class="dis-item" data-i="'+i+'"><div class="dis-head"><span class="di">'+d.icon+'</span>'+
+      '<span class="dn">'+(i+1)+'. '+d.name+'</span><span class="dx">+</span></div>'+
+      '<div class="dis-body"><p class="k">Ursache</p><p class="v">'+d.ursache+'</p>'+
+      '<p class="k">Symptome</p><p class="v">'+d.symptome+'</p>'+
+      (d.note?'<div class="dis-note">'+d.note+'</div>':'')+'</div></div>').join("");
+    list.addEventListener("click",e=>{
+      const head=e.target.closest(".dis-head"); if(!head) return;
+      head.parentNode.classList.toggle("open");
+    });
+  }
+
+  function initConverter(){
+    const kcal=document.getElementById("kcal"), kj=document.getElementById("kj"), F=4.184;
+    kcal.addEventListener("input",()=>{const v=parseFloat(kcal.value);kj.value=isNaN(v)?"":Math.round(v*F);});
+    kj.addEventListener("input",()=>{const v=parseFloat(kj.value);kcal.value=isNaN(v)?"":Math.round(v/F);});
+  }
+
+  document.getElementById("foot").textContent="Interaktive Lernfolie · erstellt von S. Mollet · ABU · HKV Aarau · © 2026";
+
+  buildPyramid();
+  buildVitamins();
+  buildSrule();
+  buildDiseases();
+  initConverter();
 
   /* ---------- Mini-Check ---------- */
   const FRAGEN=[
