@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wenn der Schweizer ÖV erwacht – echte Fahrplandaten</title>
+<style>
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  :root{
+    --bg:#0B1B24; --panel:#122B38; --line:#22475A;
+    --text:#EAF2F6; --muted:#8AA6B4;
+    --zug:#F2C14E; --bus:#E2585F; --tram:#3FD4B0; --schiff:#5AA9E6; --berg:#C08BE8;
+    --akzent:#F2C14E; --gruen:#3FD4B0;
+  }
+  body{ font-family:'Aptos','Segoe UI',system-ui,sans-serif; background:var(--bg);
+        color:var(--text); font-size:15px; line-height:1.5; min-height:100vh; }
+
+  header{ padding:16px 24px 12px; border-bottom:1px solid var(--line); }
+  header h1{ font-size:22px; font-weight:800; letter-spacing:-.3px; }
+  header .sub{ font-size:13.5px; color:var(--muted); margin-top:2px; }
+
+  /* Echte Daten – das darf man zeigen */
+  .quelle{ margin:14px 24px 0; padding:10px 14px; border-radius:10px;
+           background:#0F3A31; border-left:4px solid var(--gruen);
+           font-size:13px; color:#BFEADF; }
+  .quelle strong{ color:var(--gruen); }
+
+  .wrap{ display:grid; grid-template-columns:1fr 330px; gap:16px; padding:16px 24px 24px; align-items:start; }
+  @media(max-width:1100px){ .wrap{ grid-template-columns:1fr; } }
+
+  .stage{ background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:10px; position:relative; }
+  canvas#karte{ display:block; width:100%; height:auto; border-radius:10px; }
+
+  .hud{ position:absolute; left:26px; top:24px; pointer-events:none; }
+  .hud .uhr{ font-size:54px; font-weight:800; letter-spacing:-2px; line-height:1; }
+  .hud .zaehler{ margin-top:6px; font-size:13px; color:var(--muted); }
+  .hud .zaehler b{ display:block; font-size:26px; color:var(--akzent); font-weight:800; letter-spacing:-.5px; }
+
+  .steuer{ margin-top:10px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .btn{ font:inherit; font-size:13.5px; font-weight:700; padding:10px 16px; min-height:44px; border-radius:10px;
+        border:1.5px solid var(--akzent); background:var(--akzent); color:#26200A; cursor:pointer; }
+  .btn.ghost{ background:transparent; color:var(--akzent); }
+  .btn:hover{ filter:brightness(1.1); }
+  .btn:focus-visible, .filter:focus-visible, .tempo:focus-visible, input:focus-visible{
+    outline:3px solid #7FD1E8; outline-offset:2px; }
+
+  .zeitleiste{ flex:1; min-width:220px; display:flex; align-items:center; gap:10px; font-size:12.5px; color:var(--muted); }
+  input[type=range]{ flex:1; accent-color:var(--akzent); height:34px; cursor:pointer; }
+
+  .tempo-gruppe{ display:inline-flex; background:#0E2430; border-radius:10px; padding:3px; gap:2px; }
+  .tempo{ font:inherit; font-size:12.5px; font-weight:700; padding:8px 11px; min-height:38px; border:none;
+          background:transparent; color:var(--muted); border-radius:8px; cursor:pointer; }
+  .tempo.an{ background:var(--akzent); color:#26200A; }
+
+  .filter-reihe{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+  .filter{ font:inherit; font-size:13px; font-weight:700; padding:8px 12px; min-height:40px; border-radius:20px;
+           border:1.5px solid var(--line); background:transparent; color:var(--text);
+           display:inline-flex; align-items:center; gap:7px; cursor:pointer; transition:opacity .15s; }
+  .filter .punkt{ width:11px; height:11px; border-radius:50%; }
+  .filter.aus{ opacity:.35; }
+
+  .panel{ background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px; }
+  .panel .phase{ font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--akzent); }
+  .panel h2{ font-size:19px; font-weight:800; margin:5px 0 8px; }
+  .panel p{ font-size:14.5px; color:#C4D6DF; margin-bottom:14px; }
+
+  .chart{ width:100%; height:110px; margin-bottom:14px; }
+
+  .kat-reihe{ border-top:1px solid var(--line); padding-top:14px; }
+  .kat-reihe .tit{ font-size:12px; font-weight:800; letter-spacing:.7px; text-transform:uppercase;
+                   color:var(--muted); margin-bottom:10px; }
+  .kat{ margin-bottom:10px; }
+  .kat .kopf{ display:flex; justify-content:space-between; font-size:13px; font-weight:700; margin-bottom:4px; }
+  .kat .kopf .wert{ font-variant-numeric:tabular-nums; }
+  .kbalken{ height:7px; border-radius:4px; background:#1B3D4E; overflow:hidden; }
+  .kbalken i{ display:block; height:100%; border-radius:4px; width:0; transition:width .2s; }
+
+  .merksatz{ margin-top:14px; padding:12px 14px; background:#16303E; border-left:4px solid var(--tram);
+             border-radius:0 10px 10px 0; font-size:13.5px; font-weight:600; color:#C9E8E0; }
+  .merksatz b{ display:block; font-size:10.5px; letter-spacing:.7px; text-transform:uppercase;
+               color:var(--tram); margin-bottom:3px; }
+
+  .fehlt{ padding:40px 24px; text-align:center; color:#F3B0B4; font-size:15px; display:none; }
+
+  footer{ padding:0 24px 22px; color:var(--muted); font-size:12px; }
+  footer .cr{ margin-top:5px; color:#5E7A88; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Wenn der Schweizer ÖV erwacht</h1>
+  <div class="sub">Interaktive Folie · Jede Bewegung ist eine echte Fahrt aus dem Fahrplan</div>
+</header>
+
+<div class="quelle" id="quelle">
+  <strong>Echte Daten:</strong> <span id="q-text">Fahrplan wird geladen …</span>
+</div>
+
+<div class="fehlt" id="fehlt">
+  Die Datendatei <b>oev_daten.js</b> wurde nicht gefunden.<br>
+  Bitte beide Dateien (Folie und Daten) in denselben Ordner legen.
+</div>
+
+<div class="wrap" id="app">
+  <div>
+    <div class="stage">
+      <canvas id="karte" width="1600" height="900" role="img"
+              aria-label="Karte der Schweiz, auf der sich das ÖV-Netz eines echten Morgens aufbaut"></canvas>
+      <div class="hud">
+        <div class="uhr" id="uhr">03:00</div>
+        <div class="zaehler">Fahrten unterwegs<b id="zaehler">0</b></div>
+      </div>
+    </div>
+
+    <div class="steuer">
+      <button class="btn" id="play">▶ Start</button>
+      <button class="btn ghost" id="reset">↺ Zurück</button>
+      <div class="tempo-gruppe" role="group" aria-label="Abspieltempo">
+        <button class="tempo" data-v="2">Langsam</button>
+        <button class="tempo an" data-v="4">Normal</button>
+        <button class="tempo" data-v="8">Schnell</button>
+      </div>
+      <div class="zeitleiste">
+        <span>03:00</span>
+        <input type="range" id="zeit" min="180" max="420" value="180" step="0.25" aria-label="Uhrzeit">
+        <span>07:00</span>
+      </div>
+    </div>
+
+    <div class="filter-reihe">
+      <button class="filter" data-kat="zug"><span class="punkt" style="background:var(--zug)"></span>Zug</button>
+      <button class="filter" data-kat="bus"><span class="punkt" style="background:var(--bus)"></span>Bus / Postauto</button>
+      <button class="filter" data-kat="tram"><span class="punkt" style="background:var(--tram)"></span>Tram</button>
+      <button class="filter" data-kat="schiff"><span class="punkt" style="background:var(--schiff)"></span>Schiff</button>
+      <button class="filter" data-kat="berg"><span class="punkt" style="background:var(--berg)"></span>Bergbahnen</button>
+    </div>
+  </div>
+
+  <aside class="panel">
+    <div class="phase" id="phase">03:00 · Nachtruhe</div>
+    <h2 id="titel">Die Schweiz schläft</h2>
+    <p id="text"></p>
+
+    <svg class="chart" id="chart" viewBox="0 0 300 110" aria-hidden="true"></svg>
+
+    <div class="kat-reihe">
+      <div class="tit">Gerade unterwegs (echt)</div>
+      <div class="kat"><div class="kopf"><span>Zug</span><span class="wert" id="w-zug">0</span></div>
+        <div class="kbalken"><i id="b-zug" style="background:var(--zug)"></i></div></div>
+      <div class="kat"><div class="kopf"><span>Bus / Postauto</span><span class="wert" id="w-bus">0</span></div>
+        <div class="kbalken"><i id="b-bus" style="background:var(--bus)"></i></div></div>
+      <div class="kat"><div class="kopf"><span>Tram</span><span class="wert" id="w-tram">0</span></div>
+        <div class="kbalken"><i id="b-tram" style="background:var(--tram)"></i></div></div>
+      <div class="kat"><div class="kopf"><span>Schiff</span><span class="wert" id="w-schiff">0</span></div>
+        <div class="kbalken"><i id="b-schiff" style="background:var(--schiff)"></i></div></div>
+      <div class="kat"><div class="kopf"><span>Bergbahnen</span><span class="wert" id="w-berg">0</span></div>
+        <div class="kbalken"><i id="b-berg" style="background:var(--berg)"></i></div></div>
+    </div>
+
+    <div class="merksatz">
+      <b>Zum Nachdenken</b>
+      <span id="frage">Um 03:00 sind nur eine Handvoll Fahrten unterwegs. Wer braucht sie – und wohin?</span>
+    </div>
+  </aside>
+</div>
+
+<footer>
+  Datenquelle: <span id="f-quelle">opentransportdata.swiss</span> · Open Data · aufbereitet für den ABU-Unterricht.
+  <div class="cr">© 2026 Samuel Mollet · HKV Aarau · realisiert mit Claude (Anthropic)</div>
+</footer>
+
+<script src="oev_daten.js"></script>
+<script>
+(function(){
+'use strict';
+
+/* ---- Daten prüfen -------------------------------------------------- */
+if (!window.OEV_DATEN){
+  document.getElementById('fehlt').style.display = 'block';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('q-text').textContent = 'Datendatei fehlt.';
+  return;
+}
+const D = window.OEV_DATEN;
+const VON = D.von, BIS_ANZEIGE = 420, BIS_DATEN = VON + D.kurve.length - 1;
+const KATS = ['zug','bus','tram','schiff','berg'];
+const FARBE = { zug:'#F2C14E', bus:'#E2585F', tram:'#3FD4B0', schiff:'#5AA9E6', berg:'#C08BE8' };
+
+document.getElementById('q-text').innerHTML =
+  'Fahrplan <b>' + D.meta.tag + '</b> · ' + D.meta.fahrten.toLocaleString('de-CH') +
+  ' Fahrten zwischen 02:30 und 07:30 · Quelle: ' + D.meta.quelle;
+
+/* ---- Geografie (wie Modell-Folie: echte Projektion) ------------------ */
+const UMRISS = [
+  [118,700],[150,640],[185,600],[172,540],[152,480],[140,420],[132,360],
+  [145,305],[175,258],[220,238],[262,258],[305,232],[350,242],[392,214],
+  [432,236],[472,206],[522,190],[562,164],[602,148],[642,158],[692,144],
+  [732,158],[782,138],[832,124],[882,114],[932,118],[978,138],[1022,128],
+  [1072,148],[1112,174],[1152,194],[1198,214],[1238,238],[1268,274],
+  [1292,314],[1302,358],[1288,404],[1302,448],[1278,488],[1232,508],
+  [1196,544],[1152,568],[1108,606],[1078,650],[1060,700],[1042,745],[1030,780],
+  [1000,760],[968,726],[930,700],[892,672],[852,700],[812,676],[772,692],
+  [732,668],[692,642],[652,658],[612,682],[572,702],[532,692],[492,702],
+  [452,676],[412,692],[366,676],[322,646],[282,622],[242,594],[206,640],
+  [160,675],[118,700]
+];
+const SEEN = [
+  { cx:210, cy:620, rx:78, ry:20, rot:-24 }, { cx:392, cy:392, rx:44, ry:13, rot:-38 },
+  { cx:940, cy:275, rx:60, ry:14, rot:20 },  { cx:1130,cy:196, rx:50, ry:12, rot:-8 },
+  { cx:790, cy:400, rx:42, ry:16, rot:12 },  { cx:660, cy:505, rx:38, ry:11, rot:-14 },
+  { cx:1030,cy:730, rx:32, ry:10, rot:28 },
+];
+
+/* ---- Drei Ebenen: Hintergrund (einmal), Spuren (kumuliert), Punkte --- */
+const karte = document.getElementById('karte');
+const ctx = karte.getContext('2d');
+const bg = document.createElement('canvas');   bg.width=1600; bg.height=900;
+const spur = document.createElement('canvas'); spur.width=1600; spur.height=900;
+const bgg = bg.getContext('2d'), spg = spur.getContext('2d');
+
+function malHintergrund(){
+  bgg.fillStyle = '#0B1B24'; bgg.fillRect(0,0,1600,900);
+  bgg.beginPath();
+  UMRISS.forEach((p,i)=> i ? bgg.lineTo(p[0],p[1]) : bgg.moveTo(p[0],p[1]));
+  bgg.closePath();
+  bgg.fillStyle = '#0E2632'; bgg.fill();
+  bgg.strokeStyle = '#2A5468'; bgg.lineWidth = 2; bgg.stroke();
+  bgg.fillStyle = '#1E5C93';
+  SEEN.forEach(s=>{
+    bgg.save(); bgg.translate(s.cx,s.cy); bgg.rotate(s.rot*Math.PI/180);
+    bgg.beginPath(); bgg.ellipse(0,0,s.rx,s.ry,0,0,Math.PI*2); bgg.fill(); bgg.restore();
+  });
+}
+malHintergrund();
+
+/* ---- Segment-Zugriff -------------------------------------------------
+   D.seg[kat] ist ein flaches Array: [t1,t2,x1,y1,x2,y2, t1,t2,...]      */
+const aktiv = { zug:true, bus:true, tram:true, schiff:true, berg:true };
+
+function posAuf(arr, i, t){
+  const t1=arr[i], t2=arr[i+1];
+  const u = t2>t1 ? (t-t1)/(t2-t1) : 1;
+  return [ arr[i+2] + (arr[i+4]-arr[i+2])*u,
+           arr[i+3] + (arr[i+5]-arr[i+3])*u ];
+}
+
+/* Spuren zwischen zwei Zeitpunkten fortschreiben (beim Abspielen) */
+function spurWeiter(tAlt, tNeu){
+  spg.lineWidth = 1.1; spg.lineCap = 'round'; spg.globalAlpha = 0.5;
+  KATS.forEach(kat=>{
+    if(!aktiv[kat]) return;
+    const a = D.seg[kat];
+    spg.strokeStyle = FARBE[kat];
+    spg.beginPath();
+    for(let i=0; i<a.length; i+=6){
+      const t1=a[i], t2=a[i+1];
+      if(t2 < tAlt || t1 > tNeu) continue;
+      const [x1,y1] = posAuf(a, i, Math.max(t1, tAlt));
+      const [x2,y2] = posAuf(a, i, Math.min(t2, tNeu));
+      spg.moveTo(x1,y1); spg.lineTo(x2,y2);
+    }
+    spg.stroke();
+  });
+  spg.globalAlpha = 1;
+}
+
+/* Spuren komplett neu aufbauen (nach Springen, Reset oder Filterwechsel) */
+function spurNeu(t){
+  spg.clearRect(0,0,1600,900);
+  spurWeiter(VON, t);
+}
+
+/* Einen Frame zeichnen: Hintergrund + Spuren + laufende Punkte */
+function male(t){
+  ctx.drawImage(bg,0,0);
+  ctx.drawImage(spur,0,0);
+  KATS.forEach(kat=>{
+    if(!aktiv[kat]) return;
+    const a = D.seg[kat];
+    ctx.fillStyle = FARBE[kat];
+    for(let i=0; i<a.length; i+=6){
+      if(a[i] > t || a[i+1] < t) continue;
+      const [x,y] = posAuf(a, i, t);
+      ctx.beginPath(); ctx.arc(x,y,2.0,0,6.2832); ctx.fill();
+    }
+  });
+}
+
+/* ---- Panel: Phasen, Zähler, Kategorien, Mini-Chart ------------------- */
+const PHASEN = [
+  { bis:225, p:'Nachtruhe',      tit:'Die Schweiz schläft',
+    txt:'Fast nichts bewegt sich: Um 03:00 sind schweizweit nur 8 Fahrten unterwegs. Nachtbusse und erste Betriebsfahrten.',
+    frage:'Um 03:00 sind es genau 8 Fahrten. Wer braucht sie – und wohin?' },
+  { bis:270, p:'Betriebsbeginn', tit:'Die ersten Achsen rollen',
+    txt:'Die Depots öffnen, der Fernverkehr startet zuerst. Wer um 05:00 in Zürich einsteigen will, dessen Zug ist längst unterwegs.',
+    frage:'Warum starten die Züge vor den Trams?' },
+  { bis:330, p:'Frühschicht',    tit:'Wer fährt so früh?',
+    txt:'Spital-, Bau- und Schichtpersonal ist zuerst unterwegs. In den Städten nehmen jetzt Trams und Stadtbusse den Betrieb auf.',
+    frage:'Welche Berufe beginnen vor 06:00 – und wie kommen diese Menschen zur Arbeit?' },
+  { bis:390, p:'Pendlerwelle',   tit:'Das System beschleunigt',
+    txt:'Die Kurve steigt steil: Der Takt verdichtet sich, aus einzelnen Linien wird ein dichtes Netz über das ganze Land.',
+    frage:'Beobachten Sie die Karte: Welche Regionen erwachen zuletzt – und warum?' },
+  { bis:9999, p:'Volles Netz',   tit:'Die Schweiz ist wach',
+    txt:'Um 07:00 sind über 4300 Fahrten gleichzeitig unterwegs – aber nur 9 davon sind Schiffe. Das Netz verbindet Stadt, Agglomeration und Bergtäler.',
+    frage:'Nur 9 Schiffe, aber über 3000 Busse: Was sagt das über die Rolle der Verkehrsmittel?' },
+];
+
+const uhrEl=document.getElementById('uhr'), zaehlerEl=document.getElementById('zaehler'),
+      phaseEl=document.getElementById('phase'), titelEl=document.getElementById('titel'),
+      textEl=document.getElementById('text'), frageEl=document.getElementById('frage'),
+      zeit=document.getElementById('zeit'), playBtn=document.getElementById('play');
+
+const uhrzeit = t => {
+  const m = Math.floor(t);
+  return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+};
+const kurveBei = t => D.kurve[Math.max(0, Math.min(D.kurve.length-1, Math.floor(t)-VON))];
+
+/* Mini-Chart der echten Kurve (einmal bauen, Marker bewegen) */
+const chart = document.getElementById('chart');
+const CMAX = Math.max(...D.kurve);
+(function bauChart(){
+  const W=300, H=110, L=6, R=294, O=12, U=96;
+  let d='', fd='M '+L+' '+U;
+  for(let m=VON; m<=BIS_ANZEIGE; m+=2){
+    const x = L + (R-L)*(m-VON)/(BIS_ANZEIGE-VON);
+    const y = U - (U-O)*(kurveBei(m)/CMAX);
+    d += (m===VON ? 'M ':' L ')+x.toFixed(1)+' '+y.toFixed(1);
+    fd += ' L '+x.toFixed(1)+' '+y.toFixed(1);
+  }
+  fd += ' L '+R+' '+U+' Z';
+  chart.innerHTML =
+    '<path d="'+fd+'" fill="rgba(242,193,78,.14)"/>' +
+    '<path d="'+d+'" fill="none" stroke="#F2C14E" stroke-width="2"/>' +
+    '<circle id="c-marker" r="4" fill="#fff"/>' +
+    '<text id="c-text" fill="#fff" font-size="13" font-weight="800" font-family="inherit"></text>';
+})();
+const cMarker = document.getElementById('c-marker'), cText = document.getElementById('c-text');
+
+function panel(t){
+  uhrEl.textContent = uhrzeit(t);
+  const n = kurveBei(t);
+  zaehlerEl.textContent = n.toLocaleString('de-CH');
+
+  const m = Math.max(0, Math.min(D.kurve.length-1, Math.floor(t)-VON));
+  KATS.forEach(kat=>{
+    const v = D.kurve_kat[kat][m];
+    const mx = Math.max(1, Math.max(...D.kurve_kat[kat]));
+    document.getElementById('w-'+kat).textContent = v.toLocaleString('de-CH');
+    document.getElementById('b-'+kat).style.width = Math.round(100*v/mx)+'%';
+  });
+
+  const ph = PHASEN.find(p => t < p.bis);
+  phaseEl.textContent = uhrzeit(t)+' · '+ph.p;
+  titelEl.textContent = ph.tit;
+  textEl.textContent  = ph.txt;
+  frageEl.textContent = ph.frage;
+
+  const x = 6 + 288*(Math.min(t,BIS_ANZEIGE)-VON)/(BIS_ANZEIGE-VON);
+  const y = 96 - 84*(n/CMAX);
+  cMarker.setAttribute('cx',x); cMarker.setAttribute('cy',y);
+  cText.setAttribute('x', Math.min(x+8, 232)); cText.setAttribute('y', Math.max(y-8, 14));
+  cText.textContent = n.toLocaleString('de-CH');
+}
+
+/* ---- Abspiel-Logik ---------------------------------------------------- */
+let t = VON, laeuft = false, tempo = 4, letzterStamp = null, rafId = null;
+const reduziert = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function schritt(stamp){
+  if(!laeuft) return;
+  if(letzterStamp != null){
+    const dt = Math.min(0.1, (stamp-letzterStamp)/1000);
+    const tNeu = Math.min(BIS_ANZEIGE, t + dt*tempo);
+    if(tNeu > t){ spurWeiter(t, tNeu); t = tNeu; }
+    zeit.value = t;
+    male(t); panel(t);
+    if(t >= BIS_ANZEIGE){ stopp(); }
+  }
+  letzterStamp = stamp;
+  if(laeuft) rafId = requestAnimationFrame(schritt);
+}
+function start(){
+  if(laeuft) return;
+  if(t >= BIS_ANZEIGE){ t = VON; spurNeu(t); }
+  laeuft = true; letzterStamp = null;
+  playBtn.textContent = '⏸ Pause';
+  rafId = requestAnimationFrame(schritt);
+}
+function stopp(){
+  laeuft = false; playBtn.textContent = '▶ Start';
+  if(rafId) cancelAnimationFrame(rafId);
+}
+
+playBtn.addEventListener('click', ()=> laeuft ? stopp() : start());
+document.getElementById('reset').addEventListener('click', ()=>{
+  stopp(); t = VON; zeit.value = t; spurNeu(t); male(t); panel(t);
+});
+
+/* Zeitleiste: springen -> Spuren neu aufbauen (gedrosselt) */
+let scrubGeplant = false;
+zeit.addEventListener('input', e=>{
+  stopp();
+  t = Number(e.target.value);
+  if(!scrubGeplant){
+    scrubGeplant = true;
+    requestAnimationFrame(()=>{ spurNeu(t); male(t); panel(t); scrubGeplant = false; });
+  }
+});
+
+document.querySelectorAll('.tempo').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    tempo = Number(b.dataset.v);
+    document.querySelectorAll('.tempo').forEach(x=> x.classList.toggle('an', x===b));
+  });
+});
+
+document.querySelectorAll('.filter').forEach(b=>{
+  b.setAttribute('aria-pressed','true');
+  b.addEventListener('click', ()=>{
+    const kat = b.dataset.kat;
+    aktiv[kat] = !aktiv[kat];
+    b.classList.toggle('aus', !aktiv[kat]);
+    b.setAttribute('aria-pressed', String(aktiv[kat]));
+    spurNeu(t); male(t);
+  });
+});
+
+/* ---- Startzustand ------------------------------------------------------ */
+if(reduziert){
+  // Ohne Bewegung: das fertige Netz von 07:00 zeigen
+  t = BIS_ANZEIGE; zeit.value = t; spurNeu(t);
+}
+male(t); panel(t);
+})();
+</script>
+</body>
+</html>
