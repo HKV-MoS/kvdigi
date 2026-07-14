@@ -33,6 +33,9 @@
   .btn:focus-visible{ outline:3px solid #9Fd0f5; outline-offset:2px; }
   .score{ font-weight:700; color:#1F4E78; font-size:14px; }
   .score b{ font-size:18px; }
+  .stufe{ margin-left:8px; font-size:11.5px; font-weight:800; letter-spacing:.4px; text-transform:uppercase;
+    background:#F6E3C2; color:#8a5a00; border-radius:999px; padding:3px 9px; display:none; }
+  .stufe.show{ display:inline-block; }
 
   .axis-note{ font-size:12.5px; color:#5B6B7A; margin:0 0 12px; padding:9px 13px; background:#fff; border-radius:10px; box-shadow:0 1px 3px rgba(20,50,80,.08); }
   .axis-note b{ color:#1F4E78; }
@@ -139,6 +142,11 @@
   .done-banner.show{ display:flex; animation:slideUp .4s ease; }
   @keyframes slideUp{ from{ opacity:0; transform:translateY(10px);} to{ opacity:1; transform:translateY(0);} }
   .done-banner .em{ font-size:34px; }
+  .next-btn{ margin-left:auto; font:inherit; font-weight:800; font-size:14px; min-height:44px;
+    padding:10px 18px; border:none; border-radius:10px; background:#fff; color:#1F4E78;
+    cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.18); white-space:nowrap; }
+  .next-btn:hover{ transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,0,0,.22); }
+  @media (max-width:640px){ .next-btn{ margin-left:0; width:100%; } }
   .done-banner h3{ margin:0 0 2px; font-size:18px; }
   .done-banner p{ margin:0; font-size:13.5px; opacity:.95; }
   .quad.celebrate{ animation:celebrate .9s ease; }
@@ -196,7 +204,7 @@
       <button class="btn ghost" id="reset-btn">↺ Zurücksetzen</button>
       <button class="btn" id="solve-btn">Lösung zeigen</button>
     </div>
-    <div class="score">Richtig zugeordnet: <b id="score">0</b> / <span id="total">10</span></div>
+    <div class="score">Runde <b id="runde">1</b>/3 · Richtig zugeordnet: <b id="score">0</b> / <span id="total">10</span> <span id="stufe" class="stufe"></span></div>
   </div>
 
   <div class="axis-note">Wie ein Koordinatensystem lesen: <b>Dringlichkeit</b> nimmt nach rechts zu →, <b>Wichtigkeit</b> nach oben ↑. Oben rechts = wichtig <i>und</i> dringend.</div>
@@ -241,7 +249,8 @@
 
   <div class="done-banner" id="done">
     <div class="em">🎉</div>
-    <div><h3>Stark – alle Aufgaben richtig eingeordnet!</h3><p>Wichtig + dringend zuerst, Wichtiges einplanen, Unwichtiges abgeben oder streichen.</p></div>
+    <div><h3 id="done-t">Stark – alle Aufgaben richtig eingeordnet!</h3><p id="done-p">Wichtig + dringend zuerst, Wichtiges einplanen, Unwichtiges abgeben oder streichen.</p></div>
+    <button id="done-next" class="next-btn" type="button">Runde 2 starten →</button>
   </div>
 </div>
 
@@ -251,18 +260,49 @@
 </div>
 
 <script>
-  const TASKS = [
-    { id:'t1',  quad:'do',       text:'Kundin reklamiert ein falsch abgegebenes Medikament – sofort klären' },
-    { id:'t2',  quad:'do',       text:'Lerndokumentation abgeben – Frist ist morgen' },
-    { id:'t3',  quad:'do',       text:'Ausgelaufene Flüssigkeit auf dem Verkaufsboden – Rutschgefahr sofort beheben' },
-    { id:'t4',  quad:'plan',     text:'Für die QV-Prüfung in einem halben Jahr lernen' },
-    { id:'t5',  quad:'plan',     text:'Genug schlafen und sich gesund ernähren' },
-    { id:'t6',  quad:'plan',     text:'Sich aufs nächste Standortgespräch vorbereiten' },
-    { id:'t7',  quad:'delegate', text:'Routine-Telefonanruf, den auch eine Kollegin beantworten kann' },
-    { id:'t8',  quad:'delegate', text:'Während Ihrer Beratung klingelt das Geschäftstelefon – jemand anderes geht ran' },
-    { id:'t9',  quad:'delete',   text:'Während der Arbeit privat durch Social Media scrollen' },
-    { id:'t10', quad:'delete',   text:'Einen alten Werbe-Newsletter ein zweites Mal durchlesen' },
+  /* Drei Runden: 1 = Einstieg, 2 = neue Situationen, 3 = knifflige Fälle
+     (typische Eisenhower-Fallen: Dringend-Wirkendes, das unwichtig ist –
+      und Wichtiges, das sich nicht dringend anfühlt). */
+  const RUNDEN = [
+   [
+    { id:'a1',  quad:'do',       text:'Kundin reklamiert ein falsch abgegebenes Medikament – sofort klären' },
+    { id:'a2',  quad:'do',       text:'Lerndokumentation abgeben – Frist ist morgen' },
+    { id:'a3',  quad:'do',       text:'Ausgelaufene Flüssigkeit auf dem Verkaufsboden – Rutschgefahr sofort beheben' },
+    { id:'a4',  quad:'plan',     text:'Für die QV-Prüfung in einem halben Jahr lernen' },
+    { id:'a5',  quad:'plan',     text:'Genug schlafen und sich gesund ernähren' },
+    { id:'a6',  quad:'plan',     text:'Sich aufs nächste Standortgespräch vorbereiten' },
+    { id:'a7',  quad:'delegate', text:'Routine-Telefonanruf, den auch eine Kollegin beantworten kann' },
+    { id:'a8',  quad:'delegate', text:'Während Ihrer Beratung klingelt das Geschäftstelefon – jemand anderes geht ran' },
+    { id:'a9',  quad:'delete',   text:'Während der Arbeit privat durch Social Media scrollen' },
+    { id:'a10', quad:'delete',   text:'Einen alten Werbe-Newsletter ein zweites Mal durchlesen' }
+   ],
+   [
+    { id:'b1',  quad:'do',       text:'Der Kassendrucker fällt aus – die Warteschlange wächst' },
+    { id:'b2',  quad:'do',       text:'Produkt-Rückruf: Der Artikel muss noch heute aus dem Regal' },
+    { id:'b3',  quad:'do',       text:'Ein Lernender schneidet sich beim Auspacken – Erste Hilfe leisten und melden' },
+    { id:'b4',  quad:'plan',     text:'Unterlagen für die BM-Anmeldung zusammenstellen – Frist in einem Monat' },
+    { id:'b5',  quad:'plan',     text:'Feste Lernzeiten für den ABU in den Wochenplan eintragen' },
+    { id:'b6',  quad:'plan',     text:'Checkliste für die Stellvertretung vor den eigenen Ferien erstellen' },
+    { id:'b7',  quad:'delegate', text:'Paket zur Post bringen – ein Mitlernender geht ohnehin dorthin' },
+    { id:'b8',  quad:'delegate', text:'Preisschilder nachdrucken – eine Aufgabe, die das Team übernehmen kann' },
+    { id:'b9',  quad:'delete',   text:'In der Pause einen Gruppenchat weiterlesen, der Sie gar nicht betrifft' },
+    { id:'b10', quad:'delete',   text:'Zum dritten Mal dasselbe Lernvideo schauen, statt endlich zu üben' }
+   ],
+   [
+    { id:'c1',  quad:'do',       text:'Eine Kundin zeigt eine allergische Reaktion auf ein Produkt' },
+    { id:'c2',  quad:'do',       text:'Sie entdecken einen aktiven Preisfehler an der Kasse – jede Minute kostet Geld' },
+    { id:'c3',  quad:'plan',     text:'Ein Feedbackgespräch vereinbaren, obwohl gerade alles rund läuft' },
+    { id:'c4',  quad:'plan',     text:'Notfallnummern und Abläufe lernen – für den Fall, dass etwas passiert' },
+    { id:'c5',  quad:'plan',     text:'Die VA-Themenwahl ist erst in drei Monaten – heute schon Ideen sammeln' },
+    { id:'c6',  quad:'delegate', text:'Ein Stammkunde will eine einfache Auskunft – Sie schliessen gerade die Tageskasse ab, die Praktikantin ist frei' },
+    { id:'c7',  quad:'delegate', text:'Das Telefon klingelt zum fünften Mal, während Sie eine heikle Reklamation lösen – ein Teammitglied hat Zeit' },
+    { id:'c8',  quad:'delete',   text:'Eine E-Mail mit Betreff «DRINGEND!!» entpuppt sich als Werbung – trotzdem ganz durchlesen?' },
+    { id:'c9',  quad:'delete',   text:'Die bereits perfekte Ablage nochmals umsortieren – statt für die Prüfung zu lernen' },
+    { id:'c10', quad:'delete',   text:'Sich im Kollegenkreis lange über eine Entscheidung der Leitung beklagen, ohne etwas ändern zu können' }
+   ]
   ];
+  let runde = 0;
+  let TASKS = RUNDEN[0];
 
   const tray = document.getElementById('tray');
   const quads = Array.from(document.querySelectorAll('.quad'));
@@ -297,11 +337,35 @@
     const n = document.querySelectorAll('.card.correct').length;
     scoreEl.textContent = n;
     if (n === TASKS.length){
+      const t=document.getElementById('done-t'), pp=document.getElementById('done-p'), nx=document.getElementById('done-next');
+      if (runde===0){
+        t.textContent='Stark – Runde 1 geschafft!';
+        pp.textContent='Wichtig + dringend zuerst, Wichtiges einplanen, Unwichtiges abgeben oder streichen. Runde 2 bringt neue Situationen.';
+        nx.textContent='Runde 2 starten →';
+      } else if (runde===1){
+        t.textContent='Sehr gut – Runde 2 geschafft!';
+        pp.textContent='Jetzt wird es knifflig: In Runde 3 fühlt sich manches dringend an, was keinen Platz verdient – und Wichtiges meldet sich nicht von selbst.';
+        nx.textContent='Runde 3 starten →';
+      } else {
+        t.textContent='Alle drei Runden geschafft! 🎉';
+        pp.textContent='Sie erkennen jetzt auch die Fallen: «Dringend» heisst nicht automatisch «wichtig» – und das Wichtigste drängelt selten.';
+        nx.textContent='↺ Von vorne beginnen';
+      }
       doneBanner.classList.add('show');
       quads.forEach((q,i)=>{ q.classList.remove('celebrate'); setTimeout(()=>q.classList.add('celebrate'), i*120); });
     } else {
       doneBanner.classList.remove('show');
     }
+  }
+
+  function startRunde(i){
+    runde = i; TASKS = RUNDEN[i];
+    document.getElementById('runde').textContent = i+1;
+    document.getElementById('total').textContent = TASKS.length;
+    const st = document.getElementById('stufe');
+    st.textContent = 'knifflige Fälle';
+    st.classList.toggle('show', i===2);
+    deselect(); buildTray(); updateScore();
   }
 
   function place(card, quad){
@@ -376,7 +440,8 @@
 
   quads.forEach(q => q.addEventListener('click', () => { if (selected) place(selected, q); }));
 
-  document.getElementById('reset-btn').addEventListener('click', () => { deselect(); buildTray(); updateScore(); });
+  document.getElementById('reset-btn').addEventListener('click', () => startRunde(runde));
+  document.getElementById('done-next').addEventListener('click', () => startRunde((runde+1)%RUNDEN.length));
   document.getElementById('solve-btn').addEventListener('click', () => {
     deselect();
     const remaining = Array.from(document.querySelectorAll('#tray .card'));
@@ -385,7 +450,7 @@
     }, i*220));
   });
 
-  buildTray();
+  startRunde(0);
   updateScore();
 </script>
 </body>
