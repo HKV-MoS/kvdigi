@@ -124,27 +124,38 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
     <img id="quellbild" src="energie_wasserkraft.jpg" alt="" hidden>
     <svg viewBox="0 0 2000 1127" aria-hidden="true">
       <!-- Pfade (unsichtbar, Führungsschienen) -->
-      <path id="pfad-strom" d="M 1364 132 C 1450 100, 1530 86, 1600 88 C 1700 92, 1830 112, 1955 133" fill="none" stroke="none"/>
-
-      <!-- Wasserweg: Turbinieren -->
-      <g id="g-turb">
-        <g id="puls-turb"></g>
+      <!-- Ein Leiterseil glüht weiss: hier fliesst die Energie ins Netz -->
+      <g id="kabel" opacity=".78" style="pointer-events:none">
+        <path d="M 1364 132 C 1450 100, 1530 86, 1600 88 C 1700 92, 1830 112, 1955 133"
+              fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".38"/>
+        <path d="M 1364 132 C 1450 100, 1530 86, 1600 88 C 1700 92, 1830 112, 1955 133"
+              fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
       </g>
-      <!-- Wasserweg: Pumpen (umgekehrt) -->
-      <g id="g-pump" style="display:none">
-        <g id="puls-pump"></g>
       </g>
       <!-- Blitz am Mast: da geht was ab -->
       <g id="blitz" opacity="0" style="pointer-events:none">
-        <path d="M 1268 92 L 1298 150 L 1274 158 L 1312 228 L 1288 238 L 1330 310"
-              fill="none" stroke="#FFF3C4" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
-        <path d="M 1268 92 L 1298 150 L 1274 158 L 1312 228 L 1288 238 L 1330 310"
-              fill="none" stroke="var(--strom)" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
-        <path d="M 1300 196 L 1338 216 L 1326 224 L 1356 246"
-              fill="none" stroke="#FFF3C4" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
-        <path d="M 1300 196 L 1338 216 L 1326 224 L 1356 246"
-              fill="none" stroke="var(--strom)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>
-        <circle cx="1268" cy="88" r="13" fill="#FFF3C4" opacity=".95"/>
+        <!-- Y-Zentrum auf dem Trafo, drei Arme mit Fransen-Enden -->
+        <g stroke="#fff" fill="none" stroke-linejoin="round" stroke-linecap="round">
+          <!-- weicher Schein -->
+          <g stroke-width="10" opacity=".4">
+            <path d="M 1345 205 L 1318 178 L 1327 170 L 1295 140 L 1303 132 L 1272 112"/>
+            <path d="M 1345 205 L 1372 176 L 1362 168 L 1405 146 L 1396 138 L 1428 118"/>
+            <path d="M 1345 205 L 1352 240 L 1338 268 L 1350 300"/>
+          </g>
+          <!-- Kern -->
+          <g stroke-width="4">
+            <path d="M 1345 205 L 1318 178 L 1327 170 L 1295 140 L 1303 132 L 1272 112"/>
+            <path d="M 1345 205 L 1372 176 L 1362 168 L 1405 146 L 1396 138 L 1428 118"/>
+            <path d="M 1345 205 L 1352 240 L 1338 268 L 1350 300"/>
+          </g>
+          <!-- Fransen an den drei Enden -->
+          <g stroke-width="2.4">
+            <path d="M 1272 112 L 1258 100 M 1272 112 L 1262 122"/>
+            <path d="M 1428 118 L 1442 106 M 1428 118 L 1438 130"/>
+            <path d="M 1350 300 L 1340 314 M 1350 300 L 1362 312"/>
+          </g>
+        </g>
+        <circle cx="1345" cy="205" r="10" fill="#fff" opacity=".95"/>
       </g>
 
       <!-- Stationen -->
@@ -297,25 +308,6 @@ tourBtn.addEventListener('click', ()=> tourTimer ? tourStopp() : tourStart());
 waehle(0);
 
 /* ---------- Animierte Partikel (SMIL) ---------- */
-function partikel(zielId, pfadId, anzahl, dauer, farbe, r, rueckwaerts){
-  const ziel = document.getElementById(zielId);
-  for(let i=0;i<anzahl;i++){
-    /* flacher Strich statt Punkt: schmiegt sich an die Leitung */
-    const c = document.createElementNS(svgNS,'rect');
-    c.setAttribute('x', -r*2.6); c.setAttribute('y', -2.5);
-    c.setAttribute('width', r*5.2); c.setAttribute('height', 5);
-    c.setAttribute('rx', 2.5);
-    c.setAttribute('fill', farbe); c.setAttribute('opacity','.95');
-    const m = document.createElementNS(svgNS,'animateMotion');
-    m.setAttribute('dur', dauer+'s'); m.setAttribute('repeatCount','indefinite');
-    m.setAttribute('rotate','auto');
-    m.setAttribute('begin', (-i*dauer/anzahl)+'s');
-    if(rueckwaerts){ m.setAttribute('keyPoints','1;0'); m.setAttribute('keyTimes','0;1'); m.setAttribute('calcMode','linear'); }
-    const mp = document.createElementNS(svgNS,'mpath');
-    mp.setAttributeNS('http://www.w3.org/1999/xlink','href','#'+pfadId);
-    m.appendChild(mp); c.appendChild(m); ziel.appendChild(c);
-  }
-}
 /* ==================================================================
    FARBZYKLUS – die Amiga-Technik (Color Cycling), Ausgabe 2026:
    Kein Pixel bewegt sich. Für jedes Wasserpixel wird einmalig seine
@@ -544,9 +536,6 @@ function starteBild(){
     });
   }
   naechste();
-  /* Strom-Pulse auf der Leitung (Vektor-Ebene) */
-  partikel('puls-turb','pfad-strom', 5, 2.4, 'var(--strom)', 6, false);
-  partikel('puls-pump','pfad-strom', 5, 2.4, 'var(--strom)', 6, true);
 }
 if(quellbild.complete && quellbild.naturalWidth) starteBild();
 else quellbild.addEventListener('load', starteBild);
@@ -723,9 +712,10 @@ function zap(){
   o.start(); o.stop(ac.currentTime+.1);
 }
 const blitzEl = document.getElementById('blitz');
+const kabelEl = document.getElementById('kabel');
 function flackern(){
-  blitzEl.setAttribute('opacity','1'); zap();
-  setTimeout(()=> blitzEl.setAttribute('opacity','0'), 110);
+  blitzEl.setAttribute('opacity','1'); kabelEl.setAttribute('opacity','1'); zap();
+  setTimeout(()=>{ blitzEl.setAttribute('opacity','0'); kabelEl.setAttribute('opacity','.78'); }, 110);
   if(Math.random()<.35){
     setTimeout(()=>{ blitzEl.setAttribute('opacity','1');
       setTimeout(()=> blitzEl.setAttribute('opacity','0'), 80); }, 200);
@@ -740,8 +730,6 @@ function setzeModus(pumpen){
   richtung = pumpen ? -1 : 1;
   tonModus(pumpen);
   musikModus(pumpen);
-  document.getElementById('g-turb').style.display = pumpen ? 'none' : '';
-  document.getElementById('g-pump').style.display = pumpen ? '' : 'none';
   mTurb.setAttribute('aria-pressed', String(!pumpen));
   mPump.setAttribute('aria-pressed', String(pumpen));
   document.getElementById('m-text').textContent = MODUS_TEXT[pumpen ? 'pump':'turb'];
