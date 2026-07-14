@@ -102,7 +102,7 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
     <img id="quellbild" src="energie_wasserkraft.jpg" alt="" hidden>
     <svg viewBox="0 0 2000 1127" aria-hidden="true">
       <!-- Pfade (unsichtbar, Führungsschienen) -->
-      <path id="pfad-strom" d="M 1358 160 C 1460 112, 1560 98, 1615 100 C 1725 106, 1835 120, 1930 134" fill="none" stroke="none"/>
+      <path id="pfad-strom" d="M 1364 132 C 1450 100, 1530 86, 1600 88 C 1700 92, 1830 112, 1955 133" fill="none" stroke="none"/>
 
       <!-- Wasserweg: Turbinieren -->
       <g id="g-turb">
@@ -112,11 +112,6 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
       <g id="g-pump" style="display:none">
         <g id="puls-pump"></g>
       </g>
-      <!-- Dreh-Hinweis Turbine -->
-      <circle class="dreh" cx="1370" cy="815" r="95" fill="none" stroke="#fff" stroke-width="5"
-              stroke-dasharray="34 500" stroke-linecap="round" opacity=".85">
-        <animateTransform attributeName="transform" type="rotate" from="0 1370 815" to="360 1370 815" dur="6s" repeatCount="indefinite"/>
-      </circle>
       <!-- Stationen -->
       <g id="spots"></g>
     </svg>
@@ -244,10 +239,15 @@ waehle(0);
 function partikel(zielId, pfadId, anzahl, dauer, farbe, r, rueckwaerts){
   const ziel = document.getElementById(zielId);
   for(let i=0;i<anzahl;i++){
-    const c = document.createElementNS(svgNS,'circle');
-    c.setAttribute('r', r); c.setAttribute('fill', farbe); c.setAttribute('opacity','.9');
+    /* flacher Strich statt Punkt: schmiegt sich an die Leitung */
+    const c = document.createElementNS(svgNS,'rect');
+    c.setAttribute('x', -r*2.6); c.setAttribute('y', -2.5);
+    c.setAttribute('width', r*5.2); c.setAttribute('height', 5);
+    c.setAttribute('rx', 2.5);
+    c.setAttribute('fill', farbe); c.setAttribute('opacity','.95');
     const m = document.createElementNS(svgNS,'animateMotion');
     m.setAttribute('dur', dauer+'s'); m.setAttribute('repeatCount','indefinite');
+    m.setAttribute('rotate','auto');
     m.setAttribute('begin', (-i*dauer/anzahl)+'s');
     if(rueckwaerts){ m.setAttribute('keyPoints','1;0'); m.setAttribute('keyTimes','0;1'); m.setAttribute('calcMode','linear'); }
     const mp = document.createElementNS(svgNS,'mpath');
@@ -268,10 +268,12 @@ let richtung = 1;   // 1 = turbinieren (bergab), -1 = pumpen
 
 const ZONEN = [
   { name:'rohr',
-    pts:[[435,682],[530,742],[620,795],[710,846],[810,895],[900,933],[990,965],[1090,1000],[1190,1002],[1262,998],[1312,1000],[1340,1026],[1352,1060]],
+    pts:[[435,670],[530,730],[620,783],[710,834],[810,883],[900,921],[990,953],[1090,988],[1190,990],[1262,986],[1312,988],[1340,1014],[1352,1048]],
     halb:30, lambda:95, hell:.32, dunkel:.12, K:12, tick:85, umkehrbar:true },
   { name:'auslauf', ellipse:[1358,1050,100,42,-12], quell:[1312,1008],
     lambda:48, hell:.30, dunkel:.10, K:10, tick:70, umkehrbar:true },
+  { name:'turbine', ring:[1370,815,44,118], baender:7,
+    lambda:360/7, hell:.20, dunkel:.12, K:14, tick:70, umkehrbar:true },
   { name:'see', rect:[100,275,760,140],
     lambda:260, hell:.09, dunkel:.04, K:16, tick:260, umkehrbar:false },
 ];
@@ -284,6 +286,8 @@ function baueZone(z, basis){
     y0=Math.min(...ys)-z.halb; y1=Math.max(...ys)+z.halb; }
   else if(z.ellipse){ const [cx,cy,rx,ry]=z.ellipse;
     const r=Math.max(rx,ry); x0=cx-r; x1=cx+r; y0=cy-r; y1=cy+r; }
+  else if(z.ring){ const [cx,cy,,ra]=z.ring;
+    x0=cx-ra; x1=cx+ra; y0=cy-ra; y1=cy+ra; }
   else { [x0,y0]=[z.rect[0],z.rect[1]]; x1=x0+z.rect[2]; y1=y0+z.rect[3]; }
   x0=Math.max(0,Math.floor(x0)); y0=Math.max(0,Math.floor(y0));
   x1=Math.min(2000,Math.ceil(x1)); y1=Math.min(1127,Math.ceil(y1));
@@ -316,6 +320,11 @@ function baueZone(z, basis){
       const lx=(X-cx)*cosR+(Y-cy)*sinR, ly=-(X-cx)*sinR+(Y-cy)*cosR;
       drin = (lx*lx)/(rx*rx)+(ly*ly)/(ry*ry) <= 1;
       sWert = Math.hypot(X-z.quell[0], Y-z.quell[1]);
+    } else if(z.ring){
+      const [cx,cy,ri,ra]=z.ring;
+      const d = Math.hypot(X-cx, Y-cy);
+      drin = d >= ri && d <= ra;
+      sWert = (Math.atan2(Y-cy, X-cx)/Math.PI*180 + 360) % 360;   // Winkel in Grad
     } else {
       drin = true; sWert = X;
     }
@@ -329,7 +338,7 @@ function baueZone(z, basis){
     f.data.set(grund.data);
     const d=f.data;
     for(let n=0;n<idx.length;n++){
-      const u = ((sw[n]/z.lambda + k/z.K) % 1 + 1) % 1;
+      const u = ((sw[n]/z.lambda - k/z.K) % 1 + 1) % 1;   // -k: Bänder wandern MIT dem Wasser
       const v = .5 + .5*Math.cos(2*Math.PI*u);
       const faktor = 1 + z.hell*v*v*v - z.dunkel*(1-v)*(1-v)*(1-v);
       const i0=idx[n];
