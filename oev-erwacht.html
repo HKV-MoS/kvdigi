@@ -51,6 +51,12 @@
   .tempo{ font:inherit; font-size:12.5px; font-weight:700; padding:8px 11px; min-height:38px; border:none;
           background:transparent; color:var(--muted); border-radius:8px; cursor:pointer; }
   .tempo.an{ background:var(--akzent); color:#26200A; }
+  .fenster-zeile{ display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    margin-top:10px; font-size:13.5px; color:#B9CFDB; }
+  .f-label{ font-weight:700; }
+  .fenster-zeile select{ font:inherit; font-size:13.5px; background:#0E2430; color:#EAF4F9;
+    border:1px solid #274A5C; border-radius:9px; padding:8px 10px; min-height:38px; }
+  .f-status{ font-size:12.5px; color:var(--akzent); min-height:1em; }
 
   .filter-reihe{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
   .filter{ font:inherit; font-size:13px; font-weight:700; padding:8px 12px; min-height:40px; border-radius:20px;
@@ -98,15 +104,15 @@
 </div>
 
 <div class="fehlt" id="fehlt">
-  Die Datendatei <b>oev_daten.js</b> wurde nicht gefunden.<br>
-  Bitte beide Dateien (Folie und Daten) in denselben Ordner legen.
+  Daten nicht gefunden.<br>
+  Bitte <b>oev_meta.js</b> und den Ordner <b>oev_daten/</b> in denselben Ordner wie die Folie legen.
 </div>
 
 <div class="wrap" id="app">
   <div>
     <div class="stage">
       <canvas id="karte" width="1600" height="900" role="img"
-              aria-label="Karte der Schweiz, auf der sich das ÖV-Netz eines echten Morgens aufbaut"></canvas>
+              aria-label="Karte der Schweiz, auf der sich das ÖV-Netz eines echten Tages aufbaut"></canvas>
       <div class="hud">
         <div class="uhr" id="uhr">03:00</div>
         <div class="zaehler">Fahrten unterwegs<b id="zaehler">0</b></div>
@@ -117,15 +123,26 @@
       <button class="btn" id="play">▶ Start</button>
       <button class="btn ghost" id="reset">↺ Zurück</button>
       <div class="tempo-gruppe" role="group" aria-label="Abspieltempo">
-        <button class="tempo" data-v="2">Langsam</button>
-        <button class="tempo an" data-v="4">Normal</button>
-        <button class="tempo" data-v="8">Schnell</button>
+        <button class="tempo" data-f="0.5">×0,5</button>
+        <button class="tempo an" data-f="1">×1</button>
+        <button class="tempo" data-f="1.5">×1,5</button>
+        <button class="tempo" data-f="2">×2</button>
+        <button class="tempo" data-f="3">×3</button>
       </div>
       <div class="zeitleiste">
-        <span>03:00</span>
+        <span id="z-von">03:00</span>
         <input type="range" id="zeit" min="180" max="420" value="180" step="0.25" aria-label="Uhrzeit">
-        <span>07:00</span>
+        <span id="z-bis">07:00</span>
       </div>
+    </div>
+
+    <div class="fenster-zeile">
+      <span class="f-label">Zeitfenster:</span>
+      <select id="f-von" aria-label="Fenster von"></select>
+      <span>bis</span>
+      <select id="f-bis" aria-label="Fenster bis"></select>
+      <button class="btn ghost" id="f-laden">Fenster laden</button>
+      <span class="f-status" id="f-status"></span>
     </div>
 
     <div class="filter-reihe">
@@ -170,26 +187,63 @@
   <div class="cr">© 2026 Samuel Mollet · HKV Aarau · realisiert mit Claude (Anthropic)</div>
 </footer>
 
-<script src="oev_daten.js"></script>
+<script src="oev_meta.js"></script>
 <script>
 (function(){
 'use strict';
 
 /* ---- Daten prüfen -------------------------------------------------- */
-if (!window.OEV_DATEN){
+if (!window.OEV_META){
   document.getElementById('fehlt').style.display = 'block';
   document.getElementById('app').style.display = 'none';
   document.getElementById('q-text').textContent = 'Datendatei fehlt.';
   return;
 }
-const D = window.OEV_DATEN;
-const VON = D.von, BIS_ANZEIGE = 420, BIS_DATEN = VON + D.kurve.length - 1;
+const META = window.OEV_META;
+let VON = 180, BIS = 420;                 // aktuelles Zeitfenster (Standard 03:00–07:00)
 const KATS = ['zug','bus','tram','schiff','berg'];
 const FARBE = { zug:'#F2C14E', bus:'#E2585F', tram:'#3FD4B0', schiff:'#5AA9E6', berg:'#C08BE8' };
+const D = { seg: { zug:[], bus:[], tram:[], schiff:[], berg:[] } };   // Segmente des Fensters
 
-document.getElementById('q-text').innerHTML =
-  'Fahrplan <b>' + D.meta.tag + '</b> · ' + D.meta.fahrten.toLocaleString('de-CH') +
-  ' Fahrten zwischen 02:30 und 07:30 · Quelle: ' + D.meta.quelle;
+function zeigeQuelle(){
+  document.getElementById('q-text').innerHTML =
+    'Fahrplan <b>' + META.meta.tag + '</b> · ' + META.meta.fahrten_tag.toLocaleString('de-CH') +
+    ' Fahrten am ganzen Tag · Fenster ' + uhrzeit(VON) + '–' + uhrzeit(BIS) +
+    ' · Quelle: ' + META.meta.quelle;
+}
+
+/* ---- Stunden-Chunks laden ------------------------------------------- */
+window.OEV_CHUNK = window.OEV_CHUNK || {};
+function ladeChunk(h){
+  return new Promise((res, rej)=>{
+    if (window.OEV_CHUNK[h]){ res(); return; }
+    const sc = document.createElement('script');
+    sc.src = 'oev_daten/oev_h' + String(h).padStart(2,'0') + '.js';
+    sc.onload = ()=> window.OEV_CHUNK[h] ? res() : rej(h);
+    sc.onerror = ()=> rej(h);
+    document.head.appendChild(sc);
+  });
+}
+function noetigeStunden(von, bis){
+  const h0 = Math.max(0, Math.floor((von - META.maxdur) / 60));
+  const h1 = Math.min(23, Math.floor((bis - 0.001) / 60));
+  const liste = [];
+  for(let h=h0; h<=h1; h++) liste.push(h);
+  return liste;
+}
+function bauSegmente(von, bis){
+  KATS.forEach(kat=>{
+    const ziel = [];
+    noetigeStunden(von, bis).forEach(h=>{
+      const a = (window.OEV_CHUNK[h] || {})[kat] || [];
+      for(let i=0; i<a.length; i+=6){
+        if (a[i+1] >= von && a[i] <= bis)
+          ziel.push(a[i],a[i+1],a[i+2],a[i+3],a[i+4],a[i+5]);
+      }
+    });
+    D.seg[kat] = ziel;
+  });
+}
 
 /* ---- Geografie: echte Landesgrenze und Seen (Natural Earth, 1:10m) ---
    Vorprojiziert mit derselben seitentreuen Projektion wie die Fahrtdaten. */
@@ -255,6 +309,7 @@ function spurNeu(t){
   spg.clearRect(0,0,1600,900);
   spurWeiter(VON, t);
 }
+/* eslint-hinweis: VON/BIS sind fensterabhängige Variablen */
 
 /* Einen Frame zeichnen: Hintergrund + Spuren + laufende Punkte */
 function male(t){
@@ -274,21 +329,30 @@ function male(t){
 
 /* ---- Panel: Phasen, Zähler, Kategorien, Mini-Chart ------------------- */
 const PHASEN = [
-  { bis:225, p:'Nachtruhe',      tit:'Die Schweiz schläft',
-    txt:'Fast nichts bewegt sich: Um 03:00 sind schweizweit nur 8 Fahrten unterwegs. Nachtbusse und erste Betriebsfahrten.',
-    frage:'Um 03:00 sind es genau 8 Fahrten. Wer braucht sie – und wohin?' },
-  { bis:270, p:'Betriebsbeginn', tit:'Die ersten Achsen rollen',
+  { bis:240,  p:'Nachtruhe',      tit:'Die Schweiz schläft',
+    txt:'Tiefste Nacht: Nur einzelne Nachtlinien und Betriebsfahrten sind unterwegs – der Rest des Netzes ruht.',
+    frage:'Wer ist um diese Zeit unterwegs – und warum?' },
+  { bis:270,  p:'Betriebsbeginn', tit:'Die ersten Achsen rollen',
     txt:'Die Depots öffnen, der Fernverkehr startet zuerst. Wer um 05:00 in Zürich einsteigen will, dessen Zug ist längst unterwegs.',
     frage:'Warum starten die Züge vor den Trams?' },
-  { bis:330, p:'Frühschicht',    tit:'Wer fährt so früh?',
+  { bis:330,  p:'Frühschicht',    tit:'Wer fährt so früh?',
     txt:'Spital-, Bau- und Schichtpersonal ist zuerst unterwegs. In den Städten nehmen jetzt Trams und Stadtbusse den Betrieb auf.',
     frage:'Welche Berufe beginnen vor 06:00 – und wie kommen diese Menschen zur Arbeit?' },
-  { bis:390, p:'Pendlerwelle',   tit:'Das System beschleunigt',
+  { bis:390,  p:'Pendlerwelle',   tit:'Das System beschleunigt',
     txt:'Die Kurve steigt steil: Der Takt verdichtet sich, aus einzelnen Linien wird ein dichtes Netz über das ganze Land.',
     frage:'Beobachten Sie die Karte: Welche Regionen erwachen zuletzt – und warum?' },
-  { bis:9999, p:'Volles Netz',   tit:'Die Schweiz ist wach',
-    txt:'Um 07:00 sind über 4300 Fahrten gleichzeitig unterwegs – aber nur 9 davon sind Schiffe. Das Netz verbindet Stadt, Agglomeration und Bergtäler.',
-    frage:'Nur 9 Schiffe, aber über 3000 Busse: Was sagt das über die Rolle der Verkehrsmittel?' },
+  { bis:540,  p:'Morgenspitze',   tit:'Die Schweiz ist wach',
+    txt:'Das Netz läuft auf Hochtouren und verbindet Stadt, Agglomeration und Bergtäler – Tausende Fahrten gleichzeitig, aber nur eine Handvoll Schiffe.',
+    frage:'Nur wenige Schiffe, aber Tausende Busse: Was sagt das über die Rolle der Verkehrsmittel?' },
+  { bis:960,  p:'Tagesbetrieb',   tit:'Der lange Takt des Tages',
+    txt:'Die Pendlerspitze flacht ab, doch das Netz bleibt dicht: Einkaufs-, Schul- und Freizeitverkehr prägen nun das Bild.',
+    frage:'Woran erkennen Sie auf der Karte den Unterschied zwischen Pendler- und Tagesverkehr?' },
+  { bis:1140, p:'Abendspitze',    tit:'Die zweite Welle',
+    txt:'Feierabend: Jetzt fährt die Schweiz am dichtesten – die Tagesspitze liegt am Nachmittag, höher als am Morgen.',
+    frage:'Warum ist die Abendspitze höher als die Morgenspitze?' },
+  { bis:1441, p:'Ausklang',       tit:'Das Netz fährt herunter',
+    txt:'Linie um Linie endet der Betrieb, bis nur noch die Nacht- und Spätangebote unterwegs sind.',
+    frage:'Wann fährt die letzte Verbindung in Ihrer Region – und wohin?' },
 ];
 
 const uhrEl=document.getElementById('uhr'), zaehlerEl=document.getElementById('zaehler'),
@@ -300,16 +364,24 @@ const uhrzeit = t => {
   const m = Math.floor(t);
   return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
 };
-const kurveBei = t => D.kurve[Math.max(0, Math.min(D.kurve.length-1, Math.floor(t)-VON))];
+const kurveBei = t => META.kurve[Math.max(0, Math.min(1440, Math.floor(t)))];
 
-/* Mini-Chart der echten Kurve (einmal bauen, Marker bewegen) */
+/* Mini-Chart der echten Kurve – pro Fenster neu gebaut */
 const chart = document.getElementById('chart');
-const CMAX = Math.max(...D.kurve);
-(function bauChart(){
-  const W=300, H=110, L=6, R=294, O=12, U=96;
+let CMAX = 1, FMAX = {};
+function bauChart(){
+  CMAX = 1;
+  for(let m=VON; m<=BIS; m++) CMAX = Math.max(CMAX, kurveBei(m));
+  KATS.forEach(kat=>{
+    let mx = 1;
+    for(let m=VON; m<=BIS; m++) mx = Math.max(mx, META.kurve_kat[kat][m]);
+    FMAX[kat] = mx;
+  });
+  const L=6, R=294, O=12, U=96;
+  const schritt = Math.max(1, Math.round((BIS-VON)/150));
   let d='', fd='M '+L+' '+U;
-  for(let m=VON; m<=BIS_ANZEIGE; m+=2){
-    const x = L + (R-L)*(m-VON)/(BIS_ANZEIGE-VON);
+  for(let m=VON; m<=BIS; m+=schritt){
+    const x = L + (R-L)*(m-VON)/(BIS-VON);
     const y = U - (U-O)*(kurveBei(m)/CMAX);
     d += (m===VON ? 'M ':' L ')+x.toFixed(1)+' '+y.toFixed(1);
     fd += ' L '+x.toFixed(1)+' '+y.toFixed(1);
@@ -320,20 +392,20 @@ const CMAX = Math.max(...D.kurve);
     '<path d="'+d+'" fill="none" stroke="#F2C14E" stroke-width="2"/>' +
     '<circle id="c-marker" r="4" fill="#fff"/>' +
     '<text id="c-text" fill="#fff" font-size="13" font-weight="800" font-family="inherit"></text>';
-})();
-const cMarker = document.getElementById('c-marker'), cText = document.getElementById('c-text');
+  cMarker = document.getElementById('c-marker'); cText = document.getElementById('c-text');
+}
+let cMarker = null, cText = null;
 
 function panel(t){
   uhrEl.textContent = uhrzeit(t);
   const n = kurveBei(t);
   zaehlerEl.textContent = n.toLocaleString('de-CH');
 
-  const m = Math.max(0, Math.min(D.kurve.length-1, Math.floor(t)-VON));
+  const m = Math.max(0, Math.min(1440, Math.floor(t)));
   KATS.forEach(kat=>{
-    const v = D.kurve_kat[kat][m];
-    const mx = Math.max(1, Math.max(...D.kurve_kat[kat]));
+    const v = META.kurve_kat[kat][m];
     document.getElementById('w-'+kat).textContent = v.toLocaleString('de-CH');
-    document.getElementById('b-'+kat).style.width = Math.round(100*v/mx)+'%';
+    document.getElementById('b-'+kat).style.width = Math.round(100*v/FMAX[kat])+'%';
   });
 
   const ph = PHASEN.find(p => t < p.bis);
@@ -342,7 +414,7 @@ function panel(t){
   textEl.textContent  = ph.txt;
   frageEl.textContent = ph.frage;
 
-  const x = 6 + 288*(Math.min(t,BIS_ANZEIGE)-VON)/(BIS_ANZEIGE-VON);
+  const x = 6 + 288*(Math.min(t,BIS)-VON)/(BIS-VON);
   const y = 96 - 84*(n/CMAX);
   cMarker.setAttribute('cx',x); cMarker.setAttribute('cy',y);
   cText.setAttribute('x', Math.min(x+8, 232)); cText.setAttribute('y', Math.max(y-8, 14));
@@ -350,25 +422,25 @@ function panel(t){
 }
 
 /* ---- Abspiel-Logik ---------------------------------------------------- */
-let t = VON, laeuft = false, tempo = 4, letzterStamp = null, rafId = null;
+let t = VON, laeuft = false, tempo = 4, letzterStamp = null, rafId = null;   // tempo = 4 min/s × Faktor
 const reduziert = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function schritt(stamp){
   if(!laeuft) return;
   if(letzterStamp != null){
     const dt = Math.min(0.1, (stamp-letzterStamp)/1000);
-    const tNeu = Math.min(BIS_ANZEIGE, t + dt*tempo);
+    const tNeu = Math.min(BIS, t + dt*tempo);
     if(tNeu > t){ spurWeiter(t, tNeu); t = tNeu; }
     zeit.value = t;
     male(t); panel(t);
-    if(t >= BIS_ANZEIGE){ stopp(); }
+    if(t >= BIS){ stopp(); }
   }
   letzterStamp = stamp;
   if(laeuft) rafId = requestAnimationFrame(schritt);
 }
 function start(){
   if(laeuft) return;
-  if(t >= BIS_ANZEIGE){ t = VON; spurNeu(t); }
+  if(t >= BIS){ t = VON; spurNeu(t); }
   laeuft = true; letzterStamp = null;
   playBtn.textContent = '⏸ Pause';
   rafId = requestAnimationFrame(schritt);
@@ -396,7 +468,7 @@ zeit.addEventListener('input', e=>{
 
 document.querySelectorAll('.tempo').forEach(b=>{
   b.addEventListener('click', ()=>{
-    tempo = Number(b.dataset.v);
+    tempo = 4 * Number(b.dataset.f);
     document.querySelectorAll('.tempo').forEach(x=> x.classList.toggle('an', x===b));
   });
 });
@@ -412,12 +484,67 @@ document.querySelectorAll('.filter').forEach(b=>{
   });
 });
 
-/* ---- Startzustand ------------------------------------------------------ */
-if(reduziert){
-  // Ohne Bewegung: das fertige Netz von 07:00 zeigen
-  t = BIS_ANZEIGE; zeit.value = t; spurNeu(t);
+/* ---- Zeitfenster-Wahl --------------------------------------------------- */
+const selVon = document.getElementById('f-von'), selBis = document.getElementById('f-bis'),
+      ladenBtn = document.getElementById('f-laden'), statusEl = document.getElementById('f-status');
+
+(function fuelleSelects(){
+  for(let m=0; m<=1440; m+=30){
+    const o1 = document.createElement('option');
+    o1.value = m; o1.textContent = uhrzeit(m);
+    if(m < 1440) selVon.appendChild(o1);
+    if(m > 0){
+      const o2 = document.createElement('option');
+      o2.value = m; o2.textContent = m===1440 ? '24:00' : uhrzeit(m);
+      selBis.appendChild(o2);
+    }
+  }
+  selVon.value = 180; selBis.value = 420;
+})();
+
+async function ladeFenster(von, bis){
+  ladenBtn.disabled = true;
+  const stunden = noetigeStunden(von, bis);
+  try{
+    for(let i=0; i<stunden.length; i++){
+      statusEl.textContent = 'Lade Daten … ' + (i+1) + '/' + stunden.length;
+      await ladeChunk(stunden[i]);
+    }
+  }catch(h){
+    statusEl.textContent = '';
+    document.getElementById('fehlt').style.display = 'block';
+    ladenBtn.disabled = false;
+    return;
+  }
+  statusEl.textContent = '';
+  stopp();
+  VON = von; BIS = bis;
+  bauSegmente(VON, BIS);
+  zeit.min = VON; zeit.max = BIS; 
+  document.getElementById('z-von').textContent = uhrzeit(VON);
+  document.getElementById('z-bis').textContent = BIS===1440 ? '24:00' : uhrzeit(BIS);
+  bauChart();
+  zeigeQuelle();
+  t = reduziert ? BIS : VON;
+  zeit.value = t;
+  spurNeu(t); male(t); panel(t);
+  ladenBtn.disabled = false;
 }
-male(t); panel(t);
+
+function pruefeFenster(){
+  const ok = Number(selBis.value) - Number(selVon.value) >= 30;
+  ladenBtn.disabled = !ok;
+  statusEl.textContent = ok ? '' : '«bis» muss nach «von» liegen.';
+  return ok;
+}
+selVon.addEventListener('change', pruefeFenster);
+selBis.addEventListener('change', pruefeFenster);
+ladenBtn.addEventListener('click', ()=>{
+  if(pruefeFenster()) ladeFenster(Number(selVon.value), Number(selBis.value));
+});
+
+/* ---- Startzustand: Standardfenster 03:00–07:00 laden -------------------- */
+ladeFenster(180, 420);
 })();
 </script>
 </body>
