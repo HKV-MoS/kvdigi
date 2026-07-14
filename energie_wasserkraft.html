@@ -124,7 +124,7 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
     <img id="quellbild" src="energie_wasserkraft.jpg" alt="" hidden>
     <svg viewBox="0 0 2000 1127" aria-hidden="true">
       <!-- Pfade (unsichtbar, Führungsschienen) -->
-      <!-- Strompuls: jagt nach jedem Y-Schlag einmal über das Leiterseil -->
+      <!-- Strompuls-Duo: jagt nach jedem Y-Schlag über beide Leiterseile -->
       <g id="stromlauf" style="pointer-events:none">
         <path pathLength="600" d="M 1364 132 C 1450 100, 1530 86, 1600 88 C 1700 92, 1830 112, 1955 133"
               fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".45"
@@ -136,6 +136,18 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
               fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round"
               stroke-dasharray="110 1300" stroke-dashoffset="110">
           <animate id="sl-b" attributeName="stroke-dashoffset" from="110" to="-600"
+                   dur="0.5s" begin="indefinite" restart="always" fill="freeze"/>
+        </path>
+        <path pathLength="600" d="M 1364 162 C 1450 130, 1530 116, 1600 118 C 1700 122, 1830 142, 1955 163"
+              fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".45"
+              stroke-dasharray="110 1300" stroke-dashoffset="110">
+          <animate id="sl-c" attributeName="stroke-dashoffset" from="110" to="-600"
+                   dur="0.5s" begin="indefinite" restart="always" fill="freeze"/>
+        </path>
+        <path pathLength="600" d="M 1364 162 C 1450 130, 1530 116, 1600 118 C 1700 122, 1830 142, 1955 163"
+              fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round"
+              stroke-dasharray="110 1300" stroke-dashoffset="110">
+          <animate id="sl-d" attributeName="stroke-dashoffset" from="110" to="-600"
                    dur="0.5s" begin="indefinite" restart="always" fill="freeze"/>
         </path>
       </g>
@@ -724,7 +736,7 @@ function zap(){
 }
 const blitzEl = document.getElementById('blitz');
 function stromPuls(){
-  ['sl-a','sl-b'].forEach(id=>{
+  ['sl-a','sl-b','sl-c','sl-d'].forEach(id=>{
     const a = document.getElementById(id);
     if(a && a.beginElement) a.beginElement();
   });
