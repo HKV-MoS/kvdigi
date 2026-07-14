@@ -77,6 +77,24 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
   font-size:12px;color:var(--muted);text-align:center;}
 .fluss{mix-blend-mode:screen;}
 .tiefe{mix-blend-mode:multiply;}
+.m-btn.nebenrolle{font-weight:700;border-style:dashed;}
+.m-btn.nebenrolle[aria-pressed="true"]{background:var(--ocker);border-color:var(--ocker);border-style:solid;color:#fff;}
+.lade{position:absolute;left:12px;bottom:12px;z-index:2;background:rgba(21,35,50,.78);color:#fff;
+  font-size:12.5px;padding:7px 12px;border-radius:999px;pointer-events:none;transition:opacity .5s;}
+.mini{max-width:1240px;margin:26px auto 0;}
+.mini-t{font-size:20px;font-weight:800;}
+.mini-s{color:var(--muted);font-size:13.5px;margin:2px 0 14px;}
+.q{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:12px;
+  box-shadow:0 4px 14px rgba(21,35,50,.06);}
+.q-t{font-weight:700;margin:0 0 10px;font-size:15px;}
+.qopt{display:block;width:100%;text-align:left;font:inherit;font-size:14px;padding:9px 12px;margin:6px 0;
+  border:1.5px solid var(--line);border-radius:9px;background:#fff;cursor:pointer;min-height:42px;}
+.qopt:hover{border-color:var(--hkv);}
+.qopt.right{background:#E8F5E1;border-color:#5BA829;font-weight:700;}
+.qopt.wrong{background:#FBEAEA;border-color:#D6342C;}
+.qopt[disabled]{cursor:default;}
+.qfeed{font-size:13px;margin:8px 2px 0;color:var(--muted);display:none;}
+.qfeed.show{display:block;}
 @media (prefers-reduced-motion:reduce){ .dreh{display:none;} }
 </style>
 </head>
@@ -89,14 +107,17 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
     Klicken Sie die Stationen <b>1–8</b> im Bild oder im Seitenpanel an.</p>
 </header>
 
-<div class="modus" role="group" aria-label="Betriebsmodus">
+<div class="modus" role="group" aria-label="Betriebsmodus und Extras">
   <button class="m-btn" id="m-turb" aria-pressed="true">▶ Turbinieren – Strom erzeugen</button>
   <button class="m-btn" id="m-pump" aria-pressed="false">◀ Pumpen – Energie speichern</button>
+  <button class="m-btn nebenrolle" id="tour-btn" aria-pressed="false">🎬 Tour durch die Anlage</button>
+  <button class="m-btn nebenrolle" id="ton-btn" aria-pressed="false">♪ Ton</button>
 </div>
 <p class="m-text" id="m-text"></p>
 
 <div class="stage">
   <div class="buehne">
+    <div class="lade" id="lade" hidden></div>
     <canvas id="bild" width="2000" height="1127" role="img"
       aria-label="Schnittbild eines alpinen Wasserkraftwerks: Stausee, Staumauer, Druckleitung im Fels, Maschinenhaus mit Turbine, Generator und Transformator, Freileitung"></canvas>
     <img id="quellbild" src="energie_wasserkraft.jpg" alt="" hidden>
@@ -112,6 +133,15 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
       <g id="g-pump" style="display:none">
         <g id="puls-pump"></g>
       </g>
+      <!-- Blitz am Mast: da geht was ab -->
+      <g id="blitz" opacity="0" style="pointer-events:none">
+        <path d="M 1596 96 L 1606 116 L 1599 118 L 1611 142 L 1602 144 L 1616 172"
+              fill="none" stroke="#FFF3C4" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+        <path d="M 1596 96 L 1606 116 L 1599 118 L 1611 142 L 1602 144 L 1616 172"
+              fill="none" stroke="var(--strom)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+        <circle cx="1596" cy="94" r="7" fill="#FFF3C4" opacity=".9"/>
+      </g>
+
       <!-- Stationen -->
       <g id="spots"></g>
     </svg>
@@ -145,6 +175,12 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
   </div>
 </div>
 
+<section class="mini" aria-label="Mini-Check">
+  <h2 class="mini-t">Mini-Check</h2>
+  <p class="mini-s">Vier Fragen zur Selbstkontrolle – klicken Sie die passende Antwort an.</p>
+  <div id="mini-fragen"></div>
+</section>
+
 <p class="quelle">Bild: KI-generierte Schnittbild-Illustration · Zahlen: Bundesamt für Energie (BFE),
   Elektrizitätsbilanz 2024 (definitiv) · Aufbereitet für den ABU-Unterricht.</p>
 <footer>© 2026 Samuel Mollet · HKV Aarau · realisiert mit Claude (Anthropic)</footer>
@@ -156,7 +192,7 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
 /* ---------- Stationen (Bildkoordinaten im 2000x1127-Raster) ---------- */
 const STATIONEN = [
   { n:1, x:190,  y:320,  tit:'Stausee',
-    txt:'Der Speichersee sammelt Schmelz- und Regenwasser aus den Bergen. Je höher das Wasser über der Turbine liegt, desto mehr Energie steckt darin – gespeicherte Lageenergie. Die Schweizer Speicherseen gelten darum als «Batterie der Schweiz».' },
+    txt:'Der Speichersee sammelt Schmelz- und Regenwasser aus den Bergen. Je höher das Wasser über der Turbine liegt, desto mehr Energie steckt darin – gespeicherte Lageenergie. Die Schweizer Speicherseen gelten darum als «Batterie der Schweiz». Gefüllt wird er vom Wasserkreislauf: Verdunstung, Wolken, Regen und Schmelzwasser – schauen Sie den Wolken oben beim Werden und Vergehen zu.' },
   { n:2, x:388,  y:560,  tit:'Einlauf mit Rechen',
     txt:'Hier tritt das Wasser aus dem See in die Anlage ein. Der Rechen – das Gitter – hält Äste, Geröll und Treibgut zurück, damit die Turbine nicht beschädigt wird. Mit Schiebern lässt sich der Zufluss jederzeit stoppen.' },
   { n:3, x:870,  y:900,  tit:'Druckleitung',
@@ -207,7 +243,7 @@ STATIONEN.forEach((s,i)=>{
 });
 spots.addEventListener('click', e=>{
   const g = e.target.closest('.spot');
-  if(g) waehle(Number(g.dataset.i));
+  if(g){ tourStopp(); waehle(Number(g.dataset.i)); blip(false); }
 });
 
 /* ---------- Panel ---------- */
@@ -216,7 +252,7 @@ STATIONEN.forEach((s,i)=>{
   const b = document.createElement('button');
   b.className='chip'; b.type='button'; b.textContent = s.n+' · '+s.tit;
   b.setAttribute('aria-pressed', i===0 ? 'true':'false');
-  b.addEventListener('click', ()=>waehle(i));
+  b.addEventListener('click', ()=>{ tourStopp(); waehle(i); blip(false); });
   chips.appendChild(b);
 });
 let aktuell = 0;
@@ -231,8 +267,28 @@ function waehle(i){
 }
 document.addEventListener('keydown', e=>{
   const n = Number(e.key);
-  if(n>=1 && n<=STATIONEN.length) waehle(n-1);
+  if(n>=1 && n<=STATIONEN.length){ tourStopp(); waehle(n-1); blip(false); }
 });
+
+/* ---------- Tour: Autopilot durch die Anlage ---------- */
+let tourTimer = null;
+const tourBtn = document.getElementById('tour-btn');
+function tourStopp(){
+  if(tourTimer){ clearInterval(tourTimer); tourTimer = null; }
+  tourBtn.setAttribute('aria-pressed','false');
+  tourBtn.textContent = '🎬 Tour durch die Anlage';
+}
+function tourStart(){
+  waehle(0); blip(true);
+  tourBtn.setAttribute('aria-pressed','true');
+  tourBtn.textContent = '⏹ Tour beenden';
+  tourTimer = setInterval(()=>{
+    if(aktuell >= STATIONEN.length-1){ tourStopp(); return; }
+    waehle(aktuell+1); blip(false);
+  }, 8000);
+}
+tourBtn.addEventListener('click', ()=> tourTimer ? tourStopp() : tourStart());
+
 waehle(0);
 
 /* ---------- Animierte Partikel (SMIL) ---------- */
@@ -263,7 +319,7 @@ function partikel(zielId, pfadId, anzahl, dauer, farbe, r, rueckwaerts){
    Pro Tick nur ein putImageData – wie damals ein Palettenregister-Shift.
    ================================================================== */
 const bildCanvas = document.getElementById('bild');
-const bctx = bildCanvas.getContext('2d');
+const bctx = bildCanvas.getContext('2d', { willReadFrequently:true });
 let richtung = 1;   // 1 = turbinieren (bergab), -1 = pumpen
 
 const ZONEN = [
@@ -351,8 +407,92 @@ function baueZone(z, basis){
   return { x0, y0, frames, tick:z.tick, umkehrbar:z.umkehrbar, phase:0, letztes:0, pixel:idx.length };
 }
 
-let zyklen=[];
+/* Funkel-Felder: ausgestanzte Bereiche, deren eigene Pixel atmen.
+   «wolken»: Wolkenpixel blenden zyklisch Richtung Himmelsblau und zurück
+   (bilden sich, lösen sich auf, driften leicht) – 20 Phasen, wie am Amiga.
+   «schaum»: helle Gischtpixel funkeln und treiben flussabwärts. */
+const FELDER = [
+  { name:'wolken', art:'wolken', K:20, tick:320, phase:0, letztes:0,
+    rects:[[473,143,363,132],[913,132,187,88],[1749,66,242,121],[132,165,198,66],[1419,61,101,66]] },
+  { name:'schaum', art:'schaum', amp:.20, tick:100, phase:0, letztes:0,
+    rects:[[1782,473,198,297],[1760,770,176,220],[1628,990,264,136],[1265,1078,385,49]] },
+];
+function baueFeld(f){
+  const xs=f.rects.map(r=>r[0]), ys=f.rects.map(r=>r[1]);
+  const x0=Math.min(...xs), y0=Math.min(...ys);
+  const x1=Math.max(...f.rects.map(r=>r[0]+r[2])), y1=Math.max(...f.rects.map(r=>r[1]+r[3]));
+  const w=Math.min(2000,x1)-x0, h=Math.min(1127,y1)-y0;
+  const grund = bctx.getImageData(x0,y0,w,h);
+  const arbeit = bctx.createImageData(w,h); arbeit.data.set(grund.data);
+  const inRect=(X,Y)=> f.rects.some(r=> X>=r[0]&&X<r[0]+r[2]&&Y>=r[1]&&Y<r[1]+r[3]);
+
+  const idx=[], phi=[], staerke=[], ziel=[];
+  const d=grund.data;
+  /* Himmelsfarbe pro Zeile (Mittel der Nicht-Wolken-Pixel) für «wolken» */
+  const himmelZeile={};
+  if(f.art==='wolken'){
+    for(let py=0;py<h;py++){
+      let r=0,g=0,b=0,n=0;
+      for(let px=0;px<w;px++){
+        const X=x0+px, Y=y0+py; if(!inRect(X,Y)) continue;
+        const i0=(py*w+px)*4, R=d[i0],G=d[i0+1],B=d[i0+2];
+        const hell=(R+G+B)/3;
+        if(!(hell>180 && Math.min(R,G)>0.8*B)){ r+=R;g+=G;b+=B;n++; }
+      }
+      if(n>8) himmelZeile[py]=[r/n,g/n,b/n];
+    }
+  }
+  for(let py=0;py<h;py++) for(let px=0;px<w;px++){
+    const X=x0+px, Y=y0+py; if(!inRect(X,Y)) continue;
+    const i0=(py*w+px)*4, R=d[i0],G=d[i0+1],B=d[i0+2];
+    const hell=(R+G+B)/3;
+    if(f.art==='wolken'){
+      if(hell>180 && Math.min(R,G)>0.8*B && B>170){
+        const hz=himmelZeile[py]; if(!hz) continue;
+        idx.push(i0); ziel.push(hz);
+        phi.push(X*0.0045 + 1.3*Math.sin(X*0.004+Y*0.012));
+        staerke.push(Math.min(1,(hell-180)/50));
+      }
+    } else {
+      if(hell>185 && Math.max(R,G,B)-Math.min(R,G,B)<48){
+        idx.push(i0); ziel.push(null);
+        phi.push(((X*928371+Y*123457)%1000)/1000*6.2832 + Y*0.03);
+        staerke.push(1);
+      }
+    }
+  }
+  return { ...f, x0, y0, grund, arbeit, idx, phi, staerke, ziel, pixel:idx.length };
+}
+function feldTick(f){
+  f.phase = (f.phase + 1) % (f.art==='wolken' ? f.K : 1000);
+  const a=f.arbeit.data, g=f.grund.data;
+  if(f.art==='wolken'){
+    const p = f.phase / f.K;
+    for(let n=0;n<f.idx.length;n++){
+      const i0=f.idx[n], hz=f.ziel[n];
+      const anteil = f.staerke[n]*(0.28 + 0.72*(0.5+0.5*Math.cos(6.2832*p + f.phi[n])));
+      a[i0]   = hz[0] + (g[i0]  -hz[0])*anteil;
+      a[i0+1] = hz[1] + (g[i0+1]-hz[1])*anteil;
+      a[i0+2] = hz[2] + (g[i0+2]-hz[2])*anteil;
+    }
+  } else {
+    const t = f.phase * 0.55;
+    for(let n=0;n<f.idx.length;n++){
+      const i0=f.idx[n];
+      const fak = 1 + f.amp*Math.cos(t + f.phi[n]);
+      a[i0]   = Math.min(255, g[i0]  *fak);
+      a[i0+1] = Math.min(255, g[i0+1]*fak);
+      a[i0+2] = Math.min(255, g[i0+2]*fak);
+    }
+  }
+  bctx.putImageData(f.arbeit, f.x0, f.y0);
+}
+
+let zyklen=[], felder=[];
 function zyklusSchritt(zeit){
+  felder.forEach(f=>{
+    if(zeit - f.letztes >= f.tick){ f.letztes = zeit; feldTick(f); }
+  });
   zyklen.forEach(z=>{
     if(zeit - z.letztes >= z.tick){
       z.letztes = zeit;
@@ -366,11 +506,36 @@ function zyklusSchritt(zeit){
 
 const reduziert = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const quellbild = document.getElementById('quellbild');
+const ladeEl = document.getElementById('lade');
 function starteBild(){
   bctx.drawImage(quellbild, 0, 0, 2000, 1127);
   if(reduziert) return;               // Standbild genügt
-  ZONEN.forEach(z=> zyklen.push(baueZone(z, quellbild)));
-  requestAnimationFrame(zyklusSchritt);
+  /* Zonen nacheinander bauen – die Seite bleibt bedienbar */
+  ladeEl.hidden = false;
+  const bauplan = ZONEN.map(z=>({z})).concat(FELDER.map(f=>({f})));
+  let i = 0;
+  function naechste(){
+    if(i >= bauplan.length){
+      ladeEl.textContent = 'Das Bild lebt.';
+      setTimeout(()=>{ ladeEl.style.opacity = 0; setTimeout(()=>ladeEl.hidden = true, 600); }, 900);
+      requestAnimationFrame(zyklusSchritt);
+      return;
+    }
+    ladeEl.textContent = 'Bild wird zum Leben erweckt … ' + (i+1) + '/' + bauplan.length;
+    requestAnimationFrame(()=>{
+      try{
+        if(bauplan[i].z) zyklen.push(baueZone(bauplan[i].z, quellbild));
+        else felder.push(baueFeld(bauplan[i].f));
+      }catch(err){
+        /* file://-Betrieb: Canvas-Pixelzugriff gesperrt -> würdevolles Standbild */
+        ladeEl.textContent = 'Animation braucht einen Webserver – auf abu-tools.ch läuft sie.';
+        setTimeout(()=>{ ladeEl.style.opacity = 0; setTimeout(()=>ladeEl.hidden = true, 600); }, 3500);
+        return;
+      }
+      i++; naechste();
+    });
+  }
+  naechste();
   /* Strom-Pulse auf der Leitung (Vektor-Ebene) */
   partikel('puls-turb','pfad-strom', 5, 2.4, 'var(--strom)', 6, false);
   partikel('puls-pump','pfad-strom', 5, 2.4, 'var(--strom)', 6, true);
@@ -378,10 +543,103 @@ function starteBild(){
 if(quellbild.complete && quellbild.naturalWidth) starteBild();
 else quellbild.addEventListener('load', starteBild);
 
+/* ==================================================================
+   KLANG – der SID-Geist, prozedural aus der Web Audio API.
+   Standardmässig aus; erster Klick auf «Ton» erzeugt den AudioContext
+   (Browser verlangen die Nutzergeste ohnehin). Turbinen-Drone +
+   Wasserrauschen + 50-Hz-Netzbrumm; beim Pumpen wandert der Drone
+   nach oben und beginnt zu pulsieren – Musik, die den Zustand kennt.
+   ================================================================== */
+let audio = null, tonAn = false;
+function baueAudio(){
+  const ac = new (window.AudioContext || window.webkitAudioContext)();
+  const master = ac.createGain(); master.gain.value = 0; master.connect(ac.destination);
+
+  /* Turbinen-Drone: zwei verstimmte Sägezähne durch einen Tiefpass */
+  const o1 = ac.createOscillator(), o2 = ac.createOscillator();
+  o1.type = 'sawtooth'; o2.type = 'sawtooth';
+  o1.frequency.value = 55; o2.frequency.value = 55.6;
+  const tief = ac.createBiquadFilter(); tief.type = 'lowpass'; tief.frequency.value = 190;
+  const droneGain = ac.createGain(); droneGain.gain.value = .05;
+  o1.connect(tief); o2.connect(tief); tief.connect(droneGain); droneGain.connect(master);
+
+  /* Puls-LFO für den Pumpbetrieb (zunächst stumm) */
+  const lfo = ac.createOscillator(); lfo.frequency.value = .9;
+  const lfoGain = ac.createGain(); lfoGain.gain.value = 0;
+  lfo.connect(lfoGain); lfoGain.connect(droneGain.gain);
+
+  /* Wasserrauschen: Weissrauschen durch einen Bandpass */
+  const puffer = ac.createBuffer(1, ac.sampleRate * 2, ac.sampleRate);
+  const d = puffer.getChannelData(0);
+  for(let i=0;i<d.length;i++) d[i] = Math.random()*2-1;
+  const rauschen = ac.createBufferSource(); rauschen.buffer = puffer; rauschen.loop = true;
+  const band = ac.createBiquadFilter(); band.type = 'bandpass';
+  band.frequency.value = 750; band.Q.value = .5;
+  const rGain = ac.createGain(); rGain.gain.value = .028;
+  rauschen.connect(band); band.connect(rGain); rGain.connect(master);
+
+  /* 50-Hz-Netzbrumm, hauchzart – der Trafo lebt */
+  const netz = ac.createOscillator(); netz.frequency.value = 50;
+  const nGain = ac.createGain(); nGain.gain.value = .012;
+  netz.connect(nGain); nGain.connect(master);
+
+  o1.start(); o2.start(); lfo.start(); rauschen.start(); netz.start();
+  return { ac, master, o1, o2, lfoGain };
+}
+function tonSchalten(){
+  if(!audio) audio = baueAudio();
+  tonAn = !tonAn;
+  if(audio.ac.state === 'suspended') audio.ac.resume();
+  audio.master.gain.setTargetAtTime(tonAn ? 1 : 0, audio.ac.currentTime, .25);
+  document.getElementById('ton-btn').setAttribute('aria-pressed', String(tonAn));
+}
+document.getElementById('ton-btn').addEventListener('click', tonSchalten);
+function tonModus(pumpen){
+  if(!audio) return;
+  const t = audio.ac.currentTime;
+  audio.o1.frequency.setTargetAtTime(pumpen ? 66 : 55,   t, .6);
+  audio.o2.frequency.setTargetAtTime(pumpen ? 66.7 : 55.6, t, .6);
+  audio.lfoGain.gain.setTargetAtTime(pumpen ? .022 : 0,  t, .6);
+}
+function blip(hoch){
+  if(!audio || !tonAn) return;
+  const ac = audio.ac, o = ac.createOscillator(), g = ac.createGain();
+  o.type = 'square'; o.frequency.value = hoch ? 880 : 660;
+  g.gain.setValueAtTime(.06, ac.currentTime);
+  g.gain.exponentialRampToValueAtTime(.001, ac.currentTime + .09);
+  o.connect(g); g.connect(audio.master);
+  o.start(); o.stop(ac.currentTime + .1);
+}
+
+/* Blitz am Mast: unregelmässig, manchmal doppelt – mit Zap, wenn Ton an */
+function zap(){
+  if(!audio || !tonAn) return;
+  const ac=audio.ac, o=ac.createOscillator(), g=ac.createGain();
+  o.type='square';
+  o.frequency.setValueAtTime(1500, ac.currentTime);
+  o.frequency.exponentialRampToValueAtTime(160, ac.currentTime+.07);
+  g.gain.setValueAtTime(.07, ac.currentTime);
+  g.gain.exponentialRampToValueAtTime(.001, ac.currentTime+.09);
+  o.connect(g); g.connect(audio.master);
+  o.start(); o.stop(ac.currentTime+.1);
+}
+const blitzEl = document.getElementById('blitz');
+function flackern(){
+  blitzEl.setAttribute('opacity','1'); zap();
+  setTimeout(()=> blitzEl.setAttribute('opacity','0'), 110);
+  if(Math.random()<.35){
+    setTimeout(()=>{ blitzEl.setAttribute('opacity','1');
+      setTimeout(()=> blitzEl.setAttribute('opacity','0'), 80); }, 200);
+  }
+  setTimeout(flackern, 2200 + Math.random()*2600);
+}
+if(!reduziert) setTimeout(flackern, 1800);
+
 /* ---------- Modus-Schalter ---------- */
 const mTurb = document.getElementById('m-turb'), mPump = document.getElementById('m-pump');
 function setzeModus(pumpen){
   richtung = pumpen ? -1 : 1;
+  tonModus(pumpen);
   document.getElementById('g-turb').style.display = pumpen ? 'none' : '';
   document.getElementById('g-pump').style.display = pumpen ? '' : 'none';
   mTurb.setAttribute('aria-pressed', String(!pumpen));
@@ -417,6 +675,49 @@ function setzeSaison(w){
 sSo.addEventListener('click', ()=>setzeSaison(false));
 sWi.addEventListener('click', ()=>setzeSaison(true));
 setzeSaison(false);
+
+/* ---------- Mini-Check ---------- */
+const FRAGEN=[
+  { f:"In welcher Reihenfolge nutzt das Wasser die Anlage?",
+    o:["Stausee → Turbine → Druckleitung → Generator","Stausee → Druckleitung → Turbine → Generator",
+       "Druckleitung → Stausee → Generator → Turbine","Generator → Turbine → Druckleitung → Stausee"], r:1,
+    e:"Erst sammelt der See das Wasser, die Druckleitung bringt es mit Druck zur Turbine, und deren Drehung treibt den Generator an." },
+  { f:"Wozu dient der Transformator?",
+    o:["Er speichert überschüssigen Strom","Er kühlt den Generator",
+       "Er setzt die Spannung hoch, damit der Transport wenig Energie verliert","Er misst den Stromverbrauch der Haushalte"], r:2,
+    e:"Hohe Spannung (bis 380'000 Volt) heisst kleiner Strom – und damit geringe Verluste auf dem langen Weg." },
+  { f:"Was passiert im Pumpbetrieb?",
+    o:["Das Werk pumpt mit überschüssigem Strom Wasser zurück in den See","Die Turbine dreht schneller und erzeugt mehr Strom",
+       "Das Wasser wird gefiltert und getrunken","Der See wird abgelassen, um Platz zu schaffen"], r:0,
+    e:"Ist Strom im Überfluss da, kehrt das Werk den Fluss um – die Energie liegt danach als hochgelegenes Wasser bereit." },
+  { f:"Warum nennt man die Speicherseen die «Batterie der Schweiz»?",
+    o:["Weil sie Strom in grossen Akkus lagern","Weil sie Energie als hochgelegenes Wasser speichern, abrufbar bei Bedarf",
+       "Weil ihr Wasser elektrisch geladen ist","Weil dort die meisten Batterien hergestellt werden"], r:1,
+    e:"Gespeichert wird Lageenergie: Wasser oben im See ist abrufbarer Strom von morgen – besonders wertvoll im Winter." }
+];
+const mf=document.getElementById('mini-fragen');
+FRAGEN.forEach((q,qi)=>{
+  const box=document.createElement('div'); box.className='q';
+  box.innerHTML='<p class="q-t">'+(qi+1)+'. '+q.f+'</p>';
+  q.o.forEach((opt,oi)=>{
+    const b=document.createElement('button');
+    b.type='button'; b.className='qopt'; b.textContent=opt;
+    b.addEventListener('click',()=>{
+      box.querySelectorAll('.qopt').forEach((x,xi)=>{
+        x.disabled=true;
+        if(xi===q.r) x.classList.add('right');
+      });
+      if(oi!==q.r) b.classList.add('wrong');
+      blip(oi===q.r);
+      feed.textContent=(oi===q.r?'Richtig! ':'Nicht ganz. ')+q.e;
+      feed.classList.add('show');
+    });
+    box.appendChild(b);
+  });
+  const feed=document.createElement('p'); feed.className='qfeed';
+  box.appendChild(feed);
+  mf.appendChild(box);
+});
 })();
 </script>
 </body>
