@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>abu-tools.ch · Lernmaterialien ABU – HKV Aarau</title>
-<meta name="description" content="Interaktive Lernmaterialien für den allgemeinbildenden Unterricht an der HKV Aarau.">
+<title>abu-tools.ch · Interaktive Tools für den ABU-Unterricht – HKV Aarau</title>
+<meta name="description" content="Interaktive Folien, Simulationen und Rechner für den allgemeinbildenden Unterricht an der HKV Aarau – die Ergänzung zu KV Digital.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
@@ -44,13 +44,26 @@ body{
   margin:.55rem 0 .9rem;
 }
 .wordmark .tld{color:#9fb2c6;font-weight:500}
-.lead{font-size:clamp(1rem,2.4vw,1.12rem);color:var(--grau);max-width:46ch}
+.lead{font-size:clamp(1rem,2.4vw,1.12rem);color:var(--grau);max-width:52ch}
+
+/* Positionierung gegenüber KV Digital – kurz und dezent */
+.hinweis{
+  margin-top:1.3rem;
+  padding:.85rem 1.1rem;
+  background:var(--karte);
+  border:1px solid var(--linie);
+  border-left:3px solid var(--ocker);
+  border-radius:8px;
+  font-size:.88rem;color:var(--grau);
+  max-width:62ch;
+}
+.hinweis b{color:var(--tinte);font-weight:700}
 .rule{height:1px;background:var(--linie);margin:2.2rem 0 0}
 
 /* ── Abschnitts-Label ── */
 .materialien{
   display:flex;align-items:center;gap:.8rem;
-  margin:2.2rem 0 1.1rem;
+  margin:2.2rem 0 1rem;
 }
 .materialien span{
   font-family:'JetBrains Mono',monospace;
@@ -58,6 +71,25 @@ body{
   white-space:nowrap;
 }
 .materialien::after{content:"";flex:1;height:1px;background:var(--linie)}
+
+/* ── Filter ── */
+.filter{
+  display:flex;flex-wrap:wrap;gap:.5rem;
+  margin:0 0 1.3rem;
+}
+.chip{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:.5rem .8rem;min-height:40px;
+  background:var(--karte);color:var(--grau);
+  border:1px solid var(--linie);border-radius:999px;
+  cursor:pointer;transition:all .18s;
+}
+.chip:hover{border-color:var(--hkv);color:var(--hkv)}
+.chip[aria-pressed="true"]{
+  background:var(--hkv);border-color:var(--hkv);color:#fff;font-weight:500;
+}
+.chip:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(31,78,120,.35)}
 
 /* ── Kacheln ── */
 .grid{
@@ -76,6 +108,7 @@ body{
   transition:transform .22s cubic-bezier(.4,0,.2,1),box-shadow .22s,border-left-width .22s,border-left-color .22s;
   box-shadow:0 1px 2px rgba(21,35,50,.04);
 }
+.karte[hidden]{display:none}
 .karte:hover,.karte:focus-visible{
   transform:translateY(-3px);
   box-shadow:0 12px 28px rgba(31,78,120,.13);
@@ -84,10 +117,19 @@ body{
   outline:none;
 }
 .karte:focus-visible{box-shadow:0 0 0 3px rgba(31,78,120,.35),0 12px 28px rgba(31,78,120,.13)}
+.k-kopf{
+  display:flex;justify-content:space-between;align-items:baseline;gap:.7rem;
+  margin-bottom:.5rem;
+}
 .k-thema{
   font-family:'JetBrains Mono',monospace;
   font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ocker);
-  margin-bottom:.5rem;
+}
+.k-typ{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--grau);border:1px solid var(--linie);border-radius:999px;
+  padding:.14rem .55rem;white-space:nowrap;
 }
 .k-titel{
   font-family:'Fraunces',serif;font-weight:600;
@@ -95,10 +137,14 @@ body{
   margin-bottom:.5rem;
 }
 .k-text{font-size:.9rem;color:var(--grau);line-height:1.55;flex:1}
+.k-einsatz{
+  font-size:.74rem;color:#8a97a6;
+  margin-top:.75rem;
+}
 .k-aktion{
   font-family:'JetBrains Mono',monospace;
   font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ocker);
-  margin-top:1.1rem;display:inline-flex;align-items:center;gap:.4rem;font-weight:500;
+  margin-top:.8rem;display:inline-flex;align-items:center;gap:.4rem;font-weight:500;
 }
 .k-aktion .pfeil{transition:transform .22s cubic-bezier(.4,0,.2,1)}
 .karte:hover .k-aktion .pfeil,.karte:focus-visible .k-aktion .pfeil{transform:translateX(4px)}
@@ -121,6 +167,7 @@ body{
   .karte:nth-child(6){animation-delay:.41s}
   .karte:nth-child(7){animation-delay:.48s}
   .karte:nth-child(8){animation-delay:.55s}
+  .karte:nth-child(9){animation-delay:.62s}
   @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 }
 </style>
@@ -131,78 +178,156 @@ body{
   <header>
     <div class="eyebrow">HKV Aarau · Allgemeinbildung</div>
     <h1 class="wordmark">abu-tools<span class="tld">.ch</span></h1>
-    <p class="lead">Interaktive Lernmaterialien für den allgemeinbildenden Unterricht an der HKV Aarau.</p>
+    <p class="lead">Interaktive Folien, Simulationen und Rechner für den allgemeinbildenden Unterricht – direkt nutzbar am Beamer, Tablet oder Laptop.</p>
+    <div class="hinweis">
+      Die Aufträge, Lernziele und Theorie finden Sie in <b>KV&nbsp;Digital</b>.
+      abu-tools.ch ergänzt den Unterricht mit interaktiven Werkzeugen, die sich dort verlinken lassen.
+    </div>
     <div class="rule"></div>
   </header>
 
   <main>
-    <div class="materialien"><span>Materialien</span></div>
+    <div class="materialien"><span>Werkzeuge</span></div>
 
-    <div class="grid">
+    <div class="filter" role="group" aria-label="Nach Kategorie filtern">
+      <button class="chip" type="button" data-filter="alle" aria-pressed="true">Alle</button>
+      <button class="chip" type="button" data-filter="politik" aria-pressed="false">Politik &amp; Staat</button>
+      <button class="chip" type="button" data-filter="wirtschaft" aria-pressed="false">Wirtschaft &amp; Recht</button>
+      <button class="chip" type="button" data-filter="gesundheit" aria-pressed="false">Gesundheit &amp; Gesellschaft</button>
+      <button class="chip" type="button" data-filter="oekologie" aria-pressed="false">Ökologie &amp; Mobilität</button>
+      <button class="chip" type="button" data-filter="lernen" aria-pressed="false">Lernen &amp; Selbstmanagement</button>
+      <button class="chip" type="button" data-filter="rechner" aria-pressed="false">Rechner &amp; Organisation</button>
+    </div>
 
-      <a class="karte" href="parlament_sitzplan.html">
-        <div class="k-thema">Staatskunde</div>
+    <div class="grid" id="grid">
+
+      <a class="karte" href="parlament_sitzplan.html" data-kat="politik">
+        <div class="k-kopf">
+          <span class="k-thema">Staatskunde</span>
+          <span class="k-typ">Simulation</span>
+        </div>
         <div class="k-titel">Bundesversammlung</div>
         <p class="k-text">Interaktiver Sitzplan von National- und Ständerat – filterbar nach Partei, Fraktion, Kanton, Geschlecht und Sprache.</p>
-        <span class="k-aktion">Öffnen <span class="pfeil">→</span></span>
+        <div class="k-einsatz">Beamer · Klassenaktivität · Bundesratswahl-Simulation</div>
+        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
       </a>
 
-      <a class="karte" href="ernaehrungspyramide.html">
-        <div class="k-thema">Gesundheit</div>
+      <a class="karte" href="ernaehrungspyramide.html" data-kat="gesundheit">
+        <div class="k-kopf">
+          <span class="k-thema">Gesundheit</span>
+          <span class="k-typ">Interaktive Grafik</span>
+        </div>
         <div class="k-titel">Ernährungspyramide</div>
         <p class="k-text">Die Schweizer Lebensmittelpyramide (Stand 2024) interaktiv – mit Ländervergleich, Nährstoffen und Gesundheitswissen.</p>
-        <span class="k-aktion">Öffnen <span class="pfeil">→</span></span>
+        <div class="k-einsatz">Beamer · Einzelarbeit</div>
+        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
       </a>
 
-      <a class="karte" href="wm2026_spielplan.html">
-        <div class="k-thema">Sport &amp; Aktualität</div>
+      <a class="karte" href="wm2026_spielplan.html" data-kat="gesundheit">
+        <div class="k-kopf">
+          <span class="k-thema">Sport &amp; Aktualität</span>
+          <span class="k-typ">Visualisierung</span>
+        </div>
         <div class="k-titel">WM 2026 Spielplan</div>
         <p class="k-text">Der komplette Spielplan der Fussball-WM 2026 – mit Live-Tabellen und automatisch berechnetem K.-o.-Baum.</p>
-        <span class="k-aktion">Öffnen <span class="pfeil">→</span></span>
+        <div class="k-einsatz">Beamer · Aktualität im Unterricht</div>
+        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
       </a>
 
-      <a class="karte" href="notenrechner.html">
-        <div class="k-thema">Qualifikationsverfahren</div>
+      <a class="karte" href="notenrechner.html" data-kat="rechner">
+        <div class="k-kopf">
+          <span class="k-thema">Qualifikationsverfahren</span>
+          <span class="k-typ">Rechner</span>
+        </div>
         <div class="k-titel">Notenrechner QV</div>
         <p class="k-text">QV-Gesamtnote und Bestehen live berechnet – für Apotheke, Detailhandel und Kaufleute (EFZ, EBA und BM1).</p>
-        <span class="k-aktion">Öffnen <span class="pfeil">→</span></span>
+        <div class="k-einsatz">Einzelarbeit · QV-Vorbereitung</div>
+        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
       </a>
 
-      <a class="karte" href="wasserkreislauf.html">
-        <div class="k-thema">Geografie</div>
+      <a class="karte" href="wasserkreislauf.html" data-kat="oekologie">
+        <div class="k-kopf">
+          <span class="k-thema">Geografie</span>
+          <span class="k-typ">Interaktive Folie</span>
+        </div>
         <div class="k-titel">Wasserkreislauf</div>
         <p class="k-text">Der Wasserkreislauf interaktiv – Verdunstung, Kondensation, Niederschlag und Abfluss Schritt für Schritt erklärt.</p>
-        <span class="k-aktion">Öffnen <span class="pfeil">→</span></span>
+        <div class="k-einsatz">Beamer · KV Digital · Quiz integriert</div>
+        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
       </a>
 
-      <a class="karte" href="eisenhower_matrix.html">
-        <div class="k-thema">Selbstmanagement</div>
+      <a class="karte" href="eisenhower_matrix.html" data-kat="lernen">
+        <div class="k-kopf">
+          <span class="k-thema">Selbstmanagement</span>
+          <span class="k-typ">Interaktive Folie</span>
+        </div>
         <div class="k-titel">Eisenhower-Matrix</div>
         <p class="k-text">Aufgaben nach Dringlichkeit und Wichtigkeit ordnen – interaktiv erkunden, was sofort erledigt, geplant, delegiert oder gestrichen wird.</p>
-        <span class="k-aktion">Öffnen <span class="pfeil">→</span></span>
+        <div class="k-einsatz">Einzelarbeit · Lerncoaching</div>
+        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
       </a>
 
-      <a class="karte" href="angebot_nachfrage.html">
-        <div class="k-thema">Wirtschaft</div>
+      <a class="karte" href="angebot_nachfrage.html" data-kat="wirtschaft">
+        <div class="k-kopf">
+          <span class="k-thema">Wirtschaft</span>
+          <span class="k-typ">Simulation</span>
+        </div>
         <div class="k-titel">Angebot und Nachfrage</div>
         <p class="k-text">Wie Marktpreis und Menge entstehen – Angebots- und Nachfragekurven verschieben und das Gleichgewicht beobachten.</p>
-        <span class="k-aktion">Öffnen <span class="pfeil">→</span></span>
+        <div class="k-einsatz">Beamer · Einzelarbeit</div>
+        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
       </a>
 
-      <a class="karte" href="wirtschaftskreislauf.html">
-        <div class="k-thema">Wirtschaft</div>
+      <a class="karte" href="wirtschaftskreislauf.html" data-kat="wirtschaft">
+        <div class="k-kopf">
+          <span class="k-thema">Wirtschaft</span>
+          <span class="k-typ">Interaktive Folie</span>
+        </div>
         <div class="k-titel">Wirtschaftskreislauf</div>
         <p class="k-text">Vom einfachen zum erweiterten Kreislauf – Haushalte, Unternehmen, Banken, Staat und Ausland mit animierten Geld- und Güterströmen.</p>
-        <span class="k-aktion">Öffnen <span class="pfeil">→</span></span>
+        <div class="k-einsatz">Beamer · KV Digital · geführte Tour</div>
+        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
+      </a>
+
+      <a class="karte" href="oev-erwacht.html" data-kat="oekologie">
+        <div class="k-kopf">
+          <span class="k-thema">Mobilität · Schweiz</span>
+          <span class="k-typ">Datenvisualisierung</span>
+        </div>
+        <div class="k-titel">Wenn der ÖV erwacht</div>
+        <p class="k-text">Echte Fahrplandaten: 23'560 Fahrten zwischen 03:00 und 07:00 Uhr – das Schweizer ÖV-Netz baut sich live auf der Karte auf.</p>
+        <div class="k-einsatz">Beamer · Storytelling-Einstieg</div>
+        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
       </a>
 
     </div>
   </main>
 
   <footer class="fuss">
-    <b>abu-tools.ch</b> — erstellt für den ABU-Unterricht an der HKV Aarau · S. Mollet, ABU &amp; Sport
+    <b>abu-tools.ch</b> — interaktive Werkzeuge für den ABU-Unterricht an der HKV Aarau · S. Mollet, ABU &amp; Sport<br>
+    Aufträge und Lerninhalte: KV Digital.
   </footer>
 
 </div>
+
+<script>
+(function(){
+  'use strict';
+  var chips  = document.querySelectorAll('.chip');
+  var karten = document.querySelectorAll('.karte');
+
+  chips.forEach(function(chip){
+    chip.addEventListener('click', function(){
+      var wahl = chip.dataset.filter;
+      chips.forEach(function(c){ c.setAttribute('aria-pressed', String(c === chip)); });
+      karten.forEach(function(k){
+        var zeigen = (wahl === 'alle') || (k.dataset.kat === wahl);
+        if (zeigen) { k.removeAttribute('hidden'); }
+        else        { k.setAttribute('hidden',''); }
+      });
+    });
+  });
+})();
+</script>
 </body>
 </html>
