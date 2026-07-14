@@ -33,7 +33,7 @@ h1 .accent{color:var(--hkv);}
 .stage{max-width:1240px;margin:16px auto 0;display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:start;}
 @media(max-width:980px){.stage{grid-template-columns:1fr;}}
 .buehne{position:relative;border-radius:14px;overflow:hidden;box-shadow:0 10px 30px rgba(21,35,50,.18);}
-.buehne img{display:block;width:100%;height:auto;}
+.buehne canvas#bild{display:block;width:100%;height:auto;}
 .buehne svg{position:absolute;inset:0;width:100%;height:100%;}
 
 .spot circle.k{fill:rgba(21,35,50,.55);stroke:#fff;stroke-width:3;cursor:pointer;transition:fill .15s;}
@@ -97,46 +97,19 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
 
 <div class="stage">
   <div class="buehne">
-    <img src="energie_wasserkraft.jpg" alt="Schnittbild eines alpinen Wasserkraftwerks: Stausee, Staumauer, Druckleitung im Fels, Maschinenhaus mit Turbine, Generator und Transformator, Freileitung">
+    <canvas id="bild" width="2000" height="1127" role="img"
+      aria-label="Schnittbild eines alpinen Wasserkraftwerks: Stausee, Staumauer, Druckleitung im Fels, Maschinenhaus mit Turbine, Generator und Transformator, Freileitung"></canvas>
+    <img id="quellbild" src="energie_wasserkraft.jpg" alt="" hidden>
     <svg viewBox="0 0 2000 1127" aria-hidden="true">
-      <defs>
-        <!-- Masken: begrenzen die Animation exakt auf die Wasserzonen des Fotos -->
-        <mask id="m-rohr">
-          <path d="M 462 662 C 660 760, 858 848, 1056 918 C 1180 962, 1300 992, 1398 1008 C 1438 1028, 1458 1052, 1468 1080"
-                fill="none" stroke="#fff" stroke-width="66" stroke-linecap="round"/>
-        </mask>
-        <mask id="m-aus">
-          <ellipse cx="1500" cy="1078" rx="115" ry="44" fill="#fff" transform="rotate(-6 1500 1078)"/>
-        </mask>
-        <mask id="m-see">
-          <rect x="100" y="275" width="760" height="140" rx="30" fill="#fff"/>
-        </mask>
-      </defs>
-
       <!-- Pfade (unsichtbar, Führungsschienen) -->
-      <path id="pfad-druck" d="M 462 662 C 660 760, 858 848, 1056 918 C 1180 962, 1300 992, 1398 1008 C 1438 1028, 1458 1052, 1468 1080" fill="none" stroke="none"/>
       <path id="pfad-strom" d="M 1358 160 C 1460 112, 1560 98, 1615 100 C 1725 106, 1835 120, 1930 134" fill="none" stroke="none"/>
-
-      <!-- See: ruhiges Glitzern (immer aktiv) -->
-      <g mask="url(#m-see)" class="fluss" opacity=".8">
-        <ellipse cx="330" cy="330" rx="95" ry="5" fill="#fff">
-          <animate attributeName="opacity" values="0;.28;0" dur="7s" repeatCount="indefinite"/>
-        </ellipse>
-        <ellipse cx="620" cy="300" rx="70" ry="4" fill="#fff">
-          <animate attributeName="opacity" values="0;.22;0" dur="9s" begin="2.5s" repeatCount="indefinite"/>
-        </ellipse>
-      </g>
 
       <!-- Wasserweg: Turbinieren -->
       <g id="g-turb">
-        <g id="rohr-turb" mask="url(#m-rohr)"></g>
-        <g id="schaum-turb" mask="url(#m-aus)"></g>
         <g id="puls-turb"></g>
       </g>
       <!-- Wasserweg: Pumpen (umgekehrt) -->
       <g id="g-pump" style="display:none">
-        <g id="rohr-pump" mask="url(#m-rohr)"></g>
-        <g id="schaum-pump" mask="url(#m-aus)"></g>
         <g id="puls-pump"></g>
       </g>
       <!-- Dreh-Hinweis Turbine -->
@@ -191,7 +164,7 @@ const STATIONEN = [
     txt:'Der Speichersee sammelt Schmelz- und Regenwasser aus den Bergen. Je höher das Wasser über der Turbine liegt, desto mehr Energie steckt darin – gespeicherte Lageenergie. Die Schweizer Speicherseen gelten darum als «Batterie der Schweiz».' },
   { n:2, x:388,  y:560,  tit:'Einlauf mit Rechen',
     txt:'Hier tritt das Wasser aus dem See in die Anlage ein. Der Rechen – das Gitter – hält Äste, Geröll und Treibgut zurück, damit die Turbine nicht beschädigt wird. Mit Schiebern lässt sich der Zufluss jederzeit stoppen.' },
-  { n:3, x:880,  y:850,  tit:'Druckleitung',
+  { n:3, x:870,  y:900,  tit:'Druckleitung',
     txt:'In der Druckleitung schiesst das Wasser durch den Fels talwärts. Die Fallhöhe erzeugt enormen Druck – in grossen Schweizer Anlagen mehrere hundert Meter Wassersäule. Aus Lageenergie wird Bewegungsenergie.' },
   { n:4, x:1370,  y:815,  tit:'Turbine',
     txt:'Im spiralförmigen Gehäuse trifft das Wasser auf die Schaufeln der Turbine und versetzt sie in Rotation – hier wandelt sich Wasserkraft in Drehbewegung. Der weisse Kreis zeigt die Drehrichtung an.' },
@@ -282,57 +255,124 @@ function partikel(zielId, pfadId, anzahl, dauer, farbe, r, rueckwaerts){
     m.appendChild(mp); c.appendChild(m); ziel.appendChild(c);
   }
 }
-/* Lichtkapseln IM Wasser: laufen auf dem Pfad, die Maske hält sie im Rohr,
-   der Screen-Mischmodus verrechnet sie mit den Wasserpixeln des Fotos. */
-function stroemung(zielId, pfadId, anzahl, dauer, laenge, breite, deckung, klasse, rueckwaerts){
-  const ziel = document.getElementById(zielId);
-  for(let i=0;i<anzahl;i++){
-    const r = document.createElementNS(svgNS,'rect');
-    r.setAttribute('x', -laenge/2); r.setAttribute('y', -breite/2);
-    r.setAttribute('width', laenge); r.setAttribute('height', breite);
-    r.setAttribute('rx', breite/2); r.setAttribute('fill', '#fff');
-    r.setAttribute('opacity', deckung); r.setAttribute('class', klasse);
-    const m = document.createElementNS(svgNS,'animateMotion');
-    m.setAttribute('dur', dauer+'s'); m.setAttribute('repeatCount','indefinite');
-    m.setAttribute('rotate','auto');
-    m.setAttribute('begin', (-i*dauer/anzahl)+'s');
-    if(rueckwaerts){ m.setAttribute('keyPoints','1;0'); m.setAttribute('keyTimes','0;1'); m.setAttribute('calcMode','linear'); }
-    const mp = document.createElementNS(svgNS,'mpath');
-    mp.setAttributeNS('http://www.w3.org/1999/xlink','href','#'+pfadId);
-    m.appendChild(mp); r.appendChild(m); ziel.appendChild(r);
+/* ==================================================================
+   FARBZYKLUS – die Amiga-Technik (Color Cycling), Ausgabe 2026:
+   Kein Pixel bewegt sich. Für jedes Wasserpixel wird einmalig seine
+   Position s entlang der Fliessrichtung bestimmt; daraus entstehen
+   K vorberechnete Zyklus-Frames, durch die Helligkeitsbänder wandern.
+   Pro Tick nur ein putImageData – wie damals ein Palettenregister-Shift.
+   ================================================================== */
+const bildCanvas = document.getElementById('bild');
+const bctx = bildCanvas.getContext('2d');
+let richtung = 1;   // 1 = turbinieren (bergab), -1 = pumpen
+
+const ZONEN = [
+  { name:'rohr',
+    pts:[[435,682],[530,742],[620,795],[710,846],[810,895],[900,933],[990,965],[1090,1000],[1190,1002],[1262,998],[1312,1000],[1340,1026],[1352,1060]],
+    halb:30, lambda:95, hell:.32, dunkel:.12, K:12, tick:85, umkehrbar:true },
+  { name:'auslauf', ellipse:[1358,1050,100,42,-12], quell:[1312,1008],
+    lambda:48, hell:.30, dunkel:.10, K:10, tick:70, umkehrbar:true },
+  { name:'see', rect:[100,275,760,140],
+    lambda:260, hell:.09, dunkel:.04, K:16, tick:260, umkehrbar:false },
+];
+
+function baueZone(z, basis){
+  /* Bounding-Box bestimmen */
+  let x0,y0,x1,y1;
+  if(z.pts){ const xs=z.pts.map(p=>p[0]), ys=z.pts.map(p=>p[1]);
+    x0=Math.min(...xs)-z.halb; x1=Math.max(...xs)+z.halb;
+    y0=Math.min(...ys)-z.halb; y1=Math.max(...ys)+z.halb; }
+  else if(z.ellipse){ const [cx,cy,rx,ry]=z.ellipse;
+    const r=Math.max(rx,ry); x0=cx-r; x1=cx+r; y0=cy-r; y1=cy+r; }
+  else { [x0,y0]=[z.rect[0],z.rect[1]]; x1=x0+z.rect[2]; y1=y0+z.rect[3]; }
+  x0=Math.max(0,Math.floor(x0)); y0=Math.max(0,Math.floor(y0));
+  x1=Math.min(2000,Math.ceil(x1)); y1=Math.min(1127,Math.ceil(y1));
+  const w=x1-x0, h=y1-y0;
+  const grund = bctx.getImageData(x0,y0,w,h);
+
+  /* Wasserpixel + Fliessposition s bestimmen */
+  const idx=[], sw=[];
+  const segLaenge=[]; let gesamt=0;
+  if(z.pts){ for(let i=0;i<z.pts.length-1;i++){
+    const l=Math.hypot(z.pts[i+1][0]-z.pts[i][0], z.pts[i+1][1]-z.pts[i][1]);
+    segLaenge.push(gesamt); gesamt+=l; } }
+  const cosR = z.ellipse ? Math.cos(z.ellipse[4]*Math.PI/180) : 0;
+  const sinR = z.ellipse ? Math.sin(z.ellipse[4]*Math.PI/180) : 0;
+  for(let py=0; py<h; py++) for(let px=0; px<w; px++){
+    const X=x0+px, Y=y0+py;
+    let drin=false, sWert=0;
+    if(z.pts){
+      let best=1e9;
+      for(let i=0;i<z.pts.length-1;i++){
+        const [ax,ay]=z.pts[i], [bx,by]=z.pts[i+1];
+        const dx=bx-ax, dy=by-ay, L2=dx*dx+dy*dy;
+        let t=((X-ax)*dx+(Y-ay)*dy)/L2; t=Math.max(0,Math.min(1,t));
+        const d=Math.hypot(X-ax-t*dx, Y-ay-t*dy);
+        if(d<best){ best=d; sWert=segLaenge[i]+t*Math.sqrt(L2); }
+      }
+      drin = best <= z.halb;
+    } else if(z.ellipse){
+      const [cx,cy,rx,ry]=z.ellipse;
+      const lx=(X-cx)*cosR+(Y-cy)*sinR, ly=-(X-cx)*sinR+(Y-cy)*cosR;
+      drin = (lx*lx)/(rx*rx)+(ly*ly)/(ry*ry) <= 1;
+      sWert = Math.hypot(X-z.quell[0], Y-z.quell[1]);
+    } else {
+      drin = true; sWert = X;
+    }
+    if(drin){ idx.push((py*w+px)*4); sw.push(sWert); }
   }
+
+  /* K Zyklus-Frames vorberechnen (die «Palette») */
+  const frames=[];
+  for(let k=0;k<z.K;k++){
+    const f = bctx.createImageData(w,h);
+    f.data.set(grund.data);
+    const d=f.data;
+    for(let n=0;n<idx.length;n++){
+      const u = ((sw[n]/z.lambda + k/z.K) % 1 + 1) % 1;
+      const v = .5 + .5*Math.cos(2*Math.PI*u);
+      const faktor = 1 + z.hell*v*v*v - z.dunkel*(1-v)*(1-v)*(1-v);
+      const i0=idx[n];
+      d[i0]   = Math.min(255, d[i0]  *faktor);
+      d[i0+1] = Math.min(255, d[i0+1]*faktor);
+      d[i0+2] = Math.min(255, d[i0+2]*faktor);
+    }
+    frames.push(f);
+  }
+  return { x0, y0, frames, tick:z.tick, umkehrbar:z.umkehrbar, phase:0, letztes:0, pixel:idx.length };
 }
-function schaum(zielId){
-  const ziel = document.getElementById(zielId);
-  [[1452,1066,26,9,1.4,0],[1502,1082,32,11,1.7,.4],[1558,1070,24,8,1.5,.9]].forEach(([x,y,rx,ry,dur,beg])=>{
-    const e = document.createElementNS(svgNS,'ellipse');
-    e.setAttribute('cx',x); e.setAttribute('cy',y); e.setAttribute('rx',rx); e.setAttribute('ry',ry);
-    e.setAttribute('fill','#fff'); e.setAttribute('class','fluss');
-    const a = document.createElementNS(svgNS,'animate');
-    a.setAttribute('attributeName','opacity'); a.setAttribute('values','.08;.5;.08');
-    a.setAttribute('dur',dur+'s'); a.setAttribute('begin',beg+'s'); a.setAttribute('repeatCount','indefinite');
-    e.appendChild(a); ziel.appendChild(e);
+
+let zyklen=[];
+function zyklusSchritt(zeit){
+  zyklen.forEach(z=>{
+    if(zeit - z.letztes >= z.tick){
+      z.letztes = zeit;
+      const schritt = z.umkehrbar ? richtung : 1;
+      z.phase = (z.phase + schritt + z.frames.length) % z.frames.length;
+      bctx.putImageData(z.frames[z.phase], z.x0, z.y0);
+    }
   });
+  requestAnimationFrame(zyklusSchritt);
 }
+
 const reduziert = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-if(!reduziert){
-  /* Turbinieren: Strömung bergab – helle Bahnen, dunkle Gegenbahnen für Tiefe */
-  stroemung('rohr-turb','pfad-druck', 7, 4.6, 96, 18, .30, 'fluss',  false);
-  stroemung('rohr-turb','pfad-druck', 5, 3.4, 46, 10, .38, 'fluss',  false);
-  stroemung('rohr-turb','pfad-druck', 4, 5.6, 80, 22, .16, 'tiefe',  false);
-  schaum('schaum-turb');
+const quellbild = document.getElementById('quellbild');
+function starteBild(){
+  bctx.drawImage(quellbild, 0, 0, 2000, 1127);
+  if(reduziert) return;               // Standbild genügt
+  ZONEN.forEach(z=> zyklen.push(baueZone(z, quellbild)));
+  requestAnimationFrame(zyklusSchritt);
+  /* Strom-Pulse auf der Leitung (Vektor-Ebene) */
   partikel('puls-turb','pfad-strom', 5, 2.4, 'var(--strom)', 6, false);
-  /* Pumpen: alles rückwärts – Strom fliesst INS Werk */
-  stroemung('rohr-pump','pfad-druck', 7, 4.6, 96, 18, .30, 'fluss',  true);
-  stroemung('rohr-pump','pfad-druck', 5, 3.4, 46, 10, .38, 'fluss',  true);
-  stroemung('rohr-pump','pfad-druck', 4, 5.6, 80, 22, .16, 'tiefe',  true);
-  schaum('schaum-pump');
   partikel('puls-pump','pfad-strom', 5, 2.4, 'var(--strom)', 6, true);
 }
+if(quellbild.complete && quellbild.naturalWidth) starteBild();
+else quellbild.addEventListener('load', starteBild);
 
 /* ---------- Modus-Schalter ---------- */
 const mTurb = document.getElementById('m-turb'), mPump = document.getElementById('m-pump');
 function setzeModus(pumpen){
+  richtung = pumpen ? -1 : 1;
   document.getElementById('g-turb').style.display = pumpen ? 'none' : '';
   document.getElementById('g-pump').style.display = pumpen ? '' : 'none';
   mTurb.setAttribute('aria-pressed', String(!pumpen));
