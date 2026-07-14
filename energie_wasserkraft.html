@@ -75,6 +75,8 @@ h1 .accent{color:var(--hkv);}
 .quelle{max-width:1240px;margin:14px auto 0;font-size:12px;color:var(--muted);text-align:center;}
 footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid var(--line);
   font-size:12px;color:var(--muted);text-align:center;}
+.fluss{mix-blend-mode:screen;}
+.tiefe{mix-blend-mode:multiply;}
 @media (prefers-reduced-motion:reduce){ .dreh{display:none;} }
 </style>
 </head>
@@ -97,24 +99,50 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
   <div class="buehne">
     <img src="energie_wasserkraft.jpg" alt="Schnittbild eines alpinen Wasserkraftwerks: Stausee, Staumauer, Druckleitung im Fels, Maschinenhaus mit Turbine, Generator und Transformator, Freileitung">
     <svg viewBox="0 0 2000 1127" aria-hidden="true">
+      <defs>
+        <!-- Masken: begrenzen die Animation exakt auf die Wasserzonen des Fotos -->
+        <mask id="m-rohr">
+          <path d="M 462 662 C 660 760, 858 848, 1056 918 C 1180 962, 1300 992, 1398 1008 C 1438 1028, 1458 1052, 1468 1080"
+                fill="none" stroke="#fff" stroke-width="66" stroke-linecap="round"/>
+        </mask>
+        <mask id="m-aus">
+          <ellipse cx="1500" cy="1078" rx="115" ry="44" fill="#fff" transform="rotate(-6 1500 1078)"/>
+        </mask>
+        <mask id="m-see">
+          <rect x="100" y="275" width="760" height="140" rx="30" fill="#fff"/>
+        </mask>
+      </defs>
+
+      <!-- Pfade (unsichtbar, Führungsschienen) -->
+      <path id="pfad-druck" d="M 462 662 C 660 760, 858 848, 1056 918 C 1180 962, 1300 992, 1398 1008 C 1438 1028, 1458 1052, 1468 1080" fill="none" stroke="none"/>
+      <path id="pfad-strom" d="M 1358 160 C 1460 112, 1560 98, 1615 100 C 1725 106, 1835 120, 1930 134" fill="none" stroke="none"/>
+
+      <!-- See: ruhiges Glitzern (immer aktiv) -->
+      <g mask="url(#m-see)" class="fluss" opacity=".8">
+        <ellipse cx="330" cy="330" rx="95" ry="5" fill="#fff">
+          <animate attributeName="opacity" values="0;.28;0" dur="7s" repeatCount="indefinite"/>
+        </ellipse>
+        <ellipse cx="620" cy="300" rx="70" ry="4" fill="#fff">
+          <animate attributeName="opacity" values="0;.22;0" dur="9s" begin="2.5s" repeatCount="indefinite"/>
+        </ellipse>
+      </g>
+
       <!-- Wasserweg: Turbinieren -->
       <g id="g-turb">
-        <path id="pfad-druck" d="M 560 800 C 700 880, 850 940, 1000 1000 C 1120 1046, 1230 1064, 1340 1055 L 1405 1035" fill="none" stroke="none"/>
-        <path id="pfad-aus" d="M 1480 1085 C 1530 1112, 1575 1112, 1640 1088" fill="none" stroke="none"/>
-        <g id="tropfen-turb"></g>
-        <!-- Strompulse: Trafo -> Netz -->
-        <path id="pfad-strom" d="M 1610 205 C 1700 175, 1790 155, 1895 140" fill="none" stroke="none"/>
+        <g id="rohr-turb" mask="url(#m-rohr)"></g>
+        <g id="schaum-turb" mask="url(#m-aus)"></g>
         <g id="puls-turb"></g>
       </g>
       <!-- Wasserweg: Pumpen (umgekehrt) -->
       <g id="g-pump" style="display:none">
-        <g id="tropfen-pump"></g>
+        <g id="rohr-pump" mask="url(#m-rohr)"></g>
+        <g id="schaum-pump" mask="url(#m-aus)"></g>
         <g id="puls-pump"></g>
       </g>
       <!-- Dreh-Hinweis Turbine -->
-      <circle class="dreh" cx="1432" cy="985" r="120" fill="none" stroke="#fff" stroke-width="5"
-              stroke-dasharray="40 620" stroke-linecap="round" opacity=".85">
-        <animateTransform attributeName="transform" type="rotate" from="0 1432 985" to="360 1432 985" dur="6s" repeatCount="indefinite"/>
+      <circle class="dreh" cx="1370" cy="815" r="95" fill="none" stroke="#fff" stroke-width="5"
+              stroke-dasharray="34 500" stroke-linecap="round" opacity=".85">
+        <animateTransform attributeName="transform" type="rotate" from="0 1370 815" to="360 1370 815" dur="6s" repeatCount="indefinite"/>
       </circle>
       <!-- Stationen -->
       <g id="spots"></g>
@@ -159,21 +187,21 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
 
 /* ---------- Stationen (Bildkoordinaten im 2000x1127-Raster) ---------- */
 const STATIONEN = [
-  { n:1, x:300,  y:430,  tit:'Stausee',
+  { n:1, x:190,  y:320,  tit:'Stausee',
     txt:'Der Speichersee sammelt Schmelz- und Regenwasser aus den Bergen. Je höher das Wasser über der Turbine liegt, desto mehr Energie steckt darin – gespeicherte Lageenergie. Die Schweizer Speicherseen gelten darum als «Batterie der Schweiz».' },
-  { n:2, x:497,  y:790,  tit:'Einlauf mit Rechen',
+  { n:2, x:388,  y:560,  tit:'Einlauf mit Rechen',
     txt:'Hier tritt das Wasser aus dem See in die Anlage ein. Der Rechen – das Gitter – hält Äste, Geröll und Treibgut zurück, damit die Turbine nicht beschädigt wird. Mit Schiebern lässt sich der Zufluss jederzeit stoppen.' },
-  { n:3, x:900,  y:955,  tit:'Druckleitung',
+  { n:3, x:880,  y:850,  tit:'Druckleitung',
     txt:'In der Druckleitung schiesst das Wasser durch den Fels talwärts. Die Fallhöhe erzeugt enormen Druck – in grossen Schweizer Anlagen mehrere hundert Meter Wassersäule. Aus Lageenergie wird Bewegungsenergie.' },
-  { n:4, x:1432, y:985,  tit:'Turbine',
+  { n:4, x:1370,  y:815,  tit:'Turbine',
     txt:'Im spiralförmigen Gehäuse trifft das Wasser auf die Schaufeln der Turbine und versetzt sie in Rotation – hier wandelt sich Wasserkraft in Drehbewegung. Der weisse Kreis zeigt die Drehrichtung an.' },
-  { n:5, x:1432, y:585,  tit:'Generator',
+  { n:5, x:1370,  y:495,  tit:'Generator',
     txt:'Die Welle überträgt die Drehung nach oben in den Generator. In seinen Kupferspulen entsteht durch die Rotation im Magnetfeld elektrische Spannung – das Prinzip der Induktion. Aus Bewegung wird Strom.' },
-  { n:6, x:1520, y:225,  tit:'Transformator',
+  { n:6, x:1350,  y:200,  tit:'Transformator',
     txt:'Der Transformator «spannt» den Strom hoch – auf bis zu 380 000 Volt. Nur so lässt er sich über weite Strecken transportieren, ohne dass unterwegs zu viel Energie als Wärme verloren geht.' },
-  { n:7, x:1885, y:165,  tit:'Übertragungsnetz',
+  { n:7, x:1740,  y:125,  tit:'Übertragungsnetz',
     txt:'Über die Freileitungen fliesst der Strom dorthin, wo er gebraucht wird – in Städte, Betriebe und Haushalte. Im Netz müssen Erzeugung und Verbrauch jede Sekunde im Gleichgewicht sein.' },
-  { n:8, x:1720, y:940,  tit:'Unterwasser',
+  { n:8, x:1845,  y:1000,  tit:'Unterwasser',
     txt:'Das genutzte Wasser fliesst in den Fluss zurück – es ist nicht verbraucht, nur seine Höhe ist «verbraucht». Beim Pumpbetrieb holt sich das Werk genau dieses Wasser wieder: zurück in den See.' },
 ];
 
@@ -254,16 +282,52 @@ function partikel(zielId, pfadId, anzahl, dauer, farbe, r, rueckwaerts){
     m.appendChild(mp); c.appendChild(m); ziel.appendChild(c);
   }
 }
+/* Lichtkapseln IM Wasser: laufen auf dem Pfad, die Maske hält sie im Rohr,
+   der Screen-Mischmodus verrechnet sie mit den Wasserpixeln des Fotos. */
+function stroemung(zielId, pfadId, anzahl, dauer, laenge, breite, deckung, klasse, rueckwaerts){
+  const ziel = document.getElementById(zielId);
+  for(let i=0;i<anzahl;i++){
+    const r = document.createElementNS(svgNS,'rect');
+    r.setAttribute('x', -laenge/2); r.setAttribute('y', -breite/2);
+    r.setAttribute('width', laenge); r.setAttribute('height', breite);
+    r.setAttribute('rx', breite/2); r.setAttribute('fill', '#fff');
+    r.setAttribute('opacity', deckung); r.setAttribute('class', klasse);
+    const m = document.createElementNS(svgNS,'animateMotion');
+    m.setAttribute('dur', dauer+'s'); m.setAttribute('repeatCount','indefinite');
+    m.setAttribute('rotate','auto');
+    m.setAttribute('begin', (-i*dauer/anzahl)+'s');
+    if(rueckwaerts){ m.setAttribute('keyPoints','1;0'); m.setAttribute('keyTimes','0;1'); m.setAttribute('calcMode','linear'); }
+    const mp = document.createElementNS(svgNS,'mpath');
+    mp.setAttributeNS('http://www.w3.org/1999/xlink','href','#'+pfadId);
+    m.appendChild(mp); r.appendChild(m); ziel.appendChild(r);
+  }
+}
+function schaum(zielId){
+  const ziel = document.getElementById(zielId);
+  [[1452,1066,26,9,1.4,0],[1502,1082,32,11,1.7,.4],[1558,1070,24,8,1.5,.9]].forEach(([x,y,rx,ry,dur,beg])=>{
+    const e = document.createElementNS(svgNS,'ellipse');
+    e.setAttribute('cx',x); e.setAttribute('cy',y); e.setAttribute('rx',rx); e.setAttribute('ry',ry);
+    e.setAttribute('fill','#fff'); e.setAttribute('class','fluss');
+    const a = document.createElementNS(svgNS,'animate');
+    a.setAttribute('attributeName','opacity'); a.setAttribute('values','.08;.5;.08');
+    a.setAttribute('dur',dur+'s'); a.setAttribute('begin',beg+'s'); a.setAttribute('repeatCount','indefinite');
+    e.appendChild(a); ziel.appendChild(e);
+  });
+}
 const reduziert = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 if(!reduziert){
-  /* Turbinieren: Wasser bergab, Auslauf in den Fluss, Strom ins Netz */
-  partikel('tropfen-turb','pfad-druck', 9, 5.5, 'var(--wasser)', 9, false);
-  partikel('tropfen-turb','pfad-aus',   4, 2.2, 'var(--wasser)', 7, false);
-  partikel('puls-turb',  'pfad-strom',  5, 2.4, 'var(--strom)',  6, false);
+  /* Turbinieren: Strömung bergab – helle Bahnen, dunkle Gegenbahnen für Tiefe */
+  stroemung('rohr-turb','pfad-druck', 7, 4.6, 96, 18, .30, 'fluss',  false);
+  stroemung('rohr-turb','pfad-druck', 5, 3.4, 46, 10, .38, 'fluss',  false);
+  stroemung('rohr-turb','pfad-druck', 4, 5.6, 80, 22, .16, 'tiefe',  false);
+  schaum('schaum-turb');
+  partikel('puls-turb','pfad-strom', 5, 2.4, 'var(--strom)', 6, false);
   /* Pumpen: alles rückwärts – Strom fliesst INS Werk */
-  partikel('tropfen-pump','pfad-druck', 9, 5.5, 'var(--wasser)', 9, true);
-  partikel('tropfen-pump','pfad-aus',   4, 2.2, 'var(--wasser)', 7, true);
-  partikel('puls-pump',  'pfad-strom',  5, 2.4, 'var(--strom)',  6, true);
+  stroemung('rohr-pump','pfad-druck', 7, 4.6, 96, 18, .30, 'fluss',  true);
+  stroemung('rohr-pump','pfad-druck', 5, 3.4, 46, 10, .38, 'fluss',  true);
+  stroemung('rohr-pump','pfad-druck', 4, 5.6, 80, 22, .16, 'tiefe',  true);
+  schaum('schaum-pump');
+  partikel('puls-pump','pfad-strom', 5, 2.4, 'var(--strom)', 6, true);
 }
 
 /* ---------- Modus-Schalter ---------- */
