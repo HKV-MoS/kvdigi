@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Die Ernährungspyramide im Ländervergleich</title>
+<title>Gesund essen – aber nach welcher Empfehlung? · Ernährungspyramide im Ländervergleich</title>
 <style>
   :root{--hkv:#1F4E78;--hkv-dark:#163a5a;--hkv-light:#E8EFF6;--ink:#1b2733;--muted:#64748b;
     --line:#dbe3ec;--bg:#F5F7FA;--card:#fff;--shadow:0 10px 30px rgba(20,40,70,.10);}
@@ -29,7 +29,32 @@
   .switch button:hover{border-color:var(--hkv);transform:translateY(-1px);}
   .switch button[aria-pressed="true"]{background:var(--hkv);border-color:var(--hkv);color:#fff;
     box-shadow:0 6px 16px rgba(31,78,120,.30);}
+  .subtitle{text-align:center;color:var(--muted);font-size:14px;margin:6px 0 0;letter-spacing:.3px;}
   .switch-note{text-align:center;color:var(--muted);font-size:12.5px;margin:8px 0 0;}
+  .fuehrung{max-width:760px;margin:14px auto 0;}
+  .auftrag{background:var(--hkv-light);border-left:4px solid var(--hkv);border-radius:0 10px 10px 0;
+    padding:11px 14px;font-size:14px;}
+  .auftrag b{color:var(--hkv);}
+  .steps{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin:10px 0 0;
+    font-size:13px;font-weight:700;color:var(--hkv);}
+  .steps span{background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:6px 13px;}
+  .zgruppe{text-align:center;color:var(--muted);font-size:12.5px;margin:10px 4px 0;}
+  /* Mini-Check */
+  .mini{max-width:760px;margin:30px auto 0;}
+  .mini-t{font-size:20px;font-weight:800;margin:0 0 4px;color:var(--ink);}
+  .mini-s{color:var(--muted);font-size:13.5px;margin:0 0 14px;}
+  .q{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;
+    margin-bottom:12px;box-shadow:var(--shadow);}
+  .q-t{font-weight:700;margin:0 0 10px;font-size:15px;}
+  .qopt{display:block;width:100%;text-align:left;font:inherit;font-size:14px;padding:9px 12px;
+    margin:6px 0;border:1.5px solid var(--line);border-radius:9px;background:#fff;cursor:pointer;min-height:42px;}
+  .qopt:hover{border-color:var(--hkv);}
+  .qopt:focus-visible{outline:3px solid rgba(31,78,120,.4);outline-offset:2px;}
+  .qopt.right{background:#E8F5E1;border-color:#5BA829;font-weight:700;}
+  .qopt.wrong{background:#FBEAEA;border-color:#D6342C;}
+  .qopt[disabled]{cursor:default;}
+  .qfeed{font-size:13px;margin:8px 2px 0;color:var(--muted);display:none;}
+  .qfeed.show{display:block;}
   .switch-note b{color:var(--hkv);}
 
   .stage{display:grid;grid-template-columns:1.2fr .8fr;gap:22px;margin-top:18px;align-items:start;}
@@ -101,6 +126,10 @@
   .pcard-h{display:flex;align-items:center;gap:9px;font-weight:700;font-size:14.5px;color:var(--hkv);margin-bottom:7px;}
   .pcard-h .pic{font-size:20px;}
   .pcard-t{margin:0;font-size:13.5px;color:var(--ink);}
+  .pyr-cap{margin:10px 4px 0;text-align:center;font-size:13px;color:var(--muted);}
+  .top-runner{text-align:center;font-size:24px;line-height:1;margin-bottom:4px;}
+  .top-axis{width:11px;height:30px;margin:0 auto;background:linear-gradient(#b8c4d2,#8fa0b3);
+    border-radius:0 0 6px 6px;}
   .plate-card{grid-column:1/-1;}
   .plate-row{display:flex;gap:18px;align-items:center;flex-wrap:wrap;}
   .plate{max-width:270px;width:100%;flex:0 0 auto;}
@@ -118,10 +147,12 @@
 <div class="wrap">
   <header class="top">
     <p class="eyebrow">Gesundheit &amp; Ernährung · ABU</p>
-    <h1>Die <span class="accent">Ernährungspyramide</span><br>im Ländervergleich</h1>
-    <p class="lead">Die Schweizer Lebensmittelpyramide (SGE) ist die Grundlage – Deutschland,
-      Österreich und die USA zeigen sie zum Vergleich. Tippen Sie auf eine Stufe und dann auf einzelne
-      Lebensmittel. Unten breit heisst «täglich reichlich», oben schmal heisst «nur sparsam».</p>
+    <h1>Gesund essen – <span class="accent">aber nach welcher Empfehlung?</span></h1>
+    <p class="subtitle">Die Ernährungspyramide im Ländervergleich</p>
+    <p class="lead">Die Schweizer Lebensmittelpyramide dient in diesem Tool als Grundlage.
+      Deutschland, Österreich, die USA und Japan zeigen, wie andere Länder ihre Empfehlungen darstellen.
+      Je weiter unten eine Lebensmittelgruppe steht, desto häufiger darf sie im Alltag vorkommen –
+      je weiter oben, desto sparsamer.</p>
   </header>
 
   <div class="switch" id="switch" role="group" aria-label="Land wählen">
@@ -129,8 +160,19 @@
     <button data-c="de" aria-pressed="false"><span class="fl">🇩🇪</span> Deutschland</button>
     <button data-c="at" aria-pressed="false"><span class="fl">🇦🇹</span> Österreich</button>
     <button data-c="us" aria-pressed="false"><span class="fl">🇺🇸</span> USA</button>
+    <button data-c="jp" aria-pressed="false"><span class="fl">🇯🇵</span> Japan</button>
   </div>
-  <p class="switch-note">🇨🇭 <b>Schweiz</b> ist die Referenz für den Unterricht – die anderen Länder dienen zum Vergleich.</p>
+  <p class="switch-note">🇨🇭 Im Unterricht arbeiten wir hauptsächlich mit der <b>Schweizer Lebensmittelpyramide</b> – die anderen Modelle dienen zum Vergleich.</p>
+
+  <div class="fuehrung">
+    <div class="auftrag"><b>Auftrag:</b> Vergleichen Sie die Schweizer Pyramide mit mindestens einem anderen Land.
+      Was bleibt überall ähnlich – und wo unterscheiden sich die Empfehlungen, zum Beispiel bei Getränken,
+      Gemüse und Früchten, Getreide, tierischen Produkten oder Süssem?</div>
+    <div class="steps"><span>① Land wählen</span><span>② Stufe anklicken</span><span>③ Lebensmittel vergleichen</span></div>
+    <p class="zgruppe">Hinweis: Die Empfehlungen gelten für gesunde Erwachsene. Kinder, Jugendliche, Schwangere,
+      ältere Menschen oder Personen mit Erkrankungen können andere Bedürfnisse haben – die Mengen sind
+      Orientierungswerte, kein starrer Essplan.</p>
+  </div>
 
   <div class="stage">
     <div class="pyramid-card">
@@ -139,6 +181,7 @@
         <span class="src" id="country-src"></span>
       </div>
       <div class="pyramid" id="pyramid" aria-label="Ernährungspyramide"></div>
+      <p class="pyr-cap" id="pyr-cap" hidden></p>
     </div>
     <div class="panel intro" id="panel"></div>
   </div>
@@ -281,63 +324,66 @@
 
     at: {
       name:"Österreich", flag:"🇦🇹",
-      src:"Quelle: Österreichische Ernährungspyramide (BMSGPK / AGES)",
-      info:"",
+      src:"Quelle: Österreichisches Gesundheitsministerium / AGES – Österreichische Ernährungsempfehlungen",
+      info:"Österreich ist das einzige Land im Vergleich, das die Getränke als eigene, unterste Pyramidenstufe zeigt – und viele Portionen pro Woche statt pro Tag angibt.",
       principles:[
-        {icon:"🪜",title:"Sieben Stufen",text:"Die österreichische Pyramide unterscheidet fein zwischen sieben Ebenen – von Getränken bis Süssem."},
-        {icon:"🥗",title:"«5 am Tag»",text:"Drei Portionen Gemüse oder Hülsenfrüchte und zwei Portionen Obst pro Tag."},
-        {icon:"💧",title:"1,5 Liter trinken",text:"Alkoholfreie Getränke, am besten Wasser, über den ganzen Tag verteilt."},
-        {icon:"🐟",title:"Fisch & Fleisch dosieren",text:"Fisch ein- bis zweimal pro Woche, Fleisch und Wurst höchstens dreimal."}
+        {icon:"💧",title:"Getränke als eigene Stufe",text:"Mindestens 1,5 Liter alkoholfreie, kalorienarme Getränke täglich – die Basis der ganzen Pyramide."},
+        {icon:"📅",title:"Wochen- statt Tagesportionen",text:"Bei Fisch, Fleisch und Eiern zählt Österreich pro Woche: 1–2-mal Fisch, höchstens 3-mal Fleisch oder Wurst."},
+        {icon:"🫘",title:"Hülsenfrüchte aufgewertet",text:"Linsen, Bohnen und Kichererbsen sollen mindestens 3-mal pro Woche auf den Teller."},
+        {icon:"🥔",title:"«Erdäpfel» statt Kartoffeln",text:"Gleiche Stufe, anderer Name – Getreide und Erdäpfel liefern die Energie: 4 Portionen täglich."},
+        {icon:"🌍",title:"Klima isst mit",text:"Die aktualisierten Empfehlungen beziehen erstmals auch Umwelt und Klima ein."}
       ],
       levels:[
-        { color:"#D6342C", icon:"🍰🧂", title:"Fettes, Süsses & Salziges", portion:"selten",
-          tip:"Nur gelegentlich und in kleinen Mengen.",
+        { color:"#D6342C", icon:"🍰🍟", title:"Fettes, Süsses & Salziges", portion:"selten",
+          tip:"Die Spitze der Pyramide – höchstens eine kleine Portion pro Tag.",
           items:[
-            {icon:"🍰",name:"Mehlspeisen",note:"Kuchen und Süssspeisen nur selten."},
-            {icon:"🍫",name:"Süsses",note:"Süssigkeiten bewusst geniessen."},
-            {icon:"🥨",name:"Salziges",note:"Salzige Snacks sparsam."}
+            {icon:"🍬",name:"Süssigkeiten",note:"Nur selten und bewusst geniessen."},
+            {icon:"🍰",name:"Mehlspeisen",note:"Torten und feines Gebäck als Ausnahme."},
+            {icon:"🍟",name:"Fettes & Frittiertes",note:"Pommes, Panniertes und Fast Food selten."},
+            {icon:"🥤",name:"Limonaden",note:"Zuckerreiche Getränke gehören ebenfalls hierher."}
           ]},
-        { color:"#E8841A", icon:"🧈🫒", title:"Fette & Öle", portion:"sparsam",
-          tip:"Pflanzliche Öle bevorzugen, tierische Fette einschränken.",
+        { color:"#E8A33D", icon:"🫒🥜", title:"Fette & Öle", portion:"sparsam · 1–2 EL Öl",
+          tip:"Qualität vor Menge: hochwertige Pflanzenöle bevorzugen.",
           items:[
-            {icon:"🫒",name:"Pflanzenöle",note:"Raps- und Olivenöl bevorzugen."},
-            {icon:"🧈",name:"Streichfette",note:"Butter und Margarine sparsam."}
+            {icon:"🫒",name:"Pflanzenöle",note:"Raps- oder Olivenöl täglich in kleinen Mengen."},
+            {icon:"🥜",name:"Nüsse & Samen",note:"Etwa 2 Esslöffel pro Tag."},
+            {icon:"🧈",name:"Streich- & Bratfette",note:"Butter, Margarine und Schmalz sparsam."}
           ]},
-        { color:"#F2C94C", icon:"🐟🍗🥚", title:"Fisch, Fleisch, Wurst & Eier", portion:"1–3×/Woche",
-          tip:"Fisch 1–2×/Woche, Fleisch & Wurst höchstens 3×/Woche.",
+        { color:"#C0574F", icon:"🐟🍗", title:"Fisch, Fleisch, Wurst & Eier", portion:"pro Woche zählen",
+          tip:"1–2-mal Fisch, höchstens 3-mal Fleisch oder Wurst, bis zu 4 Eier – pro Woche.",
           items:[
-            {icon:"🐟",name:"Fisch",note:"Ein- bis zweimal pro Woche."},
-            {icon:"🍗",name:"Fleisch",note:"Mageres bevorzugen, dosieren."},
-            {icon:"🌭",name:"Wurst",note:"Nur gelegentlich."},
-            {icon:"🥚",name:"Eier",note:"Eine Eiweissquelle unter mehreren."}
+            {icon:"🐟",name:"Fisch",note:"1–2 Portionen pro Woche, z. B. Saibling oder Lachs."},
+            {icon:"🍗",name:"Fleisch & Wurst",note:"Höchstens 3 Portionen pro Woche, mager bevorzugen."},
+            {icon:"🥚",name:"Eier",note:"Bis zu 4 Stück pro Woche."},
+            {icon:"🫘",name:"Hülsenfrüchte",note:"Pflanzliches Eiweiss – mindestens 3-mal pro Woche."}
           ]},
-        { color:"#C9D24A", icon:"🥛🧀", title:"Milch & Milchprodukte", portion:"3 Portionen/Tag",
-          tip:"Fettarme Varianten wählen.",
+        { color:"#2E8BC0", icon:"🥛🧀", title:"Milch & Milchprodukte", portion:"2 Portionen täglich",
+          tip:"Ideal: eine «weisse» Portion (Joghurt, Topfen) und eine «gelbe» (Käse).",
           items:[
-            {icon:"🥛",name:"Milch",note:"Teil der täglichen Portionen."},
-            {icon:"🧀",name:"Käse",note:"Zählt zu den Milchprodukten."},
-            {icon:"🍶",name:"Topfen & Joghurt",note:"Ungezuckert bevorzugen."}
+            {icon:"🥛",name:"Milch & Joghurt",note:"«Weisse» Milchprodukte, möglichst ungesüsst."},
+            {icon:"🧀",name:"Käse",note:"Die «gelbe» Portion – zwei dünne Scheiben."},
+            {icon:"🥣",name:"Topfen & Co.",note:"Topfen heisst in der Schweiz Quark."}
           ]},
-        { color:"#9CC02B", icon:"🍝🥔", title:"Getreide, Brot, Nudeln, Reis & Erdäpfel", portion:"4–5 Portionen",
-          tip:"Vollkorn statt Weissmehl bevorzugen.",
+        { color:"#C99A3B", icon:"🍞🥔", title:"Getreide & Erdäpfel", portion:"4 Portionen täglich",
+          tip:"5 Portionen für sportlich Aktive – Vollkorn bevorzugen.",
           items:[
-            {icon:"🍞",name:"Brot",note:"Vollkornbrot bevorzugen."},
-            {icon:"🍝",name:"Nudeln",note:"Als Vollkorn besonders sättigend."},
-            {icon:"🍚",name:"Reis",note:"Naturreis bevorzugen."},
-            {icon:"🥔",name:"Erdäpfel",note:"Vielseitige Sättigungsbeilage."}
+            {icon:"🍞",name:"Brot & Gebäck",note:"Eine Portion entspricht einer Handfläche."},
+            {icon:"🍚",name:"Reis & Nudeln",note:"Gekocht etwa zwei Fäuste pro Portion."},
+            {icon:"🥔",name:"Erdäpfel",note:"So heissen die Kartoffeln in Österreich."}
           ]},
-        { color:"#5BA829", icon:"🥬🫛", title:"Gemüse, Hülsenfrüchte & Obst", portion:"5 Portionen",
-          tip:"Täglich «5 am Tag» – frisch oder tiefgekühlt.",
+        { color:"#5BA829", icon:"🥦🍎", title:"Gemüse, Hülsenfrüchte & Obst", portion:"3 + 2 Portionen",
+          tip:"Täglich 3 Portionen Gemüse oder Hülsenfrüchte und 2 Portionen Obst.",
           items:[
-            {icon:"🥬",name:"Gemüse",note:"Drei Portionen täglich."},
-            {icon:"🫛",name:"Hülsenfrüchte",note:"Linsen und Bohnen, auch als Eiweiss."},
-            {icon:"🍏",name:"Obst",note:"Zwei Portionen täglich."}
+            {icon:"🥦",name:"Gemüse",note:"3 faustgrosse Portionen, bunt und saisonal."},
+            {icon:"🍎",name:"Obst",note:"2 Portionen pro Tag."},
+            {icon:"🫘",name:"Hülsenfrüchte",note:"Zählen hier zur Gemüse-Stufe dazu."}
           ]},
-        { color:"#2E8BC0", icon:"💧", title:"Alkoholfreie Getränke", portion:"1,5 L/Tag",
-          tip:"Über den Tag verteilt, ungesüsst.",
+        { color:"#4FA3D1", icon:"💧🍵", title:"Alkoholfreie Getränke", portion:"mind. 1,5 Liter",
+          tip:"Die Basis: Wasser und ungezuckerte Getränke über den Tag verteilt.",
           items:[
-            {icon:"💧",name:"Wasser",note:"Der ideale Durstlöscher."},
-            {icon:"🍵",name:"Tee",note:"Ungezuckert, zählt zur Flüssigkeit."}
+            {icon:"💧",name:"Wasser",note:"Der beste Durstlöscher."},
+            {icon:"🍵",name:"Tee",note:"Ungezuckerte Kräuter- und Früchtetees."},
+            {icon:"☕",name:"Kaffee",note:"Bis zu 4 Tassen zählen zur Flüssigkeit."}
           ]}
       ]
     },
@@ -390,6 +436,57 @@
           ]}
       ]
     }
+    ,
+
+    jp: {
+      name:"Japan", flag:"🇯🇵",
+      src:"Quelle: Food Guide Spinning Top / 食事バランスガイド (MHLW & MAFF, 2005)",
+      shape:"top",
+      caption:"🏃 Bewegung hält den Kreisel am Drehen · 💧 Achse: Wasser & Tee · 🍡 «Schnur»: Süsses in Massen",
+      info:"Japan nutzt keine Pyramide, sondern den «Spinning Top» (Kreisel) – er steht auf dem Kopf: Zuoberst und am breitesten liegt das Getreide. Der Kreisel dreht sich auf der Achse aus Wasser und Tee, die rennende Figur darüber steht für Bewegung, und Süssigkeiten bilden die «Schnur» – in Massen.",
+      principles:[
+        {icon:"🏃",title:"Bewegung hält den Kreisel am Drehen",text:"Ohne körperliche Aktivität kippt der Kreisel – Bewegung gehört zur Ernährung dazu."},
+        {icon:"💧",title:"Wasser & Tee als Achse",text:"Sie bilden den Kern, um den sich beim Kreisel alles dreht."},
+        {icon:"🍱",title:"Washoku – ausgewogen japanisch",text:"Reis, Fisch, Gemüse und Sojaprodukte; traditionell wenig gesättigtes Fett."},
+        {icon:"🍡",title:"Snacks als «Schnur»",text:"Süssigkeiten und süsse Getränke werden nur in Massen genossen."}
+      ],
+      levels:[
+        { color:"#E8A33D", icon:"🍚🍜", title:"Getreide", portion:"5–7 Portionen",
+          tip:"Hauptenergiequelle – steht beim Kreisel zuoberst (am meisten).",
+          items:[
+            {icon:"🍚",name:"Reis",note:"Das Grundnahrungsmittel der japanischen Küche."},
+            {icon:"🍜",name:"Nudeln",note:"Soba, Udon oder Ramen."},
+            {icon:"🍞",name:"Brot",note:"Ebenfalls eine Getreidequelle."}
+          ]},
+        { color:"#5BA829", icon:"🥗🍲", title:"Gemüsegerichte", portion:"5–6 Portionen",
+          tip:"Japan zählt fertige Gerichte statt roher Zutaten – etwa Salate, gekochtes Gemüse oder Misosuppe.",
+          items:[
+            {icon:"🥗",name:"Salate",note:"Frisches Gemüse, oft mit Sesam oder Algen."},
+            {icon:"🍲",name:"Gekochtes Gemüse",note:"Gedämpft oder geschmort, z. B. Nimono."},
+            {icon:"🍄",name:"Pilze & Algen",note:"Fester Bestandteil der japanischen Küche."}
+          ]},
+        { color:"#C0574F", icon:"🐟🍳", title:"Fisch, Fleisch, Eier & Soja", portion:"3–5 Portionen",
+          tip:"Eiweissgerichte – traditionell mit viel Fisch und Sojaprodukten.",
+          items:[
+            {icon:"🐟",name:"Fisch",note:"Gegrillt, gedämpft oder roh als Sashimi."},
+            {icon:"🍳",name:"Eier",note:"Zum Beispiel Tamagoyaki, das gerollte Omelett."},
+            {icon:"🍢",name:"Tofu & Natto",note:"Sojaprodukte als wichtige Eiweissquelle."},
+            {icon:"🍖",name:"Fleisch",note:"In kleineren Mengen als in Europa."}
+          ]},
+        { color:"#2E8BC0", icon:"🥛", title:"Milchprodukte", portion:"2 Portionen",
+          tip:"Teilt sich die schmale Kreiselspitze mit den Früchten.",
+          items:[
+            {icon:"🥛",name:"Milch",note:"Ein Glas Milch entspricht einer Portion."},
+            {icon:"🧀",name:"Käse & Joghurt",note:"Kleinere Rolle als in der Schweiz."}
+          ]},
+        { color:"#D6342C", icon:"🍎🍊", title:"Früchte", portion:"2 Portionen",
+          tip:"Die zweite Gruppe an der Kreiselspitze – gleich viel wie Milch.",
+          items:[
+            {icon:"🍎",name:"Äpfel & Birnen",note:"Nashi-Birnen sind in Japan beliebt."},
+            {icon:"🍊",name:"Mikan",note:"Japanische Mandarinen als klassischer Snack."}
+          ]}
+      ]
+    }
   };
 
   let current="ch", activeTier=null;
@@ -401,15 +498,21 @@
 
   function buildPyramid(){
     const d=DATA[current], N=d.levels.length;
+    const inv=d.shape==="top";   // Japan: Kreisel – oben breit, unten schmal
     const pyr=document.getElementById("pyramid");
     pyr.classList.remove("has-active");
     pyr.innerHTML="";
+    if(inv){
+      const run=document.createElement("div");
+      run.className="top-runner"; run.textContent="🏃"; run.setAttribute("aria-hidden","true");
+      pyr.appendChild(run);
+    }
     const hw=y=>9+41*y;   // breite Basis (100%), abgestumpfte Spitze (~18%)
     d.levels.forEach((lv,k)=>{
-      const topHalf=hw(k/N), botHalf=hw((k+1)/N);
+      const topHalf=inv?hw(1-k/N):hw(k/N), botHalf=inv?hw(1-(k+1)/N):hw((k+1)/N);
       const clip="polygon("+(50-topHalf)+"% 0, "+(50+topHalf)+"% 0, "+(50+botHalf)+"% 100%, "+(50-botHalf)+"% 100%)";
       const band=document.createElement("div");
-      band.className="band"+(k===0?" apex":"");
+      band.className="band"+((inv?k===N-1:k===0)?" apex":"");
       band.style.clipPath=clip; band.style.webkitClipPath=clip;
       band.style.background=lv.color; band.style.color=textOn(lv.color);
       band.style.animationDelay=(k*55)+"ms";
@@ -423,6 +526,14 @@
       band.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();selectTier(k);}});
       pyr.appendChild(band);
     });
+    if(inv){
+      const axis=document.createElement("div");
+      axis.className="top-axis"; axis.setAttribute("aria-hidden","true");
+      pyr.appendChild(axis);
+    }
+    const cap=document.getElementById("pyr-cap");
+    if(d.caption){ cap.textContent=d.caption; cap.hidden=false; }
+    else{ cap.textContent=""; cap.hidden=true; }
     document.getElementById("country-name").textContent=d.name;
     document.getElementById("country-src").textContent=d.src;
     activeTier=null;
@@ -519,6 +630,7 @@
 
   document.getElementById("switch").addEventListener("click",e=>{
     const btn=e.target.closest("button"); if(!btn) return;
+    if(!DATA[btn.dataset.c]) return;   // Schutz: nie auf fehlende Daten schalten
     current=btn.dataset.c;
     document.querySelectorAll("#switch button").forEach(b=>b.setAttribute("aria-pressed",b===btn?"true":"false"));
     buildPyramid();
