@@ -112,6 +112,7 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
   <button class="m-btn" id="m-pump" aria-pressed="false">◀ Pumpen – Energie speichern</button>
   <button class="m-btn nebenrolle" id="tour-btn" aria-pressed="false">🎬 Tour durch die Anlage</button>
   <button class="m-btn nebenrolle" id="ton-btn" aria-pressed="false">♪ Ton</button>
+  <button class="m-btn nebenrolle" id="musik-btn" aria-pressed="false">♫ Musik</button>
 </div>
 <p class="m-text" id="m-text"></p>
 
@@ -618,6 +619,97 @@ function blip(hoch){
   o.start(); o.stop(ac.currentTime + .1);
 }
 
+/* ==================================================================
+   MUSIK – vier Stimmen im Paula-Geist (Lotus-Nachtstrecke als Referenz,
+   Komposition original): kreisendes Moll-Arpeggio mit punktiertem Echo,
+   runder Bass, atmende Fläche, Rausch-Ticken. 100 BPM, A-Moll.
+   Im Pumpbetrieb: zwei Halbtöne tiefer, dichteres Echo – die Musik
+   kennt den Zustand der Anlage (iMUSE-Prinzip).
+   ================================================================== */
+let musik = null, musikAn = false, transponierung = 0;
+const ACHTEL = 0.3;                       // 100 BPM
+const AKKORDE = [                          // Halbtöne relativ zu A (Grundton, Terz, Quinte)
+  [0,3,7],[0,3,7],[-4,0,3],[-2,2,5],      // Am Am F G
+  [0,3,7],[-4,0,3],[3,7,10],[-5,-2,2],    // Am F  C Em
+];
+const fq = (basis, halbton) => basis * Math.pow(2, (halbton + transponierung) / 12);
+
+function baueMusik(){
+  if(!audio) audio = baueAudio();
+  const ac = audio.ac;
+  const out = ac.createGain(); out.gain.value = 0; out.connect(ac.destination);
+
+  /* punktiertes Achtel-Echo – der Lotus-Raum */
+  const echo = ac.createDelay(1.0); echo.delayTime.value = ACHTEL * 1.5;
+  const rueck = ac.createGain(); rueck.gain.value = .34;
+  echo.connect(rueck); rueck.connect(echo);
+  const echoMix = ac.createGain(); echoMix.gain.value = .5;
+  echo.connect(echoMix); echoMix.connect(out);
+
+  const rauschPuffer = ac.createBuffer(1, ac.sampleRate * .06, ac.sampleRate);
+  const rd = rauschPuffer.getChannelData(0);
+  for(let i=0;i<rd.length;i++) rd[i] = (Math.random()*2-1) * (1 - i/rd.length);
+
+  return { ac, out, echo, rueck, rauschPuffer, schritt:0, timer:null, naechste:0 };
+}
+function stimme(typ, freq, wann, dauer, laut, tief, insEcho){
+  const ac = musik.ac;
+  const o = ac.createOscillator(); o.type = typ; o.frequency.value = freq;
+  const f = ac.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = tief;
+  const g = ac.createGain();
+  g.gain.setValueAtTime(0, wann);
+  g.gain.linearRampToValueAtTime(laut, wann + .012);
+  g.gain.exponentialRampToValueAtTime(.0008, wann + dauer);
+  o.connect(f); f.connect(g); g.connect(musik.out);
+  if(insEcho) g.connect(musik.echo);
+  o.start(wann); o.stop(wann + dauer + .05);
+}
+function tick(){
+  const ac = musik.ac;
+  while(musik.naechste < ac.currentTime + .18){
+    const t = musik.naechste, n = musik.schritt;
+    const takt = Math.floor(n / 8) % AKKORDE.length;
+    const [g1,t3,q5] = AKKORDE[takt];
+    const lauf = [g1, q5, g1+12, t3+12, q5+12, t3+12, g1+12, q5][n % 8];
+
+    stimme('square',   fq(220, lauf), t, .32, .042, 1800, true);          // Arpeggio
+    if(n % 8 === 0) stimme('triangle', fq(110, g1),   t, .55, .06, 500, false); // Bass 1
+    if(n % 8 === 4) stimme('triangle', fq(110, g1+7), t, .5,  .05, 500, false); // Bass 3
+    if(n % 16 === 0){                                                      // Fläche
+      stimme('sawtooth', fq(220, g1),  t, 4.6, .016, 700, false);
+      stimme('sawtooth', fq(220, t3),  t, 4.6, .014, 700, false);
+    }
+    if(n % 2 === 1){                                                       // Ticken
+      const q = ac.createBufferSource(); q.buffer = musik.rauschPuffer;
+      const hg = ac.createGain(); hg.gain.value = (n % 8 === 7) ? .022 : .014;
+      const hp = ac.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 6000;
+      q.connect(hp); hp.connect(hg); hg.connect(musik.out);
+      q.start(t);
+    }
+    musik.naechste += ACHTEL;
+    musik.schritt++;
+  }
+}
+function musikSchalten(){
+  if(!musik) musik = baueMusik();
+  musikAn = !musikAn;
+  if(musik.ac.state === 'suspended') musik.ac.resume();
+  if(musikAn){
+    musik.naechste = musik.ac.currentTime + .06;
+    musik.timer = setInterval(tick, 40);
+    musik.out.gain.setTargetAtTime(1, musik.ac.currentTime, .4);
+  } else {
+    musik.out.gain.setTargetAtTime(0, musik.ac.currentTime, .3);
+    clearInterval(musik.timer);
+  }
+  document.getElementById('musik-btn').setAttribute('aria-pressed', String(musikAn));
+}
+document.getElementById('musik-btn').addEventListener('click', musikSchalten);
+function musikModus(pumpen){
+  transponierung = pumpen ? -2 : 0;                        // die Nacht wird dunkler
+  if(musik) musik.rueck.gain.setTargetAtTime(pumpen ? .44 : .34, musik.ac.currentTime, .5);
+}
+
 /* Blitz am Mast: unregelmässig, manchmal doppelt – mit Zap, wenn Ton an */
 function zap(){
   if(!audio || !tonAn) return;
@@ -647,6 +739,7 @@ const mTurb = document.getElementById('m-turb'), mPump = document.getElementById
 function setzeModus(pumpen){
   richtung = pumpen ? -1 : 1;
   tonModus(pumpen);
+  musikModus(pumpen);
   document.getElementById('g-turb').style.display = pumpen ? 'none' : '';
   document.getElementById('g-pump').style.display = pumpen ? '' : 'none';
   mTurb.setAttribute('aria-pressed', String(!pumpen));
