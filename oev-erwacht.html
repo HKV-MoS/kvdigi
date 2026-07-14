@@ -114,7 +114,7 @@
       <canvas id="karte" width="1600" height="900" role="img"
               aria-label="Karte der Schweiz, auf der sich das ÖV-Netz eines echten Tages aufbaut"></canvas>
       <div class="hud">
-        <div class="uhr" id="uhr">03:00</div>
+        <div class="uhr" id="uhr">00:00</div>
         <div class="zaehler">Fahrten unterwegs<b id="zaehler">0</b></div>
       </div>
     </div>
@@ -130,9 +130,9 @@
         <button class="tempo" data-f="3">×3</button>
       </div>
       <div class="zeitleiste">
-        <span id="z-von">03:00</span>
-        <input type="range" id="zeit" min="180" max="420" value="180" step="0.25" aria-label="Uhrzeit">
-        <span id="z-bis">07:00</span>
+        <span id="z-von">00:00</span>
+        <input type="range" id="zeit" min="0" max="1440" value="0" step="0.25" aria-label="Uhrzeit">
+        <span id="z-bis">24:00</span>
       </div>
     </div>
 
@@ -155,7 +155,7 @@
   </div>
 
   <aside class="panel">
-    <div class="phase" id="phase">03:00 · Nachtruhe</div>
+    <div class="phase" id="phase">00:00 · Nachtruhe</div>
     <h2 id="titel">Die Schweiz schläft</h2>
     <p id="text"></p>
 
@@ -177,7 +177,7 @@
 
     <div class="merksatz">
       <b>Zum Nachdenken</b>
-      <span id="frage">Um 03:00 sind nur eine Handvoll Fahrten unterwegs. Wer braucht sie – und wohin?</span>
+      <span id="frage">Wer ist mitten in der Nacht unterwegs – und warum?</span>
     </div>
   </aside>
 </div>
@@ -200,7 +200,7 @@ if (!window.OEV_META){
   return;
 }
 const META = window.OEV_META;
-let VON = 180, BIS = 420;                 // aktuelles Zeitfenster (Standard 03:00–07:00)
+let VON = 0, BIS = 1440;                 // aktuelles Zeitfenster (Standard 03:00–07:00)
 const KATS = ['zug','bus','tram','schiff','berg'];
 const FARBE = { zug:'#F2C14E', bus:'#E2585F', tram:'#3FD4B0', schiff:'#5AA9E6', berg:'#C08BE8' };
 const D = { seg: { zug:[], bus:[], tram:[], schiff:[], berg:[] } };   // Segmente des Fensters
@@ -231,17 +231,26 @@ function noetigeStunden(von, bis){
   for(let h=h0; h<=h1; h++) liste.push(h);
   return liste;
 }
+/* Segment-Index: kurze Segmente (≤ LK min) in Minuten-Buckets nach Startzeit,
+   lange separat – so prüft jeder Frame nur einen kleinen Ausschnitt. */
+const LK = 20;
 function bauSegmente(von, bis){
   KATS.forEach(kat=>{
-    const ziel = [];
+    const buckets = new Array(1442), lang = [];
     noetigeStunden(von, bis).forEach(h=>{
       const a = (window.OEV_CHUNK[h] || {})[kat] || [];
       for(let i=0; i<a.length; i+=6){
-        if (a[i+1] >= von && a[i] <= bis)
-          ziel.push(a[i],a[i+1],a[i+2],a[i+3],a[i+4],a[i+5]);
+        const t1=a[i], t2=a[i+1];
+        if (t2 < von || t1 > bis) continue;
+        if (t2 - t1 > LK){
+          lang.push(t1,t2,a[i+2],a[i+3],a[i+4],a[i+5]);
+        } else {
+          const b = buckets[t1] || (buckets[t1] = []);
+          b.push(t1,t2,a[i+2],a[i+3],a[i+4],a[i+5]);
+        }
       }
     });
-    D.seg[kat] = ziel;
+    D.seg[kat] = { buckets, lang };
   });
 }
 
@@ -285,20 +294,28 @@ function posAuf(arr, i, t){
 }
 
 /* Spuren zwischen zwei Zeitpunkten fortschreiben (beim Abspielen) */
+function segMalen(arr, tAlt, tNeu, g){
+  for(let i=0; i<arr.length; i+=6){
+    const t1=arr[i], t2=arr[i+1];
+    if(t2 < tAlt || t1 > tNeu) continue;
+    const [x1,y1] = posAuf(arr, i, Math.max(t1, tAlt));
+    const [x2,y2] = posAuf(arr, i, Math.min(t2, tNeu));
+    g.moveTo(x1,y1); g.lineTo(x2,y2);
+  }
+}
 function spurWeiter(tAlt, tNeu){
   spg.lineWidth = 1.1; spg.lineCap = 'round'; spg.globalAlpha = 0.5;
+  const m0 = Math.max(0, Math.floor(tAlt) - LK), m1 = Math.min(1441, Math.floor(tNeu));
   KATS.forEach(kat=>{
     if(!aktiv[kat]) return;
-    const a = D.seg[kat];
+    const S = D.seg[kat];
     spg.strokeStyle = FARBE[kat];
     spg.beginPath();
-    for(let i=0; i<a.length; i+=6){
-      const t1=a[i], t2=a[i+1];
-      if(t2 < tAlt || t1 > tNeu) continue;
-      const [x1,y1] = posAuf(a, i, Math.max(t1, tAlt));
-      const [x2,y2] = posAuf(a, i, Math.min(t2, tNeu));
-      spg.moveTo(x1,y1); spg.lineTo(x2,y2);
+    for(let m=m0; m<=m1; m++){
+      const b = S.buckets[m];
+      if(b) segMalen(b, tAlt, tNeu, spg);
     }
+    segMalen(S.lang, tAlt, tNeu, spg);
     spg.stroke();
   });
   spg.globalAlpha = 1;
@@ -315,15 +332,21 @@ function spurNeu(t){
 function male(t){
   ctx.drawImage(bg,0,0);
   ctx.drawImage(spur,0,0);
+  const mt = Math.floor(t), m0 = Math.max(0, mt - LK);
   KATS.forEach(kat=>{
     if(!aktiv[kat]) return;
-    const a = D.seg[kat];
+    const S = D.seg[kat];
     ctx.fillStyle = FARBE[kat];
-    for(let i=0; i<a.length; i+=6){
-      if(a[i] > t || a[i+1] < t) continue;
-      const [x,y] = posAuf(a, i, t);
+    const punkt = (arr,i)=>{
+      if(arr[i] > t || arr[i+1] < t) return;
+      const [x,y] = posAuf(arr, i, t);
       ctx.beginPath(); ctx.arc(x,y,2.0,0,6.2832); ctx.fill();
+    };
+    for(let m=m0; m<=mt; m++){
+      const b = S.buckets[m];
+      if(b) for(let i=0; i<b.length; i+=6) punkt(b,i);
     }
+    for(let i=0; i<S.lang.length; i+=6) punkt(S.lang,i);
   });
 }
 
@@ -499,17 +522,18 @@ const selVon = document.getElementById('f-von'), selBis = document.getElementByI
       selBis.appendChild(o2);
     }
   }
-  selVon.value = 180; selBis.value = 420;
+  selVon.value = 0; selBis.value = 1440;
 })();
 
 async function ladeFenster(von, bis){
   ladenBtn.disabled = true;
   const stunden = noetigeStunden(von, bis);
   try{
-    for(let i=0; i<stunden.length; i++){
-      statusEl.textContent = 'Lade Daten … ' + (i+1) + '/' + stunden.length;
-      await ladeChunk(stunden[i]);
-    }
+    let fertig = 0;
+    statusEl.textContent = 'Lade Daten … 0/' + stunden.length;
+    await Promise.all(stunden.map(h => ladeChunk(h).then(()=>{
+      fertig++; statusEl.textContent = 'Lade Daten … ' + fertig + '/' + stunden.length;
+    })));
   }catch(h){
     statusEl.textContent = '';
     document.getElementById('fehlt').style.display = 'block';
@@ -543,8 +567,8 @@ ladenBtn.addEventListener('click', ()=>{
   if(pruefeFenster()) ladeFenster(Number(selVon.value), Number(selBis.value));
 });
 
-/* ---- Startzustand: Standardfenster 03:00–07:00 laden -------------------- */
-ladeFenster(180, 420);
+/* ---- Startzustand: ganzer Tag (00:00–24:00) ------------------------------ */
+ladeFenster(0, 1440);
 })();
 </script>
 </body>
