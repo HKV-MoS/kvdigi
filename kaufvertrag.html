@@ -206,6 +206,9 @@ function zins2Mt(){ return rest()*0.05*2/12; }
 function ersetze(t){
   const p = zustand.produkt;
   if(!p) return t;
+  if((zustand.haendler||'herr')==='frau'){
+    t = t.replaceAll('Herrn Meier','Frau Meier').replaceAll('Herr Meier','Frau Meier');
+  }
   return t
     .replaceAll('{NAME}', p.name)
     .replaceAll('{P}', p.nom)
@@ -253,7 +256,7 @@ front:[
     a:{ anschauen:'Nur ein Gebüsch. Oder …?' } },
 ],
 laden:[
-  { id:'meier', name:'Herr Meier', x:340,y:100,w:185,h:120,
+  { id:'meier', name:'Herr Meier', x:365,y:100,w:165,h:95,
     a:{ redemit:'Herr Meier hört zu – <b>nutzen Sie die Gesprächsoptionen unten.</b>',
         anschauen:'Herr Meier, Inhaber seit 1998. Brille, Weste, Ellbogen auf der Theke – und das OR vermutlich auswendig im Kopf.',
         nimm:'Herrn Meier kann man nicht mitnehmen. Er ist quasi Inventar.' } },
@@ -637,30 +640,53 @@ if(typeof Image !== 'undefined'){
    Posen: Meier 0 neutral · 1 sprechend · 2 nickend · 3 Hände hoch
           Alex  0 neutral · 1 gestikulierend · 2 fragend
    ===================================================== */
+const HAENDLER = {
+  herr:{ sprecher:'HERR MEIER', hotName:'Herr Meier',
+    hotAnschauen:'Herr Meier, Inhaber seit 1998. Brille, Weste, Ellbogen auf der Theke – und das OR vermutlich auswendig im Kopf.',
+    frames:['kaufvertrag_meier_0.png','kaufvertrag_meier_1.png','kaufvertrag_meier_2.png','kaufvertrag_meier_3.png'],
+    w:160, h:88 },
+  frau:{ sprecher:'FRAU MEIER', hotName:'Frau Meier',
+    hotAnschauen:'Frau Meier, Inhaberin seit 1998. Dutt, Jeansjacke, Ellbogen auf der Theke – und das OR garantiert auswendig im Kopf.',
+    frames:['kaufvertrag_frau_0.png','kaufvertrag_frau_1.png','kaufvertrag_frau_2.png','kaufvertrag_frau_3.png'],
+    w:152, h:88 },
+};
+function haendler(){ return HAENDLER[zustand.haendler || 'herr']; }
+const KAEUFER = {
+  m:{ frames:['kaufvertrag_alex_0.png','kaufvertrag_alex_1.png','kaufvertrag_alex_2.png'], w:94, h:128 },
+  w:{ frames:['kaufvertrag_alexw_0.png','kaufvertrag_alexw_1.png','kaufvertrag_alexw_2.png'], w:53, h:128 },
+};
+function kaeufer(){ return KAEUFER[zustand.kaeuferin || 'm']; }
+
 const SPRITES = {
   laden: [
-    { id:'meier', frames:['kaufvertrag_meier_0.png','kaufvertrag_meier_1.png','kaufvertrag_meier_2.png','kaufvertrag_meier_3.png'],
-      x:335, y:118, w:190, h:105 },
+    { id:'meier', frames:null, x:368, y:104, w:160, h:88 },
     { id:'alex',  frames:['kaufvertrag_alex_0.png','kaufvertrag_alex_1.png','kaufvertrag_alex_2.png'],
       x:238, y:132, w:94, h:128 },
   ],
 };
 const spriteOk = {};
 if(typeof Image !== 'undefined'){
-  Object.values(SPRITES).flat().forEach(sp=>{
-    sp.frames.forEach(url=>{
+  const alleFrames = Object.values(SPRITES).flat().map(sp=> sp.frames || [])
+    .concat(Object.values(HAENDLER).map(h=>h.frames))
+    .concat(Object.values(KAEUFER).map(k=>k.frames));
+  alleFrames.forEach(frames=>{
+    frames.forEach(url=>{
       const im=new Image();
       im.onload=()=>{ spriteOk[url]=true; };
       im.src=url;
     });
   });
 }
+function spriteFrames(sp){ if(sp.id==='meier') return haendler().frames; if(sp.id==='alex') return kaeufer().frames; return sp.frames; }
 function spriteSVG(key){
   let svg='';
   (SPRITES[key]||[]).forEach(sp=>{
-    if(!spriteOk[sp.frames[0]]) return;
-    svg += '<image id="sp-'+sp.id+'" href="'+sp.frames[0]+'" x="'+sp.x+'" y="'+sp.y+
-           '" width="'+sp.w+'" height="'+sp.h+'" preserveAspectRatio="xMidYMax meet"/>';
+    const fr = spriteFrames(sp);
+    const w = sp.id==='meier' ? haendler().w : (sp.id==='alex' ? kaeufer().w : sp.w);
+    const h = sp.id==='meier' ? haendler().h : (sp.id==='alex' ? kaeufer().h : sp.h);
+    if(!spriteOk[fr[0]]) return;
+    svg += '<image id="sp-'+sp.id+'" href="'+fr[0]+'" x="'+sp.x+'" y="'+sp.y+
+           '" width="'+w+'" height="'+h+'" preserveAspectRatio="xMidYMax meet"/>';
   });
   return svg;
 }
@@ -669,7 +695,8 @@ function spriteFrame(id, n){
   const el = document.getElementById('sp-'+id);
   if(!el) return;
   const sp = Object.values(SPRITES).flat().find(x=>x.id===id);
-  if(sp && sp.frames[n] && spriteOk[sp.frames[n]]) el.setAttribute('href', sp.frames[n]);
+  const fr = sp ? spriteFrames(sp) : null;
+  if(fr && fr[n] && spriteOk[fr[n]]) el.setAttribute('href', fr[n]);
 }
 function spriteStopp(){ if(spriteTimer){ clearInterval(spriteTimer); spriteTimer=null; } }
 function spriteSprich(id, dauerMs){
@@ -742,7 +769,8 @@ szeneElKlick();
 function szeneElKlick(){
   szeneEl.addEventListener('mousemove', (ev)=>{
     const el = findeHotspot(ev.target);
-    satz(el ? hotspotDaten(el).name : null);
+    const hh = el ? hotspotDaten(el) : null;
+    satz(hh ? (hh.id==='meier' ? haendler().hotName : hh.name) : null);
   });
   szeneEl.addEventListener('click', (ev)=>{
     const el = findeHotspot(ev.target);
@@ -755,7 +783,12 @@ function szeneElKlick(){
       kommentar(h.fund.text + ' <span class="rq-delta">+'+h.fund.rq+' RQ · Entdeckung!</span>');
       return;
     }
-    const antwort = (h.a && h.a[aktivesVerb]) || VERB_STANDARD[aktivesVerb];
+    let antwort = (h.a && h.a[aktivesVerb]) || VERB_STANDARD[aktivesVerb];
+    if(h.id==='meier'){
+      if(aktivesVerb==='anschauen') antwort = haendler().hotAnschauen;
+      antwort = antwort.replaceAll('Herrn Meier', haendler().hotName==='Frau Meier'?'Frau Meier':'Herrn Meier')
+                       .replaceAll('Herr Meier', haendler().hotName);
+    }
     kommentar(antwort);
   });
 }
@@ -1100,7 +1133,7 @@ function baueDialog(k){
   if(aktuelleSzeneId==='laden' && k.sprecher==='HERR MEIER') spriteSprich('meier');
   const sp = document.createElement('span');
   sp.className = 'sprecher' + (k.sprecher==='ERZÄHLER' ? ' erz':'');
-  sp.textContent = k.sprecher;
+  sp.textContent = (k.sprecher==='HERR MEIER') ? haendler().sprecher : k.sprecher;
   dialogEl.appendChild(sp);
 
   const tx = document.createElement('p');
@@ -1146,12 +1179,31 @@ function baueProduktwahl(k){
   const sp=document.createElement('span'); sp.className='sprecher erz'; sp.textContent=k.sprecher;
   const tx=document.createElement('p'); tx.className='dtext'; tx.innerHTML=k.text;
   dialogEl.append(sp,tx);
+  /* Figurenwahl */
+  const figZeile=document.createElement('p'); figZeile.className='dtext';
+  figZeile.innerHTML='<b>Ihre Spielfigur:</b>';
+  dialogEl.appendChild(figZeile);
+  const figReihe=document.createElement('div'); figReihe.className='kartenreihe'; figReihe.style.maxWidth='24rem';
+  if(!zustand.kaeuferin) zustand.kaeuferin='m';
+  [['m','Alex'],['w','Alex']].forEach(([id,label])=>{
+    const b=document.createElement('button'); b.className='pkarte'; b.type='button';
+    b.innerHTML='<img src="'+KAEUFER[id].frames[0]+'" alt="" style="height:80px;image-rendering:auto" onerror="this.style.display=\'none\'"><span class="pname">'+label+'</span>';
+    const mark=()=>{ figReihe.querySelectorAll('.pkarte').forEach(x=>x.style.borderColor=''); b.style.borderColor='#FFFF55'; };
+    if(id===zustand.kaeuferin) setTimeout(mark,0);
+    b.addEventListener('click', ()=>{ zustand.kaeuferin=id; mark(); });
+    figReihe.appendChild(b);
+  });
+  dialogEl.appendChild(figReihe);
+  const prodZeile=document.createElement('p'); prodZeile.className='dtext';
+  prodZeile.innerHTML='<b>Ihr Einkauf:</b>';
+  dialogEl.appendChild(prodZeile);
   const reihe=document.createElement('div'); reihe.className='kartenreihe';
   PRODUKTE.forEach(p=>{
     const b=document.createElement('button'); b.className='pkarte'; b.type='button';
     b.innerHTML = '<span class="pico">'+p.ico+'</span><span class="pname">'+p.name+'</span><span class="ppreis">'+chf(p.preis)+'</span>';
     b.addEventListener('click', ()=>{
       zustand.produkt=p; zustand.rq=0; zustand.flags={}; zustand.ergebnisse={}; zustand.funde={};
+      zustand.haendler = Math.random()<0.5 ? 'herr':'frau';
       rqEl.textContent='RQ 0';
       zeige('k1');
     });
