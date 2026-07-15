@@ -261,7 +261,7 @@ front:[
     a:{ anschauen:'Eine dichte Hecke am alten Holzzaun. Da raschelt doch was …?' } },
 ],
 laden:[
-  { id:'meier', name:'Herr Meier', x:425,y:128,w:92,h:58,
+  { id:'meier', name:'Herr Meier', x:430,y:115,w:100,h:62,
     a:{ redemit:'Herr Meier hört zu – <b>nutzen Sie die Gesprächsoptionen unten.</b>',
         anschauen:'Herr Meier, Inhaber seit 1998. Brille, Weste, Ellbogen auf der Theke – und das OR vermutlich auswendig im Kopf.',
         nimm:'Herrn Meier kann man nicht mitnehmen. Er ist quasi Inventar.' } },
@@ -649,11 +649,11 @@ const HAENDLER = {
   herr:{ sprecher:'HERR MEIER', hotName:'Herr Meier',
     hotAnschauen:'Herr Meier, Inhaber seit 1998. Brille, Weste, Ellbogen auf der Theke – und das OR vermutlich auswendig im Kopf.',
     frames:['kaufvertrag_meier_0.png','kaufvertrag_meier_1.png','kaufvertrag_meier_2.png','kaufvertrag_meier_3.png'],
-    w:80, h:44 },
+    w:91, h:50 },
   frau:{ sprecher:'FRAU MEIER', hotName:'Frau Meier',
     hotAnschauen:'Frau Meier, Mitinhaberin. Ihr Mann ist unterwegs – und vom mündlichen Geschäft von damals weiss sie nichts. Zum Glück gibt es Papier.',
     frames:['kaufvertrag_frau_0.png','kaufvertrag_frau_1.png','kaufvertrag_frau_2.png','kaufvertrag_frau_3.png'],
-    w:76, h:44 },
+    w:86, h:50 },
 };
 function haendler(){ return HAENDLER[zustand.haendler || 'herr']; }
 const KAEUFER = {
@@ -664,7 +664,7 @@ function kaeufer(){ return KAEUFER[zustand.kaeuferin || 'm']; }
 
 const SPRITES = {
   laden: [
-    { id:'meier', frames:null, x:430, y:136, w:80, h:44 },
+    { id:'meier', frames:null, x:435, y:122, w:91, h:50 },
     { id:'alex',  frames:['kaufvertrag_alex_0.png','kaufvertrag_alex_1.png','kaufvertrag_alex_2.png'],
       x:238, y:132, w:94, h:128 },
   ],
