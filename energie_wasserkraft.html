@@ -344,7 +344,7 @@ let richtung = 1;   // 1 = turbinieren (bergab), -1 = pumpen
 
 const ZONEN = [
   { name:'rohr',
-    pts:[[435,670],[530,730],[620,783],[710,834],[810,883],[900,921],[990,953],[1090,988],[1190,990],[1262,986],[1312,988],[1340,1014],[1352,1048]],
+    pts:[[435,655],[530,715],[620,768],[710,819],[810,868],[900,906],[990,938],[1090,973],[1190,975],[1262,971],[1312,973],[1340,999],[1352,1033]],
     halb:30, lambda:95, hell:.32, dunkel:.12, K:12, tick:85, umkehrbar:true },
   { name:'auslauf', ellipse:[1358,1050,100,42,-12], quell:[1312,1008],
     lambda:48, hell:.30, dunkel:.10, K:10, tick:70, umkehrbar:true },
@@ -507,7 +507,7 @@ function feldTick(f){
     const t = f.phase * 0.55;
     for(let n=0;n<f.idx.length;n++){
       const i0=f.idx[n];
-      const fak = 1 + f.amp*Math.cos(t - f.phi[n]);   // t − φ: Wellen laufen flussabwärts
+      const fak = 1 + f.amp*Math.cos(t + f.phi[n]);   // t + φ: Wellen laufen vom Kraftwerk weg (flussabwärts)
       a[i0]   = Math.min(255, g[i0]  *fak);
       a[i0+1] = Math.min(255, g[i0+1]*fak);
       a[i0+2] = Math.min(255, g[i0+2]*fak);
