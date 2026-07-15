@@ -20,6 +20,8 @@
   header{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:8px;}
   h1{font-size:1.35rem; letter-spacing:2px; color:var(--ega-gelb); text-transform:uppercase;}
   h1 small{display:block; font-size:.72rem; font-weight:bold; color:var(--ega-dgrau); letter-spacing:1px; text-transform:none;}
+  h1{cursor:pointer;}
+  h1:hover{color:var(--ega-weiss);}
   .rq{
     font-size:1.05rem; color:var(--ega-gelb); border:2px solid var(--ega-dgrau);
     padding:5px 14px; white-space:nowrap; background:#000;
@@ -102,7 +104,37 @@
   .wegliste b{color:var(--ega-weiss); font-weight:bold;}
   .wegliste .offen{color:var(--ega-dgrau);}
 
-  /* ------- Point-and-Click: Satzzeile + Verben ------- */
+  /* ------- Sprechblasen ------- */
+  .szene-wrap{position:relative;}
+  .blasen{position:absolute; inset:0; pointer-events:none; font-weight:bold;}
+  .blase{
+    position:absolute; background:var(--papier); color:#1c1c1c;
+    border:3px solid #111; border-radius:14px; padding:9px 13px;
+    font-size:.84rem; line-height:1.45; box-shadow:4px 4px 0 rgba(0,0,0,.55);
+  }
+  .blase .bname{display:block; font-size:.6rem; letter-spacing:2px; color:#6a6a6a; margin-bottom:3px;}
+  .blase b{color:#8a5400;}
+  .blase.meier{top:4%; right:3%; max-width:46%;}
+  .blase.meier::after{
+    content:""; position:absolute; bottom:-19px; left:24%;
+    border:10px solid transparent; border-top:12px solid #111;
+  }
+  .blase.erz{
+    top:4%; left:50%; transform:translateX(-50%); max-width:80%;
+    background:rgba(0,0,0,.84); color:var(--ega-grau);
+    border-color:var(--ega-dgrau); box-shadow:none; border-radius:8px;
+  }
+  .blase.erz b{color:var(--ega-gelb);}
+  .blase.erz .bname{color:var(--ega-dgrau);}
+  .blase.hinweis{
+    bottom:5%; left:50%; transform:translateX(-50%); max-width:72%;
+    background:rgba(0,0,0,.88); color:var(--ega-weiss);
+    border-color:var(--ega-cyan); box-shadow:none; border-radius:8px; font-size:.8rem;
+  }
+  .blase.hinweis b{color:var(--ega-gelb);}
+  .blase.hinweis .rq-delta{color:var(--ega-gelb);}
+
+  /* ------- (alt, ungenutzt) Satzzeile + Verben ------- */
   .satzzeile{
     padding:6px 16px 2px; color:var(--ega-gelb); font-size:.92rem;
     min-height:1.6em; letter-spacing:1px; background:#000;
@@ -133,7 +165,7 @@
 <body>
 <div class="rahmen">
   <header>
-    <h1>Der Kauf<small>Ein Rechtsfall in drei Wegen · Kaufvertrag nach OR</small></h1>
+    <h1 id="titel" title="Zurück zum Anfang">Der Kauf<small>Ein Rechtsfall in drei Wegen · Kaufvertrag nach OR</small></h1>
     <div>
       <div class="rq" id="rq-anzeige">RQ 0</div>
       <div class="weg-anzeige" id="weg-anzeige">Rechtsquotient</div>
@@ -141,10 +173,13 @@
   </header>
 
   <div class="buehne">
-    <div class="szene" id="szene"></div>
-    <div class="satzzeile" id="satzzeile"></div>
-    <div class="verben" id="verben"></div>
-    <div class="kommentar" id="kommentar"></div>
+    <div class="szene-wrap">
+      <div class="szene" id="szene"></div>
+      <div class="blasen">
+        <div id="blase-dialog"></div>
+        <div id="blase-hinweis"></div>
+      </div>
+    </div>
     <div class="dialog" id="dialog"></div>
   </div>
 
@@ -718,45 +753,25 @@ function spriteGeste(id, pose, dauerMs){
 }
 
 /* =====================================================
-   POINT-AND-CLICK: Verben, Satzzeile, Hotspot-Logik
+   SPRECHBLASEN + KLICK (schauen) / DOPPELKLICK (handeln)
    ===================================================== */
-const VERBEN = [
-  ['gehezu','Gehe zu'], ['anschauen','Schaue an'], ['nimm','Nimm'],
-  ['benutze','Benutze'], ['oeffne','Öffne'], ['redemit','Rede mit'],
-];
-const VERB_STANDARD = {
-  gehezu:'Sie gehen hin. Und jetzt?',
-  anschauen:'Nichts Besonderes.',
-  nimm:'Das gehört Ihnen nicht. Noch nicht.',
-  benutze:'Das bringt im Moment nichts.',
-  oeffne:'Das lässt sich nicht öffnen.',
-  redemit:'Keine Antwort. Erstaunlich.',
-};
-let aktivesVerb = 'anschauen';
-let aktiverHotKey = null;
+const blaseDialogEl = document.getElementById('blase-dialog');
+const blaseHinweisEl = document.getElementById('blase-hinweis');
+let hinweisTimer = null;
 
-const satzEl = document.getElementById('satzzeile');
-const verbenEl = document.getElementById('verben');
-const kommentarEl = document.getElementById('kommentar');
-
-function verbLabel(v){ const e=VERBEN.find(x=>x[0]===v); return e? e[1]:v; }
-function satz(objName){
-  satzEl.textContent = verbLabel(aktivesVerb) + (objName? ' ' + objName : ' …');
+function blaseDialog(sprecher, html){
+  if(!html){ blaseDialogEl.innerHTML=''; return; }
+  const istMeier = (sprecher==='HERR MEIER' || sprecher==='FRAU MEIER');
+  const name = (sprecher==='HERR MEIER') ? haendler().sprecher : sprecher;
+  blaseDialogEl.innerHTML = '<div class="blase '+(istMeier?'meier':'erz')+'">'+
+    '<span class="bname">'+name+'</span>'+html+'</div>';
 }
-function kommentar(html){ kommentarEl.innerHTML = html||''; }
-
-VERBEN.forEach(([id,label])=>{
-  const b=document.createElement('button');
-  b.className='verb'+(id===aktivesVerb?' aktiv':''); b.type='button'; b.textContent=label;
-  b.addEventListener('click', ()=>{
-    aktivesVerb=id;
-    verbenEl.querySelectorAll('.verb').forEach(x=>x.classList.remove('aktiv'));
-    b.classList.add('aktiv');
-    satz();
-  });
-  verbenEl.appendChild(b);
-});
-satz();
+function blaseHinweis(html, dauer){
+  if(hinweisTimer){ clearTimeout(hinweisTimer); hinweisTimer=null; }
+  if(!html){ blaseHinweisEl.innerHTML=''; return; }
+  blaseHinweisEl.innerHTML = '<div class="blase hinweis">'+html+'</div>';
+  hinweisTimer = setTimeout(()=>{ blaseHinweisEl.innerHTML=''; }, dauer||6000);
+}
 
 function findeHotspot(ziel){
   let el = ziel;
@@ -770,33 +785,39 @@ function hotspotDaten(el){
   const key = el.getAttribute('data-hot'), hid = el.getAttribute('data-hid');
   return (HOTSPOTS[key]||[]).find(h=>h.id===hid);
 }
-szeneElKlick();
-function szeneElKlick(){
-  szeneEl.addEventListener('mousemove', (ev)=>{
-    const el = findeHotspot(ev.target);
-    const hh = el ? hotspotDaten(el) : null;
-    satz(hh ? (hh.id==='meier' ? haendler().hotName : hh.name) : null);
-  });
-  szeneEl.addEventListener('click', (ev)=>{
-    const el = findeHotspot(ev.target);
-    if(!el) { kommentar(''); return; }
-    const h = hotspotDaten(el);
-    /* Fund? */
-    if(h.fund && h.fund.verb===aktivesVerb && !zustand.funde[h.id]){
-      zustand.funde[h.id]=true;
-      setzeRQ(h.fund.rq);
-      kommentar(h.fund.text + ' <span class="rq-delta">+'+h.fund.rq+' RQ · Entdeckung!</span>');
-      return;
-    }
-    let antwort = (h.a && h.a[aktivesVerb]) || VERB_STANDARD[aktivesVerb];
-    if(h.id==='meier'){
-      if(aktivesVerb==='anschauen') antwort = haendler().hotAnschauen;
-      antwort = antwort.replaceAll('Herrn Meier', haendler().hotName==='Frau Meier'?'Frau Meier':'Herrn Meier')
-                       .replaceAll('Herr Meier', haendler().hotName);
-    }
-    kommentar(antwort);
-  });
+function meierText(t){
+  return t.replaceAll('Herrn Meier', haendler().hotName==='Frau Meier'?'Frau Meier':'Herrn Meier')
+          .replaceAll('Herr Meier', haendler().hotName);
 }
+function hotspotSchau(h){
+  if(h.fund && h.fund.verb==='anschauen' && !zustand.funde[h.id]){
+    zustand.funde[h.id]=true;
+    setzeRQ(h.fund.rq);
+    blaseHinweis(h.fund.text + ' <span class="rq-delta">+'+h.fund.rq+' RQ · Entdeckung!</span>', 9000);
+    return;
+  }
+  let antwort = (h.a && h.a.anschauen) || 'Nichts Besonderes.';
+  if(h.id==='meier'){ antwort = haendler().hotAnschauen; }
+  blaseHinweis(antwort);
+}
+function hotspotAktion(h){
+  let antwort = h.a && (h.a.redemit || h.a.oeffne || h.a.benutze || h.a.nimm);
+  if(!antwort) antwort = 'Da gibt es gerade nichts zu tun.';
+  if(h.id==='meier') antwort = meierText(antwort);
+  blaseHinweis(antwort);
+}
+let klickTimer = null;
+szeneEl.addEventListener('click', (ev)=>{
+  const el = findeHotspot(ev.target);
+  if(!el){ blaseHinweis(''); return; }
+  const h = hotspotDaten(el);
+  if(klickTimer){                       /* zweiter Klick kurz danach = Doppelklick */
+    clearTimeout(klickTimer); klickTimer=null;
+    hotspotAktion(h);
+    return;
+  }
+  klickTimer = setTimeout(()=>{ klickTimer=null; hotspotSchau(h); }, 260);
+});
 
 /* =====================================================
    DIALOGBAUM
@@ -1118,7 +1139,7 @@ function zeige(id){
   aktuelleSzeneId = k.szene;
   szeneEl.innerHTML = bildOk[k.szene] ? bildSzene(k.szene) : (SZENEN[k.szene] || '');
   dialogEl.innerHTML = '';
-  kommentar(''); satz();
+  blaseDialog(null,''); blaseHinweis('');
 
   if(k.art==='produktwahl'){ baueProduktwahl(k); return; }
   if(k.art==='weiche'){ baueWeiche(k); return; }
@@ -1136,15 +1157,7 @@ function zeige(id){
 
 function baueDialog(k){
   if(aktuelleSzeneId==='laden' && (k.sprecher==='HERR MEIER' || k.sprecher==='FRAU MEIER')) spriteSprich('meier');
-  const sp = document.createElement('span');
-  sp.className = 'sprecher' + (k.sprecher==='ERZÄHLER' ? ' erz':'');
-  sp.textContent = (k.sprecher==='HERR MEIER') ? haendler().sprecher : k.sprecher;
-  dialogEl.appendChild(sp);
-
-  const tx = document.createElement('p');
-  tx.className='dtext';
-  tx.innerHTML = ersetze(k.text);
-  dialogEl.appendChild(tx);
+  blaseDialog(k.sprecher, ersetze(k.text));
 
   const box = document.createElement('div');
   box.className='optionen';
@@ -1181,9 +1194,7 @@ function waehle(o, box){
 
 /* ---------- Spezialbildschirme ---------- */
 function baueProduktwahl(k){
-  const sp=document.createElement('span'); sp.className='sprecher erz'; sp.textContent=k.sprecher;
-  const tx=document.createElement('p'); tx.className='dtext'; tx.innerHTML=k.text;
-  dialogEl.append(sp,tx);
+  blaseDialog('ERZÄHLER', k.text);
   /* Figurenwahl */
   const figZeile=document.createElement('p'); figZeile.className='dtext';
   figZeile.innerHTML='<b>Ihre Spielfigur:</b>';
@@ -1218,9 +1229,7 @@ function baueProduktwahl(k){
 }
 
 function baueVertrag(k){
-  const sp=document.createElement('span'); sp.className='sprecher erz'; sp.textContent=k.sprecher;
-  const tx=document.createElement('p'); tx.className='dtext'; tx.innerHTML=ersetze(k.text);
-  dialogEl.append(sp,tx);
+  blaseDialog('ERZÄHLER', ersetze(k.text));
   const p=zustand.produkt;
   const v=document.createElement('div'); v.className='vertrag';
   v.innerHTML =
@@ -1244,9 +1253,7 @@ function baueVertrag(k){
 
 function baueWeiche(k){
   zustand.weg=null; setzeWegAnzeige();
-  const sp=document.createElement('span'); sp.className='sprecher erz'; sp.textContent=k.sprecher;
-  const tx=document.createElement('p'); tx.className='dtext'; tx.innerHTML=ersetze(k.text);
-  dialogEl.append(sp,tx);
+  blaseDialog('ERZÄHLER', ersetze(k.text));
   const reihe=document.createElement('div'); reihe.className='kartenreihe';
   const icons={L:'🚚',Z:'💰',M:'🔍'};
   Object.keys(WEGE).forEach(key=>{
@@ -1307,12 +1314,7 @@ function baueEnde(){
   }
   const b2=document.createElement('button'); b2.className='opt'; b2.type='button';
   b2.textContent='Von vorne beginnen (neues Produkt wählen)';
-  b2.addEventListener('click', ()=>{
-    zustand.produkt=null; zustand.rq=0; zustand.rqAkt1=0;
-    zustand.flags={}; zustand.flagsAkt1={}; zustand.weg=null; zustand.ergebnisse={}; zustand.funde={};
-    rqEl.textContent='RQ 0'; setzeWegAnzeige();
-    zeige('start');
-  });
+  b2.addEventListener('click', neustart);
   box.appendChild(b2);
   dialogEl.appendChild(box);
 }
@@ -1323,6 +1325,18 @@ function wertungsText(rq){
   if(rq>=10) return 'Grundlagen sitzen – Details üben.';
   return 'Nochmals ins OR schauen!';
 }
+
+function neustart(){
+  zustand.produkt=null; zustand.rq=0; zustand.rqAkt1=0; zustand.haendler='herr';
+  zustand.flags={}; zustand.flagsAkt1={}; zustand.weg=null; zustand.ergebnisse={}; zustand.funde={};
+  rqEl.textContent='RQ 0'; setzeWegAnzeige();
+  zeige('start');
+}
+document.getElementById('titel').addEventListener('click', ()=>{
+  if(zustand.produkt && typeof confirm!=='undefined' &&
+     !confirm('Zurück zum Anfang? Der aktuelle Durchlauf geht verloren.')) return;
+  neustart();
+});
 
 /* ---------- Start ---------- */
 zeige('start');
