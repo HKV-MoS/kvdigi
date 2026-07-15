@@ -102,6 +102,26 @@
   .wegliste b{color:var(--ega-weiss); font-weight:bold;}
   .wegliste .offen{color:var(--ega-dgrau);}
 
+  /* ------- Point-and-Click: Satzzeile + Verben ------- */
+  .satzzeile{
+    padding:6px 16px 2px; color:var(--ega-gelb); font-size:.92rem;
+    min-height:1.6em; letter-spacing:1px; background:#000;
+    border-top:2px solid var(--ega-dgrau);
+  }
+  .verben{display:flex; flex-wrap:wrap; gap:2px 22px; padding:2px 16px 8px; background:#000;}
+  .verb{
+    font:inherit; font-size:.9rem; background:none; border:none; cursor:pointer;
+    color:var(--ega-gruen); padding:2px 4px; letter-spacing:1px;
+  }
+  .verb:hover{color:var(--ega-weiss);}
+  .verb.aktiv{color:var(--ega-gelb);}
+  .kommentar{
+    padding:0 16px 8px; color:var(--ega-weiss); font-size:.88rem; line-height:1.5;
+    background:#000; min-height:1.4em;
+  }
+  .kommentar .rq-delta{color:var(--ega-gelb);}
+  .hot{fill:transparent; cursor:pointer;}
+  .hot:hover{fill:rgba(255,255,85,.14); stroke:rgba(255,255,85,.5); stroke-width:2;}
   .quelle{font-size:.68rem; color:var(--ega-dgrau); text-align:center; margin-top:10px; line-height:1.6; font-weight:normal; font-family:inherit;}
   @media (max-width:640px){
     .optionen{grid-template-columns:1fr;}
@@ -121,6 +141,9 @@
 
   <div class="buehne">
     <div class="szene" id="szene"></div>
+    <div class="satzzeile" id="satzzeile"></div>
+    <div class="verben" id="verben"></div>
+    <div class="kommentar" id="kommentar"></div>
     <div class="dialog" id="dialog"></div>
   </div>
 
@@ -165,6 +188,7 @@ const zustand = {
   flags:{}, flagsAkt1:{},
   weg:null,
   ergebnisse:{},          // wegKey -> RQ des Durchlaufs
+  funde:{},               // Hotspot-Entdeckungen
 };
 
 /* ---------- Geldhelfer ---------- */
@@ -192,122 +216,381 @@ function ersetze(t){
     .replaceAll('{MANGEL}', p.mangel);
 }
 
+const szeneEl = document.getElementById('szene');
+
 /* =====================================================
-   SZENEN – Zak-McKracken-Pixelraster (EGA, 64×26 Zellen)
-   Später ersetzbar durch Pixel-Art-Bilder: gleiche Schlüssel.
+   SZENEN – Zak-McKracken-Pixelraster (EGA, 128×52 Zellen)
+   plus Point-and-Click: Verben, Satzzeile, Hotspots.
    ===================================================== */
 const PAL = { 0:'#000000',1:'#0000AA',2:'#00AA00',3:'#00AAAA',4:'#AA0000',5:'#AA00AA',
               6:'#AA5500',7:'#AAAAAA',8:'#555555',9:'#5555FF',A:'#55FF55',B:'#55FFFF',
               C:'#FF5555',D:'#FF55FF',E:'#FFFF55',F:'#FFFFFF' };
+const Z = 5;                                     /* Zellgrösse: 128×52 → 640×260 */
 
-function pxSzene(bg, zeichnen, overlays){
-  const G = Array.from({length:26}, ()=> new Array(64).fill(null));
+/* ---------- Hotspots (Koordinaten im 640×260-Raum) ---------- */
+const HOTSPOTS = {
+front:[
+  { id:'schild', name:'Leuchtschild', x:150,y:25,w:340,h:55,
+    a:{ anschauen:'«MEIER &amp; CO. – Occasionen · Elektro · seit 1998.» Das Neonrot flackert wie ein müder Kassenbon.' } },
+  { id:'schaufenster', name:'Schaufenster', x:85,y:95,w:120,h:70,
+    a:{ anschauen:'Hinter dem Glas stapeln sich geprüfte Occasionen. Auf jedem Preisschild: der Preis. Klar – die Preisanschrift ist Pflicht.',
+        oeffne:'Das Schaufenster bleibt zu. Der Weg führt durch die Tür.' } },
+  { id:'tuer', name:'Ladentür', x:285,y:105,w:80,h:105,
+    a:{ oeffne:'Die Glocke bimmelt. Herr Meier blickt auf – das Gespräch unten wartet auf Sie.',
+        anschauen:'«Bitte eintreten!» steht auf dem Schild. Öffnungszeiten: Mo–Sa, solange Herr Meier wach ist.' } },
+  { id:'hydrant', name:'Hydrant', x:570,y:165,w:45,h:55,
+    a:{ anschauen:'Ein Hydrant. Er hat mit dem Kaufrecht erstaunlich wenig zu tun.',
+        benutze:'Lieber nicht. Wasserschaden ist ein anderes Kapitel des OR.' } },
+  { id:'eichhoernchen', name:'Gebüsch', x:10,y:180,w:60,h:35,
+    fund:{ verb:'anschauen', rq:1, text:'Ein <b>zweiköpfiges Eichhörnchen</b> huscht vorbei und verschwindet im Dunkel. Sie haben eindeutig zu viel Zak McKracken gespielt.' },
+    a:{ anschauen:'Nur ein Gebüsch. Oder …?' } },
+],
+laden:[
+  { id:'meier', name:'Herr Meier', x:420,y:60,w:90,h:130,
+    a:{ redemit:'Herr Meier hört zu – <b>nutzen Sie die Gesprächsoptionen unten.</b>',
+        anschauen:'Herr Meier, Inhaber seit 1998. Brille, Ellbogen auf der Theke, das OR vermutlich auswendig im Kopf.',
+        nimm:'Herrn Meier kann man nicht mitnehmen. Er ist quasi Inventar.' } },
+  { id:'regal', name:'Regal', x:25,y:30,w:210,h:120,
+    a:{ anschauen:'Radio, Röhrenfernseher, Ventilator, Kamera, Telefon – alles Occasionen, alles geprüft, alles mit Preisschild.',
+        nimm:'Erst der Vertrag, dann die Ware. Sie kennen die Reihenfolge inzwischen.' } },
+  { id:'plakat', name:'Plakat', x:250,y:35,w:80,h:105,
+    fund:{ verb:'anschauen', rq:1, text:'Im Kleingedruckten des SALE-Plakats: <b>«Auch Occasionen: Gewährleistung nach OR.»</b> Gut zu wissen – Aktion hin oder her.' },
+    a:{ anschauen:'Ein grelles SALE-Plakat.' } },
+  { id:'kasse', name:'Kasse', x:530,y:100,w:80,h:55,
+    a:{ anschauen:'Eine Registrierkasse, Baujahr unklar. Das Display glimmt gelb.',
+        nimm:'Das wäre Diebstahl – und damit Strafrecht statt Obligationenrecht. Nein.',
+        oeffne:'Nur Herr Meier öffnet die Kasse. Meistens zum Einnehmen.' } },
+  { id:'uhr', name:'Wanduhr', x:295,y:15,w:45,h:45,
+    a:{ anschauen:'Die Uhr tickt. Fristen laufen – das merken Sie sich für später.' } },
+],
+zimmer:[
+  { id:'brief', name:'Brief', x:340,y:135,w:70,h:35,
+    a:{ anschauen:'Post von Meier &amp; Co. – der Auslöser dieser ganzen Geschichte.',
+        nimm:'Der Brief liegt schon auf Ihrem Pult. Näher geht nicht.' } },
+  { id:'fenster', name:'Fenster', x:35,y:15,w:150,h:100,
+    a:{ anschauen:'Draussen: Aarau bei Nacht. Irgendwo dort steht Meier &amp; Co. – und Ihr Fall wartet.',
+        oeffne:'Zu kalt. Und Ihr Problem fliegt nicht davon.' } },
+  { id:'poster', name:'Poster', x:235,y:35,w:65,h:75,
+    fund:{ verb:'anschauen', rq:1, text:'Tourplakat der Band <b>«Zwei Parteien»</b> – Support: <b>The Willenserklärung</b>. Ausverkauft, natürlich.' },
+    a:{ anschauen:'Ein Bandposter.' } },
+  { id:'pflanze', name:'Pflanze', x:195,y:80,w:55,h:105,
+    a:{ anschauen:'Die Zimmerpflanze gedeiht – im Gegensatz zu manchem Vertrag.',
+        benutze:'Sie giessen die Pflanze. Sie dankt es Ihnen mit stummer Würde.' } },
+  { id:'bett', name:'Bett', x:0,y:170,w:135,h:70,
+    a:{ anschauen:'Ihr Bett. Verlockend – aber Rechtsfälle lösen sich nicht im Schlaf.',
+        benutze:'Jetzt schlafen? Der Fall ruft!' } },
+  { id:'lampe', name:'Pultlampe', x:490,y:85,w:45,h:75,
+    a:{ anschauen:'Die Lampe wirft warmes Licht auf Ihre Unterlagen. Sehr fleissig.',
+        benutze:'Klick. Klick. An, aus, an. Konzentration, bitte.' } },
+],
+weiche:[
+  { id:'tuerL', name:'Tür des Lieferverzugs', x:35,y:35,w:95,h:145,
+    a:{ anschauen:'Hinter dieser Tür: ein leeres Schaufenster und ein Händler, der nicht liefert. (Wählen Sie unten Ihren Weg.)' } },
+  { id:'tuerZ', name:'Tür des Zahlungsverzugs', x:265,y:35,w:95,h:145,
+    a:{ anschauen:'Hinter dieser Tür: eine rote Mahnung mit Ihrem Namen darauf. (Wählen Sie unten Ihren Weg.)' } },
+  { id:'tuerM', name:'Tür der Mängelrüge', x:495,y:35,w:95,h:145,
+    a:{ anschauen:'Hinter dieser Tür: ein nagelneues Occasionsgerät mit einem Knacks. (Wählen Sie unten Ihren Weg.)' } },
+  { id:'boden', name:'Schachbrettboden', x:0,y:190,w:640,h:70,
+    a:{ anschauen:'Ein Schachbrett im Nichts. Träumen Sie noch, oder lernen Sie schon?' } },
+],
+ende:[
+  { id:'pokal', name:'Waage', x:250,y:40,w:140,h:130,
+    a:{ anschauen:'Die Waage der Justitia – heute neigt sie sich auf Ihre Seite.',
+        nimm:'Die bleibt hier. Ihr RQ dürfen Sie behalten.' } },
+],
+};
+
+/* ---------- Pixel-Renderer ---------- */
+function pxSzene(bg, zeichnen, overlays, hotKey){
+  const G = Array.from({length:52}, ()=> new Array(128).fill(null));
   const R = (x,y,w,h,c)=>{
-    for(let j=Math.max(0,y); j<Math.min(26,y+h); j++)
-      for(let i=Math.max(0,x); i<Math.min(64,x+w); i++) G[j][i]=c;
+    for(let j=Math.max(0,y); j<Math.min(52,y+h); j++)
+      for(let i=Math.max(0,x); i<Math.min(128,x+w); i++) G[j][i]=c;
   };
-  zeichnen(R,G);
+  const D = (x,y,w,h,c1,c2)=>{               /* Dithering (Schachmuster) */
+    for(let j=Math.max(0,y); j<Math.min(52,y+h); j++)
+      for(let i=Math.max(0,x); i<Math.min(128,x+w); i++) G[j][i]=((i+j)%2? c1:c2);
+  };
+  zeichnen(R,D,G);
   let rects='';
-  for(let y=0;y<26;y++){
+  for(let y=0;y<52;y++){
     let x=0;
-    while(x<64){
+    while(x<128){
       const c=G[y][x];
       if(c===null){x++;continue;}
-      let x2=x+1; while(x2<64 && G[y][x2]===c) x2++;
-      rects += '<rect x="'+(x*10)+'" y="'+(y*10)+'" width="'+((x2-x)*10)+'" height="10" fill="'+PAL[c]+'"/>';
+      let x2=x+1; while(x2<128 && G[y][x2]===c) x2++;
+      rects += '<rect x="'+(x*Z)+'" y="'+(y*Z)+'" width="'+((x2-x)*Z)+'" height="'+Z+'" fill="'+PAL[c]+'"/>';
       x=x2;
     }
   }
+  let hots='';
+  (HOTSPOTS[hotKey]||[]).forEach(h=>{
+    hots += '<rect class="hot" data-hid="'+h.id+'" data-hot="'+hotKey+'" x="'+h.x+'" y="'+h.y+'" width="'+h.w+'" height="'+h.h+'"><title>'+h.name+'</title></rect>';
+  });
   return '<svg viewBox="0 0 640 260" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">'+
-         '<rect width="640" height="260" fill="'+bg+'"/>'+rects+(overlays||'')+'</svg>';
+         '<rect width="640" height="260" fill="'+bg+'"/>'+rects+(overlays||'')+hots+'</svg>';
 }
 const TXT = (x,y,t,f,gr)=> '<text x="'+x+'" y="'+y+'" text-anchor="middle" font-family="Courier New,monospace" '+
   'font-weight="bold" font-size="'+(gr||14)+'" letter-spacing="2" fill="'+f+'">'+t+'</text>';
-function sterne(R, dichte, seed){
-  for(let i=0;i<dichte;i++){
-    const x = (i*37 + seed*13) % 64, y = (i*17 + seed*7) % 9;
-    R(x, y, 1, 1, (i%4===0) ? 'F' : 'E');
+function sterne(R, n, seed, ymax){
+  for(let i=0;i<n;i++){
+    const x=(i*53+seed*17)%128, y=(i*29+seed*11)%(ymax||16);
+    R(x,y,1,1,(i%4===0)?'F':'E');
   }
 }
 
 const SZENEN = {
 
-/* Ladenfront bei Nacht – klassischer Zak-Auftakt */
-front: pxSzene('#000018', (R)=>{
-  sterne(R, 14, 3);
-  R(0,21,64,2,'7');                        // Trottoir
-  for(let x=4;x<64;x+=8) R(x,21,1,2,'8');  // Plattenfugen
-  R(0,23,64,3,'8');                        // Strasse
-  for(let x=2;x<62;x+=8) R(x,24,4,1,'E');  // Mittelstreifen
-  R(8,4,48,17,'6');                        // Fassade
-  R(8,4,48,1,'8'); R(8,4,1,17,'8'); R(55,4,1,17,'8');   // Kanten
-  R(19,2,26,4,'0'); R(19,2,26,1,'E'); R(19,5,26,1,'E'); // Leuchtschild
-  R(19,2,1,4,'E'); R(44,2,1,4,'E');
-  R(11,9,10,7,'0'); R(12,10,8,5,'3');      // Schaufenster links
-  R(15,12,2,3,'0');                        // Silhouette Gerät
-  R(43,9,10,7,'0'); R(44,10,8,5,'3');      // Schaufenster rechts
-  R(46,11,4,2,'0'); R(47,13,2,2,'0');
-  R(28,11,8,10,'0'); R(29,12,6,9,'6');     // Tür
-  R(30,10,4,1,'E');                        // Lampe über Tür
-  R(33,16,1,1,'E');                        // Türfalle
-  R(58,18,2,3,'C'); R(58,17,2,1,'4');      // Hydrant
-}, TXT(320,48,'MEIER &amp; CO.','#FFFF55',22) + TXT(320,240,'OCCASIONEN · ELEKTRO · SEIT 1998','#555555',11)),
+/* ---------- Ladenfront bei Nacht ---------- */
+front: pxSzene('#000018', (R,D)=>{
+  sterne(R, 22, 3, 18);
+  R(104,4,6,5,'F'); R(105,5,3,3,'7'); R(104,4,1,1,'#');   /* Mond mit Schatten */
+  R(104,4,6,1,'F'); R(108,5,2,3,'8');
+  D(0,18,128,3,'1',null);                                  /* Horizontdunst */
+  /* Fassade */
+  R(16,10,96,32,'6');
+  for(let y=12;y<40;y+=4) for(let x=17+(y%8?2:0); x<110; x+=7) R(x,y,3,1,'8'); /* Backstein */
+  R(16,10,96,1,'7'); R(16,10,1,32,'7'); R(111,10,1,32,'8');
+  /* Leuchtschild */
+  R(36,5,56,8,'0'); R(35,4,58,1,'E'); R(35,13,58,1,'E'); R(35,4,1,10,'E'); R(92,4,1,10,'E');
+  D(37,6,54,1,'E',null);
+  /* Markise */
+  for(let x=20;x<48;x+=4){ R(x,19,2,2,'4'); R(x+2,19,2,2,'F'); }
+  for(let x=80;x<108;x+=4){ R(x,19,2,2,'4'); R(x+2,19,2,2,'F'); }
+  /* Schaufenster links */
+  R(19,21,28,15,'8'); R(21,23,24,11,'3');
+  D(22,24,8,9,'B','3');                                    /* Spiegelung */
+  R(32,28,5,5,'0'); R(38,26,4,7,'0'); R(24,30,4,3,'0');    /* Silhouetten */
+  R(21,33,24,1,'0');
+  /* Schaufenster rechts */
+  R(81,21,28,15,'8'); R(83,23,24,11,'3');
+  D(98,24,8,9,'B','3');
+  R(86,27,6,6,'0'); R(94,29,5,4,'0'); R(101,26,3,7,'0');
+  R(83,33,24,1,'0');
+  /* Tür */
+  R(57,21,16,21,'0'); R(58,22,14,20,'6');
+  R(59,23,12,8,'3'); D(60,24,5,6,'B','3');                 /* Türglas */
+  R(58,32,14,1,'8'); R(59,34,5,6,'8'); R(66,34,5,6,'8');   /* Füllungen */
+  R(69,33,2,2,'E');                                        /* Falle */
+  R(62,19,6,2,'E'); D(60,21,10,1,'E',null);                /* Lampe + Schein */
+  R(56,42,18,1,'8');                                       /* Fussmatte */
+  /* Trottoir + Strasse */
+  R(0,42,128,4,'7'); R(0,42,128,1,'F');
+  for(let x=6;x<128;x+=12) R(x,43,1,3,'8');
+  R(0,46,128,6,'8');
+  for(let x=3;x<124;x+=14) R(x,48,7,1,'E');
+  for(let i=0;i<30;i++) R((i*31)%128, 46+(i*13)%6, 1,1,'0');
+  /* Hydrant */
+  R(115,36,4,6,'C'); R(114,35,6,1,'4'); R(116,33,2,2,'4'); R(113,38,1,2,'C'); R(120,38,1,2,'C');
+  /* Gebüsch (Eichhörnchen-Versteck) */
+  R(3,38,11,4,'2'); R(5,36,7,2,'2'); R(8,37,2,1,'A'); R(4,39,2,1,'A');
+}, TXT(320,52,'MEIER &amp; CO.','#FFFF55',20) + TXT(320,254,'OCCASIONEN · ELEKTRO · SEIT 1998','#555555',10), 'front'),
 
-/* Ladeninneres mit Herrn Meier */
-laden: pxSzene('#000000', (R)=>{
-  R(0,0,64,18,'1');                        // Wand
-  R(0,18,64,8,'6');                        // Boden
-  for(let x=0;x<64;x+=8) R(x,18,1,8,'0');  // Dielenfugen
-  R(3,3,20,12,'8');                        // Regal
-  R(3,3,20,1,'7'); R(3,8,20,1,'7'); R(3,13,20,1,'7'); R(3,14,20,1,'7');
-  R(5,5,3,3,'C'); R(10,5,4,3,'B'); R(16,6,3,2,'E');   // Geräte oben
-  R(5,10,4,3,'A'); R(11,10,3,3,'D'); R(16,9,4,4,'7'); // Geräte unten
-  R(26,3,8,11,'F'); R(27,4,6,2,'4'); R(27,8,6,1,'4'); R(27,11,6,1,'4'); // Plakat
-  R(37,13,25,5,'6'); R(37,12,25,1,'7');    // Theke
-  R(55,9,6,3,'8'); R(56,10,3,1,'E');       // Kasse mit Display
-  R(44,4,4,1,'6');                         // Haar
-  R(44,5,4,3,'C');                         // Kopf
-  R(45,6,1,1,'0'); R(47,6,1,1,'0');        // Augen
-  R(43,8,6,4,'2');                         // Hemd
-  R(44,9,1,1,'F'); R(48,9,1,1,'F');        // Kragen
-}, TXT(300,52,'%SALE%','#AA0000',13) + TXT(320,246,'HERR MEIER · INHABER','#555555',11)),
+/* ---------- Ladeninneres ---------- */
+laden: pxSzene('#000000', (R,D)=>{
+  R(0,0,128,38,'1');
+  R(0,0,128,2,'0'); D(30,0,10,2,'E','0'); D(88,0,8,2,'E','0');   /* Deckenlampen */
+  R(0,34,128,4,'9');                                              /* Sockelleiste */
+  /* Wanduhr */
+  R(60,3,8,8,'F'); R(61,4,6,6,'F'); R(63,5,1,3,'0'); R(64,7,2,1,'0'); R(59,2,10,1,'8'); R(59,11,10,1,'8');
+  /* Regal */
+  R(5,6,42,24,'8'); R(5,6,42,1,'7'); R(5,14,42,1,'7'); R(5,22,42,1,'7'); R(5,29,42,1,'7');
+  R(5,6,1,24,'7'); R(46,6,1,24,'7');
+  /* – Geräte oben: Radio, Röhren-TV, Kamera */
+  R(8,9,8,5,'6'); R(9,10,4,2,'E'); R(14,10,1,3,'0');
+  R(19,8,10,6,'0'); R(20,9,8,4,'3'); D(21,10,3,2,'B','3');
+  R(32,10,7,4,'8'); R(34,11,3,3,'0'); R(35,12,1,1,'7');
+  /* – Geräte Mitte: Ventilator, Telefon, Boombox */
+  R(9,17,6,5,'7'); R(11,16,2,1,'B'); R(10,15,4,1,'B'); R(11,19,2,3,'8');
+  R(20,18,7,4,'4'); R(21,17,5,1,'4'); R(22,19,3,1,'F');
+  R(31,17,10,5,'8'); R(32,18,3,3,'0'); R(37,18,3,3,'0'); R(35,19,2,1,'E');
+  /* – unterste Reihe: Kartons */
+  R(8,25,9,4,'6'); R(20,25,8,4,'6'); R(31,25,9,4,'6');
+  R(11,26,3,1,'0'); R(23,26,2,1,'0'); R(34,26,3,1,'0');
+  /* SALE-Plakat */
+  R(50,7,16,21,'F'); R(50,7,16,1,'7'); R(50,27,16,1,'7');
+  R(52,10,12,3,'4'); R(52,16,12,2,'4'); R(52,21,12,3,'4');
+  R(51,8,1,1,'0'); R(64,8,1,1,'0');                               /* Pinnnadeln */
+  /* Theke */
+  R(74,28,54,10,'6'); R(74,27,54,1,'7');
+  for(let x=78;x<126;x+=12) R(x,30,1,8,'8');
+  /* Kasse */
+  R(106,20,14,8,'8'); R(107,21,12,1,'0'); R(108,22,8,2,'E');
+  R(107,25,3,1,'7'); R(111,25,3,1,'7'); R(115,25,3,1,'7');
+  R(112,18,4,2,'F');                                              /* Beleg */
+  /* Herr Meier */
+  R(86,10,10,2,'6'); R(85,11,2,4,'6'); R(95,11,2,4,'6');          /* Haar + Koteletten */
+  R(87,12,8,7,'C');                                               /* Gesicht */
+  R(88,14,2,1,'0'); R(92,14,2,1,'0');                             /* Augen */
+  R(87,13,3,3,'F'); R(92,13,3,3,'F'); R(90,14,2,1,'F');           /* Brille */
+  R(88,14,1,1,'0'); R(93,14,1,1,'0');
+  R(90,16,2,1,'6');                                               /* Nase */
+  R(89,18,4,1,'4');                                               /* Mund */
+  R(84,19,14,9,'2');                                              /* Hemd */
+  R(89,19,4,2,'F');                                               /* Kragen */
+  R(85,21,3,7,'8'); R(94,21,3,7,'8');                             /* Weste */
+  R(80,26,6,2,'C'); R(96,26,6,2,'C');                             /* Hände auf Theke */
+  /* Boden mit Dielen */
+  R(0,38,128,14,'6');
+  for(let y=40;y<52;y+=4) R(0,y,128,1,'0');
+  for(let y=38;y<52;y+=4) for(let x=(y%8? 8:16); x<128; x+=16) R(x,y+1,1,3,'0');
+}, TXT(290,88,'%SALE%','#AA0000',12) + TXT(320,254,'MEIER &amp; CO. · VERKAUFSRAUM','#555555',10), 'laden'),
 
-/* Alex' Zimmer bei Nacht */
-zimmer: pxSzene('#000000', (R)=>{
-  R(0,0,64,19,'8');                        // Wand
-  R(0,19,64,7,'0');                        // Boden
-  for(let x=0;x<64;x+=9) R(x,19,1,7,'8');
-  R(5,2,14,10,'0');                        // Fenster
-  R(5,2,14,1,'7'); R(5,11,14,1,'7'); R(5,2,1,10,'7'); R(18,2,1,10,'7');
-  R(11,2,1,10,'7'); R(5,7,14,1,'7');       // Sprossen
-  R(7,4,1,1,'E'); R(15,3,1,1,'F'); R(9,9,1,1,'E'); R(16,8,1,1,'E'); // Sterne
-  R(24,3,7,9,'5'); R(26,5,3,2,'F'); R(25,9,5,1,'F');  // Bandposter
-  R(35,13,24,2,'6');                       // Pult
-  R(36,15,2,6,'6'); R(56,15,2,6,'6');      // Beine
-  R(40,11,7,2,'F'); R(41,11,5,1,'C');      // Brief (rot!)
-  R(51,9,4,1,'E'); R(52,10,1,3,'8');       // Lampe
-  R(29,15,4,1,'6'); R(30,16,1,5,'6');      // Stuhl
-}, TXT(320,246,'ZUHAUSE BEI ALEX','#555555',11)),
+/* ---------- Alex' Zimmer bei Nacht ---------- */
+zimmer: pxSzene('#000000', (R,D)=>{
+  R(0,0,128,36,'8');
+  R(0,32,128,4,'6');                                              /* Täfer */
+  /* Fenster mit Stadt-Silhouette */
+  R(7,3,30,20,'7'); R(9,5,26,16,'0');
+  R(21,5,2,16,'7'); R(9,12,26,1,'7');                             /* Sprossen */
+  sterne(R, 8, 9, 10);
+  R(10,15,4,6,'8'); R(15,13,3,8,'8'); R(24,14,5,7,'8'); R(30,16,4,5,'8');  /* Skyline */
+  R(11,16,1,1,'E'); R(16,15,1,1,'E'); R(26,16,1,1,'E'); R(31,17,1,1,'E');  /* Fensterlichter */
+  R(32,6,3,3,'F'); R(33,7,1,1,'7');                               /* Mond */
+  /* Bandposter */
+  R(47,7,13,15,'5'); R(47,7,13,1,'D'); R(47,21,13,1,'D');
+  R(49,10,9,2,'F'); R(49,14,7,1,'F'); R(49,17,9,1,'F');
+  /* Pflanze */
+  R(41,26,7,6,'4'); R(42,25,5,1,'6');
+  R(40,18,3,4,'2'); R(45,17,3,5,'2'); R(43,15,2,6,'A'); R(38,21,3,2,'2'); R(48,20,3,2,'A');
+  /* Pult */
+  R(64,26,44,3,'6'); R(64,26,44,1,'7');
+  R(66,29,3,14,'6'); R(103,29,3,14,'6');
+  R(88,29,16,9,'8'); R(90,31,12,1,'0'); R(95,33,4,1,'E'); R(90,35,12,1,'0'); R(95,37,4,1,'E'); /* Schubladen */
+  /* Brief (rot gestreift!) */
+  R(69,23,12,3,'F'); R(70,24,10,1,'C'); R(68,26,14,1,'7');
+  /* Pultlampe mit Lichtkegel */
+  R(99,17,7,2,'E'); R(101,19,2,5,'8'); R(100,24,4,1,'8');
+  D(97,19,11,4,'E',null);
+  /* Stuhl */
+  R(58,28,7,2,'6'); R(59,30,1,8,'6'); R(64,30,1,8,'6'); R(58,20,1,8,'6'); R(58,20,7,1,'6');
+  /* Bett */
+  R(0,36,26,8,'6'); R(0,34,26,2,'F');
+  R(1,35,7,2,'F'); R(1,34,7,1,'7');                               /* Kissen */
+  R(9,35,17,6,'2'); for(let x=11;x<26;x+=4) R(x,37,1,4,'A');      /* Decke mit Falten */
+  R(0,44,26,2,'8');
+  /* Teppich */
+  R(56,44,60,6,'5'); R(56,44,60,1,'D'); R(56,49,60,1,'D');
+  for(let x=58;x<114;x+=6) R(x,46,2,2,'D');
+  /* Boden */
+  R(0,46,56,6,'0'); R(116,44,12,8,'0'); R(26,36,30,16,'0'); R(0,50,128,2,'0');
+  for(let x=30;x<128;x+=14) R(x,47,1,5,'8');
+}, TXT(320,254,'ZUHAUSE BEI ALEX · NACHTS','#555555',10), 'zimmer'),
 
-/* Traumsequenz-Weiche – drei Türen */
-weiche: pxSzene('#0A0020', (R)=>{
-  sterne(R, 10, 8);
-  for(let y=18;y<26;y++) for(let x=0;x<64;x+=4) R(x+(y%2?2:0),y,2,1,'5'); // Schachbrett
-  [[8,'E'],[28,'B'],[48,'A']].forEach(([x,c])=>{
-    R(x,5,10,13,c); R(x+1,6,8,12,'0'); R(x+2,7,6,11,'6');
-    R(x+6,12,1,1,'E');
+/* ---------- Traumsequenz: die Weiche ---------- */
+weiche: pxSzene('#0A0020', (R,D)=>{
+  sterne(R, 18, 8, 30);
+  /* schwebende Kristalle */
+  R(20,26,2,2,'B'); R(21,25,1,1,'F'); R(105,22,2,3,'D'); R(64,8,2,2,'B');
+  /* Schachbrett mit Pseudo-Perspektive */
+  for(let y=38;y<52;y++){
+    const feld = 2 + Math.floor((y-38)/5);
+    for(let x=-2;x<130;x+=feld*2){
+      R(x+((Math.floor((y-38)/2)%2)?feld:0), y, feld, 1, '5');
+    }
+  }
+  /* drei Türen */
+  [[7,'E'],[53,'B'],[99,'A']].forEach(([x,c])=>{
+    R(x,7,22,29,c); R(x+1,8,20,28,'0'); R(x+2,9,18,27,'6');
+    R(x+3,10,16,2,'8');
+    R(x+4,14,6,9,'8'); R(x+12,14,6,9,'8');                        /* Füllungen */
+    R(x+4,26,14,7,'8');
+    R(x+16,22,2,2,'E');                                           /* Falle */
+    D(x-1,36,24,2,c,null);                                        /* Glühen am Boden */
   });
-}, TXT(130,45,'🚚','#FFF',26) + TXT(330,45,'💰','#FFF',26) + TXT(530,45,'🔍','#FFF',26) +
-   TXT(320,246,'EIN VERTRAG · DREI GESCHICHTEN','#555555',11)),
+}, TXT(90,32,'🚚','#FFF',24) + TXT(320,32,'💰','#FFF',24) + TXT(550,32,'🔍','#FFF',24) +
+   TXT(320,254,'EIN VERTRAG · DREI GESCHICHTEN','#555555',10), 'weiche'),
 
-/* Abschluss */
-ende: pxSzene('#000010', (R)=>{
-  sterne(R, 12, 5);
-  R(22,18,20,2,'7'); R(24,16,16,2,'8'); R(26,14,12,2,'7'); // Podest
-  for(let i=0;i<10;i++){ R((i*23)%64, 10+(i*11)%8, 1,1, 'CDEAB'[i%5]); } // Konfetti
-}, '<text x="320" y="120" text-anchor="middle" font-size="60">⚖️</text>' +
-   TXT(320,246,'SIE HABEN IHREN FALL GELÖST','#555555',11)),
+/* ---------- Abschluss ---------- */
+ende: pxSzene('#000010', (R,D)=>{
+  sterne(R, 16, 5, 22);
+  /* Lichtkegel */
+  D(52,4,24,30,'8',null);
+  /* Podest */
+  R(40,42,48,4,'7'); R(44,38,40,4,'8'); R(48,34,32,4,'7');
+  R(40,42,48,1,'F'); R(44,38,40,1,'F'); R(48,34,32,1,'F');
+  /* Waagen-Sockel */
+  R(62,28,4,6,'6');
+  /* Konfetti */
+  for(let i=0;i<16;i++) R((i*23)%128, 6+(i*17)%22, 1,1,'CDEAB'[i%5]);
+}, '<text x="320" y="120" text-anchor="middle" font-size="52">⚖️</text>' +
+   TXT(320,254,'SIE HABEN IHREN FALL GELÖST','#555555',10), 'ende'),
 };
+
+/* =====================================================
+   POINT-AND-CLICK: Verben, Satzzeile, Hotspot-Logik
+   ===================================================== */
+const VERBEN = [
+  ['gehezu','Gehe zu'], ['anschauen','Schaue an'], ['nimm','Nimm'],
+  ['benutze','Benutze'], ['oeffne','Öffne'], ['redemit','Rede mit'],
+];
+const VERB_STANDARD = {
+  gehezu:'Sie gehen hin. Und jetzt?',
+  anschauen:'Nichts Besonderes.',
+  nimm:'Das gehört Ihnen nicht. Noch nicht.',
+  benutze:'Das bringt im Moment nichts.',
+  oeffne:'Das lässt sich nicht öffnen.',
+  redemit:'Keine Antwort. Erstaunlich.',
+};
+let aktivesVerb = 'anschauen';
+let aktiverHotKey = null;
+
+const satzEl = document.getElementById('satzzeile');
+const verbenEl = document.getElementById('verben');
+const kommentarEl = document.getElementById('kommentar');
+
+function verbLabel(v){ const e=VERBEN.find(x=>x[0]===v); return e? e[1]:v; }
+function satz(objName){
+  satzEl.textContent = verbLabel(aktivesVerb) + (objName? ' ' + objName : ' …');
+}
+function kommentar(html){ kommentarEl.innerHTML = html||''; }
+
+VERBEN.forEach(([id,label])=>{
+  const b=document.createElement('button');
+  b.className='verb'+(id===aktivesVerb?' aktiv':''); b.type='button'; b.textContent=label;
+  b.addEventListener('click', ()=>{
+    aktivesVerb=id;
+    verbenEl.querySelectorAll('.verb').forEach(x=>x.classList.remove('aktiv'));
+    b.classList.add('aktiv');
+    satz();
+  });
+  verbenEl.appendChild(b);
+});
+satz();
+
+function findeHotspot(ziel){
+  let el = ziel;
+  while(el && el !== szeneEl){
+    if(el.getAttribute && el.getAttribute('data-hid')) return el;
+    el = el.parentNode;
+  }
+  return null;
+}
+function hotspotDaten(el){
+  const key = el.getAttribute('data-hot'), hid = el.getAttribute('data-hid');
+  return (HOTSPOTS[key]||[]).find(h=>h.id===hid);
+}
+szeneElKlick();
+function szeneElKlick(){
+  szeneEl.addEventListener('mousemove', (ev)=>{
+    const el = findeHotspot(ev.target);
+    satz(el ? hotspotDaten(el).name : null);
+  });
+  szeneEl.addEventListener('click', (ev)=>{
+    const el = findeHotspot(ev.target);
+    if(!el) { kommentar(''); return; }
+    const h = hotspotDaten(el);
+    /* Fund? */
+    if(h.fund && h.fund.verb===aktivesVerb && !zustand.funde[h.id]){
+      zustand.funde[h.id]=true;
+      setzeRQ(h.fund.rq);
+      kommentar(h.fund.text + ' <span class="rq-delta">+'+h.fund.rq+' RQ · Entdeckung!</span>');
+      return;
+    }
+    const antwort = (h.a && h.a[aktivesVerb]) || VERB_STANDARD[aktivesVerb];
+    kommentar(antwort);
+  });
+}
 
 /* =====================================================
    DIALOGBAUM
@@ -606,7 +889,6 @@ function dynamischeOptionen(art){
 /* =====================================================
    ENGINE
    ===================================================== */
-const szeneEl = document.getElementById('szene');
 const dialogEl = document.getElementById('dialog');
 const rqEl = document.getElementById('rq-anzeige');
 const wegEl = document.getElementById('weg-anzeige');
@@ -628,6 +910,7 @@ function zeige(id){
   if(!k){ console.error('Unbekannter Knoten', id); return; }
   szeneEl.innerHTML = SZENEN[k.szene] || '';
   dialogEl.innerHTML = '';
+  kommentar(''); satz();
 
   if(k.art==='produktwahl'){ baueProduktwahl(k); return; }
   if(k.art==='weiche'){ baueWeiche(k); return; }
@@ -693,7 +976,7 @@ function baueProduktwahl(k){
     const b=document.createElement('button'); b.className='pkarte'; b.type='button';
     b.innerHTML = '<span class="pico">'+p.ico+'</span><span class="pname">'+p.name+'</span><span class="ppreis">'+chf(p.preis)+'</span>';
     b.addEventListener('click', ()=>{
-      zustand.produkt=p; zustand.rq=0; zustand.flags={}; zustand.ergebnisse={};
+      zustand.produkt=p; zustand.rq=0; zustand.flags={}; zustand.ergebnisse={}; zustand.funde={};
       rqEl.textContent='RQ 0';
       zeige('k1');
     });
@@ -793,7 +1076,7 @@ function baueEnde(){
   b2.textContent='Von vorne beginnen (neues Produkt wählen)';
   b2.addEventListener('click', ()=>{
     zustand.produkt=null; zustand.rq=0; zustand.rqAkt1=0;
-    zustand.flags={}; zustand.flagsAkt1={}; zustand.weg=null; zustand.ergebnisse={};
+    zustand.flags={}; zustand.flagsAkt1={}; zustand.weg=null; zustand.ergebnisse={}; zustand.funde={};
     rqEl.textContent='RQ 0'; setzeWegAnzeige();
     zeige('start');
   });
