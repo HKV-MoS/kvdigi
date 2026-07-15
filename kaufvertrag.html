@@ -1171,11 +1171,55 @@ function setzeWegAnzeige(){
   wegEl.textContent = zustand.weg ? WEGE[zustand.weg].titel + ' · ' + WEGE[zustand.weg].thema : 'Rechtsquotient';
 }
 
+/* ---------- Spielstand (localStorage, uebersteht F5) ---------- */
+const SPIELSTAND_KEY = 'derkauf_spielstand_v1';
+function speichereSpielstand(id){
+  try{
+    if(typeof localStorage==='undefined' || !zustand.produkt) return;
+    localStorage.setItem(SPIELSTAND_KEY, JSON.stringify({
+      v:1, knoten:id,
+      produktId:zustand.produkt.id, kaeuferin:zustand.kaeuferin||'m',
+      haendler:zustand.haendler||'herr',
+      rq:zustand.rq, rqAkt1:zustand.rqAkt1,
+      flags:zustand.flags, flagsAkt1:zustand.flagsAkt1,
+      weg:zustand.weg, ergebnisse:zustand.ergebnisse,
+      funde:zustand.funde, undoJoker:zustand.undoJoker,
+    }));
+  }catch(e){ /* privater Modus o.ae. - dann eben ohne Speichern */ }
+}
+function ladeSpielstand(){
+  try{
+    if(typeof localStorage==='undefined') return false;
+    const roh = localStorage.getItem(SPIELSTAND_KEY);
+    if(!roh) return false;
+    const d = JSON.parse(roh);
+    if(d.v!==1 || !d.produktId || !(d.knoten in KNOTEN)) return false;
+    const p = PRODUKTE.find(x=>x.id===d.produktId);
+    if(!p) return false;
+    Object.assign(zustand, {
+      produkt:p, kaeuferin:d.kaeuferin, haendler:d.haendler,
+      rq:d.rq||0, rqAkt1:d.rqAkt1||0,
+      flags:d.flags||{}, flagsAkt1:d.flagsAkt1||{},
+      weg:d.weg||null, ergebnisse:d.ergebnisse||{},
+      funde:d.funde||{}, undoJoker:(d.undoJoker===0?0:1),
+    });
+    rqEl.textContent = 'RQ ' + zustand.rq;
+    setzeWegAnzeige();
+    zeige(d.knoten);
+    blaseHinweis('Spielstand geladen – weiter geht\'s. (Klick auf den Titel beginnt von vorne.)', 6000);
+    return true;
+  }catch(e){ return false; }
+}
+function loescheSpielstand(){
+  try{ if(typeof localStorage!=='undefined') localStorage.removeItem(SPIELSTAND_KEY); }catch(e){}
+}
+
 let knotenSnapshot = null;
 function zeige(id){
   const k = KNOTEN[id];
   if(!k){ console.error('Unbekannter Knoten', id); return; }
   knotenSnapshot = { id:id, rq:zustand.rq, flags:Object.assign({}, zustand.flags) };
+  speichereSpielstand(id);
   spriteStopp();
   aktuelleSzeneId = k.szene;
   szeneEl.innerHTML = bildOk[k.szene] ? bildSzene(k.szene) : (SZENEN[k.szene] || '');
@@ -1389,6 +1433,7 @@ function wertungsText(rq){
 }
 
 function neustart(){
+  loescheSpielstand();
   zustand.produkt=null; zustand.rq=0; zustand.rqAkt1=0; zustand.haendler='herr';
   zustand.flags={}; zustand.flagsAkt1={}; zustand.weg=null; zustand.ergebnisse={}; zustand.funde={}; zustand.undoJoker=1;
   rqEl.textContent='RQ 0'; setzeWegAnzeige();
@@ -1401,7 +1446,7 @@ document.getElementById('titel').addEventListener('click', ()=>{
 });
 
 /* ---------- Start ---------- */
-zeige('start');
+if(!ladeSpielstand()) zeige('start');
 
 })();
 </script>
