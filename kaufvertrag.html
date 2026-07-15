@@ -241,6 +241,7 @@ const zustand = {
   weg:null,
   ergebnisse:{},          // wegKey -> RQ des Durchlaufs
   funde:{},               // Hotspot-Entdeckungen
+  undoJoker:1,            // 1x Auswahl zuruecknehmen pro Abschnitt
 };
 
 /* ---------- Geldhelfer ---------- */
@@ -690,6 +691,8 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
+const BILD_VERSION = '2';
+function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   front:'kaufvertrag_front.png',  laden:'kaufvertrag_laden.png',
   zimmer:'kaufvertrag_zimmer.png', weiche:'kaufvertrag_weiche.png',
@@ -699,7 +702,7 @@ const bildOk = {};
 let aktuelleSzeneId = null;
 function bildSzene(key){
   return '<svg viewBox="0 0 640 260" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">'+
-    '<image href="'+SZENEN_BILDER[key]+'" x="0" y="0" width="640" height="260" '+
+    '<image href="'+vurl(SZENEN_BILDER[key])+'" x="0" y="0" width="640" height="260" '+
     'preserveAspectRatio="xMidYMid slice"/>'+
     spriteSVG(key)+hotRects(key)+'</svg>';
 }
@@ -707,7 +710,7 @@ if(typeof Image !== 'undefined'){
   Object.entries(SZENEN_BILDER).forEach(([key,url])=>{
     const im = new Image();
     im.onload = ()=>{ bildOk[key]=true; if(aktuelleSzeneId===key) szeneEl.innerHTML = bildSzene(key); };
-    im.src = url;
+    im.src = vurl(url);
   });
 }
 
@@ -748,8 +751,8 @@ if(typeof Image !== 'undefined'){
   alleFrames.forEach(frames=>{
     frames.forEach(url=>{
       const im=new Image();
-      im.onload=()=>{ spriteOk[url]=true; };
-      im.src=url;
+      im.onload=()=>{ spriteOk[url]=true; if(aktuelleSzeneId && bildOk[aktuelleSzeneId]) szeneEl.innerHTML = bildSzene(aktuelleSzeneId); };
+      im.src=vurl(url);
     });
   });
 }
@@ -761,7 +764,7 @@ function spriteSVG(key){
     const w = sp.id==='meier' ? haendler().w : (sp.id==='alex' ? kaeufer().w : sp.w);
     const h = sp.id==='meier' ? haendler().h : (sp.id==='alex' ? kaeufer().h : sp.h);
     if(!spriteOk[fr[0]]) return;
-    svg += '<image id="sp-'+sp.id+'" href="'+fr[0]+'" x="'+sp.x+'" y="'+sp.y+
+    svg += '<image id="sp-'+sp.id+'" href="'+vurl(fr[0])+'" x="'+sp.x+'" y="'+sp.y+
            '" width="'+w+'" height="'+h+'" preserveAspectRatio="xMidYMax meet"/>';
   });
   return svg;
@@ -772,7 +775,7 @@ function spriteFrame(id, n){
   if(!el) return;
   const sp = Object.values(SPRITES).flat().find(x=>x.id===id);
   const fr = sp ? spriteFrames(sp) : null;
-  if(fr && fr[n] && spriteOk[fr[n]]) el.setAttribute('href', fr[n]);
+  if(fr && fr[n] && spriteOk[fr[n]]) el.setAttribute('href', vurl(fr[n]));
 }
 function spriteStopp(){ if(spriteTimer){ clearInterval(spriteTimer); spriteTimer=null; } }
 function spriteSprich(id, dauerMs){
@@ -1168,9 +1171,11 @@ function setzeWegAnzeige(){
   wegEl.textContent = zustand.weg ? WEGE[zustand.weg].titel + ' · ' + WEGE[zustand.weg].thema : 'Rechtsquotient';
 }
 
+let knotenSnapshot = null;
 function zeige(id){
   const k = KNOTEN[id];
   if(!k){ console.error('Unbekannter Knoten', id); return; }
+  knotenSnapshot = { id:id, rq:zustand.rq, flags:Object.assign({}, zustand.flags) };
   spriteStopp();
   aktuelleSzeneId = k.szene;
   szeneEl.innerHTML = bildOk[k.szene] ? bildSzene(k.szene) : (SZENEN[k.szene] || '');
@@ -1225,6 +1230,20 @@ function waehle(o, box){
   w.className='weiter'; w.type='button'; w.textContent='Weiter ▸';
   w.addEventListener('click', ()=> zeige(o.ziel));
   box.appendChild(w);
+  if(zustand.undoJoker>0 && knotenSnapshot){
+    const snap = knotenSnapshot;
+    const u = document.createElement('button');
+    u.className='opt'; u.type='button';
+    u.textContent='↶ Auswahl zurücknehmen (1×)';
+    u.addEventListener('click', ()=>{
+      zustand.undoJoker--;
+      zustand.rq = snap.rq;
+      zustand.flags = Object.assign({}, snap.flags);
+      rqEl.textContent = 'RQ ' + zustand.rq;
+      zeige(snap.id);
+    });
+    box.appendChild(u);
+  }
   w.focus();
 }
 
@@ -1240,7 +1259,7 @@ function baueProduktwahl(k){
   [['m','Alex'],['w','Alex']].forEach(([id,label])=>{
     const b=document.createElement('button'); b.className='pkarte'; b.type='button';
     const img=document.createElement('img');
-    img.src=KAEUFER[id].frames[0]; img.alt='';
+    img.src=vurl(KAEUFER[id].frames[0]); img.alt='';
     img.style.height='80px';
     img.addEventListener('error', ()=>{ img.style.display='none'; });
     const nm=document.createElement('span'); nm.className='pname'; nm.textContent=label;
@@ -1261,6 +1280,7 @@ function baueProduktwahl(k){
     b.addEventListener('click', ()=>{
       zustand.produkt=p; zustand.rq=0; zustand.flags={}; zustand.ergebnisse={}; zustand.funde={};
       zustand.haendler = 'herr';   /* Akt 1: der Chef persoenlich */
+      zustand.undoJoker = 1;
       rqEl.textContent='RQ 0';
       zeige('k1');
     });
@@ -1306,6 +1326,7 @@ function baueWeiche(k){
     b.addEventListener('click', ()=>{
       zustand.weg=key;
       zustand.haendler='frau';   /* Herr Meier ist unterwegs - Frau Meier uebernimmt */
+      zustand.undoJoker = 1;
       zustand.rq = zustand.rqAkt1;
       zustand.flags = Object.assign({}, zustand.flagsAkt1);
       rqEl.textContent='RQ '+zustand.rq;
@@ -1369,7 +1390,7 @@ function wertungsText(rq){
 
 function neustart(){
   zustand.produkt=null; zustand.rq=0; zustand.rqAkt1=0; zustand.haendler='herr';
-  zustand.flags={}; zustand.flagsAkt1={}; zustand.weg=null; zustand.ergebnisse={}; zustand.funde={};
+  zustand.flags={}; zustand.flagsAkt1={}; zustand.weg=null; zustand.ergebnisse={}; zustand.funde={}; zustand.undoJoker=1;
   rqEl.textContent='RQ 0'; setzeWegAnzeige();
   zeige('start');
 }
