@@ -465,8 +465,11 @@ weiche:[
   { id:'bank', name:'Sitzbank', x:10,y:158,w:92,h:86,
     a:{ anschauen:'Die Holzbank vor den Zimmern. Generationen von Lernenden haben hier auf Prüfungsresultate gewartet. Man sieht es ihr an.',
         benutze:'Kurz hinsetzen? Nein – Ihr Rechtsfall wartet nicht.' } },
-  { id:'pflanze', name:'Pflanze', x:86,y:120,w:36,h:88,
-    a:{ anschauen:'Eine tapfere Schulhauspflanze. Sie überlebt Semesterferien, Hitzewellen und Znüni-Krümel.' } },
+  { id:'pflanze', name:'Chuck', x:86,y:120,w:36,h:88,
+    a:{ anschauen:'Das ist <b>Chuck die Pflanze</b>. Chuck steht in jedem guten Adventure herum – warum also nicht im HKV-Gang? Er überlebt Semesterferien, Hitzewellen und Znüni-Krümel.',
+        redemit:'«Und, Chuck?» – Chuck schweigt vielsagend. Wie immer, seit 1987.',
+        nimm:'Chuck bleibt hier. Chuck bleibt <b>immer</b> hier.',
+        benutze:'Sie giessen Chuck einen Schluck aus der Trinkflasche. Chuck rauscht dankbar. Vermutlich.' } },
   { id:'brett', name:'Anschlagbrett', x:568,y:90,w:50,h:92,
     a:{ anschauen:'Das Anschlagbrett: Stundenplanänderungen, ein Flohmarkt-Zettel – und ein Aushang «Repetitorium Obligationenrecht». Ein Wink des Schicksals.' } },
   { id:'treppe', name:'Treppe', x:576,y:160,w:64,h:98,
@@ -478,11 +481,19 @@ weiche:[
     a:{ anschauen:'Der altehrwürdige Steinboden der HKV, blank poliert von Millionen Lernenden-Schritten. Träumen Sie noch, oder lernen Sie schon?' } },
 ],
 ende:[
-  { id:'pokal', name:'Waage', x:250,y:40,w:140,h:130,
-    a:{ anschauen:'Die Waage der Justitia – heute neigt sie sich auf Ihre Seite.',
-        nimm:'Die bleibt hier. Ihr RQ dürfen Sie behalten.' } },
-  { id:'teppich', name:'Roter Teppich', x:180,y:215,w:280,h:45,
-    a:{ anschauen:'Ein roter Teppich, nur für Sie ausgerollt. Beziehungsweise: für Ihren Rechtsquotienten.' } },
+  { id:'stadt', name:'Aarau', x:136,y:20,w:212,h:150,
+    a:{ anschauen:'Aarau bei Nacht – Dächer, Gassen, erleuchtete Fenster. Irgendwo dort hat alles angefangen, mit einem Handschlag.' } },
+  { id:'hkv', name:'HKV Aarau', x:6,y:28,w:132,h:130,
+    a:{ anschauen:'Die <b>HKV Aarau</b>, noch spät erleuchtet. Was Sie heute gelernt haben, hätte hier drin kaum besser erklärt werden können. Na gut – fast.' } },
+  { id:'bahnhof', name:'Bahnhof', x:342,y:70,w:296,h:104,
+    a:{ anschauen:'Der Bahnhof Aarau. Ein Zug fährt ein – pünktlich, ganz ohne Mahnung und Nachfrist.',
+        benutze:'Noch nicht einsteigen! Zuerst die Auswertung unten würdigen.' } },
+  { id:'bank', name:'Sitzbank', x:34,y:150,w:200,h:100,
+    a:{ anschauen:'Eine Bank mit dem besten Blick der Stadt. Hier lässt sich ein gelöster Rechtsfall würdig sacken lassen.',
+        benutze:'Sie setzen sich einen Moment. Der Fall ist gelöst. Es fühlt sich gut an.' } },
+  { id:'zukunft', name:'Wegweiser', x:496,y:160,w:144,h:58,
+    a:{ anschauen:'Der Wegweiser zeigt Richtung <b>«Zukunft»</b>. Nach bestandenem QV: einfach geradeaus.',
+        benutze:'Dorthin geht es zu Fuss – Schritt für Schritt, Lektion für Lektion.' } },
 ],
 };
 
@@ -772,7 +783,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '3';
+const BILD_VERSION = '4';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   front:'kaufvertrag_front.png',  laden:'kaufvertrag_laden.png',
