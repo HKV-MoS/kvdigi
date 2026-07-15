@@ -172,6 +172,30 @@
   .hot{fill:transparent; cursor:url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'41'%20height%3D'41'%3E%3Crect%20x%3D'17'%20y%3D'0'%20width%3D'7'%20height%3D'14'%20fill%3D'black'%2F%3E%3Crect%20x%3D'17'%20y%3D'27'%20width%3D'7'%20height%3D'14'%20fill%3D'black'%2F%3E%3Crect%20x%3D'0'%20y%3D'17'%20width%3D'14'%20height%3D'7'%20fill%3D'black'%2F%3E%3Crect%20x%3D'27'%20y%3D'17'%20width%3D'14'%20height%3D'7'%20fill%3D'black'%2F%3E%3Crect%20x%3D'19'%20y%3D'2'%20width%3D'3'%20height%3D'10'%20fill%3D'%23FFFF55'%2F%3E%3Crect%20x%3D'19'%20y%3D'29'%20width%3D'3'%20height%3D'10'%20fill%3D'%23FFFF55'%2F%3E%3Crect%20x%3D'2'%20y%3D'19'%20width%3D'10'%20height%3D'3'%20fill%3D'%23FFFF55'%2F%3E%3Crect%20x%3D'29'%20y%3D'19'%20width%3D'10'%20height%3D'3'%20fill%3D'%23FFFF55'%2F%3E%3Crect%20x%3D'19'%20y%3D'19'%20width%3D'3'%20height%3D'3'%20fill%3D'%23FFFF55'%2F%3E%3C%2Fsvg%3E") 20 20, crosshair;}
   .hot:hover{fill:rgba(255,255,85,.14); stroke:rgba(255,255,85,.5); stroke-width:2;}
   .quelle{font-size:.68rem; color:var(--ega-dgrau); text-align:center; margin-top:10px; line-height:1.6; font-weight:normal; font-family:inherit;}
+  /* ------- Prätorianer (Referenz: The Net, 1995) ------- */
+  #pi{
+    font:inherit; font-size:.72rem; background:none; border:none; cursor:default;
+    color:#161616; padding:0 4px; margin-left:8px;
+  }
+  #pi:hover{color:#2a2a2a; cursor:pointer;}
+  .galerie{
+    position:fixed; inset:4vh 4vw; z-index:99; overflow:auto;
+    background:#000; border:3px solid var(--ega-cyan); padding:18px;
+    box-shadow:0 0 60px rgba(85,255,255,.25);
+  }
+  .galerie h2{color:var(--ega-cyan); font-size:1rem; letter-spacing:3px; margin-bottom:12px;}
+  .galerie .graster{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px;}
+  .gzelle{border:1px solid var(--ega-dgrau); padding:8px; text-align:center;}
+  .gzelle img{max-width:100%; max-height:90px; display:block; margin:0 auto 6px; background:#111;}
+  .gzelle .gname{font-size:.62rem; color:var(--ega-grau); word-break:break-all;}
+  .gzelle .gstatus{font-size:.68rem; letter-spacing:1px;}
+  .gzelle .ok{color:var(--ega-gruen);}
+  .gzelle .fehlt{color:var(--ega-rot);}
+  .galerie .gzu{
+    position:sticky; top:0; float:right; font:inherit; font-weight:bold;
+    background:#000; color:var(--ega-gelb); border:2px solid var(--ega-gelb);
+    padding:4px 14px; cursor:pointer;
+  }
   @media (max-width:640px){
     .optionen{grid-template-columns:1fr;}
     h1{font-size:1.05rem;}
@@ -202,6 +226,7 @@
   <p class="quelle">
     Rechtsgrundlagen: OR Art. 1 ff. (Vertragsabschluss), Art. 102–109 (Verzug), Art. 184–199 (Kaufvertrag), Art. 201 (Prüf- und Rügepflicht) ·
     Fiktives Lernszenario der HKV Aarau · Figuren und Firma frei erfunden.
+    <button id="pi" type="button" aria-label="π">π</button>
   </p>
 </div>
 
@@ -794,6 +819,109 @@ function spriteGeste(id, pose, dauerMs){
 }
 
 /* =====================================================
+   REKORDER-MUSIK: Vier-Stimmen-Tracker (Eigenkomposition
+   «Thema von Meier & Co.» · Paula-Prinzip, default AUS)
+   ===================================================== */
+const musik = { an:false, ctx:null, timer:null, schritt:0, naechste:0, master:null, echoDelay:null };
+const M_ACHTEL = 0.31;                       /* ~97 BPM */
+const M_AKKORDE = [                          /* [g1,t3,q5] in Halbtönen rel. A */
+  [0,3,7], [3,7,10], [-4,0,3], [-2,2,5],
+  [0,3,7], [5,8,12], [-5,-1,2], [0,3,7],
+];
+const M_ARP = ['g','t','q','G','q','t','Q','T'];   /* klein=unten, gross=+12 */
+function mFreq(halbton, basis){ return (basis||110) * Math.pow(2, halbton/12); }
+function mTon(zeit, freq, typ, dauer, lautst, ziel){
+  const o = musik.ctx.createOscillator(), g = musik.ctx.createGain();
+  o.type = typ; o.frequency.value = freq;
+  g.gain.setValueAtTime(lautst, zeit);
+  g.gain.exponentialRampToValueAtTime(0.001, zeit + dauer);
+  o.connect(g); g.connect(ziel || musik.master);
+  o.start(zeit); o.stop(zeit + dauer + 0.05);
+}
+function mHihat(zeit, laut){
+  const n = musik.ctx.createBufferSource();
+  const buf = musik.ctx.createBuffer(1, musik.ctx.sampleRate*0.06, musik.ctx.sampleRate);
+  const d = buf.getChannelData(0);
+  for(let i=0;i<d.length;i++) d[i] = (Math.random()*2-1) * (1 - i/d.length);
+  n.buffer = buf;
+  const hp = musik.ctx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=6000;
+  const g = musik.ctx.createGain(); g.gain.value = laut;
+  n.connect(hp); hp.connect(g); g.connect(musik.master);
+  n.start(zeit);
+}
+function mSchritt(zeit, schritt){
+  const takt = Math.floor(schritt/8) % 8;
+  const pos  = schritt % 8;
+  const [g1,t3,q5] = M_AKKORDE[takt];
+  /* Arpeggio (Square, mit Echo) */
+  const wahl = M_ARP[pos];
+  const ht = { g:g1, t:t3, q:q5, G:g1+12, T:t3+12, Q:q5+12 }[wahl];
+  mTon(zeit, mFreq(ht, 220), 'square', M_ACHTEL*0.9, 0.05, musik.echoDelay);
+  /* Bass (Triangle) */
+  if(pos===0) mTon(zeit, mFreq(g1, 110), 'triangle', M_ACHTEL*3.6, 0.10);
+  if(pos===4) mTon(zeit, mFreq(g1+7, 110), 'triangle', M_ACHTEL*3.2, 0.08);
+  /* Fläche (2 Sägezähne, pro Takt) */
+  if(pos===0){
+    mTon(zeit, mFreq(g1, 220), 'sawtooth', M_ACHTEL*7.6, 0.016);
+    mTon(zeit, mFreq(t3, 220), 'sawtooth', M_ACHTEL*7.6, 0.014);
+  }
+  /* HiHat auf Offbeats */
+  if(pos%2===1) mHihat(zeit, pos===7 ? 0.05 : 0.028);
+}
+function musikStart(){
+  const AC = (typeof AudioContext!=='undefined') ? AudioContext :
+             (typeof webkitAudioContext!=='undefined' ? webkitAudioContext : null);
+  if(!AC) return false;
+  if(!musik.ctx){
+    musik.ctx = new AC();
+    musik.master = musik.ctx.createGain(); musik.master.gain.value = 0.9;
+    musik.master.connect(musik.ctx.destination);
+    /* punktiertes Achtel-Echo für das Arpeggio */
+    musik.echoDelay = musik.ctx.createGain();
+    const lp = musik.ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=1900;
+    const del = musik.ctx.createDelay(1.0); del.delayTime.value = M_ACHTEL*1.5;
+    const fb = musik.ctx.createGain(); fb.gain.value = 0.32;
+    musik.echoDelay.connect(lp); lp.connect(musik.master);
+    lp.connect(del); del.connect(fb); fb.connect(del); del.connect(musik.master);
+  }
+  if(musik.ctx.state==='suspended') musik.ctx.resume();
+  musik.an = true;
+  musik.schritt = 0;
+  musik.naechste = musik.ctx.currentTime + 0.1;
+  musik.timer = setInterval(()=>{
+    while(musik.naechste < musik.ctx.currentTime + 0.18){
+      mSchritt(musik.naechste, musik.schritt);
+      musik.naechste += M_ACHTEL;
+      musik.schritt++;
+    }
+  }, 40);
+  return true;
+}
+function musikStopp(){
+  musik.an = false;
+  if(musik.timer){ clearInterval(musik.timer); musik.timer = null; }
+  if(musik.master){
+    const t = musik.ctx.currentTime;
+    musik.master.gain.cancelScheduledValues(t);
+    musik.master.gain.setValueAtTime(musik.master.gain.value, t);
+    musik.master.gain.linearRampToValueAtTime(0.0001, t + 0.4);
+    setTimeout(()=>{ if(!musik.an && musik.master) musik.master.gain.value = 0.9; }, 600);
+  }
+}
+function musikToggle(){
+  if(musik.an){
+    musikStopp();
+    blaseHinweis('■ Klick. Der Rekorder verstummt.');
+  } else {
+    if(musikStart()){
+      blaseHinweis('▶ Das Band läuft an: <b>«Thema von Meier &amp; Co.»</b> – vier Stimmen, ein Echo, null Urheberrechtsprobleme. (Nochmals doppelklicken stoppt.)', 8000);
+    } else {
+      blaseHinweis('Der Rekorder knackt nur – Ihr Browser mag keine Musik.');
+    }
+  }
+}
+
+/* =====================================================
    SPRECHBLASEN + KLICK (schauen) / DOPPELKLICK (handeln)
    ===================================================== */
 const blaseDialogEl = document.getElementById('blase-dialog');
@@ -842,6 +970,7 @@ function hotspotSchau(h){
   blaseHinweis(antwort);
 }
 function hotspotAktion(h){
+  if(h.id==='radio'){ musikToggle(); return; }
   let antwort = h.a && (h.a.redemit || h.a.oeffne || h.a.benutze || h.a.nimm);
   if(!antwort) antwort = 'Da gibt es gerade nichts zu tun.';
   if(h.id==='meier') antwort = meierText(antwort);
@@ -1441,6 +1570,46 @@ function neustart(){
   rqEl.textContent='RQ 0'; setzeWegAnzeige();
   zeige('start');
 }
+/* ---------- Prätorianer-Konsole (π) ---------- */
+document.getElementById('pi').addEventListener('click', ()=>{
+  if(typeof prompt==='undefined') return;
+  const antwort = prompt('Was fürchtet ein einbeiniger Pirat am meisten?');
+  if(antwort===null) return;
+  if(antwort.trim().toLowerCase()==='specht'){ zeigeGalerie(); }
+  else if(typeof alert!=='undefined'){ alert('Zugriff verweigert. Die Prätorianer grüssen.'); }
+});
+function zeigeGalerie(){
+  const alt = document.getElementById('galerie');
+  if(alt) alt.remove();
+  const alle = [];
+  Object.entries(SZENEN_BILDER).forEach(([k,u])=> alle.push(['Szene '+k, u]));
+  Object.entries(HAENDLER).forEach(([k,h])=> h.frames.forEach((u,i)=> alle.push([k+' '+i, u])));
+  Object.entries(KAEUFER).forEach(([k,c])=> c.frames.forEach((u,i)=> alle.push(['alex-'+k+' '+i, u])));
+  const g = document.createElement('div');
+  g.className='galerie'; g.id='galerie';
+  const zu = document.createElement('button');
+  zu.className='gzu'; zu.type='button'; zu.textContent='Schliessen ✕';
+  zu.addEventListener('click', ()=> g.remove());
+  g.appendChild(zu);
+  const h2 = document.createElement('h2');
+  h2.textContent = 'PRÄTORIANER-KONSOLE · ' + alle.length + ' ASSETS';
+  g.appendChild(h2);
+  const raster = document.createElement('div'); raster.className='graster';
+  alle.forEach(([name,url])=>{
+    const z = document.createElement('div'); z.className='gzelle';
+    const im = document.createElement('img');
+    const st = document.createElement('div'); st.className='gstatus'; st.textContent='…';
+    im.addEventListener('load', ()=>{ st.textContent='✓ '+im.naturalWidth+'×'+im.naturalHeight; st.className='gstatus ok'; });
+    im.addEventListener('error', ()=>{ st.textContent='FEHLT'; st.className='gstatus fehlt'; });
+    im.src = vurl(url);
+    const nm = document.createElement('div'); nm.className='gname'; nm.textContent=url;
+    z.append(im, nm, st);
+    raster.appendChild(z);
+  });
+  g.appendChild(raster);
+  document.body.appendChild(g);
+}
+
 document.getElementById('titel').addEventListener('click', ()=>{
   if(zustand.produkt && typeof confirm!=='undefined' &&
      !confirm('Zurück zum Anfang? Der aktuelle Durchlauf geht verloren.')) return;
