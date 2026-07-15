@@ -206,9 +206,6 @@ function zins2Mt(){ return rest()*0.05*2/12; }
 function ersetze(t){
   const p = zustand.produkt;
   if(!p) return t;
-  if((zustand.haendler||'herr')==='frau'){
-    t = t.replaceAll('Herrn Meier','Frau Meier').replaceAll('Herr Meier','Frau Meier');
-  }
   return t
     .replaceAll('{NAME}', p.name)
     .replaceAll('{P}', p.nom)
@@ -654,7 +651,7 @@ const HAENDLER = {
     frames:['kaufvertrag_meier_0.png','kaufvertrag_meier_1.png','kaufvertrag_meier_2.png','kaufvertrag_meier_3.png'],
     w:80, h:44 },
   frau:{ sprecher:'FRAU MEIER', hotName:'Frau Meier',
-    hotAnschauen:'Frau Meier, Inhaberin seit 1998. Dutt, Jeansjacke, Ellbogen auf der Theke – und das OR garantiert auswendig im Kopf.',
+    hotAnschauen:'Frau Meier, Mitinhaberin. Ihr Mann ist unterwegs – und vom mündlichen Geschäft von damals weiss sie nichts. Zum Glück gibt es Papier.',
     frames:['kaufvertrag_frau_0.png','kaufvertrag_frau_1.png','kaufvertrag_frau_2.png','kaufvertrag_frau_3.png'],
     w:76, h:44 },
 };
@@ -925,7 +922,7 @@ l3:{ szene:'zimmer', sprecher:'ERZÄHLER',
   ]},
 
 l4a:{ szene:'laden', sprecher:'ERZÄHLER',
-  text:'Ihr eingeschriebener Brief wirkt: Drei Tage später steht {P} abholbereit im Laden. Für die Verspätung handeln Sie eine kleine Entschädigung aus – Herr Meier legt ein Zubehör-Set dazu und murmelt etwas von «nie mehr dieser Zwischenhändler». <b>Fall gelöst: Erfüllung durchgesetzt.</b>',
+  text:'Ihr eingeschriebener Brief wirkt: Drei Tage später steht {P} abholbereit im Laden. Hinter der Theke: <b>Frau Meier</b> – ihr Mann ist an einer Occasions-Börse. Vom Ärger weiss sie nur aus Ihrem Brief: «Zum Glück haben Sie geschrieben – mündlich wäre das bei uns untergegangen.» Als Entschädigung legt sie ein Zubehör-Set dazu. <b>Fall gelöst: Erfüllung durchgesetzt.</b>',
   optionen:[ { t:'Zur Auswertung', rq:0, fb:null, ziel:'ende' } ]},
 
 l4b:{ szene:'zimmer', sprecher:'ERZÄHLER',
@@ -980,7 +977,7 @@ z3:{ szene:'zimmer', sprecher:'ERZÄHLER',
   ]},
 
 z4:{ szene:'laden', sprecher:'ERZÄHLER',
-  text:'So weit lassen Sie es nicht kommen: Sie überweisen {REST} samt Verzugszins und bringen Herrn Meier zur Versöhnung ein Schoggi-Stängeli vorbei. Er nickt versöhnt: «Passiert den Besten.» <b>Fall gelöst – und Perspektive gewechselt:</b> Verzug hat immer zwei Seiten.',
+  text:'So weit lassen Sie es nicht kommen: Sie überweisen {REST} samt Verzugszins und bringen zur Versöhnung ein Schoggi-Stängeli vorbei. An der Theke steht <b>Frau Meier</b>: «Die Mahnung habe ich geschrieben – im System stand Ihre Rechnung schwarz auf weiss. Passiert den Besten.» <b>Fall gelöst – und Perspektive gewechselt:</b> Verzug hat zwei Seiten, und Papier hat immer recht.',
   optionen:[ { t:'Zur Auswertung', rq:0, fb:null, ziel:'ende' } ]},
 
 /* ---------- WEG M: MÄNGELRÜGE ---------- */
@@ -1009,8 +1006,8 @@ m1:{ szene:'zimmer', sprecher:'ERZÄHLER',
       ziel:'m2' },
   ]},
 
-m2:{ szene:'laden', sprecher:'HERR MEIER',
-  text:'Herr Meier begutachtet {PA} und seufzt. «Das tut mir leid. Ich schlage vor: <b>Ich repariere das kostenlos</b> – eine Woche Geduld.» Wie reagieren Sie?',
+m2:{ szene:'laden', sprecher:'FRAU MEIER',
+  text:'Im Laden steht heute <b>Frau Meier</b> – ihr Mann ist an einer Occasions-Börse, und <b>vom Kauf weiss sie nichts</b>. Gut, dass Ihre Rüge dokumentiert ist: Sie prüft E-Mail und Beleg, begutachtet {PA} und seufzt. «Alles klar, das geht auf uns. Ich schlage vor: <b>Wir reparieren kostenlos</b> – eine Woche Geduld.» Wie reagieren Sie?',
   optionen:[
     { t:'Einverstanden – Nachbesserung ist fair.', rq:3,
       fb:'Pragmatisch und üblich: Die <b>Nachbesserung</b> löst viele Fälle schnell. (Streng nach OR ist sie beim Kauf nicht Ihr Anspruch, aber einvernehmlich jederzeit möglich – und meist im Interesse beider.)',
@@ -1038,7 +1035,7 @@ m3:{ szene:'zimmer', sprecher:'ERZÄHLER',
   ]},
 
 m4a:{ szene:'laden', sprecher:'ERZÄHLER',
-  text:'Herr Meier zahlt anstandslos den vollen Preis zurück – «Qualität ist Ehrensache», sagt er zerknirscht und legt einen Gutschein obendrauf. <b>Fall gelöst: Wandelung.</b>',
+  text:'Frau Meier zahlt anstandslos den vollen Preis zurück – «Qualität ist Ehrensache», sagt sie zerknirscht und legt einen Gutschein obendrauf. <b>Fall gelöst: Wandelung.</b>',
   optionen:[ { t:'Zur Auswertung', rq:0, fb:null, ziel:'ende' } ]},
 
 m4b:{ szene:'laden', sprecher:'ERZÄHLER',
@@ -1069,11 +1066,11 @@ function dynamischeOptionen(art){
   }
   if(art==='ruecktritt'){
     if(zustand.flags.quittung){
-      return { text:'Sie erklären den Rücktritt und fordern Ihre Anzahlung zurück. Herr Meier blättert zweifelnd in seinem Ordner – doch Sie legen die <b>Quittung</b> auf den Tisch. Keine Diskussion: {ANZ} sind drei Tage später zurück auf Ihrem Konto. <span class="rq-delta">+2 RQ Bonus für die Quittung aus Akt 1.</span> <b>Fall gelöst: Rücktritt.</b>',
+      return { text:'Im Laden steht <b>Frau Meier</b> – ihr Mann ist unterwegs. «Rücktritt? Anzahlung?» Sie blättert im Geschäftsbuch: «Hier steht nichts. Mein Mann und seine Handschlag-Geschäfte …» Sie legen wortlos die <b>Quittung</b> auf die Theke. Frau Meier nickt: «Das ist ein Beleg. Das Geld ist bis Freitag zurück.» <span class="rq-delta">+2 RQ Bonus für die Quittung aus Akt 1.</span> <b>Fall gelöst: Rücktritt – dank Papier.</b>',
         bonus:2,
         optionen:[ { t:'Zur Auswertung', rq:0, fb:null, ziel:'ende' } ] };
     }
-    return { text:'Sie erklären den Rücktritt und fordern die Anzahlung zurück. Herr Meier kratzt sich am Kopf: «Anzahlung? Davon finde ich nichts …» <b>Ohne Quittung</b> wird es mühsam – erst als Sie den Kontoauszug mit der Barabhebung und eine Zeugin auffahren, lenkt er ein. Das wäre mit Quittung einfacher gewesen. <b>Fall gelöst: Rücktritt (mit Ach und Krach).</b>',
+    return { text:'Im Laden steht <b>Frau Meier</b> – ihr Mann ist unterwegs. «Rücktritt? Anzahlung?» Sie blättert im Geschäftsbuch: «Hier steht nichts, und ich war nicht dabei.» <b>Ohne Quittung</b> stehen Sie erst einmal da: Mündliche Geschäfte kennen nur zwei Zeugen – und einer davon ist abwesend. Erst mit Kontoauszug und einer Kollegin als Zeugin lenkt sie ein. Merken Sie sich diesen Moment. <b>Fall gelöst: Rücktritt (mit Ach und Krach).</b>',
       optionen:[ { t:'Zur Auswertung', rq:0, fb:null, ziel:'ende' } ] };
   }
   if(art==='zinsrechnung'){
@@ -1138,7 +1135,7 @@ function zeige(id){
 }
 
 function baueDialog(k){
-  if(aktuelleSzeneId==='laden' && k.sprecher==='HERR MEIER') spriteSprich('meier');
+  if(aktuelleSzeneId==='laden' && (k.sprecher==='HERR MEIER' || k.sprecher==='FRAU MEIER')) spriteSprich('meier');
   const sp = document.createElement('span');
   sp.className = 'sprecher' + (k.sprecher==='ERZÄHLER' ? ' erz':'');
   sp.textContent = (k.sprecher==='HERR MEIER') ? haendler().sprecher : k.sprecher;
@@ -1211,7 +1208,7 @@ function baueProduktwahl(k){
     b.innerHTML = '<span class="pico">'+p.ico+'</span><span class="pname">'+p.name+'</span><span class="ppreis">'+chf(p.preis)+'</span>';
     b.addEventListener('click', ()=>{
       zustand.produkt=p; zustand.rq=0; zustand.flags={}; zustand.ergebnisse={}; zustand.funde={};
-      zustand.haendler = Math.random()<0.5 ? 'herr':'frau';
+      zustand.haendler = 'herr';   /* Akt 1: der Chef persoenlich */
       rqEl.textContent='RQ 0';
       zeige('k1');
     });
@@ -1260,6 +1257,7 @@ function baueWeiche(k){
       (fertig?'<span class="gespielt-tag">✔ gespielt · RQ '+zustand.ergebnisse[key]+'</span>':'');
     b.addEventListener('click', ()=>{
       zustand.weg=key;
+      zustand.haendler='frau';   /* Herr Meier ist unterwegs - Frau Meier uebernimmt */
       zustand.rq = zustand.rqAkt1;
       zustand.flags = Object.assign({}, zustand.flagsAkt1);
       rqEl.textContent='RQ '+zustand.rq;
