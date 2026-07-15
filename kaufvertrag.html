@@ -803,6 +803,14 @@ function spriteSVG(key){
   return svg;
 }
 let spriteTimer=null;
+let figurenTimer=null;      /* Figurenwahl-Idle */
+let idleTimer=null;         /* Alex-Idle im Laden */
+let idleRueck=null;
+function stoppeIdle(){
+  if(figurenTimer){ clearInterval(figurenTimer); figurenTimer=null; }
+  if(idleTimer){ clearInterval(idleTimer); idleTimer=null; }
+  if(idleRueck){ clearTimeout(idleRueck); idleRueck=null; }
+}
 function spriteFrame(id, n){
   const el = document.getElementById('sp-'+id);
   if(!el) return;
@@ -1358,6 +1366,7 @@ function zeige(id){
   knotenSnapshot = { id:id, rq:zustand.rq, flags:Object.assign({}, zustand.flags) };
   speichereSpielstand(id);
   spriteStopp();
+  stoppeIdle();
   aktuelleSzeneId = k.szene;
   szeneEl.innerHTML = bildOk[k.szene] ? bildSzene(k.szene)
                     : bildFehler[k.szene] ? (SZENEN[k.szene] || '')
@@ -1379,8 +1388,18 @@ function zeige(id){
   baueDialog(daten);
 }
 
+function starteAlexIdle(){
+  if(aktuelleSzeneId!=='laden') return;
+  idleTimer = setInterval(()=>{
+    if(aktuelleSzeneId!=='laden') return;
+    const pose = Math.random()<0.5 ? 1 : 2;
+    spriteFrame('alex', pose);
+    idleRueck = setTimeout(()=>{ spriteFrame('alex', 0); }, 700);
+  }, 5200 + Math.random()*2600);
+}
 function baueDialog(k){
   if(aktuelleSzeneId==='laden' && (k.sprecher==='HERR MEIER' || k.sprecher==='FRAU MEIER')) spriteSprich('meier');
+  if(aktuelleSzeneId==='laden' && !idleTimer) starteAlexIdle();
   blaseDialog(k.sprecher, ersetze(k.text));
 
   const box = document.createElement('div');
@@ -1438,6 +1457,7 @@ function baueProduktwahl(k){
   figZeile.innerHTML='<b>Ihre Spielfigur:</b>';
   dialogEl.appendChild(figZeile);
   const figReihe=document.createElement('div'); figReihe.className='kartenreihe'; figReihe.style.maxWidth='24rem';
+  const figBilder = [];
   if(!zustand.kaeuferin) zustand.kaeuferin='m';
   [['m','Alex'],['w','Alex']].forEach(([id,label])=>{
     const b=document.createElement('button'); b.className='pkarte'; b.type='button';
@@ -1445,6 +1465,7 @@ function baueProduktwahl(k){
     img.src=vurl(KAEUFER[id].frames[0]); img.alt='';
     img.style.height='80px';
     img.addEventListener('error', ()=>{ img.style.display='none'; });
+    figBilder.push([img, KAEUFER[id].frames]);
     const nm=document.createElement('span'); nm.className='pname'; nm.textContent=label;
     b.append(img, nm);
     const mark=()=>{ figReihe.querySelectorAll('.pkarte').forEach(x=>x.style.borderColor=''); b.style.borderColor='#FFFF55'; };
@@ -1453,6 +1474,16 @@ function baueProduktwahl(k){
     figReihe.appendChild(b);
   });
   dialogEl.appendChild(figReihe);
+  /* Idle-Animation der Vorschaufiguren (versetzt getaktet) */
+  const IDLE_FOLGE = [0,0,1,0,0,2];
+  let idleSchritt = 0;
+  figurenTimer = setInterval(()=>{
+    idleSchritt++;
+    figBilder.forEach(([img, frames], nr)=>{
+      const pose = IDLE_FOLGE[(idleSchritt + nr*3) % IDLE_FOLGE.length];
+      if(frames[pose]) img.src = vurl(frames[pose]);
+    });
+  }, 650);
   const prodZeile=document.createElement('p'); prodZeile.className='dtext';
   prodZeile.innerHTML='<b>Ihr Einkauf:</b>';
   dialogEl.appendChild(prodZeile);
