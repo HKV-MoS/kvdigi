@@ -174,10 +174,10 @@
   .quelle{font-size:.68rem; color:var(--ega-dgrau); text-align:center; margin-top:10px; line-height:1.6; font-weight:normal; font-family:inherit;}
   /* ------- Prätorianer (Referenz: The Net, 1995) ------- */
   #pi{
-    font:inherit; font-size:.72rem; background:none; border:none; cursor:default;
-    color:#161616; padding:0 4px; margin-left:8px;
+    font:inherit; font-size:.78rem; background:none; border:none; cursor:default;
+    color:#2e2e2e; padding:0 5px; margin-left:8px;
   }
-  #pi:hover{color:#2a2a2a; cursor:pointer;}
+  #pi:hover{color:var(--ega-cyan); cursor:pointer; text-shadow:0 0 6px rgba(85,255,255,.6);}
   .galerie{
     position:fixed; inset:4vh 4vw; z-index:99; overflow:auto;
     background:#000; border:3px solid var(--ega-cyan); padding:18px;
@@ -726,7 +726,12 @@ const SZENEN_BILDER = {
   ende:'kaufvertrag_ende.png',
 };
 const bildOk = {};
+const bildFehler = {};
 let aktuelleSzeneId = null;
+const LADE_SVG = '<svg viewBox="0 0 640 260" xmlns="http://www.w3.org/2000/svg">'+
+  '<rect width="640" height="260" fill="#000"/>'+
+  '<text x="320" y="136" text-anchor="middle" font-family="Courier New,monospace" '+
+  'font-weight="bold" font-size="16" fill="#333">· · ·</text></svg>';
 function bildSzene(key){
   return '<svg viewBox="0 0 640 260" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">'+
     '<image href="'+vurl(SZENEN_BILDER[key])+'" x="0" y="0" width="640" height="260" '+
@@ -737,6 +742,7 @@ if(typeof Image !== 'undefined'){
   Object.entries(SZENEN_BILDER).forEach(([key,url])=>{
     const im = new Image();
     im.onload = ()=>{ bildOk[key]=true; if(aktuelleSzeneId===key) szeneEl.innerHTML = bildSzene(key); };
+    im.onerror = ()=>{ bildFehler[key]=true; if(aktuelleSzeneId===key) szeneEl.innerHTML = SZENEN[key] || ''; };
     im.src = vurl(url);
   });
 }
@@ -1353,7 +1359,9 @@ function zeige(id){
   speichereSpielstand(id);
   spriteStopp();
   aktuelleSzeneId = k.szene;
-  szeneEl.innerHTML = bildOk[k.szene] ? bildSzene(k.szene) : (SZENEN[k.szene] || '');
+  szeneEl.innerHTML = bildOk[k.szene] ? bildSzene(k.szene)
+                    : bildFehler[k.szene] ? (SZENEN[k.szene] || '')
+                    : LADE_SVG;
   dialogEl.innerHTML = '';
   blaseDialog(null,''); blaseHinweis('');
 
