@@ -128,7 +128,13 @@
     border:3px solid #111; border-radius:14px; padding:9px 13px;
     font-size:.84rem; line-height:1.45; box-shadow:4px 4px 0 rgba(0,0,0,.55);
   }
+  .blase{pointer-events:auto; cursor:pointer;}
   .blase .bname{display:block; font-size:.6rem; letter-spacing:2px; color:#6a6a6a; margin-bottom:3px;}
+  .blase .broll{float:right; font-size:.58rem; letter-spacing:1px; color:#8a8a8a; margin-left:12px;}
+  .blase .binhalt{overflow:hidden; max-height:38vh; transition:max-height .3s ease, margin .3s ease;}
+  .blase.zu .binhalt{max-height:0;}
+  .blase.zu{opacity:.9;}
+  .blase.zu .bname{margin-bottom:0;}
   .blase b{color:#8a5400;}
   .blase.meier{top:4%; right:3%; max-width:46%;}
   .blase.meier::after{
@@ -181,13 +187,41 @@
   #vollbild:hover{color:var(--ega-gelb); border-color:var(--ega-gelb);}
   .buehne:fullscreen{
     display:flex; flex-direction:column; overflow:auto;
-    background:#000; padding:10px 14px;
+    padding:10px 14px;
+    background:
+      repeating-linear-gradient(180deg, transparent 0 24px, rgba(85,255,255,.045) 24px 26px),
+      linear-gradient(180deg,
+        #000004 0%,   #000004 10%,
+        #050a1e 10%,  #050a1e 20%,
+        #0a1232 20%,  #0a1232 30%,
+        #121a46 30%,  #121a46 40%,
+        #221f56 40%,  #221f56 48%,
+        #3a2458 48%,  #3a2458 55%,
+        #5c2e50 55%,  #5c2e50 60%,
+        #8a4440 60%,  #8a4440 63%,
+        #123238 63%,  #123238 74%,
+        #0e2a30 74%,  #0e2a30 86%,
+        #0a2127 86%,  #0a2127 100%);
   }
   .buehne:fullscreen .szene-wrap{
     width:100%; max-width:calc(62vh * 640 / 260); margin:0 auto; flex:0 0 auto;
   }
   .buehne:fullscreen .dialog{flex:1 1 auto; overflow:auto; max-width:calc(62vh * 640 / 260); margin:0 auto; width:100%;}
-  .buehne:-webkit-full-screen{display:flex; flex-direction:column; overflow:auto; background:#000; padding:10px 14px;}
+  .buehne:-webkit-full-screen{display:flex; flex-direction:column; overflow:auto; padding:10px 14px;
+    background:
+      repeating-linear-gradient(180deg, transparent 0 24px, rgba(85,255,255,.045) 24px 26px),
+      linear-gradient(180deg,
+        #000004 0%,   #000004 10%,
+        #050a1e 10%,  #050a1e 20%,
+        #0a1232 20%,  #0a1232 30%,
+        #121a46 30%,  #121a46 40%,
+        #221f56 40%,  #221f56 48%,
+        #3a2458 48%,  #3a2458 55%,
+        #5c2e50 55%,  #5c2e50 60%,
+        #8a4440 60%,  #8a4440 63%,
+        #123238 63%,  #123238 74%,
+        #0e2a30 74%,  #0e2a30 86%,
+        #0a2127 86%,  #0a2127 100%);}
 
   /* ------- Prätorianer (Referenz: The Net, 1995) ------- */
   #pi{
@@ -963,11 +997,27 @@ const blaseHinweisEl = document.getElementById('blase-hinweis');
 let hinweisTimer = null;
 
 function blaseDialog(sprecher, html){
-  if(!html){ blaseDialogEl.innerHTML=''; return; }
+  blaseDialogEl.innerHTML='';
+  if(!html) return;
   const istMeier = (sprecher==='HERR MEIER' || sprecher==='FRAU MEIER');
   const name = (sprecher==='HERR MEIER') ? haendler().sprecher : sprecher;
-  blaseDialogEl.innerHTML = '<div class="blase '+(istMeier?'meier':'erz')+'">'+
-    '<span class="bname">'+name+'</span>'+html+'</div>';
+  const b = document.createElement('div');
+  b.className = 'blase ' + (istMeier?'meier':'erz');
+  const nm = document.createElement('span');
+  nm.className = 'bname';
+  const roll = document.createElement('span');
+  roll.className = 'broll'; roll.textContent = '📜 einrollen';
+  nm.textContent = name;
+  nm.appendChild(roll);
+  const inhalt = document.createElement('div');
+  inhalt.className = 'binhalt';
+  inhalt.innerHTML = html;
+  b.append(nm, inhalt);
+  b.addEventListener('click', ()=>{
+    b.classList.toggle('zu');
+    roll.textContent = b.classList.contains('zu') ? '📜 ausrollen' : '📜 einrollen';
+  });
+  blaseDialogEl.appendChild(b);
 }
 function blaseHinweis(html, dauer){
   if(hinweisTimer){ clearTimeout(hinweisTimer); hinweisTimer=null; }
