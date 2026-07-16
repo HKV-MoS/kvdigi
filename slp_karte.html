@@ -79,13 +79,19 @@
   .panel .asp{margin-bottom:6px;}
   .panel .asp b{font-size:.8rem;}
   .quelle{margin-top:12px; font-size:.7rem; color:#8a8574;}
+  .toast{
+    position:fixed; top:18px; left:50%; transform:translateX(-50%);
+    background:rgba(24,62,69,.93); color:#fff; padding:9px 22px; border-radius:99px;
+    font-size:.85rem; z-index:99; opacity:0; transition:opacity .35s; pointer-events:none;
+  }
+  .toast.zeig{opacity:1;}
 </style>
 </head>
 <body>
 <div class="hero-zone" id="heroZone">
   <div class="hero-halter">
     <div class="hero-rahmen" id="heroRahmen">
-      <img id="heroBild" src="slp_karte_titel.jpg?v=2" alt="Landkarte SLP ABU Kanton Aargau">
+      <img id="heroBild" src="slp_karte_titel.jpg?v=3" alt="Landkarte SLP ABU Kanton Aargau">
       <div class="hero-hinweis" id="heroHinweis">▼ scrollen</div>
     </div>
   </div>
@@ -99,11 +105,13 @@
   <button class="chipf" data-lj="1">1. Lehrjahr</button>
   <button class="chipf" data-lj="2">2. Lehrjahr</button>
   <button class="chipf" data-lj="3">3. Lehrjahr</button>
+  <button class="chipf" id="vollbild" type="button" title="Vollbild (Esc beendet)">⛶ Vollbild</button>
   <div class="lgd" id="legende"></div>
 </div>
 
 <div class="karte-wrap"><table id="karte"></table></div>
 
+<div class="toast" id="toast">Esc verlässt das Vollbild</div>
 <div class="panel" id="panel">
   <button class="zu" type="button" onclick="document.getElementById('panel').classList.remove('offen')">Schliessen ✕</button>
   <div id="panel-inhalt"></div>
@@ -198,6 +206,33 @@ document.querySelectorAll('.chipf').forEach(b=>{
     });
   });
 });
+
+/* ---- Vollbild mit Esc-Hinweis ---- */
+(function(){
+  const btn = document.getElementById('vollbild');
+  const toast = document.getElementById('toast');
+  if(!btn) return;
+  function drin(){ return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+  btn.addEventListener('click', ()=>{
+    const el = document.documentElement;
+    if(drin()){
+      if(document.exitFullscreen) document.exitFullscreen();
+      else if(document.webkitExitFullscreen) document.webkitExitFullscreen();
+    } else {
+      if(el.requestFullscreen) el.requestFullscreen();
+      else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    }
+  });
+  function wechsel(){
+    btn.textContent = drin() ? '🗗 Vollbild beenden' : '⛶ Vollbild';
+    if(drin() && toast){
+      toast.classList.add('zeig');
+      setTimeout(()=> toast.classList.remove('zeig'), 3500);
+    }
+  }
+  document.addEventListener('fullscreenchange', wechsel);
+  document.addEventListener('webkitfullscreenchange', wechsel);
+})();
 
 /* ---- Kino-Hero ---- */
 (function(){
