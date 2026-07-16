@@ -1154,17 +1154,43 @@ function fxZug(){
   });
 }
 const FX_HOTSPOTS = { brunnen:fxWasser, uhr:fxTicken, bahnhof:fxZug };
+/* Echte Sounddateien (z. B. von elevenlabs.io) werden bevorzugt,
+   fehlen sie im Repo, spielt die Synthese. */
+const FX_DATEIEN = {
+  brunnen:'kaufvertrag_fx_brunnen.mp3',
+  uhr:'kaufvertrag_fx_uhr.mp3',
+  bahnhof:'kaufvertrag_fx_zug.mp3',
+};
+const fxAudio = {};   /* hid -> {el, ok} */
+function fxDateienLaden(){
+  if(typeof Audio==='undefined') return;
+  Object.entries(FX_DATEIEN).forEach(([hid,url])=>{
+    if(fxAudio[hid]) return;
+    const el = new Audio();
+    fxAudio[hid] = { el:el, ok:false };
+    el.preload = 'auto';
+    el.volume = 0.55;
+    el.addEventListener('canplaythrough', ()=>{ fxAudio[hid].ok = true; });
+    el.addEventListener('error', ()=>{ fxAudio[hid].ok = false; });
+    el.src = vurl(url);
+  });
+}
 function fxFuer(hid){
   if(!fx.an) return;
+  const a = fxAudio[hid];
+  if(a && a.ok){
+    try{ a.el.currentTime = 0; a.el.play(); return; }catch(e){}
+  }
   const f = FX_HOTSPOTS[hid];
   if(f) f();
 }
 const fxBtn = document.getElementById('fx');
 function fxAnzeige(){ fxBtn.className = fx.an ? 'an' : ''; fxBtn.textContent = fx.an ? 'FX ♪' : 'FX'; }
-try{ if(typeof localStorage!=='undefined' && localStorage.getItem('derkauf_fx')==='1'){ fx.an = true; } }catch(e){}
+try{ if(typeof localStorage!=='undefined' && localStorage.getItem('derkauf_fx')==='1'){ fx.an = true; fxDateienLaden(); } }catch(e){}
 fxAnzeige();
 fxBtn.addEventListener('click', ()=>{
   fx.an = !fx.an;
+  if(fx.an) fxDateienLaden();
   try{ if(typeof localStorage!=='undefined') localStorage.setItem('derkauf_fx', fx.an?'1':'0'); }catch(e){}
   fxAnzeige();
   if(fx.an) fxTicken();      /* kurze Hörprobe als Bestätigung */
