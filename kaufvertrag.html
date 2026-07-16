@@ -1154,6 +1154,18 @@ function fxZug(){
     o.start(t0+1.1); o.stop(t0+1.8);
   });
 }
+function fxBlip(){
+  const ctx = fxKontext(); if(!ctx) return;
+  const t0 = ctx.currentTime;
+  [[660,0],[990,0.12]].forEach(([f,off])=>{
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type='sine'; o.frequency.value=f;
+    g.gain.setValueAtTime(0.06, t0+off);
+    g.gain.exponentialRampToValueAtTime(0.001, t0+off+0.1);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(t0+off); o.stop(t0+off+0.12);
+  });
+}
 const FX_HOTSPOTS = { brunnen:fxWasser, uhr:fxTicken, bahnhof:fxZug };
 /* Echte Sounddateien (z. B. von elevenlabs.io) werden bevorzugt,
    fehlen sie im Repo, spielt die Synthese. */
@@ -1194,7 +1206,7 @@ fxBtn.addEventListener('click', ()=>{
   if(fx.an) fxDateienLaden();
   try{ if(typeof localStorage!=='undefined') localStorage.setItem('derkauf_fx', fx.an?'1':'0'); }catch(e){}
   fxAnzeige();
-  if(fx.an) fxTicken();      /* kurze Hörprobe als Bestätigung */
+  if(fx.an) fxBlip();        /* kurzer Bestätigungston */
 });
 
 /* =====================================================
