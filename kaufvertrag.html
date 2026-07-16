@@ -833,7 +833,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '6';
+const BILD_VERSION = '7';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   front:'kaufvertrag_front.png',  laden:'kaufvertrag_laden.png',
@@ -1073,28 +1073,29 @@ function fxRauschen(ctx, dauer){
 function fxWasser(){
   const ctx = fxKontext(); if(!ctx) return;
   const t0 = ctx.currentTime;
-  const q = fxRauschen(ctx, 3.6);
-  const bp = ctx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=1000; bp.Q.value=0.9;
+  /* Dunkles, ruhiges Plätschern: tiefes Band, träge Wellen */
+  const q = fxRauschen(ctx, 4.6);
+  const bp = ctx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=480; bp.Q.value=0.6;
+  const lp = ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=1400;
   const g = ctx.createGain();
   g.gain.setValueAtTime(0.0001, t0);
-  g.gain.linearRampToValueAtTime(0.06, t0+0.3);
-  /* Wellen-Hüllkurve */
-  for(let i=0;i<10;i++){
-    g.gain.linearRampToValueAtTime(0.03 + Math.random()*0.045, t0 + 0.3 + i*0.32);
+  g.gain.linearRampToValueAtTime(0.055, t0+0.6);
+  for(let i=0;i<7;i++){
+    g.gain.linearRampToValueAtTime(0.035 + Math.random()*0.03, t0 + 0.6 + i*0.55);
   }
-  g.gain.linearRampToValueAtTime(0.0001, t0+3.6);
-  q.connect(bp); bp.connect(g); g.connect(ctx.destination);
+  g.gain.linearRampToValueAtTime(0.0001, t0+4.6);
+  q.connect(bp); bp.connect(lp); lp.connect(g); g.connect(ctx.destination);
   q.start(t0);
-  /* Tropfen-Pings */
-  for(let i=0;i<9;i++){
-    const tz = t0 + 0.4 + Math.random()*2.8;
+  /* wenige, tiefe Tropfen – «Blub» statt «Pling» */
+  for(let i=0;i<5;i++){
+    const tz = t0 + 0.8 + Math.random()*3.2;
     const o = ctx.createOscillator(), og = ctx.createGain();
-    o.type='sine'; o.frequency.setValueAtTime(1900 + Math.random()*1500, tz);
-    o.frequency.exponentialRampToValueAtTime(900, tz+0.07);
-    og.gain.setValueAtTime(0.05, tz);
-    og.gain.exponentialRampToValueAtTime(0.001, tz+0.08);
+    o.type='sine'; o.frequency.setValueAtTime(620 + Math.random()*380, tz);
+    o.frequency.exponentialRampToValueAtTime(220, tz+0.12);
+    og.gain.setValueAtTime(0.035, tz);
+    og.gain.exponentialRampToValueAtTime(0.001, tz+0.14);
     o.connect(og); og.connect(ctx.destination);
-    o.start(tz); o.stop(tz+0.1);
+    o.start(tz); o.stop(tz+0.16);
   }
 }
 function fxTicken(){
