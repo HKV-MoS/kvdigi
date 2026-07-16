@@ -89,6 +89,11 @@
   .fuss{
     margin-top:18px; text-align:center; font-size:.72rem; color:#8a8574;
   }
+  .fuss-link{color:inherit; text-decoration:underline dotted; text-underline-offset:2px;}
+  .fuss-link:hover{color:var(--petrol);}
+  .fahne-link{text-decoration:none; display:inline-flex; align-items:center; gap:6px;}
+  .fuss-fahne{height:44px; width:auto; vertical-align:middle; filter:drop-shadow(0 2px 2px rgba(0,0,0,.2)); transition:transform .15s;}
+  .fahne-link:hover .fuss-fahne{transform:scale(1.12) rotate(-2deg);}
   .toast{
     position:fixed; top:18px; left:50%; transform:translateX(-50%);
     background:rgba(24,62,69,.93); color:#fff; padding:9px 22px; border-radius:99px;
@@ -121,7 +126,20 @@
 
 <div class="karte-wrap"><table id="karte"></table></div>
 
-<p class="fuss">Quelle: Aargauer Schullehrplan Allgemeinbildung, Anhang 2 zur V ABU vom 27. Mai 2026 (SAR 422.214) · Erstellt von S. Mollet mit Claude · HKV Aarau</p>
+<p class="fuss">Quelle: Aargauer Schullehrplan Allgemeinbildung, Anhang 2 zur V ABU vom 27. Mai 2026 (SAR 422.214) ·
+  Erstellt von <a class="fuss-link" href="mailto:sam.mollet@hkv.ch" title="E-Mail an S. Mollet">S. Mollet</a> mit Claude ·
+  <a class="fuss-link fahne-link" href="https://www.hkvaarau.ch" target="_blank" rel="noopener" title="www.hkvaarau.ch">HKV Aarau
+    <svg class="fuss-fahne" viewBox="0 0 60 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M2 2 h56 v78 L30 102 4 80 Z" fill="#1F3A5F" stroke="#16293F" stroke-width="2.5"/>
+      <text x="30" y="22" text-anchor="middle" font-family="Georgia,serif" font-weight="bold" font-size="15" fill="#fff">HKV</text>
+      <text x="30" y="35" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" letter-spacing="1.5" fill="#cfd9e6">AARAU</text>
+      <g fill="none" stroke="#cfd9e6" stroke-width="1.6">
+        <rect x="17" y="44" width="26" height="20"/>
+        <path d="M14 44 30 34 46 44"/>
+        <path d="M22 64 v-8 h4 v8 M34 64 v-8 h4 v8 M27 50 h6 v5 h-6 Z"/>
+      </g>
+      <text x="30" y="80" text-anchor="middle" font-family="Georgia,serif" font-size="8" fill="#cfd9e6">1875</text>
+    </svg></a></p>
 
 <div class="toast" id="toast">Esc verlässt das Vollbild</div>
 <div class="panel" id="panel">
