@@ -52,6 +52,11 @@
   thead .tt{font-size:.78rem;}
   thead .tt small{display:block; font-weight:normal; color:#6a6659; font-size:.66rem; margin-top:2px;}
   tbody th{background:#F9F6EE; font-size:.72rem; color:#4a463c; text-align:right; width:96px; font-weight:600;}
+  .trenn th{
+    background:var(--petrol); color:#fff; text-align:left !important;
+    font-size:.7rem; letter-spacing:1.5px; padding:7px 12px; width:auto;
+  }
+  .wort.suk{border-style:dashed;}
   .tico{font-size:2.1rem; display:block; line-height:1.1; margin-bottom:2px;}
   .aico{font-size:2.3rem; font-weight:bold; line-height:1.1;}
   .wort{
@@ -102,7 +107,7 @@
   </div>
 </div>
 <h1>SLP-Landkarte — Allgemeinbildung Kanton Aargau</h1>
-<p class="unter">Alle 26 Kompetenzen und ihre Inhalte auf einen Blick · 3-jährige Grundbildung EFZ · gültig ab Schuljahr 2026/27 · Klicken Sie ein Stichwort für Details</p>
+<p class="unter">Alle 26 Kompetenzen mit Gesellschafts-Aspekten und SuK-Förderfokussen auf einen Blick · 3-jährige Grundbildung EFZ · gültig ab Schuljahr 2026/27 · Klicken Sie ein Stichwort für Details</p>
 
 <div class="leiste">
   <input id="suche" type="search" placeholder="Suchen … (z. B. Budget, Mietvertrag, KI)">
@@ -151,12 +156,36 @@ for(let t=1;t<=7;t++){
 }
 kopf += '</tr></thead>';
 let rumpf = '<tbody>';
+rumpf += '<tr class="trenn"><th colspan="8">👥 KOMPETENZBEREICH GESELLSCHAFT · 50 % GEWICHTUNG · verbindlich</th></tr>';
 ASPEKTE.forEach(a=>{
   rumpf += '<tr><th><span class="aico">'+(ASPEKT_ICO[a]||'')+'</span><br>'+a.replace(' und ',' &amp; ')+'</th>';
   for(let t=1;t<=7;t++){
     const zelle = DATEN.chips.filter(c=>c.t===t && c.a===a);
     rumpf += '<td data-lj="'+THEMEN[t].lj+'">' + zelle.map(c=>
       '<span class="wort" style="--f:'+FARBE[t]+'" data-k="'+c.k+'" title="Kompetenz '+c.k+'">'+c.w+'</span>'
+    ).join('') + '</td>';
+  }
+  rumpf += '</tr>';
+});
+/* Sprache & Kommunikation: Förderfokusse als eigenes Band */
+const SPRACHZEILEN = [['Rezeption','📖'],['Produktion','✍️'],['Interaktion','💬']];
+rumpf += '<tr class="trenn"><th colspan="8">🗣️ KOMPETENZBEREICH SPRACHE &amp; KOMMUNIKATION · 50 % GEWICHTUNG · Förderfokusse (Wahl durch Lehrperson)</th></tr>';
+SPRACHZEILEN.forEach(([modus, ico])=>{
+  rumpf += '<tr><th><span class="aico">'+ico+'</span><br>'+modus+'</th>';
+  for(let t=1;t<=7;t++){
+    const stuecke = [];
+    DATEN.komp.filter(k=>k.thema===t).forEach(k=>{
+      (k.sprache||[]).forEach(zeile=>{
+        const [kopfT, ...rest] = zeile.split(':');
+        if(!kopfT.includes(modus)) return;
+        const inhalt = rest.join(':').trim();
+        const wortliste = inhalt ? inhalt.split(',').map(x=>x.trim()).filter(Boolean)
+                                 : [kopfT.replace('und Kollaboration','').trim()];
+        wortliste.forEach(w=> stuecke.push({w:w, k:k.nr}));
+      });
+    });
+    rumpf += '<td data-lj="'+THEMEN[t].lj+'">' + stuecke.map(c=>
+      '<span class="wort suk" style="--f:'+FARBE[t]+'" data-k="'+c.k+'" title="Kompetenz '+c.k+' · '+modus+'">'+c.w+'</span>'
     ).join('') + '</td>';
   }
   rumpf += '</tr>';
