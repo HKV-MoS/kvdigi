@@ -131,6 +131,13 @@ body{
 .karte[data-kat="lernen"]:hover,.karte[data-kat="lernen"]:focus-visible{border-left-color:#514386}
 .karte[data-kat="rechner"]{background:#EAF4F4;border-left-color:#2E6B77}
 .karte[data-kat="rechner"]:hover,.karte[data-kat="rechner"]:focus-visible{border-left-color:#1F4E58}
+
+/* ------- Kachel-Deko ------- */
+.karte{position:relative}
+.k-deko{
+  position:absolute; right:14px; bottom:14px; height:58px; width:auto;
+  pointer-events:none; filter:drop-shadow(0 2px 3px rgba(0,0,0,.28));
+}
 .k-kopf{
   display:flex;justify-content:space-between;align-items:baseline;gap:.7rem;
   margin-bottom:.5rem;
@@ -314,6 +321,7 @@ body{
         <p class="k-text">Ein Kaufvertrag, drei Störungen: Lieferverzug, Zahlungsverzug und Mängelrüge als spielbares Dialog-Abenteuer – mit Produktwahl und Rechtsquotient.</p>
         <div class="k-einsatz">Einzelarbeit · drei Wege · Wiederspielwert</div>
         <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
+        <img class="k-deko" src="kachel_hydrant.png" alt="" onerror="this.style.display=&#39;none&#39;">
       </a>
 
       <a class="karte" href="slp_karte.html" data-kat="lernen">
