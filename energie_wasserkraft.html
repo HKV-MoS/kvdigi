@@ -87,6 +87,9 @@ h1 .accent{color:var(--hkv);}
 .ak-bar span{position:absolute;right:8px;top:0;line-height:20px;font-size:12px;font-weight:700;}
 .ak-frage{margin-top:12px;font-style:italic;background:#f4f7f9;border-radius:8px;padding:10px 14px;font-size:13.5px;}
 .ak-quelle{margin-top:8px;font-size:11px;color:var(--muted);}
+.ak-mehr{margin-top:10px;background:#f4f7f9;border-radius:8px;padding:8px 14px;}
+.ak-mehr summary{cursor:pointer;font-size:13px;font-weight:600;color:#2E6B77;}
+.ak-mehr[open] summary{margin-bottom:6px;}
 footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid var(--line);
   font-size:12px;color:var(--muted);text-align:center;}
 .fluss{mix-blend-mode:screen;}
@@ -235,7 +238,11 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
     <div class="k-sub">Was gerade in den Alpen passiert – und was es mit dieser Folie zu tun hat</div>
     <div class="ak-balken">
       <div class="ak-zeile">
-        <span class="ak-label">Füllstand Juli 2026</span>
+        <span class="ak-label">Anfang Juni 2026</span>
+        <div class="ak-bar"><i style="width:14%;background:#d99a94"></i><span>14 %</span></div>
+      </div>
+      <div class="ak-zeile">
+        <span class="ak-label">Mitte Juli 2026</span>
         <div class="ak-bar"><i style="width:46%;background:#B4564E"></i><span>46 %</span></div>
       </div>
       <div class="ak-zeile">
@@ -254,7 +261,21 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
     <p class="ak-frage">Verbinden Sie die Meldung mit der Folie: Weshalb ist der Füllstand im
       <b>Juli</b> für das <b>Winterhalbjahr</b> entscheidend? Und welche Rolle könnte der
       <b>Pumpbetrieb</b> spielen, wenn die natürlichen Zuflüsse schwächer werden?</p>
-    <p class="ak-quelle">Quelle: SRF «10 vor 10» / Bundesamt für Energie, 16.07.2026</p>
+    <details class="ak-mehr">
+      <summary>Hintergrund: Warum die Stauseen die «Batterie für den Winter» sind</summary>
+      <p style="font-size:13px;line-height:1.55">
+        Die Schneeschmelze füllt die Seen jeden Sommer neu – von 14 Prozent Anfang Juni auf
+        46 Prozent Mitte Juli. Entscheidend wird der Stand im Herbst: Die <b>Solarenergie</b>,
+        inzwischen bei rund 11 Prozent des Schweizer Stroms, liefert im Winter etwa zwei Drittel
+        weniger – dann müssen die Speicherseen einspringen. Dazu kommt das europäische Umfeld:
+        In der EU wird rund ein Sechstel des Stroms aus <b>Gas</b> erzeugt; wird Gas knapp,
+        steigen auch die Strompreise. Die Schweiz bezog 2025 gut 10 Prozent ihres Verbrauchs
+        aus Frankreich. Für die <b>Stromrechnung</b> gilt: Die Tarife liegen dieses Jahr im
+        Schnitt rund 5 Prozent tiefer als im Vorjahr – im September publiziert die Elcom die
+        Tarife fürs nächste Jahr, ein Anstieg gilt als möglich.
+      </p>
+    </details>
+    <p class="ak-quelle">Quellen: SRF «10 vor 10» / BFE, 16.07.2026 · SRF Tagesschau, 01.06.2026</p>
   </div>
 </section>
 
