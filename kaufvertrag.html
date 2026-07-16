@@ -131,6 +131,21 @@
   .blase{pointer-events:auto; cursor:pointer;}
   .blase .bname{display:block; font-size:.6rem; letter-spacing:2px; color:#6a6a6a; margin-bottom:3px;}
   .blase .broll{float:right; font-size:.58rem; letter-spacing:1px; color:#8a8a8a; margin-left:12px;}
+  .preisschild{
+    float:left; margin:2px 12px 4px 0; padding:7px 10px 6px;
+    background:#FFE895; border:2px solid #8a5400; border-radius:6px;
+    text-align:center; transform:rotate(-3deg);
+    box-shadow:2px 2px 0 rgba(0,0,0,.25); position:relative; min-width:74px;
+  }
+  .preisschild::before{
+    content:""; position:absolute; top:-7px; left:50%; transform:translateX(-50%);
+    width:9px; height:9px; border:2px solid #8a5400; border-radius:50%; background:#FBF7EC;
+  }
+  .preisschild .ps-ico{display:block; font-size:1.7rem; line-height:1.15;}
+  .preisschild .ps-name{display:block; font-size:.55rem; color:#5a4632; letter-spacing:.5px; margin-top:2px;}
+  .preisschild .ps-preis{display:block; font-size:.78rem; color:#1c1c1c; margin-top:2px;}
+  .preisschild.neu .ps-preis{color:#B00020;}
+  .preisschild .ps-label{display:block; font-size:.55rem; color:#B00020; letter-spacing:2px;}
   .blase .binhalt{overflow:hidden; max-height:38vh; transition:max-height .3s ease, margin .3s ease;}
   .blase.zu .binhalt{max-height:0;}
   .blase.zu{opacity:.9;}
@@ -295,15 +310,15 @@
    ===================================================== */
 
 const PRODUKTE = [
-  { id:'handy',  ico:'📱', name:'Smartphone «Nova X»', nom:'das Smartphone', akk:'das Smartphone', preis:690,
+  { id:'handy',  ico:'📱', name:'Smartphone «Nova X»', nom:'das Smartphone', akk:'das Smartphone', preis:690,  neupreis:1099,
     mangel:'Der Akku lädt nur noch bis 40 Prozent, und auf der Rückseite zeigt sich ein feiner Riss.' },
-  { id:'ebike',  ico:'🚲', name:'E-Bike «Alpenblitz»', nom:'das E-Bike', akk:'das E-Bike', preis:1800,
+  { id:'ebike',  ico:'🚲', name:'E-Bike «Alpenblitz»', nom:'das E-Bike', akk:'das E-Bike', preis:1800, neupreis:3200,
     mangel:'Im Rahmen knackt es bei jedem Tritt, und der Motor setzt immer wieder ruckartig aus.' },
-  { id:'foehn',  ico:'💨', name:'Haarföhn «Turbo 2000»', nom:'der Haarföhn', akk:'den Haarföhn', preis:89,
+  { id:'foehn',  ico:'💨', name:'Haarföhn «Turbo 2000»', nom:'der Haarföhn', akk:'den Haarföhn', preis:89,   neupreis:149,
     mangel:'Nach zwei Minuten riecht der Föhn verschmort und schaltet sich von selbst ab.' },
-  { id:'kamera', ico:'📷', name:'Fotokamera «Lux 7»', nom:'die Fotokamera', akk:'die Fotokamera', preis:1250,
+  { id:'kamera', ico:'📷', name:'Fotokamera «Lux 7»', nom:'die Fotokamera', akk:'die Fotokamera', preis:1250, neupreis:2149,
     mangel:'Auf jedem Bild zeigen sich dunkle Flecken – der Sensor ist verschmutzt – und der Autofokus findet kein Ziel.' },
-  { id:'venti',  ico:'🌀', name:'Standventilator «Brise»', nom:'der Standventilator', akk:'den Standventilator', preis:129,
+  { id:'venti',  ico:'🌀', name:'Standventilator «Brise»', nom:'der Standventilator', akk:'den Standventilator', preis:129,  neupreis:199,
     mangel:'Der Ventilator rattert laut, und der Kopf kippt nach wenigen Minuten von selbst nach unten.' },
 ];
 
@@ -343,6 +358,7 @@ function ersetze(t){
     .replaceAll('{PA}', p.akk)
     .replaceAll('{Pgross}', p.nom.charAt(0).toUpperCase()+p.nom.slice(1))
     .replaceAll('{PREIS}', chf(p.preis))
+    .replaceAll('{NEUPREIS}', chf(p.neupreis))
     .replaceAll('{ANZ}', chf(anzahlung()))
     .replaceAll('{REST}', chf(rest()))
     .replaceAll('{MANGEL}', p.mangel);
@@ -361,6 +377,33 @@ const Z = 5;                                     /* Zellgrösse: 128×52 → 640
 
 /* ---------- Hotspots (Koordinaten im 640×260-Raum) ---------- */
 const HOTSPOTS = {
+discount:[
+  { id:'dschild', name:'Leuchtreklame', x:172,y:30,w:292,h:52,
+    a:{ anschauen:'«MEGA-DISCOUNT» – in einer Schriftgrösse, die man noch vom Zug aus lesen kann. Subtilität ist hier nicht im Sortiment.' } },
+  { id:'dfensterL', name:'Schaufenster', x:150,y:94,w:134,h:132,
+    a:{ anschauen:'«Alles für Schule, Büro, Freizeit.» Alles? Das Obligationenrecht lernt man trotzdem woanders.',
+        oeffne:'Das Schaufenster bleibt zu. Und Sie bleiben draussen – der Neupreis reicht Ihnen als Erlebnis.' } },
+  { id:'dtuer', name:'Eingang', x:284,y:92,w:78,h:142,
+    a:{ anschauen:'Die Glastür zum Neonlicht. Sie waren schon drin – der Neupreis hängt noch in der Netzhaut.',
+        oeffne:'Noch einmal rein? Ihr Portemonnaie schüttelt stumm den Kopf.' } },
+  { id:'dfensterR', name:'Schaufenster', x:364,y:96,w:124,h:126,
+    a:{ anschauen:'Regale bis zur Decke, alles fabrikneu, alles blinkend. Und alles mit Preisschildern, die Ihr Lehrlingslohn persönlich nimmt.' } },
+  { id:'dstaender', name:'Prospektständer', x:364,y:142,w:70,h:96,
+    a:{ anschauen:'Ein Ständer voller Aktionsprospekte. «Nur diese Woche!» – steht da seit drei Jahren.',
+        nimm:'Einen Prospekt dürfen Sie tatsächlich mitnehmen. Gratis. Das Einzige hier, das ins Budget passt.' } },
+  { id:'dtafel', name:'Kundenstopper', x:448,y:202,w:68,h:56,
+    a:{ anschauen:'«TOP PREISE», verspricht die Tafel. Top für wen, verrät sie nicht.' } },
+  { id:'deimer', name:'Container', x:148,y:176,w:46,h:62,
+    a:{ anschauen:'Ein blauer Container. Hier landet das Verpackungsmaterial der Neugeräte – ganze Berge davon. Auch ein Argument für Occasionen.' } },
+  { id:'dlaterne', name:'Laterne', x:68,y:28,w:44,h:184,
+    a:{ anschauen:'Eine Altstadtlaterne, tapfer gegen die Leuchtreklame anleuchtend. David gegen Goliath, in Watt.' } },
+  { id:'drathaus', name:'Wegweiser', x:532,y:98,w:60,h:28,
+    a:{ anschauen:'«Rathaus →». Gut zu wissen. Für Betreibungsfragen wäre allerdings zuerst das Betreibungsamt zuständig – aber so weit lassen wir es gar nicht kommen.' } },
+  { id:'dfahne', name:'Fahne', x:582,y:86,w:30,h:46,
+    a:{ anschauen:'Die Schweizer Fahne im Nachtwind. Irgendwo darunter gilt seit 1912: das Obligationenrecht.' } },
+  { id:'dnummer', name:'Hausnummer', x:513,y:98,w:20,h:20,
+    a:{ anschauen:'Nummer 12 – schon wieder! Entweder liebt Aarau diese Zahl, oder die Stadtplanung hatte einen Lieblingswürfel.' } },
+],
 front:[
   { id:'schild', name:'Ladenschild', x:58,y:40,w:264,h:42,
     a:{ anschauen:'«Meier &amp; Co Elektro» – handgemalt, mit Goldrand und Patina. Seit 1998 hält das Schild jedem Aargauer Wetter stand.' } },
@@ -781,10 +824,11 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '5';
+const BILD_VERSION = '6';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   front:'kaufvertrag_front.png',  laden:'kaufvertrag_laden.png',
+  discount:'kaufvertrag_discount.png',
   zimmer:'kaufvertrag_zimmer.png', weiche:'kaufvertrag_weiche.png',
   ende:'kaufvertrag_ende.png',
 };
@@ -1005,7 +1049,7 @@ const blaseDialogEl = document.getElementById('blase-dialog');
 const blaseHinweisEl = document.getElementById('blase-hinweis');
 let hinweisTimer = null;
 
-function blaseDialog(sprecher, html){
+function blaseDialog(sprecher, html, anhang){
   blaseDialogEl.innerHTML='';
   if(!html) return;
   const istMeier = (sprecher==='HERR MEIER' || sprecher==='FRAU MEIER');
@@ -1020,7 +1064,7 @@ function blaseDialog(sprecher, html){
   nm.appendChild(roll);
   const inhalt = document.createElement('div');
   inhalt.className = 'binhalt';
-  inhalt.innerHTML = html;
+  inhalt.innerHTML = (anhang||'') + html;
   b.append(nm, inhalt);
   b.addEventListener('click', ()=>{
     b.classList.toggle('zu');
@@ -1094,6 +1138,24 @@ const KNOTEN = {
 start:{ art:'produktwahl', szene:'front', sprecher:'ERZÄHLER',
   text:'Aarau, ein Samstagvormittag. Sie – Alex, Lernende/r im 2. Lehrjahr – stehen vor «Meier &amp; Co.», dem Occasions- und Elektrofachgeschäft an der Vorderen Vorstadt Nummer 12. Im Schaufenster leuchtet der rote Aktionsstern. Sie haben etwas gespart und wollen sich heute etwas leisten. <b>Was kaufen Sie?</b>' },
 
+/* ---------- AKT 0b: Der Preisvergleich ---------- */
+discount:{ szene:'discount', sprecher:'ERZÄHLER',
+  text:'Kleiner Umweg vorab: Unten an der Bahnhofstrasse, im grellen «MEGA-DISCOUNT», steht {P} fabrikneu im Regal – Preisschild: <b>{NEUPREIS}</b>. Sie schlucken. Dann fällt Ihnen das Schaufenster von Meier &amp; Co. ein: dasselbe Modell, geprüft, als Occasion für <b>{PREIS}</b>. Was tun Sie?',
+  optionen:[
+    { t:'Zur Occasion – gleiche Funktion, deutlich kleinerer Preis.', rq:2,
+      fb:'Budgetbewusst gedacht. Und wichtig: Der <b>Occasionskauf ist ein ganz normaler Kaufvertrag</b> – gleiche Regeln, gleiche Rechte, inklusive Gewährleistung.',
+      ziel:'k1' },
+    { t:'Neu kaufen – Occasionen sind mir suspekt.', rq:1,
+      fb:'Ihr gutes Recht – aber Ihr Lehrlingslohn hebt beim Blick auf {NEUPREIS} mahnend die Augenbraue. Sie schlendern doch zu Meier &amp; Co.',
+      ziel:'k1' },
+    { t:'Eine Nacht darüber schlafen und Preise vergleichen.', rq:2,
+      fb:'Besonnen! Impulskäufe sind der Feind jedes Budgets. Am nächsten Morgen steht fest: Die geprüfte Occasion gewinnt.',
+      ziel:'k1' },
+    { t:'Neu kaufen – auf Kredit. Dafür gibt es doch Kleinkredite.', rq:0,
+      fb:'<b>Vorsicht, Konsumkredit!</b> Zinsen von 10 Prozent und mehr machen den Neupreis erst richtig teuer – und das Konsumkreditgesetz verlangt nicht umsonst eine Budgetprüfung. Sie verwerfen die Idee. Schnell.',
+      ziel:'k1' },
+  ]},
+
 /* ---------- AKT 1 ---------- */
 k1:{ szene:'laden', sprecher:'HERR MEIER',
   text:'«Grüezi! Sie interessieren sich für {PA}? Ein gutes Stück, frisch geprüft aus einer Geschäftsauflösung. Für Sie: <b>{PREIS}</b>.»',
@@ -1106,6 +1168,9 @@ k1:{ szene:'laden', sprecher:'HERR MEIER',
       ziel:'k2' },
     { t:'«Ich schaue mich nur um.»', rq:1,
       fb:'Kein Problem – wer nur schaut, gibt keine Willenserklärung ab. Es entsteht: nichts. Irgendwann müssen Sie sich aber entscheiden.',
+      ziel:'k1' },
+    { t:'«Ich zahle höchstens die Hälfte!»', rq:1,
+      fb:'Rechtlich ein <b>Gegenantrag</b> – erlaubt ist das. Aber ein unrealistischer Gegenantrag beendet Verhandlungen schnell: Herr Meier lacht herzlich und wartet, bis Sie ein ernsthaftes Wort sagen.',
       ziel:'k1' },
   ]},
 
@@ -1121,6 +1186,9 @@ k2:{ szene:'laden', sprecher:'HERR MEIER',
     { t:'«Ich muss es mir überlegen.»', rq:3,
       fb:'Herr Meier: «Dann gilt mein Angebot <b>bis Ladenschluss</b>.» Merken Sie sich das: Ein <b>befristeter Antrag</b> bindet den Antragsteller bis zum Ablauf der Frist (OR Art. 3). Bis 18 Uhr kann er nicht einfach zurückziehen. Sie drehen eine Runde – und kommen zurück.',
       ziel:'k3' },
+    { t:'«Gilt der Rabatt auch bei Kartenzahlung?»', rq:2,
+      fb:'Nachfragen kostet nichts. Herr Meier grinst: «Bar ist bar.» Der Rabatt ist an seine Bedingung geknüpft – ein Antrag gilt so, wie er gestellt wurde. Sie entscheiden sich.',
+      ziel:'k3' },
   ]},
 
 k3:{ szene:'laden', sprecher:'HERR MEIER',
@@ -1135,6 +1203,9 @@ k3:{ szene:'laden', sprecher:'HERR MEIER',
     { t:'«Erst, wenn ich etwas angezahlt habe.»', rq:0,
       fb:'Nein – die Anzahlung ist bereits <b>Erfüllung</b> des Vertrags, nicht seine Voraussetzung. Der Vertrag selbst entsteht durch die <b>Einigung</b>. Verpflichtungsgeschäft und Erfüllungsgeschäft sind zwei Paar Schuhe.',
       ziel:'k4' },
+    { t:'«Gültig wird das erst mit einer Quittung.»', rq:0,
+      fb:'Nein – die Quittung ist ein <b>Beweismittel</b>, keine Gültigkeitsvoraussetzung. Der Vertrag entsteht durch die Einigung selbst. (Aber merken Sie sich das Wort «Quittung» – es kommt gleich wieder.)',
+      ziel:'k4' },
   ]},
 
 k4:{ szene:'laden', sprecher:'HERR MEIER',
@@ -1148,6 +1219,9 @@ k4:{ szene:'laden', sprecher:'HERR MEIER',
       ziel:'k5' },
     { t:'Einverstanden – «aber halten wir den Liefertermin bitte schriftlich fest.»', rq:5, flag:'terminFix',
       fb:'Klug! Damit ist der Liefertermin ein <b>bestimmter Verfalltag</b>. Sollte Herr Meier zu spät liefern, gerät er <b>ohne Mahnung</b> in Verzug (OR Art. 102 Abs. 2). Das wird sich vielleicht noch auszahlen …',
+      ziel:'k5' },
+    { t:'Einverstanden – «aber ohne Anzahlung, bitte.»', rq:1,
+      fb:'Verhandeln dürfen Sie. Doch Herr Meier bleibt freundlich-fest: «Bei Bestellware üblich – sonst bleibe ich auf ihr sitzen.» Ohne Anzahlung keine Bestellung; Sie willigen ein.',
       ziel:'k5' },
   ]},
 
@@ -1171,6 +1245,9 @@ l0:{ szene:'zimmer', sprecher:'ERZÄHLER',
     { t:'Sofort erklären: «Ich trete vom Vertrag zurück!»', rq:0,
       fb:'So schnell geht das nicht. Für den Rücktritt müssen Sie den Verkäufer zuerst <b>in Verzug setzen</b> und ihm eine <b>Nachfrist</b> gewähren (OR Art. 107). Der Reihe nach!',
       ziel:'l1' },
+    { t:'Persönlich im Laden vorbeigehen und nachfragen.', rq:2,
+      fb:'Direkt und fair. Im Laden steht allerdings Frau Meier – und die weiss von nichts: «Mein Mann und seine Handschlag-Geschäfte …» Ein Vorgeschmack auf ein grundsätzliches Problem.',
+      ziel:'l1' },
   ]},
 
 l1:{ szene:'zimmer', sprecher:'ERZÄHLER',
@@ -1189,6 +1266,9 @@ l2:{ szene:'zimmer', sprecher:'ERZÄHLER',
     { t:'Gar keine Frist – einfach weiter abwarten.', rq:0,
       fb:'Ohne Nachfrist bleiben Ihnen die Wahlrechte verschlossen (Ausnahmen: OR Art. 108, z. B. wenn eine Frist offensichtlich nutzlos wäre). Sie setzen also doch eine Frist.',
       ziel:'l3' },
+    { t:'Die Nachfrist per Chat-Nachricht an die Geschäftsnummer setzen.', rq:2,
+      fb:'Auch das ist gültig – Fristen sind formlos möglich, und eine Nachricht ist immerhin dokumentiert. Vor Gericht wiegt der eingeschriebene Brief trotzdem schwerer: Zustellung beweisbar.',
+      ziel:'l3' },
   ]},
 
 l3:{ szene:'zimmer', sprecher:'ERZÄHLER',
@@ -1203,6 +1283,9 @@ l3:{ szene:'zimmer', sprecher:'ERZÄHLER',
     { t:'Vom Vertrag zurücktreten – Anzahlung zurück.', rq:3,
       fb:'Der Rücktritt löst den Vertrag auf: Bereits Geleistetes wird <b>zurückerstattet</b> – Ihre Anzahlung von {ANZ} gehört zurück auf Ihr Konto.',
       ziel:'l4c' },
+    { t:'Die Polizei einschalten – das ist doch fast Betrug!', rq:0,
+      fb:'Halt: Nichterfüllung ist <b>Zivilrecht</b>, kein Fall für die Polizei. Betrug bräuchte Täuschungsabsicht von Anfang an. Ihre Werkzeuge heissen Erfüllung, Schadenersatz oder Rücktritt – wählen Sie.',
+      ziel:'l3' },
   ]},
 
 l4a:{ szene:'laden', sprecher:'ERZÄHLER',
@@ -1228,6 +1311,9 @@ z0:{ szene:'zimmer', sprecher:'ERZÄHLER',
     { t:'Anrufen und ehrlich sagen: «Ich habe es vergessen – kann ich in zwei Raten zahlen?»', rq:3,
       fb:'Ehrlichkeit und ein Vorschlag – stark. Viele Gläubiger lassen mit sich reden: Eine einvernehmliche <b>Stundung oder Ratenzahlung</b> ist jederzeit möglich. Herr Meier brummt: «Zwei Raten. Aber pünktlich!»',
       ziel:'z1' },
+    { t:'Die Mahnung anfechten – Sie haben nie eine erste Mahnung erhalten!', rq:0,
+      fb:'Netter Versuch – aber hier war gar keine Mahnung nötig: «Zahlbar innert 30 Tagen» ist ein <b>bestimmter Verfalltag</b>. Sie sind seit Tag 31 im Verzug, Mahnung hin oder her.',
+      ziel:'z1' },
   ]},
 
 z1:{ szene:'zimmer', sprecher:'ERZÄHLER',
@@ -1241,6 +1327,9 @@ z1:{ szene:'zimmer', sprecher:'ERZÄHLER',
       ziel:'z2' },
     { t:'Gar nie – Verzugszins gilt nur unter Firmen.', rq:0,
       fb:'Leider falsch: OR Art. 104 gilt auch für Privatpersonen. Die 5 % treffen Lernende genauso wie Konzerne.',
+      ziel:'z2' },
+    { t:'Erst ab der zweiten Mahnung – die erste ist gratis.', rq:0,
+      fb:'Nein – die <b>Anzahl Mahnungen ist rechtlich egal</b>. Massgebend ist der Verzugseintritt. Die «2. Mahnung» ist bloss kaufmännische Höflichkeit (und ein letzter Wink vor der Betreibung).',
       ziel:'z2' },
   ]},
 
@@ -1258,6 +1347,9 @@ z3:{ szene:'zimmer', sprecher:'ERZÄHLER',
     { t:'Er muss zuerst die Polizei einschalten.', rq:0,
       fb:'Nein – eine unbezahlte Rechnung ist kein Fall fürs Strafrecht, sondern fürs <b>Schuldbetreibungsrecht</b> (SchKG). Die Polizei winkt ab.',
       ziel:'z4' },
+    { t:'Er darf den Lohn direkt bei Ihrem Lehrbetrieb pfänden lassen.', rq:0,
+      fb:'Nicht so schnell: Eine <b>Lohnpfändung</b> steht erst ganz am Ende des Betreibungswegs – nach Zahlungsbefehl, allfälligem Rechtsvorschlag und Fortsetzungsbegehren. Ohne Verfahren greift niemand Ihren Lohn an.',
+      ziel:'z3' },
   ]},
 
 z4:{ szene:'laden', sprecher:'ERZÄHLER',
@@ -1277,6 +1369,9 @@ m0:{ szene:'zimmer', sprecher:'ERZÄHLER',
     { t:'Eine wütende 1-Stern-Bewertung schreiben. Das wird ihn lehren!', rq:0,
       fb:'Verständlicher Frust – aber eine Online-Bewertung ist <b>keine Mängelrüge</b>. Rechte sichern Sie sich nur direkt beim Verkäufer. (Und unfaire Bewertungen können sogar rechtliche Folgen für Sie haben.)',
       ziel:'m1' },
+    { t:'Zurück in den Karton – und ungeöffnet weiterverkaufen.', rq:0,
+      fb:'Autsch. Wer einen <b>bekannten Mangel arglistig verschweigt</b>, haftet dem nächsten Käufer gegenüber selbst – und zwar ohne die üblichen Schranken. Sie verwerfen den Gedanken, zum Glück.',
+      ziel:'m1' },
   ]},
 
 m1:{ szene:'zimmer', sprecher:'ERZÄHLER',
@@ -1288,6 +1383,12 @@ m1:{ szene:'zimmer', sprecher:'ERZÄHLER',
     { t:'Beim nächsten Einkauf mündlich erwähnen: «Übrigens, da war was …»', rq:1,
       fb:'Mündlich ist gültig – aber beiläufig und ohne Beleg. Behauptet Herr Meier später, nie etwas gehört zu haben, stehen Sie ohne Beweis da. Sie schieben sicherheitshalber eine E-Mail nach.',
       ziel:'m2' },
+    { t:'Per Nachricht mit Foto und Video des Mangels.', rq:4,
+      fb:'Ebenfalls stark: Die Rüge ist formlos gültig, und <b>Foto plus Video dokumentieren den Mangel</b> hervorragend. Der eingeschriebene Brief bleibt der Klassiker – die Beweiskraft Ihrer Aufnahmen ist aber Gold wert.',
+      ziel:'m2' },
+    { t:'Gar nicht rügen – das merkt der Verkäufer schon selbst.', rq:0,
+      fb:'Gefährlich! Ohne Rüge gilt die Ware als <b>genehmigt</b> (OR Art. 201) – Ihre Rechte wären weg. Sie überlegen es sich rechtzeitig anders und melden den Mangel.',
+      ziel:'m1' },
   ]},
 
 m2:{ szene:'laden', sprecher:'FRAU MEIER',
@@ -1302,6 +1403,9 @@ m2:{ szene:'laden', sprecher:'FRAU MEIER',
     { t:'«Ich möchte ein einwandfreies Ersatzgerät.»', rq:3,
       fb:'Beim <b>Gattungskauf</b> (Ware ist beliebig ersetzbar) können Sie Ersatzlieferung verlangen (OR Art. 206). Herr Meier hat aber kein zweites Exemplar am Lager – es bleibt beim Reparaturversuch.',
       ziel:'m3' },
+    { t:'Um Bedenkzeit bitten und zu Hause die Rechtslage nachlesen.', rq:2,
+      fb:'Besonnen. Zu Hause lesen Sie im ABU-Ordner: Wandelung, Minderung, Ersatzlieferung. Am nächsten Tag nehmen Sie das Reparaturangebot an – gut informiert entscheidet es sich leichter.',
+      ziel:'m3' },
   ]},
 
 m3:{ szene:'zimmer', sprecher:'ERZÄHLER',
@@ -1315,6 +1419,9 @@ m3:{ szene:'zimmer', sprecher:'ERZÄHLER',
       ziel:'m4b' },
     { t:'Anzeige wegen Betrugs erstatten.', rq:0,
       fb:'Halt! Ein Mangel ist noch kein <b>Betrug</b> – dafür müsste Herr Meier Sie absichtlich getäuscht haben. Bleiben Sie beim Gewährleistungsrecht: Wandelung oder Minderung.',
+      ziel:'m3' },
+    { t:'Nichts mehr unternehmen – irgendwann stört der Mangel nicht mehr.', rq:0,
+      fb:'Wer zu lange zuwartet, verschenkt seine Rechte – die Gewährleistung <b>verjährt</b> (bei Occasionen oft vertraglich verkürzt). Warum warten, wenn OR Art. 205 Ihnen jetzt zwei starke Hebel gibt? Sie handeln.',
       ziel:'m3' },
   ]},
 
@@ -1346,6 +1453,12 @@ function dynamischeOptionen(art){
         { t:'Nochmals anrufen und seufzen.', rq:1,
           fb:'Auch ein Anruf kann eine Mahnung sein – nur beweisen lässt er sich schlecht. Sie schicken zur Sicherheit doch noch den eingeschriebenen Brief nach.',
           ziel:'l2' },
+        { t:'Die Anzahlung einfach «zurückbuchen» lassen.', rq:0,
+          fb:'Bar bezahlt heisst: nichts zu buchen. Und der Vertrag besteht ja weiter – Ihr Weg führt über die <b>Mahnung</b>, nicht über die Bank.',
+          ziel:'l2' },
+        { t:'In den Laden gehen und ein Ausstellungsstück mitnehmen – angezahlt ist angezahlt.', rq:0,
+          fb:'<b>Selbsthilfe ist tabu.</b> Die Anzahlung macht Sie nicht zur Eigentümerin oder zum Eigentümer der Ladenware. Der rechtliche Weg: Mahnung, Nachfrist, Wahlrechte.',
+          ziel:'l2' },
       ]};
   }
   if(art==='ruecktritt'){
@@ -1361,6 +1474,7 @@ function dynamischeOptionen(art){
     const korrekt = zins2Mt();
     const jahr = rest()*0.05;
     const falsch2 = rest()*0.05*6/12;
+    const monat = rest()*0.05*1/12;
     const antworten = [
       { betrag:korrekt, richtig:true,
         fb:'<b>Richtig gerechnet:</b> '+chf(rest())+' × 5 % × 2⁄12 Jahre = '+chf(korrekt)+'. Klingt harmlos – aber der Zins läuft weiter, solange Sie nicht zahlen. Und Mahn- sowie Betreibungskosten kämen noch obendrauf.' },
@@ -1368,6 +1482,8 @@ function dynamischeOptionen(art){
         fb:'Das wären 5 % für ein <b>ganzes Jahr</b> – Sie sind aber erst rund zwei Monate im Verzug. Richtig: '+chf(rest())+' × 5 % × 2⁄12 = '+chf(korrekt)+'.' },
       { betrag:falsch2, richtig:false,
         fb:'Das wäre der Zins für ein <b>halbes Jahr</b>. Bei zwei Monaten Verzug gilt: '+chf(rest())+' × 5 % × 2⁄12 = '+chf(korrekt)+'.' },
+      { betrag:monat, richtig:false,
+        fb:'Das wäre nur <b>ein Monat</b> – Sie sind aber rund zwei im Verzug. Richtig: '+chf(rest())+' × 5 % × 2⁄12 = '+chf(korrekt)+'.' },
     ].sort((a,b)=>a.betrag-b.betrag);
     return { text:'Rechnen wir nach: Der Restbetrag ist <b>{REST}</b>, Sie sind rund <b>zwei Monate</b> im Verzug, der Zinssatz beträgt <b>5 % pro Jahr</b>. Wie viel Verzugszins ist aufgelaufen?',
       optionen: antworten.map(a=>({
@@ -1476,10 +1592,22 @@ function starteAlexIdle(){
     idleRueck = setTimeout(()=>{ spriteFrame('alex', 0); }, 700);
   }, 5200 + Math.random()*2600);
 }
+function preisschild(neupreis){
+  const p = zustand.produkt;
+  if(!p) return '';
+  return '<span class="preisschild'+(neupreis?' neu':'')+'">'+
+    (neupreis?'<span class="ps-label">NEU</span>':'')+
+    '<span class="ps-ico">'+p.ico+'</span>'+
+    '<span class="ps-name">'+p.name+'</span>'+
+    '<span class="ps-preis">'+chf(neupreis? p.neupreis : p.preis)+'</span></span>';
+}
+const SCHILD_KNOTEN = { discount:'neu', k1:'occ', k2:'occ', k3:'occ', k4:'occ' };
+
 function baueDialog(k){
   if(aktuelleSzeneId==='laden' && (k.sprecher==='HERR MEIER' || k.sprecher==='FRAU MEIER')) spriteSprich('meier');
   if(aktuelleSzeneId==='laden' && !idleTimer) starteAlexIdle();
-  blaseDialog(k.sprecher, ersetze(k.text));
+  const schild = SCHILD_KNOTEN[knotenSnapshot ? knotenSnapshot.id : ''] || null;
+  blaseDialog(k.sprecher, ersetze(k.text), schild ? preisschild(schild==='neu') : '');
 
   const box = document.createElement('div');
   box.className='optionen';
@@ -1575,7 +1703,7 @@ function baueProduktwahl(k){
       zustand.haendler = 'herr';   /* Akt 1: der Chef persoenlich */
       zustand.undoJoker = 1;
       rqEl.textContent='RQ 0';
-      zeige('k1');
+      zeige('discount');
     });
     reihe.appendChild(b);
   });
