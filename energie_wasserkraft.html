@@ -73,6 +73,20 @@ h1 .accent{color:var(--hkv);}
 .s-zahl{font-size:30px;font-weight:800;color:var(--hkv);}
 .s-txt{font-size:13.5px;color:var(--muted);margin-top:6px;}
 .quelle{max-width:1240px;margin:14px auto 0;font-size:12px;color:var(--muted);text-align:center;}
+/* ---------- Aktuell-Box ---------- */
+.aktuell-wrap{max-width:1240px;margin:18px auto 0;padding:0 4px;}
+.aktuell{border-left:6px solid #B4564E;}
+.aktuell .k-tit::before{content:"📰 ";}
+.ak-datum{display:inline-block;background:#B4564E;color:#fff;font-size:11px;letter-spacing:1px;
+  padding:2px 10px;border-radius:99px;margin-bottom:8px;}
+.ak-balken{margin:12px 0 4px;}
+.ak-zeile{display:flex;align-items:center;gap:10px;margin:6px 0;font-size:13px;}
+.ak-zeile .ak-label{width:170px;color:var(--muted);}
+.ak-bar{height:20px;border-radius:5px;position:relative;background:#e8f0f4;flex:1;overflow:hidden;}
+.ak-bar i{position:absolute;inset:0 auto 0 0;border-radius:5px;}
+.ak-bar span{position:absolute;right:8px;top:0;line-height:20px;font-size:12px;font-weight:700;}
+.ak-frage{margin-top:12px;font-style:italic;background:#f4f7f9;border-radius:8px;padding:10px 14px;font-size:13.5px;}
+.ak-quelle{margin-top:8px;font-size:11px;color:var(--muted);}
 footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid var(--line);
   font-size:12px;color:var(--muted);text-align:center;}
 .fluss{mix-blend-mode:screen;}
@@ -213,6 +227,36 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
     <p class="s-txt" id="s-txt"></p>
   </div>
 </div>
+
+<section class="aktuell-wrap" aria-label="Aktuelle Meldung">
+  <div class="karte aktuell">
+    <span class="ak-datum">AKTUELL · 16. JULI 2026</span>
+    <div class="k-tit">Speicherseen so leer wie seit 20 Jahren nicht</div>
+    <div class="k-sub">Was gerade in den Alpen passiert – und was es mit dieser Folie zu tun hat</div>
+    <div class="ak-balken">
+      <div class="ak-zeile">
+        <span class="ak-label">Füllstand Juli 2026</span>
+        <div class="ak-bar"><i style="width:46%;background:#B4564E"></i><span>46 %</span></div>
+      </div>
+      <div class="ak-zeile">
+        <span class="ak-label">Mittelwert 2000–2025</span>
+        <div class="ak-bar"><i style="width:62%;background:#3f7ea6"></i><span>≈ 62 %</span></div>
+      </div>
+    </div>
+    <p style="font-size:13.5px;line-height:1.55;margin-top:8px">
+      Wenig Schnee im Winter und einer der <b>trockensten Frühlinge seit Messbeginn 1864</b> haben Spuren
+      hinterlassen: Die Schweizer Speicherseen sind mit <b>46 Prozent</b> so wenig gefüllt wie seit
+      20 Jahren nicht mehr. Die Aufsichtsbehörde Elcom sieht die Versorgung dennoch nicht gefährdet –
+      Speicherseen decken rund <b>20 Prozent des Strombedarfs im Winterhalbjahr</b>, und die Zuflüsse der
+      nächsten Monate können noch viel bewegen. Der Blick voraus bleibt anspruchsvoll: Mit den
+      schmelzenden Gletschern wird der sommerliche Zufluss in den kommenden Jahrzehnten deutlich abnehmen.
+    </p>
+    <p class="ak-frage">Verbinden Sie die Meldung mit der Folie: Weshalb ist der Füllstand im
+      <b>Juli</b> für das <b>Winterhalbjahr</b> entscheidend? Und welche Rolle könnte der
+      <b>Pumpbetrieb</b> spielen, wenn die natürlichen Zuflüsse schwächer werden?</p>
+    <p class="ak-quelle">Quelle: SRF «10 vor 10» / Bundesamt für Energie, 16.07.2026</p>
+  </div>
+</section>
 
 <section class="mini" aria-label="Mini-Check">
   <h2 class="mini-t">Mini-Check</h2>
