@@ -94,6 +94,38 @@
   .fahne-link{text-decoration:none; display:inline-flex; align-items:center; gap:6px;}
   .fuss-fahne{height:44px; width:auto; vertical-align:middle; filter:drop-shadow(0 2px 2px rgba(0,0,0,.2)); transition:transform .15s;}
   .fahne-link:hover .fuss-fahne{transform:scale(1.12) rotate(-2deg);}
+  .start-dialog{
+    position:fixed; inset:0; z-index:80; display:flex; align-items:center; justify-content:center;
+    background:rgba(14,32,38,.62); backdrop-filter:blur(3px);
+  }
+  .start-dialog.weg{display:none;}
+  .sd-karte{
+    background:var(--papier); border:1.5px solid var(--linie); border-radius:16px;
+    padding:30px 36px; max-width:440px; text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,.35);
+  }
+  .sd-ico{font-size:2.6rem;}
+  .sd-karte h2{color:var(--petrol); font-size:1.15rem; margin:8px 0 8px;}
+  .sd-karte p{font-size:.88rem; line-height:1.55; color:#4a463c;}
+  .sd-los{
+    display:block; width:100%; margin:16px 0 8px; font:inherit; font-size:1rem; font-weight:600;
+    background:var(--petrol); color:#fff; border:none; border-radius:10px;
+    padding:13px 18px; cursor:pointer;
+  }
+  .sd-los:hover{transform:scale(1.02); box-shadow:0 6px 18px rgba(24,62,69,.3);}
+  .sd-ohne{
+    font:inherit; font-size:.8rem; background:none; border:none; cursor:pointer;
+    color:#8a8574; text-decoration:underline dotted;
+  }
+  .sd-ohne:hover{color:var(--petrol);}
+  .sd-esc{font-size:.7rem !important; color:#8a8574 !important; margin-top:10px !important;}
+  #vollbild{
+    position:fixed; top:14px; right:14px; z-index:60;
+    font:inherit; font-size:1.25rem; line-height:1;
+    background:var(--petrol); color:#fff; border:none; border-radius:10px;
+    padding:10px 13px; cursor:pointer; box-shadow:0 4px 14px rgba(24,62,69,.3);
+  }
+  #vollbild:hover{transform:scale(1.08);}
   .toast{
     position:fixed; top:18px; left:50%; transform:translateX(-50%);
     background:rgba(24,62,69,.93); color:#fff; padding:9px 22px; border-radius:99px;
@@ -120,7 +152,6 @@
   <button class="chipf" data-lj="1">1. Lehrjahr</button>
   <button class="chipf" data-lj="2">2. Lehrjahr</button>
   <button class="chipf" data-lj="3">3. Lehrjahr</button>
-  <button class="chipf" id="vollbild" type="button" title="Vollbild (Esc beendet)">⛶ Vollbild</button>
   <div class="lgd" id="legende"></div>
 </div>
 
@@ -141,6 +172,18 @@
       <text x="30" y="80" text-anchor="middle" font-family="Georgia,serif" font-size="8" fill="#cfd9e6">1875</text>
     </svg></a></p>
 
+<div class="start-dialog" id="startDialog">
+  <div class="sd-karte">
+    <div class="sd-ico">🗺️</div>
+    <h2>Die ganze Landkarte braucht Platz</h2>
+    <p>Der neue Lehrplan ist umfangreich — 7 Themen, 8 Aspekte, 26 Kompetenzen.<br>
+       Am besten wirkt die Karte im Vollbild.</p>
+    <button class="sd-los" id="sdLos" type="button">⛶ Im Vollbild starten</button>
+    <button class="sd-ohne" id="sdOhne" type="button">ohne Vollbild weiter</button>
+    <p class="sd-esc">Esc verlässt das Vollbild jederzeit</p>
+  </div>
+</div>
+<button id="vollbild" type="button" title="Vollbild (Esc beendet)">⛶</button>
 <div class="toast" id="toast">Esc verlässt das Vollbild</div>
 <div class="panel" id="panel">
   <button class="zu" type="button" onclick="document.getElementById('panel').classList.remove('offen')">Schliessen ✕</button>
@@ -254,9 +297,9 @@ document.getElementById('suche').addEventListener('input', ev=>{
 });
 
 /* ---- Lehrjahr-Filter ---- */
-document.querySelectorAll('.chipf').forEach(b=>{
+document.querySelectorAll('.chipf[data-lj]').forEach(b=>{
   b.addEventListener('click', ()=>{
-    document.querySelectorAll('.chipf').forEach(x=>x.classList.remove('an'));
+    document.querySelectorAll('.chipf[data-lj]').forEach(x=>x.classList.remove('an'));
     b.classList.add('an');
     const lj = b.getAttribute('data-lj');
     document.querySelectorAll('td[data-lj]').forEach(td=>{
@@ -264,6 +307,26 @@ document.querySelectorAll('.chipf').forEach(b=>{
     });
   });
 });
+
+/* ---- Start-Dialog: Klick = legale Geste fuer Vollbild ---- */
+(function(){
+  const dlg = document.getElementById('startDialog');
+  if(!dlg) return;
+  let gefragt = false;
+  try{ gefragt = sessionStorage.getItem('slp_vollbild_gefragt')==='1'; }catch(e){}
+  if(gefragt){ dlg.classList.add('weg'); return; }
+  function merke(){ try{ sessionStorage.setItem('slp_vollbild_gefragt','1'); }catch(e){} }
+  document.getElementById('sdLos').addEventListener('click', ()=>{
+    merke(); dlg.classList.add('weg');
+    const el = document.documentElement;
+    const p = el.requestFullscreen ? el.requestFullscreen()
+            : el.webkitRequestFullscreen ? el.webkitRequestFullscreen() : null;
+    if(p && p.catch) p.catch(()=>{});   /* z. B. iframe ohne allowfullscreen */
+  });
+  document.getElementById('sdOhne').addEventListener('click', ()=>{
+    merke(); dlg.classList.add('weg');
+  });
+})();
 
 /* ---- Vollbild mit Esc-Hinweis ---- */
 (function(){
@@ -282,7 +345,8 @@ document.querySelectorAll('.chipf').forEach(b=>{
     }
   });
   function wechsel(){
-    btn.textContent = drin() ? '🗗 Vollbild beenden' : '⛶ Vollbild';
+    btn.textContent = drin() ? '🗗' : '⛶';
+    btn.title = drin() ? 'Vollbild beenden (Esc)' : 'Vollbild (Esc beendet)';
     if(drin() && toast){
       toast.classList.add('zeig');
       setTimeout(()=> toast.classList.remove('zeig'), 3500);
