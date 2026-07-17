@@ -1210,7 +1210,7 @@ fxBtn.addEventListener('click', ()=>{
   try{ if(typeof localStorage!=='undefined') localStorage.setItem('derkauf_fx', fx.an?'1':'0'); }catch(e){}
   fxAnzeige();
   if(fx.an) fxBlip();        /* kurzer Bestätigungston */
-  if(!fx.an) ambStop(); else if(aktuelleSzeneId) szenenAudio(aktuelleSzeneId);
+  if(!fx.an){ fxAllesStoppen(); } else { try{ if(fx.ctx) fx.ctx.resume(); }catch(e){} if(aktuelleSzeneId) szenenAudio(aktuelleSzeneId); }
 });
 
 
@@ -1307,14 +1307,27 @@ const AMBIENT = {
               einmal:'kaufvertrag_fx_glocke.mp3', einmalVol:0.45, einmalNach:2500,
               zufall:'kaufvertrag_fx_lieferwagen.mp3', zufallVol:0.40 },
 };
-const amb = { el:null, szene:null, zufallTimer:null, einmalGespielt:{} };
+const amb = { el:null, szene:null, zufallTimer:null, einmalGespielt:{}, aktive:[] };
 function ambEinmal(url, vol){
-  try{ const a = new Audio(vurl(url)); a.volume = vol; a.play().catch(()=>{}); }catch(e){}
+  try{
+    const a = new Audio(vurl(url)); a.volume = vol;
+    amb.aktive.push(a);
+    a.addEventListener('ended', ()=>{ const i = amb.aktive.indexOf(a); if(i>=0) amb.aktive.splice(i,1); });
+    a.play().catch(()=>{});
+  }catch(e){}
 }
 function ambStop(){
   if(amb.el){ try{ amb.el.pause(); }catch(e){} amb.el = null; }
   if(amb.zufallTimer){ clearInterval(amb.zufallTimer); amb.zufallTimer = null; }
+  amb.aktive.forEach(a=>{ try{ a.pause(); }catch(e){} });
+  amb.aktive.length = 0;
 }
+function fxAllesStoppen(){
+  ambStop();
+  try{ Object.values(fxAudio).forEach(a=>{ try{ a.el.pause(); a.el.currentTime = 0; }catch(e){} }); }catch(e){}
+  try{ if(fx.ctx) fx.ctx.suspend(); }catch(e){}
+}
+
 function szenenAudio(szene){
   /* Schritte auf dem Weg vom Discounter in die Altstadt */
   if(fx.an && amb.szene==='discount' && szene==='front') ambEinmal('kaufvertrag_fx_schritte.mp3', 0.5);
@@ -1460,8 +1473,14 @@ start:{ art:'produktwahl', szene:'discount', sprecher:'ERZÄHLER',
   text:'Aarau, Freitagabend. Sie – Alex, Lernende/r im 2. Lehrjahr – sind auf dem Nachhauseweg zum Bahnhof, als unten an der Bahnhofstrasse der grelle «MEGA-DISCOUNT» leuchtet. Sie haben etwas gespart und wollen sich etwas leisten. <b>Was darf es sein?</b>' },
 
 /* ---------- AKT 0b: Der Preisvergleich ---------- */
+zoegern:{ szene:'discount', sprecher:'ERZÄHLER',
+  text:'{P} also. Sie halten das Preisschild fest im Blick: <b>{NEUPREIS}</b>. Das ist… schon noch viel Geld. Sie überlegen es sich noch einmal. Und war da nicht etwas? <b>Lea aus Ihrer Klasse</b> hat doch von diesem Laden in der Altstadt erzählt – geprüfte Occasionen, «Meier &amp; Co.» oder so ähnlich.',
+  optionen:[
+    { t:'Erst einmal heim – und eine Nacht darüber schlafen.', rq:0, fb:null, ziel:'discount' },
+  ]},
+
 discount:{ szene:'front', sprecher:'ERZÄHLER',
-  text:'Im Discounter-Regal: {P}, fabrikneu – Preisschild: <b>{NEUPREIS}</b>. Sie schlucken und fahren erst einmal heim. Samstagvormittag, Altstadt: Im Schaufenster von «Meier &amp; Co.», dem Occasions- und Elektrofachgeschäft an der Vorderen Vorstadt Nummer 12, leuchtet der rote Aktionsstern – dasselbe Modell, geprüft, als Occasion für <b>{PREIS}</b>. Was tun Sie?',
+  text:'Samstagvormittag, Altstadt. Lea hatte recht: Im Schaufenster von «Meier &amp; Co.», dem Occasions- und Elektrofachgeschäft an der Vorderen Vorstadt Nummer 12, leuchtet der rote Aktionsstern – dasselbe Modell wie beim Discounter, geprüft, als Occasion für <b>{PREIS}</b>. Neu hätte es <b>{NEUPREIS}</b> gekostet. Was tun Sie?',
   optionen:[
     { t:'Hinein zu Meier &amp; Co. – gleiche Funktion, deutlich kleinerer Preis.', rq:2,
       fb:'Budgetbewusst gedacht. Und wichtig: Der <b>Occasionskauf ist ein ganz normaler Kaufvertrag</b> – gleiche Regeln, gleiche Rechte, inklusive Gewährleistung.',
@@ -2025,7 +2044,7 @@ function baueProduktwahl(k){
       zustand.haendler = 'herr';   /* Akt 1: der Chef persoenlich */
       zustand.undoJoker = 1;
       rqEl.textContent='RQ 0';
-      zeige('discount');
+      zeige('zoegern');
     });
     reihe.appendChild(b);
   });
