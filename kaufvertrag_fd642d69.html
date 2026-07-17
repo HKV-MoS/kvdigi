@@ -835,7 +835,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '14';
+const BILD_VERSION = '15';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   front:'kaufvertrag_front.png',  laden:'kaufvertrag_laden.png',
@@ -1510,6 +1510,159 @@ function musikWechsel(szene){
   }catch(e){}
 }
 
+
+/* =====================================================
+   SCHACH-EASTEREGG: Morphys Matt in zwei (1856)
+   Doppelklick aufs Büchergestell öffnet das Brett.
+   Lösung solver-verifiziert: 1.Ta6!! und Matt folgt.
+   ===================================================== */
+const SCHACH_BAUM = { 'a1a6': { 'b8c7':'a6a7', 'b8d6':'a6a7', 'b8e5':'a6a7', 'b8f4':'a6a7', 'b8g3':'a6a7', 'b8h2':'a6a7', 'b7a6':'b6b7' } };
+const SCHACH_NATIV = { wk:142, wt:86, wb:75, sk:150, sl:124, sb:78 };
+const SCHACH_START = [
+  { id:'wk', typ:'wk', feld:'c8' }, { id:'wt', typ:'wt', feld:'a1' }, { id:'wb', typ:'wb', feld:'b6' },
+  { id:'sk', typ:'sk', feld:'a8' }, { id:'sl', typ:'sl', feld:'b8' },
+  { id:'sb1', typ:'sb', feld:'a7' }, { id:'sb2', typ:'sb', feld:'b7' },
+];
+const SCHACH_RAND = 5.83, SCHACH_FELD = 11.06;   /* Prozent des Brettbilds */
+const schach = { wrap:null, stufe:0, fehl:0, figuren:[], auswahl:null, erwartet:null, vorbei:false };
+
+function schachPos(feld){
+  const spalte = feld.charCodeAt(0) - 97;
+  const reihe = 8 - parseInt(feld[1], 10);
+  return { x: SCHACH_RAND + spalte*SCHACH_FELD, y: SCHACH_RAND + reihe*SCHACH_FELD };
+}
+function schachFigurAuf(feld){ return schach.figuren.find(f=>f.feld===feld && !f.weg); }
+function schachMal(){
+  schach.figuren.forEach(f=>{
+    if(!f.el) return;
+    if(f.weg){ f.el.style.display='none'; return; }
+    const p = schachPos(f.feld);
+    const hoehe = SCHACH_FELD * 0.92 * (SCHACH_NATIV[f.typ]/150);
+    f.el.style.display='block';
+    f.el.style.height = hoehe + '%';
+    f.el.style.left = (p.x + SCHACH_FELD/2) + '%';
+    f.el.style.top = (p.y + SCHACH_FELD*0.96 - hoehe) + '%';
+    f.el.style.outline = (schach.auswahl===f) ? '3px solid #e8b84b' : 'none';
+  });
+}
+function schachSag(t){
+  const el = document.getElementById('schachText');
+  if(el) el.innerHTML = t;
+}
+function schachZug(uci){
+  const von = uci.slice(0,2), nach = uci.slice(2,4);
+  const ziel = schachFigurAuf(nach);
+  if(ziel) ziel.weg = true;                    /* geschlagen */
+  const fig = schachFigurAuf(von);
+  if(fig) fig.feld = nach;
+  try{ ambEinmal('kaufvertrag_fx_schach.mp3', 0.5); }catch(e){}
+  schachMal();
+}
+function schachSchwarz(){
+  const antworten = Object.keys(SCHACH_BAUM['a1a6']);
+  const wahl = antworten[Math.floor(Math.random()*antworten.length)];
+  schachZug(wahl);
+  schach.erwartet = SCHACH_BAUM['a1a6'][wahl];
+  schach.stufe = 2;
+  schachSag(wahl==='b7a6'
+    ? 'Schwarz schlägt den Turm: <b>bxa6</b>. War das Opfer ein Fehler? Ihr Zug.'
+    : 'Der Läufer muss ziehen – Zugzwang. Jetzt der Schlussstrich: Ihr Zug.');
+}
+function schachFalsch(){
+  schach.fehl++;
+  schach.auswahl = null; schachMal();
+  const meldungen = [
+    'So entkommt der König. Zug zurück – es gibt genau einen Weg.',
+    'Nah dran, aber Schwarz überlebt. Denken Sie an Herrn Meier: Manchmal ist das beste Angebot ein Opfer.',
+    'Hinweis: Der Turm fürchtet den Bauern nicht. Er lädt ihn ein.',
+  ];
+  schachSag(meldungen[Math.min(schach.fehl-1, meldungen.length-1)]);
+}
+function schachKlick(feld){
+  if(schach.vorbei || schach.stufe===1) return;
+  const fig = schachFigurAuf(feld);
+  if(fig && fig.typ[0]==='w'){ schach.auswahl = fig; schachMal(); return; }
+  if(!schach.auswahl) return;
+  const uci = schach.auswahl.feld + feld;
+  if(schach.stufe===0){
+    if(uci==='a1a6'){
+      schach.auswahl = null; schachZug(uci); schach.stufe = 1;
+      schachSag('Ta6!? – Sie stellen den Turm ein …');
+      setTimeout(schachSchwarz, 900);
+    } else { schachFalsch(); }
+  } else if(schach.stufe===2){
+    if(uci===schach.erwartet){
+      schach.auswahl = null; schachZug(uci);
+      schach.vorbei = true;
+      let bonus = '';
+      try{
+        if(!zustand.funde.schachproblem){
+          zustand.funde.schachproblem = true;
+          setzeRQ(2);
+          bonus = ' <span class="rq-delta">+2 RQ · Wer vorausdenkt, gewinnt.</span>';
+        }
+      }catch(e){}
+      schachSag('<b>MATT!</b> Paul Morphy komponierte dieses Problem 1856 – mit neun Jahren.' + bonus);
+    } else { schachFalsch(); }
+  }
+}
+function schachAufbau(){
+  schach.stufe = 0; schach.fehl = 0; schach.auswahl = null; schach.erwartet = null; schach.vorbei = false;
+  schach.figuren = SCHACH_START.map(f=>({ id:f.id, typ:f.typ, feld:f.feld, weg:false, el:null }));
+  const brett = schach.wrap.querySelector('.schachBrett');
+  brett.querySelectorAll('.schachFigur').forEach(e=>e.remove());
+  schach.figuren.forEach(f=>{
+    const img = document.createElement('img');
+    img.className = 'schachFigur';
+    img.src = vurl('kaufvertrag_schach_' + f.typ + '.png');
+    img.alt = '';
+    f.el = img;
+    brett.appendChild(img);
+  });
+  schachMal();
+  schachSag('<b>Weiss zieht und setzt in zwei Zügen matt.</b> Wählen Sie eine weisse Figur, dann das Zielfeld.');
+}
+function schachOeffnen(){
+  if(schach.wrap){ schach.wrap.style.display='flex'; schachAufbau(); return; }
+  const stil = document.createElement('style');
+  stil.textContent = '.schachDeckel{position:fixed;inset:0;z-index:9400;background:rgba(10,14,20,.9);display:flex;align-items:center;justify-content:center;padding:16px}' +
+    '.schachKasten{background:#141821;border:3px solid #b8892b;border-radius:12px;padding:14px;max-width:min(92vw,560px);text-align:center}' +
+    '.schachBrett{position:relative;width:min(80vw,440px);margin:0 auto;user-select:none}' +
+    '.schachBrett>img.grund{width:100%;display:block;border-radius:6px}' +
+    '.schachFigur{position:absolute;transform:translateX(-50%);pointer-events:none;image-rendering:pixelated;filter:drop-shadow(0 2px 3px rgba(0,0,0,.5))}' +
+    '.schachZelle{position:absolute;cursor:pointer}' +
+    '#schachText{color:#f4efe2;font-size:.95rem;line-height:1.5;margin:.8rem 0;min-height:3em}' +
+    '.schachKnoepfe button{font:inherit;background:#22283a;color:#f4efe2;border:1px solid #b8892b;border-radius:8px;padding:.45rem 1rem;cursor:pointer;margin:0 .3rem}' +
+    '.schachKnoepfe button:hover{background:#b8892b;color:#141821}';
+  document.head.appendChild(stil);
+  const deckel = document.createElement('div');
+  deckel.className = 'schachDeckel';
+  deckel.innerHTML = '<div class="schachKasten">' +
+    '<div class="schachBrett"><img class="grund" src="' + vurl('kaufvertrag_schachbrett.jpg') + '" alt="Schachbrett"></div>' +
+    '<div id="schachText"></div>' +
+    '<div class="schachKnoepfe"><button id="schachNeu" type="button">Nochmals</button><button id="schachZu" type="button">Schliessen</button></div>' +
+    '</div>';
+  document.body.appendChild(deckel);
+  schach.wrap = deckel;
+  const brett = deckel.querySelector('.schachBrett');
+  for(let r=0; r<8; r++){
+    for(let s=0; s<8; s++){
+      const z = document.createElement('div');
+      z.className = 'schachZelle';
+      z.style.left = (SCHACH_RAND + s*SCHACH_FELD) + '%';
+      z.style.top = (SCHACH_RAND + r*SCHACH_FELD) + '%';
+      z.style.width = SCHACH_FELD + '%';
+      z.style.height = SCHACH_FELD + '%';
+      const feld = String.fromCharCode(97+s) + (8-r);
+      z.addEventListener('click', ()=>schachKlick(feld));
+      brett.appendChild(z);
+    }
+  }
+  deckel.querySelector('#schachNeu').addEventListener('click', schachAufbau);
+  deckel.querySelector('#schachZu').addEventListener('click', ()=>{ deckel.style.display='none'; });
+  schachAufbau();
+}
+
 /* =====================================================
    SPRECHBLASEN + KLICK (schauen) / DOPPELKLICK (handeln)
    ===================================================== */
@@ -1577,6 +1730,7 @@ function hotspotSchau(h){
 }
 function hotspotAktion(h){
   if(h.id==='radio'){ musikToggle(); return; }
+  if(h.id==='gestell'){ fxFuer('gestell'); schachOeffnen(); return; }
   fxFuer(h.id);
   let antwort = h.a && (h.a.redemit || h.a.oeffne || h.a.benutze || h.a.nimm);
   if(!antwort) antwort = 'Da gibt es gerade nichts zu tun.';
