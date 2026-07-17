@@ -448,7 +448,7 @@ front:[
     a:{ anschauen:'Ein Gebüsch am Laternenfuss. Da raschelt doch was …?' } },
 ],
 laden:[
-  { id:'meier', name:'Herr Meier', x:430,y:115,w:100,h:62,
+  { id:'meier', name:'Herr Meier', x:418,y:110,w:126,h:74,
     a:{ redemit:'Herr Meier hört zu – <b>nutzen Sie die Gesprächsoptionen unten.</b>',
         anschauen:'Herr Meier, Inhaber seit 1998. Brille, Weste, Ellbogen auf der Theke – und das OR vermutlich auswendig im Kopf.',
         nimm:'Herrn Meier kann man nicht mitnehmen. Er ist quasi Inventar.' } },
@@ -834,7 +834,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '7';
+const BILD_VERSION = '8';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   front:'kaufvertrag_front.png',  laden:'kaufvertrag_laden.png',
@@ -888,7 +888,7 @@ function kaeufer(){ return KAEUFER[zustand.kaeuferin || 'm']; }
 
 const SPRITES = {
   laden: [
-    { id:'meier', frames:null, x:433, y:119, w:95, h:53 },
+    { id:'meier', frames:null, x:425, y:115, w:112, h:63 },
     { id:'alex',  frames:['kaufvertrag_alex_0.png','kaufvertrag_alex_1.png','kaufvertrag_alex_2.png'],
       x:238, y:132, w:94, h:128 },
   ],
@@ -1305,21 +1305,21 @@ szeneEl.addEventListener('click', (ev)=>{
 const KNOTEN = {
 
 /* ---------- AKT 0 ---------- */
-start:{ art:'produktwahl', szene:'front', sprecher:'ERZÄHLER',
-  text:'Aarau, ein Samstagvormittag. Sie – Alex, Lernende/r im 2. Lehrjahr – stehen vor «Meier &amp; Co.», dem Occasions- und Elektrofachgeschäft an der Vorderen Vorstadt Nummer 12. Im Schaufenster leuchtet der rote Aktionsstern. Sie haben etwas gespart und wollen sich heute etwas leisten. <b>Was kaufen Sie?</b>' },
+start:{ art:'produktwahl', szene:'discount', sprecher:'ERZÄHLER',
+  text:'Aarau, Freitagabend. Sie – Alex, Lernende/r im 2. Lehrjahr – sind auf dem Nachhauseweg zum Bahnhof, als unten an der Bahnhofstrasse der grelle «MEGA-DISCOUNT» leuchtet. Sie haben etwas gespart und wollen sich etwas leisten. <b>Was darf es sein?</b>' },
 
 /* ---------- AKT 0b: Der Preisvergleich ---------- */
-discount:{ szene:'discount', sprecher:'ERZÄHLER',
-  text:'Kleiner Umweg vorab: Unten an der Bahnhofstrasse, im grellen «MEGA-DISCOUNT», steht {P} fabrikneu im Regal – Preisschild: <b>{NEUPREIS}</b>. Sie schlucken. Dann fällt Ihnen das Schaufenster von Meier &amp; Co. ein: dasselbe Modell, geprüft, als Occasion für <b>{PREIS}</b>. Was tun Sie?',
+discount:{ szene:'front', sprecher:'ERZÄHLER',
+  text:'Im Discounter-Regal: {P}, fabrikneu – Preisschild: <b>{NEUPREIS}</b>. Sie schlucken und fahren erst einmal heim. Samstagvormittag, Altstadt: Im Schaufenster von «Meier &amp; Co.», dem Occasions- und Elektrofachgeschäft an der Vorderen Vorstadt Nummer 12, leuchtet der rote Aktionsstern – dasselbe Modell, geprüft, als Occasion für <b>{PREIS}</b>. Was tun Sie?',
   optionen:[
-    { t:'Zur Occasion – gleiche Funktion, deutlich kleinerer Preis.', rq:2,
+    { t:'Hinein zu Meier &amp; Co. – gleiche Funktion, deutlich kleinerer Preis.', rq:2,
       fb:'Budgetbewusst gedacht. Und wichtig: Der <b>Occasionskauf ist ein ganz normaler Kaufvertrag</b> – gleiche Regeln, gleiche Rechte, inklusive Gewährleistung.',
       ziel:'k1' },
-    { t:'Neu kaufen – Occasionen sind mir suspekt.', rq:1,
-      fb:'Ihr gutes Recht – aber Ihr Lehrlingslohn hebt beim Blick auf {NEUPREIS} mahnend die Augenbraue. Sie schlendern doch zu Meier &amp; Co.',
+    { t:'Zurück zum Discounter – Occasionen sind mir suspekt.', rq:1,
+      fb:'Ihr gutes Recht – aber Ihr Lehrlingslohn hebt beim Blick auf {NEUPREIS} mahnend die Augenbraue. Sie bleiben, wo Sie sind: bei Meier &amp; Co.',
       ziel:'k1' },
-    { t:'Eine Nacht darüber schlafen und Preise vergleichen.', rq:2,
-      fb:'Besonnen! Impulskäufe sind der Feind jedes Budgets. Am nächsten Morgen steht fest: Die geprüfte Occasion gewinnt.',
+    { t:'Nochmals eine Nacht darüber schlafen.', rq:2,
+      fb:'Besonnen! Impulskäufe sind der Feind jedes Budgets. Aber genau das haben Sie letzte Nacht schon getan – der Vergleich ist gemacht, die geprüfte Occasion gewinnt.',
       ziel:'k1' },
     { t:'Neu kaufen – auf Kredit. Dafür gibt es doch Kleinkredite.', rq:0,
       fb:'<b>Vorsicht, Konsumkredit!</b> Zinsen von 10 Prozent und mehr machen den Neupreis erst richtig teuer – und das Konsumkreditgesetz verlangt nicht umsonst eine Budgetprüfung. Sie verwerfen die Idee. Schnell.',
