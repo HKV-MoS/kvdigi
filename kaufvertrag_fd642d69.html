@@ -835,7 +835,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '11';
+const BILD_VERSION = '12';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   front:'kaufvertrag_front.png',  laden:'kaufvertrag_laden.png',
@@ -1468,7 +1468,10 @@ function taubenStart(){
   }, 600);
 }
 function taubenStop(){ if(tauben.timer){ clearInterval(tauben.timer); tauben.timer = null; } }
+const tiere = { szene:null };
 function tiereWechsel(szene){
+  if(tiere.szene === szene) return;   /* gleiche Szene: Choreografie NICHT neu starten */
+  tiere.szene = szene;
   if(szene==='discount') katzeStart(); else katzeStop();
   if(szene==='front') taubenStart(); else taubenStop();
 }
