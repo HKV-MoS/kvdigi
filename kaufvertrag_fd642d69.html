@@ -201,13 +201,13 @@
     padding:7px 12px; cursor:pointer;
   }
   #vollbild:hover{color:var(--ega-gelb); border-color:var(--ega-gelb);}
-  #fx{
+  #fx,#musik{
     font:inherit; font-size:.82rem; line-height:1.45; letter-spacing:1px;
     background:#000; color:var(--ega-dgrau); border:2px solid var(--ega-dgrau);
     padding:8px 10px; cursor:pointer;
   }
-  #fx:hover{color:var(--ega-gelb); border-color:var(--ega-gelb);}
-  #fx.an{color:var(--ega-gruen); border-color:var(--ega-gruen);}
+  #fx:hover,#musik:hover{color:var(--ega-gelb); border-color:var(--ega-gelb);}
+  #fx.an,#musik.an{color:var(--ega-gruen); border-color:var(--ega-gruen);}
   .buehne:fullscreen{
     display:flex; flex-direction:column; overflow:auto;
     padding:10px 14px;
@@ -281,6 +281,7 @@
   <header>
     <h1 id="titel" title="Zurück zum Anfang">Der Kauf<small>Ein Rechtsfall in drei Wegen · Kaufvertrag nach OR</small></h1>
     <div style="display:flex; align-items:flex-start; gap:10px;">
+      <button id="musik" type="button" title="Musik ein/aus">♫</button>
       <button id="fx" type="button" title="Soundeffekte ein/aus">FX</button>
       <button id="vollbild" type="button" title="Vollbild (Esc beendet)">⛶</button>
       <div>
@@ -1200,7 +1201,8 @@ function fxFuer(hid){
 }
 const fxBtn = document.getElementById('fx');
 function fxAnzeige(){ fxBtn.className = fx.an ? 'an' : ''; fxBtn.textContent = fx.an ? 'FX ♪' : 'FX'; }
-try{ if(typeof localStorage!=='undefined' && localStorage.getItem('derkauf_fx')==='1'){ fx.an = true; fxDateienLaden(); } }catch(e){}
+try{ fx.an = (typeof localStorage==='undefined') || localStorage.getItem('derkauf_fx') !== '0'; }catch(e){ fx.an = true; }
+if(fx.an) fxDateienLaden();
 fxAnzeige();
 fxBtn.addEventListener('click', ()=>{
   fx.an = !fx.an;
@@ -1208,6 +1210,155 @@ fxBtn.addEventListener('click', ()=>{
   try{ if(typeof localStorage!=='undefined') localStorage.setItem('derkauf_fx', fx.an?'1':'0'); }catch(e){}
   fxAnzeige();
   if(fx.an) fxBlip();        /* kurzer Bestätigungston */
+  if(!fx.an) ambStop(); else if(aktuelleSzeneId) szenenAudio(aktuelleSzeneId);
+});
+
+
+/* =====================================================
+   FREITAGABEND-GROOVE (Musik-Kanal, separat schaltbar)
+   ===================================================== */
+const grv = { an:true, ctx:null, timer:null, schritt:0, naechste:0, master:null, echo:null };
+const GRV_T = 0.167;
+const GRV_BASS = [
+  [3,7,10,12], [3,2,0,-2], [5,8,12,10], [-2,2,5,8],
+  [3,7,10,12], [0,4,7,10], [5,8,12,8],  [-2,2,5,-2],
+];
+const GRV_STABS = [ [7,14],[7,14],[8,15],[14,20],[7,14],[16,22],[8,15],[14,20] ];
+const GRV_MEL = [
+  [[0,10,2],[2,12,1],[3,15,2],[5,12,1],[6,10,2],[9,7,3]],
+  [[0,9,1],[1,10,2],[3,7,2],[6,3,3]],
+  [[0,8,2],[2,10,1],[3,12,2],[5,13,1],[6,15,3],[9,12,3]],
+  [[0,14,2],[2,12,1],[3,10,2],[5,8,1],[6,5,3],[9,2,3]],
+  [[0,10,2],[2,12,1],[3,15,2],[5,12,1],[6,10,2],[9,7,3]],
+  [[0,16,2],[2,14,1],[3,12,2],[5,10,1],[6,16,3],[9,12,3]],
+  [[0,8,2],[2,12,1],[3,15,2],[5,17,1],[6,15,3]],
+  [[0,14,2],[2,15,1],[3,14,2],[5,10,1],[6,7,2],[8,3,4]],
+];
+function grvFreq(ht, basis){ return (basis||110) * Math.pow(2, ht/12); }
+function grvTon(zeit, freq, typ, dauer, laut, ziel){
+  const o = grv.ctx.createOscillator(), g = grv.ctx.createGain();
+  o.type = typ; o.frequency.value = freq;
+  g.gain.setValueAtTime(laut, zeit);
+  g.gain.exponentialRampToValueAtTime(0.001, zeit + dauer);
+  o.connect(g); g.connect(ziel || grv.master);
+  o.start(zeit); o.stop(zeit + dauer + 0.05);
+}
+function grvRausch(zeit, laut, hp, ms){
+  const n = grv.ctx.createBufferSource();
+  const buf = grv.ctx.createBuffer(1, grv.ctx.sampleRate*ms, grv.ctx.sampleRate);
+  const d = buf.getChannelData(0);
+  for(let i=0;i<d.length;i++) d[i] = (Math.random()*2-1) * (1 - i/d.length);
+  n.buffer = buf;
+  const f = grv.ctx.createBiquadFilter(); f.type='highpass'; f.frequency.value=hp;
+  const g = grv.ctx.createGain(); g.gain.value = laut;
+  n.connect(f); f.connect(g); g.connect(grv.master);
+  n.start(zeit);
+}
+function grvSchritt(zeit, schritt){
+  const takt = Math.floor(schritt/12) % 8, pos = schritt % 12;
+  GRV_MEL[takt].forEach(([p, ht, len])=>{
+    if(p===pos) grvTon(zeit, grvFreq(ht, 220), 'square', GRV_T*len*0.9, 0.04, grv.echo);
+  });
+  if(pos%3===0) grvTon(zeit, grvFreq(GRV_BASS[takt][pos/3], 110), 'triangle', GRV_T*2.6, 0.10);
+  if(pos===5 || pos===11) GRV_STABS[takt].forEach(ht=> grvTon(zeit, grvFreq(ht, 220), 'sawtooth', GRV_T*1.1, 0.018));
+  if(pos%3===0 || pos%3===2) grvRausch(zeit, pos%3===0 ? 0.024 : 0.015, 6500, 0.05);
+  if(pos===3 || pos===9) grvRausch(zeit, 0.04, 2500, 0.07);
+}
+function grvPlaner(){
+  while(grv.naechste < grv.ctx.currentTime + 0.25){
+    grvSchritt(grv.naechste, grv.schritt);
+    grv.naechste += GRV_T; grv.schritt++;
+  }
+}
+function grooveStart(){
+  if(!grv.an || grv.timer) return;
+  try{
+    if(!grv.ctx){
+      const AC = (typeof AudioContext!=='undefined') ? AudioContext :
+                 (typeof webkitAudioContext!=='undefined' ? webkitAudioContext : null);
+      if(!AC) return;
+      grv.ctx = new AC();
+      grv.master = grv.ctx.createGain(); grv.master.gain.value = 0.8;
+      grv.master.connect(grv.ctx.destination);
+      const delay = grv.ctx.createDelay(); delay.delayTime.value = GRV_T*3;
+      const fb = grv.ctx.createGain(); fb.gain.value = 0.22;
+      const mix = grv.ctx.createGain(); mix.gain.value = 0.5;
+      grv.echo = grv.ctx.createGain();
+      grv.echo.connect(grv.master);
+      grv.echo.connect(delay); delay.connect(fb); fb.connect(delay);
+      delay.connect(mix); mix.connect(grv.master);
+    }
+    grv.master.gain.setValueAtTime(0.8, grv.ctx.currentTime);
+    grv.ctx.resume();
+    grv.schritt = 0; grv.naechste = grv.ctx.currentTime + 0.08;
+    grv.timer = setInterval(grvPlaner, 60);
+  }catch(e){}
+}
+function grooveStop(){
+  if(grv.timer){ clearInterval(grv.timer); grv.timer = null; }
+  try{ if(grv.master) grv.master.gain.exponentialRampToValueAtTime(0.001, grv.ctx.currentTime + 0.5); }catch(e){}
+}
+
+/* =====================================================
+   AMBIENT-FX pro Szene (Loop + Einmal- und Zufalls-Sounds)
+   ===================================================== */
+const AMBIENT = {
+  discount: { loop:'kaufvertrag_fx_strasse.mp3', loopVol:0.30,
+              einmal:'kaufvertrag_fx_glocke.mp3', einmalVol:0.45, einmalNach:2500,
+              zufall:'kaufvertrag_fx_lieferwagen.mp3', zufallVol:0.40 },
+};
+const amb = { el:null, szene:null, zufallTimer:null, einmalGespielt:{} };
+function ambEinmal(url, vol){
+  try{ const a = new Audio(vurl(url)); a.volume = vol; a.play().catch(()=>{}); }catch(e){}
+}
+function ambStop(){
+  if(amb.el){ try{ amb.el.pause(); }catch(e){} amb.el = null; }
+  if(amb.zufallTimer){ clearInterval(amb.zufallTimer); amb.zufallTimer = null; }
+}
+function szenenAudio(szene){
+  /* Schritte auf dem Weg vom Discounter in die Altstadt */
+  if(fx.an && amb.szene==='discount' && szene==='front') ambEinmal('kaufvertrag_fx_schritte.mp3', 0.5);
+  const wechsel = (amb.szene !== szene);
+  amb.szene = szene;
+  if(wechsel) ambStop();
+  /* Musik: Groove nur am Freitagabend (Discount-Szene) */
+  if(szene==='discount' && grv.an) grooveStart(); else grooveStop();
+  /* Ambient-Loop */
+  const cfg = AMBIENT[szene];
+  if(!cfg || !fx.an) return;
+  if(!amb.el){
+    try{
+      amb.el = new Audio(vurl(cfg.loop));
+      amb.el.loop = true; amb.el.volume = cfg.loopVol;
+      amb.el.play().catch(()=>{});
+    }catch(e){}
+  }
+  if(cfg.einmal && !amb.einmalGespielt[szene]){
+    amb.einmalGespielt[szene] = true;
+    setTimeout(()=>{ if(fx.an && amb.szene===szene) ambEinmal(cfg.einmal, cfg.einmalVol); }, cfg.einmalNach);
+  }
+  if(cfg.zufall && !amb.zufallTimer){
+    amb.zufallTimer = setInterval(()=>{
+      if(fx.an && amb.szene===szene && Math.random() < 0.5) ambEinmal(cfg.zufall, cfg.zufallVol);
+    }, 35000);
+  }
+}
+/* Browser verlangen eine Geste: beim ersten Klick nachstarten */
+document.addEventListener('pointerdown', function ersteGeste(){
+  document.removeEventListener('pointerdown', ersteGeste);
+  setTimeout(()=>{ if(aktuelleSzeneId) szenenAudio(aktuelleSzeneId); }, 50);
+});
+
+/* Musik-Schalter (separat) */
+const musikBtn = document.getElementById('musik');
+function musikAnzeige(){ if(musikBtn){ musikBtn.className = grv.an ? 'an' : ''; musikBtn.textContent = grv.an ? '♫ an' : '♫'; } }
+try{ grv.an = (typeof localStorage==='undefined') || localStorage.getItem('derkauf_musik') !== '0'; }catch(e){ grv.an = true; }
+musikAnzeige();
+if(musikBtn) musikBtn.addEventListener('click', ()=>{
+  grv.an = !grv.an;
+  try{ if(typeof localStorage!=='undefined') localStorage.setItem('derkauf_musik', grv.an?'1':'0'); }catch(e){}
+  musikAnzeige();
+  if(grv.an && aktuelleSzeneId==='discount') grooveStart(); else grooveStop();
 });
 
 /* =====================================================
@@ -1733,6 +1884,7 @@ function zeige(id){
   spriteStopp();
   stoppeIdle();
   aktuelleSzeneId = k.szene;
+  szenenAudio(k.szene);
   szeneEl.innerHTML = bildOk[k.szene] ? bildSzene(k.szene)
                     : bildFehler[k.szene] ? (SZENEN[k.szene] || '')
                     : LADE_SVG;
