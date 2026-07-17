@@ -834,7 +834,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '15';
+const BILD_VERSION = '16';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   front:'kaufvertrag_front.png',  laden:'kaufvertrag_laden.png',
@@ -873,11 +873,11 @@ const HAENDLER = {
   herr:{ sprecher:'HERR MEIER', hotName:'Herr Meier',
     hotAnschauen:'Herr Meier, Inhaber seit 1998. Brille, Weste, Ellbogen auf der Theke – und das OR vermutlich auswendig im Kopf.',
     frames:['kaufvertrag_meier_0.png','kaufvertrag_meier_1.png','kaufvertrag_meier_2.png','kaufvertrag_meier_3.png'],
-    w:95, h:53 },
+    w:112, h:63 },
   frau:{ sprecher:'FRAU MEIER', hotName:'Frau Meier',
     hotAnschauen:'Frau Meier, Mitinhaberin. Ihr Mann ist unterwegs – und vom mündlichen Geschäft von damals weiss sie nichts. Zum Glück gibt es Papier.',
     frames:['kaufvertrag_frau_0.png','kaufvertrag_frau_1.png','kaufvertrag_frau_2.png','kaufvertrag_frau_3.png'],
-    w:90, h:53 },
+    w:106, h:63 },
 };
 function haendler(){ return HAENDLER[zustand.haendler || 'herr']; }
 const KAEUFER = {
@@ -893,11 +893,11 @@ const SPRITES = {
       x:680, y:198, w:30, h:24 },
   ],
   front: [
-    { id:'taubeA', frames:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'], x:64, y:242, w:22, h:13 },
-    { id:'taubeB', frames:['kaufvertrag_taube_b0.png','kaufvertrag_taube_b1.png'], x:88, y:244, w:20, h:12 },
+    { id:'taubeA', frames:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'], x:62, y:238, w:28, h:17 },
+    { id:'taubeB', frames:['kaufvertrag_taube_b0.png','kaufvertrag_taube_b1.png'], x:90, y:240, w:26, h:16 },
   ],
   laden: [
-    { id:'meier', frames:null, x:425, y:115, w:112, h:63 },
+    { id:'meier', frames:null, x:425, y:113, w:112, h:63 },
     { id:'alex',  frames:['kaufvertrag_alex_0.png','kaufvertrag_alex_1.png','kaufvertrag_alex_2.png'],
       x:238, y:132, w:94, h:128 },
   ],
