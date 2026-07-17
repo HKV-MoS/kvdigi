@@ -173,9 +173,20 @@ body{
 /* ── Paywall: gesperrte Kacheln ── */
 .karte.gesperrt{cursor:default}
 .karte.gesperrt:hover{transform:none}
-.karte.bald{cursor:default;opacity:.88}
+.karte.bald{cursor:default;opacity:.94;overflow:hidden;position:relative}
 .karte.bald:hover{transform:none}
 .karte.bald .k-titel{letter-spacing:.06em}
+.k-band{
+  position:absolute;top:46%;left:-15%;width:130%;
+  transform:rotate(-16deg);
+  background:rgba(184,137,43,.93);color:#fff;
+  font-family:'JetBrains Mono',monospace;
+  font-size:1.2rem;font-weight:700;letter-spacing:.32em;text-transform:uppercase;
+  text-align:center;padding:.6rem 0;
+  box-shadow:0 4px 14px rgba(0,0,0,.22);
+  pointer-events:none;z-index:2;
+}
+.karte.gesperrt .k-deko{bottom:195px}
 .k-schloss{
   position:absolute;top:12px;right:12px;
   font-size:1rem;line-height:1;
@@ -371,8 +382,8 @@ body{
         </div>
         <div class="k-titel">1875</div>
         <p class="k-text">Manche Wände haben ein Gedächtnis.</p>
-        <span class="k-aktion" style="color:#8a97a6">Coming soon ⌛</span>
-        <img class="k-deko" src="kachel_1875_turm.png?v=1" alt="" style="height:88px;border-radius:6px" onerror="this.style.display=&#39;none&#39;">
+        <div class="k-band">Coming soon</div>
+        <img class="k-deko" src="kachel_1875_turm.png?v=2" alt="" style="height:170px;border-radius:8px" onerror="this.style.display=&#39;none&#39;">
       </div>
 
       <a class="karte" href="slp_karte.html" data-kat="lernen">
@@ -453,14 +464,11 @@ document.querySelectorAll('a.karte').forEach(k => {
   if (!cfg) return;
   k.classList.add('gesperrt');
   k.removeAttribute('href');                       // nicht mehr klickbar
-  const schloss = document.createElement('span');
-  schloss.className = 'k-schloss'; schloss.textContent = '🔒';
-  k.appendChild(schloss);
   const aktion = k.querySelector('.k-aktion');
   const zeile = document.createElement('div');
   zeile.className = 'k-kaufzeile';
   const preis = document.createElement('span');
-  preis.className = 'k-preis'; preis.textContent = cfg.preis;
+  preis.className = 'k-preis'; preis.textContent = '🔒 ' + cfg.preis;
   if (cfg.preisZusatz) preis.title = cfg.preisZusatz;
   const knopf = document.createElement('button');
   knopf.className = 'k-kaufen'; knopf.type = 'button';
