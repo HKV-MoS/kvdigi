@@ -1170,6 +1170,7 @@ function fxBlip(){
 const FX_HOTSPOTS = { brunnen:fxWasser, uhr:fxTicken, bahnhof:fxZug };
 /* Echte Sounddateien (z. B. von elevenlabs.io) werden bevorzugt,
    fehlen sie im Repo, spielt die Synthese. */
+const FX_LOOP = { brunnen:true };   /* diese FX laufen endlos, zweiter Klick stoppt */
 const FX_DATEIEN = {
   brunnen:'kaufvertrag_fx_brunnen.mp3',
   uhr:'kaufvertrag_fx_uhr.mp3',
@@ -1184,6 +1185,7 @@ function fxDateienLaden(){
     fxAudio[hid] = { el:el, ok:false };
     el.preload = 'auto';
     el.volume = 0.55;
+    el.loop = !!FX_LOOP[hid];
     el.addEventListener('canplaythrough', ()=>{ fxAudio[hid].ok = true; });
     el.addEventListener('error', ()=>{ fxAudio[hid].ok = false; });
     el.src = vurl(url);
@@ -1193,7 +1195,10 @@ function fxFuer(hid){
   if(!fx.an) return;
   const a = fxAudio[hid];
   if(a && a.ok){
-    try{ a.el.currentTime = 0; a.el.play(); return; }catch(e){}
+    try{
+      if(FX_LOOP[hid] && !a.el.paused){ a.el.pause(); a.el.currentTime = 0; return; }
+      a.el.currentTime = 0; a.el.play(); return;
+    }catch(e){}
   }
   const f = FX_HOTSPOTS[hid];
   if(f) f();
@@ -1270,7 +1275,9 @@ function grvPlaner(){
   }
 }
 function grooveStart(){
-  if(!grv.an || grv.timer) return;
+  if(!grv.an) return;
+  try{ if(grv.ctx && grv.ctx.state==='suspended') grv.ctx.resume(); }catch(e){}
+  if(grv.timer) return;
   try{
     if(!grv.ctx){
       const AC = (typeof AudioContext!=='undefined') ? AudioContext :
@@ -1332,7 +1339,10 @@ function szenenAudio(szene){
   if(fx.an && amb.szene==='discount' && szene==='front') ambEinmal('kaufvertrag_fx_schritte.mp3', 0.5);
   const wechsel = (amb.szene !== szene);
   amb.szene = szene;
-  if(wechsel) ambStop();
+  if(wechsel){
+    ambStop();
+    try{ Object.entries(fxAudio).forEach(([hid,a])=>{ if(FX_LOOP[hid]){ a.el.pause(); a.el.currentTime = 0; } }); }catch(e){}
+  }
   /* Musik: Groove nur am Freitagabend (Discount-Szene) */
   if(szene==='discount' && grv.an) grooveStart(); else grooveStop();
   /* Ambient-Loop */
@@ -1344,6 +1354,8 @@ function szenenAudio(szene){
       amb.el.loop = true; amb.el.volume = cfg.loopVol;
       amb.el.play().catch(()=>{});
     }catch(e){}
+  } else if(amb.el.paused){
+    try{ amb.el.play().catch(()=>{}); }catch(e){}
   }
   if(cfg.einmal && !amb.einmalGespielt[szene]){
     amb.einmalGespielt[szene] = true;
@@ -1358,7 +1370,9 @@ function szenenAudio(szene){
 /* Browser verlangen eine Geste: beim ersten Klick nachstarten */
 document.addEventListener('pointerdown', function ersteGeste(){
   document.removeEventListener('pointerdown', ersteGeste);
-  setTimeout(()=>{ if(aktuelleSzeneId) szenenAudio(aktuelleSzeneId); }, 50);
+  try{ if(grv.ctx) grv.ctx.resume(); }catch(e){}
+  try{ if(fx.ctx) fx.ctx.resume(); }catch(e){}
+  if(aktuelleSzeneId) szenenAudio(aktuelleSzeneId);
 });
 
 /* Musik-Schalter (separat) */
