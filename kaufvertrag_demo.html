@@ -834,7 +834,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '10';
+const BILD_VERSION = '11';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   front:'kaufvertrag_front.png',  laden:'kaufvertrag_laden.png',
@@ -1181,6 +1181,7 @@ const FX_HOTSPOTS = { brunnen:fxWasser, uhr:fxTicken, bahnhof:fxZug };
    fehlen sie im Repo, spielt die Synthese. */
 const FX_LOOP = { brunnen:true };   /* diese FX laufen endlos, zweiter Klick stoppt */
 const FX_DATEIEN = {
+  velo:'kaufvertrag_fx_velo.mp3',
   brunnen:'kaufvertrag_fx_brunnen.mp3',
   uhr:'kaufvertrag_fx_uhr.mp3',
   bahnhof:'kaufvertrag_fx_zug.mp3',
