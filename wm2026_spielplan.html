@@ -1327,6 +1327,9 @@ function renderBracket() {
   const realKO = resolveRealKO();
   lastRealKO = realKO;
   const winner = id => realKO[id] || koPicks[id] || null;
+  // Verlierer eines Spiels (fürs Spiel um Platz 3): das Team, das nicht gewonnen hat
+  const loser = id => { const w = winner(id), pair = BRACKET[id]; if (!w || !pair) return null;
+    const a = winner(pair[0]), b = winner(pair[1]); return w === a ? b : (w === b ? a : null); };
   
   const afL = [['r32_1','r32_2'],['r32_3','r32_4'],['r32_5','r32_6'],['r32_7','r32_8']];
   const afR = [['r32_9','r32_10'],['r32_11','r32_12'],['r32_13','r32_14'],['r32_15','r32_16']];
@@ -1338,6 +1341,13 @@ function renderBracket() {
       if (rr && rr.finished && rr.home !== null) scoreTxt =
         '<div class="bk-score">' + rr.home + ':' + rr.away +
         (koWinners[[a, b].sort().join('_')] && rr.home === rr.away ? ' n.E.' : '') + '</div>';
+    }
+    // Spiel um Platz 3: reine Anzeige, kein Weiterklicken
+    if (id === 'p3') {
+      const cell = (code, lab) => code
+        ? '<div class="bk-team' + (code === followTeam ? ' followed' : '') + '"><span class="nm">' + TEAMS[code].flag + ' ' + TEAMS[code].name + '</span></div>'
+        : '<div class="bk-team tbd"><span class="nm">⏳ ' + lab + '</span></div>';
+      return '<div class="bk-match ' + (extra || '') + '">' + cell(a, la) + cell(b, lb) + scoreTxt + '</div>';
     }
     return '<div class="bk-match ' + (extra || '') + '">' +
       bkTeamHtml(a, id, la) + bkTeamHtml(b, id, lb) + scoreTxt + '</div>';
@@ -1361,9 +1371,13 @@ function renderBracket() {
   const colVFR = [3,4].map(i => koMatchHtml('vf_'+i, vfTeams['vf_'+i][0], vfTeams['vf_'+i][1], '', '')).join('');
   const colHFL = koMatchHtml('hf_1', hfTeams.hf_1[0], hfTeams.hf_1[1], '', '');
   const colHFR = koMatchHtml('hf_2', hfTeams.hf_2[0], hfTeams.hf_2[1], '', '');
+  const p3a = loser('hf_1'), p3b = loser('hf_2');
   const colFinal = koMatchHtml('final', finTeams[0], finTeams[1], 'HF1', 'HF2', 'final') +
     (champ ? '<div class="champion-box">🏆 Weltmeister:<br>' + TEAMS[champ].flag + ' ' + TEAMS[champ].name + '</div>' : '') +
-    '<div class="bk-info">19. Juli · MetLife Stadium<br>New York/New Jersey</div>';
+    '<div class="bk-info">19. Juli · MetLife Stadium<br>New York/New Jersey</div>' +
+    '<div class="bk-info" style="margin-top:18px;">🥉 Spiel um Platz 3</div>' +
+    koMatchHtml('p3', p3a, p3b, 'Verlierer HF1', 'Verlierer HF2', 'p3') +
+    '<div class="bk-info">18. Juli · Miami</div>';
   
   el.innerHTML =
     '<div class="bracket-col"><h4>Sechzehntel</h4>' + colR32L + '<div class="bk-info">28.6.–3.7.</div></div>' +
