@@ -835,7 +835,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '9';
+const BILD_VERSION = '10';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   front:'kaufvertrag_front.png',  laden:'kaufvertrag_laden.png',
@@ -891,11 +891,11 @@ const SPRITES = {
   discount: [
     { id:'katze', frames:['kaufvertrag_katze_0.png','kaufvertrag_katze_1.png','kaufvertrag_katze_2.png',
       'kaufvertrag_katze_3.png','kaufvertrag_katze_4.png','kaufvertrag_katze_5.png','kaufvertrag_katze_6.png'],
-      x:-40, y:212, w:30, h:24 },
+      x:680, y:198, w:30, h:24 },
   ],
   front: [
-    { id:'taubeA', frames:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'], x:50, y:236, w:16, h:9 },
-    { id:'taubeB', frames:['kaufvertrag_taube_b0.png','kaufvertrag_taube_b1.png'], x:68, y:238, w:15, h:9 },
+    { id:'taubeA', frames:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'], x:64, y:242, w:22, h:13 },
+    { id:'taubeB', frames:['kaufvertrag_taube_b0.png','kaufvertrag_taube_b1.png'], x:88, y:244, w:20, h:12 },
   ],
   laden: [
     { id:'meier', frames:null, x:425, y:115, w:112, h:63 },
@@ -1406,11 +1406,11 @@ const KATZE_FRAMES = ['kaufvertrag_katze_0.png','kaufvertrag_katze_1.png','kaufv
   'kaufvertrag_katze_3.png','kaufvertrag_katze_4.png','kaufvertrag_katze_5.png','kaufvertrag_katze_6.png'];
 const katze = { timer:null, phase:0, tick:0, x:-40 };
 const KATZE_PLAN = [
-  { art:'lauf', bis:296, tempo:2.2 },              /* aus dem Hauseingang links vor die Ladentüre */
+  { art:'lauf', bis:300, tempo:-2.2 },             /* aus der Gasse rechts zur Ladentreppe */
   { art:'pose', frame:4, ticks:12 },               /* hinsetzen */
   { art:'wechsel', frames:[5,6], ticks:32, alle:4 },  /* Pfote lecken */
   { art:'pose', frame:4, ticks:10 },
-  { art:'lauf', bis:680, tempo:2.6 },              /* rechts in die Altstadt-Gasse */
+  { art:'lauf', bis:-40, tempo:-2.6 },             /* links im Hauseingang verschwinden */
   { art:'pause', ticks:380 },                      /* ~45 s Ruhe, dann wieder */
 ];
 function katzeZeichne(frame){
@@ -1426,7 +1426,7 @@ function katzeTick(){
   if(p.art==='lauf'){
     katze.x += p.tempo;
     katzeZeichne(Math.floor(katze.tick/2)%4);
-    if(katze.x >= p.bis) weiter();
+    if(p.tempo > 0 ? katze.x >= p.bis : katze.x <= p.bis) weiter();
   } else if(p.art==='pose'){
     katzeZeichne(p.frame);
     if(katze.tick >= p.ticks) weiter();
@@ -1434,7 +1434,7 @@ function katzeTick(){
     katzeZeichne(p.frames[Math.floor(katze.tick/p.alle)%p.frames.length]);
     if(katze.tick >= p.ticks) weiter();
   } else {
-    if(katze.tick===1){ katze.x = -40; katzeZeichne(0); }
+    if(katze.tick===1){ katze.x = 680; katzeZeichne(0); }
     if(katze.tick >= p.ticks) weiter();
   }
 }
@@ -1444,11 +1444,11 @@ function reduzierteBewegung(){
 function katzeStart(){
   katzeStop();
   if(reduzierteBewegung()){
-    katze.x = 296;
-    katze.timer = setInterval(()=>{ katze.x = 296; katzeZeichne(4); }, 1500);
+    katze.x = 300;
+    katze.timer = setInterval(()=>{ katze.x = 300; katzeZeichne(4); }, 1500);
     return;
   }
-  katze.phase = 0; katze.tick = 0; katze.x = -40;
+  katze.phase = 0; katze.tick = 0; katze.x = 680;
   katze.timer = setInterval(katzeTick, 120);
 }
 function katzeStop(){ if(katze.timer){ clearInterval(katze.timer); katze.timer = null; } }
@@ -1478,10 +1478,10 @@ function tiereWechsel(szene){
 const MUSIK_SZENEN = {
   discount:{ art:'groove' },
   front:{ art:'datei', url:'kaufvertrag_musik_elektro.mp3', vol:0.38 },
-  laden:{ art:'datei', url:'kaufvertrag_musik_elektro.mp3', vol:0.38 },
-  zimmer:{ art:'datei', url:'kaufvertrag_musik_secrets.mp3', vol:0.34 },
+  /* laden: bewusst OHNE Musik — im Geschäft zählt das Gespräch */
+  zimmer:{ art:'datei', url:'kaufvertrag_musik_zimmer.mp3', vol:0.34 },
   weiche:{ art:'datei', url:'kaufvertrag_musik_secrets.mp3', vol:0.34 },
-  ende:{ art:'datei', url:'kaufvertrag_musik_elektro.mp3', vol:0.30 },
+  ende:{ art:'datei', url:'kaufvertrag_musik_abspann.mp3', vol:0.34 },
 };
 const mtrk = { el:null, url:null };
 function trackStop(){ if(mtrk.el){ try{ mtrk.el.pause(); }catch(e){} } mtrk.el = null; mtrk.url = null; }
