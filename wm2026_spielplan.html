@@ -1328,7 +1328,7 @@ function renderBracket() {
   lastRealKO = realKO;
   const winner = id => realKO[id] || koPicks[id] || null;
   // Verlierer eines Spiels (fürs Spiel um Platz 3): das Team, das nicht gewonnen hat
-  const loser = id => { const w = winner(id), pair = BRACKET[id]; if (!w || !pair) return null;
+  const loser = id => { const w = winner(id), pair = KO_PAIRS[id]; if (!w || !pair) return null;
     const a = winner(pair[0]), b = winner(pair[1]); return w === a ? b : (w === b ? a : null); };
   
   const afL = [['r32_1','r32_2'],['r32_3','r32_4'],['r32_5','r32_6'],['r32_7','r32_8']];
