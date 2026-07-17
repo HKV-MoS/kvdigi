@@ -835,7 +835,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '8';
+const BILD_VERSION = '9';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   front:'kaufvertrag_front.png',  laden:'kaufvertrag_laden.png',
@@ -888,6 +888,15 @@ const KAEUFER = {
 function kaeufer(){ return KAEUFER[zustand.kaeuferin || 'm']; }
 
 const SPRITES = {
+  discount: [
+    { id:'katze', frames:['kaufvertrag_katze_0.png','kaufvertrag_katze_1.png','kaufvertrag_katze_2.png',
+      'kaufvertrag_katze_3.png','kaufvertrag_katze_4.png','kaufvertrag_katze_5.png','kaufvertrag_katze_6.png'],
+      x:-40, y:212, w:30, h:24 },
+  ],
+  front: [
+    { id:'taubeA', frames:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'], x:50, y:236, w:16, h:9 },
+    { id:'taubeB', frames:['kaufvertrag_taube_b0.png','kaufvertrag_taube_b1.png'], x:68, y:238, w:15, h:9 },
+  ],
   laden: [
     { id:'meier', frames:null, x:425, y:115, w:112, h:63 },
     { id:'alex',  frames:['kaufvertrag_alex_0.png','kaufvertrag_alex_1.png','kaufvertrag_alex_2.png'],
@@ -1344,8 +1353,9 @@ function szenenAudio(szene){
     ambStop();
     try{ Object.entries(fxAudio).forEach(([hid,a])=>{ if(FX_LOOP[hid]){ a.el.pause(); a.el.currentTime = 0; } }); }catch(e){}
   }
-  /* Musik: Groove nur am Freitagabend (Discount-Szene) */
-  if(szene==='discount' && grv.an) grooveStart(); else grooveStop();
+  /* Musik pro Teilbild + Ambient-Tiere */
+  musikWechsel(szene);
+  tiereWechsel(szene);
   /* Ambient-Loop */
   const cfg = AMBIENT[szene];
   if(!cfg || !fx.an) return;
@@ -1385,8 +1395,113 @@ if(musikBtn) musikBtn.addEventListener('click', ()=>{
   grv.an = !grv.an;
   try{ if(typeof localStorage!=='undefined') localStorage.setItem('derkauf_musik', grv.an?'1':'0'); }catch(e){}
   musikAnzeige();
-  if(grv.an && aktuelleSzeneId==='discount') grooveStart(); else grooveStop();
+  if(grv.an && aktuelleSzeneId){ musikWechsel(aktuelleSzeneId); } else { grooveStop(); trackStop(); }
 });
+
+
+/* =====================================================
+   AMBIENT-TIERE: Katze (Discount) + Tauben (Front)
+   ===================================================== */
+const KATZE_FRAMES = ['kaufvertrag_katze_0.png','kaufvertrag_katze_1.png','kaufvertrag_katze_2.png',
+  'kaufvertrag_katze_3.png','kaufvertrag_katze_4.png','kaufvertrag_katze_5.png','kaufvertrag_katze_6.png'];
+const katze = { timer:null, phase:0, tick:0, x:-40 };
+const KATZE_PLAN = [
+  { art:'lauf', bis:296, tempo:2.2 },              /* aus dem Hauseingang links vor die Ladentüre */
+  { art:'pose', frame:4, ticks:12 },               /* hinsetzen */
+  { art:'wechsel', frames:[5,6], ticks:32, alle:4 },  /* Pfote lecken */
+  { art:'pose', frame:4, ticks:10 },
+  { art:'lauf', bis:680, tempo:2.6 },              /* rechts in die Altstadt-Gasse */
+  { art:'pause', ticks:380 },                      /* ~45 s Ruhe, dann wieder */
+];
+function katzeZeichne(frame){
+  const el = document.getElementById('sp-katze');
+  if(!el) return;
+  el.setAttribute('x', katze.x);
+  el.setAttribute('href', vurl(KATZE_FRAMES[frame]));
+}
+function katzeTick(){
+  const p = KATZE_PLAN[katze.phase];
+  katze.tick++;
+  const weiter = ()=>{ katze.phase = (katze.phase+1)%KATZE_PLAN.length; katze.tick = 0; };
+  if(p.art==='lauf'){
+    katze.x += p.tempo;
+    katzeZeichne(Math.floor(katze.tick/2)%4);
+    if(katze.x >= p.bis) weiter();
+  } else if(p.art==='pose'){
+    katzeZeichne(p.frame);
+    if(katze.tick >= p.ticks) weiter();
+  } else if(p.art==='wechsel'){
+    katzeZeichne(p.frames[Math.floor(katze.tick/p.alle)%p.frames.length]);
+    if(katze.tick >= p.ticks) weiter();
+  } else {
+    if(katze.tick===1){ katze.x = -40; katzeZeichne(0); }
+    if(katze.tick >= p.ticks) weiter();
+  }
+}
+function reduzierteBewegung(){
+  try{ return window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){ return false; }
+}
+function katzeStart(){
+  katzeStop();
+  if(reduzierteBewegung()){
+    katze.x = 296;
+    katze.timer = setInterval(()=>{ katze.x = 296; katzeZeichne(4); }, 1500);
+    return;
+  }
+  katze.phase = 0; katze.tick = 0; katze.x = -40;
+  katze.timer = setInterval(katzeTick, 120);
+}
+function katzeStop(){ if(katze.timer){ clearInterval(katze.timer); katze.timer = null; } }
+
+const tauben = { timer:null };
+function taubenStart(){
+  taubenStop();
+  if(reduzierteBewegung()) return;
+  tauben.timer = setInterval(()=>{
+    [['sp-taubeA','kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'],
+     ['sp-taubeB','kaufvertrag_taube_b0.png','kaufvertrag_taube_b1.png']].forEach(([id, oben, unten])=>{
+      const el = document.getElementById(id);
+      if(!el) return;
+      if(Math.random() < 0.45) el.setAttribute('href', vurl(Math.random() < 0.55 ? unten : oben));
+    });
+  }, 600);
+}
+function taubenStop(){ if(tauben.timer){ clearInterval(tauben.timer); tauben.timer = null; } }
+function tiereWechsel(szene){
+  if(szene==='discount') katzeStart(); else katzeStop();
+  if(szene==='front') taubenStart(); else taubenStop();
+}
+
+/* =====================================================
+   MUSIK PRO TEILBILD (laeuft ueber den ♫-Schalter)
+   ===================================================== */
+const MUSIK_SZENEN = {
+  discount:{ art:'groove' },
+  front:{ art:'datei', url:'kaufvertrag_musik_elektro.mp3', vol:0.38 },
+  laden:{ art:'datei', url:'kaufvertrag_musik_elektro.mp3', vol:0.38 },
+  zimmer:{ art:'datei', url:'kaufvertrag_musik_secrets.mp3', vol:0.34 },
+  weiche:{ art:'datei', url:'kaufvertrag_musik_secrets.mp3', vol:0.34 },
+  ende:{ art:'datei', url:'kaufvertrag_musik_elektro.mp3', vol:0.30 },
+};
+const mtrk = { el:null, url:null };
+function trackStop(){ if(mtrk.el){ try{ mtrk.el.pause(); }catch(e){} } mtrk.el = null; mtrk.url = null; }
+function musikWechsel(szene){
+  const cfg = MUSIK_SZENEN[szene];
+  if(!grv.an || !cfg){ grooveStop(); trackStop(); return; }
+  if(cfg.art==='groove'){ trackStop(); grooveStart(); return; }
+  grooveStop();
+  if(mtrk.url === cfg.url){
+    if(mtrk.el && mtrk.el.paused){ try{ mtrk.el.play().catch(()=>{}); }catch(e){} }
+    return;
+  }
+  trackStop();
+  try{
+    mtrk.el = new Audio(vurl(cfg.url));
+    mtrk.el.loop = true; mtrk.el.volume = cfg.vol;
+    mtrk.url = cfg.url;
+    mtrk.el.play().catch(()=>{});
+  }catch(e){}
+}
 
 /* =====================================================
    SPRECHBLASEN + KLICK (schauen) / DOPPELKLICK (handeln)
