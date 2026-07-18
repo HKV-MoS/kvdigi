@@ -2198,6 +2198,54 @@ function zeigeGalerie(){
   const h2 = document.createElement('h2');
   h2.textContent = 'PRÄTORIANER-KONSOLE · ' + alle.length + ' ASSETS';
   g.appendChild(h2);
+
+  /* ---------- KONTROLL-MODUS: durchklicken ohne zu spielen ---------- */
+  const kontrolle = document.createElement('div');
+  kontrolle.style.cssText = 'margin:14px 0;padding:12px;border:1px dashed #0ff;text-align:left';
+  const kt = document.createElement('h2');
+  kt.textContent = 'KONTROLLE · Knoten anspringen, Sounds testen';
+  kt.style.cssText = 'margin:0 0 8px;font-size:.95rem;color:#0ff';
+  kontrolle.appendChild(kt);
+  function kKnopf(text, tu){
+    const b = document.createElement('button');
+    b.type='button'; b.textContent = text;
+    b.style.cssText = 'font:inherit;font-size:.72rem;margin:2px;padding:4px 8px;background:#111;color:#8f8;border:1px solid #4a4;cursor:pointer';
+    b.addEventListener('click', tu);
+    return b;
+  }
+  function kBereit(){
+    if(!zustand.produkt){ zustand.produkt = PRODUKTE[0]; zustand.kaeuferin = zustand.kaeuferin || 'm'; }
+  }
+  const kz1 = document.createElement('div');
+  kz1.appendChild(Object.assign(document.createElement('span'), {textContent:'Knoten: ', style:'color:#888;font-size:.75rem'}));
+  Object.keys(KNOTEN).forEach(id=>{
+    kz1.appendChild(kKnopf(id, ()=>{ kBereit(); g.remove(); zeige(id); }));
+  });
+  kontrolle.appendChild(kz1);
+  const kz2 = document.createElement('div');
+  kz2.appendChild(Object.assign(document.createElement('span'), {textContent:'FX: ', style:'color:#888;font-size:.75rem'}));
+  Object.keys(FX_DATEIEN).forEach(hid=>{
+    kz2.appendChild(kKnopf(hid, ()=>{ const war = fx.an; fx.an = true; if(!Object.keys(fxAudio).length) fxDateienLaden(); fxFuer(hid); fx.an = war; }));
+  });
+  Object.keys(FX_HOTSPOTS).forEach(hid=>{
+    if(!FX_DATEIEN[hid]) kz2.appendChild(kKnopf(hid+' (Synthese)', ()=>{ const f = FX_HOTSPOTS[hid]; if(f) f(); }));
+  });
+  kontrolle.appendChild(kz2);
+  const kz3 = document.createElement('div');
+  kz3.appendChild(Object.assign(document.createElement('span'), {textContent:'Musik: ', style:'color:#888;font-size:.75rem'}));
+  kz3.appendChild(kKnopf('Groove', ()=>{ trackStop(); grooveStop(); const war = grv.an; grv.an = true; grooveStart(); grv.an = war; }));
+  [['Elektro','kaufvertrag_musik_elektro.mp3'],['Zimmer','kaufvertrag_musik_zimmer.mp3'],
+   ['Weiche','kaufvertrag_musik_weiche.mp3'],['Secrets','kaufvertrag_musik_secrets.mp3'],
+   ['Abspann','kaufvertrag_musik_abspann.mp3']].forEach(([nm,url])=>{
+    kz3.appendChild(kKnopf(nm, ()=>{
+      grooveStop(); trackStop();
+      try{ mtrk.el = new Audio(vurl(url)); mtrk.el.loop = true; mtrk.el.volume = 0.4; mtrk.url = url; mtrk.el.play().catch(()=>{}); }catch(e){}
+    }));
+  });
+  kz3.appendChild(kKnopf('■ Stille', ()=>{ grooveStop(); trackStop(); ambStop(); }));
+  kontrolle.appendChild(kz3);
+  g.appendChild(kontrolle);
+
   const raster = document.createElement('div'); raster.className='graster';
   alle.forEach(([name,url])=>{
     const z = document.createElement('div'); z.className='gzelle';
