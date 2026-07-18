@@ -448,7 +448,7 @@ front:[
     a:{ anschauen:'Ein Gebüsch am Laternenfuss. Da raschelt doch was …?' } },
 ],
 laden:[
-  { id:'meier', name:'Herr Meier', x:418,y:110,w:126,h:74,
+  { id:'meier', name:'Herr Meier', x:432,y:118,w:126,h:78,
     a:{ redemit:'Herr Meier hört zu – <b>nutzen Sie die Gesprächsoptionen unten.</b>',
         anschauen:'Herr Meier, Inhaber seit 1998. Brille, Weste, Ellbogen auf der Theke – und das OR vermutlich auswendig im Kopf.',
         nimm:'Herrn Meier kann man nicht mitnehmen. Er ist quasi Inventar.' } },
@@ -456,20 +456,20 @@ laden:[
     a:{ anschauen:'Das sind Sie. Die Frisur sitzt, der Rechtsverstand wächst.',
         nimm:'Sich selbst nehmen? Das wird philosophisch.',
         redemit:'Selbstgespräche? Erst nach bestandenem QV.' } },
-  { id:'regal', name:'Regal', x:25,y:30,w:210,h:120,
+  { id:'regal', name:'Regal', x:0,y:0,w:250,h:260,
     a:{ anschauen:'Radio, Röhrenfernseher, Kamera, Ventilator, Telefon, Boombox – alles Occasionen, alles geprüft, alles mit gelbem Preisschild.',
         nimm:'Erst der Vertrag, dann die Ware. Sie kennen die Reihenfolge inzwischen.' } },
-  { id:'plakat', name:'Plakat', x:250,y:35,w:80,h:105,
-    fund:{ verb:'anschauen', rq:1, text:'Im Kleingedruckten des SALE-Plakats: <b>«Auch Occasionen: Gewährleistung nach OR.»</b> Gut zu wissen – Aktion hin oder her.' },
-    a:{ anschauen:'Ein grelles SALE-Plakat.' } },
-  { id:'werkzeug', name:'Werkzeugwand', x:345,y:15,w:60,h:50,
+  { id:'plakat', name:'Blechschild', x:456,y:4,w:88,h:104,
+    fund:{ verb:'anschauen', rq:1, text:'Zuunterst auf dem Blechschild, fast unleserlich: <b>«Auch Occasionen: Gewährleistung nach OR.»</b> Gut zu wissen – bei Ankauf, Verkauf und Tausch.' },
+    a:{ anschauen:'Ein rotes Blechschild: ANKAUF · VERKAUF · TAUSCH. Das Geschäftsmodell in drei Worten.' } },
+  { id:'werkzeug', name:'Werkzeugwand', x:340,y:0,w:104,h:110,
     a:{ anschauen:'Schraubenzieher, Zange, Lötkolben: Hier prüft Herr Meier seine Occasionen. Angeblich sehr gründlich.',
         nimm:'Werkzeug eines Fachmanns. Bleibt hängen.' } },
-  { id:'kasse', name:'Kasse', x:530,y:95,w:80,h:60,
+  { id:'kasse', name:'Kasse', x:300,y:116,w:124,h:80,
     a:{ anschauen:'Eine Registrierkasse, daneben ein Quittungsblock – zwei verschiedene Dinge! Der <b>Kassabeleg</b> aus der Kasse ist anonym: Ware, Preis, Datum, fertig. Die <b>Quittung</b> aus dem Block hält fest, <b>wer wem wofür wie viel</b> bezahlt hat, mit Unterschrift – und nach OR Art. 88 dürfen Sie sie verlangen.',
         nimm:'Das wäre Diebstahl – und damit Strafrecht statt Obligationenrecht. Nein.',
         oeffne:'Nur Herr Meier öffnet die Kasse. Meistens zum Einnehmen.' } },
-  { id:'uhr', name:'Wanduhr', x:290,y:10,w:50,h:50,
+  { id:'uhr', name:'Wanduhr', x:264,y:0,w:60,h:92,
     a:{ anschauen:'Die Uhr tickt. Fristen laufen – das merken Sie sich für später.' } },
 ],
 zimmer:[
@@ -834,7 +834,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '17';
+const BILD_VERSION = '19';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   front:'kaufvertrag_front.png',  laden:'kaufvertrag_laden.png',
@@ -897,7 +897,7 @@ const SPRITES = {
     { id:'taubeB', frames:['kaufvertrag_taube_b0.png','kaufvertrag_taube_b1.png'], x:90, y:240, w:26, h:16 },
   ],
   laden: [
-    { id:'meier', frames:null, x:425, y:113, w:112, h:63 },
+    { id:'meier', frames:null, x:440, y:131, w:112, h:63 },
     { id:'alex',  frames:['kaufvertrag_alex_0.png','kaufvertrag_alex_1.png','kaufvertrag_alex_2.png'],
       x:238, y:132, w:94, h:128 },
   ],
