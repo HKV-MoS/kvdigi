@@ -535,17 +535,22 @@ weiche:[
     a:{ anschauen:'Der altehrwürdige Steinboden der HKV, blank poliert von Millionen Lernenden-Schritten. Träumen Sie noch, oder lernen Sie schon?' } },
 ],
 ende:[
-  { id:'mond', name:'Mond', x:26,y:12,w:44,h:34,
+  { id:'mond', name:'Mond', x:8,y:259,w:1,h:1,
     a:{ anschauen:'Der Mond über Aarau. Er hat den ganzen Fall mitangesehen und schweigt beharrlich – als Zeuge damit leider unbrauchbar.' } },
-  { id:'berg', name:'Hügel', x:60,y:18,w:170,h:110,
-    a:{ anschauen:'Ein bewaldeter Hügel mit Sendeturm wacht über die Stadt. Von dort oben sähe man vermutlich alle 90 Brunnen aufs Mal.' } },
-  { id:'stadt', name:'Aarau', x:172,y:118,w:294,h:136,
+  { id:'berg', name:'Hügel', x:104,y:0,w:160,h:48,
+    a:{ anschauen:'Ein bewaldeter Hügel, darauf ein erleuchtetes Schloss. Von dort oben sähe man vermutlich alle 90 Brunnen Aaraus aufs Mal.' } },
+  { id:'stadt', name:'Aarau', x:300,y:20,w:120,h:44,
     a:{ anschauen:'Aarau bei Nacht – Dächer, Gassen, erleuchtete Fenster. Irgendwo dort hat alles angefangen, mit einem Handschlag.' } },
-  { id:'hkv', name:'HKV Aarau', x:2,y:118,w:172,h:138,
+  { id:'hkv', name:'HKV Aarau', x:376,y:44,w:160,h:144,
     a:{ anschauen:'Die <b>HKV Aarau</b>, noch spät erleuchtet, die Fahne gehisst. Was Sie heute gelernt haben, hätte hier drin kaum besser erklärt werden können. Na gut – fast.' } },
-  { id:'bahnhof', name:'Bahnhof', x:462,y:144,w:178,h:112,
+  { id:'bahnhof', name:'Bahnhof', x:9,y:259,w:1,h:1,
     a:{ anschauen:'Der Bahnhof Aarau. Ein Zug fährt ein – pünktlich, ganz ohne Mahnung und Nachfrist.',
         benutze:'Noch nicht einsteigen! Zuerst die Auswertung unten würdigen.' } },
+  { id:'endkatze', name:'Katze', x:520,y:200,w:52,h:56,
+    a:{ anschauen:'Die Katze vom Freitagabend. Sie war vor dem Discounter, und jetzt ist sie hier. Manche Bewohner dieser Stadt wissen mehr, als sie miauen.',
+        redemit:'«Psst!» – Die Katze blinzelt langsam. Bei Katzen gilt das als Vertragsabschluss.' } },
+  { id:'enddose', name:'Blechschild', x:576,y:198,w:40,h:58,
+    a:{ anschauen:'Ein verwittertes Blechschild: <b>SPRITE DOSEN</b>. Wer die Dose beim Discounter entdeckt hat, nickt jetzt wissend.' } },
 ],
 };
 
@@ -835,7 +840,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '22';
+const BILD_VERSION = '23';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   front:'kaufvertrag_front.png',  laden:'kaufvertrag_laden.png',
