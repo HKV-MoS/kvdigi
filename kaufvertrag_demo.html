@@ -280,8 +280,9 @@
   <header>
     <h1 id="titel" title="Zurück zum Anfang">Der Kauf<small>Ein Rechtsfall in drei Wegen · Kaufvertrag nach OR</small></h1>
     <div style="display:flex; align-items:flex-start; gap:10px;">
-      <input id="laut" type="range" min="0" max="100" step="5" title="Lautstärke" style="width:64px; accent-color:#55FF55; align-self:center;">
+      <input id="lautMusik" type="range" min="0" max="100" step="5" title="Musik-Lautstärke" style="width:52px; accent-color:#55FF55; align-self:center;">
       <button id="musik" type="button" title="Musik ein/aus">♫</button>
+      <input id="lautFx" type="range" min="0" max="100" step="5" title="FX-Lautstärke" style="width:52px; accent-color:#55FF55; align-self:center;">
       <button id="fx" type="button" title="Soundeffekte ein/aus">FX</button>
       <button id="vollbild" type="button" title="Vollbild (Esc beendet)">⛶</button>
       <div>
@@ -416,35 +417,35 @@ discount:[
     a:{ anschauen:'Nummer 12 – schon wieder! Entweder liebt Aarau diese Zahl, oder die Stadtplanung hatte einen Lieblingswürfel.' } },
 ],
 front:[
-  { id:'schild', name:'Ladenschild', x:92,y:0,w:240,h:50,
+  { id:'schild', name:'Ladenschild', x:58,y:40,w:264,h:42,
     a:{ anschauen:'«Meier &amp; Co Elektro» – handgemalt, mit Goldrand und Patina. Seit 1998 hält das Schild jedem Aargauer Wetter stand.' } },
-  { id:'laterne', name:'Strassenlaterne', x:7,y:259,w:1,h:1,
+  { id:'laterne', name:'Strassenlaterne', x:20,y:0,w:52,h:255,
     a:{ anschauen:'Eine schmiedeiserne Gaslaterne – längst auf LED umgerüstet, aber das bleibt unter uns.',
         benutze:'Sie lehnen sich lässig an. Sehr Film noir. Niemand schaut.' } },
-  { id:'hausnummer', name:'Hausnummer', x:62,y:64,w:18,h:18,
+  { id:'hausnummer', name:'Hausnummer', x:13,y:100,w:22,h:24,
     a:{ anschauen:'Nummer 12. Falls Sie mal eine Betreibungsandrohung adressieren müssen, wissen Sie jetzt wohin. Hoffen wir, dass es nie so weit kommt.' } },
-  { id:'schaufenster', name:'Schaufenster', x:152,y:68,w:100,h:92,
+  { id:'schaufenster', name:'Schaufenster', x:62,y:112,w:116,h:122,
     a:{ anschauen:'Röhrenfernseher, Radios, ein Ventilator – jedes Gerät mit sauberem Preisschild. Die Preisanschrift ist Pflicht, und hier wird sie zelebriert.',
         oeffne:'Das Schaufenster bleibt zu. Der Weg führt durch die Tür.' } },
-  { id:'tuer', name:'Ladentür', x:96,y:68,w:36,h:136,
+  { id:'tuer', name:'Ladentür', x:184,y:106,w:54,h:146,
     a:{ oeffne:'Die Glocke bimmelt. Das Gespräch unten wartet auf Sie.',
         anschauen:'Eine ehrwürdige Holztür mit Glaseinsatz. Drinnen brennt Licht – Herr Meier ist da.' } },
-  { id:'schaufenster2', name:'Schaufenster', x:252,y:68,w:92,h:92,
+  { id:'schaufenster2', name:'Schaufenster', x:246,y:112,w:112,h:110,
     a:{ anschauen:'Noch mehr Occasionen: Radios, Kassettengeräte, eine Kamera. Alles geprüft, alles angeschrieben.',
         oeffne:'Auch dieses Schaufenster bleibt zu.' } },
-  { id:'velo', name:'Velo', x:6,y:140,w:86,h:76,
+  { id:'velo', name:'Velo', x:266,y:176,w:92,h:82,
     a:{ anschauen:'Ein Occasionsvelo, an die Fassade gelehnt. Kein Schloss weit und breit – Herr Meier vertraut der Nachbarschaft. Mutig.',
         nimm:'Es gehört Ihnen nicht. Und gestohlene Velos sind ein ganz anderes Rechtskapitel.' } },
-  { id:'hydrant', name:'Hydrant', x:192,y:160,w:36,h:68,
+  { id:'hydrant', name:'Hydrant', x:362,y:198,w:30,h:60,
     a:{ anschauen:'Ein roter Hydrant, Schweizer Bauart. Er hat mit dem Kaufrecht erstaunlich wenig zu tun.',
         benutze:'Lieber nicht. Wasserschaden ist ein anderes Kapitel des OR.' } },
-  { id:'brunnen', name:'Brunnen', x:268,y:60,w:180,h:190,
+  { id:'brunnen', name:'Brunnen', x:504,y:148,w:136,h:110,
     a:{ anschauen:'Ein Altstadtbrunnen mit plätscherndem Trinkwasser – einer von <b>rund 90 öffentlichen Brunnen</b> in Aarau. Und ja: Manchmal muss man die im <b>Sportunterricht der HKV</b> alle suchen gehen. Fragen Sie nicht, woher Alex das weiss.',
         benutze:'Sie trinken einen Schluck. Erfrischend, gratis – und im Gegensatz zum Föhn garantiert mängelfrei. Nur noch 89 Brunnen bis zum vollständigen Brunnen-OL.' } },
-  { id:'hkv', name:'Gebäude gegenüber', x:400,y:0,w:240,h:150,
+  { id:'hkv', name:'Gebäude gegenüber', x:366,y:0,w:196,h:146,
     fund:{ verb:'anschauen', rq:1, text:'Moment … das Gebäude gegenüber – das ist ja die <b>HKV Aarau</b>! Kein Wunder, kennt sich Alex mit dem OR aus. Grüsse ins ABU-Zimmer.' },
     a:{ anschauen:'Ein stattliches Schulhaus hinter Bäumen. Kommt Ihnen sehr bekannt vor …' } },
-  { id:'eichhoernchen', name:'Gebüsch', x:592,y:0,w:48,h:96,
+  { id:'eichhoernchen', name:'Gebüsch', x:0,y:190,w:30,h:68,
     fund:{ verb:'anschauen', rq:1, text:'Im Gebüsch an der Laterne raschelt es – ein <b>zweiköpfiges Eichhörnchen</b> huscht davon. Sie haben eindeutig zu viel Zak McKracken gespielt.' },
     a:{ anschauen:'Ein Gebüsch am Laternenfuss. Da raschelt doch was …?' } },
 ],
@@ -840,7 +841,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '24';
+const BILD_VERSION = '25';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   front:'kaufvertrag_front.png',  laden:'kaufvertrag_laden.png',
@@ -887,7 +888,7 @@ const HAENDLER = {
 };
 function haendler(){ return HAENDLER[zustand.haendler || 'herr']; }
 const KAEUFER = {
-  m:{ frames:['kaufvertrag_alex_0.png','kaufvertrag_alex_1.png','kaufvertrag_alex_2.png'], w:94, h:128 },
+  m:{ frames:['kaufvertrag_alex_0.png','kaufvertrag_alex_1.png','kaufvertrag_alex_2.png'], w:53, h:128 },
   w:{ frames:['kaufvertrag_alexw_0.png','kaufvertrag_alexw_1.png','kaufvertrag_alexw_2.png'], w:53, h:128 },
 };
 function kaeufer(){ return KAEUFER[zustand.kaeuferin || 'm']; }
@@ -899,13 +900,13 @@ const SPRITES = {
       x:680, y:198, w:30, h:24 },
   ],
   front: [
-    { id:'taubeA', frames:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'], x:196, y:220, w:28, h:17 },
-    { id:'taubeB', frames:['kaufvertrag_taube_b0.png','kaufvertrag_taube_b1.png'], x:224, y:222, w:26, h:16 },
+    { id:'taubeA', frames:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'], x:62, y:238, w:28, h:17 },
+    { id:'taubeB', frames:['kaufvertrag_taube_b0.png','kaufvertrag_taube_b1.png'], x:90, y:240, w:26, h:16 },
   ],
   laden: [
     { id:'meier', frames:null, x:352, y:75, w:112, h:63 },
     { id:'alex',  frames:['kaufvertrag_alex_0.png','kaufvertrag_alex_1.png','kaufvertrag_alex_2.png'],
-      x:238, y:132, w:94, h:128 },
+      x:238, y:132, w:53, h:128 },
   ],
 };
 const spriteOk = {};
@@ -1020,7 +1021,7 @@ function musikStart(){
   if(!AC) return false;
   if(!musik.ctx){
     musik.ctx = new AC();
-    musik.master = musik.ctx.createGain(); musik.master.gain.value = 0.9;
+    musik.master = musik.ctx.createGain(); musik.master.gain.value = 0.9 * laut.m;
     musik.master.connect(musik.ctx.destination);
     /* punktiertes Achtel-Echo für das Arpeggio */
     musik.echoDelay = musik.ctx.createGain();
@@ -1068,29 +1069,40 @@ function musikToggle(){
 }
 
 /* =====================================================
-   LAUTSTAERKE: globaler Regler fuer Musik + FX
+   LAUTSTAERKE: getrennte Regler fuer Musik und FX
    ===================================================== */
-const laut = { f: 0.8 };
+const laut = { m: 0.8, x: 0.8 };
 try{
-  const g = localStorage.getItem('derkauf_laut');
-  if(g !== null) laut.f = Math.min(1, Math.max(0, parseFloat(g)));
+  const alt = localStorage.getItem('derkauf_laut');
+  if(alt !== null){ laut.m = laut.x = Math.min(1, Math.max(0, parseFloat(alt))); }
+  const gm = localStorage.getItem('derkauf_laut_musik');
+  if(gm !== null) laut.m = Math.min(1, Math.max(0, parseFloat(gm)));
+  const gx = localStorage.getItem('derkauf_laut_fx');
+  if(gx !== null) laut.x = Math.min(1, Math.max(0, parseFloat(gx)));
 }catch(e){}
 function lautAnwenden(){
-  try{ if(mtrk.el && typeof mtrk.basisVol === 'number') mtrk.el.volume = mtrk.basisVol * laut.f; }catch(e){}
-  try{ if(amb.el && typeof amb.basisVol === 'number') amb.el.volume = amb.basisVol * laut.f; }catch(e){}
-  try{ Object.values(fxAudio).forEach(a=>{ a.el.volume = 0.55 * laut.f; }); }catch(e){}
-  try{ if(grv.master) grv.master.gain.value = 0.75 * laut.f; }catch(e){}
+  try{ if(mtrk.el && typeof mtrk.basisVol === 'number') mtrk.el.volume = mtrk.basisVol * laut.m; }catch(e){}
+  try{ if(amb.el && typeof amb.basisVol === 'number') amb.el.volume = amb.basisVol * laut.x; }catch(e){}
+  try{ Object.values(fxAudio).forEach(a=>{ a.el.volume = 0.55 * laut.x; }); }catch(e){}
+  try{ if(grv.master) grv.master.gain.value = 0.75 * laut.m; }catch(e){}
+  try{ if(musik.master) musik.master.gain.value = 0.9 * laut.m; }catch(e){}
+  try{ if(fx.master) fx.master.gain.value = laut.x; }catch(e){}
 }
 
 /* =====================================================
    SOUND-FX: synthetische Effekte, default AUS (FX-Schalter)
    ===================================================== */
-const fx = { an:false, ctx:null };
+const fx = { an:false, ctx:null, master:null };
 function fxKontext(){
   const AC = (typeof AudioContext!=='undefined') ? AudioContext :
              (typeof webkitAudioContext!=='undefined' ? webkitAudioContext : null);
   if(!AC) return null;
-  if(!fx.ctx) fx.ctx = new AC();
+  if(!fx.ctx){
+    fx.ctx = new AC();
+    fx.master = fx.ctx.createGain();
+    fx.master.gain.value = laut.x;
+    fx.master.connect(fx.ctx.destination);
+  }
   if(fx.ctx.state==='suspended') fx.ctx.resume();
   return fx.ctx;
 }
@@ -1115,7 +1127,7 @@ function fxWasser(){
     g.gain.linearRampToValueAtTime(0.035 + Math.random()*0.03, t0 + 0.6 + i*0.55);
   }
   g.gain.linearRampToValueAtTime(0.0001, t0+4.6);
-  q.connect(bp); bp.connect(lp); lp.connect(g); g.connect(ctx.destination);
+  q.connect(bp); bp.connect(lp); lp.connect(g); g.connect(fx.master);
   q.start(t0);
   /* wenige, tiefe Tropfen – «Blub» statt «Pling» */
   for(let i=0;i<5;i++){
@@ -1125,7 +1137,7 @@ function fxWasser(){
     o.frequency.exponentialRampToValueAtTime(220, tz+0.12);
     og.gain.setValueAtTime(0.035, tz);
     og.gain.exponentialRampToValueAtTime(0.001, tz+0.14);
-    o.connect(og); og.connect(ctx.destination);
+    o.connect(og); og.connect(fx.master);
     o.start(tz); o.stop(tz+0.16);
   }
 }
@@ -1139,7 +1151,7 @@ function fxTicken(){
     o.frequency.value = (i%2===0) ? 1900 : 1400;   /* Tick … Tack */
     og.gain.setValueAtTime(0.05, tz);
     og.gain.exponentialRampToValueAtTime(0.0008, tz+0.045);
-    o.connect(og); og.connect(ctx.destination);
+    o.connect(og); og.connect(fx.master);
     o.start(tz); o.stop(tz+0.06);
   }
 }
@@ -1156,7 +1168,7 @@ function fxZug(){
   g.gain.setValueAtTime(0.0001, t0);
   g.gain.linearRampToValueAtTime(0.22, t0+1.6);
   g.gain.linearRampToValueAtTime(0.0001, t0+4.2);
-  q.connect(lp); lp.connect(g); g.connect(ctx.destination);
+  q.connect(lp); lp.connect(g); g.connect(fx.master);
   q.start(t0);
   /* Schienen-Klackern: da-dumm ... da-dumm */
   for(let i=0;i<7;i++){
@@ -1168,7 +1180,7 @@ function fxZug(){
       const naehe = Math.sin(Math.PI * (i+1)/8);          /* laut in der Mitte */
       kg.gain.setValueAtTime(0.10*naehe, basis+off);
       kg.gain.exponentialRampToValueAtTime(0.001, basis+off+0.03);
-      k.connect(hp); hp.connect(kg); kg.connect(ctx.destination);
+      k.connect(hp); hp.connect(kg); kg.connect(fx.master);
       k.start(basis+off);
     });
   }
@@ -1181,7 +1193,7 @@ function fxZug(){
     og.gain.setValueAtTime(0.0001, t0+1.1);
     og.gain.linearRampToValueAtTime(0.045, t0+1.2);
     og.gain.linearRampToValueAtTime(0.0001, t0+1.75);
-    o.connect(og); og.connect(ctx.destination);
+    o.connect(og); og.connect(fx.master);
     o.start(t0+1.1); o.stop(t0+1.8);
   });
 }
@@ -1193,7 +1205,7 @@ function fxBlip(){
     o.type='sine'; o.frequency.value=f;
     g.gain.setValueAtTime(0.06, t0+off);
     g.gain.exponentialRampToValueAtTime(0.001, t0+off+0.1);
-    o.connect(g); g.connect(ctx.destination);
+    o.connect(g); g.connect(fx.master);
     o.start(t0+off); o.stop(t0+off+0.12);
   });
 }
@@ -1216,7 +1228,7 @@ function fxDateienLaden(){
     const el = new Audio();
     fxAudio[hid] = { el:el, ok:false };
     el.preload = 'auto';
-    el.volume = 0.55 * laut.f;
+    el.volume = 0.55 * laut.x;
     el.loop = !!FX_LOOP[hid];
     el.addEventListener('canplaythrough', ()=>{ fxAudio[hid].ok = true; });
     el.addEventListener('error', ()=>{ fxAudio[hid].ok = false; });
@@ -1318,7 +1330,7 @@ function grooveStart(){
                  (typeof webkitAudioContext!=='undefined' ? webkitAudioContext : null);
       if(!AC) return;
       grv.ctx = new AC();
-      grv.master = grv.ctx.createGain(); grv.master.gain.value = 0.75 * laut.f;
+      grv.master = grv.ctx.createGain(); grv.master.gain.value = 0.75 * laut.m;
       grv.master.connect(grv.ctx.destination);
       const delay = grv.ctx.createDelay(); delay.delayTime.value = GRV_T*3;
       const fb = grv.ctx.createGain(); fb.gain.value = 0.22;
@@ -1328,7 +1340,7 @@ function grooveStart(){
       grv.echo.connect(delay); delay.connect(fb); fb.connect(delay);
       delay.connect(mix); mix.connect(grv.master);
     }
-    grv.master.gain.setValueAtTime(0.75 * laut.f, grv.ctx.currentTime);
+    grv.master.gain.setValueAtTime(0.75 * laut.m, grv.ctx.currentTime);
     grv.ctx.resume();
     grv.schritt = 0; grv.naechste = grv.ctx.currentTime + 0.08;
     grv.timer = setInterval(grvPlaner, 60);
@@ -1352,7 +1364,7 @@ const AMBIENT = {
 const amb = { el:null, szene:null, zufallTimer:null, einmalGespielt:{}, aktive:[] };
 function ambEinmal(url, vol){
   try{
-    const a = new Audio(vurl(url)); a.volume = Math.min(1, vol * laut.f);
+    const a = new Audio(vurl(url)); a.volume = Math.min(1, vol * laut.x);
     amb.aktive.push(a);
     a.addEventListener('ended', ()=>{ const i = amb.aktive.indexOf(a); if(i>=0) amb.aktive.splice(i,1); });
     a.play().catch(()=>{});
@@ -1389,7 +1401,7 @@ function szenenAudio(szene){
     try{
       amb.el = new Audio(vurl(cfg.loop));
       amb.basisVol = cfg.loopVol;
-      amb.el.loop = true; amb.el.volume = cfg.loopVol * laut.f;
+      amb.el.loop = true; amb.el.volume = cfg.loopVol * laut.x;
       amb.el.play().catch(()=>{});
     }catch(e){}
   } else if(amb.el.paused){
@@ -1418,12 +1430,21 @@ const musikBtn = document.getElementById('musik');
 function musikAnzeige(){ if(musikBtn){ musikBtn.className = grv.an ? 'an' : ''; musikBtn.textContent = grv.an ? '♫ an' : '♫'; } }
 try{ grv.an = (typeof localStorage==='undefined') || localStorage.getItem('derkauf_musik') !== '0'; }catch(e){ grv.an = true; }
 musikAnzeige();
-const lautRegler = document.getElementById('laut');
-if(lautRegler){
-  lautRegler.value = Math.round(laut.f * 100);
-  lautRegler.addEventListener('input', ()=>{
-    laut.f = lautRegler.value / 100;
-    try{ localStorage.setItem('derkauf_laut', String(laut.f)); }catch(e){}
+const lautMusikRegler = document.getElementById('lautMusik');
+if(lautMusikRegler){
+  lautMusikRegler.value = Math.round(laut.m * 100);
+  lautMusikRegler.addEventListener('input', ()=>{
+    laut.m = lautMusikRegler.value / 100;
+    try{ localStorage.setItem('derkauf_laut_musik', String(laut.m)); }catch(e){}
+    lautAnwenden();
+  });
+}
+const lautFxRegler = document.getElementById('lautFx');
+if(lautFxRegler){
+  lautFxRegler.value = Math.round(laut.x * 100);
+  lautFxRegler.addEventListener('input', ()=>{
+    laut.x = lautFxRegler.value / 100;
+    try{ localStorage.setItem('derkauf_laut_fx', String(laut.x)); }catch(e){}
     lautAnwenden();
   });
 }
@@ -1537,7 +1558,7 @@ function musikWechsel(szene){
   try{
     mtrk.el = new Audio(vurl(cfg.url));
     mtrk.basisVol = cfg.vol;
-    mtrk.el.loop = true; mtrk.el.volume = cfg.vol * laut.f;
+    mtrk.el.loop = true; mtrk.el.volume = cfg.vol * laut.m;
     mtrk.url = cfg.url;
     mtrk.el.play().catch(()=>{});
   }catch(e){}
