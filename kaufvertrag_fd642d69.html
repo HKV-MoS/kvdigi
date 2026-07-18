@@ -388,31 +388,31 @@ const Z = 5;                                     /* Zellgrösse: 128×52 → 640
 /* ---------- Hotspots (Koordinaten im 640×260-Raum) ---------- */
 const HOTSPOTS = {
 discount:[
-  { id:'dschild', name:'Leuchtreklame', x:172,y:30,w:292,h:52,
+  { id:'dschild', name:'Leuchtreklame', x:96,y:14,w:330,h:64,
     a:{ anschauen:'«MEGA-DISCOUNT» – in einer Schriftgrösse, die man noch vom Zug aus lesen kann. Subtilität ist hier nicht im Sortiment.' } },
   { id:'dfensterL', name:'Schaufenster', x:150,y:94,w:134,h:132,
     a:{ anschauen:'«Alles für Schule, Büro, Freizeit.» Alles? Das Obligationenrecht lernt man trotzdem woanders.',
         oeffne:'Das Schaufenster bleibt zu. Und Sie bleiben draussen – der Neupreis reicht Ihnen als Erlebnis.' } },
-  { id:'dtuer', name:'Eingang', x:284,y:92,w:78,h:142,
+  { id:'dtuer', name:'Eingang', x:228,y:84,w:50,h:100,
     a:{ anschauen:'Die Glastür zum Neonlicht. Sie waren schon drin – der Neupreis hängt noch in der Netzhaut.',
         oeffne:'Noch einmal rein? Ihr Portemonnaie schüttelt stumm den Kopf.' } },
   { id:'dfensterR', name:'Schaufenster', x:364,y:96,w:124,h:126,
     a:{ anschauen:'Regale bis zur Decke, alles fabrikneu, alles blinkend. Und alles mit Preisschildern, die Ihr Lehrlingslohn persönlich nimmt.' } },
-  { id:'dstaender', name:'Prospektständer', x:364,y:142,w:70,h:96,
+  { id:'dstaender', name:'Prospektständer', x:2,y:259,w:1,h:1,
     a:{ anschauen:'Ein Ständer voller Aktionsprospekte. «Nur diese Woche!» – steht da seit drei Jahren.',
         nimm:'Einen Prospekt dürfen Sie tatsächlich mitnehmen. Gratis. Das Einzige hier, das ins Budget passt.' } },
-  { id:'dtafel', name:'Kundenstopper', x:448,y:202,w:68,h:56,
+  { id:'dtafel', name:'Kundenstopper', x:3,y:259,w:1,h:1,
     a:{ anschauen:'«TOP PREISE», verspricht die Tafel. Top für wen, verrät sie nicht.' } },
-  { id:'deimer', name:'Container', x:148,y:176,w:46,h:62,
+  { id:'deimer', name:'Container', x:12,y:136,w:60,h:66,
     a:{ anschauen:'Ein blauer Container. Hier landet das Verpackungsmaterial der Neugeräte – ganze Berge davon. Auch ein Argument für Occasionen.',
         oeffne:'Sie lüpfen den Deckel: zuoberst eine leere Dose Zitronenlimonade. Ein gestrandeter <b>Sprite</b>, sozusagen – wobei die Sprites in diesem Spiel deutlich besser animiert sind.' } },
-  { id:'dlaterne', name:'Laterne', x:68,y:28,w:44,h:184,
+  { id:'dlaterne', name:'Laterne', x:470,y:64,w:28,h:44,
     a:{ anschauen:'Eine Altstadtlaterne, tapfer gegen die Leuchtreklame anleuchtend. David gegen Goliath, in Watt.' } },
-  { id:'drathaus', name:'Wegweiser', x:532,y:98,w:60,h:28,
+  { id:'drathaus', name:'Wegweiser', x:4,y:259,w:1,h:1,
     a:{ anschauen:'«Rathaus →». Gut zu wissen. Für Betreibungsfragen wäre allerdings zuerst das Betreibungsamt zuständig – aber so weit lassen wir es gar nicht kommen.' } },
-  { id:'dfahne', name:'Fahne', x:582,y:86,w:30,h:46,
+  { id:'dfahne', name:'Fahne', x:5,y:259,w:1,h:1,
     a:{ anschauen:'Die Schweizer Fahne im Nachtwind. Irgendwo darunter gilt seit 1912: das Obligationenrecht.' } },
-  { id:'dnummer', name:'Hausnummer', x:513,y:98,w:20,h:20,
+  { id:'dnummer', name:'Hausnummer', x:6,y:259,w:1,h:1,
     a:{ anschauen:'Nummer 12 – schon wieder! Entweder liebt Aarau diese Zahl, oder die Stadtplanung hatte einen Lieblingswürfel.' } },
 ],
 front:[
@@ -835,7 +835,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '19';
+const BILD_VERSION = '20';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   front:'kaufvertrag_front.png',  laden:'kaufvertrag_laden.png',
