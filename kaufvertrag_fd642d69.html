@@ -476,33 +476,33 @@ laden:[
     a:{ anschauen:'Die Uhr tickt. Fristen laufen – das merken Sie sich für später.' } },
 ],
 zimmer:[
-  { id:'computer', name:'Computer', x:60,y:92,w:112,h:56,
+  { id:'computer', name:'Computer', x:2,y:114,w:92,h:104,
     a:{ anschauen:'Auf dem Bildschirm: <b>kvdigital.swiss</b>, Kapitel «Lernziele». Alex lernt sogar abends um zehn. Respekt – oder Prüfungspanik.',
         benutze:'Nicht jetzt. Erst der Fall, dann die Lernziele. (Die Reihenfolge ist didaktisch umstritten.)' } },
-  { id:'fenster', name:'Fenster', x:180,y:0,w:200,h:132,
+  { id:'fenster', name:'Fenster', x:130,y:6,w:172,h:158,
     a:{ anschauen:'Draussen leuchtet das <b>Brügglifeld</b>, dahinter die KSA. Alex wohnt mit Aussicht auf Fussball und Bildung – die Prioritäten bleiben Verhandlungssache.',
         oeffne:'Zu kalt. Und Ihr Problem fliegt nicht davon.' } },
-  { id:'cash', name:'Poster', x:404,y:0,w:64,h:84,
+  { id:'cash', name:'Poster', x:350,y:0,w:57,h:70,
     fund:{ verb:'anschauen', rq:1, text:'Ein Poster von <b>Johnny Cash</b>. Der Mann wusste alles über Schulden, Reue und zweite Chancen – der inoffizielle Schutzpatron des Obligationenrechts.' },
     a:{ anschauen:'Ein Poster in Schwarz-Weiss. Der Blick: streng, aber gerecht.' } },
-  { id:'radio', name:'Radiorekorder', x:408,y:112,w:60,h:28,
+  { id:'radio', name:'Radiorekorder', x:388,y:64,w:56,h:36,
     a:{ anschauen:'Ein Radiorekorder, Baujahr Occasion. Etwa von Meier &amp; Co.? Die Kassettenklappe klemmt jedenfalls stilecht.',
         benutze:'Play. In Ihrer Fantasie erklingt ein Vier-Stimmen-Tracker-Modul. Grossartig.' } },
-  { id:'gestell', name:'Büchergestell', x:472,y:12,w:72,h:88,
+  { id:'gestell', name:'Büchergestell', x:448,y:0,w:94,h:210,
     a:{ anschauen:'Ordner, Bücher, zwei Schachfiguren als Wache – und «Schach-Strategien» griffbereit. Wer vorausdenkt, gewinnt. Auch im Vertragsrecht.',
         nimm:'Die Bücher gehören Ihnen schon. Eigentum verpflichtet – zum Lesen.' } },
-  { id:'tuer', name:'Zimmertür', x:552,y:0,w:88,h:208,
+  { id:'tuer', name:'Zimmertür', x:584,y:0,w:56,h:260,
     a:{ anschauen:'«ALEX» steht am Türschild. Ihr Reich – hier werden Rechtsfälle gelöst und Matratzen getestet.',
         oeffne:'Sie bleiben. Der Fall liegt hier drin, nicht draussen.' } },
-  { id:'bett', name:'Bett', x:400,y:140,w:196,h:120,
+  { id:'bett', name:'Bett', x:320,y:156,w:270,h:104,
     a:{ anschauen:'Auf dem Bett liegt das Leibchen des <b>BTV Aarau</b>, frisch gefaltet. Training ist morgen – zuerst das Recht.',
         benutze:'Jetzt schlafen? Der Fall ruft!' } },
-  { id:'abubuch', name:'ABU-Notizen', x:0,y:148,w:56,h:40,
+  { id:'abubuch', name:'ABU-Notizen', x:112,y:194,w:57,h:35,
     a:{ anschauen:'«ABU-Notizen», prall gefüllt. Irgendwo darin: das Kapitel Kaufvertrag, markiert in drei Leuchtfarben.',
         benutze:'Sie blättern kurz. «Einigung über Sache und Preis …» – sitzt.' } },
-  { id:'wimpel', name:'Vereinswappen', x:0,y:0,w:100,h:84,
+  { id:'wimpel', name:'Vereinswappen', x:0,y:36,w:100,h:84,
     a:{ anschauen:'Das Wappen des <b>FC Entfelden</b>, dazu ein Wimpel. Loyalität kennt keine Ligagrenzen.' } },
-  { id:'heizung', name:'Radiator', x:228,y:140,w:128,h:56,
+  { id:'heizung', name:'Radiator', x:188,y:178,w:116,h:68,
     a:{ anschauen:'Ein Radiator mit Charakter. Er knackt nachts – aber anders als beim E-Bike ist das hier kein Mangel, sondern Ambiance.',
         benutze:'Sie wärmen kurz die Hände. Gemütlich. Löst aber keinen Verzug.' } },
 ],
@@ -842,14 +842,46 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '25';
+const BILD_VERSION = '26';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   front:'kaufvertrag_front.png',  laden:'kaufvertrag_laden.png',
   discount:'kaufvertrag_discount.png',
-  zimmer:'kaufvertrag_zimmer.png', weiche:'kaufvertrag_weiche.png',
+  zimmer:'kaufvertrag_zimmer.png', zimmer2:'kaufvertrag_zimmer2.png',
+  weiche:'kaufvertrag_weiche.png',
   ende:'kaufvertrag_ende.png',
 };
+/* Spaetabend-Variante: eigenes Band (tiefer), eigene Hotspots */
+SZENEN.zimmer2 = SZENEN.zimmer;
+HOTSPOTS.zimmer2 = [
+  { id:'computer', name:'Computer', x:2,y:14,w:92,h:104,
+    a:{ anschauen:'Der Bildschirm ist dunkel. Sogar kvdigital.swiss schläft irgendwann – die Hausaufgaben sind erledigt.',
+        benutze:'Nicht mehr heute. Morgen ist auch noch ein Rechtstag.' } },
+  { id:'fenster', name:'Fenster', x:130,y:0,w:172,h:64,
+    a:{ anschauen:'Draussen ist das Flutlicht aus – <b>Spielende im Brügglifeld</b>. Nur die Nacht und Ihr Fall sind noch wach.',
+        oeffne:'Zu spät, zu kalt. Und Ihr Problem bleibt sowieso hier drin.' } },
+  { id:'buecher', name:'Büchergestell', x:448,y:0,w:94,h:110,
+    a:{ anschauen:'Bücher und Ordner im Halbdunkel. Die Schulwoche ist abgehakt – fast.',
+        nimm:'Die Bücher gehören Ihnen schon. Eigentum verpflichtet – zum Lesen.' } },
+  { id:'tuer', name:'Zimmertür', x:584,y:0,w:56,h:160,
+    a:{ anschauen:'Ihre Zimmertür. Dahinter schläft das Haus – hier drin wacht das Obligationenrecht.',
+        oeffne:'Sie bleiben. Der Fall liegt hier drin, nicht draussen.' } },
+  { id:'bett', name:'Bett', x:320,y:56,w:270,h:104,
+    a:{ anschauen:'Das Bett ist gemacht und ruft leise. Zuerst braucht der Fall eine Entscheidung.',
+        benutze:'Gleich. Wer jetzt schläft, wacht mit demselben Problem wieder auf.' } },
+  { id:'abubuch', name:'ABU-Notizen', x:112,y:94,w:57,h:35,
+    a:{ anschauen:'«ABU-Notizen», prall gefüllt. Irgendwo darin: das Kapitel Kaufvertrag, markiert in drei Leuchtfarben.',
+        benutze:'Sie blättern kurz. «Einigung über Sache und Preis …» – sitzt.' } },
+  { id:'heizung', name:'Radiator', x:188,y:78,w:116,h:68,
+    a:{ anschauen:'Ein Radiator mit Charakter. Er knackt nachts – aber anders als beim E-Bike ist das hier kein Mangel, sondern Ambiance.',
+        benutze:'Sie wärmen kurz die Hände. Gemütlich. Löst aber keinen Verzug.' } },
+  { id:'teppich', name:'Teppich', x:167,y:182,w:298,h:78,
+    a:{ anschauen:'Der <b>HKV</b>-Teppich mit Löwenwappen. Offiziell nicht im Schulshop erhältlich – ein Sammlerstück.',
+        nimm:'Der bleibt liegen. Besitz ist nicht Eigentum – aber hier stimmt zufällig beides.' } },
+  { id:'gestell', name:'Schachbrett', x:540,y:180,w:100,h:80,
+    a:{ anschauen:'Ein angefangenes Schachproblem, daneben «Schach-Strategien». <b>Matt in zwei</b> – wer vorausdenkt, gewinnt. Auch im Vertragsrecht.',
+        nimm:'Das Problem wird gelöst, nicht weggeräumt.' } },
+];
 const bildOk = {};
 const bildFehler = {};
 let aktuelleSzeneId = null;
@@ -1541,6 +1573,7 @@ const MUSIK_SZENEN = {
   front:{ art:'datei', url:'kaufvertrag_musik_elektro.mp3', vol:0.30 },
   /* laden: bewusst OHNE Musik — im Geschäft zählt das Gespräch */
   zimmer:{ art:'datei', url:'kaufvertrag_musik_zimmer.mp3', vol:0.27 },
+  zimmer2:{ art:'datei', url:'kaufvertrag_musik_zimmer.mp3', vol:0.24 },
   weiche:{ art:'datei', url:'kaufvertrag_musik_weiche.mp3', vol:0.27 },
   ende:{ art:'datei', url:'kaufvertrag_musik_abspann.mp3', vol:0.27 },
 };
@@ -1918,7 +1951,7 @@ weiche:{ art:'weiche', szene:'weiche', sprecher:'ERZÄHLER',
   text:'In der Nacht darauf träumen Sie – ausgerechnet vom Schulhaus. Sie stehen im Gang der HKV, vor drei Zimmertüren. Denn kein Vertrag ist vor Störungen sicher: <b>Drei Geschichten können jetzt passieren – wählen Sie Ihre Tür.</b> (Die anderen Wege können Sie danach ebenfalls spielen.)' },
 
 /* ---------- WEG L: LIEFERVERZUG ---------- */
-l0:{ szene:'zimmer', sprecher:'ERZÄHLER',
+l0:{ szene:'zimmer2', sprecher:'ERZÄHLER',
   text:'<b>Das leere Schaufenster.</b> Zehn Tage sind um. Elf. Zwölf. Von Meier &amp; Co.: keine Nachricht. {Pgross} – bereits mit {ANZ} angezahlt – bleibt verschwunden. Was tun Sie?',
   optionen:[
     { t:'Weiter warten – er wird sich schon melden.', rq:0,
@@ -1935,11 +1968,11 @@ l0:{ szene:'zimmer', sprecher:'ERZÄHLER',
       ziel:'l1' },
   ]},
 
-l1:{ szene:'zimmer', sprecher:'ERZÄHLER',
+l1:{ szene:'zimmer2', sprecher:'ERZÄHLER',
   text:'Eine weitere Woche vergeht. Nichts. Jetzt gilt es ernst: Herr Meier muss <b>in Verzug</b> gesetzt werden. Wie steht es darum?',
   dynamisch:'verzug' },
 
-l2:{ szene:'zimmer', sprecher:'ERZÄHLER',
+l2:{ szene:'zimmer2', sprecher:'ERZÄHLER',
   text:'Herr Meier ist im Verzug. Nach OR Art. 107 setzen Sie ihm nun eine <b>Nachfrist</b> zur Lieferung. Wie lange soll sie sein?',
   optionen:[
     { t:'«Bis morgen Mittag!»', rq:0,
@@ -1956,7 +1989,7 @@ l2:{ szene:'zimmer', sprecher:'ERZÄHLER',
       ziel:'l3' },
   ]},
 
-l3:{ szene:'zimmer', sprecher:'ERZÄHLER',
+l3:{ szene:'zimmer2', sprecher:'ERZÄHLER',
   text:'Die Nachfrist verstreicht – nichts geschieht. Jetzt haben Sie die <b>drei Wahlrechte von OR Art. 107/109</b>. Wofür entscheiden Sie sich?',
   optionen:[
     { t:'Weiterhin auf Lieferung bestehen – plus Ersatz des Verspätungsschadens.', rq:3,
@@ -1977,7 +2010,7 @@ l4a:{ szene:'laden', sprecher:'ERZÄHLER',
   text:'Ihr eingeschriebener Brief wirkt: Drei Tage später steht {P} abholbereit im Laden. Hinter der Theke: <b>Frau Meier</b> – ihr Mann ist an einer Occasions-Börse. Vom Ärger weiss sie nur aus Ihrem Brief: «Zum Glück haben Sie geschrieben – mündlich wäre das bei uns untergegangen.» Als Entschädigung legt sie ein Zubehör-Set dazu. <b>Fall gelöst: Erfüllung durchgesetzt.</b>',
   optionen:[ { t:'Zur Auswertung', rq:0, fb:null, ziel:'ende' } ]},
 
-l4b:{ szene:'zimmer', sprecher:'ERZÄHLER',
+l4b:{ szene:'zimmer2', sprecher:'ERZÄHLER',
   text:'Sie kaufen {PA} bei einem anderen Händler – etwas teurer. Die Differenz stellen Sie Herrn Meier als <b>Schadenersatz wegen Nichterfüllung</b> in Rechnung, zusammen mit der Rückforderung der Anzahlung. Nach zähem Briefwechsel zahlt er. <b>Fall gelöst: Deckungskauf.</b>',
   optionen:[ { t:'Zur Auswertung', rq:0, fb:null, ziel:'ende' } ]},
 
