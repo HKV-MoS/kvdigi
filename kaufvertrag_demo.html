@@ -1080,7 +1080,6 @@ function kaeufer(){ return KAEUFER[zustand.kaeuferin || 'm']; }
 
 const SPRITES = {
   schule: [
-    { id:'rektor', frames:['figur_rektor_steh_0.png'], x:602, y:38, w:26, h:102 },
     { id:'lehrer', frames:['kaufvertrag_lehrer_0.png','kaufvertrag_lehrer_1.png','kaufvertrag_lehrer_2.png','kaufvertrag_lehrer_3.png'],
       x:125, y:64, w:54, h:116 },
   ],
@@ -2004,7 +2003,8 @@ function tiereWechsel(szene){
   if(tiere.szene === szene) return;   /* gleiche Szene: Choreografie NICHT neu starten */
   tiere.szene = szene;
   if(szene==='titel') autoStart(); else autoStop();
-  if(szene==='schule'){ lehrerStart(); rektorStart(); } else { lehrerStop(); rektorStop(); }
+  if(szene==='schule'){ lehrerStart(); } else { lehrerStop(); }
+  rektorStop();
   if(szene==='treppe') gespraechStart(); else gespraechStop();
   if(szene==='discount') katzeStart(); else katzeStop();
   if(szene==='front' || szene==='titel') taubenStart(); else taubenStop();
