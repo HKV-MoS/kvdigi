@@ -2009,12 +2009,29 @@ let knotenSnapshot = null;
    Wird direkt in bildSzene gerendert, damit ihn kein Re-Render frisst. */
 const rechner = { an:false, zappel:false };
 let rechnerTimer = null;
+const RECHNER_LIEGEND = { x:440, y:186, w:34, h:22, bild:'kaufvertrag_rechner_flach.png' };
+const RECHNER_STEHEND = { x:446, y:174, w:22, h:34, bild:'kaufvertrag_rechner.png' };
 function rechnerSVG(key){
   if(!rechner.an || key !== aktuelleSzeneId) return '';
-  return '<image id="sp-rechner" href="'+vurl('kaufvertrag_rechner.png')+
-         '" x="446" y="182" width="22" height="28"'+
+  const p = RECHNER_LIEGEND;
+  return '<image id="sp-rechner" href="'+vurl(p.bild)+'" x="'+p.x+'" y="'+p.y+
+         '" width="'+p.w+'" height="'+p.h+'"'+
          (rechner.zappel ? ' class="rechner-zappel"' : '')+'/>';
 }
+function rechnerPose(el, p){
+  el.setAttribute('href', vurl(p.bild));
+  el.setAttribute('x', p.x); el.setAttribute('y', p.y);
+  el.setAttribute('width', p.w); el.setAttribute('height', p.h);
+}
+/* Beim Drueberfahren richtet er sich auf */
+szeneEl.addEventListener('mouseover', (e)=>{
+  const t = e.target;
+  if(t && t.id === 'sp-rechner'){ t.classList.remove('rechner-zappel'); rechnerPose(t, RECHNER_STEHEND); }
+});
+szeneEl.addEventListener('mouseout', (e)=>{
+  const t = e.target;
+  if(t && t.id === 'sp-rechner'){ rechnerPose(t, RECHNER_LIEGEND); if(rechner.zappel) t.classList.add('rechner-zappel'); }
+});
 function rechnerStart(an){
   rechner.an = !!an; rechner.zappel = false;
   if(rechnerTimer){ clearTimeout(rechnerTimer); rechnerTimer = null; }
