@@ -280,6 +280,7 @@
   45%{ transform:rotate(-5deg); } 60%{ transform:rotate(5deg); } 75%{ transform:rotate(0deg); }
 }
 #sp-rechner{ transform-box:fill-box; transform-origin:center; cursor:pointer; }
+.szene.ende-roll svg{ transition: transform 16s linear, opacity 16s ease-in; transform: translateY(-104%); opacity: 0; }
 .startTor{ position:absolute; inset:0; z-index:70; background:#000; display:flex; flex-direction:column;
   align-items:center; justify-content:center; gap:1.1rem; text-align:center; padding:20px; }
 .startTor h2{ color:#FFFF55; font-size:1.6rem; letter-spacing:.35em; margin:0; }
@@ -478,7 +479,7 @@ laden:[
     a:{ redemit:'Herr Meier hört zu – <b>nutzen Sie die Gesprächsoptionen unten.</b>',
         anschauen:'Herr Meier, Inhaber seit 1998. Brille, Weste, Ellbogen auf der Theke – und das OR vermutlich auswendig im Kopf.',
         nimm:'Herrn Meier kann man nicht mitnehmen. Er ist quasi Inventar.' } },
-  { id:'alex', name:'Alex', x:238,y:132,w:94,h:126,
+  { id:'alex', name:'Alex', x:106,y:90,w:72,h:168,
     a:{ anschauen:'Das sind Sie. Die Frisur sitzt, der Rechtsverstand wächst.',
         nimm:'Sich selbst nehmen? Das wird philosophisch.',
         redemit:'Selbstgespräche? Erst nach bestandenem QV.' } },
@@ -936,7 +937,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '43';
+const BILD_VERSION = '45';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1055,7 +1056,7 @@ const SPRITES = {
   laden: [
     { id:'meier', frames:null, x:352, y:75, w:112, h:63 },
     { id:'alex',  frames:['kaufvertrag_alex_0.png','kaufvertrag_alex_1.png','kaufvertrag_alex_2.png'],
-      x:228, y:85, w:73, h:175 },
+      x:104, y:85, w:73, h:175 },
   ],
 };
 const spriteOk = {};
@@ -1236,6 +1237,7 @@ function lautAnwenden(){
   try{ if(grv.master) grv.master.gain.value = 0.75 * laut.m; }catch(e){}
   try{ if(musik.master) musik.master.gain.value = 0.9 * laut.m; }catch(e){}
   try{ if(fx.master) fx.master.gain.value = laut.x; }catch(e){}
+  try{ if(schachMus.el) schachMus.el.volume = 0.25 * laut.m; }catch(e){}
 }
 
 /* =====================================================
@@ -1640,6 +1642,7 @@ setInterval(()=>{
     const cfg = MUSIK_SZENEN[aktuelleSzeneId];
     if(!cfg) return;
     if(cfg.art==='groove'){ return; }
+    try{ if(schachMus.el && !schachMus.el.paused) return; }catch(e){}
     if(!mtrk.el || mtrk.el.paused) musikWechsel(aktuelleSzeneId);
   }catch(e){}
 }, 1500);
@@ -1956,8 +1959,22 @@ function schachAufbau(){
   schachMal();
   schachSag('<b>Weiss zieht und setzt in zwei Zügen matt.</b> Wählen Sie eine weisse Figur, dann das Zielfeld.');
 }
+const schachMus = { el:null };
+function schachMusikStart(){
+  if(!grv.an) return;
+  try{
+    grooveStop(); trackStop();
+    if(!schachMus.el){ schachMus.el = new Audio(vurl('kaufvertrag_musik_schach.mp3')); schachMus.el.loop = true; }
+    schachMus.el.volume = 0.25 * laut.m;
+    schachMus.el.play().catch(()=>{});
+  }catch(e){}
+}
+function schachMusikStop(){
+  try{ if(schachMus.el){ schachMus.el.pause(); schachMus.el.currentTime = 0; } }catch(e){}
+  if(aktuelleSzeneId) musikWechsel(aktuelleSzeneId);
+}
 function schachOeffnen(){
-  if(schach.wrap){ schach.wrap.style.display='flex'; schachAufbau(); return; }
+  if(schach.wrap){ schach.wrap.style.display='flex'; schachAufbau(); schachMusikStart(); return; }
   const stil = document.createElement('style');
   stil.textContent = '.schachDeckel{position:fixed;inset:0;z-index:9400;background:rgba(10,14,20,.9);display:flex;align-items:center;justify-content:center;padding:16px}' +
     '.schachKasten{background:#141821;border:3px solid #b8892b;border-radius:12px;padding:14px;max-width:min(96vw,1000px);text-align:center}' +
@@ -1993,8 +2010,9 @@ function schachOeffnen(){
     }
   }
   deckel.querySelector('#schachNeu').addEventListener('click', schachAufbau);
-  deckel.querySelector('#schachZu').addEventListener('click', ()=>{ deckel.style.display='none'; });
+  deckel.querySelector('#schachZu').addEventListener('click', ()=>{ deckel.style.display='none'; schachMusikStop(); });
   schachAufbau();
+  schachMusikStart();
 }
 
 /* =====================================================
@@ -2895,6 +2913,8 @@ function zeige(id){
   speichereSpielstand(id);
   spriteStopp();
   stoppeIdle();
+  if(endeRollTimer){ clearTimeout(endeRollTimer); endeRollTimer = null; }
+  szeneEl.classList.remove('ende-roll');
   aktuelleSzeneId = k.szene;
   rechnerStart(k.rechner);
   szenenAudio(k.szene);
@@ -3096,6 +3116,7 @@ function baueWeiche(k){
   dialogEl.appendChild(reihe);
 }
 
+let endeRollTimer = null;
 function baueEnde(){
   if(zustand.weg) zustand.ergebnisse[zustand.weg]=zustand.rq;
   const gespielt=Object.keys(zustand.ergebnisse).length;
@@ -3137,6 +3158,12 @@ function baueEnde(){
   b2.addEventListener('click', neustart);
   box.appendChild(b2);
   dialogEl.appendChild(box);
+  /* Nach 10 s rollen Dank und Credits nach oben und alles faded ins Schwarz */
+  if(!reduzierteBewegung()){
+    endeRollTimer = setTimeout(()=>{
+      if(aktuelleSzeneId === 'ende') szeneEl.classList.add('ende-roll');
+    }, 10000);
+  }
 }
 
 function wertungsText(rq){
