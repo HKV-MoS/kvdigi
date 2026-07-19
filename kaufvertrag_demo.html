@@ -1018,6 +1018,10 @@ const KAEUFER = {
 function kaeufer(){ return KAEUFER[zustand.kaeuferin || 'm']; }
 
 const SPRITES = {
+  titel: [
+    { id:'auto', frames:['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png'],
+      x:660, y:182, w:88, h:42 },
+  ],
   discount: [
     { id:'katze', frames:['kaufvertrag_katze_0.png','kaufvertrag_katze_1.png','kaufvertrag_katze_2.png',
       'kaufvertrag_katze_3.png','kaufvertrag_katze_4.png','kaufvertrag_katze_5.png','kaufvertrag_katze_6.png'],
@@ -1650,10 +1654,58 @@ function taubenStart(){
   }, 600);
 }
 function taubenStop(){ if(tauben.timer){ clearInterval(tauben.timer); tauben.timer = null; } }
+const AUTO_FRAMES = ['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png'];
+const auto = { timer:null, phase:0, tick:0, x:660 };
+const AUTO_PLAN = [
+  { art:'lauf', bis:592, tempo:-3.0 },      /* von rechts zur Badge-Saeule */
+  { art:'pose', frame:2, ticks:16 },        /* halten, Arm raus, Badge */
+  { art:'lauf', bis:-110, tempo:-3.4 },     /* dem Randstein entlang links hinaus */
+  { art:'pause', ticks:300 },               /* ~36 s Ruhe, dann naechste Lehrperson */
+];
+function autoBasis(x){
+  /* Fahrbahn faellt schraeg nach unten links */
+  return x > 592 ? 224 + (660-x)*0.06 : 228 + (592-x)*0.058;
+}
+function autoZeichne(frame){
+  const el = document.getElementById('sp-auto');
+  if(!el) return;
+  el.setAttribute('x', auto.x);
+  el.setAttribute('y', autoBasis(auto.x) - 42);
+  el.setAttribute('href', vurl(AUTO_FRAMES[frame]));
+}
+function autoTick(){
+  const p = AUTO_PLAN[auto.phase];
+  auto.tick++;
+  const weiter = ()=>{ auto.phase = (auto.phase+1)%AUTO_PLAN.length; auto.tick = 0; };
+  if(p.art==='lauf'){
+    auto.x += p.tempo;
+    autoZeichne(Math.floor(auto.tick/2)%2);
+    if(auto.x <= p.bis) weiter();
+  } else if(p.art==='pose'){
+    autoZeichne(p.frame);
+    if(auto.tick >= p.ticks) weiter();
+  } else {
+    if(auto.tick===1){ auto.x = 660; autoZeichne(0); }
+    if(auto.tick >= p.ticks) weiter();
+  }
+}
+function autoStart(){
+  autoStop();
+  if(reduzierteBewegung()){
+    auto.x = 592;
+    auto.timer = setInterval(()=>{ auto.x = 592; autoZeichne(0); }, 1500);
+    return;
+  }
+  auto.phase = 0; auto.tick = 0; auto.x = 660;
+  auto.timer = setInterval(autoTick, 120);
+}
+function autoStop(){ if(auto.timer){ clearInterval(auto.timer); auto.timer = null; } }
+
 const tiere = { szene:null };
 function tiereWechsel(szene){
   if(tiere.szene === szene) return;   /* gleiche Szene: Choreografie NICHT neu starten */
   tiere.szene = szene;
+  if(szene==='titel') autoStart(); else autoStop();
   if(szene==='discount') katzeStart(); else katzeStop();
   if(szene==='front') taubenStart(); else taubenStop();
 }
