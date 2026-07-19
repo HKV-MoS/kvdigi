@@ -940,7 +940,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '46';
+const BILD_VERSION = '47';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1031,7 +1031,7 @@ const HAENDLER = {
   frau:{ sprecher:'FRAU MEIER', hotName:'Frau Meier',
     hotAnschauen:'Frau Meier, Mitinhaberin. Ihr Mann ist unterwegs – und vom mündlichen Geschäft von damals weiss sie nichts. Zum Glück gibt es Papier.',
     frames:['kaufvertrag_frau_0.png','kaufvertrag_frau_1.png','kaufvertrag_frau_2.png','kaufvertrag_frau_3.png'],
-    w:106, h:63 },
+    w:94, h:54, sx:361, sy:84 },
 };
 function haendler(){ return HAENDLER[zustand.haendler || 'herr']; }
 const KAEUFER = {
@@ -1082,8 +1082,10 @@ function spriteSVG(key){
     const fr = spriteFrames(sp);
     const w = sp.id==='meier' ? haendler().w : (sp.id==='alex' ? kaeufer().w : sp.w);
     const h = sp.id==='meier' ? haendler().h : (sp.id==='alex' ? kaeufer().h : sp.h);
+    const px = (sp.id==='meier' && haendler().sx !== undefined) ? haendler().sx : sp.x;
+    const py = (sp.id==='meier' && haendler().sy !== undefined) ? haendler().sy : sp.y;
     if(!spriteOk[fr[0]]) return;
-    svg += '<image id="sp-'+sp.id+'" href="'+vurl(fr[0])+'" x="'+sp.x+'" y="'+sp.y+
+    svg += '<image id="sp-'+sp.id+'" href="'+vurl(fr[0])+'" x="'+px+'" y="'+py+
            '" width="'+w+'" height="'+h+'" preserveAspectRatio="xMidYMax meet"/>';
   });
   return svg;
