@@ -1031,7 +1031,7 @@ function kaeufer(){ return KAEUFER[zustand.kaeuferin || 'm']; }
 const SPRITES = {
   titel: [
     { id:'taubeA', frames:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'], x:336, y:190, w:18, h:12 },
-    { id:'taubeB', frames:['kaufvertrag_taube_b0.png','kaufvertrag_taube_b1.png'], x:362, y:192, w:17, h:11 },
+    { id:'taubeB', frames:['kaufvertrag_taube_b0.png','kaufvertrag_taube_b1.png'], x:356, y:192, w:17, h:11 },
     { id:'auto', frames:['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png','kaufvertrag_auto_3.png','kaufvertrag_auto_4.png','kaufvertrag_auto_5.png'],
       x:660, y:172, w:94, h:51 },
   ],
@@ -1705,9 +1705,9 @@ function taubenStart(){
       const el = document.getElementById(id);
       if(!el) return;
       if(autoNah){ el.setAttribute('href', vurl(oben)); return; }
-      if(Math.random() < 0.45) el.setAttribute('href', vurl(Math.random() < 0.55 ? unten : oben));
+      if(Math.random() < 0.7) el.setAttribute('href', vurl(Math.random() < 0.6 ? unten : oben));
     });
-  }, 600);
+  }, 340);
 }
 function taubenStop(){ if(tauben.timer){ clearInterval(tauben.timer); tauben.timer = null; } }
 const AUTO_FRAMES = ['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png','kaufvertrag_auto_3.png','kaufvertrag_auto_4.png','kaufvertrag_auto_5.png'];
@@ -1716,8 +1716,8 @@ const auto = { raf:null, statTimer:null, phase:0, x:660, warteBis:0, strecke:0, 
 const AUTO_TEMPO_AN = 90;      /* Rastereinheiten pro Sekunde */
 const AUTO_PAUSE_MS = 26000;
 function autoBasis(x){
-  /* Dem Randstein entlang, mit mehr Abstand: durchgehend tiefer auf dem Asphalt */
-  return 258 - 0.082 * x;
+  /* Dem Randstein entlang, mit deutlich Abstand: mitten auf dem Asphalt */
+  return 262 - 0.072 * x;
 }
 function autoZeichne(){
   const el = document.getElementById('sp-auto');
