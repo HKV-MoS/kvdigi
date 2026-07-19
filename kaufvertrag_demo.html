@@ -945,7 +945,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '58';
+const BILD_VERSION = '59';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -987,8 +987,8 @@ HOTSPOTS.treppe = [
         benutze:'Gleich! Erst noch kurz umsehen – oder unten weiterklicken.' } },
   { id:'lampen', name:'Kupferlampen', x:196,y:0,w:32,h:66,
     a:{ anschauen:'Kupferlampen, warm wie Bratapfel. Vermutlich älter als das halbe Kollegium – und deutlich leiser.' } },
-  { id:'gespraech', name:'Lehrperson &amp; Rektor', x:250,y:88,w:106,h:162,
-    a:{ anschauen:'Die Lehrperson und der Rektor im Feierabendgespräch. Man versteht nur Fetzen – aber es fällt auffallend oft das Wort «Jubiläum».',
+  { id:'gespraech', name:'Lehrperson &amp; Rektor', x:188,y:88,w:106,h:162,
+    a:{ anschauen:'Die Lehrperson und der Rektor im Feierabendgespräch – die beiden sind per Du. Es geht um den Umbau: Kran, Gerüst, Presslufthammer. Und einmal, ziemlich deutlich: «1875».',
         redemit:'Sie nicken im Vorbeigehen. «Schönes Wochenende!» – «Ebenfalls. Und nicht alles auf einmal ausgeben!» Woher weiss er das?' } },
 ];
 HOTSPOTS.zimmer2 = [
@@ -1085,8 +1085,8 @@ const SPRITES = {
       x:125, y:64, w:54, h:116 },
   ],
   treppe: [
-    { id:'tlehrer', frames:['kaufvertrag_lehrer_1.png','kaufvertrag_lehrer_0.png'], x:252, y:102, w:68, h:148 },
-    { id:'trektor', frames:['figur_rektor_steh_3.png','figur_rektor_steh_0.png'], x:314, y:92, w:40, h:158 },
+    { id:'tlehrer', frames:['kaufvertrag_lehrer_1.png','kaufvertrag_lehrer_0.png'], x:190, y:102, w:68, h:148 },
+    { id:'trektor', frames:['figur_rektor_steh_3.png','figur_rektor_steh_0.png'], x:252, y:92, w:40, h:158 },
   ],
   titel: [
     { id:'taubeA', frames:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'], x:336, y:186, w:18, h:12 },
@@ -1940,12 +1940,12 @@ function lehrerStop(){ if(lehrer.timer){ clearInterval(lehrer.timer); lehrer.tim
    Schwebende Gespraechsfetzen im SCUMM-Stil
    ===================================================== */
 const GESPRAECH_FETZEN = [
-  { wer:'trektor', z:['… das Jubiläum – 150 Jahre …','… das will geplant sein …'] },
-  { wer:'tlehrer', z:['… heute hat sogar der Schläfer …','… etwas mitgenommen …'] },
-  { wer:'trektor', z:['… was man 1875 wohl alles …','… von Hand unterschrieben hat …'] },
-  { wer:'tlehrer', z:['… Kaufvertrag sitzt. OR 184 …','… können jetzt alle im Schlaf …'] },
-  { wer:'trektor', z:['… und die Glocken in der Fassade …','… haben Sie die mal gezählt? …'] },
-  { wer:'tlehrer', z:['… erst nach dem Wochenende, …','… Herr Rektor. Erst danach. …'] },
+  { wer:'trektor', z:['… der Kran steht noch bis …','… zum Jubiläum – hoffe ich …'] },
+  { wer:'tlehrer', z:['… heute hat der Presslufthammer …','… fast mein Diktat übertönt …'] },
+  { wer:'trektor', z:['… beim Umbau sind alte Pläne …','… aufgetaucht – von 1875! …'] },
+  { wer:'tlehrer', z:['… zeig sie mir am Montag – …','… das gibt Unterrichtsstoff …'] },
+  { wer:'trektor', z:['… und die Glocken in der Fassade …','… bleiben. Das habe ich schriftlich …'] },
+  { wer:'tlehrer', z:['… schriftlich ist gut. Sonst …','… gilt es nur mündlich, du weisst ja …'] },
 ];
 const gespraech = { t1:null, t2:null, blase:null, idx:0 };
 function gespraechBlase(){
@@ -2351,7 +2351,7 @@ schuleEnde:{ szene:'schule', sprecher:'ERZÄHLER',
   ]},
 
 treppe:{ szene:'treppe', sprecher:'ERZÄHLER',
-  text:'Treppenhaus, Feierabendlicht. Vor dem Sitzungszimmer stehen <b>Lehrperson und Rektor</b> und reden – Sie schnappen im Vorbeigehen nur Gesprächsfetzen auf. Auffallend oft fällt das Wort <b>«Jubiläum»</b>. Unten wartet der Freitagabend, Ihr Heimweg führt Richtung Bahnhof … und an der Bahnhofstrasse leuchtet schon das rote Neon.',
+  text:'Treppenhaus, Feierabendlicht. Vor dem Steingeländer stehen <b>Lehrperson und Rektor</b> und reden über den <b>Umbau</b> – Sie schnappen im Vorbeigehen nur Gesprächsfetzen auf. Unten wartet der Freitagabend, Ihr Heimweg führt Richtung Bahnhof … und an der Bahnhofstrasse leuchtet schon das rote Neon.',
   optionen:[
     { t:'Die Treppe hinunter – zum MEGA-DISCOUNT ▸', rq:0, fb:null, ziel:'start' },
   ]},
