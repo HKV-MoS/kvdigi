@@ -281,6 +281,8 @@
 }
 #sp-rechner{ transform-box:fill-box; transform-origin:center; cursor:pointer; }
 #sp-rektor{ opacity:0; transition:opacity .7s; cursor:pointer; }
+#sp-wlehrer{ opacity:0; transition:opacity .8s; }
+#sp-wlehrer.da{ opacity:1; }
 #sp-rektor.da{ opacity:1; }
 #sp-credits{ transition: transform 15s linear; }
 .szene.ende-roll #sp-credits{ transform: translateY(-320px); }
@@ -946,7 +948,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '54';
+const BILD_VERSION = '56';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1052,7 +1054,10 @@ const SPRITES = {
   schule: [
     { id:'rektor', frames:['figur_rektor_steh_0.png'], x:602, y:38, w:26, h:102 },
     { id:'lehrer', frames:['kaufvertrag_lehrer_0.png','kaufvertrag_lehrer_1.png','kaufvertrag_lehrer_2.png','kaufvertrag_lehrer_3.png'],
-      x:105, y:100, w:44, h:96 },
+      x:134, y:76, w:48, h:104 },
+  ],
+  weiche: [
+    { id:'wlehrer', frames:['kaufvertrag_lehrer_0.png'], x:299, y:81, w:52, h:115 },
   ],
   titel: [
     { id:'taubeA', frames:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'], x:336, y:186, w:18, h:12 },
@@ -1836,7 +1841,6 @@ const LEHRER_PLAN = [
 function lehrerZeichne(frame){
   const el = document.getElementById('sp-lehrer');
   if(!el) return;
-  el.setAttribute('x', lehrer.x.toFixed(1));
   const soll = vurl(LEHRER_FRAMES[frame]);
   if(el.getAttribute('href') !== soll) el.setAttribute('href', soll);
 }
@@ -1853,21 +1857,63 @@ function lehrerTick(){
     if(lehrer.tick >= p.ticks) weiter();
   }
 }
+const wlehrer = { t1:null, t2:null, bob:null };
+function wlehrerRunde(){
+  const el = document.getElementById('sp-wlehrer');
+  if(!el || aktuelleSzeneId !== 'weiche') return;
+  el.classList.add('da');
+  let schritt = 0;
+  wlehrer.bob = setInterval(()=>{
+    schritt++;
+    if(schritt > 5 && schritt <= 17){ el.setAttribute('y', (schritt % 2) ? '79' : '81'); }  /* tappt ungeduldig */
+    else el.setAttribute('y', '81');
+    if(schritt >= 23){
+      clearInterval(wlehrer.bob); wlehrer.bob = null;
+      el.classList.remove('da');                       /* und geht wieder */
+    }
+  }, 260);
+  wlehrer.t2 = setTimeout(wlehrerRunde, 34000 + Math.random()*14000);
+}
+function wlehrerStart(){
+  wlehrerStop();
+  if(reduzierteBewegung()) return;
+  wlehrer.t1 = setTimeout(wlehrerRunde, 20000 + Math.random()*8000);
+}
+function wlehrerStop(){
+  if(wlehrer.t1){ clearTimeout(wlehrer.t1); wlehrer.t1 = null; }
+  if(wlehrer.t2){ clearTimeout(wlehrer.t2); wlehrer.t2 = null; }
+  if(wlehrer.bob){ clearInterval(wlehrer.bob); wlehrer.bob = null; }
+}
 const rektor = { timer:null, weg:null };
+function rektorSchritt(el, vonX, nachX, vonY, nachY, dann){
+  let i = 0;
+  const t = setInterval(()=>{
+    i++;
+    const f = i/10;
+    el.setAttribute('x', (vonX + (nachX-vonX)*f).toFixed(1));
+    el.setAttribute('y', (vonY + (nachY-vonY)*f).toFixed(1));
+    if(i >= 10){ clearInterval(t); if(dann) dann(); }
+  }, 55);
+}
 function rektorStart(){
   rektorStop();
   if(reduzierteBewegung()) return;
   function runde(){
     const el = document.getElementById('sp-rektor');
     if(el && aktuelleSzeneId==='schule'){
+      el.setAttribute('x', '602'); el.setAttribute('y', '38');
       el.classList.add('da');
-      rektor.weg = setTimeout(()=>{
-        try{ el.classList.remove('da'); }catch(e){}
-      }, 3800);
+      rektorSchritt(el, 602, 585, 38, 46, ()=>{        /* tritt heraus */
+        rektor.weg = setTimeout(()=>{
+          rektorSchritt(el, 585, 602, 46, 38, ()=>{    /* und zieht sich zurueck */
+            try{ el.classList.remove('da'); }catch(e){}
+          });
+        }, 2800);
+      });
     }
-    rektor.timer = setTimeout(runde, 50000 + Math.random()*40000);
+    rektor.timer = setTimeout(runde, 40000 + Math.random()*30000);
   }
-  rektor.timer = setTimeout(runde, 14000 + Math.random()*10000);
+  rektor.timer = setTimeout(runde, 9000 + Math.random()*7000);
 }
 function rektorStop(){
   if(rektor.timer){ clearTimeout(rektor.timer); rektor.timer = null; }
@@ -1891,6 +1937,7 @@ function tiereWechsel(szene){
   tiere.szene = szene;
   if(szene==='titel') autoStart(); else autoStop();
   if(szene==='schule'){ lehrerStart(); rektorStart(); } else { lehrerStop(); rektorStop(); }
+  if(szene==='weiche') wlehrerStart(); else wlehrerStop();
   if(szene==='discount') katzeStart(); else katzeStop();
   if(szene==='front' || szene==='titel') taubenStart(); else taubenStop();
 }
