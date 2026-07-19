@@ -921,7 +921,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '39';
+const BILD_VERSION = '40';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1023,7 +1023,7 @@ function kaeufer(){ return KAEUFER[zustand.kaeuferin || 'm']; }
 
 const SPRITES = {
   titel: [
-    { id:'auto', frames:['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png','kaufvertrag_auto_3.png'],
+    { id:'auto', frames:['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png','kaufvertrag_auto_3.png','kaufvertrag_auto_4.png','kaufvertrag_auto_5.png'],
       x:660, y:172, w:94, h:51 },
   ],
   discount: [
@@ -1669,7 +1669,7 @@ function taubenStart(){
   }, 600);
 }
 function taubenStop(){ if(tauben.timer){ clearInterval(tauben.timer); tauben.timer = null; } }
-const AUTO_FRAMES = ['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png','kaufvertrag_auto_3.png'];
+const AUTO_FRAMES = ['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png','kaufvertrag_auto_3.png','kaufvertrag_auto_4.png','kaufvertrag_auto_5.png'];
 /* Fluessige Fahrt: requestAnimationFrame, Subpixel-Positionen, Raddrehung nach Strecke */
 const auto = { raf:null, statTimer:null, phase:0, x:660, warteBis:0, strecke:0, letztT:0 };
 const AUTO_TEMPO_AN = 90;      /* Rastereinheiten pro Sekunde */
@@ -1682,12 +1682,12 @@ function autoZeichne(){
   const el = document.getElementById('sp-auto');
   if(!el) return;
   const gr = 0.78 + (660 - auto.x) * 0.00055;   /* naeher beim Betrachter = groesser */
-  const w = 94 * gr, h = 51 * gr;
+  const w = 94 * gr, h = 49 * gr;
   el.setAttribute('x', auto.x.toFixed(2));
   el.setAttribute('y', (autoBasis(auto.x) - h).toFixed(2));
   el.setAttribute('width', w.toFixed(2));
   el.setAttribute('height', h.toFixed(2));
-  const frame = Math.floor(auto.strecke / 5) % AUTO_FRAMES.length;
+  const frame = Math.floor(auto.strecke / 7) % AUTO_FRAMES.length;
   const soll = vurl(AUTO_FRAMES[frame]);
   if(el.getAttribute('href') !== soll) el.setAttribute('href', soll);
 }
