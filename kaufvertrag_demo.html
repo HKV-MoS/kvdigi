@@ -279,6 +279,13 @@
   45%{ transform:rotate(-5deg); } 60%{ transform:rotate(5deg); } 75%{ transform:rotate(0deg); }
 }
 #sp-rechner{ transform-box:fill-box; transform-origin:center; cursor:pointer; }
+.startTor{ position:absolute; inset:0; z-index:70; background:#000; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:1.1rem; text-align:center; padding:20px; }
+.startTor h2{ color:#FFFF55; font-size:1.6rem; letter-spacing:.35em; margin:0; }
+.startTor p{ color:#AAAAAA; font-size:.85rem; max-width:34rem; line-height:1.6; margin:0; }
+.startTor button{ font:inherit; font-weight:700; font-size:1.05rem; color:#55FF55; background:#0a140a;
+  border:2px solid #55FF55; border-radius:12px; padding:.9rem 2.2rem; cursor:pointer; }
+.startTor button:hover{ background:#55FF55; color:#0a140a; }
 .introDeckel{ position:absolute; inset:0; z-index:60; background:#000; cursor:pointer; }
 .introDeckel video{ width:100%; height:100%; object-fit:cover; display:block; }
 .introDeckel .introHinweis{ position:absolute; right:12px; bottom:8px; color:#8f8; font-size:.7rem;
@@ -1030,8 +1037,8 @@ function kaeufer(){ return KAEUFER[zustand.kaeuferin || 'm']; }
 
 const SPRITES = {
   titel: [
-    { id:'taubeA', frames:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'], x:336, y:190, w:18, h:12 },
-    { id:'taubeB', frames:['kaufvertrag_taube_b0.png','kaufvertrag_taube_b1.png'], x:356, y:192, w:17, h:11 },
+    { id:'taubeA', frames:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'], x:336, y:186, w:18, h:12 },
+    { id:'taubeB', frames:['kaufvertrag_taube_b0.png','kaufvertrag_taube_b1.png'], x:356, y:188, w:17, h:11 },
     { id:'auto', frames:['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png','kaufvertrag_auto_3.png','kaufvertrag_auto_4.png','kaufvertrag_auto_5.png'],
       x:660, y:172, w:94, h:51 },
   ],
@@ -1561,7 +1568,28 @@ function szenenAudio(szene){
   }
 }
 /* Browser verlangen eine Geste: beim ersten Klick nachstarten */
-/* Retro-FMV-Intro: laeuft einmal beim Laden ueber der Titelszene, Klick ueberspringt */
+/* Ton-Freigabe: erst der Klick macht Musik + FX moeglich (Browser-Regel) — dann Intro */
+function startTorZeigen(){
+  try{
+    const wrap = szeneEl.parentElement;
+    if(!wrap) return;
+    autoStop();
+    const d = document.createElement('div');
+    d.className = 'startTor';
+    d.innerHTML = '<h2>DER KAUF</h2>' +
+      '<p>Für das beste Spielerlebnis erlauben Sie bitte <b>Musik und Soundeffekte</b>.<br>Kopfhörer empfohlen – dann geht es los.</p>' +
+      '<button type="button">▶ Spiel mit Ton starten</button>';
+    d.querySelector('button').addEventListener('click', ()=>{
+      try{ if(grv.ctx) grv.ctx.resume(); }catch(e){}
+      try{ if(fx.ctx) fx.ctx.resume(); }catch(e){}
+      try{ musikWechsel('titel'); }catch(e){}
+      try{ d.remove(); }catch(e){}
+      introZeigen();
+    });
+    wrap.appendChild(d);
+  }catch(e){}
+}
+/* Retro-FMV-Intro: laeuft einmal ueber der Titelszene, Klick ueberspringt */
 function introZeigen(){
   try{
     const wrap = szeneEl.parentElement;   /* .szene-wrap, position:relative */
@@ -1717,7 +1745,7 @@ const AUTO_TEMPO_AN = 90;      /* Rastereinheiten pro Sekunde */
 const AUTO_PAUSE_MS = 26000;
 function autoBasis(x){
   /* Dem Randstein entlang, mit deutlich Abstand: mitten auf dem Asphalt */
-  return 262 - 0.072 * x;
+  return 262 - 0.062 * x;
 }
 function autoZeichne(){
   const el = document.getElementById('sp-auto');
@@ -1742,7 +1770,7 @@ function autoSchritt(t){
     if(auto.x <= -40){
       try{ const sch = document.getElementById('sp-schild2'); if(sch) sch.classList.add('schild-an'); }catch(e){}
     }
-    if(auto.x <= -140){ auto.phase = 1; auto.warteBis = t + AUTO_PAUSE_MS; }
+    if(auto.x <= -185){ auto.phase = 1; auto.warteBis = t + AUTO_PAUSE_MS; }
   } else {                                  /* Pause, dann naechste Runde */
     if(t >= auto.warteBis){ auto.x = 660; auto.strecke = 0; auto.phase = 0; }
   }
@@ -2964,7 +2992,7 @@ document.getElementById('titel').addEventListener('click', ()=>{
 });
 
 /* ---------- Start ---------- */
-if(!ladeSpielstand()){ zeige('titel'); introZeigen(); }
+if(!ladeSpielstand()){ zeige('titel'); startTorZeigen(); }
 
 
 /* ---------- DEMO-ENDE ---------- */
