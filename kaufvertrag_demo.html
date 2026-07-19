@@ -917,7 +917,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '33';
+const BILD_VERSION = '34';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1020,7 +1020,7 @@ function kaeufer(){ return KAEUFER[zustand.kaeuferin || 'm']; }
 const SPRITES = {
   titel: [
     { id:'auto', frames:['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png'],
-      x:660, y:182, w:88, h:42 },
+      x:660, y:198, w:88, h:48 },
   ],
   discount: [
     { id:'katze', frames:['kaufvertrag_katze_0.png','kaufvertrag_katze_1.png','kaufvertrag_katze_2.png',
@@ -1657,20 +1657,20 @@ function taubenStop(){ if(tauben.timer){ clearInterval(tauben.timer); tauben.tim
 const AUTO_FRAMES = ['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png'];
 const auto = { timer:null, phase:0, tick:0, x:660 };
 const AUTO_PLAN = [
-  { art:'lauf', bis:592, tempo:-3.0 },      /* von rechts zur Badge-Saeule */
-  { art:'pose', frame:2, ticks:16 },        /* halten, Arm raus, Badge */
-  { art:'lauf', bis:-110, tempo:-3.4 },     /* dem Randstein entlang links hinaus */
-  { art:'pause', ticks:300 },               /* ~36 s Ruhe, dann naechste Lehrperson */
+  { art:'lauf', bis:592, tempo:-5.5 },      /* zuegig von rechts heran */
+  { art:'pose', frame:2, ticks:14 },        /* kurz halten: Badge */
+  { art:'lauf', bis:-110, tempo:-6.5 },     /* zwischen Pfosten und Randstein hindurch, dem Randstein entlang */
+  { art:'pause', ticks:240 },               /* ~29 s Ruhe, dann naechste Lehrperson */
 ];
 function autoBasis(x){
-  /* Fahrbahn faellt schraeg nach unten links */
-  return x > 592 ? 224 + (660-x)*0.06 : 228 + (592-x)*0.058;
+  /* Fahrlinie: unterhalb der kleinen Pfosten, dem Randstein entlang leicht abfallend */
+  return 246 + (660-x)*0.03;
 }
 function autoZeichne(frame){
   const el = document.getElementById('sp-auto');
   if(!el) return;
   el.setAttribute('x', auto.x);
-  el.setAttribute('y', autoBasis(auto.x) - 42);
+  el.setAttribute('y', autoBasis(auto.x) - 48);
   el.setAttribute('href', vurl(AUTO_FRAMES[frame]));
 }
 function autoTick(){
