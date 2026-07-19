@@ -943,7 +943,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '52';
+const BILD_VERSION = '53';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1010,7 +1010,7 @@ function bildSzene(key){
   return '<svg viewBox="0 0 640 260" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">'+
     '<image href="'+vurl(SZENEN_BILDER[key])+'" x="0" y="0" width="640" height="260" '+
     'preserveAspectRatio="xMidYMid slice"/>'+
-    spriteSVG(key)+creditsSVG(key)+hotRects(key)+rechnerSVG(key)+schildSVG(key)+'</svg>';
+    spriteSVG(key)+vordergrundSVG(key)+creditsSVG(key)+hotRects(key)+rechnerSVG(key)+schildSVG(key)+'</svg>';
 }
 if(typeof Image !== 'undefined'){
   Object.entries(SZENEN_BILDER).forEach(([key,url])=>{
@@ -1048,7 +1048,7 @@ function kaeufer(){ return KAEUFER[zustand.kaeuferin || 'm']; }
 const SPRITES = {
   schule: [
     { id:'lehrer', frames:['kaufvertrag_lehrer_0.png','kaufvertrag_lehrer_1.png','kaufvertrag_lehrer_2.png','kaufvertrag_lehrer_3.png'],
-      x:250, y:100, w:44, h:96 },
+      x:105, y:100, w:44, h:96 },
   ],
   titel: [
     { id:'taubeA', frames:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'], x:336, y:186, w:18, h:12 },
@@ -1821,15 +1821,15 @@ function autoStop(){
 }
 
 const LEHRER_FRAMES = ['kaufvertrag_lehrer_0.png','kaufvertrag_lehrer_1.png','kaufvertrag_lehrer_2.png','kaufvertrag_lehrer_3.png'];
-const lehrer = { timer:null, phase:0, tick:0, x:250 };
+const lehrer = { timer:null, phase:0, tick:0, x:105 };
 /* 0 frontal · 1 Profil links · 2 Ruecken (an der Tafel) · 3 Profil rechts */
 const LEHRER_PLAN = [
-  { art:'pose', frame:0, ticks:28 },            /* erklaert frontal */
-  { art:'lauf', bis:150, tempo:-1.1, frame:1 }, /* schlendert nach links */
-  { art:'pose', frame:0, ticks:18 },
-  { art:'lauf', bis:330, tempo:1.1, frame:3 },  /* und wieder nach rechts */
-  { art:'pose', frame:2, ticks:26 },            /* schreibt an die Tafel */
-  { art:'lauf', bis:250, tempo:-1.1, frame:1 },
+  { art:'pose', frame:0, ticks:34 },            /* hinter dem Pult, erklaert */
+  { art:'lauf', bis:240, tempo:1.1, frame:3 },  /* zur Tafel */
+  { art:'pose', frame:2, ticks:24 },            /* schreibt an die Tafel */
+  { art:'lauf', bis:560, tempo:1.1, frame:3 },  /* weiter zur Tuere */
+  { art:'pose', frame:0, ticks:22 },            /* steht neben der Tuere, hinter dem BL */
+  { art:'lauf', bis:105, tempo:-1.2, frame:1 }, /* zurueck ans Pult */
 ];
 function lehrerZeichne(frame){
   const el = document.getElementById('sp-lehrer');
@@ -1854,11 +1854,11 @@ function lehrerTick(){
 function lehrerStart(){
   lehrerStop();
   if(reduzierteBewegung()){
-    lehrer.x = 250;
-    lehrer.timer = setInterval(()=>{ lehrer.x = 250; lehrerZeichne(0); }, 1500);
+    lehrer.x = 105;
+    lehrer.timer = setInterval(()=>{ lehrer.x = 105; lehrerZeichne(0); }, 1500);
     return;
   }
-  lehrer.phase = 0; lehrer.tick = 0; lehrer.x = 250;
+  lehrer.phase = 0; lehrer.tick = 0; lehrer.x = 105;
   lehrer.timer = setInterval(lehrerTick, 120);
 }
 function lehrerStop(){ if(lehrer.timer){ clearInterval(lehrer.timer); lehrer.timer = null; } }
@@ -2372,6 +2372,11 @@ szeneEl.addEventListener('mouseout', (e)=>{
   const t = e.target;
   if(t && t.id === 'sp-rechner'){ rechnerPose(t, RECHNER_LIEGEND); if(rechner.zappel) t.classList.add('rechner-zappel'); }
 });
+function vordergrundSVG(key){
+  if(key !== 'schule') return '';
+  return '<image href="'+vurl('kaufvertrag_pult_vg.png')+'" x="63.2" y="128.8" width="136" height="60.8"/>' +
+         '<image href="'+vurl('kaufvertrag_bl_vg.png')+'" x="552.8" y="172.8" width="87.2" height="87.2"/>';
+}
 function creditsSVG(key){
   if(key !== 'ende') return '';
   return '<image id="sp-credits" href="'+vurl('kaufvertrag_credits.png')+
