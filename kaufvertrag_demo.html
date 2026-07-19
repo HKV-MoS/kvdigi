@@ -279,6 +279,8 @@
   45%{ transform:rotate(-5deg); } 60%{ transform:rotate(5deg); } 75%{ transform:rotate(0deg); }
 }
 #sp-rechner{ transform-box:fill-box; transform-origin:center; cursor:pointer; }
+#sp-rektor{ opacity:0; transition:opacity .7s; cursor:pointer; }
+#sp-rektor.da{ opacity:1; }
 #sp-credits{ transition: transform 15s linear; }
 .szene.ende-roll #sp-credits{ transform: translateY(-320px); }
 .endeFade{ position:absolute; inset:0; background:#000; opacity:0; transition:opacity 14s linear; pointer-events:none; z-index:40; }
@@ -943,7 +945,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '53';
+const BILD_VERSION = '54';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1047,6 +1049,7 @@ function kaeufer(){ return KAEUFER[zustand.kaeuferin || 'm']; }
 
 const SPRITES = {
   schule: [
+    { id:'rektor', frames:['figur_rektor_steh_0.png'], x:602, y:38, w:26, h:102 },
     { id:'lehrer', frames:['kaufvertrag_lehrer_0.png','kaufvertrag_lehrer_1.png','kaufvertrag_lehrer_2.png','kaufvertrag_lehrer_3.png'],
       x:105, y:100, w:44, h:96 },
   ],
@@ -1824,12 +1827,10 @@ const LEHRER_FRAMES = ['kaufvertrag_lehrer_0.png','kaufvertrag_lehrer_1.png','ka
 const lehrer = { timer:null, phase:0, tick:0, x:105 };
 /* 0 frontal · 1 Profil links · 2 Ruecken (an der Tafel) · 3 Profil rechts */
 const LEHRER_PLAN = [
-  { art:'pose', frame:0, ticks:34 },            /* hinter dem Pult, erklaert */
-  { art:'lauf', bis:240, tempo:1.1, frame:3 },  /* zur Tafel */
-  { art:'pose', frame:2, ticks:24 },            /* schreibt an die Tafel */
-  { art:'lauf', bis:560, tempo:1.1, frame:3 },  /* weiter zur Tuere */
-  { art:'pose', frame:0, ticks:22 },            /* steht neben der Tuere, hinter dem BL */
-  { art:'lauf', bis:105, tempo:-1.2, frame:1 }, /* zurueck ans Pult */
+  { art:'pose', frame:0, ticks:70 },            /* erklaert frontal hinter dem Pult */
+  { art:'pose', frame:3, ticks:22 },            /* wendet sich kurz zur Tafel hin */
+  { art:'pose', frame:0, ticks:55 },
+  { art:'pose', frame:1, ticks:18 },            /* Blick zur Fensterseite */
 ];
 function lehrerZeichne(frame){
   const el = document.getElementById('sp-lehrer');
@@ -1851,6 +1852,26 @@ function lehrerTick(){
     if(lehrer.tick >= p.ticks) weiter();
   }
 }
+const rektor = { timer:null, weg:null };
+function rektorStart(){
+  rektorStop();
+  if(reduzierteBewegung()) return;
+  function runde(){
+    const el = document.getElementById('sp-rektor');
+    if(el && aktuelleSzeneId==='schule'){
+      el.classList.add('da');
+      rektor.weg = setTimeout(()=>{
+        try{ el.classList.remove('da'); }catch(e){}
+      }, 3800);
+    }
+    rektor.timer = setTimeout(runde, 50000 + Math.random()*40000);
+  }
+  rektor.timer = setTimeout(runde, 14000 + Math.random()*10000);
+}
+function rektorStop(){
+  if(rektor.timer){ clearTimeout(rektor.timer); rektor.timer = null; }
+  if(rektor.weg){ clearTimeout(rektor.weg); rektor.weg = null; }
+}
 function lehrerStart(){
   lehrerStop();
   if(reduzierteBewegung()){
@@ -1868,7 +1889,7 @@ function tiereWechsel(szene){
   if(tiere.szene === szene) return;   /* gleiche Szene: Choreografie NICHT neu starten */
   tiere.szene = szene;
   if(szene==='titel') autoStart(); else autoStop();
-  if(szene==='schule') lehrerStart(); else lehrerStop();
+  if(szene==='schule'){ lehrerStart(); rektorStart(); } else { lehrerStop(); rektorStop(); }
   if(szene==='discount') katzeStart(); else katzeStop();
   if(szene==='front' || szene==='titel') taubenStart(); else taubenStop();
 }
@@ -2679,6 +2700,10 @@ szeneEl.addEventListener('click', (e)=>{
     e.stopPropagation(); e.preventDefault();
     fxFuer('gestell');
     rechnerOeffnen();
+  }
+  if(t && t.id === 'sp-rektor' && t.classList.contains('da')){
+    e.stopPropagation(); e.preventDefault();
+    blaseHinweis('Der <b>Rektor</b> auf seiner Runde. Er nickt Ihnen zu – Qualitätssicherung auf Schulleitungsebene – und zieht lautlos weiter.', 9000);
   }
 }, true);
 
