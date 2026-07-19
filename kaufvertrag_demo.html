@@ -283,7 +283,9 @@
 .introDeckel video{ width:100%; height:100%; object-fit:cover; display:block; }
 .introDeckel .introHinweis{ position:absolute; right:12px; bottom:8px; color:#8f8; font-size:.7rem;
   font-family:inherit; text-shadow:0 1px 3px #000; opacity:.85; pointer-events:none; }
-.introDeckel.weg{ opacity:0; transition:opacity .8s; }
+.introDeckel video{ transition:opacity .7s; }
+.introDeckel.schwarz video{ opacity:0; }
+.introDeckel.weg{ opacity:0; transition:opacity 1.1s; }
 #sp-schild2{ opacity:0; transition:opacity 1.6s steps(8); }
 #sp-schild2.schild-an{ opacity:1; }
 .rechner-zappel{ animation: rechnerZappel 1.9s ease-in-out infinite; }
@@ -1028,8 +1030,8 @@ function kaeufer(){ return KAEUFER[zustand.kaeuferin || 'm']; }
 
 const SPRITES = {
   titel: [
-    { id:'taubeA', frames:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'], x:330, y:202, w:20, h:13 },
-    { id:'taubeB', frames:['kaufvertrag_taube_b0.png','kaufvertrag_taube_b1.png'], x:360, y:205, w:19, h:12 },
+    { id:'taubeA', frames:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'], x:336, y:190, w:18, h:12 },
+    { id:'taubeB', frames:['kaufvertrag_taube_b0.png','kaufvertrag_taube_b1.png'], x:362, y:192, w:17, h:11 },
     { id:'auto', frames:['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png','kaufvertrag_auto_3.png','kaufvertrag_auto_4.png','kaufvertrag_auto_5.png'],
       x:660, y:172, w:94, h:51 },
   ],
@@ -1568,7 +1570,17 @@ function introZeigen(){
     d.className = 'introDeckel';
     d.innerHTML = '<video muted autoplay playsinline preload="auto" src="' + vurl('kaufvertrag_intro.mp4') + '"></video>' +
       '<div class="introHinweis">klicken zum Überspringen</div>';
-    const ende = ()=>{ d.classList.add('weg'); setTimeout(()=>{ try{ d.remove(); }catch(e){} }, 850); };
+    autoStop();                                  /* das Auto wartet hinter dem Vorhang */
+    let vorbei = false;
+    const ende = ()=>{
+      if(vorbei) return; vorbei = true;
+      d.classList.add('schwarz');                /* Video -> Schwarz */
+      setTimeout(()=>{ d.classList.add('weg'); }, 900);        /* Schwarz -> Szene */
+      setTimeout(()=>{
+        try{ d.remove(); }catch(e){}
+        if(aktuelleSzeneId === 'titel') autoStart();           /* jetzt darf der Panda */
+      }, 2050);
+    };
     d.addEventListener('click', ende);
     const v = d.querySelector('video');
     v.addEventListener('ended', ende);
@@ -1704,8 +1716,8 @@ const auto = { raf:null, statTimer:null, phase:0, x:660, warteBis:0, strecke:0, 
 const AUTO_TEMPO_AN = 90;      /* Rastereinheiten pro Sekunde */
 const AUTO_PAUSE_MS = 26000;
 function autoBasis(x){
-  /* Dem Randstein entlang: rechts oben einsteigen, links unten klar auf dem Asphalt */
-  return 256 - 0.09 * x;
+  /* Dem Randstein entlang, mit mehr Abstand: durchgehend tiefer auf dem Asphalt */
+  return 258 - 0.082 * x;
 }
 function autoZeichne(){
   const el = document.getElementById('sp-auto');
