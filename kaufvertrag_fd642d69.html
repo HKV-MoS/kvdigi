@@ -280,6 +280,8 @@
   45%{ transform:rotate(-5deg); } 60%{ transform:rotate(5deg); } 75%{ transform:rotate(0deg); }
 }
 #sp-rechner{ transform-box:fill-box; transform-origin:center; cursor:pointer; }
+#sp-schild2{ opacity:0; transition:opacity 1.6s steps(8); }
+#sp-schild2.schild-an{ opacity:1; }
 .rechner-zappel{ animation: rechnerZappel 1.9s ease-in-out infinite; }
 </style>
 </head>
@@ -288,9 +290,9 @@
   <header>
     <h1 id="titel" title="Zurück zum Anfang">Der Kauf<small>Ein Rechtsfall in drei Wegen · Kaufvertrag nach OR</small></h1>
     <div style="display:flex; align-items:flex-start; gap:10px;">
-      <input id="lautMusik" type="range" min="0" max="100" step="5" title="Musik-Lautstärke" style="width:52px; accent-color:#55FF55; align-self:center;">
+      <input id="lautMusik" type="range" min="0" max="100" step="5" title="Musik-Lautstärke" style="width:104px; accent-color:#55FF55; align-self:center;">
       <button id="musik" type="button" title="Musik ein/aus">♫</button>
-      <input id="lautFx" type="range" min="0" max="100" step="5" title="FX-Lautstärke" style="width:52px; accent-color:#55FF55; align-self:center;">
+      <input id="lautFx" type="range" min="0" max="100" step="5" title="FX-Lautstärke" style="width:104px; accent-color:#55FF55; align-self:center;">
       <button id="fx" type="button" title="Soundeffekte ein/aus">FX</button>
       <button id="vollbild" type="button" title="Vollbild (Esc beendet)">⛶</button>
       <div>
@@ -985,7 +987,7 @@ function bildSzene(key){
   return '<svg viewBox="0 0 640 260" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">'+
     '<image href="'+vurl(SZENEN_BILDER[key])+'" x="0" y="0" width="640" height="260" '+
     'preserveAspectRatio="xMidYMid slice"/>'+
-    spriteSVG(key)+hotRects(key)+rechnerSVG(key)+'</svg>';
+    spriteSVG(key)+hotRects(key)+rechnerSVG(key)+schildSVG(key)+'</svg>';
 }
 if(typeof Image !== 'undefined'){
   Object.entries(SZENEN_BILDER).forEach(([key,url])=>{
@@ -1549,12 +1551,23 @@ function szenenAudio(szene){
   }
 }
 /* Browser verlangen eine Geste: beim ersten Klick nachstarten */
-document.addEventListener('pointerdown', function ersteGeste(){
-  document.removeEventListener('pointerdown', ersteGeste);
+function ersteGeste(){
   try{ if(grv.ctx) grv.ctx.resume(); }catch(e){}
   try{ if(fx.ctx) fx.ctx.resume(); }catch(e){}
   if(aktuelleSzeneId) szenenAudio(aktuelleSzeneId);
-});
+}
+['pointerdown','keydown','touchstart','wheel'].forEach(ev=>
+  document.addEventListener(ev, ersteGeste, { once:true, passive:true }));
+/* Autostart-Versuch: sobald der Browser Ton erlaubt, faengt die Musik von selbst an */
+setInterval(()=>{
+  try{
+    if(!grv.an || !aktuelleSzeneId) return;
+    const cfg = MUSIK_SZENEN[aktuelleSzeneId];
+    if(!cfg) return;
+    if(cfg.art==='groove'){ return; }
+    if(!mtrk.el || mtrk.el.paused) musikWechsel(aktuelleSzeneId);
+  }catch(e){}
+}, 1500);
 
 /* Musik-Schalter (separat) */
 const musikBtn = document.getElementById('musik');
@@ -1681,6 +1694,9 @@ function autoTick(){
   if(p.art==='lauf'){
     auto.x += p.tempo;
     autoZeichne(Math.floor(auto.tick/2)%2);
+    if(auto.phase === 2 && auto.x <= -40){
+      try{ const sch = document.getElementById('sp-schild2'); if(sch) sch.classList.add('schild-an'); }catch(e){}
+    }
     if(auto.x <= p.bis) weiter();
   } else if(p.art==='pose'){
     autoZeichne(p.frame);
@@ -2489,6 +2505,11 @@ szeneEl.addEventListener('mouseout', (e)=>{
   const t = e.target;
   if(t && t.id === 'sp-rechner'){ rechnerPose(t, RECHNER_LIEGEND); if(rechner.zappel) t.classList.add('rechner-zappel'); }
 });
+function schildSVG(key){
+  if(key !== 'titel') return '';
+  return '<image id="sp-schild2" href="'+vurl('kaufvertrag_schild2.png')+
+         '" x="411.2" y="160" width="51.2" height="31.2"/>';
+}
 function rechnerStart(an){
   rechner.an = !!an; rechner.zappel = false;
   if(rechnerTimer){ clearTimeout(rechnerTimer); rechnerTimer = null; }
