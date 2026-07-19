@@ -281,8 +281,6 @@
 }
 #sp-rechner{ transform-box:fill-box; transform-origin:center; cursor:pointer; }
 #sp-rektor{ opacity:0; transition:opacity .7s; cursor:pointer; }
-#sp-wlehrer{ opacity:0; transition:opacity .8s; }
-#sp-wlehrer.da{ opacity:1; }
 #sp-rektor.da{ opacity:1; }
 #sp-credits{ transition: transform 15s linear; }
 .szene.ende-roll #sp-credits{ transform: translateY(-320px); }
@@ -1055,9 +1053,6 @@ const SPRITES = {
     { id:'rektor', frames:['figur_rektor_steh_0.png'], x:602, y:38, w:26, h:102 },
     { id:'lehrer', frames:['kaufvertrag_lehrer_0.png','kaufvertrag_lehrer_1.png','kaufvertrag_lehrer_2.png','kaufvertrag_lehrer_3.png'],
       x:125, y:64, w:54, h:116 },
-  ],
-  weiche: [
-    { id:'wlehrer', frames:['kaufvertrag_lehrer_0.png'], x:299, y:81, w:52, h:115 },
   ],
   titel: [
     { id:'taubeA', frames:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'], x:336, y:186, w:18, h:12 },
@@ -1857,33 +1852,6 @@ function lehrerTick(){
     if(lehrer.tick >= p.ticks) weiter();
   }
 }
-const wlehrer = { t1:null, t2:null, bob:null };
-function wlehrerRunde(){
-  const el = document.getElementById('sp-wlehrer');
-  if(!el || aktuelleSzeneId !== 'weiche') return;
-  el.classList.add('da');
-  let schritt = 0;
-  wlehrer.bob = setInterval(()=>{
-    schritt++;
-    if(schritt > 5 && schritt <= 17){ el.setAttribute('y', (schritt % 2) ? '79' : '81'); }  /* tappt ungeduldig */
-    else el.setAttribute('y', '81');
-    if(schritt >= 23){
-      clearInterval(wlehrer.bob); wlehrer.bob = null;
-      el.classList.remove('da');                       /* und geht wieder */
-    }
-  }, 260);
-  wlehrer.t2 = setTimeout(wlehrerRunde, 34000 + Math.random()*14000);
-}
-function wlehrerStart(){
-  wlehrerStop();
-  if(reduzierteBewegung()) return;
-  wlehrer.t1 = setTimeout(wlehrerRunde, 20000 + Math.random()*8000);
-}
-function wlehrerStop(){
-  if(wlehrer.t1){ clearTimeout(wlehrer.t1); wlehrer.t1 = null; }
-  if(wlehrer.t2){ clearTimeout(wlehrer.t2); wlehrer.t2 = null; }
-  if(wlehrer.bob){ clearInterval(wlehrer.bob); wlehrer.bob = null; }
-}
 const rektor = { timer:null, weg:null };
 function rektorSchritt(el, vonX, nachX, vonY, nachY, dann){
   let i = 0;
@@ -1937,7 +1905,6 @@ function tiereWechsel(szene){
   tiere.szene = szene;
   if(szene==='titel') autoStart(); else autoStop();
   if(szene==='schule'){ lehrerStart(); rektorStart(); } else { lehrerStop(); rektorStop(); }
-  if(szene==='weiche') wlehrerStart(); else wlehrerStop();
   if(szene==='discount') katzeStart(); else katzeStop();
   if(szene==='front' || szene==='titel') taubenStart(); else taubenStop();
 }
