@@ -920,7 +920,7 @@ function bildSzene(key){
   return '<svg viewBox="0 0 640 260" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">'+
     '<image href="'+vurl(SZENEN_BILDER[key])+'" x="0" y="0" width="640" height="260" '+
     'preserveAspectRatio="xMidYMid slice"/>'+
-    spriteSVG(key)+hotRects(key)+'</svg>';
+    spriteSVG(key)+hotRects(key)+rechnerSVG(key)+'</svg>';
 }
 if(typeof Image !== 'undefined'){
   Object.entries(SZENEN_BILDER).forEach(([key,url])=>{
@@ -2301,26 +2301,104 @@ function loescheSpielstand(){
 
 let knotenSnapshot = null;
 /* Taschenrechner-Hinweis (z2, Zinsrechnung): liegt auf dem Bett,
-   beginnt 5 s nach der Frage zu blinken und zu wackeln */
+   beginnt 5 s nach der Frage zu blinken und zu wackeln.
+   Wird direkt in bildSzene gerendert, damit ihn kein Re-Render frisst. */
+const rechner = { an:false, zappel:false };
 let rechnerTimer = null;
-function rechnerZeigen(){
-  try{
-    if(rechnerTimer){ clearTimeout(rechnerTimer); rechnerTimer = null; }
-    const svg = szeneEl.querySelector('svg'); if(!svg) return;
-    const im = document.createElementNS('http://www.w3.org/2000/svg', 'image');
-    im.setAttribute('href', vurl('kaufvertrag_rechner.png'));
-    im.setAttribute('id', 'sp-rechner');
-    im.setAttribute('x', '446'); im.setAttribute('y', '182');
-    im.setAttribute('width', '22'); im.setAttribute('height', '28');
-    im.addEventListener('click', ()=>{
-      blaseHinweis('Der Taschenrechner, wie gerufen: <b>Verzugszins = Kapital × 5 × Tage ÷ (100 × 365)</b>. Rechnen Sie ruhig nach – Herr Meier tut es garantiert.', 12000);
-    });
-    svg.appendChild(im);
-    rechnerTimer = setTimeout(()=>{
-      try{ const el = document.getElementById('sp-rechner'); if(el) el.classList.add('rechner-zappel'); }catch(e){}
-    }, 5000);
-  }catch(e){}
+function rechnerSVG(key){
+  if(!rechner.an || key !== aktuelleSzeneId) return '';
+  return '<image id="sp-rechner" href="'+vurl('kaufvertrag_rechner.png')+
+         '" x="446" y="182" width="22" height="28"'+
+         (rechner.zappel ? ' class="rechner-zappel"' : '')+'/>';
 }
+function rechnerStart(an){
+  rechner.an = !!an; rechner.zappel = false;
+  if(rechnerTimer){ clearTimeout(rechnerTimer); rechnerTimer = null; }
+  if(!rechner.an) return;
+  rechnerTimer = setTimeout(()=>{
+    rechner.zappel = true;
+    try{ const el = document.getElementById('sp-rechner'); if(el) el.classList.add('rechner-zappel'); }catch(e){}
+  }, 5000);
+}
+/* ---- Benutzbarer Taschenrechner (Overlay im Retro-Stil) ---- */
+const rechnerUi = { wrap:null, anzeige:null, ausdruck:'' };
+function rechnerMal(){
+  if(!rechnerUi.anzeige) return;
+  rechnerUi.anzeige.textContent = rechnerUi.ausdruck === '' ? '0' : rechnerUi.ausdruck.replace(/\*/g,'\u00d7').replace(/\//g,'\u00f7');
+}
+function rechnerTaste(t){
+  if(t === 'C'){ rechnerUi.ausdruck = ''; rechnerMal(); return; }
+  if(t === '\u232b'){ rechnerUi.ausdruck = rechnerUi.ausdruck.slice(0, -1); rechnerMal(); return; }
+  if(t === '='){
+    const a = rechnerUi.ausdruck;
+    if(!a || !/^[0-9+\-*/.() ]+$/.test(a)){ return; }
+    try{
+      const w = Function('"use strict"; return (' + a + ')')();
+      if(typeof w === 'number' && isFinite(w)){
+        rechnerUi.ausdruck = String(Math.round(w * 100) / 100);
+      }
+    }catch(e){ rechnerUi.anzeige.textContent = 'FEHLER'; rechnerUi.ausdruck=''; return; }
+    rechnerMal(); return;
+  }
+  if(rechnerUi.ausdruck.length > 24) return;
+  rechnerUi.ausdruck += t;
+  rechnerMal();
+}
+function rechnerOeffnen(){
+  if(rechnerUi.wrap){ rechnerUi.wrap.style.display='flex'; rechnerMal(); return; }
+  const stil = document.createElement('style');
+  stil.textContent = '.rechnerDeckel{position:fixed;inset:0;z-index:9400;background:rgba(10,14,20,.85);display:flex;align-items:center;justify-content:center;padding:16px}' +
+    '.rechnerKasten{background:#2c313d;border:3px solid #b8892b;border-radius:14px;padding:14px;width:min(92vw,300px);text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.6)}' +
+    '.rechnerKasten h3{color:#f4efe2;font-size:.85rem;margin:.1rem 0 .6rem;letter-spacing:.06em}' +
+    '#rechnerAnzeige{background:#b8d8a0;color:#233318;font-family:"Courier New",monospace;font-weight:700;font-size:1.35rem;text-align:right;padding:.5rem .6rem;border-radius:6px;border:2px solid #1c2026;min-height:1.4em;overflow:hidden;white-space:nowrap}' +
+    '.rechnerTasten{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}' +
+    '.rechnerTasten button{font:inherit;font-weight:700;font-size:1.05rem;background:#e2e5ea;color:#1c2026;border:1px solid #9aa0ac;border-bottom-width:3px;border-radius:8px;padding:.5rem 0;cursor:pointer}' +
+    '.rechnerTasten button:active{transform:translateY(1px);border-bottom-width:1px}' +
+    '.rechnerTasten button.op{background:#4a5468;color:#f4efe2}' +
+    '.rechnerTasten button.gleich{background:#e8963c;color:#1c2026}' +
+    '.rechnerFormel{color:#a9b2bd;font-size:.72rem;line-height:1.45;margin:.6rem 0 .2rem}' +
+    '.rechnerZu{margin-top:.5rem}.rechnerZu button{font:inherit;background:#22283a;color:#f4efe2;border:1px solid #b8892b;border-radius:8px;padding:.4rem 1.1rem;cursor:pointer}' +
+    '.rechnerZu button:hover{background:#b8892b;color:#141821}';
+  document.head.appendChild(stil);
+  const deckel = document.createElement('div');
+  deckel.className = 'rechnerDeckel';
+  deckel.innerHTML = '<div class="rechnerKasten">' +
+    '<h3>TASCHENRECHNER</h3>' +
+    '<div id="rechnerAnzeige">0</div>' +
+    '<div class="rechnerTasten"></div>' +
+    '<p class="rechnerFormel"><b>Verzugszins</b> = Kapital \u00d7 5 \u00d7 Tage \u00f7 (100 \u00d7 365)</p>' +
+    '<div class="rechnerZu"><button type="button">Schliessen</button></div>' +
+    '</div>';
+  document.body.appendChild(deckel);
+  rechnerUi.wrap = deckel;
+  rechnerUi.anzeige = deckel.querySelector('#rechnerAnzeige');
+  const feld = deckel.querySelector('.rechnerTasten');
+  [['C','op'],['(','op'],[')','op'],['\u00f7','op'],
+   ['7',''],['8',''],['9',''],['\u00d7','op'],
+   ['4',''],['5',''],['6',''],['-','op'],
+   ['1',''],['2',''],['3',''],['+','op'],
+   ['0',''],['.',''],['\u232b','op'],['=','gleich']].forEach(([z,kl])=>{
+    const b = document.createElement('button');
+    b.type='button'; b.textContent = z; if(kl) b.className = kl;
+    b.addEventListener('click', ()=>{
+      const t = z === '\u00d7' ? '*' : z === '\u00f7' ? '/' : z;
+      rechnerTaste(t);
+    });
+    feld.appendChild(b);
+  });
+  deckel.querySelector('.rechnerZu button').addEventListener('click', ()=>{ deckel.style.display='none'; });
+  deckel.addEventListener('click', (e)=>{ if(e.target === deckel) deckel.style.display='none'; });
+  rechnerMal();
+}
+
+szeneEl.addEventListener('click', (e)=>{
+  const t = e.target;
+  if(t && t.id === 'sp-rechner'){
+    e.stopPropagation(); e.preventDefault();
+    fxFuer('gestell');
+    rechnerOeffnen();
+  }
+}, true);
 
 function zeige(id){
   const k = KNOTEN[id];
@@ -2330,6 +2408,7 @@ function zeige(id){
   spriteStopp();
   stoppeIdle();
   aktuelleSzeneId = k.szene;
+  rechnerStart(k.rechner);
   szenenAudio(k.szene);
   szeneEl.innerHTML = bildOk[k.szene] ? bildSzene(k.szene)
                     : bildFehler[k.szene] ? (SZENEN[k.szene] || '')
@@ -2349,7 +2428,6 @@ function zeige(id){
     if(dyn.bonus) setzeRQ(dyn.bonus);
   }
   baueDialog(daten);
-  if(k.rechner) rechnerZeigen();
 }
 
 function starteAlexIdle(){
