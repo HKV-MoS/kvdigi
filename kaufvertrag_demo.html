@@ -484,23 +484,25 @@ laden:[
     a:{ anschauen:'Die Uhr tickt. Fristen laufen – das merken Sie sich für später.' } },
 ],
 titel:[
-  { id:'schild', name:'HKV-Schild', x:410,y:158,w:54,h:33,
+  { id:'schild', name:'HKV-Schild', x:430,y:142,w:56,h:40,
     a:{ anschauen:'«HKV AARAU», dunkelgrün und seriös. Hinter diesem Schild werden seit 1875 Kaufleute gemacht.' } },
-  { id:'tor', name:'Tor', x:244,y:120,w:162,h:84,
+  { id:'tor', name:'Tor', x:288,y:122,w:108,h:82,
     a:{ anschauen:'Das Gittertor zur Zufahrt. Werktags offen – die Freiheit ist bekanntlich pausenplatzgross.',
         oeffne:'Sie sind ja schon drin. Beziehungsweise: gleich.' } },
-  { id:'hof', name:'Pausenplatz', x:44,y:72,w:200,h:110,
+  { id:'hof', name:'Pausenplatz', x:84,y:62,w:200,h:134,
     a:{ anschauen:'Bäume, Bänke, Schatten – der Pausenplatz. Um 10 Uhr das dichtestbesiedelte Gebiet des Kantons.' } },
-  { id:'geruest', name:'Baugerüst', x:330,y:18,w:290,h:40,
-    a:{ anschauen:'Auf dem Dach: Gerüst und Kran. Im obersten Stock Ost wird umgebaut. Was man dort wohl alles findet, wenn man alte Wände öffnet …',
-        benutze:'Zutritt nur mit Helm. Und mit einer anderen Geschichte. (Fortsetzung folgt.)' } },
-  { id:'kandelaber', name:'Kandelaber', x:146,y:0,w:18,h:240,
+  { id:'turm', name:'Uhrtürmchen', x:294,y:16,w:28,h:54,
+    fund:{ verb:'anschauen', rq:1, text:'Das Türmchen mit der Uhr, seit 1875 im Dienst. Wenn Sie genau hinhören, wenn es schlägt … nein. Das ist eine andere Geschichte. (Fortsetzung folgt.)' },
+    a:{ anschauen:'Ein Uhrtürmchen auf dem Dachfirst. Die Zeit läuft – besonders vor dem QV.' } },
+  { id:'kran', name:'Baukran', x:612,y:20,w:28,h:62,
+    a:{ anschauen:'Ein Baukran über dem Ostflügel. Im obersten Stock wird umgebaut. Was man dort wohl alles findet, wenn man alte Wände öffnet …',
+        benutze:'Zutritt nur mit Helm. Und mit einer anderen Geschichte.' } },
+  { id:'container', name:'Baucontainer', x:582,y:142,w:42,h:24,
+    a:{ anschauen:'Blaue Baustellen-Container. Werkzeug, Pläne, Kaffeemaschine – die Grundausstattung jeder Schweizer Baustelle.' } },
+  { id:'kandelaber', name:'Kandelaber', x:144,y:0,w:14,h:220,
     a:{ anschauen:'Ein Strassenkandelaber, kerzengerade im Dienst. Nachts beleuchtet er die Zufahrt, tagsüber übt er Stillstehen.' } },
-  { id:'pfosten', name:'Pfosten', x:578,y:190,w:28,h:34,
-    a:{ anschauen:'Zwei versenkbare Pfosten mit Badge-Leser. Ohne Badge fährt hier niemand rein – die HKV kennt ihre Pappenheimer.',
-        benutze:'Sie haben keinen Fahrzeug-Badge. Sie haben nicht einmal ein Fahrzeug.' } },
-  { id:'strasse', name:'Zufahrt', x:392,y:206,w:248,h:54,
-    a:{ anschauen:'Die Zufahrt zur HKV. Gleich fährt hier bestimmt jemand durch – Lehrpersonen parkieren schliesslich auch irgendwo.' } },
+  { id:'strasse', name:'Zufahrt', x:0,y:214,w:640,h:46,
+    a:{ anschauen:'Die Zufahrt zur HKV, frisch geteert. Gleich fährt hier bestimmt jemand durch – Lehrpersonen parkieren schliesslich auch irgendwo.' } },
 ],
 schule:[
   { id:'fenster', name:'Fenster', x:0,y:0,w:32,h:154,
@@ -919,7 +921,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '37';
+const BILD_VERSION = '38';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -986,7 +988,7 @@ function bildSzene(key){
   return '<svg viewBox="0 0 640 260" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">'+
     '<image href="'+vurl(SZENEN_BILDER[key])+'" x="0" y="0" width="640" height="260" '+
     'preserveAspectRatio="xMidYMid slice"/>'+
-    spriteSVG(key)+pfostenSVG(key)+hotRects(key)+rechnerSVG(key)+schildSVG(key)+'</svg>';
+    spriteSVG(key)+hotRects(key)+rechnerSVG(key)+schildSVG(key)+'</svg>';
 }
 if(typeof Image !== 'undefined'){
   Object.entries(SZENEN_BILDER).forEach(([key,url])=>{
@@ -1022,7 +1024,7 @@ function kaeufer(){ return KAEUFER[zustand.kaeuferin || 'm']; }
 const SPRITES = {
   titel: [
     { id:'auto', frames:['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png','kaufvertrag_auto_3.png'],
-      x:660, y:172, w:94, h:54 },
+      x:660, y:172, w:94, h:51 },
   ],
   discount: [
     { id:'katze', frames:['kaufvertrag_katze_0.png','kaufvertrag_katze_1.png','kaufvertrag_katze_2.png',
@@ -1670,19 +1672,17 @@ function taubenStop(){ if(tauben.timer){ clearInterval(tauben.timer); tauben.tim
 const AUTO_FRAMES = ['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png','kaufvertrag_auto_3.png'];
 /* Fluessige Fahrt: requestAnimationFrame, Subpixel-Positionen, Raddrehung nach Strecke */
 const auto = { raf:null, statTimer:null, phase:0, x:660, warteBis:0, strecke:0, letztT:0 };
-const AUTO_TEMPO_AN = 80;      /* Rastereinheiten pro Sekunde */
-const AUTO_TEMPO_AB = 100;
-const AUTO_HALT_MS = 1600;
+const AUTO_TEMPO_AN = 90;      /* Rastereinheiten pro Sekunde */
 const AUTO_PAUSE_MS = 26000;
 function autoBasis(x){
-  /* Hintere Fahrspur: hinter der Pfosteninsel durch, praktisch eben */
-  return 226 + (660-x)*0.004;
+  /* Dem Randstein entlang, 60 cm Abstand: Linie faellt nach links zum Betrachter hin */
+  return 232 - 0.045 * x;
 }
 function autoZeichne(){
   const el = document.getElementById('sp-auto');
   if(!el) return;
   el.setAttribute('x', auto.x.toFixed(2));
-  el.setAttribute('y', (autoBasis(auto.x) - 54).toFixed(2));
+  el.setAttribute('y', (autoBasis(auto.x) - 51).toFixed(2));
   const frame = Math.floor(auto.strecke / 5) % AUTO_FRAMES.length;
   const soll = vurl(AUTO_FRAMES[frame]);
   if(el.getAttribute('href') !== soll) el.setAttribute('href', soll);
@@ -1691,19 +1691,13 @@ function autoSchritt(t){
   if(!auto.letztT) auto.letztT = t;
   const dt = Math.min(0.1, (t - auto.letztT) / 1000);
   auto.letztT = t;
-  if(auto.phase === 0){                     /* Anfahrt bis zu den Pfosten */
+  if(auto.phase === 0){                     /* Durchfahrt dem Randstein entlang */
     auto.x -= AUTO_TEMPO_AN * dt;
     auto.strecke += AUTO_TEMPO_AN * dt;
-    if(auto.x <= 602){ auto.x = 602; auto.phase = 1; auto.warteBis = t + AUTO_HALT_MS; }
-  } else if(auto.phase === 1){              /* Badge-Halt */
-    if(t >= auto.warteBis) auto.phase = 2;
-  } else if(auto.phase === 2){              /* Ausfahrt hinter der Insel */
-    auto.x -= AUTO_TEMPO_AB * dt;
-    auto.strecke += AUTO_TEMPO_AB * dt;
     if(auto.x <= -40){
       try{ const sch = document.getElementById('sp-schild2'); if(sch) sch.classList.add('schild-an'); }catch(e){}
     }
-    if(auto.x <= -130){ auto.phase = 3; auto.warteBis = t + AUTO_PAUSE_MS; }
+    if(auto.x <= -140){ auto.phase = 1; auto.warteBis = t + AUTO_PAUSE_MS; }
   } else {                                  /* Pause, dann naechste Runde */
     if(t >= auto.warteBis){ auto.x = 660; auto.strecke = 0; auto.phase = 0; }
   }
@@ -1713,8 +1707,8 @@ function autoSchritt(t){
 function autoStart(){
   autoStop();
   if(reduzierteBewegung()){
-    auto.x = 602;
-    auto.statTimer = setInterval(()=>{ auto.x = 602; auto.strecke = 0; autoZeichne(); }, 1500);
+    auto.x = 500;
+    auto.statTimer = setInterval(()=>{ auto.x = 500; auto.strecke = 0; autoZeichne(); }, 1500);
     return;
   }
   auto.phase = 0; auto.x = 660; auto.strecke = 0; auto.letztT = 0;
@@ -2217,15 +2211,10 @@ szeneEl.addEventListener('mouseout', (e)=>{
   const t = e.target;
   if(t && t.id === 'sp-rechner'){ rechnerPose(t, RECHNER_LIEGEND); if(rechner.zappel) t.classList.add('rechner-zappel'); }
 });
-function pfostenSVG(key){
-  if(key !== 'titel') return '';
-  return '<image href="'+vurl('kaufvertrag_pfosten.png')+
-         '" x="567.6" y="178.4" width="62.8" height="52"/>';
-}
 function schildSVG(key){
   if(key !== 'titel') return '';
   return '<image id="sp-schild2" href="'+vurl('kaufvertrag_schild2.png')+
-         '" x="411.2" y="160" width="51.2" height="31.2"/>';
+         '" x="432.8" y="144.8" width="51.2" height="34"/>';
 }
 function rechnerStart(an){
   rechner.an = !!an; rechner.zappel = false;
