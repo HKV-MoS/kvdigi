@@ -482,6 +482,48 @@ laden:[
   { id:'uhr', name:'Wanduhr', x:188,y:4,w:40,h:62,
     a:{ anschauen:'Die Uhr tickt. Fristen laufen – das merken Sie sich für später.' } },
 ],
+schule:[
+  { id:'fenster', name:'Fenster', x:0,y:0,w:32,h:154,
+    a:{ anschauen:'Draussen liegt die Aarauer Altstadt in der Nachmittagssonne. Irgendwo dort unten wartet das Wochenende – und, noch unbekannt, ein gewisser Occasionsladen.',
+        oeffne:'Frischluft gibt es in der Pause. Gleich.' } },
+  { id:'schrank', name:'Schrank', x:58,y:14,w:52,h:120,
+    a:{ anschauen:'Der schwarze Schulschrank. Niemand weiss genau, was drin ist. Manche sagen: Klassenlager-Fotos. Andere: Konfisziertes.',
+        oeffne:'Abgeschlossen. Natürlich.' } },
+  { id:'laptop', name:'Laptop', x:98,y:124,w:46,h:24,
+    a:{ anschauen:'Der Laptop der Lehrperson, angedockt an den grossen Bildschirm. Auf kvdigital.swiss läuft das Ablaufschema.',
+        benutze:'Besser nicht. Das Ablaufschema würde sonst durch Ihre Playlist ersetzt.' } },
+  { id:'zettelq', name:'Zettel «QUITTUNG»', x:170,y:26,w:40,h:22,
+    fund:{ verb:'anschauen', rq:1, text:'<b>Quittung (OR 88):</b> Auf Verlangen muss der Zahlungsempfänger quittieren – Ihr Beweis, dass bezahlt ist. Und weil Forderungen erst nach <b>5 bis 10 Jahren verjähren</b> (OR 127/128), heisst es: aufbewahren!' },
+    a:{ anschauen:'Ein Zettel mit dem Wort «QUITTUNG» – frisch aufgepinnt.' } },
+  { id:'zettelm', name:'Zettel «MÄNGELRÜGE»', x:168,y:56,w:46,h:17,
+    fund:{ verb:'anschauen', rq:1, text:'<b>Mängelrüge (OR 201):</b> Ware sofort prüfen, Mängel unverzüglich melden, beanstandete Ware nicht mehr benutzen. Wer schweigt, «genehmigt» die Ware.' },
+    a:{ anschauen:'«MÄNGELRÜGE» – klingt nach Ärger. Ist aber Ihre beste Waffe.' } },
+  { id:'zettelor', name:'Zettel «OR 184»', x:170,y:81,w:38,h:17,
+    fund:{ verb:'anschauen', rq:1, text:'<b>OR 184:</b> Der Kaufvertrag verpflichtet die Verkäuferin zur Übergabe der Sache, den Käufer zur Zahlung des Preises. Zwei Sätze, ein halbes Schuljahr Stoff.' },
+    a:{ anschauen:'«OR 184» – die Hausnummer des Kaufvertragsrechts.' } },
+  { id:'tafel', name:'Wandtafel', x:216,y:12,w:100,h:110,
+    a:{ anschauen:'Die Wandtafel ist verdächtig leer – als wartete sie auf ein <b>Quiz</b>. Ein beherzter <b>Doppelklick</b> könnte es starten.',
+        benutze:'Doppelklick auf die Tafel startet das Quiz!' } },
+  { id:'schema', name:'Ablaufschema', x:320,y:2,w:212,h:145,
+    fund:{ verb:'anschauen', rq:1, text:'Das <b>Ablaufschema</b> im Zickzack: <b>Anfrage → Offerte → Bestellung → Lieferung → Zahlung → Quittung → Aufbewahren.</b> Die kleinen Blitze sind die Störungen: Lieferverzug, Mängel, Zahlungsverzug. Sie ahnen nicht, wie bald Sie das brauchen.' },
+    a:{ anschauen:'Auf dem Bildschirm: das Ablaufschema eines Kaufvertrages, Schritt für Schritt im Zickzack zwischen Käuferin und Verkäufer.' } },
+  { id:'uhr', name:'Wanduhr', x:578,y:33,w:22,h:22,
+    a:{ anschauen:'Die Uhr macht das, was Uhren in letzten Lektionen tun: Sie geht gefühlt rückwärts.',
+        benutze:'Anstarren macht sie nicht schneller. Erwiesenermassen.' } },
+  { id:'tuer', name:'Türe', x:604,y:18,w:36,h:116,
+    a:{ anschauen:'Die Zimmertüre. Dahinter: der Gang, die Pause, die Freiheit. Davor: noch ein paar Minuten Obligationenrecht.',
+        oeffne:'Noch nicht. Es hat noch nicht geläutet – und die Lehrperson zählt mit.' } },
+  { id:'lavabo', name:'Lavabo', x:618,y:150,w:22,h:24,
+    a:{ anschauen:'Lavabo mit Seifenspender. Für Kreidefinger und Krisen aller Art.',
+        benutze:'Sie waschen sich die Hände. In Unschuld, versteht sich.' } },
+  { id:'schlaefer', name:'Schlafender Mitschüler', x:94,y:216,w:96,h:44,
+    fund:{ verb:'anschauen', rq:1, text:'Er verpasst gerade den <b>wesentlichen Irrtum (OR 23)</b> – und merkt nicht einmal, dass genau das einer ist.' },
+    a:{ anschauen:'Kopf auf dem Pult, tief und fest. Der Freitagnachmittag fordert seine Opfer.',
+        redemit:'Sie lassen ihn. Wer schläft, stört wenigstens nicht.' } },
+  { id:'zeichner', name:'Zeichnender Mitschüler', x:352,y:210,w:126,h:50,
+    a:{ anschauen:'Statt Notizen entsteht ein Comic: ein rundlicher Mann mit Brille hinter einer Ladentheke. Kommt Ihnen später vielleicht bekannt vor.',
+        redemit:'«Psst. Das wird mal ein Spiel», flüstert er, ohne aufzublicken.' } },
+],
 zimmer:[
   { id:'computer', name:'Computer', x:0,y:128,w:96,h:80,
     a:{ anschauen:'Auf dem Bildschirm: <b>kvdigital.swiss</b> – der interaktive Sitzplan der Bundesversammlung. Alex lernt sogar abends um acht. Respekt – oder Prüfungspanik.',
@@ -857,9 +899,10 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '27';
+const BILD_VERSION = '28';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
+  schule:'kaufvertrag_schule.png',
   front:'kaufvertrag_front.png',  laden:'kaufvertrag_laden.png',
   discount:'kaufvertrag_discount.png',
   zimmer:'kaufvertrag_zimmer.png', zimmer2:'kaufvertrag_zimmer2.png',
@@ -868,6 +911,7 @@ const SZENEN_BILDER = {
 };
 /* Spaetabend-Variante: Breitbild mit Mond UND Schachbrett, eigene Hotspots */
 SZENEN.zimmer2 = SZENEN.zimmer;
+SZENEN.schule = SZENEN.weiche;
 HOTSPOTS.zimmer2 = [
   { id:'computer', name:'Computer', x:0,y:128,w:96,h:80,
     fund:{ verb:'anschauen', rq:1, text:'Auf dem Bildschirm läuft ein Pixel-Adventure: Eine kleine Figur steht in einem Occasionsladen und verhandelt … Moment. Das kommt Ihnen <b>sehr</b> bekannt vor.' },
@@ -1415,6 +1459,7 @@ function grooveStop(){
    AMBIENT-FX pro Szene (Loop + Einmal- und Zufalls-Sounds)
    ===================================================== */
 const AMBIENT = {
+  schule: { loop:'kaufvertrag_fx_schulhaus.mp3', loopVol:0.16 },
   weiche: { loop:'kaufvertrag_fx_schulhaus.mp3', loopVol:0.22 },
   front: { loop:'kaufvertrag_fx_brunnen.mp3', loopVol:0.24 },
   discount: { loop:'kaufvertrag_fx_strasse.mp3', loopVol:0.18,
@@ -1846,6 +1891,7 @@ function hotspotSchau(h){
 function hotspotAktion(h){
   if(h.id==='radio'){ musikToggle(); return; }
   if(h.id==='gestell'){ fxFuer('gestell'); schachOeffnen(); return; }
+  if(h.id==='tafel'){ quizOeffnen(); return; }
   fxFuer(h.id);
   let antwort = h.a && (h.a.redemit || h.a.oeffne || h.a.benutze || h.a.nimm);
   if(!antwort) antwort = 'Da gibt es gerade nichts zu tun.';
@@ -1872,6 +1918,39 @@ szeneEl.addEventListener('click', (ev)=>{
    Spezialknoten: art:'produktwahl' | 'weiche' | 'vertrag' | 'ende'
    ===================================================== */
 const KNOTEN = {
+
+/* ---------- AKT -1: Schulzimmer (Theorie) ---------- */
+schule:{ szene:'schule', sprecher:'ERZÄHLER',
+  text:'Aarau, Freitagnachmittag, letzte Lektion ABU an der HKV. Auf dem Bildschirm läuft das <b>Ablaufschema eines Kaufvertrages</b> – Anfrage, Offerte, Bestellung … Ehrlich gesagt: Es ist schwer zu folgen. Vorne schläft jemand, in der Mitte entsteht heimlich ein Comic. Sie könnten einfach abwarten – oder nachfragen. <i>(Im Zimmer lässt sich einiges anklicken. Und die Wandtafel hätte da noch etwas …)</i>',
+  optionen:[
+    { t:'«Gilt der Preis im Schaufenster eigentlich verbindlich?»', rq:1,
+      fb:'Die Lehrperson strahlt: «Gute Frage! Preisanschriften im <b>Schaufenster und am Regal sind verbindliche Offerten</b> (OR 7). Prospekte, Kataloge und Inserate dagegen: <b>unverbindlich</b> – Preise können sich seit dem Druck geändert haben.»',
+      ziel:'schule2' },
+    { t:'«Und wenn am Regal aus Versehen ein falscher Preis steht?»', rq:1,
+      fb:'«Dann greift der <b>wesentliche Irrtum</b> (OR 23): Einen offensichtlich falsch angeschriebenen Preis – Fr. 4.90 statt Fr. 490.– – muss niemand einhalten. Die Offerte wird unverbindlich.»',
+      ziel:'schule2' },
+    { t:'Nicken und unauffällig zur Uhr schielen.', rq:0,
+      fb:'Sie nicken. Das Schema zackt weiter von der Bestellung zur Lieferung, kleine Blitze markieren die Störungen. Irgendetwas davon werden Sie hoffentlich nie brauchen. Hoffentlich.',
+      ziel:'schule2' },
+  ]},
+schule2:{ szene:'schule', sprecher:'ERZÄHLER',
+  text:'Die Lehrperson wirft einen Blick auf die Wanduhr: «Gleich läutet es. Letzte Fragen zum Kaufvertrag?»',
+  optionen:[
+    { t:'«Was mache ich mit Ware, die ich nie bestellt habe?»', rq:1,
+      fb:'«Gar nichts! <b>Unbestellte Ware</b> müssen Sie <b>weder aufbewahren noch zurückschicken</b> (OR 6a). Nur bei offensichtlich falscher Adresse benachrichtigen Sie die Absenderin.»',
+      ziel:'schuleEnde' },
+    { t:'«Kann ich Gekauftes im Laden einfach zurückbringen?»', rq:1,
+      fb:'«Beliebter Irrtum! Im Laden gibt es <b>kein gesetzliches Rückgaberecht</b> – Umtausch ist reine Kulanz. Anders beim <b>Haustürkauf</b>: ab Fr. 100.– gilt ein <b>Widerrufsrecht von 14 Tagen</b>, schriftlich per Einschreiben (OR 40a–f).»',
+      ziel:'schuleEnde' },
+    { t:'Bereits mal leise zusammenpacken.', rq:0,
+      fb:'Der Reissverschluss ist schneller als das Schema. Verständlich. Die Theorie holt Sie schon noch ein – versprochen.',
+      ziel:'schuleEnde' },
+  ]},
+schuleEnde:{ szene:'schule', sprecher:'ERZÄHLER',
+  text:'<b>Es läutet!</b> Stühle scheppern, Taschen schnappen zu, der Schläfer erwacht verwirrt. Feierabend – Wochenende! Ihr Heimweg führt Richtung Bahnhof … und unten an der Bahnhofstrasse leuchtet schon das rote Neon.',
+  optionen:[
+    { t:'Zum MEGA-DISCOUNT ▸', rq:0, fb:null, ziel:'start' },
+  ]},
 
 /* ---------- AKT 0 ---------- */
 start:{ art:'produktwahl', szene:'discount', sprecher:'ERZÄHLER',
@@ -2866,7 +2945,7 @@ function neustart(){
   zustand.produkt=null; zustand.rq=0; zustand.rqAkt1=0; zustand.haendler='herr';
   zustand.flags={}; zustand.flagsAkt1={}; zustand.weg=null; zustand.ergebnisse={}; zustand.funde={}; zustand.undoJoker=1;
   rqEl.textContent='RQ 0'; setzeWegAnzeige();
-  zeige('start');
+  zeige('schule');
 }
 /* ---------- Vollbild ---------- */
 const vollbildBtn = document.getElementById('vollbild');
@@ -3010,7 +3089,7 @@ document.getElementById('titel').addEventListener('click', ()=>{
 });
 
 /* ---------- Start ---------- */
-if(!ladeSpielstand()) zeige('start');
+if(!ladeSpielstand()) zeige('schule');
 
 })();
 </script>
