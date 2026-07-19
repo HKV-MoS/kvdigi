@@ -939,7 +939,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '48';
+const BILD_VERSION = '49';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1030,7 +1030,7 @@ const HAENDLER = {
   frau:{ sprecher:'FRAU MEIER', hotName:'Frau Meier',
     hotAnschauen:'Frau Meier, Mitinhaberin. Ihr Mann ist unterwegs – und vom mündlichen Geschäft von damals weiss sie nichts. Zum Glück gibt es Papier.',
     frames:['kaufvertrag_frau_0.png','kaufvertrag_frau_1.png','kaufvertrag_frau_2.png','kaufvertrag_frau_3.png'],
-    w:51, h:60, sx:382, sy:78 },
+    w:56, h:58, sx:150, sy:80 },
 };
 function haendler(){ return HAENDLER[zustand.haendler || 'herr']; }
 const KAEUFER = {
@@ -1095,6 +1095,7 @@ let idleTimer=null;         /* Alex-Idle im Laden */
 let idleRueck=null;
 function stoppeIdle(){
   if(figurenTimer){ clearInterval(figurenTimer); figurenTimer=null; }
+  if(typeof meierIdleTimer !== 'undefined' && meierIdleTimer){ clearInterval(meierIdleTimer); meierIdleTimer = null; }
   if(idleTimer){ clearInterval(idleTimer); idleTimer=null; }
   if(idleRueck){ clearTimeout(idleRueck); idleRueck=null; }
 }
@@ -2655,6 +2656,18 @@ function zeige(id){
   baueDialog(daten);
 }
 
+let meierIdleTimer = null;
+function starteMeierIdle(){
+  if(meierIdleTimer){ clearInterval(meierIdleTimer); meierIdleTimer = null; }
+  if(aktuelleSzeneId!=='laden' || reduzierteBewegung()) return;
+  meierIdleTimer = setInterval(()=>{
+    if(aktuelleSzeneId!=='laden') return;
+    if(spriteTimer) return;                     /* spricht oder gestikuliert gerade */
+    const pose = Math.random() < 0.6 ? 1 : 2;
+    spriteFrame('meier', pose);
+    setTimeout(()=>{ if(!spriteTimer) spriteFrame('meier', 0); }, 900);
+  }, 9000 + Math.random()*5000);
+}
 function starteAlexIdle(){
   if(aktuelleSzeneId!=='laden') return;
   idleTimer = setInterval(()=>{
@@ -2678,6 +2691,7 @@ const SCHILD_KNOTEN = { discount:'neu', k1:'occ', k2:'occ', k3:'occ', k4:'occ' }
 function baueDialog(k){
   if(aktuelleSzeneId==='laden' && (k.sprecher==='HERR MEIER' || k.sprecher==='FRAU MEIER')) spriteSprich('meier');
   if(aktuelleSzeneId==='laden' && !idleTimer) starteAlexIdle();
+  if(aktuelleSzeneId==='laden' && !meierIdleTimer) starteMeierIdle();
   const schild = SCHILD_KNOTEN[knotenSnapshot ? knotenSnapshot.id : ''] || null;
   blaseDialog(k.sprecher, ersetze(k.text), schild ? preisschild(schild==='neu') : '');
 
