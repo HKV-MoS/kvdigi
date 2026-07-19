@@ -287,7 +287,7 @@
 .startTor button{ font:inherit; font-weight:700; font-size:1.05rem; color:#55FF55; background:#0a140a;
   border:2px solid #55FF55; border-radius:12px; padding:.9rem 2.2rem; cursor:pointer; }
 .startTor button:hover{ background:#55FF55; color:#0a140a; }
-.introDeckel{ position:absolute; inset:0; z-index:60; background:#000; cursor:pointer; }
+.introDeckel{ position:absolute; inset:0; z-index:60; background:#000; }
 .introDeckel video{ width:100%; height:100%; object-fit:cover; display:block; }
 .introDeckel .introHinweis{ position:absolute; right:12px; bottom:8px; color:#8f8; font-size:.7rem;
   font-family:inherit; text-shadow:0 1px 3px #000; opacity:.85; pointer-events:none; }
@@ -1569,6 +1569,12 @@ function szenenAudio(szene){
   }
 }
 /* Browser verlangen eine Geste: beim ersten Klick nachstarten */
+function dialogSperren(zu){
+  try{
+    dialogEl.style.pointerEvents = zu ? 'none' : '';
+    dialogEl.style.opacity = zu ? '.35' : '';
+  }catch(e){}
+}
 /* Ton-Freigabe: erst der Klick macht Musik + FX moeglich (Browser-Regel) — dann Intro */
 function startTorZeigen(){
   try{
@@ -1588,6 +1594,7 @@ function startTorZeigen(){
       introZeigen();
     });
     wrap.appendChild(d);
+    dialogSperren(true);
   }catch(e){}
 }
 /* Retro-FMV-Intro: laeuft einmal ueber der Titelszene, Klick ueberspringt */
@@ -1597,9 +1604,9 @@ function introZeigen(){
     if(!wrap) return;
     const d = document.createElement('div');
     d.className = 'introDeckel';
-    d.innerHTML = '<video muted autoplay playsinline preload="auto" src="' + vurl('kaufvertrag_intro.mp4') + '"></video>' +
-      '<div class="introHinweis">klicken zum Überspringen</div>';
+    d.innerHTML = '<video muted autoplay playsinline preload="auto" src="' + vurl('kaufvertrag_intro.mp4') + '"></video>';
     autoStop();                                  /* das Auto wartet hinter dem Vorhang */
+    dialogSperren(true);                         /* waehrend des Flugs wird nicht gestartet */
     let vorbei = false;
     const ende = ()=>{
       if(vorbei) return; vorbei = true;
@@ -1607,10 +1614,10 @@ function introZeigen(){
       setTimeout(()=>{ d.classList.add('weg'); }, 900);        /* Schwarz -> Szene */
       setTimeout(()=>{
         try{ d.remove(); }catch(e){}
+        dialogSperren(false);
         if(aktuelleSzeneId === 'titel') autoStart();           /* jetzt darf der Panda */
       }, 2050);
     };
-    d.addEventListener('click', ende);
     const v = d.querySelector('video');
     v.addEventListener('ended', ende);
     v.addEventListener('error', ende);
@@ -1807,6 +1814,7 @@ function tiereWechsel(szene){
    ===================================================== */
 const MUSIK_SZENEN = {
   titel:{ art:'datei', url:'kaufvertrag_musik_titel.mp3', vol:0.28 },
+  schule:{ art:'datei', url:'kaufvertrag_musik_schule.mp3', vol:0.18 },
   discount:{ art:'groove' },
   front:{ art:'datei', url:'kaufvertrag_musik_elektro.mp3', vol:0.30 },
   /* laden: bewusst OHNE Musik — im Geschäft zählt das Gespräch */
