@@ -273,6 +273,13 @@
     .optionen{grid-template-columns:1fr;}
     h1{font-size:1.05rem;}
   }
+@keyframes rechnerZappel{
+  0%,100%{ opacity:1; transform:rotate(0deg); }
+  8%{ opacity:.3; } 16%{ opacity:1; } 24%{ opacity:.3; } 32%{ opacity:1; }
+  45%{ transform:rotate(-5deg); } 60%{ transform:rotate(5deg); } 75%{ transform:rotate(0deg); }
+}
+#sp-rechner{ transform-box:fill-box; transform-origin:center; cursor:pointer; }
+.rechner-zappel{ animation: rechnerZappel 1.9s ease-in-out infinite; }
 </style>
 </head>
 <body>
@@ -1997,6 +2004,28 @@ function loescheSpielstand(){
 }
 
 let knotenSnapshot = null;
+/* Taschenrechner-Hinweis (z2, Zinsrechnung): liegt auf dem Bett,
+   beginnt 5 s nach der Frage zu blinken und zu wackeln */
+let rechnerTimer = null;
+function rechnerZeigen(){
+  try{
+    if(rechnerTimer){ clearTimeout(rechnerTimer); rechnerTimer = null; }
+    const svg = szeneEl.querySelector('svg'); if(!svg) return;
+    const im = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+    im.setAttribute('href', vurl('kaufvertrag_rechner.png'));
+    im.setAttribute('id', 'sp-rechner');
+    im.setAttribute('x', '446'); im.setAttribute('y', '182');
+    im.setAttribute('width', '22'); im.setAttribute('height', '28');
+    im.addEventListener('click', ()=>{
+      blaseHinweis('Der Taschenrechner, wie gerufen: <b>Verzugszins = Kapital × 5 × Tage ÷ (100 × 365)</b>. Rechnen Sie ruhig nach – Herr Meier tut es garantiert.', 12000);
+    });
+    svg.appendChild(im);
+    rechnerTimer = setTimeout(()=>{
+      try{ const el = document.getElementById('sp-rechner'); if(el) el.classList.add('rechner-zappel'); }catch(e){}
+    }, 5000);
+  }catch(e){}
+}
+
 function zeige(id){
   const k = KNOTEN[id];
   if(!k){ console.error('Unbekannter Knoten', id); return; }
@@ -2025,6 +2054,7 @@ function zeige(id){
     if(dyn.bonus) setzeRQ(dyn.bonus);
   }
   baueDialog(daten);
+  if(k.rechner) rechnerZeigen();
 }
 
 function starteAlexIdle(){
