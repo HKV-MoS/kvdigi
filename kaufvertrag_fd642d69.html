@@ -946,11 +946,12 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '56';
+const BILD_VERSION = '57';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
   schule:'kaufvertrag_schule.png',
+  treppe:'kaufvertrag_treppe.png',
   front:'kaufvertrag_front.png',  laden:'kaufvertrag_laden.png',
   discount:'kaufvertrag_discount.png',
   zimmer:'kaufvertrag_zimmer.png', zimmer2:'kaufvertrag_zimmer2.png',
@@ -960,7 +961,37 @@ const SZENEN_BILDER = {
 /* Spaetabend-Variante: Breitbild mit Mond UND Schachbrett, eigene Hotspots */
 SZENEN.zimmer2 = SZENEN.zimmer;
 SZENEN.schule = SZENEN.weiche;
+SZENEN.treppe = SZENEN.weiche;
 SZENEN.titel = SZENEN.front;
+HOTSPOTS.treppe = [
+  { id:'plakat1875', name:'Jubiläumsplakat', x:492,y:44,w:42,h:98,
+    fund:{ verb:'anschauen', rq:1, text:'«<b>HKV AARAU 1875</b>» – das Jubiläumsplakat: 150 Jahre Handelsschule. Darunter, fein gedruckt: «Festakt mit Glockenspiel». Glockenspiel? Sie zählen im Kopf die Glocken auf dem Dach … (Fortsetzung folgt.)' },
+    a:{ anschauen:'Das gerahmte Plakat zum Schuljubiläum. Das gezeichnete Gebäude kennen Sie – Sie stehen gerade drin.',
+        nimm:'Das Plakat bleibt hängen. Geschichte nimmt man nicht einfach mit – man schreibt sie.' } },
+  { id:'rektorat', name:'Türschild', x:592,y:128,w:44,h:46,
+    a:{ anschauen:'«<b>Rektorat · Sitzungszimmer</b>». Dahinter werden Stundenpläne geschmiedet und Budgets gebogen.',
+        oeffne:'Ohne Traktandenliste kommt hier niemand rein. Nicht einmal Sie.' } },
+  { id:'uhr', name:'Wanduhr', x:580,y:20,w:40,h:60,
+    a:{ anschauen:'Kurz nach fünf. Die Uhr tickt hier oben etwas feierlicher als im Schulzimmer – findet die Uhr.',
+        benutze:'Sie tickt auch ohne Sie. Zuverlässigste Mitarbeiterin des Hauses.' } },
+  { id:'feuermelder', name:'Feuermelder', x:154,y:116,w:20,h:20,
+    a:{ anschauen:'Ein roter Feuermelder. «Scheibe einschlagen» – der einzige Vertrag im Haus, den man brechen darf. Im Notfall.',
+        benutze:'Es brennt nichts. Höchstens die Neugier auf den Feierabend.' } },
+  { id:'bogenfenster', name:'Bogenfenster', x:316,y:82,w:88,h:138,
+    a:{ anschauen:'Durch das grosse Bogenfenster: Bäume, Dächer der Altstadt, Abendsonne. Aarau macht Feierabend – Sie gleich auch.',
+        oeffne:'Das Fenster bleibt zu. Die Frischluft holen Sie sich gleich unten – gratis und ohne Vertrag.' } },
+  { id:'treppeAuf', name:'Treppe nach oben', x:60,y:76,w:88,h:150,
+    a:{ anschauen:'Die Treppe zu den oberen Schulzimmern. Dort oben war heute Kaufvertrag. Ihr Kopf ist noch halb dort.',
+        benutze:'Nochmals hoch? Freiwillig? Der Feierabend legt sein Veto ein.' } },
+  { id:'treppeAb', name:'Treppe zum Ausgang', x:324,y:176,w:148,h:56,
+    a:{ anschauen:'Die Treppe hinunter zum Ausgang. Unten wartet das Wochenende – und die Bahnhofstrasse.',
+        benutze:'Gleich! Erst noch kurz umsehen – oder unten weiterklicken.' } },
+  { id:'lampen', name:'Kupferlampen', x:196,y:0,w:32,h:66,
+    a:{ anschauen:'Kupferlampen, warm wie Bratapfel. Vermutlich älter als das halbe Kollegium – und deutlich leiser.' } },
+  { id:'gespraech', name:'Lehrperson &amp; Rektor', x:388,y:94,w:106,h:162,
+    a:{ anschauen:'Die Lehrperson und der Rektor im Feierabendgespräch. Man versteht nur Fetzen – aber es fällt auffallend oft das Wort «Jubiläum».',
+        redemit:'Sie nicken im Vorbeigehen. «Schönes Wochenende!» – «Ebenfalls. Und nicht alles auf einmal ausgeben!» Woher weiss er das?' } },
+];
 HOTSPOTS.zimmer2 = [
   { id:'computer', name:'Computer', x:0,y:128,w:96,h:80,
     fund:{ verb:'anschauen', rq:1, text:'Auf dem Bildschirm läuft ein Pixel-Adventure: Eine kleine Figur steht in einem Occasionsladen und verhandelt … Moment. Das kommt Ihnen <b>sehr</b> bekannt vor.' },
@@ -1053,6 +1084,10 @@ const SPRITES = {
     { id:'rektor', frames:['figur_rektor_steh_0.png'], x:602, y:38, w:26, h:102 },
     { id:'lehrer', frames:['kaufvertrag_lehrer_0.png','kaufvertrag_lehrer_1.png','kaufvertrag_lehrer_2.png','kaufvertrag_lehrer_3.png'],
       x:125, y:64, w:54, h:116 },
+  ],
+  treppe: [
+    { id:'tlehrer', frames:['kaufvertrag_lehrer_1.png','kaufvertrag_lehrer_0.png'], x:390, y:108, w:68, h:148 },
+    { id:'trektor', frames:['figur_rektor_steh_3.png','figur_rektor_steh_0.png'], x:452, y:98, w:40, h:158 },
   ],
   titel: [
     { id:'taubeA', frames:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'], x:336, y:186, w:18, h:12 },
@@ -1529,6 +1564,7 @@ function grooveStop(){
 const AMBIENT = {
   titel: { loop:'kaufvertrag_fx_strasse.mp3', loopVol:0.12 },
   schule: { loop:'kaufvertrag_fx_schulhaus.mp3', loopVol:0.16 },
+  treppe: { loop:'kaufvertrag_fx_schulhaus.mp3', loopVol:0.12 },
   weiche: { loop:'kaufvertrag_fx_schulhaus.mp3', loopVol:0.22 },
   front: { loop:'kaufvertrag_fx_brunnen.mp3', loopVol:0.24 },
   discount: { loop:'kaufvertrag_fx_strasse.mp3', loopVol:0.18,
@@ -1899,12 +1935,78 @@ function lehrerStart(){
 }
 function lehrerStop(){ if(lehrer.timer){ clearInterval(lehrer.timer); lehrer.timer = null; } }
 
+
+/* =====================================================
+   TREPPENHAUS: Lehrperson & Rektor im Feierabendgespraech
+   Schwebende Gespraechsfetzen im SCUMM-Stil
+   ===================================================== */
+const GESPRAECH_FETZEN = [
+  { wer:'trektor', z:['… das Jubiläum – 150 Jahre …','… das will geplant sein …'] },
+  { wer:'tlehrer', z:['… heute hat sogar der Schläfer …','… etwas mitgenommen …'] },
+  { wer:'trektor', z:['… was man 1875 wohl alles …','… von Hand unterschrieben hat …'] },
+  { wer:'tlehrer', z:['… Kaufvertrag sitzt. OR 184 …','… können jetzt alle im Schlaf …'] },
+  { wer:'trektor', z:['… und die Glocken auf dem Dach …','… haben Sie die mal gezählt? …'] },
+  { wer:'tlehrer', z:['… erst nach dem Wochenende, …','… Herr Rektor. Erst danach. …'] },
+];
+const gespraech = { t1:null, t2:null, blase:null, idx:0 };
+function gespraechBlase(){
+  const svg = szeneEl.querySelector('svg');
+  if(!svg || aktuelleSzeneId!=='treppe') return;
+  const f = GESPRAECH_FETZEN[gespraech.idx % GESPRAECH_FETZEN.length];
+  gespraech.idx++;
+  try{ const alt = svg.querySelector('#gespraechTxt'); if(alt) alt.remove(); }catch(e){}
+  const sp = (SPRITES.treppe||[]).find(s=>s.id===f.wer);
+  if(!sp) return;
+  const cx = sp.x + sp.w/2;
+  const farbe = f.wer==='trektor' ? '#aee0ff' : '#ffd9a0';
+  const ns = 'http://www.w3.org/2000/svg';
+  const g = document.createElementNS(ns,'g');
+  g.setAttribute('id','gespraechTxt');
+  f.z.forEach((zeile,i)=>{
+    const t = document.createElementNS(ns,'text');
+    t.setAttribute('x', Math.max(120, Math.min(520, cx)));
+    t.setAttribute('y', sp.y - 18 + i*11);
+    t.setAttribute('text-anchor','middle');
+    t.setAttribute('font-family','Courier New,monospace');
+    t.setAttribute('font-weight','bold');
+    t.setAttribute('font-size','9.5');
+    t.setAttribute('fill', farbe);
+    t.setAttribute('stroke','#000');
+    t.setAttribute('stroke-width','0.55');
+    t.setAttribute('paint-order','stroke');
+    t.textContent = zeile;
+    g.appendChild(t);
+  });
+  svg.appendChild(g);
+  gespraech.blase = setTimeout(()=>{
+    try{ g.remove(); }catch(e){}
+    /* der andere gestikuliert kurz als Antwort */
+  }, 3600);
+  /* Sprecher gestikuliert: kurz zur Frontpose und zurueck */
+  spriteFrame(f.wer, 1);
+  setTimeout(()=>{ if(aktuelleSzeneId==='treppe') spriteFrame(f.wer, 0); }, 1400);
+}
+function gespraechStart(){
+  gespraechStop();
+  gespraech.idx = 0;
+  if(reduzierteBewegung()) return;
+  gespraech.t1 = setTimeout(function runde(){
+    gespraechBlase();
+    gespraech.t1 = setTimeout(runde, 6200 + Math.random()*2800);
+  }, 2200);
+}
+function gespraechStop(){
+  if(gespraech.t1){ clearTimeout(gespraech.t1); gespraech.t1 = null; }
+  if(gespraech.blase){ clearTimeout(gespraech.blase); gespraech.blase = null; }
+}
+
 const tiere = { szene:null };
 function tiereWechsel(szene){
   if(tiere.szene === szene) return;   /* gleiche Szene: Choreografie NICHT neu starten */
   tiere.szene = szene;
   if(szene==='titel') autoStart(); else autoStop();
   if(szene==='schule'){ lehrerStart(); rektorStart(); } else { lehrerStop(); rektorStop(); }
+  if(szene==='treppe') gespraechStart(); else gespraechStop();
   if(szene==='discount') katzeStart(); else katzeStop();
   if(szene==='front' || szene==='titel') taubenStart(); else taubenStop();
 }
@@ -1915,6 +2017,7 @@ function tiereWechsel(szene){
 const MUSIK_SZENEN = {
   titel:{ art:'datei', url:'kaufvertrag_musik_titel.mp3', vol:0.28 },
   schule:{ art:'datei', url:'kaufvertrag_musik_schule.mp3', vol:0.18 },
+  treppe:{ art:'datei', url:'kaufvertrag_musik_schule.mp3', vol:0.13 },
   discount:{ art:'groove' },
   front:{ art:'datei', url:'kaufvertrag_musik_elektro.mp3', vol:0.30 },
   /* laden: bewusst OHNE Musik — im Geschäft zählt das Gespräch */
@@ -2243,9 +2346,15 @@ schule2:{ szene:'schule', sprecher:'ERZÄHLER',
       ziel:'schuleEnde' },
   ]},
 schuleEnde:{ szene:'schule', sprecher:'ERZÄHLER',
-  text:'<b>Es läutet!</b> Stühle scheppern, Taschen schnappen zu, der Schläfer erwacht verwirrt. Feierabend – Wochenende! Ihr Heimweg führt Richtung Bahnhof … und unten an der Bahnhofstrasse leuchtet schon das rote Neon.',
+  text:'<b>Es läutet!</b> Stühle scheppern, Taschen schnappen zu, der Schläfer erwacht verwirrt. Feierabend – Wochenende! Sie packen zusammen und treten hinaus ins Treppenhaus.',
   optionen:[
-    { t:'Zum MEGA-DISCOUNT ▸', rq:0, fb:null, ziel:'start' },
+    { t:'Raus ins Treppenhaus ▸', rq:0, fb:null, ziel:'treppe' },
+  ]},
+
+treppe:{ szene:'treppe', sprecher:'ERZÄHLER',
+  text:'Treppenhaus, Feierabendlicht. Vor dem Sitzungszimmer stehen <b>Lehrperson und Rektor</b> und reden – Sie schnappen im Vorbeigehen nur Gesprächsfetzen auf. Auffallend oft fällt das Wort <b>«Jubiläum»</b>. Unten wartet der Freitagabend, Ihr Heimweg führt Richtung Bahnhof … und an der Bahnhofstrasse leuchtet schon das rote Neon.',
+  optionen:[
+    { t:'Die Treppe hinunter – zum MEGA-DISCOUNT ▸', rq:0, fb:null, ziel:'start' },
   ]},
 
 /* ---------- AKT 0 ---------- */
