@@ -54,7 +54,14 @@
   }
 
   /* ------- Dialogbereich (Verben-Interface) ------- */
-  .dialog{padding:12px 16px 16px; border-top:2px solid var(--ega-dgrau); background:#000;}
+  @font-face{
+    font-family:'VT323';
+    src:url('kaufvertrag_font_vt323.woff2') format('woff2');
+    font-weight:400; font-style:normal; font-display:swap;
+  }
+  .dialog{padding:12px 16px 16px; border-top:2px solid var(--ega-dgrau); background:#000;
+    font-family:'VT323','Courier New',monospace; font-size:1.25rem; letter-spacing:.01em;}
+  .dialog button{font-family:inherit;}
   .sprecher{
     display:inline-block; font-size:.8rem; letter-spacing:2px;
     margin-bottom:8px; color:var(--ega-cyan);
