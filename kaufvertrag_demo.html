@@ -279,7 +279,10 @@
   45%{ transform:rotate(-5deg); } 60%{ transform:rotate(5deg); } 75%{ transform:rotate(0deg); }
 }
 #sp-rechner{ transform-box:fill-box; transform-origin:center; cursor:pointer; }
-.szene.ende-roll svg{ transition: transform 16s linear, opacity 16s ease-in; transform: translateY(-104%); opacity: 0; }
+#sp-credits{ transition: transform 15s linear; }
+.szene.ende-roll #sp-credits{ transform: translateY(-320px); }
+.endeFade{ position:absolute; inset:0; background:#000; opacity:0; transition:opacity 14s linear; pointer-events:none; z-index:40; }
+.endeFade.an{ opacity:1; }
 .startTor{ position:absolute; inset:0; z-index:70; background:#000; display:flex; flex-direction:column;
   align-items:center; justify-content:center; gap:1.1rem; text-align:center; padding:20px; }
 .startTor h2{ color:#FFFF55; font-size:1.6rem; letter-spacing:.35em; margin:0; }
@@ -936,7 +939,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '45';
+const BILD_VERSION = '46';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1003,7 +1006,7 @@ function bildSzene(key){
   return '<svg viewBox="0 0 640 260" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">'+
     '<image href="'+vurl(SZENEN_BILDER[key])+'" x="0" y="0" width="640" height="260" '+
     'preserveAspectRatio="xMidYMid slice"/>'+
-    spriteSVG(key)+hotRects(key)+rechnerSVG(key)+schildSVG(key)+'</svg>';
+    spriteSVG(key)+creditsSVG(key)+hotRects(key)+rechnerSVG(key)+schildSVG(key)+'</svg>';
 }
 if(typeof Image !== 'undefined'){
   Object.entries(SZENEN_BILDER).forEach(([key,url])=>{
@@ -2310,6 +2313,11 @@ szeneEl.addEventListener('mouseout', (e)=>{
   const t = e.target;
   if(t && t.id === 'sp-rechner'){ rechnerPose(t, RECHNER_LIEGEND); if(rechner.zappel) t.classList.add('rechner-zappel'); }
 });
+function creditsSVG(key){
+  if(key !== 'ende') return '';
+  return '<image id="sp-credits" href="'+vurl('kaufvertrag_credits.png')+
+         '" x="172" y="235.2" width="256" height="24.8"/>';
+}
 function schildSVG(key){
   if(key !== 'titel') return '';
   return '<image id="sp-schild2" href="'+vurl('kaufvertrag_schild2.png')+
@@ -2618,7 +2626,9 @@ function zeige(id){
   spriteStopp();
   stoppeIdle();
   if(endeRollTimer){ clearTimeout(endeRollTimer); endeRollTimer = null; }
+  if(endeFadeTimer){ clearTimeout(endeFadeTimer); endeFadeTimer = null; }
   szeneEl.classList.remove('ende-roll');
+  try{ szeneEl.querySelectorAll('.endeFade').forEach(f=>f.remove()); }catch(e){}
   aktuelleSzeneId = k.szene;
   rechnerStart(k.rechner);
   szenenAudio(k.szene);
@@ -2822,6 +2832,7 @@ function baueWeiche(k){
 }
 
 let endeRollTimer = null;
+let endeFadeTimer = null;
 function baueEnde(){
   if(zustand.weg) zustand.ergebnisse[zustand.weg]=zustand.rq;
   const gespielt=Object.keys(zustand.ergebnisse).length;
@@ -2863,10 +2874,18 @@ function baueEnde(){
   b2.addEventListener('click', neustart);
   box.appendChild(b2);
   dialogEl.appendChild(box);
-  /* Nach 10 s rollen Dank und Credits nach oben und alles faded ins Schwarz */
+  /* Nach 10 s rollen NUR die Credits nach oben; sind sie weg, faded alles ganz langsam ins Schwarz */
   if(!reduzierteBewegung()){
     endeRollTimer = setTimeout(()=>{
-      if(aktuelleSzeneId === 'ende') szeneEl.classList.add('ende-roll');
+      if(aktuelleSzeneId !== 'ende') return;
+      szeneEl.classList.add('ende-roll');
+      endeFadeTimer = setTimeout(()=>{
+        if(aktuelleSzeneId !== 'ende') return;
+        const f = document.createElement('div');
+        f.className = 'endeFade';
+        szeneEl.appendChild(f);
+        requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ f.classList.add('an'); }); });
+      }, 15500);
     }, 10000);
   }
 }
