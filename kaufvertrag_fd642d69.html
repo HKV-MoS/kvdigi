@@ -920,7 +920,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '36';
+const BILD_VERSION = '37';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1022,7 +1022,7 @@ function kaeufer(){ return KAEUFER[zustand.kaeuferin || 'm']; }
 
 const SPRITES = {
   titel: [
-    { id:'auto', frames:['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png'],
+    { id:'auto', frames:['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png','kaufvertrag_auto_3.png'],
       x:660, y:172, w:94, h:54 },
   ],
   discount: [
@@ -1668,55 +1668,63 @@ function taubenStart(){
   }, 600);
 }
 function taubenStop(){ if(tauben.timer){ clearInterval(tauben.timer); tauben.timer = null; } }
-const AUTO_FRAMES = ['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png'];
-const auto = { timer:null, phase:0, tick:0, x:660 };
-const AUTO_PLAN = [
-  { art:'lauf', bis:602, tempo:-8 },      /* zuegig von rechts heran */
-  { art:'pose', frame:2, ticks:14 },        /* kurz halten: Badge */
-  { art:'lauf', bis:-130, tempo:-9 },     /* zwischen Pfosten und Randstein hindurch, dem Randstein entlang */
-  { art:'pause', ticks:240 },               /* ~29 s Ruhe, dann naechste Lehrperson */
-];
+const AUTO_FRAMES = ['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png','kaufvertrag_auto_3.png'];
+/* Fluessige Fahrt: requestAnimationFrame, Subpixel-Positionen, Raddrehung nach Strecke */
+const auto = { raf:null, statTimer:null, phase:0, x:660, warteBis:0, strecke:0, letztT:0 };
+const AUTO_TEMPO_AN = 80;      /* Rastereinheiten pro Sekunde */
+const AUTO_TEMPO_AB = 100;
+const AUTO_HALT_MS = 1600;
+const AUTO_PAUSE_MS = 26000;
 function autoBasis(x){
   /* Hintere Fahrspur: hinter der Pfosteninsel durch, praktisch eben */
   return 226 + (660-x)*0.004;
 }
-function autoZeichne(frame){
+function autoZeichne(){
   const el = document.getElementById('sp-auto');
   if(!el) return;
-  el.setAttribute('x', auto.x);
-  el.setAttribute('y', autoBasis(auto.x) - 54);
-  el.setAttribute('href', vurl(AUTO_FRAMES[frame]));
+  el.setAttribute('x', auto.x.toFixed(2));
+  el.setAttribute('y', (autoBasis(auto.x) - 54).toFixed(2));
+  const frame = Math.floor(auto.strecke / 5) % AUTO_FRAMES.length;
+  const soll = vurl(AUTO_FRAMES[frame]);
+  if(el.getAttribute('href') !== soll) el.setAttribute('href', soll);
 }
-function autoTick(){
-  const p = AUTO_PLAN[auto.phase];
-  auto.tick++;
-  const weiter = ()=>{ auto.phase = (auto.phase+1)%AUTO_PLAN.length; auto.tick = 0; };
-  if(p.art==='lauf'){
-    auto.x += p.tempo;
-    autoZeichne(Math.floor(auto.tick/2)%2);
-    if(auto.phase === 2 && auto.x <= -40){
+function autoSchritt(t){
+  if(!auto.letztT) auto.letztT = t;
+  const dt = Math.min(0.1, (t - auto.letztT) / 1000);
+  auto.letztT = t;
+  if(auto.phase === 0){                     /* Anfahrt bis zu den Pfosten */
+    auto.x -= AUTO_TEMPO_AN * dt;
+    auto.strecke += AUTO_TEMPO_AN * dt;
+    if(auto.x <= 602){ auto.x = 602; auto.phase = 1; auto.warteBis = t + AUTO_HALT_MS; }
+  } else if(auto.phase === 1){              /* Badge-Halt */
+    if(t >= auto.warteBis) auto.phase = 2;
+  } else if(auto.phase === 2){              /* Ausfahrt hinter der Insel */
+    auto.x -= AUTO_TEMPO_AB * dt;
+    auto.strecke += AUTO_TEMPO_AB * dt;
+    if(auto.x <= -40){
       try{ const sch = document.getElementById('sp-schild2'); if(sch) sch.classList.add('schild-an'); }catch(e){}
     }
-    if(auto.x <= p.bis) weiter();
-  } else if(p.art==='pose'){
-    autoZeichne(p.frame);
-    if(auto.tick >= p.ticks) weiter();
-  } else {
-    if(auto.tick===1){ auto.x = 660; autoZeichne(0); }
-    if(auto.tick >= p.ticks) weiter();
+    if(auto.x <= -130){ auto.phase = 3; auto.warteBis = t + AUTO_PAUSE_MS; }
+  } else {                                  /* Pause, dann naechste Runde */
+    if(t >= auto.warteBis){ auto.x = 660; auto.strecke = 0; auto.phase = 0; }
   }
+  autoZeichne();
+  auto.raf = requestAnimationFrame(autoSchritt);
 }
 function autoStart(){
   autoStop();
   if(reduzierteBewegung()){
-    auto.x = 592;
-    auto.timer = setInterval(()=>{ auto.x = 592; autoZeichne(0); }, 1500);
+    auto.x = 602;
+    auto.statTimer = setInterval(()=>{ auto.x = 602; auto.strecke = 0; autoZeichne(); }, 1500);
     return;
   }
-  auto.phase = 0; auto.tick = 0; auto.x = 660;
-  auto.timer = setInterval(autoTick, 120);
+  auto.phase = 0; auto.x = 660; auto.strecke = 0; auto.letztT = 0;
+  auto.raf = requestAnimationFrame(autoSchritt);
 }
-function autoStop(){ if(auto.timer){ clearInterval(auto.timer); auto.timer = null; } }
+function autoStop(){
+  if(auto.raf){ cancelAnimationFrame(auto.raf); auto.raf = null; }
+  if(auto.statTimer){ clearInterval(auto.statTimer); auto.statTimer = null; }
+}
 
 const tiere = { szene:null };
 function tiereWechsel(szene){
