@@ -919,7 +919,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '34';
+const BILD_VERSION = '36';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -986,7 +986,7 @@ function bildSzene(key){
   return '<svg viewBox="0 0 640 260" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">'+
     '<image href="'+vurl(SZENEN_BILDER[key])+'" x="0" y="0" width="640" height="260" '+
     'preserveAspectRatio="xMidYMid slice"/>'+
-    spriteSVG(key)+hotRects(key)+rechnerSVG(key)+schildSVG(key)+'</svg>';
+    spriteSVG(key)+pfostenSVG(key)+hotRects(key)+rechnerSVG(key)+schildSVG(key)+'</svg>';
 }
 if(typeof Image !== 'undefined'){
   Object.entries(SZENEN_BILDER).forEach(([key,url])=>{
@@ -1022,7 +1022,7 @@ function kaeufer(){ return KAEUFER[zustand.kaeuferin || 'm']; }
 const SPRITES = {
   titel: [
     { id:'auto', frames:['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png'],
-      x:660, y:198, w:88, h:48 },
+      x:660, y:172, w:94, h:54 },
   ],
   discount: [
     { id:'katze', frames:['kaufvertrag_katze_0.png','kaufvertrag_katze_1.png','kaufvertrag_katze_2.png',
@@ -1670,20 +1670,20 @@ function taubenStop(){ if(tauben.timer){ clearInterval(tauben.timer); tauben.tim
 const AUTO_FRAMES = ['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png'];
 const auto = { timer:null, phase:0, tick:0, x:660 };
 const AUTO_PLAN = [
-  { art:'lauf', bis:592, tempo:-5.5 },      /* zuegig von rechts heran */
+  { art:'lauf', bis:602, tempo:-8 },      /* zuegig von rechts heran */
   { art:'pose', frame:2, ticks:14 },        /* kurz halten: Badge */
-  { art:'lauf', bis:-110, tempo:-6.5 },     /* zwischen Pfosten und Randstein hindurch, dem Randstein entlang */
+  { art:'lauf', bis:-130, tempo:-9 },     /* zwischen Pfosten und Randstein hindurch, dem Randstein entlang */
   { art:'pause', ticks:240 },               /* ~29 s Ruhe, dann naechste Lehrperson */
 ];
 function autoBasis(x){
-  /* Fahrlinie: unterhalb der kleinen Pfosten, dem Randstein entlang leicht abfallend */
-  return 246 + (660-x)*0.03;
+  /* Hintere Fahrspur: hinter der Pfosteninsel durch, praktisch eben */
+  return 226 + (660-x)*0.004;
 }
 function autoZeichne(frame){
   const el = document.getElementById('sp-auto');
   if(!el) return;
   el.setAttribute('x', auto.x);
-  el.setAttribute('y', autoBasis(auto.x) - 48);
+  el.setAttribute('y', autoBasis(auto.x) - 54);
   el.setAttribute('href', vurl(AUTO_FRAMES[frame]));
 }
 function autoTick(){
@@ -2209,6 +2209,11 @@ szeneEl.addEventListener('mouseout', (e)=>{
   const t = e.target;
   if(t && t.id === 'sp-rechner'){ rechnerPose(t, RECHNER_LIEGEND); if(rechner.zappel) t.classList.add('rechner-zappel'); }
 });
+function pfostenSVG(key){
+  if(key !== 'titel') return '';
+  return '<image href="'+vurl('kaufvertrag_pfosten.png')+
+         '" x="567.6" y="178.4" width="62.8" height="52"/>';
+}
 function schildSVG(key){
   if(key !== 'titel') return '';
   return '<image id="sp-schild2" href="'+vurl('kaufvertrag_schild2.png')+
