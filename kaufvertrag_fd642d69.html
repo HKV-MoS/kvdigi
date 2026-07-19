@@ -3269,6 +3269,17 @@ function pultZeigen(){
       zeige(id);
     }));
   });
+  const zfig = zeile('Figuren (Szene rendert sofort neu)');
+  function figurKnopf(text, tu){
+    zfig.appendChild(knopf(text, ()=>{
+      tu();
+      if(aktuelleSzeneId && bildOk[aktuelleSzeneId]) szeneEl.innerHTML = bildSzene(aktuelleSzeneId);
+    }, '#8ff'));
+  }
+  figurKnopf('Meier: Herr', ()=>{ zustand.haendler = 'herr'; });
+  figurKnopf('Meier: Frau', ()=>{ zustand.haendler = 'frau'; });
+  figurKnopf('Alex: m', ()=>{ zustand.kaeuferin = 'm'; });
+  figurKnopf('Alex: w', ()=>{ zustand.kaeuferin = 'w'; });
   const zmod = zeile('Module');
   zmod.appendChild(knopf('Kahoot-Quiz (20 Fragen)', ()=> quizOeffnen(), '#f8f'));
   const zf = zeile('FX');
