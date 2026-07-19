@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Hörprobe: Freitagabend-Marsch</title>
+<style>
+  body{font-family:Georgia,serif;background:#1c2026;color:#f4efe2;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
+  .box{max-width:460px;text-align:center;padding:2rem}
+  h1{font-size:1.4rem;margin:0 0 .4rem}
+  p{color:#a9b2bd;line-height:1.55;font-size:.92rem}
+  button{font-size:1.05rem;font-weight:700;color:#1c2026;background:#e8b84b;border:none;border-radius:10px;padding:.9rem 2rem;cursor:pointer;margin:.9rem 0}
+  button:hover{filter:brightness(1.08)}
+  .tempo{font-size:.8rem;color:#6f7987}
+</style>
+</head>
+<body>
+<div class="box">
+  <h1>Freitagabend-Groove</h1>
+  <p>Hörprobe für «Der Kauf» — jazzig-federnd im Geist der alten Adventure-Flughäfen: Walking Bass, Shuffle, Offbeat-Akkorde.</p>
+  <button id="knopf">▶ Abspielen</button>
+  <p class="tempo">8 Takte Loop · ~120 BPM Shuffle · C-Dur · Original­komposition</p>
+</div>
+<script>
+(function(){
+const musik = { an:false, ctx:null, timer:null, schritt:0, naechste:0, master:null, echoDelay:null };
+const M_T = 0.167;                                    /* Achteltriole, ~120 BPM Shuffle */
+/* Walking Bass: 4 Töne pro Takt, Halbtöne rel. A2 (110 Hz) */
+const BASS = [
+  [3,7,10,12], [3,2,0,-2], [5,8,12,10], [-2,2,5,8],
+  [3,7,10,12], [0,4,7,10], [5,8,12,8],  [-2,2,5,-2],
+];
+/* Akkord-Stabs: 2 Töne (Terz+Septime), rel. A3 (220 Hz) */
+const STABS = [
+  [7,14], [7,14], [8,15], [14,20], [7,14], [16,22], [8,15], [14,20],
+];
+/* Melodie: [pos12, halbton rel. A3, laenge in Triolen] */
+const MELODIE = [
+  [[0,10,2],[2,12,1],[3,15,2],[5,12,1],[6,10,2],[9,7,3]],
+  [[0,9,1],[1,10,2],[3,7,2],[6,3,3]],
+  [[0,8,2],[2,10,1],[3,12,2],[5,13,1],[6,15,3],[9,12,3]],
+  [[0,14,2],[2,12,1],[3,10,2],[5,8,1],[6,5,3],[9,2,3]],
+  [[0,10,2],[2,12,1],[3,15,2],[5,12,1],[6,10,2],[9,7,3]],
+  [[0,16,2],[2,14,1],[3,12,2],[5,10,1],[6,16,3],[9,12,3]],
+  [[0,8,2],[2,12,1],[3,15,2],[5,17,1],[6,15,3]],
+  [[0,14,2],[2,15,1],[3,14,2],[5,10,1],[6,7,2],[8,3,4]],
+];
+function mFreq(ht, basis){ return (basis||110) * Math.pow(2, ht/12); }
+function mTon(zeit, freq, typ, dauer, laut, ziel){
+  const o = musik.ctx.createOscillator(), g = musik.ctx.createGain();
+  o.type = typ; o.frequency.value = freq;
+  g.gain.setValueAtTime(laut, zeit);
+  g.gain.exponentialRampToValueAtTime(0.001, zeit + dauer);
+  o.connect(g); g.connect(ziel || musik.master);
+  o.start(zeit); o.stop(zeit + dauer + 0.05);
+}
+function mRausch(zeit, laut, hp, ms){
+  const n = musik.ctx.createBufferSource();
+  const buf = musik.ctx.createBuffer(1, musik.ctx.sampleRate*ms, musik.ctx.sampleRate);
+  const d = buf.getChannelData(0);
+  for(let i=0;i<d.length;i++) d[i] = (Math.random()*2-1) * (1 - i/d.length);
+  n.buffer = buf;
+  const f = musik.ctx.createBiquadFilter(); f.type='highpass'; f.frequency.value=hp;
+  const g = musik.ctx.createGain(); g.gain.value = laut;
+  n.connect(f); f.connect(g); g.connect(musik.master);
+  n.start(zeit);
+}
+function mSchritt(zeit, schritt){
+  const takt = Math.floor(schritt/12) % 8;
+  const pos  = schritt % 12;
+  /* Melodie: Chiptune-Lead (Square) mit Echo-Hauch */
+  MELODIE[takt].forEach(([p, ht, len])=>{
+    if(p===pos) mTon(zeit, mFreq(ht, 220), 'square', M_T*len*0.9, 0.045, musik.echoDelay);
+  });
+  /* Walking Bass auf jeder Zählzeit */
+  if(pos%3===0) mTon(zeit, mFreq(BASS[takt][pos/3], 110), 'triangle', M_T*2.6, 0.115);
+  /* Akkord-Stabs auf dem Offbeat von 2 und 4 */
+  if(pos===5 || pos===11){
+    STABS[takt].forEach(ht=> mTon(zeit, mFreq(ht, 220), 'sawtooth', M_T*1.1, 0.02));
+  }
+  /* Shuffle-Ride + Rim auf 2 und 4 */
+  if(pos%3===0 || pos%3===2) mRausch(zeit, pos%3===0 ? 0.028 : 0.018, 6500, 0.05);
+  if(pos===3 || pos===9) mRausch(zeit, 0.045, 2500, 0.07);
+}
+function planer(){
+  while(musik.naechste < musik.ctx.currentTime + 0.25){
+    mSchritt(musik.naechste, musik.schritt);
+    musik.naechste += M_T;
+    musik.schritt++;
+  }
+}
+const knopf = document.getElementById('knopf');
+knopf.addEventListener('click', ()=>{
+  if(musik.an){
+    musik.an=false; clearInterval(musik.timer);
+    if(musik.master) musik.master.gain.exponentialRampToValueAtTime(0.001, musik.ctx.currentTime+0.4);
+    knopf.textContent='▶ Abspielen'; return;
+  }
+  if(!musik.ctx){
+    musik.ctx = new (window.AudioContext||window.webkitAudioContext)();
+    musik.master = musik.ctx.createGain(); musik.master.gain.value = 0.9;
+    musik.master.connect(musik.ctx.destination);
+    const delay = musik.ctx.createDelay(); delay.delayTime.value = M_T*3;
+    const fb = musik.ctx.createGain(); fb.gain.value = 0.22;
+    const mix = musik.ctx.createGain(); mix.gain.value = 0.5;
+    musik.echoDelay = musik.ctx.createGain();
+    musik.echoDelay.connect(musik.master);
+    musik.echoDelay.connect(delay); delay.connect(fb); fb.connect(delay);
+    delay.connect(mix); mix.connect(musik.master);
+  }
+  musik.master.gain.setValueAtTime(0.9, musik.ctx.currentTime);
+  musik.ctx.resume();
+  musik.an = true; musik.schritt = 0;
+  musik.naechste = musik.ctx.currentTime + 0.08;
+  musik.timer = setInterval(planer, 60);
+  knopf.textContent = '■ Stopp';
+});
+})();
+</script>
+</body>
+</html>
