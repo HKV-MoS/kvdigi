@@ -280,6 +280,11 @@
   45%{ transform:rotate(-5deg); } 60%{ transform:rotate(5deg); } 75%{ transform:rotate(0deg); }
 }
 #sp-rechner{ transform-box:fill-box; transform-origin:center; cursor:pointer; }
+.introDeckel{ position:absolute; inset:0; z-index:60; background:#000; cursor:pointer; }
+.introDeckel video{ width:100%; height:100%; object-fit:cover; display:block; }
+.introDeckel .introHinweis{ position:absolute; right:12px; bottom:8px; color:#8f8; font-size:.7rem;
+  font-family:inherit; text-shadow:0 1px 3px #000; opacity:.85; pointer-events:none; }
+.introDeckel.weg{ opacity:0; transition:opacity .8s; }
 #sp-schild2{ opacity:0; transition:opacity 1.6s steps(8); }
 #sp-schild2.schild-an{ opacity:1; }
 .rechner-zappel{ animation: rechnerZappel 1.9s ease-in-out infinite; }
@@ -1555,6 +1560,25 @@ function szenenAudio(szene){
   }
 }
 /* Browser verlangen eine Geste: beim ersten Klick nachstarten */
+/* Retro-FMV-Intro: laeuft einmal beim Laden ueber der Titelszene, Klick ueberspringt */
+function introZeigen(){
+  try{
+    const wrap = szeneEl.parentElement;   /* .szene-wrap, position:relative */
+    if(!wrap) return;
+    const d = document.createElement('div');
+    d.className = 'introDeckel';
+    d.innerHTML = '<video muted autoplay playsinline preload="auto" src="' + vurl('kaufvertrag_intro.mp4') + '"></video>' +
+      '<div class="introHinweis">klicken zum Überspringen</div>';
+    const ende = ()=>{ d.classList.add('weg'); setTimeout(()=>{ try{ d.remove(); }catch(e){} }, 850); };
+    d.addEventListener('click', ende);
+    const v = d.querySelector('video');
+    v.addEventListener('ended', ende);
+    v.addEventListener('error', ende);
+    setTimeout(()=>{ if(d.parentElement) ende(); }, 12000);   /* Sicherheitsnetz */
+    wrap.appendChild(d);
+    v.play().catch(()=>{});
+  }catch(e){}
+}
 function ersteGeste(){
   try{ if(grv.ctx) grv.ctx.resume(); }catch(e){}
   try{ if(fx.ctx) fx.ctx.resume(); }catch(e){}
@@ -1681,14 +1705,14 @@ const auto = { raf:null, statTimer:null, phase:0, x:660, warteBis:0, strecke:0, 
 const AUTO_TEMPO_AN = 90;      /* Rastereinheiten pro Sekunde */
 const AUTO_PAUSE_MS = 26000;
 function autoBasis(x){
-  /* Dem Randstein entlang: rechts oben einsteigen, links unten auf dem Asphalt hinaus */
-  return 248 - 0.08 * x;
+  /* Dem Randstein entlang: rechts oben einsteigen, links unten klar auf dem Asphalt */
+  return 256 - 0.09 * x;
 }
 function autoZeichne(){
   const el = document.getElementById('sp-auto');
   if(!el) return;
   const gr = 0.78 + (660 - auto.x) * 0.00055;   /* naeher beim Betrachter = groesser */
-  const w = 110 * gr, h = 55 * gr;
+  const w = 124 * gr, h = 62 * gr;
   el.setAttribute('x', auto.x.toFixed(2));
   el.setAttribute('y', (autoBasis(auto.x) - h).toFixed(2));
   el.setAttribute('width', w.toFixed(2));
@@ -3223,7 +3247,7 @@ document.getElementById('titel').addEventListener('click', ()=>{
 });
 
 /* ---------- Start ---------- */
-if(!ladeSpielstand()) zeige('titel');
+if(!ladeSpielstand()){ zeige('titel'); introZeigen(); }
 
 })();
 </script>
