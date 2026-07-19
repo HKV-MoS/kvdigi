@@ -921,7 +921,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '38';
+const BILD_VERSION = '39';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1675,14 +1675,18 @@ const auto = { raf:null, statTimer:null, phase:0, x:660, warteBis:0, strecke:0, 
 const AUTO_TEMPO_AN = 90;      /* Rastereinheiten pro Sekunde */
 const AUTO_PAUSE_MS = 26000;
 function autoBasis(x){
-  /* Dem Randstein entlang, 60 cm Abstand: Linie faellt nach links zum Betrachter hin */
-  return 232 - 0.045 * x;
+  /* Dem Randstein entlang, 60 cm Abstand: faellt steil nach links unten (Perspektive) */
+  return 238 - 0.075 * x;
 }
 function autoZeichne(){
   const el = document.getElementById('sp-auto');
   if(!el) return;
+  const gr = 0.78 + (660 - auto.x) * 0.00055;   /* naeher beim Betrachter = groesser */
+  const w = 94 * gr, h = 51 * gr;
   el.setAttribute('x', auto.x.toFixed(2));
-  el.setAttribute('y', (autoBasis(auto.x) - 51).toFixed(2));
+  el.setAttribute('y', (autoBasis(auto.x) - h).toFixed(2));
+  el.setAttribute('width', w.toFixed(2));
+  el.setAttribute('height', h.toFixed(2));
   const frame = Math.floor(auto.strecke / 5) % AUTO_FRAMES.length;
   const soll = vurl(AUTO_FRAMES[frame]);
   if(el.getAttribute('href') !== soll) el.setAttribute('href', soll);
