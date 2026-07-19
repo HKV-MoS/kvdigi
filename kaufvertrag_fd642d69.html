@@ -1875,7 +1875,7 @@ const KNOTEN = {
 
 /* ---------- AKT 0 ---------- */
 start:{ art:'produktwahl', szene:'discount', sprecher:'ERZÄHLER',
-  text:'Aarau, Freitagabend. Sie – Alex, Lernende/r im 2. Lehrjahr – sind auf dem Nachhauseweg zum Bahnhof, als unten an der Bahnhofstrasse der grelle «MEGA-DISCOUNT» leuchtet. Sie haben etwas gespart und wollen sich etwas leisten. <b>Was darf es sein?</b>' },
+  text:'Aarau, Freitagabend. Sie – Alex, Lernende/r im 1. Lehrjahr – sind auf dem Nachhauseweg zum Bahnhof, als unten an der Bahnhofstrasse der grelle «MEGA-DISCOUNT» leuchtet. Sie haben etwas gespart und wollen sich etwas leisten. <b>Was darf es sein?</b>' },
 
 /* ---------- AKT 0b: Der Preisvergleich ---------- */
 zoegern:{ szene:'discount', sprecher:'ERZÄHLER',
@@ -2337,6 +2337,192 @@ function rechnerStart(an){
     try{ const el = document.getElementById('sp-rechner'); if(el) el.classList.add('rechner-zappel'); }catch(e){}
   }, 5000);
 }
+/* =====================================================
+   KAHOOT-QUIZ: 20 Fragen zum Kaufvertrag
+   (spaeter an der Wandtafel der Schulzimmer-Szene)
+   ===================================================== */
+const QUIZ_ZEIT = 20;
+const QUIZ_FRAGEN = [
+  { f:'Sie fragen im Laden: «Was kostet dieses Velo?» Was ist diese Anfrage rechtlich?',
+    a:['Ein verbindlicher Antrag','Ein Kaufvertrag','Unverbindlich – niemand ist gebunden','Eine Offerte'], k:2,
+    fb:'Anfragen sind unverbindlich – ob mündlich oder schriftlich.' },
+  { f:'Der Föhn liegt mit Preisschild «Fr. 49.–» im Schaufenster. Das ist …',
+    a:['eine verbindliche Offerte','unverbindliche Werbung','eine Anfrage','ein Vertragsabschluss'], k:0,
+    fb:'Preisangaben im Schaufenster und am Regal sind verbindliche Offerten (OR 7).' },
+  { f:'Der Preis im Prospekt ist …',
+    a:['verbindlich wie im Schaufenster','eine unverbindliche Offerte','ein Fixpreis','eine Bestellung'], k:1,
+    fb:'Prospekte, Kataloge und Inserate sind unverbindlich – Preise können sich seit der Publikation geändert haben.' },
+  { f:'Im Regal steht aus Versehen «Fr. 4.90» statt «Fr. 490.–». Muss der Laden zu diesem Preis verkaufen?',
+    a:['Ja, Offerte ist Offerte','Ja, aber nur ein Stück','Nein – das wäre Betrug des Kunden','Nein – wesentlicher Irrtum (OR 23)'], k:3,
+    fb:'Beim offensichtlichen Preisfehler schützt OR 23 den Verkäufer: Die Offerte wird unverbindlich.' },
+  { f:'Ihnen wird unbestellte Ware zugeschickt. Was müssen Sie tun?',
+    a:['Zurückschicken auf eigene Kosten','Gar nichts – weder aufbewahren noch zurückschicken','Nach 30 Tagen bezahlen','Dem Betreibungsamt melden'], k:1,
+    fb:'OR 6a: Unbestellte Ware müssen Sie weder aufbewahren noch zurückschicken. Nur bei offensichtlicher Fehladressierung: Absenderin benachrichtigen.' },
+  { f:'Mit welcher Handlung kommt der Kaufvertrag zustande?',
+    a:['Mit der Anfrage','Mit der Offerte','Mit der Bestellung','Mit der Lieferung'], k:2,
+    fb:'Die Bestellung ist die Annahme der Offerte – damit entsteht der Kaufvertrag (OR 184 ff.).' },
+  { f:'Herr Meier sagt mündlich zu, Sie schlagen ein. Gilt die Abmachung?',
+    a:['Nein, nur schriftlich gilt','Ja – mündliche Zusagen sind bindend','Nur mit Zeugen','Nur bis Ladenschluss'], k:1,
+    fb:'Auch mündliche Verträge sind verbindlich. Schriftliches lässt sich nur leichter beweisen.' },
+  { f:'Die Lieferfrist ist verstrichen, nichts kommt. Erster korrekter Schritt?',
+    a:['Sofort vom Vertrag zurücktreten','Betreibung einleiten','Eingeschriebene Mahnung mit Nachfrist','Preis mindern'], k:2,
+    fb:'Mahnkauf OR 107: zuerst eingeschrieben mahnen und eine Nachfrist setzen.' },
+  { f:'Das Hochzeitskleid ist fest auf den 14. Juni bestellt – und kommt nicht. Was gilt?',
+    a:['Fixkauf: sofort in Verzug, ohne Mahnung (OR 108)','Normale Nachfrist von 30 Tagen','Kein Verzug – einfach Pech','Automatisch Wandelung'], k:0,
+    fb:'Beim Fixkauf ist der Liefertermin entscheidend – die Verkäuferin ist sofort in Verzug.' },
+  { f:'Die Nachfrist läuft ungenutzt ab. Was gehört NICHT zu Ihren Möglichkeiten?',
+    a:['Auf Lieferung bestehen plus Schadenersatz','Verzicht mit Schadenersatzforderung','Rücktritt vom Vertrag','Die Ware gratis behalten'], k:3,
+    fb:'OR 107/109 gibt Ihnen drei Wahlrechte – geschenkt wird nichts.' },
+  { f:'Wie lange haftet der Verkäufer grundsätzlich für Mängel an der Kaufsache?',
+    a:['6 Monate','1 Jahr','2 Jahre','5 Jahre'], k:2,
+    fb:'Gewährleistung: 2 Jahre (OR 197/210). Bei Occasionen ist eine Verkürzung auf 1 Jahr zulässig.' },
+  { f:'Die neue Ware ist da. Was verlangt OR 201 von Ihnen?',
+    a:['Sofort prüfen und Mängel unverzüglich rügen','Innert 2 Jahren irgendwann melden','Erst benutzen, dann reklamieren','Eine Quittung verlangen'], k:0,
+    fb:'Wer nicht sofort prüft und rügt, «genehmigt» die Ware – die Rechte für erkennbare Mängel verfallen.' },
+  { f:'Berechtigte Mängelrüge – welche Forderung gibt es NICHT?',
+    a:['Ersatzlieferung','Minderung','Schmerzensgeld für den Ärger','Wandelung'], k:2,
+    fb:'OR 205/206 kennt Ersatzlieferung, Minderung und Wandelung – Ärger wird nicht vergütet.' },
+  { f:'«Wandelung» bedeutet …',
+    a:['Umtausch in ein anderes Modell','Kauf rückgängig: Ware zurück, Geld zurück','Preisnachlass','Gratisreparatur'], k:1,
+    fb:'Wandelung = Rückabwicklung des Kaufs.' },
+  { f:'Der Käufer verweigert die Annahme der Ware. Was darf die Verkäuferin?',
+    a:['Die Ware auf Kosten des Käufers hinterlegen','Sofort betreiben','Den Preis verdoppeln','Gar nichts'], k:0,
+    fb:'Beim Annahmeverzug darf die Ware z. B. in einem Lagerhaus hinterlegt werden – auf Kosten des Käufers.' },
+  { f:'Sie zahlen die Rechnung trotz Mahnung nicht. Welcher Verzugszins droht?',
+    a:['1 Prozent','5 Prozent pro Jahr','10 Prozent pro Jahr','Gar keiner'], k:1,
+    fb:'OR 104: 5 Prozent Verzugszins pro Jahr.' },
+  { f:'Wer muss auf Verlangen eine Quittung ausstellen?',
+    a:['Die Bank','Der Käufer','Die Verkäuferin bzw. der Zahlungsempfänger','Das Betreibungsamt'], k:2,
+    fb:'OR 88: Auf Wunsch muss quittiert werden – Ihr Beweis, dass die Schuld beglichen ist.' },
+  { f:'Wie lange sollten Sie Quittungen grösserer Beträge aufbewahren?',
+    a:['1 Jahr','2 Jahre','5 bis 10 Jahre','Gar nicht'], k:2,
+    fb:'Die meisten Forderungen verjähren nach 5 bis 10 Jahren (OR 127/128) – so lange ist die Quittung Ihr Beweis.' },
+  { f:'An der Haustür einen Staubsauger für Fr. 300.– gekauft. Was gilt?',
+    a:['Kauf ist Kauf','Widerruf innert 14 Tagen, schriftlich per Einschreiben','Widerruf nur am selben Tag','Nur der Verkäufer darf widerrufen'], k:1,
+    fb:'Haustürkauf über Fr. 100.–: 14 Tage Widerrufsrecht (OR 40a–f), das Datum des Poststempels zählt.' },
+  { f:'Im Laden gekauft – zu Hause gefällt die Farbe nicht mehr. Ihr Rückgaberecht?',
+    a:['14 Tage, wie immer','30 Tage mit Quittung','Keines – Umtausch ist reine Kulanz','Nur bei Occasionen'], k:2,
+    fb:'Im Laden gibt es KEIN gesetzliches Rückgaberecht – was viele Geschäfte anbieten, ist freiwillige Kulanz.' },
+];
+const quiz = { wrap:null, nr:0, punkte:0, richtig:0, timer:null, rest:0, offen:false };
+const QUIZ_FARBEN = [ ['#e21b3c','▲'], ['#1368ce','◆'], ['#d89e00','●'], ['#26890c','■'] ];
+function quizStopTimer(){ if(quiz.timer){ clearInterval(quiz.timer); quiz.timer = null; } }
+function quizOeffnen(){
+  if(!quiz.wrap){
+    const stil = document.createElement('style');
+    stil.textContent = '.quizDeckel{position:fixed;inset:0;z-index:9400;background:#46178f;display:flex;align-items:center;justify-content:center;padding:14px}' +
+      '.quizKasten{width:min(96vw,760px);max-height:94vh;overflow:auto;text-align:center;color:#fff;font-family:inherit}' +
+      '.quizKopf{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;font-weight:700}' +
+      '.quizKopf .zu{font:inherit;background:rgba(0,0,0,.3);color:#fff;border:1px solid rgba(255,255,255,.5);border-radius:6px;padding:.3rem .8rem;cursor:pointer}' +
+      '.quizBalkenWrap{height:10px;background:rgba(0,0,0,.3);border-radius:5px;overflow:hidden;margin-bottom:12px}' +
+      '.quizBalken{height:100%;background:#ffd000;width:100%}' +
+      '.quizFrage{background:#fff;color:#222;border-radius:10px;padding:1rem 1.2rem;font-size:1.05rem;font-weight:700;min-height:3.2em;display:flex;align-items:center;justify-content:center;margin-bottom:12px;box-shadow:0 4px 16px rgba(0,0,0,.35)}' +
+      '.quizGitter{display:grid;grid-template-columns:1fr 1fr;gap:10px}' +
+      '.quizGitter button{font:inherit;font-weight:700;font-size:.95rem;color:#fff;border:none;border-radius:8px;padding:1rem .8rem;cursor:pointer;display:flex;align-items:center;gap:.6rem;text-align:left;min-height:3.6em;box-shadow:0 3px 0 rgba(0,0,0,.35)}' +
+      '.quizGitter button:hover{filter:brightness(1.12)}' +
+      '.quizGitter button:disabled{cursor:default}' +
+      '.quizGitter button.falschAus{opacity:.25}' +
+      '.quizGitter button.korrekt{outline:4px solid #fff}' +
+      '.quizFb{margin:12px 0 0;background:rgba(0,0,0,.35);border-radius:10px;padding:.8rem 1rem;font-size:.92rem;line-height:1.5;display:none}' +
+      '.quizFb b.gross{font-size:1.15rem;display:block;margin-bottom:.3rem}' +
+      '.quizWeiter{font:inherit;font-weight:700;background:#ffd000;color:#222;border:none;border-radius:8px;padding:.6rem 1.6rem;cursor:pointer;margin-top:12px;display:none}' +
+      '.quizEnde h2{font-size:1.6rem;margin:.4rem 0}' +
+      '.quizEnde p{font-size:1rem;line-height:1.6}' +
+      '@media (max-width:520px){ .quizGitter{grid-template-columns:1fr} }';
+    document.head.appendChild(stil);
+    const deckel = document.createElement('div');
+    deckel.className = 'quizDeckel';
+    deckel.innerHTML = '<div class="quizKasten">' +
+      '<div class="quizKopf"><span id="quizStand"></span><span id="quizPunkte"></span><button type="button" class="zu">✕</button></div>' +
+      '<div class="quizBalkenWrap"><div class="quizBalken" id="quizBalken"></div></div>' +
+      '<div class="quizFrage" id="quizFrage"></div>' +
+      '<div class="quizGitter" id="quizGitter"></div>' +
+      '<div class="quizFb" id="quizFb"></div>' +
+      '<button type="button" class="quizWeiter" id="quizWeiter">Weiter ▸</button>' +
+      '</div>';
+    document.body.appendChild(deckel);
+    quiz.wrap = deckel;
+    deckel.querySelector('.zu').addEventListener('click', ()=>{ quizStopTimer(); deckel.style.display='none'; });
+    deckel.querySelector('#quizWeiter').addEventListener('click', ()=>{ quiz.nr++; quizFrageZeigen(); });
+  }
+  quiz.wrap.style.display = 'flex';
+  quiz.nr = 0; quiz.punkte = 0; quiz.richtig = 0;
+  quizFrageZeigen();
+}
+function quizFrageZeigen(){
+  quizStopTimer();
+  const w = quiz.wrap;
+  const fbEl = w.querySelector('#quizFb'), weiter = w.querySelector('#quizWeiter');
+  fbEl.style.display = 'none'; weiter.style.display = 'none';
+  if(quiz.nr >= QUIZ_FRAGEN.length){ quizEnde(); return; }
+  const fr = QUIZ_FRAGEN[quiz.nr];
+  w.querySelector('#quizStand').textContent = 'Frage ' + (quiz.nr+1) + ' / ' + QUIZ_FRAGEN.length;
+  w.querySelector('#quizPunkte').textContent = quiz.punkte + ' Punkte';
+  w.querySelector('#quizFrage').textContent = fr.f;
+  const g = w.querySelector('#quizGitter');
+  g.innerHTML = '';
+  fr.a.forEach((txt, i)=>{
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.style.background = QUIZ_FARBEN[i][0];
+    b.innerHTML = '<span style="font-size:1.2rem">' + QUIZ_FARBEN[i][1] + '</span><span>' + txt + '</span>';
+    b.addEventListener('click', ()=> quizAntwort(i));
+    g.appendChild(b);
+  });
+  quiz.rest = QUIZ_ZEIT;
+  const balken = w.querySelector('#quizBalken');
+  balken.style.width = '100%';
+  quiz.timer = setInterval(()=>{
+    quiz.rest -= 0.1;
+    balken.style.width = Math.max(0, quiz.rest/QUIZ_ZEIT*100) + '%';
+    if(quiz.rest <= 0){ quizAntwort(-1); }
+  }, 100);
+}
+function quizAntwort(i){
+  quizStopTimer();
+  const fr = QUIZ_FRAGEN[quiz.nr];
+  const w = quiz.wrap;
+  const knoepfe = w.querySelectorAll('#quizGitter button');
+  knoepfe.forEach((b, nr)=>{
+    b.disabled = true;
+    if(nr === fr.k) b.classList.add('korrekt'); else b.classList.add('falschAus');
+  });
+  const fbEl = w.querySelector('#quizFb');
+  let kopf;
+  if(i === fr.k){
+    const bonus = 500 + Math.round(500 * Math.max(0, quiz.rest) / QUIZ_ZEIT);
+    quiz.punkte += bonus; quiz.richtig++;
+    kopf = '<b class="gross" style="color:#7CFC8E">Richtig! +' + bonus + '</b>';
+  } else if(i === -1){
+    kopf = '<b class="gross" style="color:#ffb0b0">Zeit abgelaufen!</b>';
+  } else {
+    kopf = '<b class="gross" style="color:#ffb0b0">Falsch.</b>';
+  }
+  fbEl.innerHTML = kopf + fr.fb;
+  fbEl.style.display = 'block';
+  w.querySelector('#quizPunkte').textContent = quiz.punkte + ' Punkte';
+  w.querySelector('#quizWeiter').style.display = 'inline-block';
+  w.querySelector('#quizWeiter').focus();
+}
+function quizEnde(){
+  const w = quiz.wrap;
+  const n = QUIZ_FRAGEN.length;
+  let rang;
+  if(quiz.richtig >= 18) rang = 'Rechtsprofi – Herr Meier würde Sie sofort einstellen.';
+  else if(quiz.richtig >= 14) rang = 'Sattelfest – dem QV sehen Sie gelassen entgegen.';
+  else if(quiz.richtig >= 9) rang = 'Solide Basis – ein zweiter Durchgang lohnt sich.';
+  else rang = 'Noch Luft nach oben – das Spiel kennt den Weg.';
+  w.querySelector('#quizFrage').innerHTML = '<div class="quizEnde"><h2>Geschafft!</h2>' +
+    '<p><b>' + quiz.richtig + ' von ' + n + '</b> richtig · <b>' + quiz.punkte + ' Punkte</b><br>' + rang + '</p></div>';
+  w.querySelector('#quizGitter').innerHTML = '';
+  w.querySelector('#quizFb').style.display = 'none';
+  const weiter = w.querySelector('#quizWeiter');
+  weiter.style.display = 'inline-block';
+  weiter.textContent = '↻ Nochmals';
+  weiter.onclick = ()=>{ weiter.onclick = null; weiter.textContent = 'Weiter ▸';
+    quiz.nr = 0; quiz.punkte = 0; quiz.richtig = 0; quizFrageZeigen(); };
+}
+
 /* ---- Benutzbarer Taschenrechner (Overlay im Retro-Stil) ---- */
 const rechnerUi = { wrap:null, anzeige:null, ausdruck:'' };
 function rechnerMal(){
@@ -2546,12 +2732,14 @@ function baueProduktwahl(k){
   });
   dialogEl.appendChild(figReihe);
   /* Idle-Animation der Vorschaufiguren (versetzt getaktet) */
-  const IDLE_FOLGE = [0,0,1,0,0,2];
+  /* Zwei eigene Rhythmen (7er- und 11er-Folge): nie synchron */
+  const IDLE_FOLGEN = [ [0,0,1,0,0,0,2], [0,2,0,0,1,0,0,0,0,1,0] ];
   let idleSchritt = 0;
   figurenTimer = setInterval(()=>{
     idleSchritt++;
     figBilder.forEach(([img, frames], nr)=>{
-      const pose = IDLE_FOLGE[(idleSchritt + nr*3) % IDLE_FOLGE.length];
+      const folge = IDLE_FOLGEN[nr % IDLE_FOLGEN.length];
+      const pose = folge[(idleSchritt + nr*5) % folge.length];
       if(frames[pose]) img.src = vurl(frames[pose]);
     });
   }, 650);
@@ -2750,6 +2938,8 @@ function pultZeigen(){
       zeige(id);
     }));
   });
+  const zmod = zeile('Module');
+  zmod.appendChild(knopf('Kahoot-Quiz (20 Fragen)', ()=> quizOeffnen(), '#f8f'));
   const zf = zeile('FX');
   Object.keys(FX_DATEIEN).forEach(hid=>{
     zf.appendChild(knopf(hid, ()=>{ const war = fx.an; fx.an = true; if(!Object.keys(fxAudio).length) fxDateienLaden(); fxFuer(hid); fx.an = war; }));
