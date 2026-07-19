@@ -1023,6 +1023,8 @@ function kaeufer(){ return KAEUFER[zustand.kaeuferin || 'm']; }
 
 const SPRITES = {
   titel: [
+    { id:'taubeA', frames:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'], x:330, y:202, w:20, h:13 },
+    { id:'taubeB', frames:['kaufvertrag_taube_b0.png','kaufvertrag_taube_b1.png'], x:360, y:205, w:19, h:12 },
     { id:'auto', frames:['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png','kaufvertrag_auto_3.png','kaufvertrag_auto_4.png','kaufvertrag_auto_5.png'],
       x:660, y:172, w:94, h:51 },
   ],
@@ -1660,10 +1662,13 @@ function taubenStart(){
   taubenStop();
   if(reduzierteBewegung()) return;
   tauben.timer = setInterval(()=>{
+    /* Faehrt das Auto vorbei, halten die Tauben inne (Kopf hoch, keine Bewegung) */
+    const autoNah = (tiere.szene === 'titel' && auto.raf && auto.x > 120 && auto.x < 500);
     [['sp-taubeA','kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'],
      ['sp-taubeB','kaufvertrag_taube_b0.png','kaufvertrag_taube_b1.png']].forEach(([id, oben, unten])=>{
       const el = document.getElementById(id);
       if(!el) return;
+      if(autoNah){ el.setAttribute('href', vurl(oben)); return; }
       if(Math.random() < 0.45) el.setAttribute('href', vurl(Math.random() < 0.55 ? unten : oben));
     });
   }, 600);
@@ -1729,7 +1734,7 @@ function tiereWechsel(szene){
   tiere.szene = szene;
   if(szene==='titel') autoStart(); else autoStop();
   if(szene==='discount') katzeStart(); else katzeStop();
-  if(szene==='front') taubenStart(); else taubenStop();
+  if(szene==='front' || szene==='titel') taubenStart(); else taubenStop();
 }
 
 /* =====================================================
