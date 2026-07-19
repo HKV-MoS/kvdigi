@@ -485,24 +485,24 @@ laden:[
     a:{ anschauen:'Die Uhr tickt. Fristen laufen – das merken Sie sich für später.' } },
 ],
 titel:[
-  { id:'schild', name:'HKV-Schild', x:430,y:142,w:56,h:40,
+  { id:'schild', name:'HKV-Schild', x:426,y:130,w:62,h:50,
     a:{ anschauen:'«HKV AARAU», dunkelgrün und seriös. Hinter diesem Schild werden seit 1875 Kaufleute gemacht.' } },
-  { id:'tor', name:'Tor', x:288,y:122,w:108,h:82,
+  { id:'tor', name:'Tor', x:306,y:108,w:102,h:82,
     a:{ anschauen:'Das Gittertor zur Zufahrt. Werktags offen – die Freiheit ist bekanntlich pausenplatzgross.',
         oeffne:'Sie sind ja schon drin. Beziehungsweise: gleich.' } },
-  { id:'hof', name:'Pausenplatz', x:84,y:62,w:200,h:134,
+  { id:'hof', name:'Pausenplatz', x:22,y:44,w:280,h:130,
     a:{ anschauen:'Bäume, Bänke, Schatten – der Pausenplatz. Um 10 Uhr das dichtestbesiedelte Gebiet des Kantons.' } },
-  { id:'turm', name:'Uhrtürmchen', x:294,y:16,w:28,h:54,
+  { id:'turm', name:'Uhrtürmchen', x:294,y:2,w:28,h:44,
     fund:{ verb:'anschauen', rq:1, text:'Das Türmchen mit der Uhr, seit 1875 im Dienst. Wenn Sie genau hinhören, wenn es schlägt … nein. Das ist eine andere Geschichte. (Fortsetzung folgt.)' },
     a:{ anschauen:'Ein Uhrtürmchen auf dem Dachfirst. Die Zeit läuft – besonders vor dem QV.' } },
-  { id:'kran', name:'Baukran', x:612,y:20,w:28,h:62,
+  { id:'kran', name:'Baugerüst', x:364,y:0,w:276,h:20,
     a:{ anschauen:'Ein Baukran über dem Ostflügel. Im obersten Stock wird umgebaut. Was man dort wohl alles findet, wenn man alte Wände öffnet …',
         benutze:'Zutritt nur mit Helm. Und mit einer anderen Geschichte.' } },
-  { id:'container', name:'Baucontainer', x:582,y:142,w:42,h:24,
+  { id:'container', name:'Baucontainer', x:618,y:136,w:22,h:24,
     a:{ anschauen:'Blaue Baustellen-Container. Werkzeug, Pläne, Kaffeemaschine – die Grundausstattung jeder Schweizer Baustelle.' } },
-  { id:'kandelaber', name:'Kandelaber', x:144,y:0,w:14,h:220,
+  { id:'kandelaber', name:'Kandelaber', x:160,y:0,w:18,h:230,
     a:{ anschauen:'Ein Strassenkandelaber, kerzengerade im Dienst. Nachts beleuchtet er die Zufahrt, tagsüber übt er Stillstehen.' } },
-  { id:'strasse', name:'Zufahrt', x:0,y:214,w:640,h:46,
+  { id:'strasse', name:'Zufahrt', x:0,y:220,w:640,h:40,
     a:{ anschauen:'Die Zufahrt zur HKV, frisch geteert. Gleich fährt hier bestimmt jemand durch – Lehrpersonen parkieren schliesslich auch irgendwo.' } },
 ],
 schule:[
@@ -922,7 +922,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '40';
+const BILD_VERSION = '42';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1676,14 +1676,14 @@ const auto = { raf:null, statTimer:null, phase:0, x:660, warteBis:0, strecke:0, 
 const AUTO_TEMPO_AN = 90;      /* Rastereinheiten pro Sekunde */
 const AUTO_PAUSE_MS = 26000;
 function autoBasis(x){
-  /* Dem Randstein entlang, 60 cm Abstand: faellt steil nach links unten (Perspektive) */
-  return 238 - 0.075 * x;
+  /* Dem Randstein entlang: rechts oben einsteigen, links unten auf dem Asphalt hinaus */
+  return 248 - 0.08 * x;
 }
 function autoZeichne(){
   const el = document.getElementById('sp-auto');
   if(!el) return;
   const gr = 0.78 + (660 - auto.x) * 0.00055;   /* naeher beim Betrachter = groesser */
-  const w = 94 * gr, h = 49 * gr;
+  const w = 110 * gr, h = 55 * gr;
   el.setAttribute('x', auto.x.toFixed(2));
   el.setAttribute('y', (autoBasis(auto.x) - h).toFixed(2));
   el.setAttribute('width', w.toFixed(2));
@@ -2514,7 +2514,7 @@ szeneEl.addEventListener('mouseout', (e)=>{
 function schildSVG(key){
   if(key !== 'titel') return '';
   return '<image id="sp-schild2" href="'+vurl('kaufvertrag_schild2.png')+
-         '" x="432.8" y="144.8" width="51.2" height="34"/>';
+         '" x="430" y="133.2" width="54.8" height="42"/>';
 }
 function rechnerStart(an){
   rechner.an = !!an; rechner.zappel = false;
