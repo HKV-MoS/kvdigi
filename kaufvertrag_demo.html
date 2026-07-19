@@ -32,7 +32,7 @@
         #0a2127 86%,  #0a2127 100%);
     background-attachment: fixed;
   }
-  .rahmen{max-width:1000px; margin:0 auto;}
+  .rahmen{max-width:1050px; margin:0 auto;}
   header{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:8px;}
   h1{font-size:1.35rem; letter-spacing:2px; color:var(--ega-gelb); text-transform:uppercase;}
   h1 small{display:block; font-size:.72rem; font-weight:bold; color:var(--ega-dgrau); letter-spacing:1px; text-transform:none;}
@@ -47,7 +47,7 @@
   /* ------- Bühne ------- */
   .buehne{background:#000; border:2px solid var(--ega-dgrau); box-shadow:0 10px 40px rgba(0,0,0,.65);}
   .szene{width:100%; aspect-ratio:640/260; display:block; background:#000; position:relative;}
-  .szene svg{width:100%; height:100%; display:block; image-rendering:pixelated;}
+  .szene svg{width:100%; height:100%; display:block; image-rendering:pixelated; filter:brightness(1.1);}
   .szene::after{ /* CRT-Zeilen */
     content:""; position:absolute; inset:0; pointer-events:none;
     background:repeating-linear-gradient(180deg, rgba(0,0,0,.22) 0 1px, transparent 1px 3px);
