@@ -946,7 +946,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '61';
+const BILD_VERSION = '62';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1840,7 +1840,7 @@ function autoZeichne(){
     sch.setAttribute('ry', (4.2*gr).toFixed(2));
   }
 }
-const AUTO_STOP_X  = 483;      /* Halt auf Hoehe der Pfosten (Badge zeigen) */
+const AUTO_STOP_X  = 283;      /* Halt hinter den Pfosten (Badge zeigen) */
 const AUTO_HALT_MS = 3200;
 function autoMotor(vol){
   if(!fx.an){ autoMotorStopp(); return; }
@@ -2851,6 +2851,10 @@ szeneEl.addEventListener('mouseout', (e)=>{
   if(t && t.id === 'sp-rechner'){ rechnerPose(t, RECHNER_LIEGEND); if(rechner.zappel) t.classList.add('rechner-zappel'); }
 });
 function vordergrundSVG(key){
+  if(key === 'titel'){
+    /* Badge-Pfosten in der Bildmitte – der Fiat faehrt hintendurch */
+    return '<image href="'+vurl('kaufvertrag_pfosten_vg.png')+'" x="307.8" y="204" width="24.4" height="42"/>';
+  }
   if(key !== 'schule') return '';
   return '<image href="'+vurl('kaufvertrag_pult_vg.png')+'" x="63.2" y="128.8" width="136" height="60.8"/>' +
          '<image href="'+vurl('kaufvertrag_bl_vg.png')+'" x="552.8" y="172.8" width="87.2" height="87.2"/>';
