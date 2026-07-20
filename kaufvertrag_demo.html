@@ -1928,7 +1928,7 @@ function autoSchritt(t){
       taubenFlug();
     }
   } else if(auto.phase === 2){              /* Zuckel-Ausfahrt nach links */
-    const tempo = AUTO_TEMPO_AN * (0.42 + 0.58 * Math.abs(Math.sin(auto.strecke / 2.6)));
+    const tempo = AUTO_TEMPO_AN * 1.18 * (0.42 + 0.58 * Math.abs(Math.sin(auto.strecke / 2.6)));  /* nach dem Badgen ~18% schneller */
     auto.x -= tempo * dt;
     auto.strecke += tempo * dt;
     if(auto.x <= -40){
@@ -2100,9 +2100,9 @@ function treppenAuftritt(){
   if(reduzierteBewegung()){ gespraechStart(); return; }
   const start = performance.now();
   const FIGS = [
-    { id:'sp-trektor', fr:REKTOR_GEH, von:400, bis:271, dauer:4200, wGeh:79,
+    { id:'sp-trektor', fr:REKTOR_GEH, von:400, bis:271, dauer:2700, wGeh:79,
       talkHref:'figur_rektor_steh_3.png', wTalk:38, xTalk:252 },
-    { id:'sp-tlehrer', fr:LEHRER_GEH, von:96, bis:194, dauer:4200, wGeh:79,
+    { id:'sp-tlehrer', fr:LEHRER_GEH, von:96, bis:194, dauer:2050, wGeh:79,
       talkHref:'kaufvertrag_lehrer_1.png', wTalk:70, xTalk:159 },
   ];
   function schritt(t){
@@ -2117,7 +2117,7 @@ function treppenAuftritt(){
         el.setAttribute('width', fig.wGeh);
         el.setAttribute('x', (cx - fig.wGeh/2).toFixed(1));
         const dist = Math.abs(cx - fig.von);
-        el.setAttribute('href', vurl(fig.fr[Math.floor(dist / 5.5) % 6]));
+        el.setAttribute('href', vurl(fig.fr[Math.floor(dist / 4.2) % 6]));
       } else {
         el.setAttribute('width', fig.wTalk);
         el.setAttribute('x', fig.xTalk);
