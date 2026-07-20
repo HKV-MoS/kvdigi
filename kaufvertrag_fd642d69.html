@@ -946,7 +946,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '66';
+const BILD_VERSION = '67';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -2927,7 +2927,7 @@ szeneEl.addEventListener('mouseout', (e)=>{
 function vordergrundSVG(key){
   if(key === 'titel'){
     /* Badge-Pfosten unten rechts – der Fiat faehrt hintendurch */
-    return '<image href="'+vurl('kaufvertrag_pfosten_vg.png')+'" x="558.8" y="170.9" width="34.5" height="45"/>';
+    return '<image href="'+vurl('kaufvertrag_pfosten_vg.png')+'" x="556.4" y="171.8" width="37.2" height="46.5"/>';
   }
   if(key !== 'schule') return '';
   return '<image href="'+vurl('kaufvertrag_pult_vg.png')+'" x="63.2" y="128.8" width="136" height="60.8"/>' +
