@@ -945,7 +945,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '68';
+const BILD_VERSION = '69';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -964,14 +964,14 @@ SZENEN.treppe = SZENEN.weiche;
 SZENEN.titel = SZENEN.front;
 HOTSPOTS.treppe = [
   { id:'plakat1875', name:'Jubiläumsplakat', x:492,y:44,w:42,h:98,
-    fund:{ verb:'anschauen', rq:1, text:'«<b>HKV AARAU 1875</b>» – das Jubiläumsplakat: 150 Jahre Handelsschule. Darunter, fein gedruckt: «Festakt mit Glockenspiel». Glockenspiel? Sie zählen im Kopf die Glocken in der Fassade … (Fortsetzung folgt.)' },
-    a:{ anschauen:'Das gerahmte Plakat zum Schuljubiläum. Das gezeichnete Gebäude kennen Sie – Sie stehen gerade drin.',
+    fund:{ verb:'anschauen', rq:1, text:'«<b>HKV AARAU 1875</b>» – das Plakat vom <b>150-Jahr-Jubiläum letztes Jahr</b>. Es hängt immer noch; von so viel Geschichte trennt man sich hier nicht so schnell. Darunter, fein gedruckt: «Festakt mit Glockenspiel». Glockenspiel? Sie zählen im Kopf die Glocken in der Fassade … (Fortsetzung folgt.)' },
+    a:{ anschauen:'Das gerahmte Plakat vom Jubiläum im letzten Jahr. Das gezeichnete Gebäude kennen Sie – Sie stehen gerade drin.',
         nimm:'Das Plakat bleibt hängen. Geschichte nimmt man nicht einfach mit – man schreibt sie.' } },
   { id:'rektorat', name:'Türschild', x:592,y:128,w:44,h:46,
     a:{ anschauen:'«<b>Rektorat · Sitzungszimmer</b>». Dahinter werden Stundenpläne geschmiedet und Budgets gebogen.',
         oeffne:'Ohne Traktandenliste kommt hier niemand rein. Nicht einmal Sie.' } },
   { id:'uhr', name:'Wanduhr', x:580,y:20,w:40,h:60,
-    a:{ anschauen:'Kurz nach fünf. Die Uhr tickt hier oben etwas feierlicher als im Schulzimmer – findet die Uhr.',
+    a:{ anschauen:'Genau <b>17:03</b> – Feierabend seit drei Minuten. Die Uhr tickt hier oben etwas feierlicher als im Schulzimmer – findet die Uhr.',
         benutze:'Sie tickt auch ohne Sie. Zuverlässigste Mitarbeiterin des Hauses.' } },
   { id:'feuermelder', name:'Feuermelder', x:154,y:116,w:20,h:20,
     a:{ anschauen:'Ein roter Feuermelder. «Scheibe einschlagen» – der einzige Vertrag im Haus, den man brechen darf. Im Notfall.',
@@ -1080,7 +1080,7 @@ function kaeufer(){ return KAEUFER[zustand.kaeuferin || 'm']; }
 
 const SPRITES = {
   schule: [
-    { id:'lehrer', frames:['kaufvertrag_lehrer_0.png','kaufvertrag_lehrer_1.png','kaufvertrag_lehrer_2.png','kaufvertrag_lehrer_3.png'],
+    { id:'lehrer', frames:['kaufvertrag_lehrer_0.png','kaufvertrag_lehrer_1.png','kaufvertrag_lehrer_2.png','kaufvertrag_lehrer_3.png','kaufvertrag_lehrer_sprich_0.png','kaufvertrag_lehrer_sprich_1.png','kaufvertrag_lehrer_sprich_2.png','kaufvertrag_lehrer_sprich_5.png'],
       x:125, y:64, w:54, h:116 },
   ],
   treppe: [
@@ -1977,6 +1977,7 @@ function lehrerZeichne(frame){
   if(el.getAttribute('href') !== soll) el.setAttribute('href', soll);
 }
 function lehrerTick(){
+  if(flappeT) return;
   const p = LEHRER_PLAN[lehrer.phase];
   lehrer.tick++;
   const weiter = ()=>{ lehrer.phase = (lehrer.phase+1)%LEHRER_PLAN.length; lehrer.tick = 0; };
@@ -2044,11 +2045,38 @@ function lehrerStop(){ if(lehrer.timer){ clearInterval(lehrer.timer); lehrer.tim
 const GESPRAECH_FETZEN = [
   { wer:'trektor', z:['… im Sitzungszimmer sind es …','… 31 Grad. Der Ventilator streikt …'] },
   { wer:'tlehrer', z:['… bei mir schläft niemand wegen …','… des Stoffs ein – nur wegen der Hitze …'] },
-  { wer:'trektor', z:['… und der Kran steht hoffentlich …','… nicht mehr lange – das Jubiläum! …'] },
+  { wer:'trektor', z:['… und der Kran? Der sollte schon …','… zum Jubiläum weg sein. Letztes Jahr! …'] },
   { wer:'tlehrer', z:['… Hauptsache, die neue Lüftung …','… kommt vor dem nächsten Sommer …'] },
   { wer:'trektor', z:['… beim Umbau sind alte Pläne …','… aufgetaucht – von 1875! …'] },
   { wer:'tlehrer', z:['… zeig sie mir am Montag – …','… wenn es unter 30 Grad hat …'] },
 ];
+
+/* Sprechanimation der Lehrperson: Buesten-Frames mit Mundbewegung */
+const LEHRER_SPRICH = ['kaufvertrag_lehrer_sprich_0.png','kaufvertrag_lehrer_sprich_1.png','kaufvertrag_lehrer_sprich_2.png','kaufvertrag_lehrer_sprich_3.png','kaufvertrag_lehrer_sprich_4.png','kaufvertrag_lehrer_sprich_5.png'];
+let flappeT = null;
+function lehrerFlappe(elId, dauerMs, lachen){
+  if(reduzierteBewegung()) return;
+  const el = document.getElementById(elId);
+  if(!el) return;
+  if(flappeT){ clearInterval(flappeT); flappeT = null; }
+  const seq = [2,0,1,0];
+  const ende = performance.now() + (dauerMs||3000);
+  const zurueck = el.getAttribute('href');
+  let i = 0;
+  flappeT = setInterval(()=>{
+    if(performance.now() >= ende){
+      clearInterval(flappeT); flappeT = null;
+      if(lachen){
+        el.setAttribute('href', vurl(LEHRER_SPRICH[5]));
+        setTimeout(()=>{ try{ el.setAttribute('href', zurueck); }catch(e){} }, 1000);
+      } else {
+        el.setAttribute('href', zurueck);
+      }
+      return;
+    }
+    el.setAttribute('href', vurl(LEHRER_SPRICH[seq[i++ % seq.length]]));
+  }, 150);
+}
 const gespraech = { t1:null, t2:null, blase:null, idx:0 };
 function gespraechBlase(){
   const svg = szeneEl.querySelector('svg');
@@ -2083,9 +2111,10 @@ function gespraechBlase(){
     try{ g.remove(); }catch(e){}
     /* der andere gestikuliert kurz als Antwort */
   }, 3600);
-  /* Sprecher gestikuliert: kurz zur Frontpose und zurueck */
-  spriteFrame(f.wer, 1);
-  setTimeout(()=>{ if(aktuelleSzeneId==='treppe') spriteFrame(f.wer, 0); }, 1400);
+  /* Lehrperson spricht mit Mundbewegung; der Rektor bleibt ihr zugewandt */
+  if(f.wer === 'tlehrer'){
+    lehrerFlappe('sp-tlehrer', 3300, f === GESPRAECH_FETZEN[GESPRAECH_FETZEN.length-1]);
+  }
 }
 
 /* Auftritt: Rektor kommt von der Treppe (rechts), die Lehrperson durch den
@@ -3003,6 +3032,7 @@ function zeige(id){
                     : LADE_SVG;
   dialogEl.innerHTML = '';
   blaseDialog(null,''); blaseHinweis('');
+  if(id==='schule' || id==='schule2'){ setTimeout(()=>{ try{ lehrerFlappe('sp-lehrer', 4200, false); }catch(e){} }, 350); }
 
   if(k.art==='produktwahl'){ baueProduktwahl(k); return; }
   if(k.art==='demoende'){ baueDemoEnde(); return; }
