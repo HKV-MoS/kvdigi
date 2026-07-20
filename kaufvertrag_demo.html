@@ -2092,6 +2092,10 @@ function gespraechBlase(){
    Durchgang (links) – sie treffen sich am Steingelaender und reden. */
 const REKTOR_GEH = ['figur_rektor_geh_0.png','figur_rektor_geh_1.png','figur_rektor_geh_2.png','figur_rektor_geh_3.png','figur_rektor_geh_4.png','figur_rektor_geh_5.png'];
 const LEHRER_GEH = ['kaufvertrag_lehrer_geh_0.png','kaufvertrag_lehrer_geh_1.png','kaufvertrag_lehrer_geh_2.png','kaufvertrag_lehrer_geh_3.png','kaufvertrag_lehrer_geh_4.png','kaufvertrag_lehrer_geh_5.png'];
+/* Frames nach Schrittweite geordnet und als Ping-Pong abgespielt – so
+   oeffnet und schliesst sich der Schritt fluessig statt zu zappeln */
+const REKTOR_GEH_SEQ = [4,2,0,5,3,1,3,5,0,2];
+const LEHRER_GEH_SEQ = [3,2,4,0,1,5,1,0,4,2];
 const auftritt = { raf:null };
 function auftrittStop(){ if(auftritt.raf){ cancelAnimationFrame(auftritt.raf); auftritt.raf = null; } }
 function treppenAuftritt(){
@@ -2100,9 +2104,9 @@ function treppenAuftritt(){
   if(reduzierteBewegung()){ gespraechStart(); return; }
   const start = performance.now();
   const FIGS = [
-    { id:'sp-trektor', fr:REKTOR_GEH, von:400, bis:271, dauer:2700, wGeh:79,
+    { id:'sp-trektor', fr:REKTOR_GEH, seq:REKTOR_GEH_SEQ, von:400, bis:271, dauer:2700, wGeh:79,
       talkHref:'figur_rektor_steh_3.png', wTalk:38, xTalk:252 },
-    { id:'sp-tlehrer', fr:LEHRER_GEH, von:96, bis:194, dauer:2050, wGeh:79,
+    { id:'sp-tlehrer', fr:LEHRER_GEH, seq:LEHRER_GEH_SEQ, von:96, bis:194, dauer:2050, wGeh:79,
       talkHref:'kaufvertrag_lehrer_1.png', wTalk:70, xTalk:159 },
   ];
   function schritt(t){
@@ -2117,7 +2121,7 @@ function treppenAuftritt(){
         el.setAttribute('width', fig.wGeh);
         el.setAttribute('x', (cx - fig.wGeh/2).toFixed(1));
         const dist = Math.abs(cx - fig.von);
-        el.setAttribute('href', vurl(fig.fr[Math.floor(dist / 4.2) % 6]));
+        el.setAttribute('href', vurl(fig.fr[fig.seq[Math.floor(dist / 4.2) % fig.seq.length]]));
       } else {
         el.setAttribute('width', fig.wTalk);
         el.setAttribute('x', fig.xTalk);
