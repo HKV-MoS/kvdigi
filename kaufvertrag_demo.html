@@ -1090,7 +1090,7 @@ const SPRITES = {
   titel: [
     { id:'taubeA', frames:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'], x:336, y:186, w:18, h:12 },
     { id:'taubeB', frames:['kaufvertrag_taube_b0.png','kaufvertrag_taube_b1.png'], x:356, y:188, w:17, h:11 },
-    { id:'auto', frames:['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png','kaufvertrag_auto_3.png','kaufvertrag_auto_4.png','kaufvertrag_auto_5.png'],
+    { id:'auto', frames:['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png','kaufvertrag_auto_3.png','kaufvertrag_auto_4.png','kaufvertrag_auto_5.png','kaufvertrag_auto_6.png','kaufvertrag_auto_7.png','kaufvertrag_auto_8.png','kaufvertrag_auto_halt.png'],
       x:660, y:172, w:94, h:51 },
   ],
   discount: [
@@ -1871,6 +1871,7 @@ function taubenStart(){
 }
 function taubenStop(){ if(tauben.timer){ clearInterval(tauben.timer); tauben.timer = null; } }
 const AUTO_FRAMES = ['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png','kaufvertrag_auto_3.png','kaufvertrag_auto_4.png','kaufvertrag_auto_5.png'];
+const AUTO_FRAMES_ZUCKEL = AUTO_FRAMES.concat(['kaufvertrag_auto_6.png','kaufvertrag_auto_7.png','kaufvertrag_auto_8.png']);
 /* Fluessige Fahrt: requestAnimationFrame, Subpixel-Positionen, Raddrehung nach Strecke */
 const auto = { raf:null, statTimer:null, phase:0, x:660, warteBis:0, strecke:0, letztT:0 };
 const AUTO_TEMPO_AN = 99;      /* Rastereinheiten pro Sekunde */
@@ -1891,8 +1892,13 @@ function autoZeichne(){
   el.setAttribute('y', (autoBasis(auto.x) - h + wipp).toFixed(2));
   el.setAttribute('width', w.toFixed(2));
   el.setAttribute('height', h.toFixed(2));
-  const frame = Math.floor(auto.strecke / 7) % AUTO_FRAMES.length;
-  const soll = vurl(AUTO_FRAMES[frame]);
+  let soll;
+  if(auto.phase === 1){
+    soll = vurl('kaufvertrag_auto_halt.png');          /* Hand raus: Badge + Daumen hoch */
+  } else {
+    const menge = auto.phase === 2 ? AUTO_FRAMES_ZUCKEL : AUTO_FRAMES;
+    soll = vurl(menge[Math.floor(auto.strecke / 7) % menge.length]);
+  }
   if(el.getAttribute('href') !== soll) el.setAttribute('href', soll);
   /* Schatten bleibt am Boden – das Federn spielt sich darueber ab */
   const sch = document.getElementById('sp-autoschatten');
