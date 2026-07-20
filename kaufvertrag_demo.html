@@ -945,7 +945,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '62';
+const BILD_VERSION = '63';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1790,10 +1790,48 @@ function katzeStart(){
 function katzeStop(){ if(katze.timer){ clearInterval(katze.timer); katze.timer = null; } }
 
 const tauben = { timer:null };
+/* Tauben fliegen auf, wenn der Fiat nach dem Badge-Halt beschleunigt */
+let taubenFlugAktiv = false;
+function taubenFlug(){
+  if(taubenFlugAktiv || reduzierteBewegung()) return;
+  taubenFlugAktiv = true;
+  const start = performance.now();
+  const voegel = [
+    { id:'sp-taubeA', x:336, y:186, vx:-75, vy:-72, fr:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'] },
+    { id:'sp-taubeB', x:356, y:188, vx:58,  vy:-88, fr:['kaufvertrag_taube_b0.png','kaufvertrag_taube_b1.png'] },
+  ];
+  function schlag(t){
+    const s = (t - start) / 1000;
+    let weiter = false;
+    voegel.forEach(v=>{
+      const el = document.getElementById(v.id);
+      if(!el) return;
+      if(s < 1.5){
+        weiter = true;
+        el.setAttribute('x', (v.x + v.vx*s).toFixed(1));
+        el.setAttribute('y', (v.y + v.vy*s - 20*s*s).toFixed(1));
+        el.setAttribute('href', vurl(v.fr[Math.floor(s/0.09)%2]));
+      } else {
+        el.setAttribute('opacity','0');
+      }
+    });
+    if(weiter && taubenFlugAktiv) requestAnimationFrame(schlag);
+  }
+  requestAnimationFrame(schlag);
+}
+function taubenReset(){
+  taubenFlugAktiv = false;
+  [['sp-taubeA',336,186],['sp-taubeB',356,188]].forEach(([id,x,y])=>{
+    const el = document.getElementById(id);
+    if(el){ el.setAttribute('x',x); el.setAttribute('y',y); el.setAttribute('opacity','1'); }
+  });
+}
+
 function taubenStart(){
   taubenStop();
   if(reduzierteBewegung()) return;
   tauben.timer = setInterval(()=>{
+    if(taubenFlugAktiv) return;
     /* Faehrt das Auto vorbei, halten die Tauben inne (Kopf hoch, keine Bewegung) */
     const autoNah = (tiere.szene === 'titel' && auto.raf && auto.x > 120 && auto.x < 500);
     [['sp-taubeA','kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'],
@@ -1809,7 +1847,7 @@ function taubenStop(){ if(tauben.timer){ clearInterval(tauben.timer); tauben.tim
 const AUTO_FRAMES = ['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png','kaufvertrag_auto_3.png','kaufvertrag_auto_4.png','kaufvertrag_auto_5.png'];
 /* Fluessige Fahrt: requestAnimationFrame, Subpixel-Positionen, Raddrehung nach Strecke */
 const auto = { raf:null, statTimer:null, phase:0, x:660, warteBis:0, strecke:0, letztT:0 };
-const AUTO_TEMPO_AN = 90;      /* Rastereinheiten pro Sekunde */
+const AUTO_TEMPO_AN = 99;      /* Rastereinheiten pro Sekunde */
 const AUTO_PAUSE_MS = 26000;
 function autoBasis(x){
   /* Exakt parallel zum Randstein (aus dem Bild gemessen: Steigung -0.1171),
@@ -1839,7 +1877,7 @@ function autoZeichne(){
     sch.setAttribute('ry', (4.2*gr).toFixed(2));
   }
 }
-const AUTO_STOP_X  = 283;      /* Halt hinter den Pfosten (Badge zeigen) */
+const AUTO_STOP_X  = 369;      /* Halt bei den Pfosten in der Einfahrt (Badge zeigen) */
 const AUTO_HALT_MS = 3200;
 function autoMotor(vol){
   if(!fx.an){ autoMotorStopp(); return; }
@@ -1864,6 +1902,7 @@ function autoSchritt(t){
       auto.phase = 2;
       if(fx.an){ try{ ambEinmal('kaufvertrag_fx_motorstart.mp3', 0.5); }catch(e){} }
       autoMotor(0.26);
+      taubenFlug();
     }
   } else if(auto.phase === 2){              /* Zuckel-Ausfahrt nach links */
     const tempo = AUTO_TEMPO_AN * (0.42 + 0.58 * Math.abs(Math.sin(auto.strecke / 2.6)));
@@ -1874,7 +1913,7 @@ function autoSchritt(t){
     }
     if(auto.x <= -185){ auto.phase = 3; auto.warteBis = t + AUTO_PAUSE_MS; autoMotorStopp(); }
   } else {                                  /* Fernpause, dann naechste Runde */
-    if(t >= auto.warteBis){ auto.x = 660; auto.strecke = 0; auto.phase = 0; autoMotor(0.15); }
+    if(t >= auto.warteBis){ auto.x = 660; auto.strecke = 0; auto.phase = 0; autoMotor(0.15); taubenReset(); }
   }
   autoZeichne();
   auto.raf = requestAnimationFrame(autoSchritt);
@@ -2555,10 +2594,6 @@ szeneEl.addEventListener('mouseout', (e)=>{
   if(t && t.id === 'sp-rechner'){ rechnerPose(t, RECHNER_LIEGEND); if(rechner.zappel) t.classList.add('rechner-zappel'); }
 });
 function vordergrundSVG(key){
-  if(key === 'titel'){
-    /* Badge-Pfosten in der Bildmitte – der Fiat faehrt hintendurch */
-    return '<image href="'+vurl('kaufvertrag_pfosten_vg.png')+'" x="307.8" y="204" width="24.4" height="42"/>';
-  }
   if(key !== 'schule') return '';
   return '<image href="'+vurl('kaufvertrag_pult_vg.png')+'" x="63.2" y="128.8" width="136" height="60.8"/>' +
          '<image href="'+vurl('kaufvertrag_bl_vg.png')+'" x="552.8" y="172.8" width="87.2" height="87.2"/>';
