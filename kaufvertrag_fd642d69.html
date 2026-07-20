@@ -1127,6 +1127,7 @@ function spriteFrames(sp){ if(sp.id==='meier') return haendler().frames; if(sp.i
 function spriteSVG(key){
   let svg='';
   (SPRITES[key]||[]).forEach(sp=>{
+    if(sp.id==='auto') svg += '<ellipse id="sp-autoschatten" fill="#000" opacity="0.26" cx="-999" cy="-999" rx="0" ry="0"/>';
     const fr = spriteFrames(sp);
     const w = sp.id==='meier' ? haendler().w : (sp.id==='alex' ? kaeufer().w : sp.w);
     const h = sp.id==='meier' ? haendler().h : (sp.id==='alex' ? kaeufer().h : sp.h);
@@ -1811,21 +1812,31 @@ const auto = { raf:null, statTimer:null, phase:0, x:660, warteBis:0, strecke:0, 
 const AUTO_TEMPO_AN = 90;      /* Rastereinheiten pro Sekunde */
 const AUTO_PAUSE_MS = 26000;
 function autoBasis(x){
-  /* Dem Randstein entlang, mit deutlich Abstand: mitten auf dem Asphalt */
-  return 262 - 0.062 * x;
+  /* Exakt parallel zum Randstein (aus dem Bild gemessen: Steigung -0.1171),
+     am linken Bildrand auf der bewaehrten Hoehe 262 verankert */
+  return 262 - 0.1171 * x;
 }
 function autoZeichne(){
   const el = document.getElementById('sp-auto');
   if(!el) return;
   const gr = 0.78 + (660 - auto.x) * 0.00055;   /* naeher beim Betrachter = groesser */
   const w = 124 * gr, h = 62 * gr;
+  const wipp = Math.sin(auto.strecke / 5.5) * 0.8 * gr;   /* sanftes Federn der Karosserie */
   el.setAttribute('x', auto.x.toFixed(2));
-  el.setAttribute('y', (autoBasis(auto.x) - h).toFixed(2));
+  el.setAttribute('y', (autoBasis(auto.x) - h + wipp).toFixed(2));
   el.setAttribute('width', w.toFixed(2));
   el.setAttribute('height', h.toFixed(2));
   const frame = Math.floor(auto.strecke / 7) % AUTO_FRAMES.length;
   const soll = vurl(AUTO_FRAMES[frame]);
   if(el.getAttribute('href') !== soll) el.setAttribute('href', soll);
+  /* Schatten bleibt am Boden – das Federn spielt sich darueber ab */
+  const sch = document.getElementById('sp-autoschatten');
+  if(sch){
+    sch.setAttribute('cx', (auto.x + w*0.5).toFixed(2));
+    sch.setAttribute('cy', (autoBasis(auto.x) - 1.5).toFixed(2));
+    sch.setAttribute('rx', (w*0.46).toFixed(2));
+    sch.setAttribute('ry', (4.2*gr).toFixed(2));
+  }
 }
 function autoSchritt(t){
   if(!auto.letztT) auto.letztT = t;
