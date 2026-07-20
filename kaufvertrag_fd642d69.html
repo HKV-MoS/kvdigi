@@ -39,6 +39,15 @@
   h1 small{display:block; font-size:.72rem; font-weight:bold; color:var(--ega-dgrau); letter-spacing:1px; text-transform:none;}
   h1{cursor:pointer;}
   h1:hover{color:var(--ega-weiss);}
+  .frageDeckel{position:absolute; inset:0; background:rgba(0,0,10,.78); display:flex;
+    align-items:center; justify-content:center; z-index:70;}
+  .fragePanel{background:#0c1014; border:2px solid var(--ega-gelb); padding:16px 20px;
+    max-width:min(540px, 86%); box-shadow:0 0 30px rgba(0,0,0,.8);}
+  .fragePanel .frageTitel{color:var(--ega-gelb); font-weight:bold; letter-spacing:.12em; font-size:.8em;}
+  .fragePanel .frageText{color:#e8e8e0; margin:.7em 0;}
+  .fragePanel .opt{display:block; width:100%; text-align:left; margin:.3em 0;}
+  .fragePanel .frageFeedback{color:#cfe8cf; border-top:1px solid #333; padding-top:.6em; margin-top:.7em;}
+  .fragePanel .weiter{margin-top:.7em;}
   .rq{
     font-size:1.05rem; color:var(--ega-gelb); border:2px solid var(--ega-dgrau);
     padding:5px 14px; white-space:nowrap; background:#000;
@@ -946,7 +955,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '74';
+const BILD_VERSION = '75';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -2549,8 +2558,83 @@ function meierText(t){
   return t.replaceAll('Herrn Meier', haendler().hotName==='Frau Meier'?'Frau Meier':'Herrn Meier')
           .replaceAll('Herr Meier', haendler().hotName);
 }
+
+/* =====================================================
+   VERSTECKTE AARAU-FRAGEN (+16 RQ -> total 100)
+   ===================================================== */
+const AARAU_FRAGEN = {
+  schild: { punkte:5, frage:'Da Sie gerade vor dem Schild stehen: In welchem Jahr wurde die HKV Aarau gegründet?',
+    antworten:[
+      { t:'1875', ok:true },
+      { t:'1848', ok:false },
+      { t:'1912', ok:false },
+      { t:'1998', ok:false },
+    ],
+    richtig:'<b>1875!</b> Vor gut 150 Jahren gegründet – das Jubiläum war letztes Jahr. Wer das Uhrtürmchen oder das Plakat im Treppenhaus studiert hat, wusste es.',
+    falsch:'Es ist <b>1875</b> – steht übrigens gross auf dem Jubiläumsplakat im Treppenhaus. 1848 ist die Bundesverfassung, 1912 das ZGB, 1998 die Ladeneröffnung von Meier &amp; Co.' },
+  brunnen: { punkte:5, frage:'Ein schöner Brunnen. Wie viele Brunnen soll es in Aarau insgesamt geben?',
+    antworten:[
+      { t:'Rund 90', ok:true },
+      { t:'Rund 20', ok:false },
+      { t:'Rund 250', ok:false },
+      { t:'Genau 12', ok:false },
+    ],
+    richtig:'<b>Rund 90!</b> Und man sagt, Ihre ABU-Lehrperson kenne jeden einzelnen davon.',
+    falsch:'Es sind <b>rund 90</b> – Aarau ist heimliche Brunnenhauptstadt. Ihre ABU-Lehrperson kennt angeblich alle.' },
+  dlaterne: { punkte:6, frage:'Eine Altstadtlaterne, tapfer gegen das Neon. Apropos Altstadt: Aarau war einmal Hauptstadt der Schweiz. Wie lange?',
+    antworten:[
+      { t:'Rund 5 Monate', ok:true },
+      { t:'Rund 5 Jahre', ok:false },
+      { t:'Rund 5 Wochen', ok:false },
+      { t:'Bis heute – wusste es nur niemand', ok:false },
+    ],
+    richtig:'<b>Rund 5 Monate</b> – 1798 war Aarau die erste Hauptstadt der Helvetischen Republik, dann zog die Regierung weiter. Kurz, aber immerhin.',
+    falsch:'<b>Rund 5 Monate</b> war es – 1798, als erste Hauptstadt der Helvetischen Republik. Danach zog die Regierung nach Luzern weiter.' },
+};
+function frageOeffnen(hid){
+  const f = AARAU_FRAGEN[hid];
+  if(!f || zustand.funde['frage_'+hid]) return false;
+  const wrap = szeneEl.parentElement;
+  if(!wrap || wrap.querySelector('.frageDeckel')) return true;
+  const d = document.createElement('div');
+  d.className = 'frageDeckel';
+  const p = document.createElement('div');
+  p.className = 'fragePanel';
+  p.innerHTML = '<span class="frageTitel">✦ VERSTECKTE AARAU-FRAGE · +'+f.punkte+' RQ ✦</span><p class="frageText">'+f.frage+'</p>';
+  const box = document.createElement('div');
+  const misch = f.antworten.slice().sort(()=>Math.random()-0.5);
+  misch.forEach(a=>{
+    const b = document.createElement('button');
+    b.className = 'opt'; b.type = 'button'; b.textContent = a.t;
+    b.addEventListener('click', ()=>{
+      if(zustand.funde['frage_'+hid]) return;
+      zustand.funde['frage_'+hid] = true;
+      const fb = document.createElement('p');
+      fb.className = 'frageFeedback';
+      if(a.ok){
+        setzeRQ(f.punkte);
+        fb.innerHTML = f.richtig + ' <span class="rq-delta">+'+f.punkte+' RQ</span>';
+      } else {
+        fb.innerHTML = f.falsch;
+      }
+      box.querySelectorAll('button.opt').forEach(x=>{ x.disabled = true; });
+      p.appendChild(fb);
+      zu.textContent = 'Weiter ▸';
+    });
+    box.appendChild(b);
+  });
+  p.appendChild(box);
+  const zu = document.createElement('button');
+  zu.className = 'weiter'; zu.type = 'button'; zu.textContent = 'Später beantworten ▸';
+  zu.addEventListener('click', ()=>{ try{ d.remove(); }catch(e){} });
+  p.appendChild(zu);
+  d.appendChild(p);
+  wrap.appendChild(d);
+  return true;
+}
 function hotspotSchau(h){
   fxFuer(h.id);
+  if(AARAU_FRAGEN[h.id] && frageOeffnen(h.id)) return;
   if(h.fund && h.fund.verb==='anschauen' && !zustand.funde[h.id]){
     zustand.funde[h.id]=true;
     setzeRQ(h.fund.rq);
@@ -3009,7 +3093,7 @@ const dialogEl = document.getElementById('dialog');
 const rqEl = document.getElementById('rq-anzeige');
 /* Maximal erreichbarer RQ (Entscheidungen + Fundstuecke + Schach-Bonus),
    statisch aus dem Spielgraphen berechnet */
-const RQ_MAX = { vorspann:31, L:50, Z:50, M:51, gesamt:84 };
+const RQ_MAX = { vorspann:47, L:66, Z:66, M:67, gesamt:100 };
 function rqMaxAktuell(){ return zustand.weg ? RQ_MAX[zustand.weg] : RQ_MAX.vorspann; }
 function rqAnzeigen(){ rqEl.textContent = 'RQ ' + zustand.rq + ' / ' + rqMaxAktuell(); }
 const wegEl = document.getElementById('weg-anzeige');
