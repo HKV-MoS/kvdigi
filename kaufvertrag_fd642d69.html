@@ -1813,8 +1813,8 @@ const AUTO_TEMPO_AN = 90;      /* Rastereinheiten pro Sekunde */
 const AUTO_PAUSE_MS = 26000;
 function autoBasis(x){
   /* Exakt parallel zum Randstein (aus dem Bild gemessen: Steigung -0.1171),
-     am linken Bildrand auf der bewaehrten Hoehe 262 verankert */
-  return 262 - 0.1171 * x;
+     mit gut 50 cm Abstand: Basis 270 am linken Bildrand */
+  return 270 - 0.1171 * x;
 }
 function autoZeichne(){
   const el = document.getElementById('sp-auto');
