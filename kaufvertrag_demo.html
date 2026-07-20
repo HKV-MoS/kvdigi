@@ -945,7 +945,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '72';
+const BILD_VERSION = '73';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -2122,6 +2122,61 @@ function rektorLacht(){
   el.setAttribute('href', vurl(REKTOR_SPRICH[5]));
   rektorK.weg = setTimeout(rektorKopfWeg, 1200);
 }
+
+/* Sprecher-Portraet: gerahmter Close-up in der Szenenecke, Mund bewegt sich */
+const PORTRAETS = {
+  lehrer: ['kaufvertrag_lp_portraet_0.png','kaufvertrag_lp_portraet_1.png','kaufvertrag_lp_portraet_2.png','kaufvertrag_lp_portraet_3.png','kaufvertrag_lp_portraet_4.png','kaufvertrag_lp_portraet_5.png'],
+  rektor: ['figur_rektor_portraet_0.png','figur_rektor_portraet_1.png','figur_rektor_portraet_2.png','figur_rektor_portraet_3.png','figur_rektor_portraet_4.png','figur_rektor_portraet_5.png'],
+};
+const portraet = { t:null, weg:null };
+function portraetWeg(){
+  if(portraet.t){ clearInterval(portraet.t); portraet.t = null; }
+  if(portraet.weg){ clearTimeout(portraet.weg); portraet.weg = null; }
+  try{ const g = szeneEl.querySelector('#sprechKopf'); if(g) g.remove(); }catch(e){}
+}
+function sprechPortraet(wer, dauerMs, opt){
+  if(reduzierteBewegung()) return;
+  const svg = szeneEl.querySelector('svg');
+  if(!svg) return;
+  portraetWeg();
+  const ns = 'http://www.w3.org/2000/svg';
+  const g = document.createElementNS(ns,'g');
+  g.setAttribute('id','sprechKopf');
+  const r = document.createElementNS(ns,'rect');
+  r.setAttribute('x','14'); r.setAttribute('y','124');
+  r.setAttribute('width','50'); r.setAttribute('height','62');
+  r.setAttribute('rx','3');
+  r.setAttribute('fill','#101010'); r.setAttribute('fill-opacity','0.82');
+  r.setAttribute('stroke','#9a9a7a'); r.setAttribute('stroke-width','0.8');
+  const im = document.createElementNS(ns,'image');
+  im.setAttribute('x','17'); im.setAttribute('y','127');
+  im.setAttribute('width','44'); im.setAttribute('height','56');
+  im.setAttribute('preserveAspectRatio','xMidYMid meet');
+  g.appendChild(r); g.appendChild(im);
+  svg.appendChild(g);
+  const fr = PORTRAETS[wer];
+  if(opt && opt.nurFrame !== undefined){
+    im.setAttribute('href', vurl(fr[opt.nurFrame]));
+    portraet.weg = setTimeout(portraetWeg, dauerMs||1200);
+    return;
+  }
+  const seq = [2,0,1,0];
+  const ende = performance.now() + (dauerMs||3000);
+  let i = 0;
+  im.setAttribute('href', vurl(fr[0]));
+  portraet.t = setInterval(()=>{
+    if(!document.getElementById('sprechKopf')){ portraetWeg(); return; }
+    if(performance.now() >= ende){
+      if(opt && opt.lachen){
+        im.setAttribute('href', vurl(fr[5]));
+        clearInterval(portraet.t); portraet.t = null;
+        portraet.weg = setTimeout(portraetWeg, 1100);
+      } else { portraetWeg(); }
+      return;
+    }
+    im.setAttribute('href', vurl(fr[seq[i++ % seq.length]]));
+  }, 150);
+}
 const gespraech = { t1:null, t2:null, blase:null, idx:0 };
 function gespraechBlase(){
   const svg = szeneEl.querySelector('svg');
@@ -2156,14 +2211,10 @@ function gespraechBlase(){
     try{ g.remove(); }catch(e){}
     /* der andere gestikuliert kurz als Antwort */
   }, 3600);
-  /* Beide sprechen mit Mundbewegung */
-  if(f.wer === 'tlehrer'){
-    const pointe = (f === GESPRAECH_FETZEN[GESPRAECH_FETZEN.length-1]);
-    lehrerFlappe('sp-tlehrer', 3300, pointe);
-    if(pointe){ setTimeout(()=>{ if(aktuelleSzeneId==='treppe') rektorLacht(); }, 2700); }
-  } else {
-    rektorSprich(3300);
-  }
+  /* Sprecher-Portraet mit Mundbewegung, Figuren bleiben unveraendert */
+  const pointe = (f === GESPRAECH_FETZEN[GESPRAECH_FETZEN.length-1]);
+  sprechPortraet(f.wer === 'tlehrer' ? 'lehrer' : 'rektor', 3300, { lachen: pointe });
+  if(pointe){ setTimeout(()=>{ if(aktuelleSzeneId==='treppe') sprechPortraet('rektor', 1300, { nurFrame:5 }); }, 4700); }
 }
 
 /* Auftritt: Rektor kommt von der Treppe (rechts), die Lehrperson durch den
@@ -2218,11 +2269,12 @@ function gespraechStart(){
   if(reduzierteBewegung()) return;
   gespraech.t1 = setTimeout(function runde(){
     gespraechBlase();
-    gespraech.t1 = setTimeout(runde, 6200 + Math.random()*2800);
+    gespraech.t1 = setTimeout(runde, 4300 + Math.random()*1200);
   }, 2200);
 }
 function gespraechStop(){
   try{ rektorKopfWeg(); }catch(e){}
+  try{ portraetWeg(); }catch(e){}
   if(gespraech.t1){ clearTimeout(gespraech.t1); gespraech.t1 = null; }
   if(gespraech.blase){ clearTimeout(gespraech.blase); gespraech.blase = null; }
 }
@@ -3082,7 +3134,7 @@ function zeige(id){
                     : LADE_SVG;
   dialogEl.innerHTML = '';
   blaseDialog(null,''); blaseHinweis('');
-  if(id==='schule' || id==='schule2'){ setTimeout(()=>{ try{ lehrerFlappe('sp-lehrer', 4200, false); }catch(e){} }, 350); }
+  if(id==='schule' || id==='schule2'){ setTimeout(()=>{ try{ if(aktuelleSzeneId==='schule') sprechPortraet('lehrer', 4200); }catch(e){} }, 350); }
 
   if(k.art==='produktwahl'){ baueProduktwahl(k); return; }
   if(k.art==='demoende'){ baueDemoEnde(); return; }
