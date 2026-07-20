@@ -945,7 +945,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '60';
+const BILD_VERSION = '61';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1287,17 +1287,18 @@ try{
 }catch(e){}
 function lautAnwenden(){
   try{ if(mtrk.el && typeof mtrk.basisVol === 'number') mtrk.el.volume = mtrk.basisVol * laut.m; }catch(e){}
-  try{ if(amb.el && typeof amb.basisVol === 'number') amb.el.volume = amb.basisVol * laut.x; }catch(e){}
-  try{ Object.values(fxAudio).forEach(a=>{ a.el.volume = 0.55 * laut.x; }); }catch(e){}
+  try{ if(amb.el && typeof amb.basisVol === 'number') amb.el.volume = Math.min(1, amb.basisVol * FX_BOOST * laut.x); }catch(e){}
+  try{ Object.values(fxAudio).forEach(a=>{ a.el.volume = Math.min(1, 0.55 * FX_BOOST * laut.x); }); }catch(e){}
   try{ if(grv.master) grv.master.gain.value = 0.75 * laut.m; }catch(e){}
   try{ if(musik.master) musik.master.gain.value = 0.9 * laut.m; }catch(e){}
-  try{ if(fx.master) fx.master.gain.value = laut.x; }catch(e){}
+  try{ if(fx.master) fx.master.gain.value = FX_BOOST * laut.x; }catch(e){}
   try{ if(schachMus.el) schachMus.el.volume = 0.25 * laut.m; }catch(e){}
 }
 
 /* =====================================================
    SOUND-FX: synthetische Effekte, default AUS (FX-Schalter)
    ===================================================== */
+const FX_BOOST = 2.2;   /* FX generell 120 % lauter; der Regler skaliert darunter */
 const fx = { an:false, ctx:null, master:null };
 function fxKontext(){
   const AC = (typeof AudioContext!=='undefined') ? AudioContext :
@@ -1306,7 +1307,7 @@ function fxKontext(){
   if(!fx.ctx){
     fx.ctx = new AC();
     fx.master = fx.ctx.createGain();
-    fx.master.gain.value = laut.x;
+    fx.master.gain.value = FX_BOOST * laut.x;
     fx.master.connect(fx.ctx.destination);
   }
   if(fx.ctx.state==='suspended') fx.ctx.resume();
@@ -1434,7 +1435,7 @@ function fxDateienLaden(){
     const el = new Audio();
     fxAudio[hid] = { el:el, ok:false };
     el.preload = 'auto';
-    el.volume = 0.55 * laut.x;
+    el.volume = Math.min(1, 0.55 * FX_BOOST * laut.x);
     el.loop = !!FX_LOOP[hid];
     el.addEventListener('canplaythrough', ()=>{ fxAudio[hid].ok = true; });
     el.addEventListener('error', ()=>{ fxAudio[hid].ok = false; });
@@ -1573,7 +1574,7 @@ const AMBIENT = {
 const amb = { el:null, szene:null, zufallTimer:null, einmalGespielt:{}, aktive:[] };
 function ambEinmal(url, vol){
   try{
-    const a = new Audio(vurl(url)); a.volume = Math.min(1, vol * laut.x);
+    const a = new Audio(vurl(url)); a.volume = Math.min(1, vol * FX_BOOST * laut.x);
     amb.aktive.push(a);
     a.addEventListener('ended', ()=>{ const i = amb.aktive.indexOf(a); if(i>=0) amb.aktive.splice(i,1); });
     a.play().catch(()=>{});
@@ -1610,7 +1611,7 @@ function szenenAudio(szene){
     try{
       amb.el = new Audio(vurl(cfg.loop));
       amb.basisVol = cfg.loopVol;
-      amb.el.loop = true; amb.el.volume = cfg.loopVol * laut.x;
+      amb.el.loop = true; amb.el.volume = Math.min(1, cfg.loopVol * FX_BOOST * laut.x);
       amb.el.play().catch(()=>{});
     }catch(e){}
   } else if(amb.el.paused){
@@ -1820,7 +1821,8 @@ function autoZeichne(){
   if(!el) return;
   const gr = 0.78 + (660 - auto.x) * 0.00055;   /* naeher beim Betrachter = groesser */
   const w = 124 * gr, h = 62 * gr;
-  const wipp = Math.sin(auto.strecke / 5.5) * 0.8 * gr;   /* sanftes Federn der Karosserie */
+  let wipp = Math.sin(auto.strecke / 5.5) * (auto.phase===2 ? 2.0 : 0.8) * gr;  /* Federn, beim Zuckeln kraeftiger */
+  if(auto.phase===1) wipp = Math.sin(performance.now() / 58) * 0.35 * gr;        /* Standgas-Vibrieren */
   el.setAttribute('x', auto.x.toFixed(2));
   el.setAttribute('y', (autoBasis(auto.x) - h + wipp).toFixed(2));
   el.setAttribute('width', w.toFixed(2));
@@ -1837,19 +1839,42 @@ function autoZeichne(){
     sch.setAttribute('ry', (4.2*gr).toFixed(2));
   }
 }
+const AUTO_STOP_X  = 483;      /* Halt auf Hoehe der Pfosten (Badge zeigen) */
+const AUTO_HALT_MS = 3200;
+function autoMotor(vol){
+  if(!fx.an){ autoMotorStopp(); return; }
+  try{
+    if(!auto.motor){ auto.motor = new Audio(vurl('kaufvertrag_fx_motor.mp3')); auto.motor.loop = true; }
+    auto.motor.volume = Math.min(1, vol * FX_BOOST * laut.x);
+    if(auto.motor.paused) auto.motor.play().catch(()=>{});
+  }catch(e){}
+}
+function autoMotorStopp(){ if(auto.motor){ try{ auto.motor.pause(); }catch(e){} } }
 function autoSchritt(t){
   if(!auto.letztT) auto.letztT = t;
   const dt = Math.min(0.1, (t - auto.letztT) / 1000);
   auto.letztT = t;
-  if(auto.phase === 0){                     /* Durchfahrt dem Randstein entlang */
-    auto.x -= AUTO_TEMPO_AN * dt;
-    auto.strecke += AUTO_TEMPO_AN * dt;
+  if(auto.phase === 0){                     /* Einfahrt, bremst sanft vor den Pfosten ab */
+    const tempo = Math.max(16, AUTO_TEMPO_AN * Math.min(1, (auto.x - AUTO_STOP_X) / 45));
+    auto.x -= tempo * dt;
+    auto.strecke += tempo * dt;
+    if(auto.x <= AUTO_STOP_X){ auto.phase = 1; auto.warteBis = t + AUTO_HALT_MS; autoMotor(0.07); }
+  } else if(auto.phase === 1){              /* Standgas: Badge an die Pfosten */
+    if(t >= auto.warteBis){
+      auto.phase = 2;
+      if(fx.an){ try{ ambEinmal('kaufvertrag_fx_motorstart.mp3', 0.5); }catch(e){} }
+      autoMotor(0.26);
+    }
+  } else if(auto.phase === 2){              /* Zuckel-Ausfahrt nach links */
+    const tempo = AUTO_TEMPO_AN * (0.42 + 0.58 * Math.abs(Math.sin(auto.strecke / 2.6)));
+    auto.x -= tempo * dt;
+    auto.strecke += tempo * dt;
     if(auto.x <= -40){
       try{ const sch = document.getElementById('sp-schild2'); if(sch) sch.classList.add('schild-an'); }catch(e){}
     }
-    if(auto.x <= -185){ auto.phase = 1; auto.warteBis = t + AUTO_PAUSE_MS; }
-  } else {                                  /* Pause, dann naechste Runde */
-    if(t >= auto.warteBis){ auto.x = 660; auto.strecke = 0; auto.phase = 0; }
+    if(auto.x <= -185){ auto.phase = 3; auto.warteBis = t + AUTO_PAUSE_MS; autoMotorStopp(); }
+  } else {                                  /* Fernpause, dann naechste Runde */
+    if(t >= auto.warteBis){ auto.x = 660; auto.strecke = 0; auto.phase = 0; autoMotor(0.15); }
   }
   autoZeichne();
   auto.raf = requestAnimationFrame(autoSchritt);
@@ -1862,9 +1887,11 @@ function autoStart(){
     return;
   }
   auto.phase = 0; auto.x = 660; auto.strecke = 0; auto.letztT = 0;
+  autoMotor(0.15);
   auto.raf = requestAnimationFrame(autoSchritt);
 }
 function autoStop(){
+  autoMotorStopp();
   if(auto.raf){ cancelAnimationFrame(auto.raf); auto.raf = null; }
   if(auto.statTimer){ clearInterval(auto.statTimer); auto.statTimer = null; }
 }
