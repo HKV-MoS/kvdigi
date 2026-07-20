@@ -1085,8 +1085,8 @@ const SPRITES = {
       x:125, y:64, w:54, h:116 },
   ],
   treppe: [
-    { id:'tlehrer', frames:['kaufvertrag_lehrer_1.png','kaufvertrag_lehrer_0.png'], x:159, y:98, w:70, h:152 },
-    { id:'trektor', frames:['figur_rektor_steh_3.png','figur_rektor_steh_3.png'], x:252, y:98, w:38, h:152 },
+    { id:'tlehrer', frames:['kaufvertrag_lehrer_1.png','kaufvertrag_lehrer_0.png','kaufvertrag_lehrer_geh_0.png','kaufvertrag_lehrer_geh_1.png','kaufvertrag_lehrer_geh_2.png','kaufvertrag_lehrer_geh_3.png','kaufvertrag_lehrer_geh_4.png','kaufvertrag_lehrer_geh_5.png'], x:159, y:98, w:70, h:152 },
+    { id:'trektor', frames:['figur_rektor_steh_3.png','figur_rektor_steh_3.png','figur_rektor_geh_0.png','figur_rektor_geh_1.png','figur_rektor_geh_2.png','figur_rektor_geh_3.png','figur_rektor_geh_4.png','figur_rektor_geh_5.png'], x:252, y:98, w:38, h:152 },
   ],
   titel: [
     { id:'taubeA', frames:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'], x:336, y:186, w:18, h:12 },
@@ -2043,12 +2043,12 @@ function lehrerStop(){ if(lehrer.timer){ clearInterval(lehrer.timer); lehrer.tim
    Schwebende Gespraechsfetzen im SCUMM-Stil
    ===================================================== */
 const GESPRAECH_FETZEN = [
-  { wer:'trektor', z:['… der Kran steht noch bis …','… zum Jubiläum – hoffe ich …'] },
-  { wer:'tlehrer', z:['… heute hat der Presslufthammer …','… fast mein Diktat übertönt …'] },
+  { wer:'trektor', z:['… im Sitzungszimmer sind es …','… 31 Grad. Der Ventilator streikt …'] },
+  { wer:'tlehrer', z:['… bei mir schläft niemand wegen …','… des Stoffs ein – nur wegen der Hitze …'] },
+  { wer:'trektor', z:['… und der Kran steht hoffentlich …','… nicht mehr lange – das Jubiläum! …'] },
+  { wer:'tlehrer', z:['… Hauptsache, die neue Lüftung …','… kommt vor dem nächsten Sommer …'] },
   { wer:'trektor', z:['… beim Umbau sind alte Pläne …','… aufgetaucht – von 1875! …'] },
-  { wer:'tlehrer', z:['… zeig sie mir am Montag – …','… das gibt Unterrichtsstoff …'] },
-  { wer:'trektor', z:['… und die Glocken in der Fassade …','… bleiben. Das habe ich schriftlich …'] },
-  { wer:'tlehrer', z:['… schriftlich ist gut. Sonst …','… gilt es nur mündlich, du weisst ja …'] },
+  { wer:'tlehrer', z:['… zeig sie mir am Montag – …','… wenn es unter 30 Grad hat …'] },
 ];
 const gespraech = { t1:null, t2:null, blase:null, idx:0 };
 function gespraechBlase(){
@@ -2088,6 +2088,49 @@ function gespraechBlase(){
   spriteFrame(f.wer, 1);
   setTimeout(()=>{ if(aktuelleSzeneId==='treppe') spriteFrame(f.wer, 0); }, 1400);
 }
+
+/* Auftritt: Rektor kommt von der Treppe (rechts), die Lehrperson durch den
+   Durchgang (links) – sie treffen sich am Steingelaender und reden. */
+const REKTOR_GEH = ['figur_rektor_geh_0.png','figur_rektor_geh_1.png','figur_rektor_geh_2.png','figur_rektor_geh_3.png','figur_rektor_geh_4.png','figur_rektor_geh_5.png'];
+const LEHRER_GEH = ['kaufvertrag_lehrer_geh_0.png','kaufvertrag_lehrer_geh_1.png','kaufvertrag_lehrer_geh_2.png','kaufvertrag_lehrer_geh_3.png','kaufvertrag_lehrer_geh_4.png','kaufvertrag_lehrer_geh_5.png'];
+const auftritt = { raf:null };
+function auftrittStop(){ if(auftritt.raf){ cancelAnimationFrame(auftritt.raf); auftritt.raf = null; } }
+function treppenAuftritt(){
+  auftrittStop();
+  gespraechStop();
+  if(reduzierteBewegung()){ gespraechStart(); return; }
+  const start = performance.now();
+  const FIGS = [
+    { id:'sp-trektor', fr:REKTOR_GEH, von:400, bis:271, dauer:4200, wGeh:79,
+      talkHref:'figur_rektor_steh_3.png', wTalk:38, xTalk:252 },
+    { id:'sp-tlehrer', fr:LEHRER_GEH, von:96, bis:194, dauer:4200, wGeh:79,
+      talkHref:'kaufvertrag_lehrer_1.png', wTalk:70, xTalk:159 },
+  ];
+  function schritt(t){
+    let laufen = false;
+    FIGS.forEach(fig=>{
+      const el = document.getElementById(fig.id);
+      if(!el) return;
+      const p = Math.min(1, (t - start) / fig.dauer);
+      const cx = fig.von + (fig.bis - fig.von) * p;
+      if(p < 1){
+        laufen = true;
+        el.setAttribute('width', fig.wGeh);
+        el.setAttribute('x', (cx - fig.wGeh/2).toFixed(1));
+        const dist = Math.abs(cx - fig.von);
+        el.setAttribute('href', vurl(fig.fr[Math.floor(dist / 5.5) % 6]));
+      } else {
+        el.setAttribute('width', fig.wTalk);
+        el.setAttribute('x', fig.xTalk);
+        el.setAttribute('href', vurl(fig.talkHref));
+      }
+    });
+    if(aktuelleSzeneId !== 'treppe'){ auftritt.raf = null; return; }
+    if(laufen){ auftritt.raf = requestAnimationFrame(schritt); }
+    else { auftritt.raf = null; gespraechStart(); }
+  }
+  auftritt.raf = requestAnimationFrame(schritt);
+}
 function gespraechStart(){
   gespraechStop();
   gespraech.idx = 0;
@@ -2109,7 +2152,7 @@ function tiereWechsel(szene){
   if(szene==='titel') autoStart(); else autoStop();
   if(szene==='schule'){ lehrerStart(); } else { lehrerStop(); }
   rektorStop();
-  if(szene==='treppe') gespraechStart(); else gespraechStop();
+  if(szene==='treppe'){ treppenAuftritt(); } else { auftrittStop(); gespraechStop(); }
   if(szene==='discount') katzeStart(); else katzeStop();
   if(szene==='front' || szene==='titel') taubenStart(); else taubenStop();
 }
