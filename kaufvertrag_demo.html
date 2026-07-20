@@ -945,7 +945,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '73';
+const BILD_VERSION = '74';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -971,7 +971,7 @@ HOTSPOTS.treppe = [
     a:{ anschauen:'«<b>Rektorat · Sitzungszimmer</b>». Dahinter werden Stundenpläne geschmiedet und Budgets gebogen.',
         oeffne:'Ohne Traktandenliste kommt hier niemand rein. Nicht einmal Sie.' } },
   { id:'uhr', name:'Wanduhr', x:580,y:20,w:40,h:60,
-    a:{ anschauen:'Genau <b>17:03</b> – Feierabend seit drei Minuten. Die Uhr tickt hier oben etwas feierlicher als im Schulzimmer – findet die Uhr.',
+    a:{ anschauen:'Genau <b>17:04</b> – Feierabend seit vier Minuten. Die Uhr tickt hier oben etwas feierlicher als im Schulzimmer – findet die Uhr.',
         benutze:'Sie tickt auch ohne Sie. Zuverlässigste Mitarbeiterin des Hauses.' } },
   { id:'feuermelder', name:'Feuermelder', x:154,y:116,w:20,h:20,
     a:{ anschauen:'Ein roter Feuermelder. «Scheibe einschlagen» – der einzige Vertrag im Haus, den man brechen darf. Im Notfall.',
@@ -2711,11 +2711,16 @@ function dynamischeOptionen(art){ return null; }
    ===================================================== */
 const dialogEl = document.getElementById('dialog');
 const rqEl = document.getElementById('rq-anzeige');
+/* Maximal erreichbarer RQ (Entscheidungen + Fundstuecke + Schach-Bonus),
+   statisch aus dem Spielgraphen berechnet */
+const RQ_MAX = { vorspann:31, L:50, Z:50, M:51, gesamt:84 };
+function rqMaxAktuell(){ return zustand.weg ? RQ_MAX[zustand.weg] : RQ_MAX.vorspann; }
+function rqAnzeigen(){ rqEl.textContent = 'RQ ' + zustand.rq + ' / ' + rqMaxAktuell(); }
 const wegEl = document.getElementById('weg-anzeige');
 
 function setzeRQ(delta){
   zustand.rq += delta;
-  rqEl.textContent = 'RQ ' + zustand.rq;
+  rqAnzeigen();
   if(delta>0){
     rqEl.style.transform='scale(1.15)';
     setTimeout(()=>rqEl.style.transform='', 200);
@@ -2757,7 +2762,7 @@ function ladeSpielstand(){
       weg:d.weg||null, ergebnisse:d.ergebnisse||{},
       funde:d.funde||{}, undoJoker:(d.undoJoker===0?0:1),
     });
-    rqEl.textContent = 'RQ ' + zustand.rq;
+    rqAnzeigen();
     setzeWegAnzeige();
     zeige(d.knoten);
     blaseHinweis('Spielstand geladen – weiter geht\'s. (Klick auf den Titel beginnt von vorne.)', 6000);
@@ -3229,7 +3234,7 @@ function waehle(o, box){
       zustand.undoJoker--;
       zustand.rq = snap.rq;
       zustand.flags = Object.assign({}, snap.flags);
-      rqEl.textContent = 'RQ ' + zustand.rq;
+      rqAnzeigen();
       zeige(snap.id);
     });
     box.appendChild(u);
@@ -3286,7 +3291,7 @@ function baueProduktwahl(k){
       zustand.produkt=p; zustand.rq=0; zustand.flags={}; zustand.ergebnisse={}; zustand.funde={};
       zustand.haendler = 'herr';   /* Akt 1: der Chef persoenlich */
       zustand.undoJoker = 1;
-      rqEl.textContent='RQ 0';
+      rqAnzeigen();
       zeige('zoegern');
     });
     reihe.appendChild(b);
@@ -3327,14 +3332,14 @@ function baueWeiche(k){
     const fertig = key in zustand.ergebnisse;
     const b=document.createElement('button'); b.className='pkarte'+(fertig?' gespielt':''); b.type='button';
     b.innerHTML='<span class="pico">'+icons[key]+'</span><span class="pname">'+wg.titel+'</span><span class="ppreis">'+wg.thema+'</span>'+
-      (fertig?'<span class="gespielt-tag">✔ gespielt · RQ '+zustand.ergebnisse[key]+'</span>':'');
+      (fertig?'<span class="gespielt-tag">✔ gespielt · RQ '+zustand.ergebnisse[key]+' / '+RQ_MAX[key]+'</span>':'');
     b.addEventListener('click', ()=>{
       zustand.weg=key;
       zustand.haendler='frau';   /* Herr Meier ist unterwegs - Frau Meier uebernimmt */
       zustand.undoJoker = 1;
       zustand.rq = zustand.rqAkt1;
       zustand.flags = Object.assign({}, zustand.flagsAkt1);
-      rqEl.textContent='RQ '+zustand.rq;
+      rqAnzeigen();
       setzeWegAnzeige();
       zeige(wg.start);
     });
@@ -3353,20 +3358,28 @@ function baueEnde(){
   dialogEl.appendChild(sp);
 
   const wert=document.createElement('p'); wert.className='ende-wertung';
-  wert.textContent='RQ '+zustand.rq+' – '+wertungsText(zustand.rq);
+  wert.textContent='RQ '+zustand.rq+' von '+rqMaxAktuell()+' möglich – '+wertungsText(zustand.rq);
   dialogEl.appendChild(wert);
 
   const liste=document.createElement('ul'); liste.className='wegliste';
   Object.keys(WEGE).forEach(key=>{
     const li=document.createElement('li');
     if(key in zustand.ergebnisse){
-      li.innerHTML='✔ <b>'+WEGE[key].titel+'</b> gespielt · RQ '+zustand.ergebnisse[key];
+      li.innerHTML='✔ <b>'+WEGE[key].titel+'</b> gespielt · RQ '+zustand.ergebnisse[key]+' / '+RQ_MAX[key];
     } else {
       li.innerHTML='<span class="offen">○ '+WEGE[key].titel+' – noch nicht erkundet</span>';
     }
     liste.appendChild(li);
   });
   dialogEl.appendChild(liste);
+
+  if(gespielt>=2){
+    const ges=document.createElement('p'); ges.className='ende-wertung';
+    let gesamt = zustand.rqAkt1;
+    Object.values(zustand.ergebnisse).forEach(r=>{ gesamt += Math.max(0, r - zustand.rqAkt1); });
+    ges.innerHTML='Alle Wege zusammen: <b>RQ '+gesamt+' von '+RQ_MAX.gesamt+'</b> möglich.';
+    dialogEl.appendChild(ges);
+  }
 
   const tx=document.createElement('p'); tx.className='dtext';
   tx.innerHTML = gespielt>=3
@@ -3413,7 +3426,7 @@ function neustart(){
   loescheSpielstand();
   zustand.produkt=null; zustand.rq=0; zustand.rqAkt1=0; zustand.haendler='herr';
   zustand.flags={}; zustand.flagsAkt1={}; zustand.weg=null; zustand.ergebnisse={}; zustand.funde={}; zustand.undoJoker=1;
-  rqEl.textContent='RQ 0'; setzeWegAnzeige();
+  rqAnzeigen(); setzeWegAnzeige();
   zeige('titel');
 }
 /* ---------- Vollbild ---------- */
