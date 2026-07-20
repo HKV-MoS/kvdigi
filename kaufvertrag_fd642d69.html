@@ -946,7 +946,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '67';
+const BILD_VERSION = '68';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1127,7 +1127,6 @@ function spriteFrames(sp){ if(sp.id==='meier') return haendler().frames; if(sp.i
 function spriteSVG(key){
   let svg='';
   (SPRITES[key]||[]).forEach(sp=>{
-    if(sp.id==='auto') svg += '<ellipse id="sp-autoschatten" fill="#000" opacity="0.34" cx="-999" cy="-999" rx="0" ry="0"/>';
     const fr = spriteFrames(sp);
     const w = sp.id==='meier' ? haendler().w : (sp.id==='alex' ? kaeufer().w : sp.w);
     const h = sp.id==='meier' ? haendler().h : (sp.id==='alex' ? kaeufer().h : sp.h);
@@ -1901,14 +1900,6 @@ function autoZeichne(){
     soll = vurl(menge[Math.floor(auto.strecke / 7) % menge.length]);
   }
   if(el.getAttribute('href') !== soll) el.setAttribute('href', soll);
-  /* Schatten bleibt am Boden – das Federn spielt sich darueber ab */
-  const sch = document.getElementById('sp-autoschatten');
-  if(sch){
-    sch.setAttribute('cx', (auto.x + w*0.5).toFixed(2));
-    sch.setAttribute('cy', (autoBasis(auto.x) - 0.8).toFixed(2));
-    sch.setAttribute('rx', (w*0.485).toFixed(2));
-    sch.setAttribute('ry', (3.4*gr).toFixed(2));
-  }
 }
 const AUTO_STOP_X  = 491;      /* Halt: Daumen auf Hoehe des mittleren Pfostens */
 const AUTO_HALT_MS = 3200;
