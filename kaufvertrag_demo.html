@@ -958,7 +958,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '81';
+const BILD_VERSION = '82';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -2330,7 +2330,7 @@ function kraeheStart(){
           e.setAttribute('href', vurl(KRAEHE_FRAMES[z<0.62?0:(z<0.88?2:1)]));
         }, 1100);
       }
-    }, 680);
+    }, 3000);
     /* Aufenthalt, dann Kraehe weg und Fenster wieder zu */
     kraeheT.weg = setTimeout(()=>{
       const el = document.getElementById('sp-kraehe');
