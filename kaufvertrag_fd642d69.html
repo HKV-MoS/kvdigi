@@ -297,6 +297,8 @@
 #sp-rektor.da{ opacity:1; }
 #sp-credits{ transition: transform 15s linear; }
 .szene.ende-roll #sp-credits{ transform: translateY(-320px); }
+#sp-danke{ transition: transform 3s linear 8.4s; }
+.szene.ende-roll #sp-danke{ transform: translateY(-64px); }
 .endeFade{ position:absolute; inset:0; background:#000; opacity:0; transition:opacity 14s linear; pointer-events:none; z-index:40; }
 .endeFade.an{ opacity:1; }
 .startTor{ position:absolute; inset:0; z-index:70; background:#000; display:flex; flex-direction:column;
@@ -959,7 +961,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '85';
+const BILD_VERSION = '86';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -3272,7 +3274,9 @@ function vordergrundSVG(key){
 }
 function creditsSVG(key){
   if(key !== 'ende') return '';
-  return '<image id="sp-credits" href="'+vurl('kaufvertrag_credits.png')+
+  return '<image id="sp-danke" href="'+vurl('kaufvertrag_danke.png')+
+         '" x="219.2" y="26.4" width="168" height="30.4"/>' +
+         '<image id="sp-credits" href="'+vurl('kaufvertrag_credits.png')+
          '" x="172" y="235.2" width="256" height="24.8"/>';
 }
 function schildSVG(key){
@@ -3858,15 +3862,19 @@ function baueEnde(){
   b2.addEventListener('click', neustart);
   box.appendChild(b2);
   dialogEl.appendChild(box);
-  /* Das Ende bleibt stehen (Bild + Danke + Credits) und faded dann ganz langsam ins Schwarz */
+  /* Credits rollen hoch; erreichen sie den Dank, rollt der Dank mit. ENDE bleibt fest. Danach Fade. */
   if(!reduzierteBewegung()){
-    endeFadeTimer = setTimeout(()=>{
+    endeRollTimer = setTimeout(()=>{
       if(aktuelleSzeneId !== 'ende') return;
-      const f = document.createElement('div');
-      f.className = 'endeFade';
-      szeneEl.appendChild(f);
-      requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ f.classList.add('an'); }); });
-    }, 12000);
+      szeneEl.classList.add('ende-roll');
+      endeFadeTimer = setTimeout(()=>{
+        if(aktuelleSzeneId !== 'ende') return;
+        const f = document.createElement('div');
+        f.className = 'endeFade';
+        szeneEl.appendChild(f);
+        requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ f.classList.add('an'); }); });
+      }, 16500);
+    }, 8000);
   }
 }
 
