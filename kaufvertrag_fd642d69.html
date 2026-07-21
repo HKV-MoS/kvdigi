@@ -967,7 +967,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '88';
+const BILD_VERSION = '89';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -2246,12 +2246,10 @@ function gespraechBlase(){
 
 /* Auftritt: Rektor kommt von der Treppe (rechts), die Lehrperson durch den
    Durchgang (links) – sie treffen sich am Steingelaender und reden. */
-const REKTOR_GEH = ['figur_rektor_geh_0.png','figur_rektor_geh_1.png','figur_rektor_geh_2.png','figur_rektor_geh_3.png','figur_rektor_geh_4.png','figur_rektor_geh_5.png'];
-const LEHRER_GEH = ['kaufvertrag_lehrer_geh_0.png','kaufvertrag_lehrer_geh_1.png','kaufvertrag_lehrer_geh_2.png','kaufvertrag_lehrer_geh_3.png','kaufvertrag_lehrer_geh_4.png','kaufvertrag_lehrer_geh_5.png'];
+const REKTOR_GEH = ['figur_rgeh_0.png','figur_rgeh_1.png','figur_rgeh_2.png','figur_rgeh_3.png','figur_rgeh_4.png','figur_rgeh_5.png','figur_rgeh_6.png','figur_rgeh_7.png','figur_rgeh_8.png','figur_rgeh_9.png','figur_rgeh_10.png','figur_rgeh_11.png','figur_rgeh_12.png','figur_rgeh_13.png','figur_rgeh_14.png','figur_rgeh_15.png','figur_rgeh_16.png','figur_rgeh_17.png','figur_rgeh_18.png','figur_rgeh_19.png','figur_rgeh_20.png','figur_rgeh_21.png','figur_rgeh_22.png','figur_rgeh_23.png','figur_rgeh_24.png','figur_rgeh_25.png','figur_rgeh_26.png','figur_rgeh_27.png','figur_rgeh_28.png','figur_rgeh_29.png'];
+const LEHRER_GEH = ['kaufvertrag_lgeh_0.png','kaufvertrag_lgeh_1.png','kaufvertrag_lgeh_2.png','kaufvertrag_lgeh_3.png','kaufvertrag_lgeh_4.png','kaufvertrag_lgeh_5.png','kaufvertrag_lgeh_6.png','kaufvertrag_lgeh_7.png','kaufvertrag_lgeh_8.png','kaufvertrag_lgeh_9.png','kaufvertrag_lgeh_10.png','kaufvertrag_lgeh_11.png','kaufvertrag_lgeh_12.png','kaufvertrag_lgeh_13.png','kaufvertrag_lgeh_14.png','kaufvertrag_lgeh_15.png','kaufvertrag_lgeh_16.png','kaufvertrag_lgeh_17.png','kaufvertrag_lgeh_18.png','kaufvertrag_lgeh_19.png','kaufvertrag_lgeh_20.png','kaufvertrag_lgeh_21.png','kaufvertrag_lgeh_22.png','kaufvertrag_lgeh_23.png','kaufvertrag_lgeh_24.png','kaufvertrag_lgeh_25.png','kaufvertrag_lgeh_26.png','kaufvertrag_lgeh_27.png','kaufvertrag_lgeh_28.png','kaufvertrag_lgeh_29.png'];
 /* Frames nach Schrittweite geordnet und als Ping-Pong abgespielt – so
    oeffnet und schliesst sich der Schritt fluessig statt zu zappeln */
-const REKTOR_GEH_SEQ = [4,2,0,5,3,1,3,5,0,2];
-const LEHRER_GEH_SEQ = [3,2,4,0,1,5,1,0,4,2];
 const auftritt = { raf:null };
 function auftrittStop(){ if(auftritt.raf){ cancelAnimationFrame(auftritt.raf); auftritt.raf = null; } }
 function treppenAuftritt(){
@@ -2260,9 +2258,9 @@ function treppenAuftritt(){
   if(reduzierteBewegung()){ gespraechStart(); return; }
   const start = performance.now();
   const FIGS = [
-    { id:'sp-trektor', fr:REKTOR_GEH, seq:REKTOR_GEH_SEQ, von:400, bis:271, dauer:2700, wGeh:79,
+    { id:'sp-trektor', fr:REKTOR_GEH, von:400, bis:271, dauer:1800, wGeh:79,
       talkHref:'figur_rektor_steh_3.png', wTalk:38, xTalk:252 },
-    { id:'sp-tlehrer', fr:LEHRER_GEH, seq:LEHRER_GEH_SEQ, von:96, bis:194, dauer:2050, wGeh:79,
+    { id:'sp-tlehrer', fr:LEHRER_GEH, von:96, bis:194, dauer:1367, wGeh:79,
       talkHref:'kaufvertrag_lehrer_1.png', wTalk:70, xTalk:159 },
   ];
   function schritt(t){
@@ -2277,7 +2275,7 @@ function treppenAuftritt(){
         el.setAttribute('width', fig.wGeh);
         el.setAttribute('x', (cx - fig.wGeh/2).toFixed(1));
         const dist = Math.abs(cx - fig.von);
-        el.setAttribute('href', vurl(fig.fr[fig.seq[Math.floor(dist / 4.2) % fig.seq.length]]));
+        el.setAttribute('href', vurl(fig.fr[Math.floor(dist / 1.6) % fig.fr.length]));
       } else {
         el.setAttribute('width', fig.wTalk);
         el.setAttribute('x', fig.xTalk);
