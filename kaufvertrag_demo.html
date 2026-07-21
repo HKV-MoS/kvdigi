@@ -958,7 +958,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '83';
+const BILD_VERSION = '84';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -3515,6 +3515,7 @@ let endeRollTimer = null;
 let endeFadeTimer = null;
 function baueEnde(){
   if(zustand.weg) zustand.ergebnisse[zustand.weg]=zustand.rq;
+  if(fx.an){ try{ ambEinmal('kaufvertrag_fx_kasse.mp3', 0.6); }catch(e){} }   /* Kasse: cha-ching zur Abrechnung */
   const gespielt=Object.keys(zustand.ergebnisse).length;
 
   const sp=document.createElement('span'); sp.className='sprecher erz'; sp.textContent='AUSWERTUNG';
