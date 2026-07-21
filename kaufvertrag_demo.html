@@ -288,7 +288,9 @@
   45%{ transform:rotate(-5deg); } 60%{ transform:rotate(5deg); } 75%{ transform:rotate(0deg); }
 }
 #sp-rechner{ transform-box:fill-box; transform-origin:center; cursor:pointer; }
-#sp-kraehe{ opacity:0; transition:opacity 1.6s; }
+#sp-fenster{ opacity:0; transition:opacity .22s; }
+#sp-fenster.auf{ opacity:1; }
+#sp-kraehe{ opacity:0; transition:opacity 1.4s; }
 #sp-kraehe.da{ opacity:1; }
 #sp-rektor{ opacity:0; transition:opacity .7s; cursor:pointer; }
 #sp-rektor.da{ opacity:1; }
@@ -956,7 +958,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '79';
+const BILD_VERSION = '80';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1099,7 +1101,8 @@ const SPRITES = {
     { id:'trektor', frames:['figur_rektor_steh_3.png','figur_rektor_steh_3.png','figur_rektor_geh_0.png','figur_rektor_geh_1.png','figur_rektor_geh_2.png','figur_rektor_geh_3.png','figur_rektor_geh_4.png','figur_rektor_geh_5.png','figur_rektor_kopf_0.png','figur_rektor_kopf_1.png','figur_rektor_kopf_2.png','figur_rektor_kopf_5.png'], x:252, y:98, w:38, h:152 },
   ],
   weiche: [
-    { id:'kraehe', frames:['kaufvertrag_kraehe_0.png','kaufvertrag_kraehe_1.png','kaufvertrag_kraehe_2.png'], x:37.4, y:119.6, w:22.1, h:15 },
+    { id:'fenster', frames:['kaufvertrag_fenster_1.png','kaufvertrag_fenster_2.png','kaufvertrag_fenster_3.png'], x:45.6, y:36, w:17.6, h:95.2 },
+    { id:'kraehe', frames:['kaufvertrag_kraehe_0.png','kaufvertrag_kraehe_1.png','kaufvertrag_kraehe_2.png'], x:41.2, y:113, w:26.5, h:18 },
   ],
   titel: [
     { id:'taubeA', frames:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'], x:336, y:186, w:18, h:12 },
@@ -2297,33 +2300,55 @@ function gespraechStop(){
 
 /* Kraehe am Schulzimmer-Fenster: landet ab und zu, pickt, kraechzt, fliegt wieder */
 const KRAEHE_FRAMES = ['kaufvertrag_kraehe_0.png','kaufvertrag_kraehe_1.png','kaufvertrag_kraehe_2.png'];
-const kraeheT = { t:null, weg:null, anim:null };
+const kraeheT = { t:null, weg:null, anim:null, o1:null, o2:null, o3:null, z1:null, z2:null, z3:null };
+function fensterFrame(n){
+  const el = document.getElementById('sp-fenster');
+  if(!el) return;
+  if(n===0){ el.classList.remove('auf'); return; }
+  el.classList.add('auf');
+  el.setAttribute('href', vurl('kaufvertrag_fenster_'+n+'.png'));
+}
 function kraeheStart(){
   kraeheStop();
   if(reduzierteBewegung()) return;
   function runde(){
-    const el = document.getElementById('sp-kraehe');
-    if(el && aktuelleSzeneId==='weiche'){
-      el.classList.add('da');
-      kraeheT.anim = setInterval(()=>{
-        const e = document.getElementById('sp-kraehe');
-        if(!e) return;
-        const z = Math.random();
-        e.setAttribute('href', vurl(KRAEHE_FRAMES[z<0.62?0:(z<0.88?2:1)]));
-      }, 1100);
-      kraeheT.weg = setTimeout(()=>{
-        try{ el.classList.remove('da'); el.setAttribute('href', vurl(KRAEHE_FRAMES[0])); }catch(e){}
-        if(kraeheT.anim){ clearInterval(kraeheT.anim); kraeheT.anim = null; }
-      }, 9000 + Math.random()*6000);
-    }
-    kraeheT.t = setTimeout(runde, 26000 + Math.random()*22000);
+    if(aktuelleSzeneId!=='weiche'){ kraeheT.t = setTimeout(runde, 8000); return; }
+    /* Windstoss: der linke Fluegel des rechten Fensters schwingt auf */
+    if(fx.an){ try{ ambEinmal('kaufvertrag_fx_wind.mp3', 0.6); }catch(e){} }
+    fensterFrame(1);
+    kraeheT.o1 = setTimeout(()=>fensterFrame(2), 200);
+    kraeheT.o2 = setTimeout(()=>fensterFrame(3), 430);
+    /* dann erscheint die Kraehe im offenen Fenster */
+    kraeheT.o3 = setTimeout(()=>{
+      const el = document.getElementById('sp-kraehe');
+      if(el && aktuelleSzeneId==='weiche'){
+        el.classList.add('da');
+        kraeheT.anim = setInterval(()=>{
+          const e = document.getElementById('sp-kraehe');
+          if(!e) return;
+          const z = Math.random();
+          e.setAttribute('href', vurl(KRAEHE_FRAMES[z<0.62?0:(z<0.88?2:1)]));
+        }, 1100);
+      }
+    }, 680);
+    /* Aufenthalt, dann Kraehe weg und Fenster wieder zu */
+    kraeheT.weg = setTimeout(()=>{
+      const el = document.getElementById('sp-kraehe');
+      try{ if(el){ el.classList.remove('da'); el.setAttribute('href', vurl(KRAEHE_FRAMES[0])); } }catch(e){}
+      if(kraeheT.anim){ clearInterval(kraeheT.anim); kraeheT.anim = null; }
+      kraeheT.z1 = setTimeout(()=>fensterFrame(2), 1000);
+      kraeheT.z2 = setTimeout(()=>fensterFrame(1), 1200);
+      kraeheT.z3 = setTimeout(()=>fensterFrame(0), 1450);
+    }, 12000 + Math.random()*4000);
+    kraeheT.t = setTimeout(runde, 30000 + Math.random()*20000);
   }
-  kraeheT.t = setTimeout(runde, 6000 + Math.random()*7000);
+  kraeheT.t = setTimeout(runde, 6000 + Math.random()*6000);
 }
 function kraeheStop(){
-  if(kraeheT.t){ clearTimeout(kraeheT.t); kraeheT.t = null; }
-  if(kraeheT.weg){ clearTimeout(kraeheT.weg); kraeheT.weg = null; }
-  if(kraeheT.anim){ clearInterval(kraeheT.anim); kraeheT.anim = null; }
+  ['t','weg','anim','o1','o2','o3','z1','z2','z3'].forEach(k=>{
+    if(kraeheT[k]){ (k==='anim'?clearInterval:clearTimeout)(kraeheT[k]); kraeheT[k]=null; }
+  });
+  try{ fensterFrame(0); }catch(e){}
 }
 
 /* Nestbaum vor der Schule: Kraehe im Nest bewegt sich ab und zu */
