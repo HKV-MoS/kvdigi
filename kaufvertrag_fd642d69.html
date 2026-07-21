@@ -957,7 +957,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '75';
+const BILD_VERSION = '76';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1100,16 +1100,16 @@ const SPRITES = {
     { id:'trektor', frames:['figur_rektor_steh_3.png','figur_rektor_steh_3.png','figur_rektor_geh_0.png','figur_rektor_geh_1.png','figur_rektor_geh_2.png','figur_rektor_geh_3.png','figur_rektor_geh_4.png','figur_rektor_geh_5.png','figur_rektor_kopf_0.png','figur_rektor_kopf_1.png','figur_rektor_kopf_2.png','figur_rektor_kopf_5.png'], x:252, y:98, w:38, h:152 },
   ],
   weiche: [
-    { id:'kraehe', frames:['kaufvertrag_kraehe_0.png','kaufvertrag_kraehe_1.png','kaufvertrag_kraehe_2.png'], x:40, y:123, w:17, h:11.5 },
+    { id:'kraehe', frames:['kaufvertrag_kraehe_0.png','kaufvertrag_kraehe_1.png','kaufvertrag_kraehe_2.png'], x:37.4, y:119.6, w:22.1, h:15 },
   ],
   titel: [
-    { id:'nestbaum', frames:['kaufvertrag_nestbaum_0.png','kaufvertrag_nestbaum_1.png','kaufvertrag_nestbaum_2.png'], x:521.6, y:88, w:88.8, h:92 },
     { id:'taubeA', frames:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'], x:336, y:186, w:18, h:12 },
     { id:'taubeB', frames:['kaufvertrag_taube_b0.png','kaufvertrag_taube_b1.png'], x:356, y:188, w:17, h:11 },
     { id:'auto', frames:['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png','kaufvertrag_auto_3.png','kaufvertrag_auto_4.png','kaufvertrag_auto_5.png','kaufvertrag_auto_6.png','kaufvertrag_auto_7.png','kaufvertrag_auto_8.png','kaufvertrag_auto_halt.png'],
       x:660, y:172, w:94, h:51 },
   ],
   discount: [
+    { id:'nestbaum', frames:['kaufvertrag_nestbaum_0.png','kaufvertrag_nestbaum_1.png','kaufvertrag_nestbaum_2.png'], x:452, y:121, w:78, h:81 },
     { id:'katze', frames:['kaufvertrag_katze_0.png','kaufvertrag_katze_1.png','kaufvertrag_katze_2.png',
       'kaufvertrag_katze_3.png','kaufvertrag_katze_4.png','kaufvertrag_katze_5.png','kaufvertrag_katze_6.png'],
       x:680, y:198, w:30, h:24 },
@@ -2335,7 +2335,7 @@ function nestStart(){
   if(reduzierteBewegung()) return;
   nestT.t = setInterval(()=>{
     const e = document.getElementById('sp-nestbaum');
-    if(!e || aktuelleSzeneId!=='titel') return;
+    if(!e || aktuelleSzeneId!=='discount') return;
     const z = Math.random();
     e.setAttribute('href', vurl(NESTBAUM_FRAMES[z<0.66?0:(z<0.9?2:1)]));
   }, 4500);
@@ -2348,7 +2348,7 @@ function tiereWechsel(szene){
   if(szene==='titel') autoStart(); else autoStop();
   if(szene==='schule'){ lehrerStart(); } else { lehrerStop(); }
   if(szene==='weiche'){ kraeheStart(); } else { kraeheStop(); }
-  if(szene==='titel'){ nestStart(); } else { nestStop(); }
+  if(szene==='discount'){ nestStart(); } else { nestStop(); }
   rektorStop();
   if(szene==='treppe'){ treppenAuftritt(); } else { auftrittStop(); gespraechStop(); }
   if(szene==='discount') katzeStart(); else katzeStop();
