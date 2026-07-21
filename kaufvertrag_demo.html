@@ -966,7 +966,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '91';
+const BILD_VERSION = '92';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -2257,9 +2257,9 @@ function treppenAuftritt(){
   if(reduzierteBewegung()){ gespraechStart(); return; }
   const start = performance.now();
   const FIGS = [
-    { id:'sp-trektor', fr:REKTOR_GEH, step:6, von:400, bis:271, dauer:1800, wGeh:79,
+    { id:'sp-trektor', fr:REKTOR_GEH, step:11.5, von:400, bis:271, dauer:1800, wGeh:79,
       talkHref:'figur_rektor_steh_3.png', wTalk:38, xTalk:252 },
-    { id:'sp-tlehrer', fr:LEHRER_GEH, step:1.6, von:96, bis:194, dauer:1367, wGeh:79,
+    { id:'sp-tlehrer', fr:LEHRER_GEH, step:5.5, von:96, bis:194, dauer:1367, wGeh:79,
       talkHref:'kaufvertrag_lehrer_1.png', wTalk:70, xTalk:159 },
   ];
   function schritt(t){
