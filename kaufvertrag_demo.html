@@ -958,7 +958,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '84';
+const BILD_VERSION = '85';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -3563,19 +3563,15 @@ function baueEnde(){
   b2.addEventListener('click', neustart);
   box.appendChild(b2);
   dialogEl.appendChild(box);
-  /* Nach 10 s rollen NUR die Credits nach oben; sind sie weg, faded alles ganz langsam ins Schwarz */
+  /* Das Ende bleibt stehen (Bild + Danke + Credits) und faded dann ganz langsam ins Schwarz */
   if(!reduzierteBewegung()){
-    endeRollTimer = setTimeout(()=>{
+    endeFadeTimer = setTimeout(()=>{
       if(aktuelleSzeneId !== 'ende') return;
-      szeneEl.classList.add('ende-roll');
-      endeFadeTimer = setTimeout(()=>{
-        if(aktuelleSzeneId !== 'ende') return;
-        const f = document.createElement('div');
-        f.className = 'endeFade';
-        szeneEl.appendChild(f);
-        requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ f.classList.add('an'); }); });
-      }, 15500);
-    }, 10000);
+      const f = document.createElement('div');
+      f.className = 'endeFade';
+      szeneEl.appendChild(f);
+      requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ f.classList.add('an'); }); });
+    }, 12000);
   }
 }
 
