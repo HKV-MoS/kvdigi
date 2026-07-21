@@ -1091,7 +1091,6 @@ function kaeufer(){ return KAEUFER[zustand.kaeuferin || 'm']; }
 
 const SPRITES = {
   schule: [
-    { id:'kraehe', frames:['kaufvertrag_kraehe_0.png','kaufvertrag_kraehe_1.png','kaufvertrag_kraehe_2.png'], x:1, y:130, w:13, h:9 },
     { id:'lehrer', frames:['kaufvertrag_lehrer_0.png','kaufvertrag_lehrer_1.png','kaufvertrag_lehrer_2.png','kaufvertrag_lehrer_3.png','kaufvertrag_lehrer_mund_0.png','kaufvertrag_lehrer_mund_1.png','kaufvertrag_lehrer_mund_2.png','kaufvertrag_lehrer_mund_5.png'],
       x:125, y:64, w:54, h:116 },
   ],
@@ -1099,7 +1098,11 @@ const SPRITES = {
     { id:'tlehrer', frames:['kaufvertrag_lehrer_1.png','kaufvertrag_lehrer_0.png','kaufvertrag_lehrer_geh_0.png','kaufvertrag_lehrer_geh_1.png','kaufvertrag_lehrer_geh_2.png','kaufvertrag_lehrer_geh_3.png','kaufvertrag_lehrer_geh_4.png','kaufvertrag_lehrer_geh_5.png'], x:159, y:98, w:70, h:152 },
     { id:'trektor', frames:['figur_rektor_steh_3.png','figur_rektor_steh_3.png','figur_rektor_geh_0.png','figur_rektor_geh_1.png','figur_rektor_geh_2.png','figur_rektor_geh_3.png','figur_rektor_geh_4.png','figur_rektor_geh_5.png','figur_rektor_kopf_0.png','figur_rektor_kopf_1.png','figur_rektor_kopf_2.png','figur_rektor_kopf_5.png'], x:252, y:98, w:38, h:152 },
   ],
+  weiche: [
+    { id:'kraehe', frames:['kaufvertrag_kraehe_0.png','kaufvertrag_kraehe_1.png','kaufvertrag_kraehe_2.png'], x:40, y:123, w:17, h:11.5 },
+  ],
   titel: [
+    { id:'nestbaum', frames:['kaufvertrag_nestbaum_0.png','kaufvertrag_nestbaum_1.png','kaufvertrag_nestbaum_2.png'], x:521.6, y:88, w:88.8, h:92 },
     { id:'taubeA', frames:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'], x:336, y:186, w:18, h:12 },
     { id:'taubeB', frames:['kaufvertrag_taube_b0.png','kaufvertrag_taube_b1.png'], x:356, y:188, w:17, h:11 },
     { id:'auto', frames:['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png','kaufvertrag_auto_3.png','kaufvertrag_auto_4.png','kaufvertrag_auto_5.png','kaufvertrag_auto_6.png','kaufvertrag_auto_7.png','kaufvertrag_auto_8.png','kaufvertrag_auto_halt.png'],
@@ -2300,7 +2303,7 @@ function kraeheStart(){
   if(reduzierteBewegung()) return;
   function runde(){
     const el = document.getElementById('sp-kraehe');
-    if(el && aktuelleSzeneId==='schule'){
+    if(el && aktuelleSzeneId==='weiche'){
       el.classList.add('da');
       kraeheT.anim = setInterval(()=>{
         const e = document.getElementById('sp-kraehe');
@@ -2322,12 +2325,29 @@ function kraeheStop(){
   if(kraeheT.weg){ clearTimeout(kraeheT.weg); kraeheT.weg = null; }
   if(kraeheT.anim){ clearInterval(kraeheT.anim); kraeheT.anim = null; }
 }
+
+/* Nestbaum vor der Schule: Kraehe im Nest bewegt sich ab und zu */
+const NESTBAUM_FRAMES = ['kaufvertrag_nestbaum_0.png','kaufvertrag_nestbaum_1.png','kaufvertrag_nestbaum_2.png'];
+const nestT = { t:null };
+function nestStart(){
+  nestStop();
+  if(reduzierteBewegung()) return;
+  nestT.t = setInterval(()=>{
+    const e = document.getElementById('sp-nestbaum');
+    if(!e || aktuelleSzeneId!=='titel') return;
+    const z = Math.random();
+    e.setAttribute('href', vurl(NESTBAUM_FRAMES[z<0.66?0:(z<0.9?2:1)]));
+  }, 4500);
+}
+function nestStop(){ if(nestT.t){ clearInterval(nestT.t); nestT.t = null; } }
 const tiere = { szene:null };
 function tiereWechsel(szene){
   if(tiere.szene === szene) return;   /* gleiche Szene: Choreografie NICHT neu starten */
   tiere.szene = szene;
   if(szene==='titel') autoStart(); else autoStop();
-  if(szene==='schule'){ lehrerStart(); kraeheStart(); } else { lehrerStop(); kraeheStop(); }
+  if(szene==='schule'){ lehrerStart(); } else { lehrerStop(); }
+  if(szene==='weiche'){ kraeheStart(); } else { kraeheStop(); }
+  if(szene==='titel'){ nestStart(); } else { nestStop(); }
   rektorStop();
   if(szene==='treppe'){ treppenAuftritt(); } else { auftrittStop(); gespraechStop(); }
   if(szene==='discount') katzeStart(); else katzeStop();
