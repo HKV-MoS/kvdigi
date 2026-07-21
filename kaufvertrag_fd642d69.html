@@ -289,6 +289,8 @@
   45%{ transform:rotate(-5deg); } 60%{ transform:rotate(5deg); } 75%{ transform:rotate(0deg); }
 }
 #sp-rechner{ transform-box:fill-box; transform-origin:center; cursor:pointer; }
+#sp-kraehe{ opacity:0; transition:opacity 1.6s; }
+#sp-kraehe.da{ opacity:1; }
 #sp-rektor{ opacity:0; transition:opacity .7s; cursor:pointer; }
 #sp-rektor.da{ opacity:1; }
 #sp-credits{ transition: transform 15s linear; }
@@ -1090,6 +1092,7 @@ function kaeufer(){ return KAEUFER[zustand.kaeuferin || 'm']; }
 
 const SPRITES = {
   schule: [
+    { id:'kraehe', frames:['kaufvertrag_kraehe_0.png','kaufvertrag_kraehe_1.png','kaufvertrag_kraehe_2.png'], x:1, y:130, w:13, h:9 },
     { id:'lehrer', frames:['kaufvertrag_lehrer_0.png','kaufvertrag_lehrer_1.png','kaufvertrag_lehrer_2.png','kaufvertrag_lehrer_3.png','kaufvertrag_lehrer_mund_0.png','kaufvertrag_lehrer_mund_1.png','kaufvertrag_lehrer_mund_2.png','kaufvertrag_lehrer_mund_5.png'],
       x:125, y:64, w:54, h:116 },
   ],
@@ -2289,12 +2292,43 @@ function gespraechStop(){
   if(gespraech.blase){ clearTimeout(gespraech.blase); gespraech.blase = null; }
 }
 
+
+/* Kraehe am Schulzimmer-Fenster: landet ab und zu, pickt, kraechzt, fliegt wieder */
+const KRAEHE_FRAMES = ['kaufvertrag_kraehe_0.png','kaufvertrag_kraehe_1.png','kaufvertrag_kraehe_2.png'];
+const kraeheT = { t:null, weg:null, anim:null };
+function kraeheStart(){
+  kraeheStop();
+  if(reduzierteBewegung()) return;
+  function runde(){
+    const el = document.getElementById('sp-kraehe');
+    if(el && aktuelleSzeneId==='schule'){
+      el.classList.add('da');
+      kraeheT.anim = setInterval(()=>{
+        const e = document.getElementById('sp-kraehe');
+        if(!e) return;
+        const z = Math.random();
+        e.setAttribute('href', vurl(KRAEHE_FRAMES[z<0.62?0:(z<0.88?2:1)]));
+      }, 1100);
+      kraeheT.weg = setTimeout(()=>{
+        try{ el.classList.remove('da'); el.setAttribute('href', vurl(KRAEHE_FRAMES[0])); }catch(e){}
+        if(kraeheT.anim){ clearInterval(kraeheT.anim); kraeheT.anim = null; }
+      }, 9000 + Math.random()*6000);
+    }
+    kraeheT.t = setTimeout(runde, 26000 + Math.random()*22000);
+  }
+  kraeheT.t = setTimeout(runde, 6000 + Math.random()*7000);
+}
+function kraeheStop(){
+  if(kraeheT.t){ clearTimeout(kraeheT.t); kraeheT.t = null; }
+  if(kraeheT.weg){ clearTimeout(kraeheT.weg); kraeheT.weg = null; }
+  if(kraeheT.anim){ clearInterval(kraeheT.anim); kraeheT.anim = null; }
+}
 const tiere = { szene:null };
 function tiereWechsel(szene){
   if(tiere.szene === szene) return;   /* gleiche Szene: Choreografie NICHT neu starten */
   tiere.szene = szene;
   if(szene==='titel') autoStart(); else autoStop();
-  if(szene==='schule'){ lehrerStart(); } else { lehrerStop(); }
+  if(szene==='schule'){ lehrerStart(); kraeheStart(); } else { lehrerStop(); kraeheStop(); }
   rektorStop();
   if(szene==='treppe'){ treppenAuftritt(); } else { auftrittStop(); gespraechStop(); }
   if(szene==='discount') katzeStart(); else katzeStop();
