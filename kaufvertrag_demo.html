@@ -966,7 +966,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '93';
+const BILD_VERSION = '94';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -2246,7 +2246,7 @@ function gespraechBlase(){
 /* Auftritt: Rektor kommt von der Treppe (rechts), die Lehrperson durch den
    Durchgang (links) – sie treffen sich am Steingelaender und reden. */
 const REKTOR_GEH = ['figur_r8_7.png','figur_r8_6.png','figur_r8_5.png','figur_r8_4.png','figur_r8_3.png','figur_r8_2.png','figur_r8_1.png','figur_r8_0.png'];
-const LEHRER_GEH = ['kaufvertrag_lgeh_0.png','kaufvertrag_lgeh_1.png','kaufvertrag_lgeh_2.png','kaufvertrag_lgeh_3.png','kaufvertrag_lgeh_4.png','kaufvertrag_lgeh_5.png','kaufvertrag_lgeh_6.png','kaufvertrag_lgeh_7.png','kaufvertrag_lgeh_8.png','kaufvertrag_lgeh_9.png','kaufvertrag_lgeh_10.png','kaufvertrag_lgeh_11.png','kaufvertrag_lgeh_12.png','kaufvertrag_lgeh_13.png','kaufvertrag_lgeh_14.png','kaufvertrag_lgeh_15.png','kaufvertrag_lgeh_16.png','kaufvertrag_lgeh_17.png','kaufvertrag_lgeh_18.png','kaufvertrag_lgeh_19.png','kaufvertrag_lgeh_20.png','kaufvertrag_lgeh_21.png','kaufvertrag_lgeh_22.png','kaufvertrag_lgeh_23.png','kaufvertrag_lgeh_24.png','kaufvertrag_lgeh_25.png','kaufvertrag_lgeh_26.png','kaufvertrag_lgeh_27.png','kaufvertrag_lgeh_28.png','kaufvertrag_lgeh_29.png'];
+const LEHRER_GEH = ['kaufvertrag_l8_7.png','kaufvertrag_l8_6.png','kaufvertrag_l8_5.png','kaufvertrag_l8_4.png','kaufvertrag_l8_3.png','kaufvertrag_l8_2.png','kaufvertrag_l8_1.png','kaufvertrag_l8_0.png'];
 /* Frames nach Schrittweite geordnet und als Ping-Pong abgespielt – so
    oeffnet und schliesst sich der Schritt fluessig statt zu zappeln */
 const auftritt = { raf:null };
@@ -2259,7 +2259,7 @@ function treppenAuftritt(){
   const FIGS = [
     { id:'sp-trektor', fr:REKTOR_GEH, step:11.5, von:400, bis:271, dauer:1800, wGeh:79,
       talkHref:'figur_rektor_steh_3.png', wTalk:38, xTalk:252 },
-    { id:'sp-tlehrer', fr:LEHRER_GEH, step:5.5, von:96, bis:194, dauer:1367, wGeh:79,
+    { id:'sp-tlehrer', fr:LEHRER_GEH, step:11, von:96, bis:194, dauer:1367, wGeh:79,
       talkHref:'kaufvertrag_lehrer_1.png', wTalk:70, xTalk:159 },
   ];
   function schritt(t){
