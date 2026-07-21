@@ -966,7 +966,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '94';
+const BILD_VERSION = '96';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -2380,7 +2380,7 @@ function tiereWechsel(szene){
   if(szene==='weiche'){ kraeheStart(); } else { kraeheStop(); }
   if(szene==='front'){ nestStart(); } else { nestStop(); }
   rektorStop();
-  if(szene==='treppe'){ treppenAuftritt(); } else { auftrittStop(); gespraechStop(); }
+  if(szene==='treppe'){ auftrittStop(); gespraechStart(); } else { auftrittStop(); gespraechStop(); }
   if(szene==='discount') katzeStart(); else katzeStop();
   if(szene==='front' || szene==='titel') taubenStart(); else taubenStop();
 }
