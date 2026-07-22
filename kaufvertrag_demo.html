@@ -509,7 +509,7 @@ front:[
     a:{ anschauen:'Ein Altstadtbrunnen mit plätscherndem Trinkwasser – einer von <b>rund 90 öffentlichen Brunnen</b> in Aarau. Und ja: Manchmal muss man die im <b>Sportunterricht der HKV</b> alle suchen gehen. Fragen Sie nicht, woher Alex das weiss.',
         benutze:'Sie trinken einen Schluck. Erfrischend, gratis – und im Gegensatz zum Föhn garantiert mängelfrei. Nur noch 89 Brunnen bis zum vollständigen Brunnen-OL.' } },
   { id:'hkv', name:'Gebäude gegenüber', x:366,y:0,w:196,h:146,
-    fund:{ verb:'anschauen', rq:1, text:'Moment … das Gebäude gegenüber – das ist ja die <b>HKV Aarau</b>! Kein Wunder, kennt sich Alex mit dem OR aus. Grüsse ins ABU-Zimmer.' },
+    fund:{ verb:'anschauen', rq:1, text:'Moment … das Gebäude gegenüber – das ist ja die <b>HKV Aarau</b>! Kein Wunder, kennt sich Alex mit dem OR aus. Grüsse aus dem Schulzimmer.' },
     a:{ anschauen:'Ein stattliches Schulhaus hinter Bäumen. Kommt Ihnen sehr bekannt vor …' } },
   { id:'eichhoernchen', name:'Gebüsch', x:0,y:190,w:30,h:68,
     fund:{ verb:'anschauen', rq:1, text:'Im Gebüsch an der Laterne raschelt es – ein <b>zweiköpfiges Eichhörnchen</b> huscht davon. Sie haben eindeutig zu viel Zak McKracken gespielt.' },
@@ -982,7 +982,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '113';
+const BILD_VERSION = '114';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -3733,13 +3733,22 @@ if(document.addEventListener){
 }
 
 /* ---------- Prätorianer-Konsole (π) ---------- */
+let praeAuth = false;
+try{ praeAuth = (typeof localStorage!=='undefined') && localStorage.getItem('derkauf_prae')==='1'; }catch(e){}
 document.getElementById('pi').addEventListener('click', ()=>{
+  if(praeAuth){ zeigeGalerie(); return; }               /* schon eingeloggt: kein Passwort mehr */
   if(typeof prompt==='undefined') return;
   const antwort = prompt('Was fürchtet ein einbeiniger Pirat am meisten?');
   if(antwort===null) return;
-  if(antwort.trim().toLowerCase()==='specht'){ zeigeGalerie(); }
+  if(antwort.trim().toLowerCase()==='specht'){ praeAuth=true; try{ localStorage.setItem('derkauf_prae','1'); }catch(e){} zeigeGalerie(); }
   else if(typeof alert!=='undefined'){ alert('Zugriff verweigert. Die Prätorianer grüssen.'); }
 });
+/* Prätorianer-Modus nach Cmd+R wiederherstellen: Kontrollpult erneut oeffnen, falls es offen war */
+try{
+  if(praeAuth && typeof localStorage!=='undefined' && localStorage.getItem('derkauf_pult')==='1'){
+    setTimeout(()=>{ try{ pultZeigen(); }catch(e){} }, 400);
+  }
+}catch(e){}
 
 /* ---------- SCHWEBENDES KONTROLLPULT (bleibt beim Durchklicken offen) ---------- */
 function pultZeigen(){
@@ -3754,7 +3763,7 @@ function pultZeigen(){
   const zu = document.createElement('button');
   zu.type='button'; zu.textContent='✕';
   zu.style.cssText = 'font:inherit;background:#111;color:#f88;border:1px solid #a44;cursor:pointer;padding:2px 8px';
-  zu.addEventListener('click', ()=> p.remove());
+  zu.addEventListener('click', ()=>{ p.remove(); try{ if(typeof localStorage!=='undefined') localStorage.setItem('derkauf_pult','0'); }catch(e){} });
   kopf.appendChild(zu);
   p.appendChild(kopf);
   function knopf(text, tu, farbe){
@@ -3814,6 +3823,7 @@ function pultZeigen(){
   const zx = zeile('Extras');
   zx.appendChild(knopf('Schach', ()=>{ schachOeffnen(); }));
   zx.appendChild(knopf('Galerie', ()=>{ zeigeGalerie(); }));
+  try{ if(typeof localStorage!=="undefined") localStorage.setItem("derkauf_pult","1"); }catch(e){}
   document.body.appendChild(p);
 }
 
