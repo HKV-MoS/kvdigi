@@ -982,7 +982,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '107';
+const BILD_VERSION = '108';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1119,6 +1119,8 @@ const ALEX_S = {
   w: ['kaufvertrag_alexw_s_0.png','kaufvertrag_alexw_s_1.png','kaufvertrag_alexw_s_2.png','kaufvertrag_alexw_s_3.png','kaufvertrag_alexw_s_4.png','kaufvertrag_alexw_s_5.png'],
 };
 let alexTalk = { t:null };
+const LEHRER_S = ['kaufvertrag_lehrer_s_0.png','kaufvertrag_lehrer_s_1.png','kaufvertrag_lehrer_s_2.png','kaufvertrag_lehrer_s_3.png','kaufvertrag_lehrer_s_4.png','kaufvertrag_lehrer_s_5.png'];
+let lehrerT = { t:null };
 function alexRuecksetzen(){
   const el=document.getElementById('sp-alex'); if(!el) return;
   const fr = kaeufer().frames;
@@ -1148,7 +1150,7 @@ const SPRITES = {
       x:125, y:64, w:54, h:116 },
   ],
   treppe: [
-    { id:'tlehrer', frames:['kaufvertrag_lehrer_1.png','kaufvertrag_lehrer_0.png','kaufvertrag_lehrer_geh_0.png','kaufvertrag_lehrer_geh_1.png','kaufvertrag_lehrer_geh_2.png','kaufvertrag_lehrer_geh_3.png','kaufvertrag_lehrer_geh_4.png','kaufvertrag_lehrer_geh_5.png'], x:159, y:98, w:70, h:152 },
+    { id:'tlehrer', frames:['kaufvertrag_lehrer_s_0.png','kaufvertrag_lehrer_s_1.png','kaufvertrag_lehrer_s_2.png','kaufvertrag_lehrer_s_3.png','kaufvertrag_lehrer_s_4.png','kaufvertrag_lehrer_s_5.png'], x:159, y:98, w:70, h:152 },
     { id:'trektor', frames:['figur_rektor_steh_3.png','figur_rektor_steh_3.png','figur_rektor_geh_0.png','figur_rektor_geh_1.png','figur_rektor_geh_2.png','figur_rektor_geh_3.png','figur_rektor_geh_4.png','figur_rektor_geh_5.png','figur_rektor_kopf_0.png','figur_rektor_kopf_1.png','figur_rektor_kopf_2.png','figur_rektor_kopf_5.png'], x:252, y:98, w:38, h:152 },
   ],
   weiche: [
@@ -1183,7 +1185,7 @@ if(typeof Image !== 'undefined'){
     .concat(Object.values(HAENDLER).map(h=>h.frames))
     .concat(Object.values(KAEUFER).map(k=>k.frames))
     .concat(Object.values(KAEUFER).map(k=>k.framesL).filter(Boolean))
-    .concat(Object.values(ALEX_S));
+    .concat(Object.values(ALEX_S)).concat([LEHRER_S]);
   alleFrames.forEach(frames=>{
     frames.forEach(url=>{
       const im=new Image();
@@ -2225,6 +2227,19 @@ function sprichKopf(id, dauerMs){
   if(el._bobT) clearTimeout(el._bobT);
   el._bobT = setTimeout(()=>{ try{ el.classList.remove('sprichBob'); el.classList.add('idleSway'); }catch(e){} }, dauerMs||2600);
 }
+function lehrerSprich(dauerMs){
+  const el=document.getElementById('sp-tlehrer');
+  if(!el || reduzierteBewegung()) return;
+  if(!spriteOk[LEHRER_S[0]]){ sprichKopf('tlehrer', dauerMs); return; }
+  if(lehrerT.t){ clearInterval(lehrerT.t); lehrerT.t=null; }
+  const seq=[1,0,2,0,3,0,4,5,0]; let i=0;
+  const ende=performance.now()+(dauerMs||2600);
+  lehrerT.t=setInterval(()=>{
+    const e=document.getElementById('sp-tlehrer');
+    if(!e || performance.now()>=ende){ if(lehrerT.t){ clearInterval(lehrerT.t); lehrerT.t=null; } if(e) e.setAttribute('href', vurl(LEHRER_S[0])); return; }
+    e.setAttribute('href', vurl(LEHRER_S[seq[i++ % seq.length]]));
+  }, 150);
+}
 function sprechPortraet(wer, dauerMs, opt){
   if(reduzierteBewegung()) return;
   const svg = szeneEl.querySelector('svg');
@@ -2304,7 +2319,7 @@ function gespraechBlase(){
   }, 3600);
   /* Sprecher-Portraet mit Mundbewegung, Figuren bleiben unveraendert */
   const pointe = (f === GESPRAECH_FETZEN[GESPRAECH_FETZEN.length-1]);
-  sprichKopf(f.wer, 3300);
+  if(f.wer==='tlehrer') lehrerSprich(3300); else sprichKopf(f.wer, 3300);
   if(pointe){ setTimeout(()=>{ if(aktuelleSzeneId==='treppe') sprichKopf('trektor', 1300); }, 4700); }
 }
 
