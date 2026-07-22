@@ -982,7 +982,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '109';
+const BILD_VERSION = '110';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1961,7 +1961,7 @@ function autoZeichne(){
   const gr = 0.78 + (660 - auto.x) * 0.00055;   /* naeher beim Betrachter = groesser */
   const w = 124 * gr, h = 62 * gr;
   let wipp = Math.sin(auto.strecke / 5.5) * (auto.phase===2 ? 1.3 : 0.45) * gr; /* Federn, beim Zuckeln kraeftiger */
-  if(auto.phase===1) wipp = Math.sin(performance.now() / 58) * 0.25 * gr;        /* Standgas-Vibrieren */
+  if(auto.phase===1) wipp = Math.sin(performance.now() / 520) * 1.0 * gr + Math.sin(performance.now() / 60) * 0.25 * gr; /* Standgas: sanftes Federwippen + feines Motorzittern */
   el.setAttribute('x', auto.x.toFixed(2));
   el.setAttribute('y', (autoBasis(auto.x) - h + wipp).toFixed(2));
   el.setAttribute('width', w.toFixed(2));
