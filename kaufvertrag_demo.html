@@ -982,7 +982,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '108';
+const BILD_VERSION = '109';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1121,6 +1121,8 @@ const ALEX_S = {
 let alexTalk = { t:null };
 const LEHRER_S = ['kaufvertrag_lehrer_s_0.png','kaufvertrag_lehrer_s_1.png','kaufvertrag_lehrer_s_2.png','kaufvertrag_lehrer_s_3.png','kaufvertrag_lehrer_s_4.png','kaufvertrag_lehrer_s_5.png'];
 let lehrerT = { t:null };
+const REKTOR_S = ['kaufvertrag_rektor_s_0.png','kaufvertrag_rektor_s_1.png','kaufvertrag_rektor_s_2.png','kaufvertrag_rektor_s_3.png','kaufvertrag_rektor_s_4.png','kaufvertrag_rektor_s_5.png'];
+let rektorT = { t:null };
 function alexRuecksetzen(){
   const el=document.getElementById('sp-alex'); if(!el) return;
   const fr = kaeufer().frames;
@@ -1151,7 +1153,7 @@ const SPRITES = {
   ],
   treppe: [
     { id:'tlehrer', frames:['kaufvertrag_lehrer_s_0.png','kaufvertrag_lehrer_s_1.png','kaufvertrag_lehrer_s_2.png','kaufvertrag_lehrer_s_3.png','kaufvertrag_lehrer_s_4.png','kaufvertrag_lehrer_s_5.png'], x:159, y:98, w:70, h:152 },
-    { id:'trektor', frames:['figur_rektor_steh_3.png','figur_rektor_steh_3.png','figur_rektor_geh_0.png','figur_rektor_geh_1.png','figur_rektor_geh_2.png','figur_rektor_geh_3.png','figur_rektor_geh_4.png','figur_rektor_geh_5.png','figur_rektor_kopf_0.png','figur_rektor_kopf_1.png','figur_rektor_kopf_2.png','figur_rektor_kopf_5.png'], x:252, y:98, w:38, h:152 },
+    { id:'trektor', frames:['kaufvertrag_rektor_s_0.png','kaufvertrag_rektor_s_1.png','kaufvertrag_rektor_s_2.png','kaufvertrag_rektor_s_3.png','kaufvertrag_rektor_s_4.png','kaufvertrag_rektor_s_5.png'], x:236, y:98, w:70, h:152 },
   ],
   weiche: [
     { id:'fenster', frames:['kaufvertrag_fenster_1.png','kaufvertrag_fenster_2.png','kaufvertrag_fenster_3.png'], x:46, y:24, w:18.4, h:109.2 },
@@ -1185,7 +1187,7 @@ if(typeof Image !== 'undefined'){
     .concat(Object.values(HAENDLER).map(h=>h.frames))
     .concat(Object.values(KAEUFER).map(k=>k.frames))
     .concat(Object.values(KAEUFER).map(k=>k.framesL).filter(Boolean))
-    .concat(Object.values(ALEX_S)).concat([LEHRER_S]);
+    .concat(Object.values(ALEX_S)).concat([LEHRER_S]).concat([REKTOR_S]);
   alleFrames.forEach(frames=>{
     frames.forEach(url=>{
       const im=new Image();
@@ -2240,6 +2242,19 @@ function lehrerSprich(dauerMs){
     e.setAttribute('href', vurl(LEHRER_S[seq[i++ % seq.length]]));
   }, 150);
 }
+function rektorSprich(dauerMs){
+  const el=document.getElementById('sp-trektor');
+  if(!el || reduzierteBewegung()) return;
+  if(!spriteOk[REKTOR_S[0]]){ sprichKopf('trektor', dauerMs); return; }
+  if(rektorT.t){ clearInterval(rektorT.t); rektorT.t=null; }
+  const seq=[1,0,2,0,3,0,4,5,0]; let i=0;
+  const ende=performance.now()+(dauerMs||2600);
+  rektorT.t=setInterval(()=>{
+    const e=document.getElementById('sp-trektor');
+    if(!e || performance.now()>=ende){ if(rektorT.t){ clearInterval(rektorT.t); rektorT.t=null; } if(e) e.setAttribute('href', vurl(REKTOR_S[0])); return; }
+    e.setAttribute('href', vurl(REKTOR_S[seq[i++ % seq.length]]));
+  }, 150);
+}
 function sprechPortraet(wer, dauerMs, opt){
   if(reduzierteBewegung()) return;
   const svg = szeneEl.querySelector('svg');
@@ -2319,8 +2334,8 @@ function gespraechBlase(){
   }, 3600);
   /* Sprecher-Portraet mit Mundbewegung, Figuren bleiben unveraendert */
   const pointe = (f === GESPRAECH_FETZEN[GESPRAECH_FETZEN.length-1]);
-  if(f.wer==='tlehrer') lehrerSprich(3300); else sprichKopf(f.wer, 3300);
-  if(pointe){ setTimeout(()=>{ if(aktuelleSzeneId==='treppe') sprichKopf('trektor', 1300); }, 4700); }
+  if(f.wer==='tlehrer') lehrerSprich(3300); else if(f.wer==='trektor') rektorSprich(3300); else sprichKopf(f.wer, 3300);
+  if(pointe){ setTimeout(()=>{ if(aktuelleSzeneId==='treppe') rektorSprich(1300); }, 4700); }
 }
 
 /* Auftritt: Rektor kommt von der Treppe (rechts), die Lehrperson durch den
