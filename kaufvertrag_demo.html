@@ -322,6 +322,9 @@
   .gzelle .gstatus{font-size:.68rem; letter-spacing:1px;}
   .gzelle .ok{color:var(--ega-gruen);}
   .gzelle .fehlt{color:var(--ega-rot);}
+  .gzelle.aktuell{border:3px solid var(--ega-rot); box-shadow:0 0 16px rgba(255,80,80,.75);}
+  .gzelle.aktuell .gname{color:var(--ega-rot);}
+  .gzelle .gaktuell{color:var(--ega-rot); font-size:.6rem; font-weight:bold; letter-spacing:1px; margin-bottom:4px;}
   .galerie .gzu{
     position:sticky; top:0; float:right; font:inherit; font-weight:bold;
     background:#000; color:var(--ega-gelb); border:2px solid var(--ega-gelb);
@@ -1015,7 +1018,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '128';
+const BILD_VERSION = '129';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1221,10 +1224,10 @@ const SPRITES = {
     { id:'taubeB', frames:['kaufvertrag_taube_b0.png','kaufvertrag_taube_b1.png'], x:90, y:240, w:26, h:16 },
   ],
   zimmer: [
-    { id:'bettkatze', frames:['kaufvertrag_bettkatze.png'], x:429, y:150, w:30, h:46 },
+    { id:'bettkatze', frames:['kaufvertrag_bettkatze.png'], x:390, y:150, w:30, h:46 },
   ],
   zimmer2: [
-    { id:'bettkatze', frames:['kaufvertrag_bettkatze.png'], x:429, y:150, w:30, h:46 },
+    { id:'bettkatze', frames:['kaufvertrag_bettkatze.png'], x:390, y:150, w:30, h:46 },
   ],
   laden: [
     { id:'meier', frames:null, x:373, y:69, w:71, h:64 },
@@ -4068,6 +4071,12 @@ function zeigeGalerie(){
   const raster = document.createElement('div'); raster.className='graster';
   alle.forEach(([name,url])=>{
     const z = document.createElement('div'); z.className='gzelle';
+    const istAktuell = aktuelleSzeneId && name === 'Szene '+aktuelleSzeneId;
+    if(istAktuell){
+      z.className='gzelle aktuell';
+      const b = document.createElement('div'); b.className='gaktuell'; b.textContent='\u25B6 AKTUELLES BILD';
+      z.appendChild(b);
+    }
     const im = document.createElement('img');
     const st = document.createElement('div'); st.className='gstatus'; st.textContent='…';
     im.addEventListener('load', ()=>{ st.textContent='✓ '+im.naturalWidth+'×'+im.naturalHeight; st.className='gstatus ok'; });
