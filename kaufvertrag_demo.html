@@ -982,7 +982,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '106';
+const BILD_VERSION = '107';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -2207,12 +2207,23 @@ function portraetWeg(){
   if(portraet.weg){ clearTimeout(portraet.weg); portraet.weg = null; }
   try{ const g = szeneEl.querySelector('#sprechKopf'); if(g) g.remove(); }catch(e){}
 }
+const FIGUR_SPRITES = ['lehrer','tlehrer','trektor','meier','alex'];
+function belebeFiguren(){
+  if(reduzierteBewegung()) return;
+  FIGUR_SPRITES.forEach(id=>{
+    if(id==='alex' && typeof alexTalk!=='undefined' && alexTalk.t) return;
+    const el=document.getElementById('sp-'+id);
+    if(el && !el.classList.contains('sprichBob')) el.classList.add('idleSway');
+  });
+}
+if(typeof document !== 'undefined'){ setInterval(belebeFiguren, 1500); }
 function sprichKopf(id, dauerMs){
   const el = document.getElementById('sp-'+id);
   if(!el || reduzierteBewegung()) return;
+  el.classList.remove('idleSway');
   el.classList.add('sprichBob');
   if(el._bobT) clearTimeout(el._bobT);
-  el._bobT = setTimeout(()=>{ try{ el.classList.remove('sprichBob'); }catch(e){} }, dauerMs||2600);
+  el._bobT = setTimeout(()=>{ try{ el.classList.remove('sprichBob'); el.classList.add('idleSway'); }catch(e){} }, dauerMs||2600);
 }
 function sprechPortraet(wer, dauerMs, opt){
   if(reduzierteBewegung()) return;
