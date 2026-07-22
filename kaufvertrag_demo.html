@@ -982,7 +982,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '110';
+const BILD_VERSION = '111';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1148,8 +1148,8 @@ function alexSprich(dauerMs){
 
 const SPRITES = {
   schule: [
-    { id:'lehrer', frames:['kaufvertrag_lehrer_0.png','kaufvertrag_lehrer_1.png','kaufvertrag_lehrer_2.png','kaufvertrag_lehrer_3.png','kaufvertrag_lehrer_mund_0.png','kaufvertrag_lehrer_mund_1.png','kaufvertrag_lehrer_mund_2.png','kaufvertrag_lehrer_mund_5.png'],
-      x:125, y:64, w:54, h:116 },
+    { id:'lehrer', frames:['kaufvertrag_lehrer_s_0.png','kaufvertrag_lehrer_s_1.png','kaufvertrag_lehrer_s_2.png','kaufvertrag_lehrer_s_3.png','kaufvertrag_lehrer_s_4.png','kaufvertrag_lehrer_s_5.png'],
+      x:96, y:60, w:60, h:128 },
   ],
   treppe: [
     { id:'tlehrer', frames:['kaufvertrag_lehrer_s_0.png','kaufvertrag_lehrer_s_1.png','kaufvertrag_lehrer_s_2.png','kaufvertrag_lehrer_s_3.png','kaufvertrag_lehrer_s_4.png','kaufvertrag_lehrer_s_5.png'], x:159, y:98, w:70, h:152 },
@@ -2255,6 +2255,21 @@ function rektorSprich(dauerMs){
     e.setAttribute('href', vurl(REKTOR_S[seq[i++ % seq.length]]));
   }, 150);
 }
+const flapT = {};
+function mundFlap(id, set, dauerMs){
+  const el=document.getElementById('sp-'+id);
+  if(!el || reduzierteBewegung()) return;
+  if(!spriteOk[set[0]]){ sprichKopf(id, dauerMs); return; }
+  if(flapT[id]){ clearInterval(flapT[id]); flapT[id]=null; }
+  const seq=[1,2,1,3,4,2,5,1,3]; let i=0;   /* natuerliches Gestikulieren beim Sprechen */
+  const ende=performance.now()+(dauerMs||2600);
+  el.setAttribute('href', vurl(set[1]));
+  flapT[id]=setInterval(()=>{
+    const e=document.getElementById('sp-'+id);
+    if(!e || performance.now()>=ende){ if(flapT[id]){ clearInterval(flapT[id]); flapT[id]=null; } if(e) e.setAttribute('href', vurl(set[0])); return; }
+    e.setAttribute('href', vurl(set[seq[i++ % seq.length]]));
+  }, 430);
+}
 function sprechPortraet(wer, dauerMs, opt){
   if(reduzierteBewegung()) return;
   const svg = szeneEl.querySelector('svg');
@@ -2334,8 +2349,8 @@ function gespraechBlase(){
   }, 3600);
   /* Sprecher-Portraet mit Mundbewegung, Figuren bleiben unveraendert */
   const pointe = (f === GESPRAECH_FETZEN[GESPRAECH_FETZEN.length-1]);
-  if(f.wer==='tlehrer') lehrerSprich(3300); else if(f.wer==='trektor') rektorSprich(3300); else sprichKopf(f.wer, 3300);
-  if(pointe){ setTimeout(()=>{ if(aktuelleSzeneId==='treppe') rektorSprich(1300); }, 4700); }
+  if(f.wer==='tlehrer') mundFlap('tlehrer', LEHRER_S, 3300); else if(f.wer==='trektor') mundFlap('trektor', REKTOR_S, 3300); else sprichKopf(f.wer, 3300);
+  if(pointe){ setTimeout(()=>{ if(aktuelleSzeneId==='treppe') mundFlap('trektor', REKTOR_S, 1300); }, 4700); }
 }
 
 /* Auftritt: Rektor kommt von der Treppe (rechts), die Lehrperson durch den
@@ -3405,7 +3420,7 @@ function zeige(id){
                     : LADE_SVG;
   dialogEl.innerHTML = '';
   blaseDialog(null,''); blaseHinweis('');
-  if(id==='schule' || id==='schule2'){ setTimeout(()=>{ try{ if(aktuelleSzeneId==='schule') sprichKopf('lehrer', 4200); }catch(e){} }, 350); }
+  if(id==='schule' || id==='schule2'){ setTimeout(()=>{ try{ if(aktuelleSzeneId==='schule') mundFlap('lehrer', LEHRER_S, 4200); }catch(e){} }, 350); }
 
   if(k.art==='produktwahl'){ baueProduktwahl(k); return; }
   if(k.art==='demoende'){ baueDemoEnde(); return; }
