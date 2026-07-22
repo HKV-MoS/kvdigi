@@ -1015,7 +1015,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '127';
+const BILD_VERSION = '128';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1180,6 +1180,13 @@ function alexSprich(dauerMs){
   }, 160);
 }
 
+/* Passanten-Gehzyklus: Seitenansicht, r=nach rechts, l=nach links (gespiegelt) */
+const PASS_FRAMES = {
+  mann_r:['kaufvertrag_passant_0.png','kaufvertrag_passant_1.png','kaufvertrag_passant_2.png','kaufvertrag_passant_3.png'],
+  mann_l:['kaufvertrag_passantl_0.png','kaufvertrag_passantl_1.png','kaufvertrag_passantl_2.png','kaufvertrag_passantl_3.png'],
+  frau_r:['kaufvertrag_passantin_0.png','kaufvertrag_passantin_1.png','kaufvertrag_passantin_2.png','kaufvertrag_passantin_3.png'],
+  frau_l:['kaufvertrag_passantinl_0.png','kaufvertrag_passantinl_1.png','kaufvertrag_passantinl_2.png','kaufvertrag_passantinl_3.png'],
+};
 const SPRITES = {
   schule: [
     { id:'lehrer', frames:['kaufvertrag_lehrer_s_0.png','kaufvertrag_lehrer_s_1.png','kaufvertrag_lehrer_s_2.png','kaufvertrag_lehrer_s_3.png','kaufvertrag_lehrer_s_4.png','kaufvertrag_lehrer_s_5.png'],
@@ -1194,12 +1201,16 @@ const SPRITES = {
     { id:'kraehe', frames:['kaufvertrag_kraehe_0.png','kaufvertrag_kraehe_1.png','kaufvertrag_kraehe_2.png'], x:41.2, y:115.5, w:26.5, h:18 },
   ],
   titel: [
+    { id:'passA', frames:['kaufvertrag_passant_0.png','kaufvertrag_passant_1.png','kaufvertrag_passant_2.png','kaufvertrag_passant_3.png'], x:-300, y:150, w:44, h:68 },
+    { id:'passB', frames:['kaufvertrag_passantin_0.png','kaufvertrag_passantin_1.png','kaufvertrag_passantin_2.png','kaufvertrag_passantin_3.png'], x:-300, y:150, w:44, h:68 },
     { id:'taubeA', frames:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'], x:336, y:186, w:18, h:12 },
     { id:'taubeB', frames:['kaufvertrag_taube_b0.png','kaufvertrag_taube_b1.png'], x:356, y:188, w:17, h:11 },
     { id:'auto', frames:['kaufvertrag_auto_0.png','kaufvertrag_auto_1.png','kaufvertrag_auto_2.png','kaufvertrag_auto_3.png','kaufvertrag_auto_4.png','kaufvertrag_auto_5.png','kaufvertrag_auto_6.png','kaufvertrag_auto_7.png','kaufvertrag_auto_8.png','kaufvertrag_auto_halt.png'],
       x:660, y:172, w:94, h:51 },
   ],
   discount: [
+    { id:'passA', frames:['kaufvertrag_passant_0.png','kaufvertrag_passant_1.png','kaufvertrag_passant_2.png','kaufvertrag_passant_3.png'], x:-300, y:138, w:44, h:66 },
+    { id:'passB', frames:['kaufvertrag_passantin_0.png','kaufvertrag_passantin_1.png','kaufvertrag_passantin_2.png','kaufvertrag_passantin_3.png'], x:-300, y:138, w:44, h:66 },
     { id:'katze', frames:['kaufvertrag_katze_0.png','kaufvertrag_katze_1.png','kaufvertrag_katze_2.png',
       'kaufvertrag_katze_3.png','kaufvertrag_katze_4.png','kaufvertrag_katze_5.png','kaufvertrag_katze_6.png'],
       x:680, y:198, w:30, h:24 },
@@ -1227,7 +1238,7 @@ if(typeof Image !== 'undefined'){
     .concat(Object.values(HAENDLER).map(h=>h.frames))
     .concat(Object.values(KAEUFER).map(k=>k.frames))
     .concat(Object.values(KAEUFER).map(k=>k.framesL).filter(Boolean))
-    .concat(Object.values(ALEX_S)).concat([LEHRER_S]).concat([REKTOR_S]);
+    .concat(Object.values(ALEX_S)).concat([LEHRER_S]).concat([REKTOR_S]).concat(Object.values(PASS_FRAMES));
   alleFrames.forEach(frames=>{
     frames.forEach(url=>{
       const im=new Image();
@@ -1907,6 +1918,73 @@ function katzeStart(){
 }
 function katzeStop(){ if(katze.timer){ clearInterval(katze.timer); katze.timer = null; } }
 
+/* =====================================================
+   PASSANTEN – Fussgaenger laufen gelegentlich durchs Bild
+   (Start-/Titelbild und Discount-Strasse)
+   ===================================================== */
+const PASS_KONFIG = {
+  titel:    { tempo:1.6 },
+  discount: { tempo:1.7 },
+};
+const passanten = { timer:null, szene:null, akteure:[] };
+function passZeichne(a){
+  const el = document.getElementById('sp-'+a.id);
+  if(!el) return;
+  el.setAttribute('x', a.x.toFixed(1));
+  el.setAttribute('href', vurl(PASS_FRAMES[a.person+'_'+a.dir][a.frame]));
+}
+function passVerstecke(a){
+  const el = document.getElementById('sp-'+a.id);
+  if(el) el.setAttribute('x','-300');
+}
+function passLaunch(a, k){
+  a.person = Math.random() < 0.5 ? 'mann' : 'frau';
+  a.dir    = Math.random() < 0.5 ? 'r' : 'l';
+  a.tempo  = k.tempo * (0.85 + Math.random()*0.35);
+  a.x      = a.dir==='r' ? -70 : 700;
+  a.frame  = 0; a.tick = 0; a.state = 'geh';
+  passZeichne(a);
+}
+function passTick(){
+  const k = PASS_KONFIG[passanten.szene];
+  if(!k) return;
+  passanten.akteure.forEach(a=>{
+    if(a.state==='idle'){
+      a.wart--;
+      if(a.wart<=0) passLaunch(a,k);
+      return;
+    }
+    a.tick++;
+    a.x += a.dir==='r' ? a.tempo : -a.tempo;
+    a.frame = Math.floor(a.tick/4) % 4;
+    passZeichne(a);
+    if(a.dir==='r' ? a.x > 700 : a.x < -70){
+      a.state = 'idle';
+      a.wart  = 280 + Math.floor(Math.random()*430);
+      passVerstecke(a);
+    }
+  });
+}
+function passStart(szene){
+  passStop();
+  const k = PASS_KONFIG[szene];
+  if(!k) return;
+  passanten.szene = szene;
+  passanten.akteure = [
+    { id:'passA', state:'idle', wart: 15 + Math.floor(Math.random()*70) },
+    { id:'passB', state:'idle', wart: 170 + Math.floor(Math.random()*280) },
+  ];
+  passanten.akteure.forEach(passVerstecke);
+  if(reduzierteBewegung()){
+    const a = passanten.akteure[0];
+    a.state='geh'; a.person='frau'; a.dir='r'; a.frame=0; a.x=110;
+    passZeichne(a);
+    return;
+  }
+  passanten.timer = setInterval(passTick, 120);
+}
+function passStop(){ if(passanten.timer){ clearInterval(passanten.timer); passanten.timer=null; } passanten.szene=null; }
+
 const tauben = { timer:null };
 /* Tauben fliegen auf, wenn der Fiat nach dem Badge-Halt beschleunigt */
 let taubenFlugAktiv = false;
@@ -2530,6 +2608,7 @@ function tiereWechsel(szene){
   rektorStop();
   if(szene==='treppe'){ auftrittStop(); gespraechStart(); } else { auftrittStop(); gespraechStop(); }
   if(szene==='discount') katzeStart(); else katzeStop();
+  if(szene==='titel' || szene==='discount') passStart(szene); else passStop();
   if(szene==='front' || szene==='titel') taubenStart(); else taubenStop();
 }
 
