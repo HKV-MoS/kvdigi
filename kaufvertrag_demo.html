@@ -52,6 +52,23 @@
     padding:5px 14px; white-space:nowrap; background:#000;
   }
   .weg-anzeige{font-size:.72rem; color:var(--ega-dgrau); margin-top:3px; letter-spacing:1px;}
+  #inventar{font:inherit;font-size:.9rem;background:none;border:none;color:var(--ega-gelb);cursor:pointer;padding:0 6px;}
+  #inventar:hover{filter:brightness(1.25);}
+  .invToast{position:fixed;right:14px;bottom:14px;z-index:9700;background:#1a1030;border:2px solid var(--ega-gelb);color:#fff;border-radius:8px;padding:9px 13px;font-size:.82rem;max-width:250px;box-shadow:0 6px 20px rgba(0,0,0,.5);opacity:0;transform:translateY(12px);transition:opacity .35s,transform .35s;}
+  .invToast.an{opacity:1;transform:translateY(0);}
+  .invToast b{color:var(--ega-gelb);}
+  .invDeckel{position:fixed;inset:0;z-index:9450;background:rgba(6,8,16,.9);display:flex;align-items:center;justify-content:center;padding:16px;}
+  .invKasten{width:min(94vw,520px);max-height:88vh;overflow:auto;background:#120c22;border:3px solid var(--ega-gelb);border-radius:12px;padding:18px;color:#eee;}
+  .invKasten h2{color:var(--ega-gelb);font-size:1.1rem;letter-spacing:2px;margin:0 0 4px;}
+  .invKasten .sub{color:#9a9a7a;font-size:.78rem;margin-bottom:14px;}
+  .invListe{display:flex;flex-direction:column;gap:8px;}
+  .invZeile{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);}
+  .invZeile .ico{font-size:1.15rem;flex:0 0 auto;}
+  .invZeile .art{font-weight:700;color:#fff;flex:0 0 74px;}
+  .invZeile .lab{color:#cfeccf;font-size:.9rem;}
+  .invZeile.zu{opacity:.5;}
+  .invZeile.zu .art,.invZeile.zu .lab{color:#888;}
+  .invZu{float:right;font:inherit;font-weight:700;background:#000;color:var(--ega-gelb);border:2px solid var(--ega-gelb);border-radius:6px;padding:3px 12px;cursor:pointer;}
 
   /* ------- Bühne ------- */
   .buehne{background:#000; border:2px solid var(--ega-dgrau); box-shadow:0 10px 40px rgba(0,0,0,.65);}
@@ -150,6 +167,16 @@
   .wegliste li{padding:3px 0;}
   .wegliste b{color:var(--ega-weiss); font-weight:bold;}
   .wegliste .offen{color:var(--ega-dgrau);}
+  .ende-sterne{margin:2px 0 12px; text-align:center;}
+  .ende-sterne .stars{font-size:1.9rem; color:#ffd000; letter-spacing:5px; display:block; text-shadow:0 2px 6px rgba(0,0,0,.4);}
+  .ende-sterne .sttitel{color:var(--ega-weiss); font-size:1.05rem; letter-spacing:1px;}
+  .lernbox{margin:14px 0; background:rgba(85,255,85,.06); border:1px solid rgba(85,255,85,.28); border-radius:8px; padding:12px 14px;}
+  .lerntitel{color:var(--ega-gelb); font-weight:bold; margin-bottom:8px; letter-spacing:1px;}
+  .lernliste{list-style:none; margin:0; padding:0;}
+  .lernliste li{padding:3px 0; font-size:.92rem;}
+  .lernliste li.ja{color:var(--ega-gruen);}
+  .lernliste li.nein{color:var(--ega-dgrau);}
+  .lernliste .lz-art{color:#8a8a6a; font-size:.76rem; margin-left:6px;}
 
   /* ------- Sprechblasen ------- */
   .szene-wrap{position:relative;}
@@ -351,9 +378,13 @@
       <input id="lautFx" type="range" min="0" max="100" step="5" title="FX-Lautstärke" style="width:104px; accent-color:#55FF55; align-self:center;">
       <button id="fx" type="button" title="Soundeffekte ein/aus">FX</button>
       <button id="vollbild" type="button" title="Vollbild (Esc beendet)">⛶</button>
-      <div>
-        <div class="rq" id="rq-anzeige">RQ 0</div>
-        <div class="weg-anzeige" id="weg-anzeige">Rechtsquotient</div>
+      <button id="inventar" type="button" title="Wissens-Inventar: gefundene Gesetze">📜 <span id="invZahl">0</span></button>
+      <div style="display:flex;align-items:center;gap:7px;">
+        <span id="alexStimmung" title="Alex' Stimmung" style="font-size:1.3rem;transition:transform .2s;">😐</span>
+        <div>
+          <div class="rq" id="rq-anzeige">RQ 0</div>
+          <div class="weg-anzeige" id="weg-anzeige">Rechtsquotient</div>
+        </div>
       </div>
     </div>
   </header>
@@ -412,6 +443,8 @@ const zustand = {
   weg:null,
   ergebnisse:{},          // wegKey -> RQ des Durchlaufs
   funde:{},               // Hotspot-Entdeckungen
+  gesetze:{},             // entdeckte OR-Artikel (Wissens-Inventar)
+  stimmung:2,             // Alex-Stimmung 0..4 (😱😟😐🙂😊)
   undoJoker:1,            // 1x Auswahl zuruecknehmen pro Abschnitt
 };
 
@@ -982,7 +1015,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '122';
+const BILD_VERSION = '125';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -2727,11 +2760,13 @@ function blaseDialog(sprecher, html, anhang){
     roll.textContent = b.classList.contains('zu') ? '📜 ausrollen' : '📜 einrollen';
   });
   blaseDialogEl.appendChild(b);
+  try{ gesetzeErfassen(html); }catch(e){}
 }
 function blaseHinweis(html, dauer){
   if(hinweisTimer){ clearTimeout(hinweisTimer); hinweisTimer=null; }
   if(!html){ blaseHinweisEl.innerHTML=''; return; }
   blaseHinweisEl.innerHTML = '<div class="blase hinweis">'+html+'</div>';
+  try{ gesetzeErfassen(html); }catch(e){}
   hinweisTimer = setTimeout(()=>{ blaseHinweisEl.innerHTML=''; }, dauer||6000);
 }
 
@@ -2804,6 +2839,7 @@ function frageOeffnen(hid){
       zustand.funde['frage_'+hid] = true;
       const fb = document.createElement('p');
       fb.className = 'frageFeedback';
+      stimmungUpdate(a.ok?1:-1);
       if(a.ok){
         setzeRQ(f.punkte);
         fb.innerHTML = f.richtig + ' <span class="rq-delta">+'+f.punkte+' RQ</span>';
@@ -2878,7 +2914,7 @@ titel:{ szene:'titel', sprecher:'ERZÄHLER',
 
 /* ---------- AKT -1: Schulzimmer (Theorie) ---------- */
 schule:{ szene:'schule', sprecher:'ERZÄHLER',
-  text:'Aarau, Freitagnachmittag, letzte Lektion ABU an der HKV. Auf dem Bildschirm läuft das <b>Ablaufschema eines Kaufvertrages</b> – Anfrage, Offerte, Bestellung … Ehrlich gesagt: Es ist schwer zu folgen. Vorne schläft jemand, in der Mitte entsteht heimlich ein Comic. Sie könnten einfach abwarten – oder nachfragen. <i>(Im Zimmer lässt sich einiges anklicken. Und die Wandtafel hätte da noch etwas …)</i>',
+  text:'Aarau, Freitagnachmittag, letzte Lektion ABU an der HKV. Auf dem Bildschirm läuft das <b>Ablaufschema eines Kaufvertrages</b> – Anfrage, Offerte, Bestellung … Ehrlich gesagt: Es ist schwer zu folgen. Vorne schläft jemand, in der Mitte entsteht heimlich ein Comic. Sie könnten einfach abwarten – oder nachfragen. <i>(Im Zimmer lässt sich einiges anklicken. Und die Wandtafel hätte da noch etwas …)</i> <b>Ihre Entscheidungen bestimmen, wie diese Geschichte endet.</b>',
   optionen:[
     { t:'«Gilt der Preis im Schaufenster eigentlich verbindlich?»', rq:1,
       fb:'Die Lehrperson strahlt: «Gute Frage! Preisanschriften im <b>Schaufenster und am Regal sind verbindliche Offerten</b> (OR 7). Prospekte, Kataloge und Inserate dagegen: <b>unverbindlich</b> – Preise können sich seit dem Druck geändert haben.»',
@@ -2994,6 +3030,62 @@ const rqEl = document.getElementById('rq-anzeige');
 const RQ_MAX = { vorspann:47, L:66, Z:66, M:67, gesamt:100 };
 function rqMaxAktuell(){ return zustand.weg ? RQ_MAX[zustand.weg] : RQ_MAX.vorspann; }
 function rqAnzeigen(){ rqEl.textContent = 'RQ ' + zustand.rq + ' / ' + rqMaxAktuell(); }
+/* ---------- Wissens-Inventar (gefundene Gesetze) ---------- */
+const GESETZE = [
+  ['OR 1','Vertragsabschluss'],
+  ['OR 6a','Unbestellte Ware'],
+  ['OR 7','Offerte (Schaufenster/Regal)'],
+  ['OR 23','Wesentlicher Irrtum'],
+  ['OR 102','Schuldnerverzug'],
+  ['OR 107','Nachfrist & Wahlrechte'],
+  ['OR 108','Fixkauf'],
+  ['OR 184','Kaufvertrag'],
+  ['OR 201','Pruef- & Ruegepflicht'],
+  ['OR 205','Wandelung / Minderung'],
+];
+function artikelImText(html, nr){
+  try{ const num=nr.replace(/^OR\s*/,'').replace('.','\\.');
+    return new RegExp('(OR|Art\\.)\\s*(Art\\.\\s*)?'+num+'(?![0-9])','i').test(html);
+  }catch(e){ return false; }
+}
+function gesetzBadge(){ const z=document.getElementById('invZahl'); if(z) z.textContent=Object.keys(zustand.gesetze||{}).length; }
+function gesetzToast(nr,label){
+  try{ const t=document.createElement('div'); t.className='invToast';
+    t.innerHTML='📜 <b>Neu im Wissens-Inventar</b><br>'+nr+' – '+label;
+    document.body.appendChild(t); requestAnimationFrame(()=>t.classList.add('an'));
+    setTimeout(()=>{ t.classList.remove('an'); setTimeout(()=>{try{t.remove();}catch(e){}},420); }, 3400);
+  }catch(e){}
+}
+function gesetzeErfassen(html){
+  if(!html || !zustand.gesetze) return;
+  GESETZE.forEach(([nr,label])=>{
+    if(!zustand.gesetze[nr] && artikelImText(html,nr)){ zustand.gesetze[nr]=true; gesetzToast(nr,label); gesetzBadge(); }
+  });
+}
+function inventarOeffnen(){
+  const alt=document.getElementById('invDeckel'); if(alt){ alt.remove(); return; }
+  const gef=Object.keys(zustand.gesetze||{}).length;
+  const d=document.createElement('div'); d.className='invDeckel'; d.id='invDeckel';
+  let zeilen='';
+  GESETZE.forEach(([nr,label])=>{
+    const ok=zustand.gesetze && zustand.gesetze[nr];
+    zeilen += '<div class="invZeile'+(ok?'':' zu')+'"><span class="ico">'+(ok?'✅':'🔒')+'</span><span class="art">'+nr+'</span><span class="lab">'+(ok?label:'noch nicht entdeckt')+'</span></div>';
+  });
+  d.innerHTML='<div class="invKasten"><button type="button" class="invZu">Schliessen ✕</button><h2>📜 WISSENS-INVENTAR</h2><div class="sub">Gefundene Gesetze: '+gef+' / '+GESETZE.length+' · sammelt sich beim Spielen</div><div class="invListe">'+zeilen+'</div></div>';
+  document.body.appendChild(d);
+  d.querySelector('.invZu').addEventListener('click', ()=>d.remove());
+  d.addEventListener('click', e=>{ if(e.target===d) d.remove(); });
+}
+if(document.getElementById('inventar')){ document.getElementById('inventar').addEventListener('click', inventarOeffnen); }
+gesetzBadge();
+const STIMMUNG_EMOJI=['😱','😟','😐','🙂','😊'];
+function stimmungAnzeigen(){ const el=document.getElementById('alexStimmung'); if(el) el.textContent=STIMMUNG_EMOJI[zustand.stimmung==null?2:zustand.stimmung]; }
+function stimmungUpdate(d){
+  zustand.stimmung=Math.max(0,Math.min(4,(zustand.stimmung==null?2:zustand.stimmung)+d));
+  const el=document.getElementById('alexStimmung');
+  if(el){ el.textContent=STIMMUNG_EMOJI[zustand.stimmung]; el.style.transform='scale(1.35)'; setTimeout(()=>{try{el.style.transform='';}catch(e){}},220); }
+}
+stimmungAnzeigen();
 const wegEl = document.getElementById('weg-anzeige');
 
 function setzeRQ(delta){
@@ -3020,7 +3112,7 @@ function speichereSpielstand(id){
       rq:zustand.rq, rqAkt1:zustand.rqAkt1,
       flags:zustand.flags, flagsAkt1:zustand.flagsAkt1,
       weg:zustand.weg, ergebnisse:zustand.ergebnisse,
-      funde:zustand.funde, undoJoker:zustand.undoJoker,
+      funde:zustand.funde, undoJoker:zustand.undoJoker, gesetze:zustand.gesetze, stimmung:zustand.stimmung,
     }));
   }catch(e){ /* privater Modus o.ae. - dann eben ohne Speichern */ }
 }
@@ -3038,9 +3130,9 @@ function ladeSpielstand(){
       rq:d.rq||0, rqAkt1:d.rqAkt1||0,
       flags:d.flags||{}, flagsAkt1:d.flagsAkt1||{},
       weg:d.weg||null, ergebnisse:d.ergebnisse||{},
-      funde:d.funde||{}, undoJoker:(d.undoJoker===0?0:1),
+      funde:d.funde||{}, undoJoker:(d.undoJoker===0?0:1), gesetze:d.gesetze||{}, stimmung:(d.stimmung==null?2:d.stimmung),
     });
-    rqAnzeigen();
+    rqAnzeigen(); gesetzBadge(); stimmungAnzeigen();
     setzeWegAnzeige();
     zeige(d.knoten);
     blaseHinweis('Spielstand geladen – weiter geht\'s. (Klick auf den Titel beginnt von vorne.)', 6000);
@@ -3495,6 +3587,7 @@ function waehle(o, box){
   if(aktuelleSzeneId==='laden') alexSprich(2200);
   if(o.flag) zustand.flags[o.flag]=true;
   if(o.rq) setzeRQ(o.rq);
+  if(o.fb) stimmungUpdate(o.rq>0?1:-1);
   if(!o.fb){ zeige(o.ziel); return; }
 
   if(aktuelleSzeneId==='laden'){
@@ -3505,6 +3598,7 @@ function waehle(o, box){
   const fb = document.createElement('div');
   fb.className = 'feedback' + (o.rq>0?'':' neutral');
   fb.innerHTML = ersetze(o.fb) + (o.rq>0 ? ' <span class="rq-delta">+'+o.rq+' RQ</span>' : '');
+  try{ gesetzeErfassen(o.fb); }catch(e){}
   box.appendChild(fb);
   const w = document.createElement('button');
   w.className='weiter'; w.type='button'; w.textContent='Weiter ▸';
@@ -3573,7 +3667,7 @@ function baueProduktwahl(k){
     const b=document.createElement('button'); b.className='pkarte'; b.type='button';
     b.innerHTML = '<span class="pico">'+p.ico+'</span><span class="pname">'+p.name+'</span><span class="ppreis">'+chf(p.preis)+'</span>';
     b.addEventListener('click', ()=>{
-      zustand.produkt=p; zustand.rq=0; zustand.flags={}; zustand.ergebnisse={}; zustand.funde={};
+      zustand.produkt=p; zustand.rq=0; zustand.flags={}; zustand.ergebnisse={}; zustand.funde={}; zustand.gesetze={}; zustand.stimmung=2; try{gesetzBadge();stimmungAnzeigen();}catch(e){}
       zustand.haendler = 'herr';   /* Akt 1: der Chef persoenlich */
       zustand.undoJoker = 1;
       rqAnzeigen();
@@ -3636,6 +3730,25 @@ function baueWeiche(k){
 
 let endeRollTimer = null;
 let endeFadeTimer = null;
+function sterne(rq, max){
+  const p = max>0 ? rq/max : 0;
+  let n, titel;
+  if(p>=0.90){ n=5; titel='Jurist:in des Jahres'; }
+  else if(p>=0.72){ n=4; titel='Sehr gut gelöst'; }
+  else if(p>=0.52){ n=3; titel='Solide durchgekommen'; }
+  else if(p>=0.32){ n=2; titel='Fast geschafft'; }
+  else { n=1; titel='Über den Tisch gezogen'; }
+  return { s:'★'.repeat(n)+'☆'.repeat(5-n), titel:titel };
+}
+const LERNZIELE = [
+  ['Kaufvertrag entsteht (Bestellung)','OR 184'],
+  ['Offerte vs. unverbindliche Werbung','OR 7'],
+  ['Wesentlicher Irrtum beim Preis','OR 23'],
+  ['Lieferverzug & Nachfrist','OR 107'],
+  ['Schuldnerverzug','OR 102'],
+  ['Prüf- & Rügepflicht (Mängelrüge)','OR 201'],
+  ['Wandelung / Minderung','OR 205'],
+];
 function baueEnde(){
   if(zustand.weg) zustand.ergebnisse[zustand.weg]=zustand.rq;
   if(fx.an){ try{ ambEinmal('kaufvertrag_fx_kasse.mp3', 0.6); }catch(e){} }   /* Kasse: cha-ching zur Abrechnung */
@@ -3647,6 +3760,10 @@ function baueEnde(){
   const wert=document.createElement('p'); wert.className='ende-wertung';
   wert.textContent='RQ '+zustand.rq+' von '+rqMaxAktuell()+' möglich – '+wertungsText(zustand.rq);
   dialogEl.appendChild(wert);
+  const st=sterne(zustand.rq, rqMaxAktuell());
+  const sterneEl=document.createElement('p'); sterneEl.className='ende-sterne';
+  sterneEl.innerHTML='<span class="stars">'+st.s+'</span><span class="sttitel">'+st.titel+'</span>';
+  dialogEl.appendChild(sterneEl);
 
   const liste=document.createElement('ul'); liste.className='wegliste';
   Object.keys(WEGE).forEach(key=>{
@@ -3673,6 +3790,13 @@ function baueEnde(){
     ? '<b>Alle drei Wege gemeistert!</b> Sie haben erlebt: Der gleiche Vertrag kann auf ganz unterschiedliche Weise in Schieflage geraten – und das OR hält für jede Störung ein Rezept bereit. Vergleichen Sie zum Abschluss mit der Übersicht: Welche <b>«wichtigen Elemente»</b> des Kaufvertrags sind Ihnen in den Geschichten begegnet?'
     : 'Tipp: Spielen Sie auch die anderen Wege – dieselbe Ausgangslage, ganz andere Rechtsfragen. Entscheidungen aus Akt 1 (Quittung? Termin schriftlich?) wirken dort unterschiedlich nach.';
   dialogEl.appendChild(tx);
+
+  const refl=document.createElement('div'); refl.className='lernbox';
+  let lz='<div class="lerntitel">📚 Was du kennengelernt hast</div><ul class="lernliste">';
+  LERNZIELE.forEach(([txt,art])=>{ const ok=zustand.gesetze && zustand.gesetze[art]; lz+='<li class="'+(ok?'ja':'nein')+'">'+(ok?'☑':'☐')+' '+txt+'<span class="lz-art">'+art+'</span></li>'; });
+  lz+='</ul>';
+  refl.innerHTML=lz;
+  dialogEl.appendChild(refl);
 
   const box=document.createElement('div'); box.className='optionen';
   if(gespielt<3){
@@ -3712,7 +3836,7 @@ function wertungsText(rq){
 function neustart(){
   loescheSpielstand();
   zustand.produkt=null; zustand.rq=0; zustand.rqAkt1=0; zustand.haendler='herr';
-  zustand.flags={}; zustand.flagsAkt1={}; zustand.weg=null; zustand.ergebnisse={}; zustand.funde={}; zustand.undoJoker=1;
+  zustand.flags={}; zustand.flagsAkt1={}; zustand.weg=null; zustand.ergebnisse={}; zustand.funde={}; zustand.undoJoker=1; zustand.gesetze={}; zustand.stimmung=2; try{gesetzBadge();stimmungAnzeigen();}catch(e){}
   rqAnzeigen(); setzeWegAnzeige();
   zeige('titel');
 }
