@@ -1016,7 +1016,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '126';
+const BILD_VERSION = '127';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1209,6 +1209,12 @@ const SPRITES = {
     { id:'nest', frames:['kaufvertrag_nest_0.png','kaufvertrag_nest_1.png','kaufvertrag_nest_2.png'], x:503, y:66, w:25, h:23.2 },
     { id:'taubeA', frames:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'], x:62, y:238, w:28, h:17 },
     { id:'taubeB', frames:['kaufvertrag_taube_b0.png','kaufvertrag_taube_b1.png'], x:90, y:240, w:26, h:16 },
+  ],
+  zimmer: [
+    { id:'bettkatze', frames:['kaufvertrag_bettkatze.png'], x:429, y:150, w:30, h:46 },
+  ],
+  zimmer2: [
+    { id:'bettkatze', frames:['kaufvertrag_bettkatze.png'], x:429, y:150, w:30, h:46 },
   ],
   laden: [
     { id:'meier', frames:null, x:373, y:69, w:71, h:64 },
