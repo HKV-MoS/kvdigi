@@ -333,9 +333,9 @@
 .introDeckel video{ width:100%; height:100%; object-fit:cover; display:block; }
 .introDeckel .introHinweis{ position:absolute; right:12px; bottom:8px; color:#8f8; font-size:.7rem;
   font-family:inherit; text-shadow:0 1px 3px #000; opacity:.85; pointer-events:none; }
-.introDeckel video{ transition:opacity .7s; }
+.introDeckel video{ transition:opacity .4s; }
 .introDeckel.schwarz video{ opacity:0; }
-.introDeckel.weg{ opacity:0; transition:opacity 1.1s; }
+.introDeckel.weg{ opacity:0; transition:opacity .55s; }
 #sp-schild2{ opacity:0; transition:opacity 1.6s steps(8); }
 #sp-schild2.schild-an{ opacity:1; }
 .rechner-zappel{ animation: rechnerZappel 1.9s ease-in-out infinite; }
@@ -982,7 +982,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '112';
+const BILD_VERSION = '113';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1745,12 +1745,12 @@ function introZeigen(){
     const ende = ()=>{
       if(vorbei) return; vorbei = true;
       d.classList.add('schwarz');                /* Video -> Schwarz */
-      setTimeout(()=>{ d.classList.add('weg'); }, 900);        /* Schwarz -> Szene */
+      setTimeout(()=>{ d.classList.add('weg'); }, 450);        /* Schwarz -> Szene (halbiert) */
       setTimeout(()=>{
         try{ d.remove(); }catch(e){}
         dialogSperren(false);
         if(aktuelleSzeneId === 'titel') autoStart();           /* jetzt darf der Panda */
-      }, 2050);
+      }, 1050);
     };
     const v = d.querySelector('video');
     v.addEventListener('ended', ende);
@@ -1978,14 +1978,7 @@ function autoZeichne(){
 }
 const AUTO_STOP_X  = 491;      /* Halt: Daumen auf Hoehe des mittleren Pfostens */
 const AUTO_HALT_MS = 3200;
-function autoMotor(vol){
-  if(!fx.an){ autoMotorStopp(); return; }
-  try{
-    if(!auto.motor){ auto.motor = new Audio(vurl('kaufvertrag_fx_motor.mp3')); auto.motor.loop = true; }
-    auto.motor.volume = Math.min(1, vol * FX_BOOST * laut.x);
-    if(auto.motor.paused) auto.motor.play().catch(()=>{});
-  }catch(e){}
-}
+function autoMotor(vol){ /* alter Motor-Loop entfernt – nur der ElevenLabs-Startsound bleibt */ }
 function autoMotorStopp(){ if(auto.motor){ try{ auto.motor.pause(); }catch(e){} } }
 function autoSchritt(t){
   if(!auto.letztT) auto.letztT = t;
