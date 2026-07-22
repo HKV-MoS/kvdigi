@@ -983,7 +983,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '105';
+const BILD_VERSION = '106';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1105,7 +1105,7 @@ const HAENDLER = {
   frau:{ sprecher:'FRAU MEIER', hotName:'Frau Meier',
     hotAnschauen:'Frau Meier, Mitinhaberin. Ihr Mann ist unterwegs – und vom mündlichen Geschäft von damals weiss sie nichts. Zum Glück gibt es Papier.',
     frames:['kaufvertrag_frau_0.png','kaufvertrag_frau_1.png','kaufvertrag_frau_2.png','kaufvertrag_frau_3.png'],
-    w:64, h:64, sx:146, sy:87 },
+    w:64, h:64, sx:146, sy:69 },
 };
 function haendler(){ return HAENDLER[zustand.haendler || 'herr']; }
 const KAEUFER = {
@@ -1173,7 +1173,7 @@ const SPRITES = {
     { id:'taubeB', frames:['kaufvertrag_taube_b0.png','kaufvertrag_taube_b1.png'], x:90, y:240, w:26, h:16 },
   ],
   laden: [
-    { id:'meier', frames:null, x:373, y:87, w:71, h:64 },
+    { id:'meier', frames:null, x:373, y:69, w:71, h:64 },
     { id:'alex',  frames:['kaufvertrag_alex_0.png','kaufvertrag_alex_1.png','kaufvertrag_alex_2.png'],
       x:104, y:85, w:73, h:175 },
   ],
