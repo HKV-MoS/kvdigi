@@ -983,7 +983,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '111';
+const BILD_VERSION = '112';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1009,6 +1009,7 @@ HOTSPOTS.treppe = [
     a:{ anschauen:'«<b>Rektorat · Sitzungszimmer</b>». Dahinter werden Stundenpläne geschmiedet und Budgets gebogen.',
         oeffne:'Ohne Traktandenliste kommt hier niemand rein. Nicht einmal Sie.' } },
   { id:'uhr', name:'Wanduhr', x:580,y:20,w:40,h:60,
+    fund:{ verb:'anschauen', rq:2, text:'<b>Tempus fugit</b> – «die Zeit flieht». Der Sekundenzeiger dreht unbeirrt weiter, w&auml;hrend <b>17:04</b> stehen bleibt. Passt: Im Kaufvertragsrecht z&auml;hlt jede Frist – wer den <b>Liefertermin</b> verpasst, kommt in <b>Verzug</b> (Art. 102 OR). Gut, hat die Uhr Sie daran erinnert.' },
     a:{ anschauen:'Genau <b>17:04</b> – Feierabend seit vier Minuten. Die Uhr tickt hier oben etwas feierlicher als im Schulzimmer – findet die Uhr.',
         benutze:'Sie tickt auch ohne Sie. Zuverlässigste Mitarbeiterin des Hauses.' } },
   { id:'feuermelder', name:'Feuermelder', x:154,y:116,w:20,h:20,
@@ -3381,6 +3382,12 @@ function vordergrundSVG(key){
   if(key === 'titel'){
     /* Badge-Pfosten unten rechts – der Fiat faehrt hintendurch */
     return '<image href="'+vurl('kaufvertrag_pfosten_vg.png')+'" x="556.4" y="171.8" width="37.2" height="46.5"/>';
+  }
+  if(key === 'treppe'){
+    /* Sekundenzeiger auf der Wanduhr: Zeit bleibt 17:04, nur die Sekunde wandert (Echtzeit) */
+    return '<g><line x1="609" y1="50" x2="609" y2="30" stroke="#b23b2e" stroke-width="0.7" stroke-linecap="round">'+
+           '<animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 609 46" to="360 609 46" dur="60s" repeatCount="indefinite"/>'+
+           '</line><circle cx="609" cy="46" r="1.1" fill="#b23b2e"/></g>';
   }
   if(key !== 'schule') return '';
   return '<image href="'+vurl('kaufvertrag_pult_vg.png')+'" x="63.2" y="128.8" width="136" height="60.8"/>' +
