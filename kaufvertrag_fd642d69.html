@@ -983,7 +983,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '104';
+const BILD_VERSION = '105';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1115,6 +1115,33 @@ const KAEUFER = {
      framesL:['kaufvertrag_alexwl_0.png','kaufvertrag_alexwl_1.png','kaufvertrag_alexwl_2.png'], w:73, h:175 },
 };
 function kaeufer(){ return KAEUFER[zustand.kaeuferin || 'm']; }
+const ALEX_S = {
+  m: ['kaufvertrag_alex_s_0.png','kaufvertrag_alex_s_1.png','kaufvertrag_alex_s_2.png','kaufvertrag_alex_s_3.png','kaufvertrag_alex_s_4.png','kaufvertrag_alex_s_5.png'],
+  w: ['kaufvertrag_alexw_s_0.png','kaufvertrag_alexw_s_1.png','kaufvertrag_alexw_s_2.png','kaufvertrag_alexw_s_3.png','kaufvertrag_alexw_s_4.png','kaufvertrag_alexw_s_5.png'],
+};
+let alexTalk = { t:null };
+function alexRuecksetzen(){
+  const el=document.getElementById('sp-alex'); if(!el) return;
+  const fr = kaeufer().frames;
+  if(fr && spriteOk[fr[0]]) el.setAttribute('href', vurl(fr[0]));
+  if(!reduzierteBewegung()) el.classList.add('idleSway');
+}
+function alexSprich(dauerMs){
+  const el=document.getElementById('sp-alex');
+  if(!el || reduzierteBewegung()) return;
+  const set = ALEX_S[zustand.kaeuferin || 'm'];
+  if(!set || !spriteOk[set[0]]) return;
+  if(alexTalk.t){ clearInterval(alexTalk.t); alexTalk.t=null; }
+  el.classList.remove('idleSway');
+  const seq=[1,0,2,0,3,0,4,5,0]; let i=0;
+  const ende = performance.now() + (dauerMs||2200);
+  el.setAttribute('href', vurl(set[0]));
+  alexTalk.t = setInterval(()=>{
+    const e=document.getElementById('sp-alex');
+    if(!e || performance.now() >= ende){ clearInterval(alexTalk.t); alexTalk.t=null; alexRuecksetzen(); return; }
+    e.setAttribute('href', vurl(set[seq[i++ % seq.length]]));
+  }, 160);
+}
 
 const SPRITES = {
   schule: [
@@ -1156,7 +1183,8 @@ if(typeof Image !== 'undefined'){
   const alleFrames = Object.values(SPRITES).flat().map(sp=> sp.frames || [])
     .concat(Object.values(HAENDLER).map(h=>h.frames))
     .concat(Object.values(KAEUFER).map(k=>k.frames))
-    .concat(Object.values(KAEUFER).map(k=>k.framesL).filter(Boolean));
+    .concat(Object.values(KAEUFER).map(k=>k.framesL).filter(Boolean))
+    .concat(Object.values(ALEX_S));
   alleFrames.forEach(frames=>{
     frames.forEach(url=>{
       const im=new Image();
@@ -1190,6 +1218,7 @@ function stoppeIdle(){
   if(typeof meierIdleTimer !== 'undefined' && meierIdleTimer){ clearInterval(meierIdleTimer); meierIdleTimer = null; }
   if(idleTimer){ clearInterval(idleTimer); idleTimer=null; }
   if(idleRueck){ clearTimeout(idleRueck); idleRueck=null; }
+  if(typeof alexTalk!=='undefined' && alexTalk.t){ clearInterval(alexTalk.t); alexTalk.t=null; }
 }
 function spriteFrame(id, n){
   const el = document.getElementById('sp-'+id);
@@ -3696,6 +3725,7 @@ function baueDialog(k){
 }
 
 function waehle(o, box){
+  if(aktuelleSzeneId==='laden') alexSprich(2200);
   if(o.flag) zustand.flags[o.flag]=true;
   if(o.rq) setzeRQ(o.rq);
   if(!o.fb){ zeige(o.ziel); return; }
