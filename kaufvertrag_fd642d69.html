@@ -2673,7 +2673,7 @@ function tiereWechsel(szene){
   rektorStop();
   if(szene==='treppe'){ auftrittStop(); gespraechStart(); } else { auftrittStop(); gespraechStop(); }
   if(szene==='discount') katzeStart(); else katzeStop();
-  if(szene==='titel') passStart(szene); else passStop();
+  passStop();   /* Passanten deaktiviert (Schulhof leer) */
   if(szene==='front' || szene==='titel') taubenStart(); else taubenStop();
 }
 
