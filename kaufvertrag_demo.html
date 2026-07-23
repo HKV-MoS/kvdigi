@@ -1018,7 +1018,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '136';
+const BILD_VERSION = '137';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -2640,7 +2640,11 @@ function veloReaktion(){
   ['mann2','frau2'].forEach(id=>{ if(flapT[id]){ clearInterval(flapT[id]); flapT[id]=null; } });
   const m=document.getElementById('sp-mann2'); if(m) m.setAttribute('href', vurl('kaufvertrag_mann2hip.png'));  /* Hände in die Hüften */
   const w=document.getElementById('sp-frau2'); if(w) w.setAttribute('href', vurl('kaufvertrag_frau2hip.png'));
-  if(veloN % 10 === 0){ setTimeout(()=>{ try{ veloSpruch('What a moron.'); }catch(e){} }, 650); }
+  if(veloN % 10 === 0){
+    let bonus=false;
+    if(zustand.flags && !zustand.flags.veloMoron){ zustand.flags.veloMoron=true; try{ setzeRQ(2); }catch(e){} bonus=true; }
+    setTimeout(()=>{ try{ veloSpruch(bonus ? 'What a moron. (+2 RQ)' : 'What a moron.'); }catch(e){} }, 650);
+  }
   if(veloT) clearTimeout(veloT);
   veloT = setTimeout(()=>{
     frontGespr.pause = false;
