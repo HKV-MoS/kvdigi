@@ -3973,6 +3973,7 @@ function zeige(id){
   const k = KNOTEN[id];
   if(!k){ console.error('Unbekannter Knoten', id); return; }
   knotenSnapshot = { id:id, rq:zustand.rq, flags:Object.assign({}, zustand.flags) };
+  try{ pultAktuellMarkieren(); }catch(e){}
   speichereSpielstand(id);
   spriteStopp();
   stoppeIdle();
@@ -4350,6 +4351,16 @@ try{
 }catch(e){}
 
 /* ---------- SCHWEBENDES KONTROLLPULT (bleibt beim Durchklicken offen) ---------- */
+function pultAktuellMarkieren(){
+  const pult=document.getElementById('pult'); if(!pult) return;
+  const cur = knotenSnapshot && knotenSnapshot.id;
+  [...pult.querySelectorAll('button')].forEach(b=>{
+    if(typeof KNOTEN!=='undefined' && KNOTEN[b.textContent]!==undefined){
+      if(b.textContent===cur){ b.style.borderColor='#f33'; b.style.borderWidth='2px'; b.style.color='#f88'; }
+      else { b.style.borderColor='#4a4'; b.style.borderWidth='1px'; b.style.color='#8f8'; }
+    }
+  });
+}
 function pultZeigen(){
   const alt = document.getElementById('pult');
   if(alt){ alt.remove(); }
