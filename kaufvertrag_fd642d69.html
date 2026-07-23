@@ -1019,7 +1019,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '133';
+const BILD_VERSION = '134';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1162,6 +1162,8 @@ let lehrerT = { t:null };
 const REKTOR_S = ['kaufvertrag_rektor_s_0.png','kaufvertrag_rektor_s_1.png','kaufvertrag_rektor_s_2.png','kaufvertrag_rektor_s_3.png','kaufvertrag_rektor_s_4.png','kaufvertrag_rektor_s_5.png'];
 let rektorT = { t:null };
 const MANN2_S = ['kaufvertrag_mann2_0.png','kaufvertrag_mann2_1.png','kaufvertrag_mann2_2.png','kaufvertrag_mann2_3.png','kaufvertrag_mann2_4.png','kaufvertrag_mann2_5.png'];
+const MANN2_L = ['kaufvertrag_mann2l_0.png','kaufvertrag_mann2l_1.png','kaufvertrag_mann2l_2.png','kaufvertrag_mann2l_3.png','kaufvertrag_mann2l_4.png','kaufvertrag_mann2l_5.png'];
+const WASSER_FRAMES = ['kaufvertrag_wasser_0.png','kaufvertrag_wasser_1.png','kaufvertrag_wasser_2.png'];
 const FRAU2_S = ['kaufvertrag_frau2_0.png','kaufvertrag_frau2_1.png','kaufvertrag_frau2_2.png','kaufvertrag_frau2_3.png','kaufvertrag_frau2_4.png','kaufvertrag_frau2_5.png'];
 const FRAU2_R = ['kaufvertrag_frau2r_0.png','kaufvertrag_frau2r_1.png','kaufvertrag_frau2r_2.png','kaufvertrag_frau2r_3.png','kaufvertrag_frau2r_4.png','kaufvertrag_frau2r_5.png'];
 function alexRuecksetzen(){
@@ -1222,6 +1224,7 @@ const SPRITES = {
   ],
   front: [
     { id:'nest', frames:['kaufvertrag_nest_0.png','kaufvertrag_nest_1.png','kaufvertrag_nest_2.png'], x:503, y:66, w:25, h:23.2 },
+    { id:'wasser', frames:['kaufvertrag_wasser_0.png','kaufvertrag_wasser_1.png','kaufvertrag_wasser_2.png'], x:585, y:176, w:10, h:40 },
     { id:'mann2', frames:['kaufvertrag_mann2_0.png','kaufvertrag_mann2_1.png','kaufvertrag_mann2_2.png','kaufvertrag_mann2_3.png','kaufvertrag_mann2_4.png','kaufvertrag_mann2_5.png'], x:449, y:92, w:25, h:60 },
     { id:'frau2', frames:['kaufvertrag_frau2_0.png','kaufvertrag_frau2_1.png','kaufvertrag_frau2_2.png','kaufvertrag_frau2_3.png','kaufvertrag_frau2_4.png','kaufvertrag_frau2_5.png'], x:476, y:95, w:24, h:57 },
     { id:'taubeA', frames:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'], x:62, y:238, w:28, h:17 },
@@ -1245,7 +1248,7 @@ if(typeof Image !== 'undefined'){
     .concat(Object.values(HAENDLER).map(h=>h.frames))
     .concat(Object.values(KAEUFER).map(k=>k.frames))
     .concat(Object.values(KAEUFER).map(k=>k.framesL).filter(Boolean))
-    .concat(Object.values(ALEX_S)).concat([LEHRER_S]).concat([REKTOR_S]).concat(Object.values(PASS_FRAMES)).concat([MANN2_S, FRAU2_S, FRAU2_R]);
+    .concat(Object.values(ALEX_S)).concat([LEHRER_S]).concat([REKTOR_S]).concat(Object.values(PASS_FRAMES)).concat([MANN2_S, MANN2_L, FRAU2_S, FRAU2_R, WASSER_FRAMES]);
   alleFrames.forEach(frames=>{
     frames.forEach(url=>{
       const im=new Image();
@@ -1575,6 +1578,7 @@ function fxDateienLaden(){
   });
 }
 function fxFuer(hid){
+  if(hid==='velo' && aktuelleSzeneId==='front'){ try{ veloReaktion(); }catch(e){} }
   if(!fx.an) return;
   const a = fxAudio[hid];
   if(a && a.ok){
@@ -1979,7 +1983,6 @@ function passStart(szene){
   passanten.szene = szene;
   passanten.akteure = [
     { id:'passA', state:'idle', wart: 15 + Math.floor(Math.random()*70) },
-    { id:'passB', state:'idle', wart: 170 + Math.floor(Math.random()*280) },
   ];
   passanten.akteure.forEach(passVerstecke);
   if(reduzierteBewegung()){
@@ -2605,12 +2608,12 @@ function nestStart(){
 }
 function nestStop(){ if(nestT.t){ clearInterval(nestT.t); nestT.t = null; } }
 /* Gespraech vor der Schule (nahe der Kraehe): Mann & Frau reden abwechselnd */
-const frontGespr = { t:null, wer:0, frauN:0 };
+const frontGespr = { t:null, wer:0, frauN:0, pause:false };
 function frontGespraechStart(){
   frontGespraechStop();
   if(reduzierteBewegung()) return;
   const schritt=()=>{
-    if(aktuelleSzeneId!=='front') return;
+    if(aktuelleSzeneId!=='front' || frontGespr.pause) return;
     if(frontGespr.wer===0){
       mundFlap('mann2', MANN2_S, 2100 + Math.random()*1400, 0);
     } else {
@@ -2627,6 +2630,36 @@ function frontGespraechStop(){
   if(frontGespr.t){ clearInterval(frontGespr.t); frontGespr.t=null; }
   ['mann2','frau2'].forEach(id=>{ if(flapT[id]){ clearInterval(flapT[id]); flapT[id]=null; } });
 }
+/* Velo-Klingel: Dave & die Dame schauen 5 s zum Velo (links), dann wieder zueinander */
+let veloT = null;
+function veloReaktion(){
+  if(aktuelleSzeneId!=='front' || reduzierteBewegung()) return;
+  frontGespr.pause = true;
+  ['mann2','frau2'].forEach(id=>{ if(flapT[id]){ clearInterval(flapT[id]); flapT[id]=null; } });
+  const m=document.getElementById('sp-mann2'), w=document.getElementById('sp-frau2');
+  if(m) m.setAttribute('href', vurl(MANN2_L[0]));   /* Dave dreht sich nach links zum Velo */
+  if(w) w.setAttribute('href', vurl(FRAU2_S[0]));    /* Dame schaut nach links zum Velo */
+  if(veloT) clearTimeout(veloT);
+  veloT = setTimeout(()=>{
+    frontGespr.pause = false;
+    const m2=document.getElementById('sp-mann2'), w2=document.getElementById('sp-frau2');
+    if(m2) m2.setAttribute('href', vurl(MANN2_S[0]));  /* wieder nach rechts, zur Dame */
+    if(w2) w2.setAttribute('href', vurl(FRAU2_S[0]));
+  }, 5000);
+}
+/* Brunnen: fallender Wasserstrahl animiert */
+const wasserT = { t:null, i:0 };
+function wasserStart(){
+  wasserStop();
+  if(reduzierteBewegung()) return;
+  wasserT.t = setInterval(()=>{
+    const e=document.getElementById('sp-wasser');
+    if(!e || aktuelleSzeneId!=='front') return;
+    wasserT.i=(wasserT.i+1)%WASSER_FRAMES.length;
+    e.setAttribute('href', vurl(WASSER_FRAMES[wasserT.i]));
+  }, 140);
+}
+function wasserStop(){ if(wasserT.t){ clearInterval(wasserT.t); wasserT.t=null; } }
 const tiere = { szene:null };
 function tiereWechsel(szene){
   if(tiere.szene === szene) return;   /* gleiche Szene: Choreografie NICHT neu starten */
@@ -2636,6 +2669,7 @@ function tiereWechsel(szene){
   if(szene==='weiche'){ kraeheStart(); } else { kraeheStop(); }
   if(szene==='front'){ nestStart(); } else { nestStop(); }
   if(szene==='front'){ frontGespraechStart(); } else { frontGespraechStop(); }
+  if(szene==='front'){ wasserStart(); } else { wasserStop(); }
   rektorStop();
   if(szene==='treppe'){ auftrittStop(); gespraechStart(); } else { auftrittStop(); gespraechStop(); }
   if(szene==='discount') katzeStart(); else katzeStop();
