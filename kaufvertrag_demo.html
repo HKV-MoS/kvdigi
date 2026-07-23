@@ -1941,7 +1941,7 @@ function passVerstecke(a){
   if(el) el.setAttribute('x','-300');
 }
 function passLaunch(a, k){
-  a.person = Math.random() < 0.5 ? 'mann' : 'frau';
+  a.person = 'mann';   /* nur der Herr im Anzug – Passantin entfernt */
   a.dir    = Math.random() < 0.5 ? 'r' : 'l';
   a.tempo  = k.tempo * (0.85 + Math.random()*0.35);
   a.x      = a.dir==='r' ? -70 : 700;
@@ -1980,7 +1980,7 @@ function passStart(szene){
   passanten.akteure.forEach(passVerstecke);
   if(reduzierteBewegung()){
     const a = passanten.akteure[0];
-    a.state='geh'; a.person='frau'; a.dir='r'; a.frame=0; a.x=110;
+    a.state='geh'; a.person='mann'; a.dir='r'; a.frame=0; a.x=110;
     passZeichne(a);
     return;
   }
