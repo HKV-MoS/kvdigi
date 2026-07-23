@@ -1018,7 +1018,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '135';
+const BILD_VERSION = '136';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1249,7 +1249,7 @@ if(typeof Image !== 'undefined'){
     .concat(Object.values(HAENDLER).map(h=>h.frames))
     .concat(Object.values(KAEUFER).map(k=>k.frames))
     .concat(Object.values(KAEUFER).map(k=>k.framesL).filter(Boolean))
-    .concat(Object.values(ALEX_S)).concat([LEHRER_S]).concat([REKTOR_S]).concat(Object.values(PASS_FRAMES)).concat([MANN2_S, MANN2_L, FRAU2_S, FRAU2_R, WASSER_FRAMES, BRUNNENOBER_FRAMES]);
+    .concat(Object.values(ALEX_S)).concat([LEHRER_S]).concat([REKTOR_S]).concat(Object.values(PASS_FRAMES)).concat([MANN2_S, MANN2_L, FRAU2_S, FRAU2_R, WASSER_FRAMES, BRUNNENOBER_FRAMES]).concat([['kaufvertrag_mann2hip.png'],['kaufvertrag_frau2hip.png']]);
   alleFrames.forEach(frames=>{
     frames.forEach(url=>{
       const im=new Image();
@@ -2632,18 +2632,38 @@ function frontGespraechStop(){
   ['mann2','frau2'].forEach(id=>{ if(flapT[id]){ clearInterval(flapT[id]); flapT[id]=null; } });
 }
 /* Velo-Klingel: Dave & die Dame schauen 5 s zum Velo (links), dann wieder zueinander */
-let veloT = null;
+let veloT = null, veloN = 0;
 function veloReaktion(){
   if(aktuelleSzeneId!=='front' || reduzierteBewegung()) return;
+  veloN++;
   frontGespr.pause = true;
-  mundFlap('mann2', MANN2_L, 4600, 0);   /* Dave dreht sich nach links zum Velo & gestikuliert */
-  mundFlap('frau2', FRAU2_S, 4600, 0);   /* Dame schaut/gestikuliert ebenfalls nach links zum Velo */
+  ['mann2','frau2'].forEach(id=>{ if(flapT[id]){ clearInterval(flapT[id]); flapT[id]=null; } });
+  const m=document.getElementById('sp-mann2'); if(m) m.setAttribute('href', vurl('kaufvertrag_mann2hip.png'));  /* Hände in die Hüften */
+  const w=document.getElementById('sp-frau2'); if(w) w.setAttribute('href', vurl('kaufvertrag_frau2hip.png'));
+  if(veloN % 10 === 0){ setTimeout(()=>{ try{ veloSpruch('What a moron.'); }catch(e){} }, 650); }
   if(veloT) clearTimeout(veloT);
   veloT = setTimeout(()=>{
     frontGespr.pause = false;
-    const m=document.getElementById('sp-mann2'); if(m) m.setAttribute('href', vurl(MANN2_S[0]));  /* wieder zur Dame */
-    const w=document.getElementById('sp-frau2'); if(w) w.setAttribute('href', vurl(FRAU2_S[0]));
+    const m2=document.getElementById('sp-mann2'); if(m2) m2.setAttribute('href', vurl(MANN2_S[0]));  /* wieder ins Gespräch */
+    const w2=document.getElementById('sp-frau2'); if(w2) w2.setAttribute('href', vurl(FRAU2_S[0]));
   }, 5000);
+}
+/* kleiner Textfetzen ueber Dave */
+function veloSpruch(text){
+  const svg = szeneEl.querySelector('svg'); if(!svg) return;
+  const ns='http://www.w3.org/2000/svg';
+  const old=svg.querySelector('#veloSpruch'); if(old) old.remove();
+  const g=document.createElementNS(ns,'g'); g.setAttribute('id','veloSpruch');
+  const label='\u00ab'+text+'\u00bb';
+  const bw=label.length*4.3+8, x=430, y=80;
+  const rc=document.createElementNS(ns,'rect');
+  rc.setAttribute('x',x-4); rc.setAttribute('y',y-9); rc.setAttribute('width',bw); rc.setAttribute('height',13); rc.setAttribute('rx',2);
+  rc.setAttribute('fill','#101010'); rc.setAttribute('fill-opacity','0.85'); rc.setAttribute('stroke','#9a9a7a'); rc.setAttribute('stroke-width','0.5');
+  const t=document.createElementNS(ns,'text');
+  t.setAttribute('x',x); t.setAttribute('y',y); t.setAttribute('fill','#fff'); t.setAttribute('font-size','8'); t.setAttribute('font-family','ui-monospace,monospace');
+  t.textContent=label;
+  g.appendChild(rc); g.appendChild(t); svg.appendChild(g);
+  setTimeout(()=>{ try{ g.remove(); }catch(e){} }, 2800);
 }
 /* Brunnen: fallender Wasserstrahl animiert */
 const wasserT = { t:null, i:0, n:0 };
@@ -4064,10 +4084,12 @@ function pultZeigen(){
   }
   const zk = zeile('Knoten');
   Object.keys(KNOTEN).forEach(id=>{
-    zk.appendChild(knopf(id, ()=>{
+    const b = knopf(id, ()=>{
       if(!zustand.produkt){ zustand.produkt = PRODUKTE[0]; zustand.kaeuferin = zustand.kaeuferin || 'm'; }
       zeige(id);
-    }));
+    });
+    if(knotenSnapshot && knotenSnapshot.id===id){ b.style.borderColor='#f33'; b.style.borderWidth='2px'; b.style.color='#f88'; }
+    zk.appendChild(b);
   });
   const zfig = zeile('Figuren (Szene rendert sofort neu)');
   function figurKnopf(text, tu){
