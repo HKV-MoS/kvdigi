@@ -1019,7 +1019,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '132';
+const BILD_VERSION = '133';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1163,6 +1163,7 @@ const REKTOR_S = ['kaufvertrag_rektor_s_0.png','kaufvertrag_rektor_s_1.png','kau
 let rektorT = { t:null };
 const MANN2_S = ['kaufvertrag_mann2_0.png','kaufvertrag_mann2_1.png','kaufvertrag_mann2_2.png','kaufvertrag_mann2_3.png','kaufvertrag_mann2_4.png','kaufvertrag_mann2_5.png'];
 const FRAU2_S = ['kaufvertrag_frau2_0.png','kaufvertrag_frau2_1.png','kaufvertrag_frau2_2.png','kaufvertrag_frau2_3.png','kaufvertrag_frau2_4.png','kaufvertrag_frau2_5.png'];
+const FRAU2_R = ['kaufvertrag_frau2r_0.png','kaufvertrag_frau2r_1.png','kaufvertrag_frau2r_2.png','kaufvertrag_frau2r_3.png','kaufvertrag_frau2r_4.png','kaufvertrag_frau2r_5.png'];
 function alexRuecksetzen(){
   const el=document.getElementById('sp-alex'); if(!el) return;
   const fr = kaeufer().frames;
@@ -1221,8 +1222,8 @@ const SPRITES = {
   ],
   front: [
     { id:'nest', frames:['kaufvertrag_nest_0.png','kaufvertrag_nest_1.png','kaufvertrag_nest_2.png'], x:503, y:66, w:25, h:23.2 },
-    { id:'mann2', frames:['kaufvertrag_mann2_0.png','kaufvertrag_mann2_1.png','kaufvertrag_mann2_2.png','kaufvertrag_mann2_3.png','kaufvertrag_mann2_4.png','kaufvertrag_mann2_5.png'], x:449, y:95, w:25, h:60 },
-    { id:'frau2', frames:['kaufvertrag_frau2_0.png','kaufvertrag_frau2_1.png','kaufvertrag_frau2_2.png','kaufvertrag_frau2_3.png','kaufvertrag_frau2_4.png','kaufvertrag_frau2_5.png'], x:476, y:98, w:24, h:57 },
+    { id:'mann2', frames:['kaufvertrag_mann2_0.png','kaufvertrag_mann2_1.png','kaufvertrag_mann2_2.png','kaufvertrag_mann2_3.png','kaufvertrag_mann2_4.png','kaufvertrag_mann2_5.png'], x:449, y:101, w:25, h:60 },
+    { id:'frau2', frames:['kaufvertrag_frau2_0.png','kaufvertrag_frau2_1.png','kaufvertrag_frau2_2.png','kaufvertrag_frau2_3.png','kaufvertrag_frau2_4.png','kaufvertrag_frau2_5.png'], x:476, y:104, w:24, h:57 },
     { id:'taubeA', frames:['kaufvertrag_taube_a0.png','kaufvertrag_taube_a1.png'], x:62, y:238, w:28, h:17 },
     { id:'taubeB', frames:['kaufvertrag_taube_b0.png','kaufvertrag_taube_b1.png'], x:90, y:240, w:26, h:16 },
   ],
@@ -1244,7 +1245,7 @@ if(typeof Image !== 'undefined'){
     .concat(Object.values(HAENDLER).map(h=>h.frames))
     .concat(Object.values(KAEUFER).map(k=>k.frames))
     .concat(Object.values(KAEUFER).map(k=>k.framesL).filter(Boolean))
-    .concat(Object.values(ALEX_S)).concat([LEHRER_S]).concat([REKTOR_S]).concat(Object.values(PASS_FRAMES)).concat([MANN2_S, FRAU2_S]);
+    .concat(Object.values(ALEX_S)).concat([LEHRER_S]).concat([REKTOR_S]).concat(Object.values(PASS_FRAMES)).concat([MANN2_S, FRAU2_S, FRAU2_R]);
   alleFrames.forEach(frames=>{
     frames.forEach(url=>{
       const im=new Image();
@@ -2604,14 +2605,19 @@ function nestStart(){
 }
 function nestStop(){ if(nestT.t){ clearInterval(nestT.t); nestT.t = null; } }
 /* Gespraech vor der Schule (nahe der Kraehe): Mann & Frau reden abwechselnd */
-const frontGespr = { t:null, wer:0 };
+const frontGespr = { t:null, wer:0, frauN:0 };
 function frontGespraechStart(){
   frontGespraechStop();
   if(reduzierteBewegung()) return;
   const schritt=()=>{
     if(aktuelleSzeneId!=='front') return;
-    if(frontGespr.wer===0) mundFlap('mann2', MANN2_S, 2100 + Math.random()*1400, 0);
-    else                    mundFlap('frau2', FRAU2_S, 2100 + Math.random()*1400, 0);
+    if(frontGespr.wer===0){
+      mundFlap('mann2', MANN2_S, 2100 + Math.random()*1400, 0);
+    } else {
+      frontGespr.frauN++;
+      const dreht = (frontGespr.frauN % 3 === 0);   /* ab und zu dreht sie sich zum Haus */
+      mundFlap('frau2', dreht ? FRAU2_R : FRAU2_S, 2100 + Math.random()*1400, 0);
+    }
     frontGespr.wer ^= 1;
   };
   setTimeout(schritt, 800);
