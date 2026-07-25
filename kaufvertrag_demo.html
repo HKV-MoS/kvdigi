@@ -3987,7 +3987,59 @@ const LERNZIELE = [
   ['Prüf- & Rügepflicht (Mängelrüge)','OR 201'],
   ['Wandelung / Minderung','OR 205'],
 ];
+function lernberichtOeffnen(){
+  const alt=document.getElementById('lernbericht'); if(alt){ alt.remove(); }
+  if(!document.getElementById('lbPrintStyle')){
+    const stl=document.createElement('style'); stl.id='lbPrintStyle';
+    stl.textContent='@media print{body{background:#fff!important}body>*:not(#lernbericht){display:none!important}#lernbericht{position:static!important;inset:auto!important;background:#fff!important;display:block!important;padding:0!important;overflow:visible!important}.lbNoPrint{display:none!important}.lbSheet{box-shadow:none!important;border:none!important;max-height:none!important;margin:0!important;width:100%!important;max-width:none!important}}';
+    document.head.appendChild(stl);
+  }
+  const stw=sterne(zustand.rq, rqMaxAktuell());
+  let datum=''; try{ datum=new Date().toLocaleDateString('de-CH'); }catch(e){}
+  const stim=(typeof STIMMUNG_EMOJI!=='undefined' && STIMMUNG_EMOJI[zustand.stimmung])||'';
+  let wegRows='';
+  Object.keys(WEGE).forEach(function(key){
+    if(key in zustand.ergebnisse){
+      const s2=sterne(zustand.ergebnisse[key], RQ_MAX[key]);
+      wegRows+='<tr><td style="padding:3px 6px">'+WEGE[key].titel+'</td><td style="padding:3px 6px">'+zustand.ergebnisse[key]+' / '+RQ_MAX[key]+'</td><td style="padding:3px 6px">'+s2.s+'</td></tr>';
+    }
+  });
+  if(!wegRows && zustand.weg){ wegRows='<tr><td style="padding:3px 6px">'+WEGE[zustand.weg].titel+'</td><td style="padding:3px 6px">'+zustand.rq+' / '+rqMaxAktuell()+'</td><td style="padding:3px 6px">'+stw.s+'</td></tr>'; }
+  let gRows='';
+  GESETZE.forEach(function(pair){ const ok=zustand.gesetze && zustand.gesetze[pair[0]]; gRows+='<li style="margin:2px 0">'+(ok?'☑':'☐')+' <b>'+pair[0]+'</b> – '+pair[1]+'</li>'; });
+  let lzRows='';
+  LERNZIELE.forEach(function(pair){ const ok=zustand.gesetze && zustand.gesetze[pair[1]]; lzRows+='<li style="margin:2px 0">'+(ok?'☑':'☐')+' '+pair[0]+' <span style="color:#888">('+pair[1]+')</span></li>'; });
+  const gefunden=Object.keys(zustand.gesetze||{}).length;
+  const ov=document.createElement('div'); ov.id='lernbericht';
+  ov.style.cssText='position:fixed;inset:0;z-index:9800;background:rgba(6,8,16,.92);overflow:auto;display:flex;justify-content:center;padding:24px;font-family:Georgia,"Times New Roman",serif';
+  ov.innerHTML=
+    '<div class="lbSheet" style="background:#fff;color:#1a1a1a;max-width:720px;width:100%;padding:30px 40px;border-radius:4px;box-shadow:0 10px 40px rgba(0,0,0,.5);line-height:1.5">'
+    +'<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #7a1f2b;padding-bottom:10px;margin-bottom:14px">'
+      +'<div><div style="font-size:1.5rem;font-weight:bold;color:#7a1f2b">Der Kauf – Lernbericht</div>'
+      +'<div style="font-size:.82rem;color:#555">Kaufvertragsrecht nach OR · HKV Aarau</div></div>'
+      +'<div style="font-size:.82rem;color:#555;text-align:right">Datum: '+datum+'</div></div>'
+    +'<div style="margin:10px 0 16px;font-size:.95rem">Name: <input type="text" style="border:none;border-bottom:1px solid #999;font-size:1rem;font-family:inherit;padding:2px 4px;min-width:280px"></div>'
+    +'<h3 style="color:#7a1f2b;font-size:1.02rem;margin:14px 0 6px">Ergebnis</h3>'
+    +'<div style="font-size:1.15rem;margin-bottom:4px"><b>'+stw.s+'</b> &nbsp; '+stw.titel+'</div>'
+    +'<table style="width:100%;border-collapse:collapse;font-size:.9rem;margin:8px 0"><thead><tr style="text-align:left;border-bottom:1px solid #ccc"><th style="padding:3px 6px">Weg</th><th style="padding:3px 6px">Rechtsquotient</th><th style="padding:3px 6px">Sterne</th></tr></thead><tbody>'+wegRows+'</tbody></table>'
+    +'<div style="font-size:.88rem;color:#333">Stimmung von Alex am Ende: <span style="font-size:1.2rem">'+stim+'</span></div>'
+    +'<h3 style="color:#7a1f2b;font-size:1.02rem;margin:18px 0 6px">Gefundene Gesetzesartikel ('+gefunden+' / '+GESETZE.length+')</h3>'
+    +'<ul style="list-style:none;padding:0;margin:0;columns:2;font-size:.88rem">'+gRows+'</ul>'
+    +'<h3 style="color:#7a1f2b;font-size:1.02rem;margin:18px 0 6px">Kennengelernte Elemente des Kaufvertrags</h3>'
+    +'<ul style="list-style:none;padding:0;margin:0;font-size:.88rem">'+lzRows+'</ul>'
+    +'<h3 style="color:#7a1f2b;font-size:1.02rem;margin:18px 0 6px">Meine Reflexion</h3>'
+    +'<textarea placeholder="Was habe ich über den Kaufvertrag gelernt? Wo würde ich heute anders entscheiden?" style="width:100%;min-height:90px;border:1px solid #ccc;border-radius:4px;padding:8px;font-family:inherit;font-size:.9rem;box-sizing:border-box;resize:vertical"></textarea>'
+    +'<div class="lbNoPrint" style="margin-top:20px;display:flex;gap:10px;justify-content:flex-end">'
+      +'<button type="button" id="lbPrint" style="background:#7a1f2b;color:#fff;border:none;border-radius:5px;padding:8px 18px;cursor:pointer;font-family:inherit;font-size:.9rem">Drucken / als PDF speichern</button>'
+      +'<button type="button" id="lbClose" style="background:#eee;color:#333;border:1px solid #bbb;border-radius:5px;padding:8px 18px;cursor:pointer;font-family:inherit;font-size:.9rem">Schliessen</button>'
+    +'</div></div>';
+  document.body.appendChild(ov);
+  document.getElementById('lbPrint').addEventListener('click', function(){ try{ window.print(); }catch(e){} });
+  document.getElementById('lbClose').addEventListener('click', function(){ ov.remove(); });
+  ov.addEventListener('click', function(e){ if(e.target===ov) ov.remove(); });
+}
 function baueEnde(){
+
   if(zustand.weg) zustand.ergebnisse[zustand.weg]=zustand.rq;
   if(fx.an){ try{ ambEinmal('kaufvertrag_fx_kasse.mp3', 0.6); }catch(e){} }   /* Kasse: cha-ching zur Abrechnung */
   const gespielt=Object.keys(zustand.ergebnisse).length;
@@ -4047,6 +4099,10 @@ function baueEnde(){
   b2.textContent='Von vorne beginnen (neues Produkt wählen)';
   b2.addEventListener('click', neustart);
   box.appendChild(b2);
+  const bLB=document.createElement('button'); bLB.className='opt'; bLB.type='button';
+  bLB.textContent='📋 Lernbericht (drucken / als PDF)';
+  bLB.addEventListener('click', lernberichtOeffnen);
+  box.appendChild(bLB);
   dialogEl.appendChild(box);
   /* Credits rollen hoch; erreichen sie den Dank, rollt der Dank mit. ENDE bleibt fest. Danach Fade. */
   if(!reduzierteBewegung()){
