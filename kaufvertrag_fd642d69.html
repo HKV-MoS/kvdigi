@@ -1020,7 +1020,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '142';
+const BILD_VERSION = '143';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1166,9 +1166,10 @@ const LP_TEMPLATES = {
   frauB: ['kaufvertrag_lp_frauB_0.png','kaufvertrag_lp_frauB_1.png','kaufvertrag_lp_frauB_2.png','kaufvertrag_lp_frauB_3.png','kaufvertrag_lp_frauB_4.png','kaufvertrag_lp_frauB_5.png'],
   mann1: ['kaufvertrag_lp_mann1_0.png','kaufvertrag_lp_mann1_1.png','kaufvertrag_lp_mann1_2.png','kaufvertrag_lp_mann1_3.png','kaufvertrag_lp_mann1_4.png','kaufvertrag_lp_mann1_5.png'],
   mann2: ['kaufvertrag_lp_mann2_0.png','kaufvertrag_lp_mann2_1.png','kaufvertrag_lp_mann2_2.png','kaufvertrag_lp_mann2_3.png','kaufvertrag_lp_mann2_4.png','kaufvertrag_lp_mann2_5.png'],
-  mann3: ['kaufvertrag_lp_mann3_0.png','kaufvertrag_lp_mann3_1.png','kaufvertrag_lp_mann3_2.png','kaufvertrag_lp_mann3_3.png','kaufvertrag_lp_mann3_4.png','kaufvertrag_lp_mann3_5.png']
+  mann3: ['kaufvertrag_lp_mann3_0.png','kaufvertrag_lp_mann3_1.png','kaufvertrag_lp_mann3_2.png','kaufvertrag_lp_mann3_3.png','kaufvertrag_lp_mann3_4.png','kaufvertrag_lp_mann3_5.png'],
+  frauC: ['kaufvertrag_lp_frauC_0.png','kaufvertrag_lp_frauC_1.png','kaufvertrag_lp_frauC_2.png','kaufvertrag_lp_frauC_3.png','kaufvertrag_lp_frauC_4.png','kaufvertrag_lp_frauC_5.png']
 };
-const LP_NAMEN = { standard:'Standard', frau1:'Frau \u00b7 Bob \u00b7 Blazer', frauB:'Frau \u00b7 lang \u00b7 blond', mann1:'Mann \u00b7 Zopf \u00b7 Flanell', mann2:'Mann \u00b7 Brille \u00b7 Pullover', mann3:'Mann \u00b7 Glatze \u00b7 Hemd' };
+const LP_NAMEN = { standard:'Standard', frau1:'Frau \u00b7 Bob \u00b7 Blazer', frauB:'Frau \u00b7 lang \u00b7 blond', mann1:'Mann \u00b7 Zopf \u00b7 Flanell', mann2:'Mann \u00b7 Brille \u00b7 Pullover', mann3:'Mann \u00b7 Glatze \u00b7 Hemd', frauC:'Frau \u00b7 Dutt \u00b7 Kleid' };
 let LP_AKTIV = 'standard';
 try{ if(typeof localStorage!=='undefined'){ const _v=localStorage.getItem('derkauf_lp'); if(_v && LP_TEMPLATES[_v]) LP_AKTIV=_v; } }catch(e){}
 function lpFrames(){ return LP_TEMPLATES[LP_AKTIV] || LP_TEMPLATES.standard; }
@@ -1298,7 +1299,7 @@ if(typeof Image !== 'undefined'){
     .concat(Object.values(HAENDLER).map(h=>h.frames))
     .concat(Object.values(KAEUFER).map(k=>k.frames))
     .concat(Object.values(KAEUFER).map(k=>k.framesL).filter(Boolean))
-    .concat(Object.values(ALEX_S)).concat([LEHRER_S]).concat([REKTOR_S]).concat(Object.values(PASS_FRAMES)).concat([MANN2_S, MANN2_L, FRAU2_S, FRAU2_R, WASSER_FRAMES, BRUNNENOBER_FRAMES]).concat([['kaufvertrag_mann2hip.png'],['kaufvertrag_frau2hip.png'],FAN_FRAMES]).concat([LP_TEMPLATES.frau1, LP_TEMPLATES.frauB, LP_TEMPLATES.mann1, LP_TEMPLATES.mann2, LP_TEMPLATES.mann3]);
+    .concat(Object.values(ALEX_S)).concat([LEHRER_S]).concat([REKTOR_S]).concat(Object.values(PASS_FRAMES)).concat([MANN2_S, MANN2_L, FRAU2_S, FRAU2_R, WASSER_FRAMES, BRUNNENOBER_FRAMES]).concat([['kaufvertrag_mann2hip.png'],['kaufvertrag_frau2hip.png'],FAN_FRAMES]).concat([LP_TEMPLATES.frau1, LP_TEMPLATES.frauB, LP_TEMPLATES.mann1, LP_TEMPLATES.mann2, LP_TEMPLATES.mann3, LP_TEMPLATES.frauC]);
   alleFrames.forEach(frames=>{
     frames.forEach(url=>{
       const im=new Image();
