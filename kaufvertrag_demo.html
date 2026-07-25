@@ -382,6 +382,7 @@
       <button id="fx" type="button" title="Soundeffekte ein/aus">FX</button>
       <button id="vollbild" type="button" title="Vollbild (Esc beendet)">⛶</button>
       <button id="inventar" type="button" title="Wissens-Inventar: gefundene Gesetze">📜 <span id="invZahl">0</span></button>
+      <button id="lpBtn" type="button" title="Lehrperson wählen">👤</button>
       <div style="display:flex;align-items:center;gap:7px;">
         <span id="alexStimmung" title="Alex' Stimmung" style="font-size:1.3rem;transition:transform .2s;">😐</span>
         <div>
@@ -1018,7 +1019,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '138';
+const BILD_VERSION = '141';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1157,6 +1158,50 @@ const ALEX_S = {
 };
 let alexTalk = { t:null };
 const LEHRER_S = ['kaufvertrag_lehrer_s_0.png','kaufvertrag_lehrer_s_1.png','kaufvertrag_lehrer_s_2.png','kaufvertrag_lehrer_s_3.png','kaufvertrag_lehrer_s_4.png','kaufvertrag_lehrer_s_5.png'];
+/* ===== Lehrperson-Templates (individualisierbar) ===== */
+const LP_TEMPLATES = {
+  standard: LEHRER_S,
+  frau1: ['kaufvertrag_lp_frau1_0.png','kaufvertrag_lp_frau1_1.png','kaufvertrag_lp_frau1_2.png','kaufvertrag_lp_frau1_3.png','kaufvertrag_lp_frau1_4.png','kaufvertrag_lp_frau1_5.png'],
+  frauB: ['kaufvertrag_lp_frauB_0.png','kaufvertrag_lp_frauB_1.png','kaufvertrag_lp_frauB_2.png','kaufvertrag_lp_frauB_3.png','kaufvertrag_lp_frauB_4.png','kaufvertrag_lp_frauB_5.png'],
+  mann1: ['kaufvertrag_lp_mann1_0.png','kaufvertrag_lp_mann1_1.png','kaufvertrag_lp_mann1_2.png','kaufvertrag_lp_mann1_3.png','kaufvertrag_lp_mann1_4.png','kaufvertrag_lp_mann1_5.png'],
+  mann2: ['kaufvertrag_lp_mann2_0.png','kaufvertrag_lp_mann2_1.png','kaufvertrag_lp_mann2_2.png','kaufvertrag_lp_mann2_3.png','kaufvertrag_lp_mann2_4.png','kaufvertrag_lp_mann2_5.png']
+};
+const LP_NAMEN = { standard:'Standard', frau1:'Frau \u00b7 Bob \u00b7 Blazer', frauB:'Frau \u00b7 lang \u00b7 blond', mann1:'Mann \u00b7 Zopf \u00b7 Flanell', mann2:'Mann \u00b7 Brille \u00b7 Pullover' };
+let LP_AKTIV = 'standard';
+try{ if(typeof localStorage!=='undefined'){ const _v=localStorage.getItem('derkauf_lp'); if(_v && LP_TEMPLATES[_v]) LP_AKTIV=_v; } }catch(e){}
+function lpFrames(){ return LP_TEMPLATES[LP_AKTIV] || LP_TEMPLATES.standard; }
+function lpWaehlen(){
+  const alt=document.getElementById('lpWahl'); if(alt){ alt.remove(); return; }
+  const ov=document.createElement('div'); ov.id='lpWahl';
+  ov.style.cssText='position:fixed;inset:0;z-index:9500;background:rgba(6,8,16,.9);display:flex;align-items:center;justify-content:center;padding:20px';
+  const box=document.createElement('div');
+  box.style.cssText='background:#111;border:2px solid var(--ega-cyan);border-radius:8px;padding:18px;max-width:540px;max-height:88vh;overflow:auto;color:#cfc;font-size:.85rem';
+  box.innerHTML='<h2 style="color:var(--ega-cyan);font-size:1rem;letter-spacing:2px;margin:0 0 4px">LEHRPERSON W\u00c4HLEN</h2><p style="color:#8a8;margin:0 0 12px">Wird auf Schulzimmer und Treppenhaus angewendet und auf diesem Ger\u00e4t gespeichert.</p>';
+  const grid=document.createElement('div'); grid.style.cssText='display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px';
+  Object.keys(LP_TEMPLATES).forEach(key=>{
+    const card=document.createElement('button'); card.type='button';
+    const akt=(key===LP_AKTIV);
+    card.style.cssText='background:'+(akt?'#1b3a1b':'#181818')+';border:2px solid '+(akt?'#5f5':'#444')+';border-radius:6px;padding:8px;cursor:pointer;color:#cfc;font:inherit;display:flex;flex-direction:column;align-items:center;gap:6px';
+    const img=document.createElement('img'); img.src=vurl(LP_TEMPLATES[key][0]); img.style.cssText='height:120px;image-rendering:pixelated;background:#0a0a0a';
+    const nm=document.createElement('div'); nm.textContent=LP_NAMEN[key]||key; nm.style.cssText='font-size:.72rem;text-align:center';
+    card.append(img,nm);
+    card.addEventListener('click', ()=>{
+      LP_AKTIV=key; try{ localStorage.setItem('derkauf_lp',key); }catch(e){}
+      ov.remove();
+      if(aktuelleSzeneId && bildOk[aktuelleSzeneId]) szeneEl.innerHTML=bildSzene(aktuelleSzeneId);
+      if(aktuelleSzeneId==='treppe'){ try{ gespraechStart(); }catch(e){} }
+      if(aktuelleSzeneId==='schule'){ setTimeout(()=>{ try{ mundFlap('lehrer', lpFrames(), 4200); }catch(e){} }, 300); }
+    });
+    grid.appendChild(card);
+  });
+  box.appendChild(grid);
+  const zu=document.createElement('button'); zu.type='button'; zu.textContent='Schliessen';
+  zu.style.cssText='margin-top:14px;background:#000;color:var(--ega-gelb);border:1px solid var(--ega-gelb);padding:5px 14px;cursor:pointer;font:inherit';
+  zu.addEventListener('click',()=>ov.remove());
+  box.appendChild(zu);
+  ov.appendChild(box); ov.addEventListener('click',function(e){ if(e.target===ov) ov.remove(); });
+  document.body.appendChild(ov);
+}
 let lehrerT = { t:null };
 const REKTOR_S = ['kaufvertrag_rektor_s_0.png','kaufvertrag_rektor_s_1.png','kaufvertrag_rektor_s_2.png','kaufvertrag_rektor_s_3.png','kaufvertrag_rektor_s_4.png','kaufvertrag_rektor_s_5.png'];
 let rektorT = { t:null };
@@ -1251,7 +1296,7 @@ if(typeof Image !== 'undefined'){
     .concat(Object.values(HAENDLER).map(h=>h.frames))
     .concat(Object.values(KAEUFER).map(k=>k.frames))
     .concat(Object.values(KAEUFER).map(k=>k.framesL).filter(Boolean))
-    .concat(Object.values(ALEX_S)).concat([LEHRER_S]).concat([REKTOR_S]).concat(Object.values(PASS_FRAMES)).concat([MANN2_S, MANN2_L, FRAU2_S, FRAU2_R, WASSER_FRAMES, BRUNNENOBER_FRAMES]).concat([['kaufvertrag_mann2hip.png'],['kaufvertrag_frau2hip.png'],FAN_FRAMES]);
+    .concat(Object.values(ALEX_S)).concat([LEHRER_S]).concat([REKTOR_S]).concat(Object.values(PASS_FRAMES)).concat([MANN2_S, MANN2_L, FRAU2_S, FRAU2_R, WASSER_FRAMES, BRUNNENOBER_FRAMES]).concat([['kaufvertrag_mann2hip.png'],['kaufvertrag_frau2hip.png'],FAN_FRAMES]).concat([LP_TEMPLATES.frau1, LP_TEMPLATES.frauB, LP_TEMPLATES.mann1, LP_TEMPLATES.mann2]);
   alleFrames.forEach(frames=>{
     frames.forEach(url=>{
       const im=new Image();
@@ -1260,7 +1305,7 @@ if(typeof Image !== 'undefined'){
     });
   });
 }
-function spriteFrames(sp){ if(sp.id==='meier') return haendler().frames; if(sp.id==='alex'){ return (zustand.haendler==='frau' && kaeufer().framesL) ? kaeufer().framesL : kaeufer().frames; } return sp.frames; }
+function spriteFrames(sp){ if(sp.id==='lehrer'||sp.id==='tlehrer') return lpFrames(); if(sp.id==='meier') return haendler().frames; if(sp.id==='alex'){ return (zustand.haendler==='frau' && kaeufer().framesL) ? kaeufer().framesL : kaeufer().frames; } return sp.frames; }
 function spriteSVG(key){
   let svg='';
   (SPRITES[key]||[]).forEach(sp=>{
@@ -2478,7 +2523,7 @@ function gespraechBlase(){
   }, 3600);
   /* Sprecher-Portraet mit Mundbewegung, Figuren bleiben unveraendert */
   const pointe = (f === GESPRAECH_FETZEN[GESPRAECH_FETZEN.length-1]);
-  if(f.wer==='tlehrer') mundFlap('tlehrer', LEHRER_S, 3300, 1); else if(f.wer==='trektor') mundFlap('trektor', REKTOR_S, 3300, 5); else sprichKopf(f.wer, 3300);
+  if(f.wer==='tlehrer') mundFlap('tlehrer', lpFrames(), 3300, 1); else if(f.wer==='trektor') mundFlap('trektor', REKTOR_S, 3300, 5); else sprichKopf(f.wer, 3300);
   if(pointe){ setTimeout(()=>{ if(aktuelleSzeneId==='treppe') mundFlap('trektor', REKTOR_S, 1300, 5); }, 4700); }
 }
 
@@ -3709,7 +3754,7 @@ function zeige(id){
                     : LADE_SVG;
   dialogEl.innerHTML = '';
   blaseDialog(null,''); blaseHinweis('');
-  if(id==='schule' || id==='schule2'){ setTimeout(()=>{ try{ if(aktuelleSzeneId==='schule') mundFlap('lehrer', LEHRER_S, 4200); }catch(e){} }, 350); }
+  if(id==='schule' || id==='schule2'){ setTimeout(()=>{ try{ if(aktuelleSzeneId==='schule') mundFlap('lehrer', lpFrames(), 4200); }catch(e){} }, 350); }
 
   if(k.art==='produktwahl'){ baueProduktwahl(k); return; }
   if(k.art==='demoende'){ baueDemoEnde(); return; }
@@ -4032,6 +4077,7 @@ function neustart(){
   zeige('titel');
 }
 /* ---------- Vollbild ---------- */
+try{ const _lpb=document.getElementById('lpBtn'); if(_lpb) _lpb.addEventListener('click', lpWaehlen); }catch(e){}
 const vollbildBtn = document.getElementById('vollbild');
 const buehneEl = document.querySelector ? document.querySelector('.buehne') : null;
 function imVollbild(){
