@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dreisatz – HKV Aarau</title>
+<style>
+  *{ box-sizing:border-box; }
+  body{ margin:0; font-family:'Aptos','Segoe UI',system-ui,-apple-system,sans-serif; background:#F4F8FB; color:#1A2B3A; font-size:15px; line-height:1.55; }
+  header{ background:linear-gradient(135deg,#213B42 0%,#3C6E73 100%); color:#fff; padding:16px 22px; box-shadow:0 2px 8px rgba(0,0,0,.12); }
+  .brand-eyebrow{ font-size:11px; font-weight:800; letter-spacing:2.5px; color:#D8AE66; margin-bottom:3px; text-transform:uppercase; }
+  header h1{ margin:0 0 2px; font-size:22px; font-weight:800; letter-spacing:-.3px; }
+  header .sub{ font-size:13px; opacity:.93; max-width:760px; }
+  .wrap{ max-width:980px; margin:0 auto; padding:16px; }
+
+  /* Tabs */
+  .tabs{ display:flex; gap:8px; margin:18px 0 4px; flex-wrap:wrap; }
+  .tab{ font-family:inherit; font-size:14px; font-weight:700; padding:9px 18px; border-radius:10px 10px 0 0; border:none; background:transparent; color:#5B6B7A; cursor:pointer; border-bottom:3px solid transparent; transition:all .15s ease; }
+  .tab:hover{ color:#213B42; }
+  .tab.active{ color:#213B42; border-bottom-color:#D8AE66; background:#fff; box-shadow:0 -2px 8px rgba(20,50,80,.05); }
+  .tab:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
+  .panel{ display:none; }
+  .panel.active{ display:block; }
+
+  .card{ background:#fff; border-radius:14px; box-shadow:0 2px 10px rgba(20,50,80,.08); padding:18px 20px; margin-bottom:16px; }
+  .card h2{ margin:0 0 4px; font-size:18px; color:#213B42; font-weight:800; }
+  .card h3{ margin:16px 0 6px; font-size:14px; font-weight:800; color:#3C6E73; text-transform:uppercase; letter-spacing:.5px; }
+  .card p{ margin:6px 0; }
+  .lead{ color:#41585f; }
+  .tag{ display:inline-block; font-size:11px; font-weight:800; padding:3px 10px; border-radius:999px; letter-spacing:.3px; vertical-align:middle; }
+  .tag.pro{ background:#E3F1EA; color:#1d7a4a; }
+  .tag.anti{ background:#FBE9DA; color:#B5641E; }
+  .hl{ background:#FBF3DF; padding:1px 6px; border-radius:5px; font-weight:700; }
+
+  /* Dreisatz-Schema */
+  .schema{ margin:12px 0; display:inline-block; background:#F3F8FC; border-radius:12px; padding:14px 18px; border:1px solid #E1EBF1; }
+  .srow{ display:grid; grid-template-columns:auto 34px auto; align-items:center; gap:6px; font-size:16px; }
+  .srow .lhs{ text-align:right; font-weight:700; color:#28435E; white-space:nowrap; }
+  .srow .rhs{ text-align:left; font-weight:800; color:#213B42; white-space:nowrap; }
+  .srow .eq{ text-align:center; color:#9DB2BF; }
+  .sarrow{ position:relative; height:20px; }
+  .sarrow .lab{ position:absolute; font-size:12px; font-weight:800; padding:1px 7px; border-radius:6px; white-space:nowrap; }
+  .sarrow .left{ left:2px; } .sarrow .right{ right:2px; }
+  .op-div{ background:#E3F1EA; color:#1d7a4a; } .op-mul{ background:#FBE9DA; color:#B5641E; }
+  .qmark{ color:#B5641E; }
+
+  .steps{ margin:8px 0; }
+  .step{ display:flex; gap:12px; align-items:flex-start; padding:9px 0; border-top:1px dashed #E1EBF1; }
+  .step:first-child{ border-top:none; }
+  .step .no{ flex:0 0 26px; height:26px; border-radius:50%; background:#3C6E73; color:#fff; font-weight:800; font-size:13px; display:flex; align-items:center; justify-content:center; }
+  .step .body{ flex:1 1 auto; }
+  .step .calc{ font-size:16px; font-weight:800; color:#213B42; }
+  .step .why{ font-size:12.5px; color:#6a7c88; }
+  .result-line{ margin-top:10px; padding:10px 14px; background:#EEF6F4; border-left:4px solid #2E9D6B; border-radius:8px; font-size:16px; font-weight:800; color:#16603c; }
+
+  .rulebox{ display:flex; gap:14px; flex-wrap:wrap; margin-top:8px; }
+  .rulecard{ flex:1 1 300px; border-radius:12px; padding:14px 16px; }
+  .rulecard.pro{ background:#EDF7F1; border:1px solid #C6E6D3; }
+  .rulecard.anti{ background:#FBF0E5; border:1px solid #F0D8BF; }
+  .rulecard h4{ margin:0 0 6px; font-size:14px; }
+  .rulecard.pro h4{ color:#1d7a4a; } .rulecard.anti h4{ color:#B5641E; }
+  .rulecard ul{ margin:6px 0 0; padding-left:18px; } .rulecard li{ margin:3px 0; }
+
+  .toggle-btn{ font-family:inherit; font-size:13px; font-weight:700; padding:7px 14px; border-radius:9px; border:1.5px solid #CBD7E2; background:#fff; color:#3C6E73; cursor:pointer; margin-top:8px; }
+  .toggle-btn:hover{ background:#F3F8FC; }
+  .toggle-btn:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
+  .collapse{ display:none; margin-top:10px; }
+  .collapse.open{ display:block; }
+
+  /* Trainer */
+  .filters{ display:flex; gap:16px; flex-wrap:wrap; align-items:flex-start; }
+  .fgroup{ flex:1 1 auto; }
+  .fgroup .flab{ font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:#3C6E73; margin-bottom:6px; }
+  .chips{ display:flex; gap:6px; flex-wrap:wrap; }
+  .chip{ font-family:inherit; font-size:13px; font-weight:600; padding:6px 12px; border-radius:8px; border:1.5px solid #CBD7E2; background:#fff; color:#3C6E73; cursor:pointer; transition:all .13s ease; }
+  .chip:hover{ border-color:#3C6E73; }
+  .chip.on{ background:#213B42; color:#fff; border-color:#213B42; }
+  .chip:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
+
+  .qtext{ font-size:18px; font-weight:700; color:#213B42; line-height:1.5; }
+  .qmeta{ font-size:12px; color:#8AA0B4; margin-top:2px; }
+  .answerzone{ margin-top:14px; }
+  .artrow{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:12px; }
+  .artrow .q{ font-size:13.5px; font-weight:700; color:#28435E; margin-right:4px; }
+  .artbtn{ font-family:inherit; font-size:13.5px; font-weight:700; padding:8px 16px; border-radius:9px; border:2px solid #CBD7E2; background:#fff; color:#3C6E73; cursor:pointer; }
+  .artbtn.sel{ border-color:#3C6E73; background:#EEF6F4; }
+  .artbtn.correct{ border-color:#2E9D6B; background:#2E9D6B; color:#fff; }
+  .artbtn.wrong{ border-color:#E2574C; background:#E2574C; color:#fff; }
+  .artbtn:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
+  .numrow{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .numrow .q{ font-size:13.5px; font-weight:700; color:#28435E; }
+  .numrow input{ font-family:inherit; font-size:17px; font-weight:700; padding:9px 12px; border:2px solid #CBD7E2; border-radius:9px; width:130px; color:#213B42; }
+  .numrow input:focus{ outline:none; border-color:#3C6E73; }
+  .numrow .unit{ font-size:15px; font-weight:700; color:#5B6B7A; }
+  .btnbar{ display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+  .btn{ font-family:inherit; font-size:14px; font-weight:800; cursor:pointer; border-radius:10px; padding:10px 18px; border:none; transition:all .14s ease; }
+  .btn-primary{ background:#3C6E73; color:#fff; } .btn-primary:hover{ background:#325c60; }
+  .btn-ghost{ background:#fff; color:#3C6E73; border:1.5px solid #CBD7E2; } .btn-ghost:hover{ background:#F3F8FC; }
+  .btn:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
+  .btn:disabled{ opacity:.5; cursor:default; }
+
+  .feedback{ margin-top:14px; padding:12px 16px; border-radius:10px; font-weight:700; display:none; }
+  .feedback.show{ display:block; }
+  .feedback.ok{ background:#E7F6EE; color:#16603c; border-left:4px solid #2E9D6B; }
+  .feedback.no{ background:#FBEBE9; color:#9d2f26; border-left:4px solid #E2574C; }
+  .solution{ margin-top:12px; display:none; }
+  .solution.show{ display:block; }
+
+  .scoreboard{ display:flex; gap:10px; flex-wrap:wrap; }
+  .scard{ flex:1 1 120px; background:linear-gradient(160deg,#213B42,#2E5054); color:#fff; border-radius:12px; padding:12px 14px; text-align:center; }
+  .scard .n{ font-size:28px; font-weight:900; line-height:1; }
+  .scard .l{ font-size:11px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; color:#A9C3C8; margin-top:4px; }
+
+  .hintbox{ font-size:13px; color:#6a7c88; background:#F3F8FC; border-radius:9px; padding:9px 13px; margin-top:10px; display:none; }
+  .hintbox.show{ display:block; }
+
+  /* Trainer-Layout mit Rechner nebenan */
+  .trainer-shell{ display:flex; gap:16px; align-items:flex-start; }
+  .trainer-shell .qcard{ flex:1 1 auto; min-width:0; }
+  .calc-card{ flex:0 0 232px; position:sticky; top:14px; margin-bottom:16px; }
+  @media (max-width:820px){ .trainer-shell{ flex-direction:column; } .calc-card{ position:static; width:100%; max-width:320px; flex:1 1 auto; } }
+  .calc{ background:#213B42; border-radius:14px; padding:13px; box-shadow:0 2px 10px rgba(20,50,80,.18); }
+  .calc .clabel{ font-size:10.5px; font-weight:800; letter-spacing:1.2px; text-transform:uppercase; color:#A9C3C8; margin-bottom:9px; text-align:center; }
+  .calc .disp{ background:#0f2024; color:#EAF6F2; font-size:26px; font-weight:800; text-align:right; padding:11px 13px; border-radius:10px; min-height:50px; word-break:break-all; font-variant-numeric:tabular-nums; margin-bottom:10px; }
+  .calc .grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:7px; }
+  .calc .grid button{ font-family:inherit; font-size:18px; font-weight:700; padding:13px 0; border-radius:9px; border:none; cursor:pointer; background:#3C6E73; color:#fff; transition:filter .1s ease; }
+  .calc .grid button:hover{ filter:brightness(1.14); }
+  .calc .grid button:active{ filter:brightness(.88); }
+  .calc .grid button:focus-visible{ outline:3px solid #A7D2CE; outline-offset:1px; }
+  .calc .grid button.op{ background:#4d7d82; }
+  .calc .grid button.fn{ background:#2b4d52; font-size:16px; }
+  .calc .grid button.eq{ background:#D8AE66; color:#213B42; grid-row:span 2; }
+  .calc .grid button.zero{ grid-column:span 2; }
+  .calc .toanswer{ width:100%; margin-top:9px; background:#2E9D6B; color:#fff; font-weight:800; font-size:13px; padding:10px; border-radius:9px; border:none; cursor:pointer; }
+  .calc .toanswer:hover{ filter:brightness(1.08); }
+  .calc .toanswer:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
+
+  .footer{ max-width:980px; margin:6px auto 26px; padding:0 18px; }
+  .footer .cr{ color:#94A3B0; font-size:11px; }
+  @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
+  @media (max-width:560px){ .srow{ font-size:15px; } .qtext{ font-size:16px; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand-eyebrow">HKV Aarau · ABU</div>
+  <h1>Dreisatz</h1>
+  <div class="sub">Verstehen und üben: gerader (proportionaler) und ungerader (umgekehrt proportionaler) Dreisatz – mit endlosem Aufgaben-Trainer.</div>
+</header>
+
+<div class="wrap">
+  <div class="tabs" role="tablist">
+    <button class="tab active" id="tab-lernen" role="tab" aria-selected="true">📘 Erklärung</button>
+    <button class="tab" id="tab-trainer" role="tab" aria-selected="false">✏️ Trainer</button>
+  </div>
+
+  <!-- ============ ERKLÄRUNG ============ -->
+  <div class="panel active" id="panel-lernen">
+
+    <div class="card">
+      <h2>Die Grundidee: über die <span class="hl">1</span> rechnen</h2>
+      <p class="lead">Beim Dreisatz kennen Sie drei Werte und suchen den vierten. Der Trick: Rechnen Sie zuerst auf <b>eine</b> Einheit herunter, dann auf die gesuchte Menge hoch. Zwei Schritte – daher der Name.</p>
+      <p>Es gibt zwei Arten. Zuerst müssen Sie erkennen, <b>welche</b> vorliegt – das entscheidet, ob Sie multiplizieren oder dividieren.</p>
+    </div>
+
+    <div class="card">
+      <h2>Gerader Dreisatz <span class="tag pro">proportional · je mehr, desto mehr</span></h2>
+      <p>Beide Grössen wachsen im Gleichschritt: doppelt so viel Ware &rarr; doppelter Preis. Beide Schritte gehen in <b>dieselbe</b> Richtung.</p>
+
+      <h3>Beispiel</h3>
+      <p>🍎 <b>3 kg</b> Äpfel kosten <b>CHF 7.50</b>. Was kosten <b>5 kg</b>?</p>
+
+      <div class="schema">
+        <div class="srow"><span class="lhs">🍎 3 kg</span><span class="eq">=</span><span class="rhs">CHF 7.50</span></div>
+        <div class="srow"><span class="lhs"></span><span class="eq"></span><span class="rhs"></span></div>
+        <div class="srow"><span class="lhs">1 kg</span><span class="eq">=</span><span class="rhs">CHF 2.50</span></div>
+        <div class="srow"><span class="lhs">5 kg</span><span class="eq">=</span><span class="rhs qmark">?</span></div>
+      </div>
+
+      <div class="steps">
+        <div class="step"><div class="no">1</div><div class="body"><div class="calc">7.50 : 3 = 2.50</div><div class="why">Auf <b>1 kg</b> herunter: durch 3 <b>teilen</b> (weniger kg &rarr; weniger Geld).</div></div></div>
+        <div class="step"><div class="no">2</div><div class="body"><div class="calc">2.50 · 5 = 12.50</div><div class="why">Auf <b>5 kg</b> hoch: mal 5 (mehr kg &rarr; mehr Geld).</div></div></div>
+      </div>
+      <div class="result-line">🍎 5 kg Äpfel kosten CHF 12.50.</div>
+      <p style="margin-top:10px;"><b>Merke:</b> geteilt, dann mal – beide Grössen gehen gleich rauf oder runter.</p>
+    </div>
+
+    <div class="card">
+      <h2>Ungerader Dreisatz <span class="tag anti">umgekehrt · je mehr, desto weniger</span></h2>
+      <p>Die eine Grösse wächst, die andere sinkt: mehr Arbeiter &rarr; weniger Zeit. Die beiden Schritte gehen in <b>entgegengesetzte</b> Richtung.</p>
+
+      <h3>Beispiel</h3>
+      <p>👷 <b>4 Arbeiter</b> streichen eine Halle in <b>6 Tagen</b>. Wie lange brauchen <b>3 Arbeiter</b>?</p>
+
+      <div class="schema">
+        <div class="srow"><span class="lhs">👷 4 Arbeiter</span><span class="eq">=</span><span class="rhs">6 Tage</span></div>
+        <div class="srow"><span class="lhs"></span><span class="eq"></span><span class="rhs"></span></div>
+        <div class="srow"><span class="lhs">1 Arbeiter</span><span class="eq">=</span><span class="rhs">24 Tage</span></div>
+        <div class="srow"><span class="lhs">3 Arbeiter</span><span class="eq">=</span><span class="rhs qmark">?</span></div>
+      </div>
+
+      <div class="steps">
+        <div class="step"><div class="no">1</div><div class="body"><div class="calc">6 · 4 = 24</div><div class="why">Auf <b>1 Arbeiter</b>: mal 4 – <b>einer allein braucht länger</b> (umgekehrt!).</div></div></div>
+        <div class="step"><div class="no">2</div><div class="body"><div class="calc">24 : 3 = 8</div><div class="why">Auf <b>3 Arbeiter</b>: durch 3 – mehr Leute, weniger Zeit.</div></div></div>
+      </div>
+      <div class="result-line">👷 3 Arbeiter brauchen 8 Tage.</div>
+      <p style="margin-top:10px;"><b>Kontrolle:</b> Das Produkt bleibt gleich: 4 · 6 = 24 und 3 · 8 = 24. ✓</p>
+    </div>
+
+    <div class="card">
+      <h2>Welche Art ist es? – Die Faustregel</h2>
+      <p>Stellen Sie sich vor, Sie <b>erhöhen</b> die erste Grösse. Wird die zweite dann <b>grösser</b> oder <b>kleiner</b>?</p>
+      <div class="rulebox">
+        <div class="rulecard pro">
+          <h4>📈 grösser = gerader Dreisatz</h4>
+          <ul>
+            <li>⏱️ mehr Stunden Arbeit &rarr; mehr Lohn</li>
+            <li>🛒 mehr Stück &rarr; mehr Kosten</li>
+            <li>⛽ weitere Strecke &rarr; mehr Benzin</li>
+          </ul>
+          <p style="margin:8px 0 0;"><b>Rechnen:</b> geteilt, dann mal.</p>
+        </div>
+        <div class="rulecard anti">
+          <h4>📉 kleiner = ungerader Dreisatz</h4>
+          <ul>
+            <li>👷 mehr Arbeiter &rarr; weniger Tage</li>
+            <li>🤝 mehr Personen teilen &rarr; weniger pro Kopf</li>
+            <li>🏎️ höheres Tempo &rarr; weniger Fahrzeit</li>
+          </ul>
+          <p style="margin:8px 0 0;"><b>Rechnen:</b> mal, dann geteilt.</p>
+        </div>
+      </div>
+      <button class="toggle-btn" id="mehr-btn">Noch ein Beispiel zum Erkennen ▾</button>
+      <div class="collapse" id="mehr-box">
+        <p>🎨 <b>„6 Maler brauchen 10 Tage."</b> Mehr Maler &rarr; <span class="hl">weniger</span> Tage &rarr; <b>ungerader</b> Dreisatz.<br>
+        🧃 <b>„6 Liter kosten 9 Franken."</b> Mehr Liter &rarr; <span class="hl">mehr</span> Franken &rarr; <b>gerader</b> Dreisatz.</p>
+      </div>
+    </div>
+
+    <div class="card" style="text-align:center;">
+      <p style="margin:0 0 10px;"><b>Bereit?</b> Üben Sie jetzt mit zufälligen Aufgaben.</p>
+      <button class="btn btn-primary" id="goto-trainer">Zum Trainer ✏️</button>
+    </div>
+
+  </div>
+
+  <!-- ============ TRAINER ============ -->
+  <div class="panel" id="panel-trainer">
+
+    <div class="card">
+      <div class="fgroup" style="margin-bottom:14px;">
+        <div class="flab">Beruf / Niveau</div>
+        <div class="chips" id="nivChips">
+          <button class="chip" data-niv="eba">🛍️ DH EBA</button>
+          <button class="chip on" data-niv="dhefz">🏬 DH EFZ</button>
+          <button class="chip" data-niv="kv">🏢 KV</button>
+          <button class="chip" data-niv="pharma">💊 Pharma</button>
+        </div>
+      </div>
+      <div class="filters">
+        <div class="fgroup">
+          <div class="flab">Art</div>
+          <div class="chips" id="typChips">
+            <button class="chip on" data-typ="beide">🔀 Gemischt</button>
+            <button class="chip" data-typ="pro">📈 Nur gerader</button>
+            <button class="chip" data-typ="anti">📉 Nur ungerader</button>
+          </div>
+        </div>
+        <div class="fgroup">
+          <div class="flab">Themen (mind. eines)</div>
+          <div class="chips" id="ktChips">
+            <button class="chip on" data-kt="lohn">💰 Lohn / Arbeit</button>
+            <button class="chip on" data-kt="einkauf">🛒 Einkauf / Mengen</button>
+            <button class="chip on" data-kt="prozent">📊 Prozent</button>
+            <button class="chip on" data-kt="tempo">🚗 Tempo / Verbrauch</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="trainer-shell">
+    <div class="card qcard">
+      <div class="qtext" id="qtext">…</div>
+      <div class="qmeta" id="qmeta"></div>
+
+      <div class="answerzone">
+        <div class="artrow">
+          <span class="q">1. Welche Art?</span>
+          <button class="artbtn" id="art-pro" data-art="pro">📈 gerader</button>
+          <button class="artbtn" id="art-anti" data-art="anti">📉 ungerader</button>
+        </div>
+        <div class="numrow">
+          <span class="q">2. Ergebnis:</span>
+          <input type="text" id="answer" inputmode="decimal" autocomplete="off" placeholder="Zahl">
+          <span class="unit" id="unit"></span>
+        </div>
+        <button class="toggle-btn" id="hint-btn">💡 Tipp</button>
+        <div class="hintbox" id="hintbox"></div>
+      </div>
+
+      <div class="btnbar">
+        <button class="btn btn-primary" id="check">Prüfen</button>
+        <button class="btn btn-ghost" id="next">Neue Aufgabe</button>
+      </div>
+
+      <div class="feedback" id="feedback"></div>
+      <div class="solution" id="solution"></div>
+    </div>
+
+    <div class="calc-card">
+      <div class="calc">
+        <div class="clabel">🧮 Taschenrechner</div>
+        <div class="disp" id="cdisp">0</div>
+        <div class="grid" id="cgrid">
+          <button class="fn" data-k="C">C</button>
+          <button class="fn" data-k="back">⌫</button>
+          <button class="op" data-k="÷">÷</button>
+          <button class="op" data-k="×">×</button>
+          <button data-k="7">7</button>
+          <button data-k="8">8</button>
+          <button data-k="9">9</button>
+          <button class="op" data-k="-">−</button>
+          <button data-k="4">4</button>
+          <button data-k="5">5</button>
+          <button data-k="6">6</button>
+          <button class="op" data-k="+">+</button>
+          <button data-k="1">1</button>
+          <button data-k="2">2</button>
+          <button data-k="3">3</button>
+          <button class="eq" data-k="=">=</button>
+          <button class="zero" data-k="0">0</button>
+          <button data-k=".">,</button>
+        </div>
+        <button class="toanswer" id="calcToAnswer">↳ Ergebnis ins Antwortfeld</button>
+      </div>
+    </div>
+    </div><!-- /trainer-shell -->
+
+    <div class="card">
+      <div class="scoreboard">
+        <div class="scard"><div class="n" id="sc-correct">0</div><div class="l">richtig</div></div>
+        <div class="scard"><div class="n" id="sc-total">0</div><div class="l">gelöst</div></div>
+        <div class="scard"><div class="n" id="sc-streak">0</div><div class="l">Serie</div></div>
+        <div class="scard"><div class="n" id="sc-rate">–</div><div class="l">Quote</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer">
+  <div class="cr">Dreisatz-Lerneinheit · ABU · HKV Aarau · Samuel Mollet · realisiert mit Claude (Anthropic)</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const ri=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function twoDistinct(arr){ const a=pick(arr); let c=pick(arr); let g=0; while(c===a && g++<50) c=pick(arr); return [a,c]; }
+function divisors(n,lo,hi){ const d=[]; for(let i=lo;i<=hi;i++) if(n%i===0) d.push(i); return d; }
+
+const money=x=>{ x=Math.round(x*100)/100; return 'CHF '+(Number.isInteger(x)? x+'.–' : x.toFixed(2)); };
+const num=x=>{ const r=Math.round(x*1000)/1000; return String(parseFloat(r.toFixed(3))); };
+
+/* ---------- Aufgaben-Generatoren ----------
+   Jeder gibt zurück: {typ, kt, text, aStr,bStr,cStr, per1Str, kStr, ansUnit, answer, warum1, warum2, calc1, calc2, hint}
+   Methode "über 1":
+     pro:  Schritt1 b:a=per1   Schritt2 per1*c=answer   (geteilt, dann mal)
+     anti: Schritt1 a*b=K       Schritt2 K:c=answer       (mal, dann geteilt)
+*/
+const NAMEN=['Lea','Tim','Mia','Jan','Nora','Elias','Sara','Ben'];
+const ITEMS=[{s:'Brötchen',p:'Brötchen',e:'🥐'},{s:'Heft',p:'Hefte',e:'📓'},{s:'Schraube',p:'Schrauben',e:'🔩'},{s:'Apfel',p:'Äpfel',e:'🍎'},{s:'Kerze',p:'Kerzen',e:'🕯️'},{s:'Tulpe',p:'Tulpen',e:'🌷'}];
+
+/* ---------- Beruf / Niveau (zugleich Schwierigkeitsgrad) ---------- */
+const LEVELS={
+  eba:{ label:'DH EBA', typ:'pro', contexts:['lohn','einkauf'],
+    lohn:[15,16,18,20], hoursA:[2,3,4,5,6],
+    preise:[0.50,0.80,1.00,1.20,1.50], stk:[2,3,4,5,6,8],
+    prozPer1:[2,3,5], prozX:[10,20,25,50], prozC:[100,50,10,20],
+    speed:[40,50,60,80], hoursB:[2,3,4,5],
+    cons:[5,6,8], distV:[100,200,300],
+    antiK:[12,24,36,48], antiKein:[24,36,48,60],
+    antiDist:[{d:120,sp:[30,40,60]},{d:240,sp:[40,60,80,120]}] },
+  dhefz:{ label:'DH EFZ', typ:'beide', contexts:['lohn','einkauf','prozent','tempo'],
+    lohn:[18,20,22,24,25], hoursA:[3,4,5,6,7,8],
+    preise:[0.80,1.20,1.50,2.40,2.50,3.50], stk:[3,4,5,6,7,8,9,10],
+    prozPer1:[1.5,2,2.5,3,4,5], prozX:[5,8,10,12,15,20,25], prozC:[100,50,75,60,80],
+    speed:[60,70,80,90,100], hoursB:[2,3,4,5,6],
+    cons:[5,6,7,8], distV:[50,100,150,200,250],
+    antiK:[24,36,48,60,72], antiKein:[60,72,120,144,180],
+    antiDist:[{d:240,sp:[40,60,80,120]},{d:300,sp:[50,60,75,100]},{d:180,sp:[45,60,90]}] },
+  kv:{ label:'KV', typ:'beide', contexts:['lohn','einkauf','prozent','tempo'],
+    lohn:[22,24,25,26,28,30,32], hoursA:[4,5,6,7,8,9,10,12],
+    preise:[1.20,1.50,2.40,2.50,3.50,4.20,4.80], stk:[4,5,6,7,8,9,10,12],
+    prozPer1:[1.5,2,2.5,3,4,5,6,8], prozX:[5,8,12,15,20,25,40], prozC:[100,75,60,80,120,150],
+    speed:[70,80,90,100,120], hoursB:[3,4,5,6],
+    cons:[6,7,8,9], distV:[100,150,200,250,300],
+    antiK:[36,48,60,72,120], antiKein:[120,144,180,240,300,360],
+    antiDist:[{d:300,sp:[50,60,75,100]},{d:360,sp:[60,72,90,120]},{d:480,sp:[60,80,120]}] },
+  pharma:{ label:'Pharma', typ:'beide', contexts:['lohn','einkauf','prozent','tempo'],
+    lohn:[24,26,28,30,32,35], hoursA:[4,5,6,7,8,9,10,12],
+    preise:[1.20,1.80,2.40,3.50,4.20,4.80,6.50], stk:[4,5,6,7,8,9,10,12,15],
+    prozPer1:[1.5,2.5,3,4,5,6,7.5], prozX:[5,8,12,15,20,25,40,60], prozC:[100,75,60,120,150,250],
+    speed:[80,90,100,120], hoursB:[3,4,5,6],
+    cons:[6,7,8,9], distV:[125,150,175,200,250,300],
+    antiK:[48,60,72,120,144], antiKein:[144,180,240,300,360,720],
+    antiDist:[{d:360,sp:[60,72,90,120]},{d:480,sp:[60,80,120]},{d:600,sp:[60,75,100,120,150]}] },
+};
+let LV=LEVELS.dhefz;
+
+function g_lohn_pro(){
+  const lohn=pick(LV.lohn);
+  const [a,c]=twoDistinct(LV.hoursA);
+  const b=lohn*a, ans=lohn*c, nm=pick(NAMEN);
+  return { typ:'pro', kt:'lohn', emoji:'💰',
+    text:`${nm} verdient in ${a} Stunden ${money(b)}. Wie viel verdient ${nm} in ${c} Stunden bei gleichem Stundenlohn?`,
+    aStr:`${a} Std`, bStr:money(b), cStr:`${c} Std`,
+    calc1:`${num(b)} : ${a} = ${num(lohn)}`, per1Str:`1 Std = ${money(lohn)}`,
+    calc2:`${num(lohn)} · ${c} = ${num(ans)}`,
+    warum1:`Auf 1 Stunde herunter: durch ${a} teilen.`, warum2:`Auf ${c} Stunden hoch: mal ${c}.`,
+    ansUnit:'CHF', answer:ans, hint:'Mehr Stunden → mehr Lohn: gerader Dreisatz. Zuerst durch die Stunden teilen (Lohn pro Stunde), dann mal die gesuchten Stunden.' };
+}
+function g_einkauf_pro(){
+  const preis=pick(LV.preise);
+  const [a,c]=twoDistinct(LV.stk);
+  const b=Math.round(preis*a*100)/100, ans=Math.round(preis*c*100)/100, it=pick(ITEMS);
+  return { typ:'pro', kt:'einkauf', emoji:it.e,
+    text:`${a} ${it.p} kosten ${money(b)}. Was kosten ${c} ${it.p}?`,
+    aStr:`${a} ${it.p}`, bStr:money(b), cStr:`${c} ${it.p}`,
+    calc1:`${num(b)} : ${a} = ${num(preis)}`, per1Str:`1 ${it.s} = ${money(preis)}`,
+    calc2:`${num(preis)} · ${c} = ${num(ans)}`,
+    warum1:`Auf 1 ${it.s}: durch ${a} teilen (Stückpreis).`, warum2:`Auf ${c} ${it.p}: mal ${c}.`,
+    ansUnit:'CHF', answer:ans, hint:'Mehr Stück → mehr Kosten: gerader Dreisatz. Zuerst Stückpreis (÷), dann mal die Anzahl.' };
+}
+function g_prozent_pro(){
+  const per1=pick(LV.prozPer1);
+  const x=pick(LV.prozX);
+  let c=pick(LV.prozC); if(c===x) c=100;
+  const b=Math.round(per1*x*100)/100, ans=Math.round(per1*c*100)/100;
+  return { typ:'pro', kt:'prozent', emoji:'📊',
+    text:`${x} % eines Betrags sind ${money(b)}. Wie viel sind ${c} %?`,
+    aStr:`${x} %`, bStr:money(b), cStr:`${c} %`,
+    calc1:`${num(b)} : ${x} = ${num(per1)}`, per1Str:`1 % = ${money(per1)}`,
+    calc2:`${num(per1)} · ${c} = ${num(ans)}`,
+    warum1:`Auf 1 %: durch ${x} teilen.`, warum2:`Auf ${c} %: mal ${c}.`,
+    ansUnit:'CHF', answer:ans, hint:'Prozent ist ein gerader Dreisatz. Zuerst der Wert von 1 % (÷), dann mal die gesuchten Prozent.' };
+}
+function g_tempo_pro(){
+  if(Math.random()<0.55){ // Geschwindigkeit (Zeit → Strecke)
+    const v=pick(LV.speed);
+    const [a,c]=twoDistinct(LV.hoursB);
+    const veh=pick([{n:'Zug',e:'🚂'},{n:'Bus',e:'🚌'},{n:'Velofahrer',e:'🚴'},{n:'Auto',e:'🚗'}]), nm=veh.n;
+    const b=v*a, ans=v*c;
+    return { typ:'pro', kt:'tempo', emoji:veh.e,
+      text:`Ein ${nm} fährt in ${a} Stunden ${b} km. Wie weit kommt er in ${c} Stunden bei gleichem Tempo?`,
+      aStr:`${a} Std`, bStr:`${b} km`, cStr:`${c} Std`,
+      calc1:`${b} : ${a} = ${v}`, per1Str:`1 Std = ${v} km`,
+      calc2:`${v} · ${c} = ${num(ans)}`,
+      warum1:`Auf 1 Stunde: durch ${a} teilen (Tempo pro Stunde).`, warum2:`Auf ${c} Stunden: mal ${c}.`,
+      ansUnit:'km', answer:ans, hint:'Mehr Zeit → mehr Strecke: gerader Dreisatz. Zuerst km pro Stunde (÷), dann mal die Stunden.' };
+  } else { // Verbrauch
+    const cons=pick(LV.cons); // L pro 100 km
+    const [a,c]=twoDistinct(LV.distV);
+    const b=Math.round(cons*a/100*100)/100, ans=Math.round(cons*c/100*100)/100, per1=cons/100;
+    return { typ:'pro', kt:'tempo', emoji:'⛽',
+      text:`Ein Auto braucht auf ${a} km ${num(b)} Liter Benzin. Wie viel braucht es auf ${c} km?`,
+      aStr:`${a} km`, bStr:`${num(b)} L`, cStr:`${c} km`,
+      calc1:`${num(b)} : ${a} = ${num(per1)}`, per1Str:`1 km = ${num(per1)} L`,
+      calc2:`${num(per1)} · ${c} = ${num(ans)}`,
+      warum1:`Auf 1 km: durch ${a} teilen (Verbrauch pro km).`, warum2:`Auf ${c} km: mal ${c}.`,
+      ansUnit:'L', answer:ans, hint:'Weitere Strecke → mehr Benzin: gerader Dreisatz. Verbrauch pro km (÷), dann mal die km.' };
+  }
+}
+
+function g_lohn_anti(){
+  const K=pick(LV.antiK);
+  const ds=divisors(K,2,12); if(ds.length<2) return g_lohn_anti();
+  const [a,c]=twoDistinct(ds); if(a===c) return g_lohn_anti();
+  const b=K/a, ans=K/c, was=pick([['Arbeiter','streichen eine Halle','👷'],['Maler','tapezieren ein Haus','🎨'],['Helfer','räumen ein Lager','📦']]);
+  return { typ:'anti', kt:'lohn', emoji:was[2],
+    text:`${a} ${was[0]} ${was[1]} in ${b} Tagen. Wie lange brauchen ${c} ${was[0]} (gleiches Tempo)?`,
+    aStr:`${a} ${was[0]}`, bStr:`${b} Tage`, cStr:`${c} ${was[0]}`,
+    calc1:`${a} · ${b} = ${K}`, kStr:`1 ${was[0]} = ${K} Tage`,
+    calc2:`${K} : ${c} = ${num(ans)}`,
+    warum1:`Auf 1 ${was[0]}: mal ${a} – einer allein braucht länger.`, warum2:`Auf ${c} ${was[0]}: durch ${c} – mehr Leute, weniger Zeit.`,
+    ansUnit:'Tage', answer:ans, hint:'Mehr Leute → weniger Zeit: ungerader Dreisatz. Zuerst mal (einer allein), dann durch die Anzahl.' };
+}
+function g_einkauf_anti(){
+  const K=pick(LV.antiKein);
+  const ds=divisors(K,2,12); if(ds.length<2) return g_einkauf_anti();
+  const [a,c]=twoDistinct(ds); if(a===c) return g_einkauf_anti();
+  const b=K/a, ans=K/c;
+  if(Math.random()<0.5){ // Geld aufteilen
+    return { typ:'anti', kt:'einkauf', emoji:'🤝',
+      text:`Ein Gewinn wird gerecht auf ${a} Personen verteilt – jede erhält ${money(b)}. Wie viel erhält jede, wenn ${c} Personen teilen?`,
+      aStr:`${a} Pers.`, bStr:money(b), cStr:`${c} Pers.`,
+      calc1:`${a} · ${num(b)} = ${num(K)}`, kStr:`ganzer Gewinn = ${money(K)}`,
+      calc2:`${num(K)} : ${c} = ${num(ans)}`,
+      warum1:`Ganzer Betrag: ${a} · ${num(b)} = ${num(K)}.`, warum2:`Auf ${c} Personen: durch ${c} – mehr Köpfe, weniger pro Kopf.`,
+      ansUnit:'CHF', answer:ans, hint:'Mehr Personen → weniger pro Kopf: ungerader Dreisatz. Zuerst den ganzen Betrag (mal), dann durch die Personen.' };
+  } else { // Vorrat
+    return { typ:'anti', kt:'einkauf', emoji:'🐄',
+      text:`Ein Futtervorrat reicht für ${a} Kühe genau ${b} Tage. Für wie viele Tage reicht er bei ${c} Kühen?`,
+      aStr:`${a} Kühe`, bStr:`${b} Tage`, cStr:`${c} Kühe`,
+      calc1:`${a} · ${b} = ${K}`, kStr:`1 Kuh = ${K} Tage`,
+      calc2:`${K} : ${c} = ${num(ans)}`,
+      warum1:`Auf 1 Kuh: mal ${a} – für eine Kuh reicht es viel länger.`, warum2:`Auf ${c} Kühe: durch ${c} – mehr Tiere, weniger Tage.`,
+      ansUnit:'Tage', answer:ans, hint:'Mehr Tiere → Vorrat reicht kürzer: ungerader Dreisatz. Zuerst mal (1 Kuh), dann durch die Anzahl.' };
+  }
+}
+function g_tempo_anti(){
+  const opt=pick(LV.antiDist);
+  const [a,c]=twoDistinct(opt.sp); if(a===c) return g_tempo_anti();
+  const K=opt.d, b=K/a, ans=K/c;
+  return { typ:'anti', kt:'tempo', emoji:'🏎️',
+    text:`Bei ${a} km/h dauert eine Fahrt ${num(b)} Stunden. Wie lange dauert dieselbe Strecke bei ${c} km/h?`,
+    aStr:`${a} km/h`, bStr:`${num(b)} Std`, cStr:`${c} km/h`,
+    calc1:`${a} · ${num(b)} = ${K}`, kStr:`Strecke = ${K} km`,
+    calc2:`${K} : ${c} = ${num(ans)}`,
+    warum1:`Strecke ausrechnen: ${a} · ${num(b)} = ${K} km.`, warum2:`Bei ${c} km/h: ${K} : ${c} = ${num(ans)} – schneller, weniger Zeit.`,
+    ansUnit:'Stunden', answer:ans, hint:'Höheres Tempo → weniger Fahrzeit: ungerader Dreisatz. Zuerst die Strecke (Tempo · Zeit), dann durch das neue Tempo.' };
+}
+
+const GENS={
+  pro:{ lohn:g_lohn_pro, einkauf:g_einkauf_pro, prozent:g_prozent_pro, tempo:g_tempo_pro },
+  anti:{ lohn:g_lohn_anti, einkauf:g_einkauf_anti, tempo:g_tempo_anti } // prozent: nur pro
+};
+
+/* ---------- Zustand & Auswahl ---------- */
+let selTyp='beide';
+let selKt={lohn:true,einkauf:true,prozent:true,tempo:true};
+let cur=null, artChosen=null, answered=false;
+let score={correct:0,total:0,streak:0};
+
+function buildPool(){
+  let typs = selTyp==='beide' ? ['pro','anti'] : [selTyp];
+  const kts = Object.keys(selKt).filter(k=>selKt[k]);
+  let pool=[];
+  typs.forEach(t=>{ kts.forEach(k=>{ if(GENS[t] && GENS[t][k]) pool.push(GENS[t][k]); }); });
+  if(pool.length===0){ // Fallback (z.B. nur ungerader + nur Prozent)
+    typs.forEach(t=>{ Object.keys(GENS[t]||{}).forEach(k=>pool.push(GENS[t][k])); });
+  }
+  if(pool.length===0) pool=[g_lohn_pro];
+  return pool;
+}
+
+function neueAufgabe(){
+  const pool=buildPool();
+  cur=pick(pool)();
+  artChosen=null; answered=false;
+  $('qtext').textContent=(cur.emoji?cur.emoji+' ':'')+cur.text;
+  $('qmeta').textContent='';
+  $('art-pro').className='artbtn'; $('art-anti').className='artbtn';
+  $('answer').value=''; $('answer').disabled=false;
+  $('unit').textContent=cur.ansUnit;
+  $('feedback').className='feedback'; $('feedback').innerHTML='';
+  $('solution').className='solution'; $('solution').innerHTML='';
+  $('hintbox').className='hintbox'; $('hintbox').textContent=cur.hint;
+  $('check').disabled=false;
+  $('answer').focus();
+}
+
+function waehleArt(a){ if(answered) return; artChosen=a;
+  $('art-pro').className='artbtn'+(a==='pro'?' sel':'');
+  $('art-anti').className='artbtn'+(a==='anti'?' sel':'');
+}
+
+function schemaHTML(g){
+  const op1 = g.typ==='pro' ? 'op-div' : 'op-mul';
+  const op2 = g.typ==='pro' ? 'op-mul' : 'op-div';
+  const s1 = g.typ==='pro' ? `: ${g.aStr.split(' ')[0]}` : `· ${g.aStr.split(' ')[0]}`;
+  return `<div class="steps">
+    <div class="step"><div class="no">1</div><div class="body"><div class="calc">${g.calc1}</div><div class="why">${g.warum1}</div></div></div>
+    <div class="step"><div class="no">2</div><div class="body"><div class="calc">${g.calc2}</div><div class="why">${g.warum2}</div></div></div>
+  </div>
+  <div class="result-line">Ergebnis: ${num(g.answer)} ${g.ansUnit==='CHF'?'CHF':g.ansUnit}</div>`;
+}
+
+function pruefen(){
+  if(!cur || answered) return;
+  const raw=$('answer').value.trim().replace(',','.').replace(/[^0-9.\-]/g,'');
+  if(raw==='' && artChosen===null){ return; }
+  const val=parseFloat(raw);
+  const artOk = artChosen===cur.typ;
+  const numOk = !isNaN(val) && Math.abs(val-cur.answer)<0.005;
+  answered=true;
+  $('check').disabled=true; $('answer').disabled=true;
+
+  $('art-pro').className='artbtn'+(cur.typ==='pro'?' correct':(artChosen==='pro'?' wrong':''));
+  $('art-anti').className='artbtn'+(cur.typ==='anti'?' correct':(artChosen==='anti'?' wrong':''));
+
+  const fb=$('feedback');
+  if(artOk && numOk){
+    fb.className='feedback show ok';
+    fb.innerHTML='✓ Richtig! Art und Ergebnis stimmen.';
+    score.correct++; score.streak++;
+  } else {
+    fb.className='feedback show no';
+    let msg=[];
+    if(!artOk) msg.push(`Art: es ist ein <b>${cur.typ==='pro'?'gerader':'ungerader'}</b> Dreisatz`);
+    if(!numOk) msg.push(`richtiges Ergebnis: <b>${num(cur.answer)} ${cur.ansUnit==='CHF'?'CHF':cur.ansUnit}</b>`);
+    fb.innerHTML='✗ Noch nicht ganz. '+msg.join(' · ')+'.';
+    score.streak=0;
+  }
+  score.total++;
+  updateScore();
+
+  const sol=$('solution');
+  sol.className='solution show';
+  sol.innerHTML=`<h3 style="margin:4px 0 6px;color:#3C6E73;font-size:13px;text-transform:uppercase;letter-spacing:.5px;">Lösungsweg <span class="tag ${cur.typ}">${cur.typ==='pro'?'gerader':'ungerader'} Dreisatz</span></h3>
+    <div class="schema" style="display:block;">
+      <div class="srow"><span class="lhs">${cur.aStr}</span><span class="eq">=</span><span class="rhs">${cur.bStr}</span></div>
+      <div class="srow"><span class="lhs">${cur.cStr}</span><span class="eq">=</span><span class="rhs">${num(cur.answer)} ${cur.ansUnit==='CHF'?'CHF':cur.ansUnit}</span></div>
+    </div>`+schemaHTML(cur);
+}
+
+function updateScore(){
+  $('sc-correct').textContent=score.correct;
+  $('sc-total').textContent=score.total;
+  $('sc-streak').textContent=score.streak;
+  $('sc-rate').textContent = score.total? Math.round(score.correct/score.total*100)+'%' : '–';
+}
+
+/* ---------- Events ---------- */
+$('tab-lernen').onclick=()=>switchTab('lernen');
+$('tab-trainer').onclick=()=>switchTab('trainer');
+$('goto-trainer').onclick=()=>switchTab('trainer');
+function switchTab(w){
+  const L=w==='lernen';
+  $('tab-lernen').classList.toggle('active',L); $('tab-lernen').setAttribute('aria-selected',L);
+  $('tab-trainer').classList.toggle('active',!L); $('tab-trainer').setAttribute('aria-selected',!L);
+  $('panel-lernen').classList.toggle('active',L);
+  $('panel-trainer').classList.toggle('active',!L);
+  if(!L && !cur) neueAufgabe();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+$('mehr-btn').onclick=()=>{ const b=$('mehr-box'); b.classList.toggle('open'); $('mehr-btn').textContent=b.classList.contains('open')?'Beispiel ausblenden ▴':'Noch ein Beispiel zum Erkennen ▾'; };
+
+$('typChips').addEventListener('click',e=>{ const b=e.target.closest('.chip'); if(!b) return;
+  selTyp=b.dataset.typ; $('typChips').querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c===b)); });
+$('ktChips').addEventListener('click',e=>{ const b=e.target.closest('.chip'); if(!b) return;
+  const k=b.dataset.kt; const on=Object.values(selKt).filter(Boolean).length;
+  if(selKt[k] && on<=1) return; // mind. eines
+  selKt[k]=!selKt[k]; b.classList.toggle('on',selKt[k]); });
+
+$('art-pro').onclick=()=>waehleArt('pro');
+$('art-anti').onclick=()=>waehleArt('anti');
+$('check').onclick=pruefen;
+$('next').onclick=neueAufgabe;
+$('hint-btn').onclick=()=>$('hintbox').classList.toggle('show');
+$('answer').addEventListener('keydown',e=>{ if(e.key==='Enter'){ if(answered) neueAufgabe(); else pruefen(); } });
+
+/* ---------- Beruf / Niveau ---------- */
+function applyLevel(key, skipNew){
+  LV=LEVELS[key]||LEVELS.dhefz;
+  $('nivChips').querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.niv===key));
+  selTyp=LV.typ;
+  $('typChips').querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.typ===selTyp));
+  selKt={lohn:false,einkauf:false,prozent:false,tempo:false};
+  LV.contexts.forEach(k=>selKt[k]=true);
+  $('ktChips').querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',!!selKt[c.dataset.kt]));
+  if(!skipNew) neueAufgabe();
+}
+$('nivChips').addEventListener('click',e=>{ const b=e.target.closest('.chip'); if(b) applyLevel(b.dataset.niv); });
+
+/* ---------- Taschenrechner ---------- */
+let cexpr='';
+function cdisp(){ $('cdisp').textContent=(cexpr||'0').replace(/\./g,',').replace(/-/g,'−'); }
+function calcInput(v){
+  if(cexpr==='Fehler' && v!=='C') cexpr='';
+  if(v==='C') cexpr='';
+  else if(v==='back') cexpr=cexpr.slice(0,-1);
+  else if(v==='=') return evalCalc();
+  else if('+-×÷'.indexOf(v)>=0){
+    if(cexpr==='' && v!=='-') return;
+    if('+-×÷'.indexOf(cexpr.slice(-1))>=0) cexpr=cexpr.slice(0,-1)+v; else cexpr+=v;
+  } else {
+    if(v==='.'){ const seg=cexpr.split(/[+\-×÷]/).pop(); if(seg.indexOf('.')>=0) return; if(seg==='') cexpr+='0'; }
+    cexpr+=v;
+  }
+  cdisp();
+}
+function evalCalc(){
+  if(!cexpr) return;
+  let e=cexpr.replace(/×/g,'*').replace(/÷/g,'/').replace(/[+\-*/.]+$/,'');
+  if(!/^[-0-9+*/. ]+$/.test(e)){ cexpr='Fehler'; return cdisp(); }
+  let r; try{ r=Function('return ('+e+')')(); }catch(_){ r=null; }
+  cexpr=(r===null||typeof r!=='number'||!isFinite(r))?'Fehler':String(Math.round(r*1e6)/1e6);
+  cdisp();
+}
+$('cgrid').addEventListener('click',e=>{ const b=e.target.closest('button'); if(b) calcInput(b.dataset.k); });
+$('calcToAnswer').addEventListener('click',()=>{ evalCalc(); if(cexpr && cexpr!=='Fehler' && !isNaN(parseFloat(cexpr))){ $('answer').value=cexpr; $('answer').focus(); } });
+
+applyLevel('dhefz', true);
+updateScore();
+</script>
+</body>
+</html>
