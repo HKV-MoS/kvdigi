@@ -170,55 +170,6 @@ body{
 .k-aktion .pfeil{transition:transform .22s cubic-bezier(.4,0,.2,1)}
 .karte:hover .k-aktion .pfeil,.karte:focus-visible .k-aktion .pfeil{transform:translateX(4px)}
 
-/* ── Paywall: gesperrte Kacheln ── */
-.karte.gesperrt{cursor:default}
-.karte.gesperrt:hover{transform:none}
-.karte.bald{cursor:default;opacity:.94;overflow:hidden;position:relative}
-.karte.bald:hover{transform:none}
-.karte.bald .k-titel{letter-spacing:.06em}
-.k-band{
-  position:absolute;top:46%;left:-15%;width:130%;
-  transform:rotate(-16deg);
-  background:rgba(184,137,43,.93);color:#fff;
-  font-family:'JetBrains Mono',monospace;
-  font-size:1.2rem;font-weight:700;letter-spacing:.32em;text-transform:uppercase;
-  text-align:center;padding:.6rem 0;
-  box-shadow:0 4px 14px rgba(0,0,0,.22);
-  pointer-events:none;z-index:2;
-}
-.karte.gesperrt .k-deko{bottom:195px}
-.k-schloss{
-  position:absolute;top:12px;right:12px;
-  font-size:1rem;line-height:1;
-  background:rgba(255,255,255,.82);border:1px solid var(--linie);border-radius:999px;
-  padding:.3rem .45rem;
-  box-shadow:0 1px 3px rgba(0,0,0,.08);
-}
-.k-kaufzeile{
-  margin-top:.8rem;display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;
-}
-.k-preis{
-  font-family:'JetBrains Mono',monospace;
-  font-size:.78rem;font-weight:700;color:var(--tinte);
-  letter-spacing:.04em;
-}
-.k-kaufen{
-  font-family:'JetBrains Mono',monospace;
-  font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;
-  color:#fff;background:var(--ocker);
-  border:none;border-radius:8px;padding:.5rem .9rem;cursor:pointer;
-  display:inline-flex;align-items:center;gap:.4rem;font-weight:600;
-  transition:filter .18s;
-}
-.k-kaufen:hover,.k-kaufen:focus-visible{filter:brightness(.88)}
-.k-kaufhinweis{
-  font-size:.7rem;color:#8a97a6;flex-basis:100%;
-}
-.k-twint{
-  display:inline-block;font-size:.62rem;font-weight:700;color:#fff;
-  background:#000;border-radius:4px;padding:.1rem .35rem;vertical-align:1px;
-}
-
 /* ── Fuss ── */
 .fuss{
   margin-top:3rem;padding-top:1.4rem;border-top:1px solid var(--linie);
@@ -240,8 +191,6 @@ body{
   .karte:nth-child(9){animation-delay:.62s}
   .karte:nth-child(10){animation-delay:.69s}
   .karte:nth-child(11){animation-delay:.76s}
-  .karte:nth-child(12){animation-delay:.83s}
-  .karte:nth-child(13){animation-delay:.90s}
   @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 }
 </style>
@@ -319,6 +268,17 @@ body{
         <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
       </a>
 
+      <a class="karte" href="dreisatz.html" data-kat="rechner">
+        <div class="k-kopf">
+          <span class="k-thema">Rechnen · ABU</span>
+          <span class="k-typ">Trainer</span>
+        </div>
+        <div class="k-titel">Dreisatz</div>
+        <p class="k-text">Gerader und ungerader Dreisatz Schritt für Schritt erklärt – mit endlosem Aufgaben-Trainer, Berufs-Niveaus (EBA, EFZ, KV, Pharma) und eingebautem Taschenrechner.</p>
+        <div class="k-einsatz">Einzelarbeit · Selbstübung · Niveaus wählbar</div>
+        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
+      </a>
+
       <a class="karte" href="wasserkreislauf.html" data-kat="oekologie">
         <div class="k-kopf">
           <span class="k-thema">Geografie</span>
@@ -372,19 +332,8 @@ body{
         <p class="k-text">Ein Kaufvertrag, drei Störungen: Lieferverzug, Zahlungsverzug und Mängelrüge als spielbares Dialog-Abenteuer – mit Produktwahl und Rechtsquotient.</p>
         <div class="k-einsatz">Einzelarbeit · drei Wege · Wiederspielwert</div>
         <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
-        <img class="k-deko" src="kachel_hydrant.png?v=5" alt="" onerror="this.style.display=&#39;none&#39;">
+        <img class="k-deko" src="kachel_hydrant.png?v=4" alt="" onerror="this.style.display=&#39;none&#39;">
       </a>
-
-      <div class="karte bald" data-kat="politik">
-        <div class="k-kopf">
-          <span class="k-thema">Aarau</span>
-          <span class="k-typ">Lernspiel</span>
-        </div>
-        <div class="k-titel">1875</div>
-        <p class="k-text">Manche Wände haben ein Gedächtnis.</p>
-        <div class="k-band">Coming soon</div>
-        <img class="k-deko" src="kachel_1875_turm.png?v=2" alt="" style="height:170px;border-radius:8px" onerror="this.style.display=&#39;none&#39;">
-      </div>
 
       <a class="karte" href="slp_karte.html" data-kat="lernen">
         <div class="k-thema">Lehrplan · ABU</div>
@@ -419,7 +368,7 @@ body{
   </main>
 
   <footer class="fuss">
-    <b>abu-tools.ch</b> — interaktive Werkzeuge für den ABU-Unterricht an der HKV Aarau · S. Mollet<br>
+    <b>abu-tools.ch</b> — interaktive Werkzeuge für den ABU-Unterricht an der HKV Aarau · S. Mollet, ABU &amp; Sport<br>
     Aufträge und Lerninhalte: KV Digital.
   </footer>
 
@@ -443,58 +392,6 @@ body{
     });
   });
 })();
-</script>
-<script>
-/* ── PAYWALL-KONFIG ─────────────────────────────────────────────
-   Pro kostenpflichtigem Tool ein Eintrag. href = wie im <a class="karte">.
-   payLink = Payrexx-Zahlungslink (TWINT + Karten), z.B. https://abu-tools.payrexx.com/pay?tid=...
-   Solange payLink 'PLATZHALTER' ist, zeigt der Knopf einen Hinweis statt Checkout. */
-const PAYWALL = {
-  'kaufvertrag.html': {
-    preis: 'CHF 10.–',
-    preisZusatz: 'Einführungspreis für die ersten 10 · danach CHF 19.–',
-    payLink: 'PLATZHALTER',
-    demoLink: 'kaufvertrag_demo.html',
-    hinweis: 'Einmalkauf für Lehrpersonen · Zugang per Link nach Zahlung'
-  }
-};
-document.querySelectorAll('a.karte').forEach(k => {
-  const ziel = k.getAttribute('href');
-  const cfg = PAYWALL[ziel];
-  if (!cfg) return;
-  k.classList.add('gesperrt');
-  k.removeAttribute('href');                       // nicht mehr klickbar
-  const aktion = k.querySelector('.k-aktion');
-  const zeile = document.createElement('div');
-  zeile.className = 'k-kaufzeile';
-  const preis = document.createElement('span');
-  preis.className = 'k-preis'; preis.textContent = '🔒 ' + cfg.preis;
-  if (cfg.preisZusatz) preis.title = cfg.preisZusatz;
-  const knopf = document.createElement('button');
-  knopf.className = 'k-kaufen'; knopf.type = 'button';
-  knopf.innerHTML = 'Kaufen <span class="k-twint">TWINT</span>';
-  knopf.addEventListener('click', ev => {
-    ev.stopPropagation();
-    if (cfg.payLink === 'PLATZHALTER') {
-      alert('Der Verkauf startet in Kürze. Interesse? samuel.mollet@hkv.ch');
-    } else {
-      window.open(cfg.payLink, '_blank', 'noopener');
-    }
-  });
-  const hinweis = document.createElement('span');
-  hinweis.className = 'k-kaufhinweis';
-  hinweis.textContent = cfg.preisZusatz ? cfg.preisZusatz + ' · ' + cfg.hinweis : cfg.hinweis;
-  zeile.appendChild(preis); zeile.appendChild(knopf);
-  if (cfg.demoLink) {
-    const demo = document.createElement('a');
-    demo.className = 'k-aktion'; demo.href = cfg.demoLink;
-    demo.innerHTML = 'Demo spielen <span class="pfeil">→</span>';
-    demo.addEventListener('click', ev => ev.stopPropagation());
-    zeile.appendChild(demo);
-  }
-  zeile.appendChild(hinweis);
-  if (aktion) aktion.replaceWith(zeile); else k.appendChild(zeile);
-});
 </script>
 </body>
 </html>
