@@ -1275,8 +1275,9 @@ const SPRITES = {
       x:680, y:198, w:30, h:24 },
   ],
   discountinnen: [
-    { id:'verkaeufer', frames:['kaufvertrag_verkaeufer_0.png','kaufvertrag_verkaeufer_1.png','kaufvertrag_verkaeufer_2.png','kaufvertrag_verkaeufer_3.png','kaufvertrag_verkaeufer_4.png','kaufvertrag_verkaeufer_5.png'], x:290, y:82, w:72, h:100 },
+    { id:'verkaeufer', frames:['kaufvertrag_verkaeufer_0.png','kaufvertrag_verkaeufer_1.png','kaufvertrag_verkaeufer_2.png','kaufvertrag_verkaeufer_3.png','kaufvertrag_verkaeufer_4.png','kaufvertrag_verkaeufer_5.png'], x:290, y:100, w:72, h:100 },
     { id:'thekevg', frames:['kaufvertrag_theke_vg.png'], x:0, y:0, w:640, h:260 },
+    { id:'alexd', frames:['kaufvertrag_alex_0.png'], x:96, y:92, w:66, h:160 },
   ],
   front: [
     { id:'nest', frames:['kaufvertrag_nest_0.png','kaufvertrag_nest_1.png','kaufvertrag_nest_2.png'], x:503, y:66, w:25, h:23.2 },
@@ -1315,7 +1316,7 @@ if(typeof Image !== 'undefined'){
     });
   });
 }
-function spriteFrames(sp){ if(sp.id==='lehrer'||sp.id==='tlehrer') return lpFrames(); if(sp.id==='meier') return haendler().frames; if(sp.id==='alex'){ return (zustand.haendler==='frau' && kaeufer().framesL) ? kaeufer().framesL : kaeufer().frames; } return sp.frames; }
+function spriteFrames(sp){ if(sp.id==='lehrer'||sp.id==='tlehrer') return lpFrames(); if(sp.id==='meier') return haendler().frames; if(sp.id==='alex'){ return (zustand.haendler==='frau' && kaeufer().framesL) ? kaeufer().framesL : kaeufer().frames; } if(sp.id==='alexd') return kaeufer().frames; return sp.frames; }
 function spriteSVG(key){
   let svg='';
   (SPRITES[key]||[]).forEach(sp=>{
