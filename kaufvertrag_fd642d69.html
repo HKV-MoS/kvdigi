@@ -1020,7 +1020,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '144';
+const BILD_VERSION = '145';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1209,6 +1209,7 @@ function lpWaehlen(){
 }
 let lehrerT = { t:null };
 const REKTOR_S = ['kaufvertrag_rektor_s_0.png','kaufvertrag_rektor_s_1.png','kaufvertrag_rektor_s_2.png','kaufvertrag_rektor_s_3.png','kaufvertrag_rektor_s_4.png','kaufvertrag_rektor_s_5.png'];
+const VERKAEUFER_S = ['kaufvertrag_verkaeufer_0.png','kaufvertrag_verkaeufer_1.png','kaufvertrag_verkaeufer_2.png','kaufvertrag_verkaeufer_3.png','kaufvertrag_verkaeufer_4.png','kaufvertrag_verkaeufer_5.png'];
 let rektorT = { t:null };
 const MANN2_S = ['kaufvertrag_mann2_0.png','kaufvertrag_mann2_1.png','kaufvertrag_mann2_2.png','kaufvertrag_mann2_3.png','kaufvertrag_mann2_4.png','kaufvertrag_mann2_5.png'];
 const MANN2_L = ['kaufvertrag_mann2l_0.png','kaufvertrag_mann2l_1.png','kaufvertrag_mann2l_2.png','kaufvertrag_mann2l_3.png','kaufvertrag_mann2l_4.png','kaufvertrag_mann2l_5.png'];
@@ -1273,6 +1274,9 @@ const SPRITES = {
       'kaufvertrag_katze_3.png','kaufvertrag_katze_4.png','kaufvertrag_katze_5.png','kaufvertrag_katze_6.png'],
       x:680, y:198, w:30, h:24 },
   ],
+  discountinnen: [
+    { id:'verkaeufer', frames:['kaufvertrag_verkaeufer_0.png','kaufvertrag_verkaeufer_1.png','kaufvertrag_verkaeufer_2.png','kaufvertrag_verkaeufer_3.png','kaufvertrag_verkaeufer_4.png','kaufvertrag_verkaeufer_5.png'], x:320, y:52, w:64, h:98 },
+  ],
   front: [
     { id:'nest', frames:['kaufvertrag_nest_0.png','kaufvertrag_nest_1.png','kaufvertrag_nest_2.png'], x:503, y:66, w:25, h:23.2 },
     { id:'wasser', frames:['kaufvertrag_wasser_0.png','kaufvertrag_wasser_1.png','kaufvertrag_wasser_2.png'], x:585, y:176, w:10, h:40 },
@@ -1301,7 +1305,7 @@ if(typeof Image !== 'undefined'){
     .concat(Object.values(HAENDLER).map(h=>h.frames))
     .concat(Object.values(KAEUFER).map(k=>k.frames))
     .concat(Object.values(KAEUFER).map(k=>k.framesL).filter(Boolean))
-    .concat(Object.values(ALEX_S)).concat([LEHRER_S]).concat([REKTOR_S]).concat(Object.values(PASS_FRAMES)).concat([MANN2_S, MANN2_L, FRAU2_S, FRAU2_R, WASSER_FRAMES, BRUNNENOBER_FRAMES]).concat([['kaufvertrag_mann2hip.png'],['kaufvertrag_frau2hip.png'],FAN_FRAMES]).concat([LP_TEMPLATES.frau1, LP_TEMPLATES.frauB, LP_TEMPLATES.mann1, LP_TEMPLATES.mann2, LP_TEMPLATES.mann3, LP_TEMPLATES.frauC]);
+    .concat(Object.values(ALEX_S)).concat([LEHRER_S]).concat([REKTOR_S]).concat(Object.values(PASS_FRAMES)).concat([MANN2_S, MANN2_L, FRAU2_S, FRAU2_R, WASSER_FRAMES, BRUNNENOBER_FRAMES]).concat([['kaufvertrag_mann2hip.png'],['kaufvertrag_frau2hip.png'],FAN_FRAMES]).concat([LP_TEMPLATES.frau1, LP_TEMPLATES.frauB, LP_TEMPLATES.mann1, LP_TEMPLATES.mann2, LP_TEMPLATES.mann3, LP_TEMPLATES.frauC]).concat([VERKAEUFER_S]);
   alleFrames.forEach(frames=>{
     frames.forEach(url=>{
       const im=new Image();
@@ -2389,7 +2393,7 @@ function portraetWeg(){
   if(portraet.weg){ clearTimeout(portraet.weg); portraet.weg = null; }
   try{ const g = szeneEl.querySelector('#sprechKopf'); if(g) g.remove(); }catch(e){}
 }
-const FIGUR_SPRITES = ['lehrer','tlehrer','trektor','meier','alex','mann2','frau2'];
+const FIGUR_SPRITES = ['lehrer','tlehrer','trektor','meier','alex','mann2','frau2','verkaeufer'];
 function belebeFiguren(){
   if(reduzierteBewegung()) return;
   FIGUR_SPRITES.forEach(id=>{
@@ -2749,6 +2753,16 @@ function fanStart(){
   }, 85);
 }
 function fanStop(){ if(fanT.t){ clearInterval(fanT.t); fanT.t=null; } }
+/* Verkäufer Dan im MEGA-DISCOUNT gestikuliert */
+const vkT = { t:null };
+function verkaeuferStart(){
+  verkaeuferStop();
+  if(reduzierteBewegung()) return;
+  const tick=()=>{ if(aktuelleSzeneId!=='discountinnen') return; mundFlap('verkaeufer', VERKAEUFER_S, 2400 + Math.random()*1600, 0); };
+  setTimeout(tick, 700);
+  vkT.t = setInterval(tick, 3400);
+}
+function verkaeuferStop(){ if(vkT.t){ clearInterval(vkT.t); vkT.t=null; } if(flapT['verkaeufer']){ clearInterval(flapT['verkaeufer']); flapT['verkaeufer']=null; } }
 const tiere = { szene:null };
 function tiereWechsel(szene){
   if(tiere.szene === szene) return;   /* gleiche Szene: Choreografie NICHT neu starten */
@@ -2757,6 +2771,7 @@ function tiereWechsel(szene){
   lehrerStop();  /* alte Lehrer-Pose-Schleife deaktiviert – neuer Pixel-Lehrer via Sprite + mundFlap */
   if(szene==='weiche'){ kraeheStart(); } else { kraeheStop(); }
   if(szene==='front'){ nestStart(); } else { nestStop(); }
+  if(szene==='discountinnen'){ verkaeuferStart(); } else { verkaeuferStop(); }
   if(szene==='front'){ frontGespraechStart(); } else { frontGespraechStop(); }
   if(szene==='front'){ wasserStart(); } else { wasserStop(); }
   if(szene==='front'){ fanStart(); } else { fanStop(); }
