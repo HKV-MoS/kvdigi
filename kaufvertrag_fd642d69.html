@@ -1020,7 +1020,7 @@ ende: pxSzene('#000010', (R,D)=>{
    Liegen im Repo PNGs mit diesen Namen, werden sie automatisch
    statt der Pixel-Programme geladen. Fehlen sie: Pixel-Fallback.
    ===================================================== */
-const BILD_VERSION = '143';
+const BILD_VERSION = '144';
 function vurl(u){ return u + '?v=' + BILD_VERSION; }
 const SZENEN_BILDER = {
   titel:'kaufvertrag_titel.png',
@@ -1028,6 +1028,7 @@ const SZENEN_BILDER = {
   treppe:'kaufvertrag_treppe.png',
   front:'kaufvertrag_front.png',  laden:'kaufvertrag_laden.png',
   discount:'kaufvertrag_discount.png',
+  discountinnen:'kaufvertrag_discount_innen.png',
   zimmer:'kaufvertrag_zimmer.png', zimmer2:'kaufvertrag_zimmer2.png',
   weiche:'kaufvertrag_weiche.png',
   ende:'kaufvertrag_ende.png',
@@ -1037,6 +1038,7 @@ SZENEN.zimmer2 = SZENEN.zimmer;
 SZENEN.schule = SZENEN.weiche;
 SZENEN.treppe = SZENEN.weiche;
 SZENEN.titel = SZENEN.front;
+SZENEN.discountinnen = SZENEN.discount || SZENEN.front;
 HOTSPOTS.treppe = [
   { id:'plakat1875', name:'Jubiläumsplakat', x:492,y:44,w:42,h:98,
     fund:{ verb:'anschauen', rq:1, text:'«<b>HKV AARAU 1875</b>» – das Plakat vom <b>150-Jahr-Jubiläum letztes Jahr</b>. Es hängt immer noch; von so viel Geschichte trennt man sich hier nicht so schnell. Darunter, fein gedruckt: «Festakt mit Glockenspiel». Glockenspiel? Sie zählen im Kopf die Glocken in der Fassade … (Fortsetzung folgt.)' },
@@ -3494,7 +3496,7 @@ m4b:{ szene:'laden', sprecher:'ERZÄHLER',
   text:'Sie erhalten einen Viertel des Kaufpreises zurück und behalten {PA} – mit Macke, aber zum fairen Preis. <b>Fall gelöst: Minderung.</b>',
   optionen:[ { t:'Weiter ▸', rq:0, fb:null, ziel:'gattung' } ]},
 
-gattung:{ szene:'discount', sprecher:'ERZÄHLER',
+gattung:{ szene:'discountinnen', sprecher:'ERZÄHLER',
   text:'<b>Gedankenexperiment zum Schluss.</b> Dieselbe Macke – aber stellen Sie sich vor, Alex hätte {PA} nicht als Occasion bei Meier gekauft, sondern <b>fabrikneu ab Stange im MEGA-DISCOUNT</b>. Bei der Occasion war es ein <b>Einzelstück – Speziesware</b>. Neu ab Stange ist es <b>Gattungsware</b>, beliebig ersetzbar. Was hätte das beim gleichen Mangel geändert?',
   optionen:[
     { t:'Bei Neuware (Gattung) könnte Alex ein neues, mangelfreies Exemplar verlangen – Ersatzlieferung.', rq:3,
