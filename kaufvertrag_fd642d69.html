@@ -3488,11 +3488,25 @@ m3:{ szene:'zimmer', sprecher:'ERZÄHLER',
 
 m4a:{ szene:'laden', sprecher:'ERZÄHLER',
   text:'Frau Meier zahlt anstandslos den vollen Preis zurück – «Qualität ist Ehrensache», sagt sie zerknirscht und legt einen Gutschein obendrauf. <b>Fall gelöst: Wandelung.</b>',
-  optionen:[ { t:'Zur Auswertung', rq:0, fb:null, ziel:'ende' } ]},
+  optionen:[ { t:'Weiter ▸', rq:0, fb:null, ziel:'gattung' } ]},
 
 m4b:{ szene:'laden', sprecher:'ERZÄHLER',
   text:'Sie erhalten einen Viertel des Kaufpreises zurück und behalten {PA} – mit Macke, aber zum fairen Preis. <b>Fall gelöst: Minderung.</b>',
-  optionen:[ { t:'Zur Auswertung', rq:0, fb:null, ziel:'ende' } ]},
+  optionen:[ { t:'Weiter ▸', rq:0, fb:null, ziel:'gattung' } ]},
+
+gattung:{ szene:'discount', sprecher:'ERZÄHLER',
+  text:'<b>Gedankenexperiment zum Schluss.</b> Dieselbe Macke – aber stellen Sie sich vor, Alex hätte {PA} nicht als Occasion bei Meier gekauft, sondern <b>fabrikneu ab Stange im MEGA-DISCOUNT</b>. Bei der Occasion war es ein <b>Einzelstück – Speziesware</b>. Neu ab Stange ist es <b>Gattungsware</b>, beliebig ersetzbar. Was hätte das beim gleichen Mangel geändert?',
+  optionen:[
+    { t:'Bei Neuware (Gattung) könnte Alex ein neues, mangelfreies Exemplar verlangen – Ersatzlieferung.', rq:3,
+      fb:'<b>Genau.</b> Beim <b>Gattungskauf</b> kommt zu Wandelung und Minderung ein drittes Recht dazu: die <b>Ersatzlieferung</b> (OR Art. 206). Der Discounter hat das Modell am Lager – einfach umtauschen. «Genus non perit» – die Gattung geht nicht unter.',
+      ziel:'ende' },
+    { t:'Kein Unterschied – die Mängelrechte sind immer dieselben.', rq:0,
+      fb:'Nicht ganz: Bei <b>Speziesware</b> (dem Occasions-Einzelstück) haben Sie Wandelung und Minderung (OR 205), aber <b>keine Ersatzlieferung</b> – das eine Stück ist nicht ersetzbar. Bei <b>Gattungsware</b> kommt die Ersatzlieferung dazu (OR Art. 206).',
+      ziel:'gattung' },
+    { t:'Bei der Occasion (Spezies) hätte Alex gar keine Rechte gehabt.', rq:0,
+      fb:'Doch – auch beim <b>Stückkauf</b> gelten Wandelung und Minderung (OR 205). Nur die <b>Ersatzlieferung</b> fällt weg, weil ein Einzelstück nicht ersetzbar ist. Das ist der Kern von Spezies vs. Gattung.',
+      ziel:'gattung' },
+  ]},
 
 /* ---------- ENDE ---------- */
 ende:{ art:'ende', szene:'ende', sprecher:'ERZÄHLER', text:'' },
@@ -3560,7 +3574,7 @@ const dialogEl = document.getElementById('dialog');
 const rqEl = document.getElementById('rq-anzeige');
 /* Maximal erreichbarer RQ (Entscheidungen + Fundstuecke + Schach-Bonus),
    statisch aus dem Spielgraphen berechnet */
-const RQ_MAX = { vorspann:47, L:66, Z:66, M:67, gesamt:100 };
+const RQ_MAX = { vorspann:47, L:66, Z:66, M:70, gesamt:103 };
 function rqMaxAktuell(){ return zustand.weg ? RQ_MAX[zustand.weg] : RQ_MAX.vorspann; }
 function rqAnzeigen(){ rqEl.textContent = 'RQ ' + zustand.rq + ' / ' + rqMaxAktuell(); }
 /* ---------- Wissens-Inventar (gefundene Gesetze) ---------- */
@@ -3575,6 +3589,7 @@ const GESETZE = [
   ['OR 184','Kaufvertrag'],
   ['OR 201','Pruef- & Ruegepflicht'],
   ['OR 205','Wandelung / Minderung'],
+  ['OR 206','Ersatzlieferung (Gattungskauf)'],
 ];
 function artikelImText(html, nr){
   try{ const num=nr.replace(/^OR\s*/,'').replace('.','\\.');
@@ -4281,6 +4296,7 @@ const LERNZIELE = [
   ['Schuldnerverzug','OR 102'],
   ['Prüf- & Rügepflicht (Mängelrüge)','OR 201'],
   ['Wandelung / Minderung','OR 205'],
+  ['Spezies- vs. Gattungskauf (Ersatzlieferung)','OR 206'],
 ];
 function lernberichtOeffnen(){
   const alt=document.getElementById('lernbericht'); if(alt){ alt.remove(); }
