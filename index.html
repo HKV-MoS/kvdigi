@@ -46,6 +46,14 @@ body{
 .wordmark .tld{color:#9fb2c6;font-weight:500}
 .lead{font-size:clamp(1rem,2.4vw,1.12rem);color:var(--grau);max-width:52ch}
 
+/* ── Hero-Banner ── */
+.hero{position:relative;margin-bottom:.4rem}
+.hero-img{display:block;width:100%;height:auto;border-radius:16px}
+.hero-text{position:absolute;top:50%;left:clamp(1.1rem,4.5%,3rem);transform:translateY(-50%);width:min(50%,540px);z-index:1}
+@media (max-width:680px){
+  .hero-text{position:static;transform:none;left:auto;width:auto;margin-top:1rem}
+}
+
 /* Positionierung gegenüber KV Digital – kurz und dezent */
 .hinweis{
   margin-top:1.3rem;
@@ -170,6 +178,30 @@ body{
 .k-aktion .pfeil{transition:transform .22s cubic-bezier(.4,0,.2,1)}
 .karte:hover .k-aktion .pfeil,.karte:focus-visible .k-aktion .pfeil{transform:translateX(4px)}
 
+/* ── „In Arbeit"-Kennzeichnung ── */
+.karte{overflow:hidden}
+.karte[data-wip]{border-left-style:dashed}
+.karte[data-wip]::before{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:repeating-linear-gradient(-45deg,rgba(244,196,0,.10) 0 14px,rgba(244,196,0,0) 14px 28px);
+}
+.wip-ribbon{
+  position:absolute; top:16px; right:-44px; width:160px; z-index:2;
+  transform:rotate(45deg);
+  background:#F4C400; color:#3a2c00;
+  font-family:'JetBrains Mono',monospace; font-size:.58rem; font-weight:700;
+  letter-spacing:.1em; text-transform:uppercase; text-align:center;
+  padding:.34rem 0; box-shadow:0 2px 6px rgba(0,0,0,.22);
+  border-top:1px solid rgba(255,255,255,.55); border-bottom:1px solid rgba(0,0,0,.18);
+}
+.wip-tag{
+  display:inline-flex;align-items:center;gap:.35rem;
+  font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.06em;
+  text-transform:uppercase;color:#7a5a00;font-weight:700;
+  background:#FCEFB8;border:1px solid #EBD37A;border-radius:999px;
+  padding:.16rem .55rem;margin-top:.6rem;width:fit-content;
+}
+
 /* ── Fuss ── */
 .fuss{
   margin-top:3rem;padding-top:1.4rem;border-top:1px solid var(--linie);
@@ -198,10 +230,13 @@ body{
 <body>
 <div class="wrap">
 
-  <header>
-    <div class="eyebrow">HKV Aarau · Allgemeinbildung</div>
-    <h1 class="wordmark">abu-tools<span class="tld">.ch</span></h1>
-    <p class="lead">Interaktive Folien, Simulationen und Rechner für den allgemeinbildenden Unterricht – direkt nutzbar am Beamer, Tablet oder Laptop.</p>
+  <header class="hero">
+    <img class="hero-img" src="abu_banner.jpg?v=1" alt="Zahnräder formen einen Kopf mit Fragezeichen – Symbol für Denken und Lernen">
+    <div class="hero-text">
+      <div class="eyebrow">HKV Aarau · Allgemeinbildung</div>
+      <h1 class="wordmark">abu-tools<span class="tld">.ch</span></h1>
+      <p class="lead">Interaktive Folien, Simulationen und Rechner für den allgemeinbildenden Unterricht – direkt nutzbar am Beamer, Tablet oder Laptop.</p>
+    </div>
     <div class="hinweis">
       Die Aufträge, Lernziele und Theorie finden Sie in <b>KV&nbsp;Digital</b>.
       abu-tools.ch ergänzt den Unterricht mit interaktiven Werkzeugen, die sich dort verlinken lassen.
@@ -312,7 +347,8 @@ body{
         <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
       </a>
 
-      <a class="karte" href="wirtschaftskreislauf.html" data-kat="wirtschaft">
+      <a class="karte" href="wirtschaftskreislauf.html" data-kat="wirtschaft" data-wip>
+        <span class="wip-ribbon">🚧 In Arbeit</span>
         <div class="k-kopf">
           <span class="k-thema">Wirtschaft</span>
           <span class="k-typ">Interaktive Folie</span>
@@ -320,6 +356,7 @@ body{
         <div class="k-titel">Wirtschaftskreislauf</div>
         <p class="k-text">Vom einfachen zum erweiterten Kreislauf – Haushalte, Unternehmen, Banken, Staat und Ausland mit animierten Geld- und Güterströmen.</p>
         <div class="k-einsatz">Beamer · KV Digital · geführte Tour</div>
+        <span class="wip-tag">👷 Noch im Aufbau</span>
         <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
       </a>
 
@@ -393,6 +430,5 @@ body{
   });
 })();
 </script>
-<script data-goatcounter="https://abu-tools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
