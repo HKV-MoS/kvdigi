@@ -61,13 +61,14 @@ body{
 @keyframes sweep{0%{transform:translateX(-75%)}42%{transform:translateX(75%)}100%{transform:translateX(75%)}}
 .tw{position:absolute;width:6px;height:6px;border-radius:50%;pointer-events:none;opacity:0;z-index:2;background:radial-gradient(circle,#fffdf2,#ffe9ad 45%,rgba(255,214,120,0) 72%);animation:twk 4.5s ease-in-out infinite}
 @keyframes twk{0%,100%{opacity:0;transform:scale(.3)}50%{opacity:.95;transform:scale(1.1)}}
-.rotor{position:absolute;transform:translate(-50%,-50%);transform-origin:center;z-index:1;pointer-events:none;animation:rot var(--dur,26s) linear infinite}
-.rotor.rev{animation-direction:reverse}
-.r1{left:75.789%;top:82.988%;width:15.779%;--dur:26s}
-.r2{left:86.028%;top:88.543%;width:7.733%;--dur:13.5s;filter:drop-shadow(4px 6px 7px rgba(90,70,40,.32))}
-.r3{left:91.266%;top:83.975%;width:4.908%;--dur:8.6s;filter:drop-shadow(3px 4px 5px rgba(90,70,40,.32))}
-@keyframes rot{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
-@media(prefers-reduced-motion:reduce){.tw,.rotor{animation:none}.shine{display:none}}
+.rotor{position:absolute;transform:translate(-50%,-50%);transform-origin:50% 50%;z-index:1;pointer-events:none;will-change:transform}
+.r1{left:75.789%;top:82.988%;width:15.779%;animation:rot 26s linear infinite}
+.r2{left:86.028%;top:88.543%;width:7.733%;animation:rotrev 13.5s linear infinite;filter:drop-shadow(4px 6px 7px rgba(90,70,40,.32))}
+.r3{left:91.266%;top:83.975%;width:4.908%;animation:rot 8.6s linear infinite;filter:drop-shadow(3px 4px 5px rgba(90,70,40,.32))}
+@keyframes rot{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes rotrev{from{transform:translate(-50%,-50%) rotate(360deg)}to{transform:translate(-50%,-50%) rotate(0deg)}}
+@media(prefers-reduced-motion:reduce){.tw{animation:none}.shine{display:none}
+  .r1{animation-duration:70s}.r2{animation-duration:36s}.r3{animation-duration:23s}}
 
 /* Positionierung gegenüber KV Digital – kurz und dezent */
 .hinweis{
@@ -247,7 +248,7 @@ body{
 
   <header class="hero">
     <div class="hero-media">
-      <img class="hero-img" src="abu_hero2.jpg?v=1" alt="Kopf aus goldenen Zahnrädern, die die ABU-Themen bilden">
+      <img class="hero-img" src="abu_hero2.jpg?v=3" alt="Kopf aus goldenen Zahnrädern, die die ABU-Themen bilden">
       <div class="shine"></div>
       <div class="tw" style="left:60%;top:15%"></div><div class="tw" style="left:83%;top:24%;animation-delay:1.6s"></div><div class="tw" style="left:72%;top:38%;animation-delay:2.8s"></div><div class="tw" style="left:82%;top:55%;animation-delay:.9s"></div><div class="tw" style="left:70%;top:62%;animation-delay:3.3s"></div>
       <img class="rotor r1" src="abu_gear_dot.png?v=3" alt="" aria-hidden="true">
