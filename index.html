@@ -61,7 +61,9 @@ body{
 @keyframes sweep{0%{transform:translateX(-75%)}42%{transform:translateX(75%)}100%{transform:translateX(75%)}}
 .tw{position:absolute;width:6px;height:6px;border-radius:50%;pointer-events:none;opacity:0;z-index:2;background:radial-gradient(circle,#fffdf2,#ffe9ad 45%,rgba(255,214,120,0) 72%);animation:twk 4.5s ease-in-out infinite}
 @keyframes twk{0%,100%{opacity:0;transform:scale(.3)}50%{opacity:.95;transform:scale(1.1)}}
-@media(prefers-reduced-motion:reduce){.tw{animation:none}.shine{display:none}}
+.rotor{position:absolute;left:73.28%;top:78.58%;width:24.44%;transform:translate(-50%,-50%);transform-origin:center;z-index:1;pointer-events:none;animation:rot 15s linear infinite}
+@keyframes rot{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.tw,.rotor{animation:none}.shine{display:none}}
 
 /* Positionierung gegenüber KV Digital – kurz und dezent */
 .hinweis{
@@ -244,7 +246,7 @@ body{
       <img class="hero-img" src="abu_hero2.jpg?v=1" alt="Kopf aus goldenen Zahnrädern, die die ABU-Themen bilden">
       <div class="shine"></div>
       <div class="tw" style="left:60%;top:15%"></div><div class="tw" style="left:83%;top:24%;animation-delay:1.6s"></div><div class="tw" style="left:72%;top:38%;animation-delay:2.8s"></div><div class="tw" style="left:82%;top:55%;animation-delay:.9s"></div><div class="tw" style="left:70%;top:62%;animation-delay:3.3s"></div>
-      <div id="hotspots"></div>
+      <img class="rotor" src="abu_gear_dot.png?v=1" alt="" aria-hidden="true">
     </div>
     <div class="hero-text">
       <div class="eyebrow">HKV Aarau · Allgemeinbildung</div>
@@ -442,18 +444,6 @@ body{
       });
     });
   });
-})();
-</script>
-<script>
-(function(){
- const CAT={recht:'wirtschaft',staat:'politik',wirtschaft:'wirtschaft',oekologie:'oekologie',gesundheit:'gesundheit',mathematik:'rechner',kommunikation:'alle',ki:'alle'};
- const LB={recht:'Recht',staat:'Staat',wirtschaft:'Wirtschaft',oekologie:'Ökologie',gesundheit:'Gesundheit',mathematik:'Mathematik',kommunikation:'Kommunikation',ki:'KI'};
- const H=[['recht',68,18,10],['staat',81,18,9.5],['kommunikation',67,30,9.5],['wirtschaft',86.8,26,10],['oekologie',86.5,41,9.5],['gesundheit',80,50,9.5],['ki',75.3,59.5,9],['mathematik',76,70,9.5]];
- const wrap=document.getElementById('hotspots'); if(!wrap) return;
- H.forEach(function(a){var k=a[0];var d=document.createElement('div');d.className='hot';d.style.left=a[1]+'%';d.style.top=a[2]+'%';d.style.width=a[3]+'%';d.style.aspectRatio='1';d.title=LB[k];
-  d.innerHTML='<div class="ring"></div><div class="lbl">'+LB[k]+'</div>';
-  d.addEventListener('click',function(){var f=CAT[k]||'alle';var c=document.querySelector('.chip[data-filter="'+f+'"]');if(c)c.click();var w=document.getElementById('werkzeuge');if(w)w.scrollIntoView({behavior:'smooth',block:'start'});});
-  wrap.appendChild(d);});
 })();
 </script>
 </body>
