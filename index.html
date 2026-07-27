@@ -46,23 +46,22 @@ body{
 .wordmark .tld{color:#9fb2c6;font-weight:500}
 .lead{font-size:clamp(1rem,2.4vw,1.12rem);color:var(--grau);max-width:52ch}
 
-/* ── Kopf-Hero mit drehenden Zahnrädern ── */
-.kopf-grid{display:grid;grid-template-columns:1.02fr .98fr;align-items:center;gap:clamp(.4rem,2vw,1.4rem);margin-bottom:.4rem}
-@media(max-width:760px){.kopf-grid{grid-template-columns:1fr}.kopf-svg{max-width:420px;margin:0 auto}}
-.kopf-svg svg{width:100%;height:auto;display:block}
-.spin{animation:spin var(--d,34s) linear infinite;transform-box:fill-box;transform-origin:center}
-.ico{animation:spin var(--d,34s) linear infinite reverse;transform-box:fill-box;transform-origin:center}
-.gear.rev .spin{animation-direction:reverse}.gear.rev .ico{animation-direction:normal}
-@keyframes spin{to{transform:rotate(360deg)}}
-.teeth{fill:url(#gold);stroke:#7c5514;stroke-width:.8}
-.filler .teeth{fill:url(#gold2);stroke:#9a7526;stroke-width:.6}
-.rim{fill:none;stroke:#f2dc9e;stroke-width:2;opacity:.7}
-.hub{fill:url(#hub)}.bolt{fill:#6d4c12}.spoke{stroke:#5f430f;stroke-width:3;stroke-linecap:round}
-.ico *{fill:none;stroke:#20344e;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}.ico text{fill:#20344e;stroke:none}
-.scaler{transition:transform .25s cubic-bezier(.34,1.4,.4,1);transform-box:fill-box;transform-origin:center}
-.gear.theme{cursor:pointer}.gear.theme:hover .scaler{transform:scale(1.09)}.gear.theme:hover .spin,.gear.theme:hover .ico{animation-play-state:paused}.gear.theme:hover .teeth{fill:url(#gold-h)}
-.glbl{opacity:0;transition:opacity .18s;pointer-events:none}.gear.theme:hover .glbl{opacity:1}.glbl rect{fill:var(--hkv)}.glbl text{fill:#fff;font-family:'DM Sans',sans-serif;font-weight:700;font-size:15px;text-anchor:middle}
-@media (prefers-reduced-motion:reduce){.spin,.ico{animation:none}}
+/* ── Hero: goldenes Bild + interaktive Zahnrad-Hotspots ── */
+.hero{position:relative;margin-bottom:.4rem}
+.hero-media{position:relative;border-radius:16px;overflow:hidden}
+.hero-img{display:block;width:100%;height:auto}
+.hero-text{position:absolute;top:50%;left:clamp(1.1rem,4.5%,3rem);transform:translateY(-50%);width:min(46%,520px);z-index:4}
+@media(max-width:680px){.hero-text{position:static;transform:none;left:auto;width:auto;margin-top:1rem}}
+.hot{position:absolute;transform:translate(-50%,-50%);border-radius:50%;cursor:pointer;z-index:3}
+.hot .ring{position:absolute;inset:0;border-radius:50%;transition:box-shadow .2s,background .2s;box-shadow:0 0 0 3px rgba(216,174,102,0)}
+.hot:hover .ring{box-shadow:0 0 0 3px rgba(216,174,102,.9),0 0 26px 8px rgba(240,200,110,.55);background:radial-gradient(circle,rgba(255,244,205,.30) 55%,rgba(255,244,205,0) 100%)}
+.hot .lbl{position:absolute;left:50%;bottom:100%;transform:translate(-50%,-8px);background:var(--hkv);color:#fff;font-size:12.5px;font-weight:700;white-space:nowrap;padding:4px 10px;border-radius:999px;opacity:0;transition:opacity .18s;pointer-events:none}
+.hot:hover .lbl{opacity:1}
+.shine{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;z-index:2;background:linear-gradient(115deg,transparent 44%,rgba(255,246,214,.5) 50%,transparent 56%);transform:translateX(-75%);animation:sweep 8s ease-in-out infinite}
+@keyframes sweep{0%{transform:translateX(-75%)}42%{transform:translateX(75%)}100%{transform:translateX(75%)}}
+.tw{position:absolute;width:6px;height:6px;border-radius:50%;pointer-events:none;opacity:0;z-index:2;background:radial-gradient(circle,#fffdf2,#ffe9ad 45%,rgba(255,214,120,0) 72%);animation:twk 4.5s ease-in-out infinite}
+@keyframes twk{0%,100%{opacity:0;transform:scale(.3)}50%{opacity:.95;transform:scale(1.1)}}
+@media(prefers-reduced-motion:reduce){.tw{animation:none}.shine{display:none}}
 
 /* Positionierung gegenüber KV Digital – kurz und dezent */
 .hinweis{
@@ -240,14 +239,17 @@ body{
 <body>
 <div class="wrap">
 
-  <header>
-    <div class="kopf-grid">
-      <div class="kopf-text">
-        <div class="eyebrow">HKV Aarau · Allgemeinbildung</div>
-        <h1 class="wordmark">abu-tools<span class="tld">.ch</span></h1>
-        <p class="lead">Interaktive Folien, Simulationen und Rechner für den allgemeinbildenden Unterricht – direkt nutzbar am Beamer, Tablet oder Laptop.</p>
-      </div>
-      <div class="kopf-svg"><svg viewBox="1584 97 1406 1872" id="heroSvg" aria-label="Kopf aus goldenen Zahnrädern, die die ABU-Themen bilden"></svg></div>
+  <header class="hero">
+    <div class="hero-media">
+      <img class="hero-img" src="abu_hero2.jpg?v=1" alt="Kopf aus goldenen Zahnrädern, die die ABU-Themen bilden">
+      <div class="shine"></div>
+      <div class="tw" style="left:60%;top:15%"></div><div class="tw" style="left:83%;top:24%;animation-delay:1.6s"></div><div class="tw" style="left:72%;top:38%;animation-delay:2.8s"></div><div class="tw" style="left:82%;top:55%;animation-delay:.9s"></div><div class="tw" style="left:70%;top:62%;animation-delay:3.3s"></div>
+      <div id="hotspots"></div>
+    </div>
+    <div class="hero-text">
+      <div class="eyebrow">HKV Aarau · Allgemeinbildung</div>
+      <h1 class="wordmark">abu-tools<span class="tld">.ch</span></h1>
+      <p class="lead">Interaktive Folien, Simulationen und Rechner für den allgemeinbildenden Unterricht – direkt nutzbar am Beamer, Tablet oder Laptop.</p>
     </div>
     <div class="hinweis">
       Die Aufträge, Lernziele und Theorie finden Sie in <b>KV&nbsp;Digital</b>.
@@ -444,44 +446,14 @@ body{
 </script>
 <script>
 (function(){
- const NS='http://www.w3.org/2000/svg',svg=document.getElementById('heroSvg');
- const VB=[1584,97,1406,1872];
- svg.insertAdjacentHTML('beforeend','<defs>'
- +'<radialGradient id="gold" cx="36%" cy="30%" r="80%"><stop offset="0" stop-color="#F6E3A6"/><stop offset="45%" stop-color="#CE9E37"/><stop offset="1" stop-color="#8a5e16"/></radialGradient>'
- +'<radialGradient id="gold-h" cx="36%" cy="30%" r="80%"><stop offset="0" stop-color="#FFF1C6"/><stop offset="45%" stop-color="#E6BC5A"/><stop offset="1" stop-color="#a9781f"/></radialGradient>'
- +'<radialGradient id="gold2" cx="36%" cy="30%" r="80%"><stop offset="0" stop-color="#EBD59A"/><stop offset="55%" stop-color="#C8A552"/><stop offset="1" stop-color="#9c7a30"/></radialGradient>'
- +'<radialGradient id="hub" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="#E9CE86"/><stop offset="1" stop-color="#9c6f1f"/></radialGradient>'
- +'<linearGradient id="head" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#64789c"/><stop offset="1" stop-color="#c6d1e0"/></linearGradient>'
- +'<filter id="ds" x="-25%" y="-25%" width="150%" height="150%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#7a5a1e" flood-opacity=".35"/></filter></defs>');
- svg.insertAdjacentHTML('beforeend','<path d="M2249,147 L2017,214 L1915,283 L1835,371 L1740,593 L1722,696 L1737,822 L1634,1024 L1729,1097 L1713,1160 L1732,1232 L1801,1278 L1836,1219 L1825,1176 L1872,934 L1924,826 L2007,806 L2075,723 L2132,706 L2171,579 L2236,514 L2342,500 L2437,562 L2465,639 L2450,726 L2239,965 L2155,1136 L2106,1126 L2048,1147 L2022,1132 L2003,1184 L1949,1210 L1905,1282 L1933,1313 L1906,1344 L1921,1428 L2016,1467 L2053,1598 L2049,1684 L1952,1739 L1981,1765 L2063,1744 L2164,1890 L2291,1918 L2420,1901 L2481,1844 L2512,1781 L2524,1571 L2448,1466 L2488,1392 L2500,1239 L2566,1143 L2804,915 L2833,910 L2831,867 L2873,813 L2887,662 L2917,611 L2893,588 L2878,516 L2939,462 L2876,375 L2884,328 L2844,293 L2765,328 L2585,205 L2477,172 Z" fill="url(#head)" opacity=".82"/>');
- function gearD(r,t){const ro=r,ri=r*0.78,s=2*Math.PI/t,p=[];for(let i=0;i<t;i++){const a=i*s;
-  p.push([ri*Math.cos(a-0.36*s),ri*Math.sin(a-0.36*s)]);p.push([ro*Math.cos(a-0.17*s),ro*Math.sin(a-0.17*s)]);
-  p.push([ro*Math.cos(a+0.17*s),ro*Math.sin(a+0.17*s)]);p.push([ri*Math.cos(a+0.36*s),ri*Math.sin(a+0.36*s)]);}
-  return 'M'+p.map(q=>q[0].toFixed(1)+','+q[1].toFixed(1)).join('L')+'Z';}
- function spokes(r){let d='';for(let i=0;i<6;i++){const a=i*Math.PI/3;d+='M0,0 L'+(r*0.6*Math.cos(a)).toFixed(1)+','+(r*0.6*Math.sin(a)).toFixed(1)+' ';}return d;}
- const ICONS={
-  recht:'<path d="M0,-13 V10 M-6,10 H6 M-11,-9 H11 M0,-13 a2 2 0 1 0 .01 0"/><path d="M-11,-9 L-15,0 A6 4 0 0 0 -7,0 Z"/><path d="M11,-9 L7,0 A6 4 0 0 0 15,0 Z"/>',
-  staat:'<path d="M-13,-6 L0,-13 L13,-6"/><path d="M-13,-6 H13 M-13,11 H13"/><path d="M-9,-6 V9 M-3,-6 V9 M3,-6 V9 M9,-6 V9"/>',
-  wirtschaft:'<path d="M-12,11 V-11 M-12,11 H13"/><path d="M-8,5 L-2,-1 L3,3 L12,-8"/><path d="M7,-8 H12 V-3"/>',
-  oekologie:'<path d="M-9,9 C-11,-5 3,-11 11,-11 C11,3 -3,10 -9,9 Z"/><path d="M-6,6 C0,-1 5,-6 9,-9"/>',
-  gesundheit:'<path d="M0,10 C-11,1 -13,-9 -5,-10 C-1,-10 0,-6 0,-5 C0,-6 1,-10 5,-10 C13,-9 11,1 0,10 Z"/>',
-  mathematik:'<rect x="-9" y="-13" width="18" height="26" rx="3"/><path d="M-5,-8 H5"/><path d="M-5,2 h.01 M0,2 h.01 M5,2 h.01 M-5,8 h.01 M0,8 h.01 M5,8 h.01" stroke-width="3.4"/>',
-  kommunikation:'<path d="M-12,-9 H12 V4 H2 L-3,10 V4 H-12 Z"/><path d="M-6,-2 h.01 M0,-2 h.01 M6,-2 h.01" stroke-width="3.4"/>',
-  ki:'<rect x="-10" y="-7" width="20" height="17" rx="4"/><path d="M0,-7 V-13 M-14,0 H-10 M14,0 H10"/><circle cx="0" cy="-13" r="1.7"/><path d="M-4,0 h.01 M4,0 h.01" stroke-width="3.6"/><path d="M-4,5 H4"/>'};
+ const CAT={recht:'wirtschaft',staat:'politik',wirtschaft:'wirtschaft',oekologie:'oekologie',gesundheit:'gesundheit',mathematik:'rechner',kommunikation:'alle',ki:'alle'};
  const LB={recht:'Recht',staat:'Staat',wirtschaft:'Wirtschaft',oekologie:'Ökologie',gesundheit:'Gesundheit',mathematik:'Mathematik',kommunikation:'Kommunikation',ki:'KI'};
- const CATMAP={recht:'wirtschaft',staat:'politik',wirtschaft:'wirtschaft',oekologie:'oekologie',gesundheit:'gesundheit',mathematik:'rechner',kommunikation:'alle',ki:'alle'};
- const G=[['recht',.42,.11,.075,12],['staat',.60,.10,.066,11],['wirtschaft',.72,.24,.072,12],['kommunikation',.34,.22,.070,12],['ki',.52,.34,.064,11],['oekologie',.67,.40,.062,12],['gesundheit',.60,.55,.058,11],['mathematik',.46,.60,.066,12]].map(a=>({k:a[0],fx:a[1],fy:a[2],fr:a[3],t:a[4],theme:true}));
- const F=[[.53,.19,.032,9],[.41,.32,.030,8],[.30,.13,.032,8],[.71,.13,.028,8],[.79,.36,.028,8],[.55,.47,.032,9],[.40,.48,.030,9],[.69,.53,.028,8],[.52,.85,.085,20]].map(a=>({fx:a[0],fy:a[1],fr:a[2],t:a[3],theme:false}));
- function place(o,i){const cx=VB[0]+o.fx*VB[2],cy=VB[1]+o.fy*VB[3],r=o.fr*VB[2];
-  const g=document.createElementNS(NS,'g');g.setAttribute('transform','translate('+cx.toFixed(1)+','+cy.toFixed(1)+')');g.style.setProperty('--d',(26+i*3.3)+'s');
-  if(!o.theme){g.setAttribute('class','gear filler '+(i%2?'rev':''));const big=r>VB[2]*0.06;
-   g.innerHTML='<g class="spin"><path class="teeth" d="'+gearD(r,o.t)+'" filter="url(#ds)"/><circle class="rim" r="'+(r*0.6).toFixed(1)+'"/>'+(big?'<path class="spoke" d="'+spokes(r)+'"/>':'')+'<circle class="hub" r="'+(r*0.3).toFixed(1)+'"/><circle class="bolt" r="'+(r*0.12).toFixed(1)+'"/></g>';
-  } else {g.setAttribute('class','gear theme '+(i%2?'rev':''));g.setAttribute('data-cat',o.k);const isc=r/17;
-   g.innerHTML='<g class="scaler"><g class="spin"><path class="teeth" d="'+gearD(r,o.t)+'" filter="url(#ds)"/><circle class="rim" r="'+(r*0.66).toFixed(1)+'"/></g><circle class="hub" r="'+(r*0.62).toFixed(1)+'"/><g class="ico" transform="scale('+isc.toFixed(2)+')">'+ICONS[o.k]+'</g></g><g class="glbl" transform="translate(0,'+(-(r+18)).toFixed(1)+')"><rect x="'+(-(LB[o.k].length*4.6+14))+'" y="-16" width="'+(LB[o.k].length*9.2+28)+'" height="28" rx="14"/><text y="4">'+LB[o.k]+'</text></g>';
-   g.addEventListener('click',function(){var f=CATMAP[o.k]||'alle';var chip=document.querySelector('.chip[data-filter="'+f+'"]');if(chip)chip.click();var w=document.getElementById('werkzeuge');if(w)w.scrollIntoView({behavior:'smooth',block:'start'});});
-  }
-  svg.appendChild(g);}
- F.forEach(function(o,i){place(o,i);}); G.forEach(function(o,i){place(o,i+3);});
+ const H=[['recht',68,18,10],['staat',81,18,9.5],['kommunikation',67,30,9.5],['wirtschaft',86.8,26,10],['oekologie',86.5,41,9.5],['gesundheit',80,50,9.5],['ki',75.3,59.5,9],['mathematik',76,70,9.5]];
+ const wrap=document.getElementById('hotspots'); if(!wrap) return;
+ H.forEach(function(a){var k=a[0];var d=document.createElement('div');d.className='hot';d.style.left=a[1]+'%';d.style.top=a[2]+'%';d.style.width=a[3]+'%';d.style.aspectRatio='1';d.title=LB[k];
+  d.innerHTML='<div class="ring"></div><div class="lbl">'+LB[k]+'</div>';
+  d.addEventListener('click',function(){var f=CAT[k]||'alle';var c=document.querySelector('.chip[data-filter="'+f+'"]');if(c)c.click();var w=document.getElementById('werkzeuge');if(w)w.scrollIntoView({behavior:'smooth',block:'start'});});
+  wrap.appendChild(d);});
 })();
 </script>
 </body>
