@@ -47,10 +47,10 @@ body{
 .lead{font-size:clamp(1rem,2.4vw,1.12rem);color:var(--grau);max-width:52ch}
 
 /* ── Kopf mit Titelbild ── */
-.kopf-grid{display:flex;gap:clamp(1.1rem,4vw,2.2rem);align-items:center}
+.kopf-grid{display:flex;gap:clamp(1.1rem,4vw,2.2rem);align-items:center;flex-direction:row-reverse}
 .kopf-text{flex:1 1 auto;min-width:0}
 .kopf-bild{flex:0 0 clamp(130px,22vw,190px)}
-.kopf-bild img{width:100%;height:auto;border-radius:16px;box-shadow:0 10px 26px rgba(21,35,50,.18);display:block}
+.kopf-bild img{width:100%;height:auto;display:block;-webkit-mask-image:radial-gradient(ellipse closest-side at 50% 47%,#000 42%,rgba(0,0,0,0) 100%);mask-image:radial-gradient(ellipse closest-side at 50% 47%,#000 42%,rgba(0,0,0,0) 100%)}
 @media (max-width:560px){.kopf-grid{flex-direction:column;align-items:center}.kopf-bild{align-self:center;margin-top:.3rem}.kopf-bild img{max-width:200px}}
 
 /* Positionierung gegenüber KV Digital – kurz und dezent */
