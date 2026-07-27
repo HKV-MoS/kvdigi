@@ -46,6 +46,13 @@ body{
 .wordmark .tld{color:#9fb2c6;font-weight:500}
 .lead{font-size:clamp(1rem,2.4vw,1.12rem);color:var(--grau);max-width:52ch}
 
+/* ── Kopf mit Titelbild ── */
+.kopf-grid{display:flex;gap:clamp(1.1rem,4vw,2.2rem);align-items:center}
+.kopf-text{flex:1 1 auto;min-width:0}
+.kopf-bild{flex:0 0 clamp(130px,22vw,190px)}
+.kopf-bild img{width:100%;height:auto;border-radius:16px;box-shadow:0 10px 26px rgba(21,35,50,.18);display:block}
+@media (max-width:560px){.kopf-grid{flex-direction:column;align-items:center}.kopf-bild{align-self:center;margin-top:.3rem}.kopf-bild img{max-width:200px}}
+
 /* Positionierung gegenüber KV Digital – kurz und dezent */
 .hinweis{
   margin-top:1.3rem;
@@ -223,9 +230,16 @@ body{
 <div class="wrap">
 
   <header>
-    <div class="eyebrow">HKV Aarau · Allgemeinbildung</div>
-    <h1 class="wordmark">abu-tools<span class="tld">.ch</span></h1>
-    <p class="lead">Interaktive Folien, Simulationen und Rechner für den allgemeinbildenden Unterricht – direkt nutzbar am Beamer, Tablet oder Laptop.</p>
+    <div class="kopf-grid">
+      <div class="kopf-text">
+        <div class="eyebrow">HKV Aarau · Allgemeinbildung</div>
+        <h1 class="wordmark">abu-tools<span class="tld">.ch</span></h1>
+        <p class="lead">Interaktive Folien, Simulationen und Rechner für den allgemeinbildenden Unterricht – direkt nutzbar am Beamer, Tablet oder Laptop.</p>
+      </div>
+      <div class="kopf-bild">
+        <img src="abu_titel.png?v=1" alt="Zahnräder formen einen Kopf mit Fragezeichen – Symbol für Denken und Lernen">
+      </div>
+    </div>
     <div class="hinweis">
       Die Aufträge, Lernziele und Theorie finden Sie in <b>KV&nbsp;Digital</b>.
       abu-tools.ch ergänzt den Unterricht mit interaktiven Werkzeugen, die sich dort verlinken lassen.
