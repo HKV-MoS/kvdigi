@@ -50,7 +50,11 @@ body{
 .kopf-grid{display:flex;gap:clamp(1.1rem,4vw,2.2rem);align-items:center;flex-direction:row-reverse}
 .kopf-text{flex:1 1 auto;min-width:0}
 .kopf-bild{flex:0 0 clamp(130px,22vw,190px)}
-.kopf-bild img{width:100%;height:auto;display:block;-webkit-mask-image:radial-gradient(ellipse closest-side at 50% 47%,#000 42%,rgba(0,0,0,0) 100%);mask-image:radial-gradient(ellipse closest-side at 50% 47%,#000 42%,rgba(0,0,0,0) 100%)}
+.kopf-bild img{width:100%;height:auto;display:block;
+  -webkit-mask-image:linear-gradient(to right,transparent 0,#000 12%,#000 88%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 12%,#000 88%,transparent 100%);
+  -webkit-mask-composite:source-in;
+  mask-image:linear-gradient(to right,transparent 0,#000 12%,#000 88%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 12%,#000 88%,transparent 100%);
+  mask-composite:intersect}
 @media (max-width:560px){.kopf-grid{flex-direction:column;align-items:center}.kopf-bild{align-self:center;margin-top:.3rem}.kopf-bild img{max-width:200px}}
 
 /* Positionierung gegenüber KV Digital – kurz und dezent */
