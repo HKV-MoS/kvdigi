@@ -170,6 +170,30 @@ body{
 .k-aktion .pfeil{transition:transform .22s cubic-bezier(.4,0,.2,1)}
 .karte:hover .k-aktion .pfeil,.karte:focus-visible .k-aktion .pfeil{transform:translateX(4px)}
 
+/* ── „In Arbeit"-Kennzeichnung ── */
+.karte{overflow:hidden}
+.karte[data-wip]{border-left-style:dashed}
+.karte[data-wip]::before{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:repeating-linear-gradient(-45deg,rgba(244,196,0,.10) 0 14px,rgba(244,196,0,0) 14px 28px);
+}
+.wip-ribbon{
+  position:absolute; top:16px; right:-44px; width:160px; z-index:2;
+  transform:rotate(45deg);
+  background:#F4C400; color:#3a2c00;
+  font-family:'JetBrains Mono',monospace; font-size:.58rem; font-weight:700;
+  letter-spacing:.1em; text-transform:uppercase; text-align:center;
+  padding:.34rem 0; box-shadow:0 2px 6px rgba(0,0,0,.22);
+  border-top:1px solid rgba(255,255,255,.55); border-bottom:1px solid rgba(0,0,0,.18);
+}
+.wip-tag{
+  display:inline-flex;align-items:center;gap:.35rem;
+  font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.06em;
+  text-transform:uppercase;color:#7a5a00;font-weight:700;
+  background:#FCEFB8;border:1px solid #EBD37A;border-radius:999px;
+  padding:.16rem .55rem;margin-top:.6rem;width:fit-content;
+}
+
 /* ── Fuss ── */
 .fuss{
   margin-top:3rem;padding-top:1.4rem;border-top:1px solid var(--linie);
@@ -312,7 +336,8 @@ body{
         <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
       </a>
 
-      <a class="karte" href="wirtschaftskreislauf.html" data-kat="wirtschaft">
+      <a class="karte" href="wirtschaftskreislauf.html" data-kat="wirtschaft" data-wip>
+        <span class="wip-ribbon">🚧 In Arbeit</span>
         <div class="k-kopf">
           <span class="k-thema">Wirtschaft</span>
           <span class="k-typ">Interaktive Folie</span>
@@ -320,6 +345,7 @@ body{
         <div class="k-titel">Wirtschaftskreislauf</div>
         <p class="k-text">Vom einfachen zum erweiterten Kreislauf – Haushalte, Unternehmen, Banken, Staat und Ausland mit animierten Geld- und Güterströmen.</p>
         <div class="k-einsatz">Beamer · KV Digital · geführte Tour</div>
+        <span class="wip-tag">👷 Noch im Aufbau</span>
         <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
       </a>
 
@@ -393,6 +419,5 @@ body{
   });
 })();
 </script>
-<script data-goatcounter="https://abu-tools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
