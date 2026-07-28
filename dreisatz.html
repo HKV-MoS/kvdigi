@@ -15,6 +15,7 @@
 
   /* Direkteinstieg nach Beruf */
   .berufswahl{ max-width:900px; margin:18px auto 0; }
+  .berufswahl.aus{ display:none; }
   .bw-lead{ font-size:13px; opacity:.95; margin:0 0 10px; }
   .bw-lead b{ color:#F3CE8E; }
   .bw-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
@@ -727,6 +728,7 @@ function switchTab(w){
   $('tab-trainer').classList.toggle('active',!L); $('tab-trainer').setAttribute('aria-selected',!L);
   $('panel-lernen').classList.toggle('active',L);
   $('panel-trainer').classList.toggle('active',!L);
+  document.querySelector('.berufswahl').classList.toggle('aus',!L);   // Kacheln nur in der Erklärung
   if(!L && !cur) neueAufgabe();
   window.scrollTo({top:0,behavior:'smooth'});
 }
