@@ -198,8 +198,8 @@
   <div class="sub">Verstehen und üben: gerader (proportionaler) und ungerader (umgekehrt proportionaler) Dreisatz – mit endlosem Aufgaben-Trainer.</div>
 
   <div class="berufswahl">
-    <p class="bw-lead">Direkt in den Trainer – die Aufgaben kommen aus Ihrem Berufsalltag.
-      Über <b>30&thinsp;000 verschiedene Aufgaben</b>: es geht nie aus.</p>
+    <p class="bw-lead">Direkt in den Trainer – mit Aufgaben aus Ihrem Berufsalltag.
+      Über <b>30'000 verschiedene Aufgaben</b>: Der Stoff geht nie aus.</p>
     <div class="bw-grid">
       <button type="button" class="bw-karte" data-niv="dhefz">
         <img src="kachel_figur_detailhandel.png" alt="">
@@ -220,8 +220,8 @@
       <button type="button" class="bw-karte" data-niv="pharma">
         <img src="kachel_figur_pharma.png" alt="">
         <span class="bw-txt">
-          <span class="bw-tit">Pharma</span>
-          <span class="bw-satz">20 ml Sirup enthalten 250 mg Wirkstoff – wie viel in 35 ml?</span>
+          <span class="bw-tit">Fachleute Apotheke</span>
+          <span class="bw-satz">20 ml Hustensaft enthalten 250 mg Wirkstoff – wie viel in 35 ml?</span>
           <span class="bw-cta">Trainer starten →</span>
         </span>
       </button>
@@ -336,7 +336,7 @@
           <button class="chip" data-niv="eba">🛍️ DH EBA</button>
           <button class="chip on" data-niv="dhefz">🏬 DH EFZ</button>
           <button class="chip" data-niv="kv">🏢 KV</button>
-          <button class="chip" data-niv="pharma">💊 Pharma</button>
+          <button class="chip" data-niv="pharma">💊 Apotheke</button>
         </div>
       </div>
       <div class="filters">
@@ -494,7 +494,7 @@ const LEVELS={
     cons:[6,7,8,9], distV:[100,150,200,250,300],
     antiK:[36,48,60,72,120], antiKein:[120,144,180,240,300,360],
     antiDist:[{d:300,sp:[50,60,75,100]},{d:360,sp:[60,72,90,120]},{d:480,sp:[60,80,120]}] },
-  pharma:{ label:'Pharma', typ:'beide', contexts:['lohn','einkauf','prozent','tempo'],
+  pharma:{ label:'Apotheke', typ:'beide', contexts:['lohn','einkauf','prozent','tempo'],
     lohn:[24,26,28,30,32,35], hoursA:[4,5,6,7,8,9,10,12],
     preise:[1.20,1.80,2.40,3.50,4.20,4.80,6.50], stk:[4,5,6,7,8,9,10,12,15],
     prozPer1:[1.5,2.5,3,4,5,6,7.5], prozX:[5,8,12,15,20,25,40,60], prozC:[100,75,60,120,150,250],
@@ -753,7 +753,7 @@ const FIGUREN={
   eba:   { bild:'kachel_figur_detailhandel.png', text:'Detailhandels&shy;assistentin EBA' },
   dhefz: { bild:'kachel_figur_detailhandel.png', text:'Detailhandels&shy;fachfrau EFZ' },
   kv:    { bild:'kachel_figur_bank.png',         text:'Kauffrau EFZ · Bank' },
-  pharma:{ bild:'kachel_figur_pharma.png',       text:'Pharma-Assistentin EFZ' },
+  pharma:{ bild:'kachel_figur_pharma.png',       text:'Fachfrau Apotheke EFZ' },
 };
 function setzeFigur(key){
   const f=FIGUREN[key]||FIGUREN.dhefz, img=$('figurImg'), lab=$('figurLabel');
