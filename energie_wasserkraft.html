@@ -122,6 +122,14 @@ h1 .accent{color:var(--hkv);}
 .s-btn[aria-pressed="true"]{background:var(--ocker);border-color:var(--ocker);color:#fff;}
 .s-zahl{font-size:30px;font-weight:800;color:var(--hkv);}
 .s-txt{font-size:13.5px;color:var(--muted);margin-top:6px;}
+/* ── «Wo gibt es das?» im Gezeiten-Reiter ── */
+.orte{max-width:1240px;margin:16px auto 0;}
+.orte-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:10px;margin-top:4px;}
+.ort{border:1px solid var(--line);border-radius:11px;padding:10px 12px;background:#fbfdff;}
+.ort-land{display:block;font-size:11px;font-weight:800;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--ocker);}
+.ort b{display:block;font-size:15px;color:var(--hkv);margin:1px 0 4px;}
+.ort p{font-size:12.5px;color:var(--muted);}
 .quelle{max-width:1240px;margin:14px auto 0;font-size:12px;color:var(--muted);text-align:center;}
 /* ---------- Aktuell-Box ---------- */
 .aktuell-wrap{max-width:1240px;margin:18px auto 0;padding:0 4px;}
@@ -188,6 +196,20 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
       Stationen <b>1–6</b> im Bild oder im Seitenpanel an – von den Modulen bis zum Zähler
       an der Hauswand.</p>
   </div>
+  <div class="kopf-var" data-fuer="wind" hidden>
+    <h1>Strom aus dem Wind – <span class="accent">die Windkraftanlage im Schnittbild</span></h1>
+    <p class="subtitle">Energiebereitstellung in der Schweiz · Interaktive Folie</p>
+    <p class="lead">Kein Stausee, kein Dampf – und trotzdem endet alles wieder beim Generator.
+      Klicken Sie die Stationen <b>1–9</b> im Bild oder im Seitenpanel an; die Nummern sind
+      im Bild bereits eingezeichnet.</p>
+  </div>
+  <div class="kopf-var" data-fuer="gezeiten" hidden>
+    <h1>Strom aus Ebbe und Flut – <span class="accent">das Gezeitenkraftwerk im Schnittbild</span></h1>
+    <p class="subtitle">Energiebereitstellung weltweit · Interaktive Folie</p>
+    <p class="lead">Ein Kraftwerk, das es in der Schweiz nicht geben kann: Hier liefert der Mond
+      die Energie. Klicken Sie die Stationen <b>1–7</b> im Bild oder im Seitenpanel an –
+      weiter unten steht, wo auf der Welt solche Anlagen tatsächlich stehen.</p>
+  </div>
 </header>
 
 <div class="reiter" role="tablist" aria-label="Kraftwerkstyp">
@@ -197,6 +219,10 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
           aria-controls="tab-akw" data-tab="akw">☢️ Kernkraftwerk</button>
   <button class="reiter-btn" id="rb-solar" role="tab" aria-selected="false"
           aria-controls="tab-solar" data-tab="solar">☀️ Solaranlage</button>
+  <button class="reiter-btn" id="rb-wind" role="tab" aria-selected="false"
+          aria-controls="tab-wind" data-tab="wind">🌬️ Windkraftanlage</button>
+  <button class="reiter-btn" id="rb-gezeiten" role="tab" aria-selected="false"
+          aria-controls="tab-gezeiten" data-tab="gezeiten">🌊 Gezeitenkraftwerk</button>
 </div>
 
 <section id="tab-wasser" class="reiter-panel" role="tabpanel" aria-labelledby="rb-wasser">
@@ -466,6 +492,209 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
   </div>
 </section><!-- /tab-solar -->
 
+<section id="tab-wind" class="reiter-panel" role="tabpanel" aria-labelledby="rb-wind" hidden>
+  <p class="m-text">In der Schweiz drehen sich rund <b>50</b> grössere Windturbinen; zusammen
+    liefern sie etwa 161 Millionen Kilowattstunden im Jahr – <b>weniger als 0,5 %</b> des
+    Schweizer Stroms. Am Wind liegt das selten: Bis eine Anlage bewilligt ist, vergehen oft
+    über zwanzig Jahre. Interessant ist sie trotzdem, denn Wind weht vor allem im
+    Winterhalbjahr – also genau dann, wenn Solar und Wasserkraft schwächeln.</p>
+
+  <div class="stage">
+    <div class="buehne">
+      <img class="schnitt" src="energie_wind.jpg"
+        alt="Schnittbild einer Windkraftanlage: Rotorblätter mit Blattverstellung, Hauptwelle, Getriebe, Generator und Steuerung in der geöffneten Gondel, Windmessgerät auf dem Dach, Turm mit Leiter und Kabeln, Transformator und Freileitung im Hintergrund">
+      <svg viewBox="0 0 2000 965" aria-hidden="true">
+        <g class="ani">
+          <!-- anströmender Wind von links -->
+          <path class="fl v3" pathLength="600" d="M 0 150 C 90 142, 180 148, 300 158"
+                stroke="#fff" stroke-width="5" stroke-dasharray="50 70" opacity=".32"/>
+          <path class="fl v3" pathLength="600" d="M 0 300 C 100 292, 190 300, 300 308"
+                stroke="#fff" stroke-width="5" stroke-dasharray="50 70" opacity=".3"
+                style="animation-delay:-1.2s"/>
+          <path class="fl v3" pathLength="600" d="M 0 470 C 110 462, 200 470, 305 480"
+                stroke="#fff" stroke-width="5" stroke-dasharray="50 70" opacity=".3"
+                style="animation-delay:-2.4s"/>
+          <path class="fl v3" pathLength="600" d="M 0 640 C 120 632, 210 640, 300 648"
+                stroke="#fff" stroke-width="5" stroke-dasharray="50 70" opacity=".26"
+                style="animation-delay:-3.1s"/>
+
+          <!-- Rotor: umlaufende Striche um die Nabe -->
+          <circle class="fl v3" pathLength="600" cx="440" cy="350" r="150"
+                  stroke="#fff" stroke-width="5" stroke-dasharray="40 60" opacity=".42"/>
+
+          <!-- Triebstrang: Welle → Getriebe → Generator -->
+          <circle class="fl v1" pathLength="600" cx="854" cy="355" r="78"
+                  stroke="#F2C14E" stroke-width="5" stroke-dasharray="30 70" opacity=".7"/>
+          <circle class="fl v1" pathLength="600" cx="1105" cy="355" r="80"
+                  stroke="#F2C14E" stroke-width="5" stroke-dasharray="30 70" opacity=".7"
+                  style="animation-delay:-.5s"/>
+
+          <!-- Strom: Generator → Kabel im Turm → Transformator -->
+          <path class="fl v1" pathLength="600"
+                d="M 1160 392 L 1258 392 C 1286 394, 1292 414, 1292 452 L 1296 572
+                   C 1298 606, 1338 612, 1350 648 C 1358 676, 1358 720, 1358 752
+                   C 1358 782, 1392 792, 1432 792 L 1520 786"
+                stroke="#fff" stroke-width="14" stroke-dasharray="26 94" opacity=".2"/>
+          <path class="fl v1" pathLength="600"
+                d="M 1160 392 L 1258 392 C 1286 394, 1292 414, 1292 452 L 1296 572
+                   C 1298 606, 1338 612, 1350 648 C 1358 676, 1358 720, 1358 752
+                   C 1358 782, 1392 792, 1432 792 L 1520 786"
+                stroke="#F2C14E" stroke-width="5" stroke-dasharray="26 94" opacity=".9"/>
+
+          <!-- Transformator → Freileitung -->
+          <path class="fl v1" pathLength="600"
+                d="M 1603 668 L 1603 596 L 1700 590 C 1735 558, 1762 482, 1788 428 L 1930 420 L 2000 398"
+                stroke="#fff" stroke-width="13" stroke-dasharray="26 94" opacity=".18"/>
+          <path class="fl v1" pathLength="600"
+                d="M 1603 668 L 1603 596 L 1700 590 C 1735 558, 1762 482, 1788 428 L 1930 420 L 2000 398"
+                stroke="#F2C14E" stroke-width="5" stroke-dasharray="26 94" opacity=".9"
+                style="animation-delay:-.4s"/>
+
+          <g class="zuck" stroke="#fff" stroke-width="4" fill="none" opacity="0">
+            <path d="M 1548 618 L 1566 642 L 1550 646 L 1568 670"/>
+            <path d="M 1672 612 L 1690 636 L 1674 640 L 1692 664" style="opacity:.8"/>
+          </g>
+        </g>
+
+        <g class="spots"></g>
+      </svg>
+    </div>
+
+    <aside class="panel">
+      <div class="p-chips" role="group" aria-label="Stationen"></div>
+      <div class="p-nr"></div>
+      <div class="p-tit"></div>
+      <p class="p-txt"></p>
+      <p class="p-hint">Tipp am Beamer: mit den Tasten <b>1–9</b> durch die Stationen springen.
+        Die Nummern sind im Bild bereits eingezeichnet.</p>
+    </aside>
+  </div>
+</section><!-- /tab-wind -->
+
+<section id="tab-gezeiten" class="reiter-panel" role="tabpanel" aria-labelledby="rb-gezeiten" hidden>
+  <p class="m-text">Ebbe und Flut heben und senken das Meer zweimal täglich – angetrieben von der
+    Anziehungskraft des Mondes. Wo der <b>Tidenhub</b> mindestens etwa fünf Meter beträgt, lässt
+    sich daraus Strom machen. Die Schweiz hat kein Meer; dieser Reiter ist deshalb kein Schweizer
+    Kraftwerk, sondern ein Vergleich: <b>andere Energiequelle, gleiche Technik.</b></p>
+
+  <div class="stage">
+    <div class="buehne">
+      <img class="schnitt" src="energie_gezeiten.jpg"
+        alt="Schnittbild eines Gezeitenkraftwerks: Wehranlage mit Sieltoren im Damm, darunter im Schnitt eine liegende Rohrturbine mit Welle, Getriebe und Generator, darüber Schaltanlage und Transformator, rechts Freileitung, links das höher stehende Meer bei Flut, rechts das Auslaufwasser bei Ebbe">
+      <svg viewBox="0 0 2000 955" aria-hidden="true">
+        <g class="ani">
+          <!-- einlaufendes Wasser (Flut) -->
+          <path class="fl v2" pathLength="600" d="M 10 628 C 220 632, 420 640, 600 672"
+                stroke="#39C2E0" stroke-width="8" stroke-dasharray="40 80" opacity=".55"/>
+          <path class="fl v2" pathLength="600" d="M 10 702 L 620 702"
+                stroke="#39C2E0" stroke-width="8" stroke-dasharray="40 80" opacity=".6"
+                style="animation-delay:-1s"/>
+          <path class="fl v2" pathLength="600" d="M 10 782 C 230 784, 430 774, 600 732"
+                stroke="#39C2E0" stroke-width="8" stroke-dasharray="40 80" opacity=".5"
+                style="animation-delay:-2s"/>
+
+          <!-- Laufrad -->
+          <circle class="fl v2" pathLength="600" cx="700" cy="700" r="96"
+                  stroke="#fff" stroke-width="5" stroke-dasharray="40 60" opacity=".5"/>
+          <!-- Welle → Getriebe → Generator -->
+          <circle class="fl v1" pathLength="600" cx="1037" cy="700" r="82"
+                  stroke="#F2C14E" stroke-width="5" stroke-dasharray="30 70" opacity=".7"/>
+          <circle class="fl v1" pathLength="600" cx="1309" cy="690" r="80"
+                  stroke="#F2C14E" stroke-width="5" stroke-dasharray="30 70" opacity=".7"
+                  style="animation-delay:-.5s"/>
+
+          <!-- Strom: Generator → Schaltanlage → Transformator → Netz -->
+          <path class="fl v1" pathLength="600"
+                d="M 1330 636 C 1300 608, 1252 598, 1236 558 L 1233 480
+                   C 1240 440, 1290 420, 1310 390 L 1336 322 L 1400 300 L 1560 292 L 1610 262"
+                stroke="#fff" stroke-width="14" stroke-dasharray="26 94" opacity=".2"/>
+          <path class="fl v1" pathLength="600"
+                d="M 1330 636 C 1300 608, 1252 598, 1236 558 L 1233 480
+                   C 1240 440, 1290 420, 1310 390 L 1336 322 L 1400 300 L 1560 292 L 1610 262"
+                stroke="#F2C14E" stroke-width="5" stroke-dasharray="26 94" opacity=".9"/>
+          <path class="fl v1" pathLength="600"
+                d="M 1650 246 C 1730 236, 1800 228, 1868 204 L 1990 176"
+                stroke="#F2C14E" stroke-width="5" stroke-dasharray="26 94" opacity=".85"
+                style="animation-delay:-.4s"/>
+
+          <!-- auslaufendes Wasser (Ebbe) -->
+          <path class="fl v2" pathLength="600" d="M 1530 648 C 1700 652, 1850 660, 1990 666"
+                stroke="#39C2E0" stroke-width="8" stroke-dasharray="40 80" opacity=".45"/>
+          <path class="fl v2" pathLength="600" d="M 1530 760 L 1990 766"
+                stroke="#39C2E0" stroke-width="8" stroke-dasharray="40 80" opacity=".4"
+                style="animation-delay:-1.4s"/>
+          <g class="welle">
+            <ellipse cx="1760" cy="700" rx="130" ry="40" style="animation-delay:0s"/>
+            <ellipse cx="1760" cy="700" rx="130" ry="40" style="animation-delay:-1.35s"/>
+            <ellipse cx="1760" cy="700" rx="130" ry="40" style="animation-delay:-2.7s"/>
+          </g>
+
+          <g class="zuck" stroke="#fff" stroke-width="4" fill="none" opacity="0">
+            <path d="M 1548 226 L 1566 250 L 1550 254 L 1568 278"/>
+            <path d="M 1682 220 L 1700 244 L 1684 248 L 1702 272" style="opacity:.8"/>
+          </g>
+        </g>
+
+        <g class="spots"></g>
+      </svg>
+    </div>
+
+    <aside class="panel">
+      <div class="p-chips" role="group" aria-label="Stationen"></div>
+      <div class="p-nr"></div>
+      <div class="p-tit"></div>
+      <p class="p-txt"></p>
+      <p class="p-hint">Tipp am Beamer: mit den Tasten <b>1–7</b> durch die Stationen springen.
+        Die Nummern sind im Bild bereits eingezeichnet.</p>
+    </aside>
+  </div>
+
+  <div class="orte">
+    <div class="karte">
+      <div class="k-tit">🌍 Wo gibt es das?</div>
+      <div class="k-sub">Gezeitenkraftwerke mit Damm gibt es weltweit nur eine Handvoll –
+        die Küste muss mitspielen. Unter rund fünf Metern Tidenhub lohnt sich der Bau nicht.</div>
+      <div class="orte-grid">
+        <div class="ort">
+          <span class="ort-land">Südkorea</span>
+          <b>Sihwa-ho</b>
+          <p>254 Megawatt, seit 2011 am Netz, 10 Turbinen, rund 550 Millionen kWh im Jahr –
+            das grösste der Welt. Der Damm war ursprünglich zur Landgewinnung gebaut; das
+            Wasser dahinter kippte, und man öffnete ihn wieder für die Gezeiten.</p>
+        </div>
+        <div class="ort">
+          <span class="ort-land">Frankreich · Bretagne</span>
+          <b>La Rance</b>
+          <p>240 Megawatt, seit 1966 in Betrieb, 24 Rohrturbinen, Tidenhub über 8 Meter.
+            Das erste grosse Gezeitenkraftwerk der Welt – und bis 2011 auch das grösste.
+            Preis dafür: Das Becken verlandet, einzelne Fischarten sind verschwunden.</p>
+        </div>
+        <div class="ort">
+          <span class="ort-land">Kanada · Bay of Fundy</span>
+          <b>Annapolis Royal</b>
+          <p>20 Megawatt, 1984 bis 2019 – dann stillgelegt, weil die Turbine zu viele Fische
+            tötete und ein Bauteil versagte. Ein Lehrstück: erneuerbar heisst nicht
+            automatisch unproblematisch.</p>
+        </div>
+        <div class="ort">
+          <span class="ort-land">Schottland · Pentland Firth</span>
+          <b>MeyGen</b>
+          <p>Kein Damm, sondern Turbinen auf dem Meeresgrund – ein Unterwasser-Windpark,
+            angetrieben von der Gezeitenströmung. Seit 2016 am Netz und die Bauart, auf die
+            heute am meisten gesetzt wird.</p>
+        </div>
+        <div class="ort">
+          <span class="ort-land">Und die Schweiz?</span>
+          <b>Kein Meer, kein Tidenhub</b>
+          <p>Null Gramm Gezeitenstrom – und das bleibt so. Am nächsten kommt dem Prinzip das
+            Pumpspeicherwerk im ersten Reiter: Auch dort wird Wasser gehoben und später wieder
+            abgelassen. Nur macht das bei uns eine Pumpe statt der Mond.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section><!-- /tab-gezeiten -->
+
 <div class="wissen">
   <div class="karte">
     <div class="k-tit">Der Schweizer Strommix 2024</div>
@@ -540,7 +769,8 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
 </section>
 
 <p class="quelle">Bild: KI-generierte Schnittbild-Illustration · Zahlen: Bundesamt für Energie (BFE),
-  Elektrizitätsbilanz 2024 (definitiv) · Aufbereitet für den ABU-Unterricht.</p>
+  Elektrizitätsbilanz 2024 (definitiv); Windkraft Schweiz: Suisse Eole / BFE;
+  Gezeitenkraftwerke: Betreiber- und Länderangaben · Aufbereitet für den ABU-Unterricht.</p>
 <footer>© 2026 Samuel Mollet · HKV Aarau · realisiert mit Claude (Anthropic)</footer>
 
 <script>
@@ -1224,6 +1454,44 @@ const SOLAR = [
     txt:'Diese Steuerung entscheidet sekündlich, wohin der Strom fliesst: zuerst in die laufenden Geräte, dann in die Batterie, dann in Boiler, Wärmepumpe oder Auto – und erst was übrig bleibt, ins Netz. Sie macht aus Einzelteilen ein System.' },
 ];
 
+const WIND = [
+  { n:1, x:375,  y:678,  tit:'Rotorblätter',
+    txt:'Die drei Blätter sind keine Segel, sondern Flügel: Der Wind strömt über die gewölbte Seite schneller als über die flache, und der Druckunterschied zieht das Blatt nach vorne – dasselbe Prinzip wie beim Flugzeug. Ein modernes Blatt ist 60 bis 80 Meter lang und besteht aus glasfaserverstärktem Kunststoff. Mehr als knapp 60 Prozent der Windenergie kann eine Turbine physikalisch gar nie herausholen: Sonst stünde die Luft hinter ihr still und es käme nichts mehr nach.' },
+  { n:2, x:433,  y:338,  tit:'Blattverstellung',
+    txt:'Jedes Blatt sitzt auf einem grossen Lager und lässt sich um die eigene Längsachse drehen. Bei wenig Wind stellt die Anlage die Blätter voll in den Wind, bei zu viel Wind dreht sie sie heraus und bremst damit ab. Ab etwa 25 Metern pro Sekunde geht sie ganz in Fahnenstellung und schaltet ab – nicht weil der Wind fehlt, sondern weil er zu stark ist.' },
+  { n:3, x:672,  y:355,  tit:'Hauptwelle',
+    txt:'Die Rotorwelle dreht sich erstaunlich langsam: je nach Anlage nur 10 bis 15 Mal pro Minute. Dafür überträgt sie ein gewaltiges Drehmoment. Zusammen mit dem Rotor ist sie das schwerste bewegte Teil der ganzen Anlage.' },
+  { n:4, x:854,  y:355,  tit:'Getriebe',
+    txt:'Der Generator braucht rund 1500 Umdrehungen pro Minute, der Rotor liefert 15. Das Getriebe übersetzt dazwischen im Verhältnis von etwa 1:100. Es ist das am stärksten belastete Bauteil und der häufigste Schadensfall – deshalb bauen manche Hersteller getriebelose Anlagen mit einem sehr grossen, langsam laufenden Generator.' },
+  { n:5, x:1105, y:355,  tit:'Generator',
+    txt:'Ab hier läuft alles genau gleich wie im Wasserkraftwerk und im Kernkraftwerk: Eine Spule dreht sich im Magnetfeld, und es entsteht Spannung. Ob die Drehung von Wasser, Dampf oder Wind kommt, merkt der Generator nicht. Eine grosse Anlage leistet 3 bis 6 Megawatt.' },
+  { n:6, x:1292, y:355,  tit:'Steuerung',
+    txt:'Der Schaltschrank in der Gondel überwacht Drehzahl, Temperaturen, Vibrationen und Netzspannung. Er dreht auch die ganze Gondel in den Wind und legt bei Störungen die Bremse ein. Ein Windpark wird aus einer Leitstelle fernüberwacht – vor Ort ist normalerweise niemand.' },
+  { n:7, x:1396, y:179,  tit:'Windmessung',
+    txt:'Schalenkreuz und Windfahne auf dem Dach der Gondel melden Geschwindigkeit und Richtung. Ab rund 3 Metern pro Sekunde läuft die Anlage an, ab etwa 12 bis 13 liefert sie ihre volle Leistung, ab 25 schaltet sie ab. Entscheidend ist dabei: Die Leistung wächst mit der dritten Potenz der Windgeschwindigkeit – doppelt so viel Wind bedeutet achtmal so viel Leistung.' },
+  { n:8, x:894,  y:758,  tit:'Turm',
+    txt:'Der Turm ist nicht bloss ein Ständer, sondern ein Ertragsfaktor: Je höher, desto gleichmässiger und stärker weht der Wind. Moderne Anlagen erreichen 100 bis 160 Meter Nabenhöhe. Im Innern führen Leitern oder ein kleiner Aufzug nach oben, daneben laufen die Kabel vom Generator nach unten. Genau diese Höhe ist im Schweizer Mittelland der häufigste Streitpunkt bei Einsprachen.' },
+  { n:9, x:1613, y:739,  tit:'Transformator',
+    txt:'Der Generator liefert rund 690 Volt – für den Transport viel zu wenig, die Verluste wären enorm. Der Transformator spannt auf 20 000 Volt hoch und speist ins Verteilnetz ein. Von da an ist dem Strom nicht mehr anzusehen, ob er aus Wind, Wasser oder einem Kernkraftwerk stammt.' },
+];
+
+const GEZEITEN = [
+  { n:1, x:715,  y:343,  tit:'Wehranlage / Sieltore',
+    txt:'Die Tore sind das Herzstück: Bei Flut stehen sie offen, das Meer füllt das Becken hinter dem Damm. Bei Hochwasser schliessen sie. Wenn das Meer bei Ebbe wieder gesunken ist, steht das Wasser im Becken höher als draussen – und genau dieser Höhenunterschied ist die nutzbare Energie. Im Grunde ein Stausee, den zweimal täglich der Mond füllt.' },
+  { n:2, x:707,  y:753,  tit:'Turbine',
+    txt:'Eine Rohrturbine, verwandt mit der Kaplan-Turbine im Flusskraftwerk: grosser Durchmesser, wenig Gefälle, sehr viel Wasser. Sie liegt waagrecht im Durchlass und kann in beide Richtungen arbeiten – bei einlaufendem und bei auslaufendem Wasser. In La Rance sind 24 solche Turbinen eingebaut, jede mit rund 5,3 Metern Laufraddurchmesser.' },
+  { n:3, x:1347, y:301,  tit:'Steuerung und Schaltanlage',
+    txt:'Ein Gezeitenkraftwerk läuft nicht nach Bedarf, sondern nach Mondkalender. Die Steuerung rechnet den Tidenfahrplan Tage im Voraus durch und legt fest, wann die Tore öffnen, wann die Turbinen laufen und wann pausiert wird. Der Strom ist damit exakt vorhersehbar – aber eben nicht dann verfügbar, wenn man ihn gerade braucht.' },
+  { n:4, x:1624, y:321,  tit:'Transformator',
+    txt:'Wie in jedem Kraftwerk: Der Generator liefert Mittelspannung, der Transformator spannt für den Transport hoch. Salzluft und Feuchtigkeit sind der grosse Unterschied zum Binnenland – Korrosion ist am Meer über die Lebensdauer der grösste Kostenfaktor.' },
+  { n:5, x:1790, y:271,  tit:'Stromnetz',
+    txt:'Ab hier ist Gezeitenstrom von Wasserkraft-, Wind- oder Kernkraftstrom nicht mehr zu unterscheiden. Weltweit bleibt er allerdings eine Randnotiz: Alle Gezeitenkraftwerke der Erde zusammen leisten rund 0,5 Gigawatt – weniger als die Hälfte eines einzigen Schweizer Kraftwerks wie Bieudron im Wallis.' },
+  { n:6, x:1037, y:714,  tit:'Getriebe',
+    txt:'Dasselbe Problem wie bei der Windkraft: Die Turbinenwelle dreht zu langsam für den Generator, das Getriebe erhöht die Drehzahl. Bei neueren Anlagen versucht man es wegzulassen, denn jedes Getriebe ist ein Verschleissteil – und Wartung mitten im Meerwasser ist teuer.' },
+  { n:7, x:1309, y:714,  tit:'Generator',
+    txt:'Und wieder dasselbe Prinzip wie in allen anderen Reitern: Drehbewegung wird zu Spannung. Das ist der rote Faden dieser Folie – die Energiequellen sind völlig verschieden, der letzte Schritt ist überall derselbe.' },
+];
+
 const svgNS = 'http://www.w3.org/2000/svg';
 
 function baueTab(panelId, daten){
@@ -1275,8 +1543,10 @@ function baueTab(panelId, daten){
   waehle(0);
 }
 
-baueTab('tab-akw',   AKW);
-baueTab('tab-solar', SOLAR);
+baueTab('tab-akw',      AKW);
+baueTab('tab-solar',    SOLAR);
+baueTab('tab-wind',     WIND);
+baueTab('tab-gezeiten', GEZEITEN);
 })();
 </script>
 
@@ -1284,13 +1554,17 @@ baueTab('tab-solar', SOLAR);
 /* ── Reiter-Umschaltung: Wasserkraft / Kernkraft / Solar ── */
 (function(){
   const btns   = Array.from(document.querySelectorAll('.reiter-btn'));
-  const panels = {wasser:document.getElementById('tab-wasser'),
-                  akw:   document.getElementById('tab-akw'),
-                  solar: document.getElementById('tab-solar')};
+  const panels = {wasser:  document.getElementById('tab-wasser'),
+                  akw:     document.getElementById('tab-akw'),
+                  solar:   document.getElementById('tab-solar'),
+                  wind:    document.getElementById('tab-wind'),
+                  gezeiten:document.getElementById('tab-gezeiten')};
   const koepfe = Array.from(document.querySelectorAll('.kopf-var'));
-  const titel  = {wasser:'Strom aus den Alpen – das Wasserkraftwerk im Schnittbild',
-                  akw:   'Strom aus dem Atom – das Kernkraftwerk im Schnittbild',
-                  solar: 'Strom vom eigenen Dach – die Solaranlage im Schnittbild'};
+  const titel  = {wasser:  'Strom aus den Alpen – das Wasserkraftwerk im Schnittbild',
+                  akw:     'Strom aus dem Atom – das Kernkraftwerk im Schnittbild',
+                  solar:   'Strom vom eigenen Dach – die Solaranlage im Schnittbild',
+                  wind:    'Strom aus dem Wind – die Windkraftanlage im Schnittbild',
+                  gezeiten:'Strom aus Ebbe und Flut – das Gezeitenkraftwerk im Schnittbild'};
 
   function ausHash(){
     const h = location.hash.replace('#','');
