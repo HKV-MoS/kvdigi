@@ -204,6 +204,7 @@ body{
 /* ── „In Arbeit"-Kennzeichnung ── */
 .karte{overflow:hidden}
 .karte[data-wip]{border-left-style:dashed}
+.karte[data-wip] .k-kopf{flex-direction:column;align-items:flex-start;gap:.3rem;padding-right:44px}
 .karte[data-wip]::before{
   content:""; position:absolute; inset:0; pointer-events:none;
   background:repeating-linear-gradient(-45deg,rgba(244,196,0,.10) 0 14px,rgba(244,196,0,0) 14px 28px);
@@ -430,14 +431,16 @@ body{
         <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
       </a>
 
-      <a class="karte" href="energie_wasserkraft.html" data-kat="oekologie">
+      <a class="karte" href="energie_wasserkraft.html" data-kat="oekologie" data-wip>
+        <span class="wip-ribbon">🚧 In Arbeit</span>
         <div class="k-kopf">
           <span class="k-thema">Energie · Schweiz</span>
           <span class="k-typ">Interaktive Grafik</span>
         </div>
         <div class="k-titel">Strom aus den Alpen</div>
-        <p class="k-text">Das Wasserkraftwerk im Schnittbild: acht Stationen vom Stausee bis ins Netz – mit Pumpbetrieb-Schalter und dem echten Schweizer Strommix 2024.</p>
+        <p class="k-text">Das Wasserkraftwerk im Schnittbild: acht Stationen vom Stausee bis ins Netz – mit Pumpbetrieb-Schalter und dem echten Schweizer Strommix 2024. Zweiter Reiter: das Kernkraftwerk.</p>
         <div class="k-einsatz">Beamer · Klick-Stationen · Tasten 1–8</div>
+        <span class="wip-tag">👷 Reiter AKW im Aufbau</span>
         <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
       </a>
 

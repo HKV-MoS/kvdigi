@@ -19,6 +19,28 @@ h1 .accent{color:var(--hkv);}
 .subtitle{color:var(--muted);font-size:15px;margin-top:4px;}
 .lead{max-width:70ch;margin:10px auto 0;color:var(--muted);font-size:14.5px;}
 
+/* ── Reiter: Wasserkraft / Kernkraft ── */
+.reiter{max-width:1240px;margin:20px auto 0;display:flex;justify-content:center;gap:8px;
+  flex-wrap:wrap;border-bottom:2px solid var(--line);padding-bottom:0;}
+.reiter-btn{font:inherit;font-weight:800;font-size:15px;min-height:46px;padding:11px 22px;
+  border:2px solid transparent;border-bottom:none;border-radius:12px 12px 0 0;
+  background:transparent;color:var(--muted);cursor:pointer;position:relative;bottom:-2px;
+  display:inline-flex;align-items:center;gap:.5em;transition:all .18s;}
+.reiter-btn:hover{color:var(--hkv);background:rgba(31,78,120,.06);}
+.reiter-btn[aria-selected="true"]{background:var(--card);border-color:var(--line);
+  color:var(--hkv);box-shadow:0 -3px 0 var(--hkv) inset;}
+.reiter-btn[aria-selected="true"]::after{content:"";position:absolute;left:0;right:0;bottom:-2px;
+  height:2px;background:var(--card);}
+.reiter-btn:focus-visible{outline:3px solid rgba(31,78,120,.4);outline-offset:2px;}
+.reiter-wip{font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+  background:#F4C400;color:#3a2c00;border-radius:999px;padding:2px 8px;}
+.platzhalter{max-width:1240px;margin:18px auto 0;background:var(--card);border:1px solid var(--line);
+  border-radius:14px;padding:44px 24px;text-align:center;
+  background-image:repeating-linear-gradient(-45deg,rgba(244,196,0,.09) 0 16px,rgba(244,196,0,0) 16px 32px);}
+.platzhalter .ph-icon{font-size:44px;line-height:1;}
+.platzhalter .ph-tit{font-size:20px;font-weight:800;color:var(--hkv);margin-top:10px;}
+.platzhalter .ph-txt{max-width:60ch;margin:8px auto 0;font-size:14.5px;color:var(--muted);}
+
 .modus{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:16px auto 4px;}
 .m-btn{font:inherit;font-weight:800;font-size:14.5px;min-height:44px;padding:10px 18px;
   border:2px solid var(--line);border-radius:999px;background:var(--card);color:var(--muted);cursor:pointer;
@@ -118,11 +140,28 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
 <body>
 
 <header>
-  <h1>Strom aus den Alpen – <span class="accent">das Wasserkraftwerk im Schnittbild</span></h1>
-  <p class="subtitle">Energiebereitstellung in der Schweiz · Interaktive Folie</p>
-  <p class="lead">Folgen Sie dem Weg des Wassers vom Stausee bis ins Stromnetz:
-    Klicken Sie die Stationen <b>1–8</b> im Bild oder im Seitenpanel an.</p>
+  <div class="kopf-var" data-fuer="wasser">
+    <h1>Strom aus den Alpen – <span class="accent">das Wasserkraftwerk im Schnittbild</span></h1>
+    <p class="subtitle">Energiebereitstellung in der Schweiz · Interaktive Folie</p>
+    <p class="lead">Folgen Sie dem Weg des Wassers vom Stausee bis ins Stromnetz:
+      Klicken Sie die Stationen <b>1–8</b> im Bild oder im Seitenpanel an.</p>
+  </div>
+  <div class="kopf-var" data-fuer="akw" hidden>
+    <h1>Strom aus dem Atom – <span class="accent">das Kernkraftwerk im Schnittbild</span></h1>
+    <p class="subtitle">Energiebereitstellung in der Schweiz · Interaktive Folie</p>
+    <p class="lead">Vom Brennelement bis ins Netz – der zweite Pfeiler der Schweizer
+      Stromproduktion, im direkten Vergleich zur Wasserkraft.</p>
+  </div>
 </header>
+
+<div class="reiter" role="tablist" aria-label="Kraftwerkstyp">
+  <button class="reiter-btn" id="rb-wasser" role="tab" aria-selected="true"
+          aria-controls="tab-wasser" data-tab="wasser">💧 Wasserkraftwerk</button>
+  <button class="reiter-btn" id="rb-akw" role="tab" aria-selected="false"
+          aria-controls="tab-akw" data-tab="akw">☢️ Kernkraftwerk <span class="reiter-wip">in Arbeit</span></button>
+</div>
+
+<section id="tab-wasser" class="reiter-panel" role="tabpanel" aria-labelledby="rb-wasser">
 
 <div class="modus" role="group" aria-label="Betriebsmodus und Extras">
   <button class="m-btn" id="m-turb" aria-pressed="true">▶ Turbinieren – Strom erzeugen</button>
@@ -211,6 +250,18 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
     <p class="p-hint">Tipp am Beamer: mit den Tasten <b>1–8</b> durch die Stationen springen.</p>
   </aside>
 </div>
+
+</section><!-- /tab-wasser -->
+
+<section id="tab-akw" class="reiter-panel" role="tabpanel" aria-labelledby="rb-akw" hidden>
+  <div class="platzhalter">
+    <div class="ph-icon">☢️</div>
+    <div class="ph-tit">Das Kernkraftwerk im Schnittbild</div>
+    <p class="ph-txt">Dieser Reiter ist im Aufbau. Geplant: dasselbe Prinzip wie nebenan –
+      Schnittbild mit anklickbaren Stationen vom Brennelement über Reaktordruckbehälter,
+      Dampferzeuger und Turbine bis zum Kühlturm, plus der Vergleich mit der Wasserkraft.</p>
+  </div>
+</section><!-- /tab-akw -->
 
 <div class="wissen">
   <div class="karte">
@@ -928,6 +979,45 @@ FRAGEN.forEach((q,qi)=>{
   box.appendChild(feed);
   mf.appendChild(box);
 });
+})();
+</script>
+
+<script>
+/* ── Reiter-Umschaltung: Wasserkraft / Kernkraft ── */
+(function(){
+  const btns   = Array.from(document.querySelectorAll('.reiter-btn'));
+  const panels = {wasser:document.getElementById('tab-wasser'), akw:document.getElementById('tab-akw')};
+  const koepfe = Array.from(document.querySelectorAll('.kopf-var'));
+  const titel  = {wasser:'Strom aus den Alpen – das Wasserkraftwerk im Schnittbild',
+                  akw:'Strom aus dem Atom – das Kernkraftwerk im Schnittbild'};
+
+  function zeige(name, mitHash){
+    if(!panels[name]) name = 'wasser';
+    btns.forEach(b => b.setAttribute('aria-selected', b.dataset.tab === name ? 'true' : 'false'));
+    Object.keys(panels).forEach(k => { panels[k].hidden = (k !== name); });
+    koepfe.forEach(k => { k.hidden = (k.dataset.fuer !== name); });
+    document.title = titel[name];
+    if(mitHash){
+      const neu = (name === 'wasser') ? location.pathname + location.search
+                                      : location.pathname + location.search + '#akw';
+      history.replaceState(null, '', neu);
+    }
+  }
+
+  btns.forEach(b => b.addEventListener('click', () => zeige(b.dataset.tab, true)));
+
+  // Pfeiltasten im Reiter-Balken
+  document.querySelector('.reiter').addEventListener('keydown', e => {
+    if(e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    const i = btns.indexOf(document.activeElement); if(i < 0) return;
+    const j = (i + (e.key === 'ArrowRight' ? 1 : btns.length - 1)) % btns.length;
+    btns[j].focus(); zeige(btns[j].dataset.tab, true); e.preventDefault();
+  });
+
+  // Deep-Link: energie_wasserkraft.html#akw öffnet direkt den Kernkraft-Reiter
+  zeige(location.hash.replace('#','') === 'akw' ? 'akw' : 'wasser', false);
+  window.addEventListener('hashchange', () =>
+    zeige(location.hash.replace('#','') === 'akw' ? 'akw' : 'wasser', false));
 })();
 </script>
 </body>
