@@ -48,9 +48,10 @@ body{
 
 /* ── Hero: goldenes Bild + interaktive Zahnrad-Hotspots ── */
 .hero{position:relative;margin-bottom:.4rem}
+.hero-buehne{position:relative}
 .hero-media{position:relative;border-radius:16px;overflow:hidden}
 .hero-img{display:block;width:100%;height:auto}
-.hero-text{position:absolute;top:50%;left:clamp(1.1rem,4.5%,3rem);transform:translateY(-50%);width:min(46%,520px);z-index:4}
+.hero-text{position:absolute;top:37%;left:clamp(1.1rem,4.5%,3rem);transform:translateY(-50%);width:min(46%,520px);z-index:4}
 @media(max-width:680px){.hero-text{position:static;transform:none;left:auto;width:auto;margin-top:1rem}}
 .hot{position:absolute;transform:translate(-50%,-50%);border-radius:50%;cursor:pointer;z-index:3}
 .hot .ring{position:absolute;inset:0;border-radius:50%;transition:box-shadow .2s,background .2s;box-shadow:0 0 0 3px rgba(216,174,102,0)}
@@ -255,6 +256,7 @@ body{
 <div class="wrap">
 
   <header class="hero">
+    <div class="hero-buehne">
     <div class="hero-media">
       <img class="hero-img" src="abu_hero2.jpg?v=3" alt="Kopf aus goldenen Zahnrädern, die die ABU-Themen bilden">
       <div class="shine"></div>
@@ -269,6 +271,7 @@ body{
       <h1 class="wordmark">abu-tools<span class="tld">.ch</span></h1>
       <p class="lead">Interaktive Folien, Simulationen und Rechner für den allgemeinbildenden Unterricht – direkt nutzbar am Beamer, Tablet oder Laptop.</p>
     </div>
+    </div><!-- /hero-buehne -->
     <div class="hinweis">
       Die Aufträge, Lernziele und Theorie finden Sie in <a class="kvd" href="https://go.kvdigital.swiss/dashboard" target="_blank" rel="noopener">KV&nbsp;Digital<span class="pfeil-ex">↗</span></a>.
       abu-tools.ch ergänzt den Unterricht mit interaktiven Werkzeugen, die sich dort verlinken lassen.
