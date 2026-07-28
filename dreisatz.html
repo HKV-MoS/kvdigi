@@ -184,9 +184,72 @@
   .calcpad .toanswer:hover{ filter:brightness(1.08); }
   .calcpad .toanswer:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
 
+
+  /* Infografik auf der Erklaerseite */
+  .illu{ margin:16px 0 0; }
+  .illu img{ width:100%; height:auto; display:block; border-radius:12px; border:1px solid #E1EBF1;
+             box-shadow:0 2px 10px rgba(20,50,80,.10); cursor:zoom-in; }
+  .illu figcaption{ font-size:12px; color:#8AA0B4; margin-top:6px; }
+  .lightbox{ position:fixed; inset:0; background:rgba(12,26,34,.90); display:none;
+             align-items:center; justify-content:center; padding:22px; z-index:60; cursor:zoom-out; }
+  .lightbox.open{ display:flex; }
+  .lightbox img{ max-width:100%; max-height:100%; border-radius:10px; box-shadow:0 10px 40px rgba(0,0,0,.5); }
+
+  /* Pokalregal */
+  .pk-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:12px; flex-wrap:wrap; }
+  .pk-eyebrow{ font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:#3C6E73; }
+  .pk-next{ font-size:12.5px; font-weight:700; color:#8AA0B4; }
+  .pokale{ display:flex; gap:9px; flex-wrap:wrap; margin-top:12px; align-items:flex-end; }
+  .pokal{ flex:1 1 92px; text-align:center; padding:10px 6px 9px; border-radius:12px;
+          background:#F3F8FC; border:1px solid #E1EBF1; transition:background .25s ease, border-color .25s ease; }
+  .pokal.auf{ background:linear-gradient(170deg,#FFFDF6,#FAF0DA); border-color:#EBD6A8; }
+  .pokal svg{ display:block; margin:0 auto; }
+  .pokal .zu{ filter:grayscale(1); opacity:.28; }
+  .pokal .zahl{ font-size:15px; font-weight:900; color:#213B42; margin-top:5px; line-height:1.1; }
+  .pokal .lab{ font-size:10px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; color:#9DB0BB; }
+  .pokal.auf .lab{ color:#B5641E; }
+  @keyframes pkPop{ 0%{ transform:scale(.6); } 55%{ transform:scale(1.16); } 100%{ transform:scale(1); } }
+  .pokal.frisch svg{ animation-name:pkPop; animation-duration:.7s; animation-timing-function:ease-out; }
+
+  /* Feier beim Pokal */
+  .feier{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:70;
+          background:rgba(12,26,34,.58); padding:20px; }
+  .feier.open{ display:flex; }
+  .feierbox{ position:relative; background:#fff; border-radius:18px; padding:26px 32px 22px; text-align:center;
+             box-shadow:0 18px 50px rgba(0,0,0,.35); max-width:360px; }
+  .feierbox .ft{ font-size:19px; font-weight:900; color:#213B42; margin-top:8px; }
+  .feierbox .fs{ font-size:13.5px; color:#5B6B7A; margin-top:5px; }
+  .feierbox .fx{ margin-top:14px; }
+  @keyframes konfFall{ 0%{ transform:translateY(-14px) rotate(0deg); opacity:0; }
+                       12%{ opacity:1; } 100%{ transform:translateY(210px) rotate(300deg); opacity:0; } }
+  .konf{ position:absolute; top:0; width:7px; height:11px; border-radius:2px;
+         animation-name:konfFall; animation-duration:2.6s; animation-timing-function:ease-in;
+         animation-iteration-count:1; opacity:0; }
+
+  /* Fehleranalyse */
+  .analyse{ margin-top:14px; border-radius:12px; border:1px solid #E1EBF1; background:#F8FBFD; padding:14px 16px; display:none; }
+  .analyse.show{ display:block; }
+  .an-top{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap; }
+  .an-tit{ font-size:14px; font-weight:900; color:#213B42; }
+  .an-sub{ font-size:12px; color:#8AA0B4; }
+  .an-zeile{ display:grid; grid-template-columns:150px 1fr 34px; gap:9px; align-items:center; margin-top:7px; font-size:12.5px; }
+  .an-zeile .nm{ font-weight:700; color:#41585f; }
+  .an-bar{ height:9px; border-radius:5px; background:#E4EDF3; overflow:hidden; }
+  .an-bar i{ display:block; height:100%; border-radius:5px; background:#E2574C; }
+  .an-zeile .ct{ text-align:right; font-weight:800; color:#213B42; }
+  .an-tipp{ margin-top:11px; padding:10px 13px; border-radius:9px; background:#FBF3DF;
+            border-left:4px solid #D8AE66; font-size:13px; color:#5C4715; }
+  .an-tipp b{ color:#3C2E06; }
+  .an-diag{ margin-top:7px; padding-top:7px; border-top:1px solid rgba(226,87,76,.28); font-size:12.5px; font-weight:600; opacity:.95; }
+  @media (max-width:560px){ .an-zeile{ grid-template-columns:118px 1fr 30px; } }
+
   .footer{ max-width:980px; margin:6px auto 26px; padding:0 18px; }
   .footer .cr{ color:#94A3B0; font-size:11px; }
-  @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
+  @media (prefers-reduced-motion:reduce){
+    *{ transition-duration:.5s !important; }
+    .pokal.frisch svg{ animation-duration:2.1s; }
+    .konf{ animation-duration:7s; }
+  }
   @media (max-width:560px){ .srow{ font-size:15px; } .qtext{ font-size:16px; } }
 </style>
 </head>
@@ -264,6 +327,12 @@
       </div>
       <div class="result-line">🍎 5 kg Äpfel kosten CHF 12.50.</div>
       <p style="margin-top:10px;"><b>Merke:</b> geteilt, dann mal – beide Grössen gehen gleich rauf oder runter.</p>
+
+      <figure class="illu">
+        <img id="illu-gerade" src="dreisatz_gerader.jpg" loading="lazy"
+             alt="Gerader Dreisatz am Beispiel Äpfel: 3 kg kosten CHF 7.50, 1 kg kostet CHF 2.50, 5 kg kosten CHF 12.50.">
+        <figcaption>Derselbe Weg als Bild – erst auf 1 kg herunter, dann auf 5 kg hoch. Klicken zum Vergrössern.</figcaption>
+      </figure>
     </div>
 
     <div class="card">
@@ -442,8 +511,28 @@
       </div>
     </div>
 
+    <div class="card">
+      <div class="pk-head">
+        <div>
+          <div class="pk-eyebrow">Pokalregal</div>
+          <h2 style="margin:0;">Wie weit kommen Sie ohne Fehler?</h2>
+        </div>
+        <div class="pk-next" id="pk-next">Noch 5 richtige in Folge bis zum ersten Pokal.</div>
+      </div>
+      <div class="pokale" id="pokale"></div>
+
+      <div style="margin-top:12px;">
+        <button class="toggle-btn" id="fa-btn">📊 Fehleranalyse anzeigen</button>
+      </div>
+      <div class="analyse" id="analyse"></div>
+    </div>
+
   </div>
 </div>
+
+<div class="lightbox" id="lightbox"><img id="lightbox-img" src="" alt=""></div>
+
+<div class="feier" id="feier"><div class="feierbox" id="feierbox"></div></div>
 
 <div class="footer">
   <div class="cr">Dreisatz-Lerneinheit · ABU · HKV Aarau · Samuel Mollet · realisiert mit Claude (Anthropic)</div>
@@ -515,7 +604,7 @@ function g_lohn_pro(){
     calc1:`${num(b)} : ${a} = ${num(lohn)}`, per1Str:`1 Std = ${money(lohn)}`,
     calc2:`${num(lohn)} · ${c} = ${num(ans)}`,
     warum1:`Auf 1 Stunde herunter: durch ${a} teilen.`, warum2:`Auf ${c} Stunden hoch: mal ${c}.`,
-    ansUnit:'CHF', answer:ans, hint:'Mehr Stunden → mehr Lohn: gerader Dreisatz. Zuerst durch die Stunden teilen (Lohn pro Stunde), dann mal die gesuchten Stunden.' };
+    A:a, B:b, C:c, ansUnit:'CHF', answer:ans, hint:'Mehr Stunden → mehr Lohn: gerader Dreisatz. Zuerst durch die Stunden teilen (Lohn pro Stunde), dann mal die gesuchten Stunden.' };
 }
 function g_einkauf_pro(){
   const preis=pick(LV.preise);
@@ -527,7 +616,7 @@ function g_einkauf_pro(){
     calc1:`${num(b)} : ${a} = ${num(preis)}`, per1Str:`1 ${it.s} = ${money(preis)}`,
     calc2:`${num(preis)} · ${c} = ${num(ans)}`,
     warum1:`Auf 1 ${it.s}: durch ${a} teilen (Stückpreis).`, warum2:`Auf ${c} ${it.p}: mal ${c}.`,
-    ansUnit:'CHF', answer:ans, hint:'Mehr Stück → mehr Kosten: gerader Dreisatz. Zuerst Stückpreis (÷), dann mal die Anzahl.' };
+    A:a, B:b, C:c, ansUnit:'CHF', answer:ans, hint:'Mehr Stück → mehr Kosten: gerader Dreisatz. Zuerst Stückpreis (÷), dann mal die Anzahl.' };
 }
 function g_prozent_pro(){
   const per1=pick(LV.prozPer1);
@@ -540,7 +629,7 @@ function g_prozent_pro(){
     calc1:`${num(b)} : ${x} = ${num(per1)}`, per1Str:`1 % = ${money(per1)}`,
     calc2:`${num(per1)} · ${c} = ${num(ans)}`,
     warum1:`Auf 1 %: durch ${x} teilen.`, warum2:`Auf ${c} %: mal ${c}.`,
-    ansUnit:'CHF', answer:ans, hint:'Prozent ist ein gerader Dreisatz. Zuerst der Wert von 1 % (÷), dann mal die gesuchten Prozent.' };
+    A:x, B:b, C:c, ansUnit:'CHF', answer:ans, hint:'Prozent ist ein gerader Dreisatz. Zuerst der Wert von 1 % (÷), dann mal die gesuchten Prozent.' };
 }
 function g_tempo_pro(){
   if(Math.random()<0.55){ // Geschwindigkeit (Zeit → Strecke)
@@ -554,7 +643,7 @@ function g_tempo_pro(){
       calc1:`${b} : ${a} = ${v}`, per1Str:`1 Std = ${v} km`,
       calc2:`${v} · ${c} = ${num(ans)}`,
       warum1:`Auf 1 Stunde: durch ${a} teilen (Tempo pro Stunde).`, warum2:`Auf ${c} Stunden: mal ${c}.`,
-      ansUnit:'km', answer:ans, hint:'Mehr Zeit → mehr Strecke: gerader Dreisatz. Zuerst km pro Stunde (÷), dann mal die Stunden.' };
+      A:a, B:b, C:c, ansUnit:'km', answer:ans, hint:'Mehr Zeit → mehr Strecke: gerader Dreisatz. Zuerst km pro Stunde (÷), dann mal die Stunden.' };
   } else { // Verbrauch
     const cons=pick(LV.cons); // L pro 100 km
     const [a,c]=twoDistinct(LV.distV);
@@ -565,7 +654,7 @@ function g_tempo_pro(){
       calc1:`${num(b)} : ${a} = ${num(per1)}`, per1Str:`1 km = ${num(per1)} L`,
       calc2:`${num(per1)} · ${c} = ${num(ans)}`,
       warum1:`Auf 1 km: durch ${a} teilen (Verbrauch pro km).`, warum2:`Auf ${c} km: mal ${c}.`,
-      ansUnit:'L', answer:ans, hint:'Weitere Strecke → mehr Benzin: gerader Dreisatz. Verbrauch pro km (÷), dann mal die km.' };
+      A:a, B:b, C:c, ansUnit:'L', answer:ans, hint:'Weitere Strecke → mehr Benzin: gerader Dreisatz. Verbrauch pro km (÷), dann mal die km.' };
   }
 }
 
@@ -580,7 +669,7 @@ function g_lohn_anti(){
     calc1:`${a} · ${b} = ${K}`, kStr:`1 ${was[0]} = ${K} Tage`,
     calc2:`${K} : ${c} = ${num(ans)}`,
     warum1:`Auf 1 ${was[0]}: mal ${a} – einer allein braucht länger.`, warum2:`Auf ${c} ${was[0]}: durch ${c} – mehr Leute, weniger Zeit.`,
-    ansUnit:'Tage', answer:ans, hint:'Mehr Leute → weniger Zeit: ungerader Dreisatz. Zuerst mal (einer allein), dann durch die Anzahl.' };
+    A:a, B:b, C:c, ansUnit:'Tage', answer:ans, hint:'Mehr Leute → weniger Zeit: ungerader Dreisatz. Zuerst mal (einer allein), dann durch die Anzahl.' };
 }
 function g_einkauf_anti(){
   const K=pick(LV.antiKein);
@@ -594,7 +683,7 @@ function g_einkauf_anti(){
       calc1:`${a} · ${num(b)} = ${num(K)}`, kStr:`ganzer Gewinn = ${money(K)}`,
       calc2:`${num(K)} : ${c} = ${num(ans)}`,
       warum1:`Ganzer Betrag: ${a} · ${num(b)} = ${num(K)}.`, warum2:`Auf ${c} Personen: durch ${c} – mehr Köpfe, weniger pro Kopf.`,
-      ansUnit:'CHF', answer:ans, hint:'Mehr Personen → weniger pro Kopf: ungerader Dreisatz. Zuerst den ganzen Betrag (mal), dann durch die Personen.' };
+      A:a, B:b, C:c, ansUnit:'CHF', answer:ans, hint:'Mehr Personen → weniger pro Kopf: ungerader Dreisatz. Zuerst den ganzen Betrag (mal), dann durch die Personen.' };
   } else { // Vorrat
     return { typ:'anti', kt:'einkauf', emoji:'🐄',
       text:`Ein Futtervorrat reicht für ${a} Kühe genau ${b} Tage. Für wie viele Tage reicht er bei ${c} Kühen?`,
@@ -602,7 +691,7 @@ function g_einkauf_anti(){
       calc1:`${a} · ${b} = ${K}`, kStr:`1 Kuh = ${K} Tage`,
       calc2:`${K} : ${c} = ${num(ans)}`,
       warum1:`Auf 1 Kuh: mal ${a} – für eine Kuh reicht es viel länger.`, warum2:`Auf ${c} Kühe: durch ${c} – mehr Tiere, weniger Tage.`,
-      ansUnit:'Tage', answer:ans, hint:'Mehr Tiere → Vorrat reicht kürzer: ungerader Dreisatz. Zuerst mal (1 Kuh), dann durch die Anzahl.' };
+      A:a, B:b, C:c, ansUnit:'Tage', answer:ans, hint:'Mehr Tiere → Vorrat reicht kürzer: ungerader Dreisatz. Zuerst mal (1 Kuh), dann durch die Anzahl.' };
   }
 }
 function g_tempo_anti(){
@@ -615,7 +704,7 @@ function g_tempo_anti(){
     calc1:`${a} · ${num(b)} = ${K}`, kStr:`Strecke = ${K} km`,
     calc2:`${K} : ${c} = ${num(ans)}`,
     warum1:`Strecke ausrechnen: ${a} · ${num(b)} = ${K} km.`, warum2:`Bei ${c} km/h: ${K} : ${c} = ${num(ans)} – schneller, weniger Zeit.`,
-    ansUnit:'Stunden', answer:ans, hint:'Höheres Tempo → weniger Fahrzeit: ungerader Dreisatz. Zuerst die Strecke (Tempo · Zeit), dann durch das neue Tempo.' };
+    A:a, B:b, C:c, ansUnit:'Stunden', answer:ans, hint:'Höheres Tempo → weniger Fahrzeit: ungerader Dreisatz. Zuerst die Strecke (Tempo · Zeit), dann durch das neue Tempo.' };
 }
 
 const GENS={
@@ -627,7 +716,8 @@ const GENS={
 let selTyp='beide';
 let selKt={lohn:true,einkauf:true,prozent:true,tempo:true};
 let cur=null, artChosen=null, answered=false;
-let score={correct:0,total:0,streak:0};
+let score={correct:0,total:0,streak:0,best:0};
+let fehler={art:0,gegenart:0,schritt1:0,komma:0,rund:0,rechnen:0};
 
 function buildPool(){
   let typs = selTyp==='beide' ? ['pro','anti'] : [selTyp];
@@ -675,6 +765,7 @@ function schemaHTML(g){
 
 function pruefen(){
   if(!cur || answered) return;
+  let neuerPokal=-1, serieEnde=0;
   const raw=$('answer').value.trim().replace(',','.').replace(/[^0-9.\-]/g,'');
   if(raw==='' && artChosen===null){ return; }
   const val=parseFloat(raw);
@@ -691,16 +782,30 @@ function pruefen(){
     fb.className='feedback show ok';
     fb.innerHTML='✓ Richtig! Art und Ergebnis stimmen.';
     score.correct++; score.streak++;
+    const stufe = POKALE.findIndex(p=>p.n===score.streak);
+    if(stufe>=0 && score.streak>score.best){ neuerPokal=stufe; }
+    if(score.streak>score.best) score.best=score.streak;
   } else {
     fb.className='feedback show no';
     let msg=[];
     if(!artOk) msg.push(`Art: es ist ein <b>${cur.typ==='pro'?'gerader':'ungerader'}</b> Dreisatz`);
     if(!numOk) msg.push(`richtiges Ergebnis: <b>${num(cur.answer)} ${cur.ansUnit==='CHF'?'CHF':cur.ansUnit}</b>`);
     fb.innerHTML='✗ Noch nicht ganz. '+msg.join(' · ')+'.';
+    const kats = diagnose(val, artOk, numOk);
+    if(kats.length){
+      fb.innerHTML += '<div class="an-diag">🔍 '+kats.map(k=>FSATZ[k]).join(' ')+'</div>';
+    }
+    serieEnde = score.streak;
     score.streak=0;
   }
   score.total++;
   updateScore();
+
+  if(neuerPokal>=0){ frischerPokal=neuerPokal; renderPokale(); feiern(neuerPokal); }
+  if(serieEnde>=3){
+    renderAnalyse('Serie beendet nach '+serieEnde+' richtigen in Folge');
+    $('analyse').scrollIntoView({block:'nearest',behavior:'smooth'});
+  }
 
   const sol=$('solution');
   sol.className='solution show';
@@ -716,6 +821,7 @@ function updateScore(){
   $('sc-total').textContent=score.total;
   $('sc-streak').textContent=score.streak;
   $('sc-rate').textContent = score.total? Math.round(score.correct/score.total*100)+'%' : '–';
+  renderPokale();
 }
 
 /* ---------- Events ---------- */
@@ -747,6 +853,18 @@ $('check').onclick=pruefen;
 $('next').onclick=neueAufgabe;
 $('hint-btn').onclick=()=>$('hintbox').classList.toggle('show');
 $('answer').addEventListener('keydown',e=>{ if(e.key==='Enter'){ if(answered) neueAufgabe(); else pruefen(); } });
+
+$('fa-btn').onclick=()=>{
+  const box=$('analyse');
+  if(box.classList.contains('show')){ box.classList.remove('show'); $('fa-btn').textContent='📊 Fehleranalyse anzeigen'; }
+  else renderAnalyse('Fehleranalyse');
+};
+
+const illu=$('illu-gerade');
+if(illu) illu.addEventListener('click',()=>lightboxAuf(illu.getAttribute('src'), illu.getAttribute('alt')));
+$('lightbox').addEventListener('click', lightboxZu);
+$('feier').addEventListener('click', e=>{ if(e.target.id==='feier') feierZu(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ lightboxZu(); feierZu(); } });
 
 /* ---------- Beruf / Niveau ---------- */
 const FIGUREN={
@@ -780,6 +898,179 @@ $('nivChips').addEventListener('click',e=>{ const b=e.target.closest('.chip'); i
 document.querySelectorAll('.bw-karte').forEach(b=>{
   b.addEventListener('click',()=>{ applyLevel(b.dataset.niv); switchTab('trainer'); });
 });
+
+
+/* ---------- Pokalregal ---------- */
+const POKALE=[
+  {n:5,   lab:'Bronze',  size:38, c1:'#F0C89A', c2:'#B9793F', cw:28, ch:27, henkel:0, sockel:1, sterne:0,
+   gruss:'Der erste Pokal steht im Regal.'},
+  {n:10,  lab:'Silber',  size:46, c1:'#EFF3F7', c2:'#A0AEBA', cw:31, ch:29, henkel:1, sockel:1, sterne:0,
+   gruss:'Zehn am Stück – das ist kein Zufall mehr.'},
+  {n:25,  lab:'Gold',    size:54, c1:'#F8E4A2', c2:'#D8AE66', cw:34, ch:32, henkel:1, sockel:2, sterne:1,
+   gruss:'Fünfundzwanzig ohne Fehler. Stark.'},
+  {n:50,  lab:'Platin',  size:66, c1:'#FBEBAE', c2:'#DDB463', cw:38, ch:35, henkel:1, sockel:2, sterne:2,
+   gruss:'Fünfzig in Folge – das schafft nicht jede.'},
+  {n:100, lab:'Meister', size:80, c1:'#FFF4C8', c2:'#E3BE6C', cw:42, ch:38, henkel:1, sockel:3, sterne:3,
+   gruss:'Hundert am Stück. Meisterklasse.'},
+];
+
+function sternPath(cx,cy,r){
+  let d='';
+  for(let i=0;i<10;i++){
+    const rad = (i%2) ? r*0.44 : r;
+    const ang = -Math.PI/2 + i*Math.PI/5;
+    d += (i?'L':'M') + (cx+rad*Math.cos(ang)).toFixed(1) + ' ' + (cy+rad*Math.sin(ang)).toFixed(1);
+  }
+  return d+'Z';
+}
+
+function pokalSVG(i, groesse){
+  const p=POKALE[i], cw=p.cw, ch=p.ch, cx=60, top=38;
+  const gid='pk-grad-'+i+'-'+Math.round(groesse);
+  const baseY = top+ch+18;
+  let inner='';
+  inner += '<defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="1" y2="1">'
+        +  '<stop offset="0" stop-color="'+p.c1+'"/><stop offset="1" stop-color="'+p.c2+'"/></linearGradient></defs>';
+  if(p.sterne>0){
+    const xs = p.sterne===1 ? [cx] : (p.sterne===2 ? [cx-15,cx+15] : [cx-21,cx,cx+21]);
+    xs.forEach(x=>{ inner += '<path d="'+sternPath(x,20,7)+'" fill="'+p.c1+'" stroke="'+p.c2+'" stroke-width="1.6" stroke-linejoin="round"/>'; });
+  }
+  if(p.henkel){
+    inner += '<path d="M'+(cx-cw+2)+' '+(top+6)+' C'+(cx-cw-18)+' '+(top+8)+' '+(cx-cw-18)+' '+(top+ch*0.85).toFixed(1)+' '+(cx-cw*0.55).toFixed(1)+' '+(top+ch*0.9).toFixed(1)+'" fill="none" stroke="'+p.c2+'" stroke-width="6" stroke-linecap="round"/>';
+    inner += '<path d="M'+(cx+cw-2)+' '+(top+6)+' C'+(cx+cw+18)+' '+(top+8)+' '+(cx+cw+18)+' '+(top+ch*0.85).toFixed(1)+' '+(cx+cw*0.55).toFixed(1)+' '+(top+ch*0.9).toFixed(1)+'" fill="none" stroke="'+p.c2+'" stroke-width="6" stroke-linecap="round"/>';
+  }
+  inner += '<path d="M'+(cx-cw)+' '+top+' L'+(cx+cw)+' '+top+' L'+(cx+cw*0.47).toFixed(1)+' '+(top+ch)+' Q'+cx+' '+(top+ch+6)+' '+(cx-cw*0.47).toFixed(1)+' '+(top+ch)+' Z" fill="url(#'+gid+')"/>';
+  inner += '<path d="M'+(cx-cw*0.62).toFixed(1)+' '+(top+4)+' L'+(cx-cw*0.30).toFixed(1)+' '+(top+4)+' L'+(cx-cw*0.12).toFixed(1)+' '+(top+ch*0.78).toFixed(1)+' L'+(cx-cw*0.38).toFixed(1)+' '+(top+ch*0.78).toFixed(1)+' Z" fill="#ffffff" opacity=".42"/>';
+  inner += '<rect x="'+(cx-cw-4)+'" y="'+(top-8)+'" width="'+(2*cw+8)+'" height="9" rx="4" fill="'+p.c2+'"/>';
+  inner += '<rect x="'+(cx-5)+'" y="'+(top+ch+5)+'" width="10" height="13" rx="2" fill="'+p.c2+'"/>';
+  inner += '<rect x="'+(cx-cw*0.55).toFixed(1)+'" y="'+baseY+'" width="'+(cw*1.10).toFixed(1)+'" height="7" rx="2" fill="'+p.c2+'"/>';
+  if(p.sockel>=2) inner += '<rect x="'+(cx-cw*0.725).toFixed(1)+'" y="'+(baseY+7)+'" width="'+(cw*1.45).toFixed(1)+'" height="8" rx="2" fill="'+p.c2+'"/>';
+  if(p.sockel>=3) inner += '<rect x="'+(cx-cw*0.90).toFixed(1)+'" y="'+(baseY+15)+'" width="'+(cw*1.80).toFixed(1)+'" height="9" rx="2" fill="'+p.c2+'"/>';
+  const h = Math.round(groesse*126/120);
+  return '<svg viewBox="0 0 120 126" width="'+groesse+'" height="'+h+'" aria-hidden="true">'+inner+'</svg>';
+}
+
+let frischerPokal = -1;
+function renderPokale(){
+  const box=$('pokale'); if(!box) return;
+  box.innerHTML = POKALE.map((p,i)=>{
+    const auf = score.best >= p.n;
+    const cls = 'pokal'+(auf?' auf':'')+(i===frischerPokal?' frisch':'');
+    const svg = pokalSVG(i, p.size);
+    return '<div class="'+cls+'" title="'+p.n+' richtige in Folge">'
+         + '<div class="'+(auf?'':'zu')+'">'+svg+'</div>'
+         + '<div class="zahl">'+p.n+'</div><div class="lab">'+(auf?p.lab:'offen')+'</div></div>';
+  }).join('');
+  frischerPokal = -1;
+
+  const nx=$('pk-next'); if(!nx) return;
+  const offen = POKALE.find(p=>score.best < p.n);
+  if(!offen){ nx.textContent='Alle Pokale geholt – Regal voll.'; return; }
+  const fehlt = offen.n - score.streak;
+  if(score.streak===0) nx.textContent = (offen.n===5 ? 'Noch 5 richtige in Folge bis zum ersten Pokal.' : 'Noch '+offen.n+' richtige in Folge bis zum nächsten Pokal.');
+  else nx.textContent = 'Serie läuft: '+score.streak+' – noch '+fehlt+' bis zum Pokal für '+offen.n+'.';
+}
+
+/* ---------- Feier ---------- */
+const KONF_FARBEN=['#D8AE66','#3C6E73','#2E9D6B','#E2574C','#8AA0B4','#F4D67A'];
+let feierTimer=null;
+function konfetti(){
+  let h='';
+  for(let i=0;i<16;i++){
+    const l = Math.round(4 + i*6 + (i%3)*2);
+    const f = KONF_FARBEN[i%KONF_FARBEN.length];
+    const d = (i%7)*0.16;
+    h += '<span class="konf" style="left:'+l+'%;background:'+f+';animation-delay:'+d.toFixed(2)+'s"></span>';
+  }
+  return h;
+}
+function feiern(i){
+  const p=POKALE[i], bx=$('feierbox'); if(!bx) return;
+  bx.innerHTML = konfetti()
+    + '<div>'+pokalSVG(i, 92)+'</div>'
+    + '<div class="ft">'+p.n+' richtige in Folge!</div>'
+    + '<div class="fs">'+p.gruss+'</div>'
+    + '<div class="fx"><button class="toggle-btn" id="feier-zu">Weiter</button></div>';
+  $('feier').classList.add('open');
+  const btn=$('feier-zu'); if(btn) btn.onclick=feierZu;
+  clearTimeout(feierTimer); feierTimer=setTimeout(feierZu, 6000);
+}
+function feierZu(){ clearTimeout(feierTimer); $('feier').classList.remove('open'); }
+
+/* ---------- Fehleranalyse ---------- */
+const FKAT=[
+  ['art',      'Art verwechselt'],
+  ['gegenart', 'Anderes Muster gerechnet'],
+  ['schritt1', 'Nur bis 1 gerechnet'],
+  ['komma',    'Komma verrutscht'],
+  ['rund',     'Nur gerundet'],
+  ['rechnen',  'Rechenfehler'],
+];
+const TIPPS={
+  art:      'Fragen Sie zuerst: Wenn die eine Grösse steigt – steigt die andere mit (gerader) oder sinkt sie (ungerader)? Erst danach rechnen.',
+  gegenart: 'Gerader Dreisatz: <b>erst teilen, dann mal</b>. Ungerader Dreisatz: <b>erst mal, dann teilen</b>. Den Merksatz vor dem Rechnen hinschreiben.',
+  schritt1: 'Der Wert für 1 ist erst der halbe Weg. Danach kommt immer noch der zweite Schritt auf die gesuchte Menge.',
+  komma:    'Überschlagen Sie zuerst grob im Kopf – dann fällt sofort auf, wenn das Komma um eine Stelle verrutscht ist.',
+  rund:     'Der Weg stimmt, es sind nur die Rappen. Auf zwei Stellen genau runden und erst ganz am Schluss.',
+  rechnen:  'Rechnen Sie in zwei sauber getrennten Schritten und schreiben Sie den Zwischenwert auf, statt alles auf einmal einzutippen.',
+};
+const nahe=(x,y)=> isFinite(x) && isFinite(y) && Math.abs(x-y) < Math.max(0.005, Math.abs(y)*0.0005);
+
+function diagnose(val, artOk, numOk){
+  const out=[];
+  if(!artOk) out.push('art');
+  if(!numOk && !isNaN(val) && cur && isFinite(cur.A) && isFinite(cur.B) && isFinite(cur.C)){
+    const A=cur.A, B=cur.B, C=cur.C;
+    const gegen = cur.typ==='pro' ? (A*B/C) : (B/A*C);
+    const s1    = cur.typ==='pro' ? (B/A)   : (A*B);
+    if(nahe(val,gegen) && !nahe(gegen,cur.answer))      out.push('gegenart');
+    else if(nahe(val,s1) && !nahe(s1,cur.answer))       out.push('schritt1');
+    else if(nahe(val,cur.answer*10)||nahe(val,cur.answer/10)) out.push('komma');
+    else if(Math.abs(val-cur.answer)<0.05)              out.push('rund');
+    else                                                out.push('rechnen');
+  }
+  out.forEach(k=>{ fehler[k]++; });
+  return out;
+}
+const FSATZ={
+  art:      'Die <b>Art</b> wurde verwechselt.',
+  gegenart: 'Gerechnet wurde nach dem <b>anderen Muster</b> – die Reihenfolge von mal und geteilt war vertauscht.',
+  schritt1: 'Sie sind beim <b>Wert für 1</b> stehen geblieben – der zweite Schritt fehlt.',
+  komma:    'Das <b>Komma</b> ist um eine Stelle verrutscht.',
+  rund:     'Der Weg stimmt – es fehlen nur die <b>Rappen</b>.',
+  rechnen:  'Beim <b>Rechnen</b> ist etwas schiefgelaufen.',
+};
+
+function renderAnalyse(kopf){
+  const box=$('analyse'); if(!box) return;
+  const zeilen = FKAT.map(([k,n])=>({k:k,n:n,c:fehler[k]})).filter(r=>r.c>0).sort((a,b)=>b.c-a.c);
+  const summe = zeilen.reduce((x,r)=>x+r.c,0);
+  const falsch = score.total - score.correct;
+  let h = '<div class="an-top"><div class="an-tit">'+(kopf||'Fehleranalyse')+'</div>'
+        + '<div class="an-sub">'+(summe? summe+' '+(summe===1?'Befund':'Befunde')+' aus '+falsch+' falschen '+(falsch===1?'Aufgabe':'Aufgaben') : 'noch keine Fehler')+'</div></div>';
+  if(!summe){
+    h += '<div class="an-sub" style="margin-top:9px;">Hier erscheint später, woran es bei Ihnen am häufigsten hakt – nach Art des Fehlers geordnet.</div>';
+  } else {
+    const max = zeilen[0].c;
+    zeilen.forEach(r=>{
+      h += '<div class="an-zeile"><div class="nm">'+r.n+'</div>'
+        +  '<div class="an-bar"><i style="width:'+Math.round(r.c/max*100)+'%"></i></div>'
+        +  '<div class="ct">'+r.c+'</div></div>';
+    });
+    h += '<div class="an-tipp"><b>Tipp:</b> '+TIPPS[zeilen[0].k]+'</div>';
+  }
+  box.innerHTML = h;
+  box.classList.add('show');
+  const b=$('fa-btn'); if(b) b.textContent='📊 Fehleranalyse ausblenden';
+}
+
+/* ---------- Lightbox ---------- */
+function lightboxAuf(src, alt){
+  const lb=$('lightbox'); if(!lb) return;
+  $('lightbox-img').src=src; $('lightbox-img').alt=alt||'';
+  lb.classList.add('open');
+}
+function lightboxZu(){ const lb=$('lightbox'); if(lb) lb.classList.remove('open'); }
 
 /* ---------- Taschenrechner ---------- */
 let cexpr='';
