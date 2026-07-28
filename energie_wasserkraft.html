@@ -19,7 +19,7 @@ h1 .accent{color:var(--hkv);}
 .subtitle{color:var(--muted);font-size:15px;margin-top:4px;}
 .lead{max-width:70ch;margin:10px auto 0;color:var(--muted);font-size:14.5px;}
 
-/* ── Reiter: Wasserkraft / Kernkraft ── */
+/* ── Reiter: Wasserkraft / Kernkraft / Solar ── */
 .reiter{max-width:1240px;margin:20px auto 0;display:flex;justify-content:center;gap:8px;
   flex-wrap:wrap;border-bottom:2px solid var(--line);padding-bottom:0;}
 .reiter-btn{font:inherit;font-weight:800;font-size:15px;min-height:46px;padding:11px 22px;
@@ -34,12 +34,13 @@ h1 .accent{color:var(--hkv);}
 .reiter-btn:focus-visible{outline:3px solid rgba(31,78,120,.4);outline-offset:2px;}
 .reiter-wip{font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
   background:#F4C400;color:#3a2c00;border-radius:999px;padding:2px 8px;}
-.platzhalter{max-width:1240px;margin:18px auto 0;background:var(--card);border:1px solid var(--line);
-  border-radius:14px;padding:44px 24px;text-align:center;
-  background-image:repeating-linear-gradient(-45deg,rgba(244,196,0,.09) 0 16px,rgba(244,196,0,0) 16px 32px);}
-.platzhalter .ph-icon{font-size:44px;line-height:1;}
-.platzhalter .ph-tit{font-size:20px;font-weight:800;color:var(--hkv);margin-top:10px;}
-.platzhalter .ph-txt{max-width:60ch;margin:8px auto 0;font-size:14.5px;color:var(--muted);}
+
+/* Schnittbilder ohne Canvas (Kernkraft, Solar) */
+.buehne img.schnitt{display:block;width:100%;height:auto;}
+.spot-blank circle.k{fill:transparent;stroke:rgba(255,255,255,.5);stroke-width:4;
+  stroke-dasharray:7 9;cursor:pointer;transition:fill .16s,stroke .16s,stroke-width .16s;}
+.spot-blank:hover circle.k{fill:rgba(224,162,46,.20);stroke:rgba(255,255,255,.95);stroke-dasharray:none;}
+.spot-blank.an circle.k{fill:rgba(224,162,46,.26);stroke:#fff;stroke-width:6;stroke-dasharray:none;}
 
 .modus{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:16px auto 4px;}
 .m-btn{font:inherit;font-weight:800;font-size:14.5px;min-height:44px;padding:10px 18px;
@@ -149,8 +150,16 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
   <div class="kopf-var" data-fuer="akw" hidden>
     <h1>Strom aus dem Atom – <span class="accent">das Kernkraftwerk im Schnittbild</span></h1>
     <p class="subtitle">Energiebereitstellung in der Schweiz · Interaktive Folie</p>
-    <p class="lead">Vom Brennelement bis ins Netz – der zweite Pfeiler der Schweizer
-      Stromproduktion, im direkten Vergleich zur Wasserkraft.</p>
+    <p class="lead">Vom Brennstab bis ins Netz: Klicken Sie die Stationen <b>1–8</b> im Bild
+      oder im Seitenpanel an. Achten Sie darauf, was gleich läuft wie bei der Wasserkraft –
+      und was ganz anders.</p>
+  </div>
+  <div class="kopf-var" data-fuer="solar" hidden>
+    <h1>Strom vom eigenen Dach – <span class="accent">die Solaranlage im Schnittbild</span></h1>
+    <p class="subtitle">Energiebereitstellung in der Schweiz · Interaktive Folie</p>
+    <p class="lead">Kein Kraftwerk im Tal, sondern eines auf dem Hausdach: Klicken Sie die
+      Stationen <b>1–6</b> im Bild oder im Seitenpanel an – von den Modulen bis zum Zähler
+      an der Hauswand.</p>
   </div>
 </header>
 
@@ -158,7 +167,9 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
   <button class="reiter-btn" id="rb-wasser" role="tab" aria-selected="true"
           aria-controls="tab-wasser" data-tab="wasser">💧 Wasserkraftwerk</button>
   <button class="reiter-btn" id="rb-akw" role="tab" aria-selected="false"
-          aria-controls="tab-akw" data-tab="akw">☢️ Kernkraftwerk <span class="reiter-wip">in Arbeit</span></button>
+          aria-controls="tab-akw" data-tab="akw">☢️ Kernkraftwerk</button>
+  <button class="reiter-btn" id="rb-solar" role="tab" aria-selected="false"
+          aria-controls="tab-solar" data-tab="solar">☀️ Solaranlage</button>
 </div>
 
 <section id="tab-wasser" class="reiter-panel" role="tabpanel" aria-labelledby="rb-wasser">
@@ -254,14 +265,50 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
 </section><!-- /tab-wasser -->
 
 <section id="tab-akw" class="reiter-panel" role="tabpanel" aria-labelledby="rb-akw" hidden>
-  <div class="platzhalter">
-    <div class="ph-icon">☢️</div>
-    <div class="ph-tit">Das Kernkraftwerk im Schnittbild</div>
-    <p class="ph-txt">Dieser Reiter ist im Aufbau. Geplant: dasselbe Prinzip wie nebenan –
-      Schnittbild mit anklickbaren Stationen vom Brennelement über Reaktordruckbehälter,
-      Dampferzeuger und Turbine bis zum Kühlturm, plus der Vergleich mit der Wasserkraft.</p>
+  <p class="m-text">Vier Reaktoren an drei Standorten – Beznau I und II, Gösgen und Leibstadt –
+    lieferten 2024 rund <b>28 %</b> des Schweizer Stroms. Neue Kernkraftwerke sind seit dem
+    Energiegesetz von 2018 nicht mehr bewilligungsfähig; die bestehenden dürfen laufen,
+    solange sie als sicher gelten.</p>
+
+  <div class="stage">
+    <div class="buehne">
+      <img class="schnitt" src="energie_kernkraft.jpg"
+        alt="Schnittbild eines Kernkraftwerks: Kühlturm, Sicherheitsbehälter mit Reaktordruckbehälter und Dampferzeuger, Maschinenhaus mit Turbine und Generator, Kondensator, Transformator und Freileitung">
+      <svg viewBox="0 0 2000 1339" aria-hidden="true"><g class="spots"></g></svg>
+    </div>
+
+    <aside class="panel">
+      <div class="p-chips" role="group" aria-label="Stationen"></div>
+      <div class="p-nr"></div>
+      <div class="p-tit"></div>
+      <p class="p-txt"></p>
+      <p class="p-hint">Tipp am Beamer: mit den Tasten <b>1–8</b> durch die Stationen springen.</p>
+    </aside>
   </div>
 </section><!-- /tab-akw -->
+
+<section id="tab-solar" class="reiter-panel" role="tabpanel" aria-labelledby="rb-solar" hidden>
+  <p class="m-text">Photovoltaik deckte 2024 rund <b>7,4 %</b> der Schweizer Stromproduktion –
+    wenig im Vergleich zur Wasserkraft, aber mit Abstand der am schnellsten wachsende Anteil.
+    Das Besondere: Hier ist die Kundschaft gleichzeitig Produzentin.</p>
+
+  <div class="stage">
+    <div class="buehne">
+      <img class="schnitt" src="energie_solar.jpg"
+        alt="Schnittbild eines Einfamilienhauses mit Photovoltaikanlage: Solarmodule auf dem Dach, Wechselrichter und Hausverteilung an der Wand, Stromzähler aussen, Batteriespeicher und Energiemanagement im Keller">
+      <svg viewBox="0 0 2000 1127" aria-hidden="true"><g class="spots"></g></svg>
+    </div>
+
+    <aside class="panel">
+      <div class="p-chips" role="group" aria-label="Stationen"></div>
+      <div class="p-nr"></div>
+      <div class="p-tit"></div>
+      <p class="p-txt"></p>
+      <p class="p-hint">Tipp am Beamer: mit den Tasten <b>1–6</b> durch die Stationen springen.
+        Die Nummern sind im Bild bereits eingezeichnet.</p>
+    </aside>
+  </div>
+</section><!-- /tab-solar -->
 
 <div class="wissen">
   <div class="karte">
@@ -421,6 +468,7 @@ function waehle(i){
   document.querySelectorAll('.spot').forEach((g,k)=> g.classList.toggle('an', k===i));
 }
 document.addEventListener('keydown', e=>{
+  if(document.getElementById('tab-wasser').hidden) return;
   const n = Number(e.key);
   if(n>=1 && n<=STATIONEN.length){ tourStopp(); waehle(n-1); blip(false); }
 });
@@ -983,13 +1031,115 @@ FRAGEN.forEach((q,qi)=>{
 </script>
 
 <script>
-/* ── Reiter-Umschaltung: Wasserkraft / Kernkraft ── */
+/* ── Stationen für die Schnittbilder ohne Canvas (Kernkraft, Solar) ── */
+(function(){
+
+const AKW = [
+  { n:1, x:590,  y:690,  tit:'Reaktordruckbehälter',
+    txt:'Im Herzstück der Anlage stecken die Brennelemente aus angereichertem Uran. Beim Zerfall der Urankerne – der Kernspaltung – wird Wärme frei, sehr viel Wärme. Das Wasser rundherum wird über 300 °C heiss, bleibt aber flüssig: Es steht unter rund 155 bar Druck. Nur ein Bruchteil des Brennstoffs wird pro Jahr gewechselt.' },
+  { n:2, x:795,  y:660,  tit:'Dampferzeuger',
+    txt:'Hier trifft der heisse Primärkreislauf auf einen zweiten, vollständig getrennten Wasserkreislauf und gibt seine Wärme durch die Rohrwände ab. Im Sekundärkreislauf entsteht Dampf. Entscheidend: Die beiden Kreisläufe berühren sich nie – die Radioaktivität bleibt im Primärkreis eingeschlossen.' },
+  { n:3, x:700,  y:250,  tit:'Sicherheitsbehälter',
+    txt:'Die Kuppel über dem Reaktor ist die letzte Barriere: eine dicke Stahlhülle, umgeben von meterdickem Stahlbeton. Sie soll die Radioaktivität auch dann zurückhalten, wenn im Innern etwas schiefgeht – und schützt umgekehrt den Reaktor von aussen.' },
+  { n:4, x:1150, y:625,  tit:'Turbine',
+    txt:'Der Dampf strömt mit hohem Druck auf die Schaufeln der Turbine und versetzt sie in Rotation. Ab hier läuft alles genau gleich wie im Wasserkraftwerk: Was den Generator antreibt, ist Drehbewegung – ob sie von Wasser oder von Dampf kommt, ist der Maschine egal.' },
+  { n:5, x:1455, y:630,  tit:'Generator',
+    txt:'Die Welle überträgt die Drehung in den Generator. In seinen Spulen entsteht durch die Rotation im Magnetfeld elektrische Spannung – Induktion, dasselbe Prinzip wie bei der Wasserkraft. Ein einzelner Block liefert so bis zu 1200 Megawatt.' },
+  { n:6, x:1355, y:855,  tit:'Kondensator',
+    txt:'Nach der Turbine muss der Dampf wieder zu Wasser werden, sonst schliesst sich der Kreislauf nicht. Im Kondensator kühlt ihn ein dritter Kreislauf mit Fluss- oder Kühlturmwasser ab. Das Wasser läuft zurück zum Dampferzeuger – die Wärme aber ist weg.' },
+  { n:7, x:265,  y:400,  tit:'Kühlturm',
+    txt:'Was aus dem Kühlturm steigt, ist kein Rauch, sondern Wasserdampf. Hier verlässt rund zwei Drittel der freigesetzten Energie die Anlage ungenutzt als Abwärme – nur etwa ein Drittel wird zu Strom. Das ist keine schlechte Bauweise, sondern eine physikalische Grenze jeder Wärmekraftmaschine.' },
+  { n:8, x:1855, y:770,  tit:'Transformator & Netz',
+    txt:'Der Transformator spannt den Strom auf bis zu 380 000 Volt hoch, dann geht er über die Freileitung ins selbe Netz, in das auch die Wasserkraftwerke einspeisen. Dem Strom in der Steckdose sieht man nicht mehr an, woher er kommt.' },
+];
+
+const SOLAR = [
+  { n:1, x:905,  y:295,  tit:'Solarmodule',
+    txt:'In den Siliziumzellen löst das Sonnenlicht Elektronen aus ihrer Bindung – der photovoltaische Effekt. Es dreht sich nichts, es dampft nichts: Aus Licht wird direkt Gleichstrom. Eine typische Anlage auf einem Einfamilienhaus leistet rund 10 kWp und liefert etwa 10 000 kWh im Jahr.' },
+  { n:2, x:1150, y:590,  tit:'Wechselrichter',
+    txt:'Aus dem Dach kommt Gleichstrom, im Haus braucht es Wechselstrom mit 230 Volt und 50 Hertz. Der Wechselrichter formt ihn um und ist zugleich das Gehirn der Anlage: Er sucht laufend den Betriebspunkt mit der höchsten Leistung und schaltet bei einem Netzausfall aus Sicherheitsgründen ab.' },
+  { n:3, x:1315, y:630,  tit:'Hausverteilung',
+    txt:'Vom Sicherungskasten aus geht der Solarstrom zuerst an die eigenen Geräte – Kühlschrank, Waschmaschine, Licht. Das nennt man Eigenverbrauch, und er lohnt sich am meisten: Selbst genutzter Strom spart den vollen Bezugspreis, eingespeister bringt nur die tiefere Vergütung.' },
+  { n:4, x:1815, y:720,  tit:'Stromzähler',
+    txt:'Der Zähler misst in beide Richtungen: was aus dem Netz bezogen und was ins Netz zurückgeliefert wird. Die Vergütung dafür legt das lokale Elektrizitätswerk fest – sie unterscheidet sich in der Schweiz von Gemeinde zu Gemeinde teils um das Dreifache.' },
+  { n:5, x:952,  y:980,  tit:'Batteriespeicher',
+    txt:'Produziert wird am Mittag, gebraucht wird am Abend. Die Batterie im Keller überbrückt diese Lücke und hebt den Eigenverbrauch von etwa 30 auf 60 bis 70 Prozent. Sie ist die Miniaturausgabe dessen, was die Pumpspeicherwerke im ersten Reiter für das ganze Land machen.' },
+  { n:6, x:1335, y:950,  tit:'Energiemanagement',
+    txt:'Diese Steuerung entscheidet sekündlich, wohin der Strom fliesst: zuerst in die laufenden Geräte, dann in die Batterie, dann in Boiler, Wärmepumpe oder Auto – und erst was übrig bleibt, ins Netz. Sie macht aus Einzelteilen ein System.' },
+];
+
+const svgNS = 'http://www.w3.org/2000/svg';
+
+function baueTab(panelId, daten){
+  const panel  = document.getElementById(panelId);
+  const spots  = panel.querySelector('.spots');
+  const chips  = panel.querySelector('.p-chips');
+  const elNr   = panel.querySelector('.p-nr');
+  const elTit  = panel.querySelector('.p-tit');
+  const elTxt  = panel.querySelector('.p-txt');
+
+  daten.forEach((s,i)=>{
+    const g = document.createElementNS(svgNS,'g');
+    g.setAttribute('class','spot-blank'); g.dataset.i = i;
+    const c = document.createElementNS(svgNS,'circle');
+    c.setAttribute('class','k'); c.setAttribute('cx',s.x); c.setAttribute('cy',s.y); c.setAttribute('r',46);
+    const t = document.createElementNS(svgNS,'title'); t.textContent = s.n+' · '+s.tit;
+    g.appendChild(c); g.appendChild(t);
+    spots.appendChild(g);
+  });
+  spots.addEventListener('click', e=>{
+    const g = e.target.closest('.spot-blank');
+    if(g) waehle(Number(g.dataset.i));
+  });
+
+  daten.forEach((s,i)=>{
+    const b = document.createElement('button');
+    b.className='chip'; b.type='button'; b.textContent = s.n+' · '+s.tit;
+    b.setAttribute('aria-pressed', i===0 ? 'true':'false');
+    b.addEventListener('click', ()=> waehle(i));
+    chips.appendChild(b);
+  });
+
+  function waehle(i){
+    const s = daten[i];
+    elNr.textContent  = 'Station '+s.n+' von '+daten.length;
+    elTit.textContent = s.tit;
+    elTxt.textContent = s.txt;
+    chips.querySelectorAll('.chip').forEach((c,k)=> c.setAttribute('aria-pressed', String(k===i)));
+    spots.querySelectorAll('.spot-blank').forEach((g,k)=> g.classList.toggle('an', k===i));
+  }
+
+  document.addEventListener('keydown', e=>{
+    if(panel.hidden) return;
+    if(e.target.matches('input,textarea')) return;
+    const n = Number(e.key);
+    if(n>=1 && n<=daten.length) waehle(n-1);
+  });
+
+  waehle(0);
+}
+
+baueTab('tab-akw',   AKW);
+baueTab('tab-solar', SOLAR);
+})();
+</script>
+
+<script>
+/* ── Reiter-Umschaltung: Wasserkraft / Kernkraft / Solar ── */
 (function(){
   const btns   = Array.from(document.querySelectorAll('.reiter-btn'));
-  const panels = {wasser:document.getElementById('tab-wasser'), akw:document.getElementById('tab-akw')};
+  const panels = {wasser:document.getElementById('tab-wasser'),
+                  akw:   document.getElementById('tab-akw'),
+                  solar: document.getElementById('tab-solar')};
   const koepfe = Array.from(document.querySelectorAll('.kopf-var'));
   const titel  = {wasser:'Strom aus den Alpen – das Wasserkraftwerk im Schnittbild',
-                  akw:'Strom aus dem Atom – das Kernkraftwerk im Schnittbild'};
+                  akw:   'Strom aus dem Atom – das Kernkraftwerk im Schnittbild',
+                  solar: 'Strom vom eigenen Dach – die Solaranlage im Schnittbild'};
+
+  function ausHash(){
+    const h = location.hash.replace('#','');
+    return panels[h] ? h : 'wasser';
+  }
 
   function zeige(name, mitHash){
     if(!panels[name]) name = 'wasser';
@@ -998,9 +1148,8 @@ FRAGEN.forEach((q,qi)=>{
     koepfe.forEach(k => { k.hidden = (k.dataset.fuer !== name); });
     document.title = titel[name];
     if(mitHash){
-      const neu = (name === 'wasser') ? location.pathname + location.search
-                                      : location.pathname + location.search + '#akw';
-      history.replaceState(null, '', neu);
+      const basis = location.pathname + location.search;
+      history.replaceState(null, '', name === 'wasser' ? basis : basis + '#' + name);
     }
   }
 
@@ -1014,10 +1163,9 @@ FRAGEN.forEach((q,qi)=>{
     btns[j].focus(); zeige(btns[j].dataset.tab, true); e.preventDefault();
   });
 
-  // Deep-Link: energie_wasserkraft.html#akw öffnet direkt den Kernkraft-Reiter
-  zeige(location.hash.replace('#','') === 'akw' ? 'akw' : 'wasser', false);
-  window.addEventListener('hashchange', () =>
-    zeige(location.hash.replace('#','') === 'akw' ? 'akw' : 'wasser', false));
+  // Deep-Links: …#akw und …#solar öffnen direkt den passenden Reiter
+  zeige(ausHash(), false);
+  window.addEventListener('hashchange', () => zeige(ausHash(), false));
 })();
 </script>
 </body>
