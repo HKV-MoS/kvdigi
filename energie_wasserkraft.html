@@ -130,6 +130,63 @@ h1 .accent{color:var(--hkv);}
   text-transform:uppercase;color:var(--ocker);}
 .ort b{display:block;font-size:15px;color:var(--hkv);margin:1px 0 4px;}
 .ort p{font-size:12.5px;color:var(--muted);}
+.k-txt{font-size:13.5px;color:var(--ink);margin-top:8px;}
+.wissen.drei{grid-template-columns:repeat(3,1fr);}
+@media(max-width:980px){.wissen.drei{grid-template-columns:1fr;}}
+
+/* ── Reiter «Wie lange dauert das?» ── */
+.zeit{max-width:1240px;margin:18px auto 0;background:var(--card);border:1px solid var(--line);
+  border-radius:14px;padding:18px 20px 14px;box-shadow:0 4px 14px rgba(21,35,50,.06);}
+.z-skala{position:relative;height:16px;margin-left:250px;margin-bottom:6px;
+  border-bottom:1px dashed var(--line);}
+.z-skala span{position:absolute;top:0;transform:translateX(-50%);font-size:11px;color:var(--muted);
+  font-weight:700;white-space:nowrap;}
+.z-skala span:first-child{transform:none;}
+.z-skala span:last-child{transform:translateX(-100%);}
+.z-zeile{display:flex;align-items:flex-start;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);}
+.z-zeile:last-of-type{border-bottom:none;}
+.z-lab{width:238px;flex:none;}
+.z-lab b{display:block;font-size:14px;color:var(--ink);}
+.z-lab span{font-size:11.5px;color:var(--muted);}
+.z-bar{flex:1;min-width:0;padding-top:2px;}
+.z-bar i{display:inline-block;height:19px;vertical-align:middle;min-width:4px;}
+.z-bar i.z-p{background:var(--ocker);border-radius:5px 0 0 5px;}
+.z-bar i.z-b{background:var(--hkv);border-radius:0 5px 5px 0;}
+.z-bar em{display:block;font-style:normal;font-size:11.5px;color:var(--muted);margin-top:3px;}
+.z-zeile.z-max .z-lab b{color:#B4564E;}
+.z-leg{display:flex;gap:18px;margin-top:12px;padding-top:10px;border-top:1px dashed var(--line);
+  font-size:12px;color:var(--muted);}
+.z-leg span{display:inline-flex;align-items:center;gap:6px;}
+.z-leg i{width:14px;height:14px;border-radius:4px;display:inline-block;}
+@media(max-width:820px){
+  .z-skala{margin-left:0;}
+  .z-zeile{flex-direction:column;gap:4px;}
+  .z-lab{width:auto;}
+}
+
+/* ── Reiter «Zukunft» ── */
+.zuk-grid{max-width:1240px;margin:18px auto 0;display:grid;gap:14px;
+  grid-template-columns:repeat(auto-fit,minmax(290px,1fr));}
+.zuk-grid.zwei{grid-template-columns:repeat(auto-fit,minmax(360px,1fr));}
+.zuk{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;
+  box-shadow:0 4px 14px rgba(21,35,50,.06);}
+.zuk.exot{background:#fbfdff;border-left:5px solid var(--ocker);}
+.zuk-kopf{display:flex;align-items:center;gap:11px;margin-bottom:9px;}
+.zuk-icon{font-size:27px;line-height:1;}
+.zuk-kopf b{display:block;font-size:17px;color:var(--hkv);}
+.zuk-unter{display:block;font-size:11.5px;color:var(--muted);}
+.reife{display:flex;align-items:center;gap:4px;margin-bottom:10px;}
+.reife i{width:15px;height:8px;border-radius:3px;background:var(--line);display:inline-block;}
+.reife i.an{background:var(--gruen);}
+.reife span{margin-left:7px;font-size:11px;font-weight:800;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--ocker);}
+.zuk p{font-size:13px;color:var(--ink);margin-top:7px;}
+.zuk p.zuk-fazit{margin-top:11px;padding-top:9px;border-top:1px dashed var(--line);
+  color:var(--muted);font-size:12.5px;}
+.exot-kopf{max-width:1240px;margin:26px auto 0;text-align:center;}
+.exot-kopf h2{font-size:20px;color:var(--hkv);}
+.exot-kopf p{font-size:13px;color:var(--muted);margin-top:2px;}
+.m-text.nach{margin-top:20px;}
 .quelle{max-width:1240px;margin:14px auto 0;font-size:12px;color:var(--muted);text-align:center;}
 /* ---------- Aktuell-Box ---------- */
 .aktuell-wrap{max-width:1240px;margin:18px auto 0;padding:0 4px;}
@@ -210,19 +267,37 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
       die Energie. Klicken Sie die Stationen <b>1–7</b> im Bild oder im Seitenpanel an –
       weiter unten steht, wo auf der Welt solche Anlagen tatsächlich stehen.</p>
   </div>
+  <div class="kopf-var" data-fuer="dauer" hidden>
+    <h1>Vom ersten Plan bis zum ersten Strom – <span class="accent">wie lange dauert das?</span></h1>
+    <p class="subtitle">Planung, Bewilligung und Bau im Vergleich · Interaktive Folie</p>
+    <p class="lead">Gebaut ist ein Kraftwerk schnell. Bewilligt zu werden dauert. Dieser Reiter
+      zeigt für jede Anlage aus den vorherigen Reitern, wie sich die Jahre aufteilen –
+      und warum bei manchen Projekten der Papierkrieg zehnmal länger dauert als die Baustelle.</p>
+  </div>
+  <div class="kopf-var" data-fuer="zukunft" hidden>
+    <h1>Und morgen? – <span class="accent">Energieformen zwischen Labor und Baustelle</span></h1>
+    <p class="subtitle">Was kommt, was bleibt, was nie kommt · Interaktive Folie</p>
+    <p class="lead">Wasserstoff, Kernfusion, Antimaterie, Erdwärme – und zum Schluss zwei Exoten,
+      die es tatsächlich gibt. Für jede Technologie steht hier, wie weit sie ist und
+      wann realistischerweise Strom daraus fliesst.</p>
+  </div>
 </header>
 
 <div class="reiter" role="tablist" aria-label="Kraftwerkstyp">
   <button class="reiter-btn" id="rb-wasser" role="tab" aria-selected="true"
-          aria-controls="tab-wasser" data-tab="wasser">💧 Wasserkraftwerk</button>
+          aria-controls="tab-wasser" data-tab="wasser">💧 Wasserkraft</button>
   <button class="reiter-btn" id="rb-akw" role="tab" aria-selected="false"
-          aria-controls="tab-akw" data-tab="akw">☢️ Kernkraftwerk</button>
+          aria-controls="tab-akw" data-tab="akw">☢️ Kernkraft</button>
   <button class="reiter-btn" id="rb-solar" role="tab" aria-selected="false"
-          aria-controls="tab-solar" data-tab="solar">☀️ Solaranlage</button>
+          aria-controls="tab-solar" data-tab="solar">☀️ Solar</button>
   <button class="reiter-btn" id="rb-wind" role="tab" aria-selected="false"
-          aria-controls="tab-wind" data-tab="wind">🌬️ Windkraftanlage</button>
+          aria-controls="tab-wind" data-tab="wind">🌬️ Wind</button>
   <button class="reiter-btn" id="rb-gezeiten" role="tab" aria-selected="false"
-          aria-controls="tab-gezeiten" data-tab="gezeiten">🌊 Gezeitenkraftwerk</button>
+          aria-controls="tab-gezeiten" data-tab="gezeiten">🌊 Gezeiten</button>
+  <button class="reiter-btn" id="rb-dauer" role="tab" aria-selected="false"
+          aria-controls="tab-dauer" data-tab="dauer">⏱️ Wie lange?</button>
+  <button class="reiter-btn" id="rb-zukunft" role="tab" aria-selected="false"
+          aria-controls="tab-zukunft" data-tab="zukunft">🔮 Zukunft</button>
 </div>
 
 <section id="tab-wasser" class="reiter-panel" role="tabpanel" aria-labelledby="rb-wasser">
@@ -695,6 +770,264 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
   </div>
 </section><!-- /tab-gezeiten -->
 
+<section id="tab-dauer" class="reiter-panel" role="tabpanel" aria-labelledby="rb-dauer" hidden>
+  <p class="m-text">Fragt man, warum die Schweiz beim Ausbau nicht schneller vorwärtskommt,
+    lautet die Antwort selten «zu wenig Technik» und fast immer «zu viel Verfahren».
+    Der Balken zeigt <b>Planung und Bewilligung</b> in Ocker und die eigentliche
+    <b>Bauzeit</b> in Blau. Je nach Anlage ist der ockerfarbene Teil ein paar Wochen
+    lang – oder mehr als zwei Jahrzehnte.</p>
+
+  <div class="zeit">
+    <div class="z-skala" aria-hidden="true">
+      <span style="left:0%">0</span><span style="left:20%">5</span><span style="left:40%">10</span>
+      <span style="left:60%">15</span><span style="left:80%">20</span><span style="left:100%">25 Jahre</span>
+    </div>
+
+    <div class="z-zeile">
+      <div class="z-lab"><b>☀️ Solaranlage aufs Hausdach</b><span>Einfamilienhaus, Schweiz</span></div>
+      <div class="z-bar">
+        <i class="z-p" style="width:1.6%"></i><i class="z-b" style="width:.4%"></i>
+        <em>rund ein halbes Jahr – davon wenige Tage auf dem Dach</em>
+      </div>
+    </div>
+
+    <div class="z-zeile">
+      <div class="z-lab"><b>🏔️ Alpine Grosssolaranlage</b><span>z.&nbsp;B. Madrisa Solar, Klosters</span></div>
+      <div class="z-bar">
+        <i class="z-p" style="width:12%"></i><i class="z-b" style="width:8%"></i>
+        <em>rund 5 Jahre · Solarexpress 2023 gestartet, fertig Ende 2027</em>
+      </div>
+    </div>
+
+    <div class="z-zeile">
+      <div class="z-lab"><b>🌊 Gezeitenkraftwerk</b><span>Sihwa-ho, Südkorea</span></div>
+      <div class="z-bar">
+        <i class="z-p" style="width:16%"></i><i class="z-b" style="width:28%"></i>
+        <em>rund 11 Jahre · Bau 2004–2011, der Damm stand schon vorher</em>
+      </div>
+    </div>
+
+    <div class="z-zeile">
+      <div class="z-lab"><b>☢️ Kernkraftwerk, damals</b><span>Gösgen SO</span></div>
+      <div class="z-bar">
+        <i class="z-p" style="width:28%"></i><i class="z-b" style="width:24%"></i>
+        <em>13 Jahre · erste Abklärungen 1966, kommerzieller Betrieb 1979</em>
+      </div>
+    </div>
+
+    <div class="z-zeile">
+      <div class="z-lab"><b>💧 Grosses Wasserkraftprojekt</b><span>Runder Tisch Wasserkraft</span></div>
+      <div class="z-bar">
+        <i class="z-p" style="width:56%"></i><i class="z-b" style="width:20%"></i>
+        <em>rund 19 Jahre · 2021 vereinbart, in Betrieb frühestens 2040</em>
+      </div>
+    </div>
+
+    <div class="z-zeile">
+      <div class="z-lab"><b>☢️ Kernkraftwerk, heute</b><span>Olkiluoto 3, Finnland</span></div>
+      <div class="z-bar">
+        <i class="z-p" style="width:20%"></i><i class="z-b" style="width:60%"></i>
+        <em>20 Jahre · Baustart 2007 für 2009 – ans Netz ging es 2022</em>
+      </div>
+    </div>
+
+    <div class="z-zeile z-max">
+      <div class="z-lab"><b>🌬️ Windpark Schweiz</b><span>Sainte-Croix VD</span></div>
+      <div class="z-bar">
+        <i class="z-p" style="width:92%"></i><i class="z-b" style="width:8%"></i>
+        <em>25 Jahre · erste Studie 1998, Eröffnung Oktober 2023</em>
+      </div>
+    </div>
+
+    <div class="z-leg" aria-hidden="true">
+      <span><i class="z-p"></i> Planung, Einsprachen, Gerichte</span>
+      <span><i class="z-b"></i> Bauzeit</span>
+    </div>
+  </div>
+
+  <div class="wissen drei">
+    <div class="karte">
+      <div class="k-tit">⚖️ Der Rekordhalter: Sainte-Croix</div>
+      <div class="k-sub">Der erste Windpark im Kanton Waadt</div>
+      <p class="k-txt">1998 erste Machbarkeitsstudie. Dann ein Vierteljahrhundert Einsprachen,
+        Rekurse und Instanzen bis hinauf ans Bundesgericht, das 2021 grünes Licht gab. Ein halbes
+        Jahr später rollten die Bagger, <b>zwei Jahre</b> danach drehten sich die sechs Turbinen.
+        Rechnet man nach: <b>23 Jahre Papier auf 2 Jahre Baustelle</b> – ein Verhältnis von rund
+        zwölf zu eins. Die sechs Anlagen liefern heute Strom für etwa 20'000 Menschen.</p>
+      <p class="k-txt">Zum Vergleich der Gegenpol: Auf dem Gütsch ob Andermatt steht der höchste
+        Windpark Europas auf 2332 Metern. Dort ging es deutlich schneller – weil kaum jemand
+        oben wohnt, der Einsprache erheben könnte.</p>
+    </div>
+    <div class="karte">
+      <div class="k-tit">🚦 Seit dem 1. April 2026 gilt Neues</div>
+      <div class="k-sub">Der Beschleunigungserlass des Bundes</div>
+      <p class="k-txt">Das Parlament hat reagiert. Für Solar-, Wind- und Wasserkraftanlagen
+        <b>von nationalem Interesse</b> gilt neu ein <b>konzentriertes kantonales Verfahren</b>:
+        Der Standortkanton erteilt sämtliche kantonalen und bisher kommunalen Bewilligungen
+        in einem Zug statt nacheinander. Und der Rechtsmittelweg wird gekürzt – auf kantonaler
+        Ebene ist nur noch <b>eine einzige Beschwerde</b> ans obere kantonale Gericht möglich.</p>
+      <p class="k-txt">Ob daraus wirklich Tempo wird, weiss man erst in einigen Jahren. Klar ist
+        nur: An der Technik hat noch nie etwas gelegen.</p>
+    </div>
+    <div class="karte">
+      <div class="k-tit">💬 Zum Diskutieren im Unterricht</div>
+      <div class="k-sub">Es gibt keine richtige Antwort – nur gute Argumente</div>
+      <p class="k-txt">Einspracherecht heisst: Wer betroffen ist, darf sich wehren. Genau das
+        hat die Schweiz stark gemacht – und genau das bremst jetzt den Ausbau.</p>
+      <p class="k-txt"><b>1.</b> Wem gehört die Landschaft – der Gemeinde, dem Kanton, allen?<br>
+        <b>2.</b> Ist es gerecht, das Einspracherecht ausgerechnet für Windräder zu kürzen,
+        aber nicht für eine Überbauung?<br>
+        <b>3.</b> Wenn ein Projekt 25 Jahre dauert: Wer entscheidet dann eigentlich –
+        die Generation, die plant, oder die, die den Strom braucht?</p>
+    </div>
+  </div>
+</section><!-- /tab-dauer -->
+
+<section id="tab-zukunft" class="reiter-panel" role="tabpanel" aria-labelledby="rb-zukunft" hidden>
+  <p class="m-text">In den Medien klingt vieles nach «gleich soweit». Der Blick auf die Zahlen
+    sortiert das schnell: Manches läuft längst und setzt sich trotzdem nicht durch, anderes
+    braucht noch Jahrzehnte – und eines wird nie ein Kraftwerk, so oft es in Filmen auch
+    vorkommt.</p>
+
+  <div class="zuk-grid">
+
+    <div class="zuk">
+      <div class="zuk-kopf">
+        <span class="zuk-icon">💨</span>
+        <div><b>Wasserstoff</b><span class="zuk-unter">Brennstoffzelle statt Batterie</span></div>
+      </div>
+      <div class="reife"><i class="an"></i><i class="an"></i><i class="an"></i><i class="an"></i><i class="an"></i>
+        <span>Gibt es heute schon</span></div>
+      <p>Strom spaltet Wasser in Wasserstoff und Sauerstoff, die Brennstoffzelle macht daraus
+        wieder Strom. Das funktioniert – nur bleibt bei jedem Schritt Energie liegen. Vom
+        Kraftwerk bis zum Rad kommt bei der Batterie <b>rund dreimal mehr</b> an.</p>
+      <p>Die Schweiz war weltweit vorne dabei: Migros, Coop und andere fuhren die ersten
+        Wasserstoff-Lastwagen. Ende 2024 waren <b>59</b> schwere Brennstoffzellenfahrzeuge
+        zugelassen – 2025 kamen ganze <b>vier</b> dazu, während gleichzeitig <b>942</b> neue
+        Elektro-Lastwagen auf die Strasse kamen. Agrola schliesst seine drei Wasserstofftankstellen
+        Ende 2026 wegen zu wenig Absatz.</p>
+      <p class="zuk-fazit">Wasserstoff ist kein Kraftwerk, sondern ein <b>Speicher</b> – interessant
+        dort, wo eine Batterie zu schwer wäre: Stahlwerk, Schiff, Flugzeug.</p>
+    </div>
+
+    <div class="zuk">
+      <div class="zuk-kopf">
+        <span class="zuk-icon">🌟</span>
+        <div><b>Kernfusion</b><span class="zuk-unter">Die Sonne im Labor</span></div>
+      </div>
+      <div class="reife"><i class="an"></i><i class="an"></i><i class="an"></i><i></i><i></i>
+        <span>Forschung, frühestens ab 2050</span></div>
+      <p>Statt schwere Kerne zu spalten, verschmilzt man leichte: Wasserstoff wird zu Helium,
+        wie in der Sonne. Kein langlebiger Atommüll, kein Kettenreaktions-Risiko, Brennstoff
+        praktisch unbegrenzt. Der Haken ist die Temperatur – rund <b>150 Millionen Grad</b>,
+        zehnmal heisser als der Sonnenkern.</p>
+      <p>Der Versuchsreaktor <b>ITER</b> in Südfrankreich, gebaut von 35 Staaten, sollte
+        ursprünglich 2025 das erste Plasma zünden. Nach dem neuen Zeitplan beginnt der Betrieb
+        <b>2034</b>, der eigentliche Fusionsbrennstoff kommt <b>2039</b> zum Einsatz. Und ITER
+        ist noch kein Kraftwerk – es speist nie eine Kilowattstunde ins Netz. Das soll erst der
+        Nachfolger DEMO, nicht vor den 2050er-Jahren.</p>
+      <p class="zuk-fazit">Ein alter Insiderwitz: Die Fusion ist seit den 1950er-Jahren
+        konstant <b>dreissig Jahre</b> entfernt.</p>
+    </div>
+
+    <div class="zuk">
+      <div class="zuk-kopf">
+        <span class="zuk-icon">🪐</span>
+        <div><b>Antimaterie</b><span class="zuk-unter">Der teuerste Stoff des Universums</span></div>
+      </div>
+      <div class="reife"><i class="an"></i><i></i><i></i><i></i><i></i>
+        <span>Wird nie ein Kraftwerk</span></div>
+      <p>Trifft Antimaterie auf Materie, verwandelt sich beides <b>vollständig</b> in Energie –
+        keine andere Reaktion ist so ergiebig. Ein Gramm Antimaterie liefert rund
+        <b>50 Millionen Kilowattstunden</b>, genug für die ganze Schweiz für etwa acht Stunden.
+        Kein Wunder taucht der Stoff in jedem zweiten Science-Fiction-Film auf.</p>
+      <p>Nur muss man ihn zuerst herstellen. Für dieses eine Gramm bräuchte man rund
+        <b>25 Billiarden Kilowattstunden</b> Strom – das ist der gesamte Schweizer Stromverbrauch
+        von etwa <b>400'000 Jahren</b>. Man steckt also rund <b>500 Millionen Mal</b> mehr Energie
+        hinein, als man herausbekommt. Sämtliche Teilchenbeschleuniger der Welt haben zusammen
+        bis heute noch nicht ein Millionstel Gramm produziert.</p>
+      <p class="zuk-fazit">Antimaterie ist keine Energiequelle, sondern die <b>schlechteste
+        Batterie</b>, die sich denken lässt. Physikalisch faszinierend, energiewirtschaftlich
+        chancenlos.</p>
+    </div>
+
+    <div class="zuk">
+      <div class="zuk-kopf">
+        <span class="zuk-icon">🌋</span>
+        <div><b>Tiefengeothermie</b><span class="zuk-unter">Wärme aus vier Kilometern Tiefe</span></div>
+      </div>
+      <div class="reife"><i class="an"></i><i class="an"></i><i class="an"></i><i class="an"></i><i></i>
+        <span>Pilotanlage, Strom ab 2029?</span></div>
+      <p>Je tiefer man bohrt, desto heisser wird das Gestein – pro hundert Meter etwa drei Grad.
+        Ab rund vier Kilometern lässt sich Wasser so weit erhitzen, dass eine Turbine läuft.
+        Das Beste daran: Erdwärme liefert <b>Tag und Nacht, Sommer wie Winter</b> gleich viel.</p>
+      <p>Zweimal ging es schief. In <b>Basel 2006</b> und in <b>St. Gallen 2013</b> löste das
+        Aufbrechen des Gesteins spürbare Erdbeben aus, beide Projekte wurden abgebrochen. Jetzt
+        läuft im jurassischen <b>Haute-Sorne</b> ein Pilotprojekt mit einem sanfteren Verfahren:
+        2024 wurde über 4000 Meter tief gebohrt, der Bund unterstützt mit bis zu 90 Millionen
+        Franken. Ab <b>2029</b> könnte Strom für rund 6000 Haushalte fliessen.</p>
+      <p class="zuk-fazit">Die einzige Technologie auf dieser Seite, bei der die Schweiz in
+        wenigen Jahren wissen wird, ob es klappt.</p>
+    </div>
+
+  </div>
+
+  <div class="exot-kopf">
+    <h2>🧭 Zwei Exoten, die es wirklich gibt</h2>
+    <p>Nicht jede Alternative ist Zukunft – manche war schon einmal Gegenwart.</p>
+  </div>
+
+  <div class="zuk-grid zwei">
+
+    <div class="zuk exot">
+      <div class="zuk-kopf">
+        <span class="zuk-icon">🪵</span>
+        <div><b>Holzvergaser</b><span class="zuk-unter">Aus der Not geboren, heute Nischentechnik</span></div>
+      </div>
+      <div class="reife"><i class="an"></i><i class="an"></i><i class="an"></i><i class="an"></i><i></i>
+        <span>Läuft, aber im Kleinen</span></div>
+      <p>Erhitzt man Holz unter Luftmangel, verbrennt es nicht, sondern <b>vergast</b>. Übrig
+        bleibt ein brennbares Gemisch aus rund 20 % Kohlenmonoxid und 20 % Wasserstoff – Holzgas.
+        Damit lässt sich ein ganz normaler Motor betreiben.</p>
+      <p>Im Zweiten Weltkrieg war das keine Spielerei: Weltweit fuhren zeitweise
+        <b>über eine Million</b> Fahrzeuge mit einem Vergaser am Heck, auch in der Schweiz.
+        Zwei bis drei Kilogramm Holz ersetzten einen Liter Benzin. Bequem war es nicht –
+        anheizen, nachfüllen, reinigen, und Leistung hatte man deutlich weniger.</p>
+      <p>Heute steckt die Technik in Holzkraftwerken. Die Anlage in <b>Stans</b> läuft seit 2008,
+        vergast jährlich 8000 Tonnen Altholz und liefert 1,2 Megawatt Strom für rund 1000 Haushalte.
+        Elektrisch sind das nur 25 bis 30 Prozent – nutzt man die Abwärme mit, kommt man
+        aber auf <b>80 bis 90 Prozent</b>.</p>
+      <p class="zuk-fazit">Technisch überzeugend, wirtschaftlich mühsam: Teer und Wartung
+        fressen den Gewinn. In der Schweiz laufen nur eine Handvoll solcher Anlagen.</p>
+    </div>
+
+    <div class="zuk exot">
+      <div class="zuk-kopf">
+        <span class="zuk-icon">⛽</span>
+        <div><b>Gas im Auto</b><span class="zuk-unter">Erdgas und Biogas, CNG</span></div>
+      </div>
+      <div class="reife"><i class="an"></i><i class="an"></i><i class="an"></i><i class="an"></i><i class="an"></i>
+        <span>Gibt es – aber auf dem Rückzug</span></div>
+      <p>Gas wird auf 200 bar verdichtet und in einem Drucktank mitgeführt. Der Motor ist fast
+        derselbe wie beim Benziner. Weil Gas sauberer verbrennt, fällt weniger CO₂ an –
+        und je mehr <b>Biogas</b> beigemischt ist, desto besser wird die Bilanz. In der Schweiz
+        liegt der Biogasanteil im Treibstoff bei rund <b>20 Prozent</b>; mit reinem Biogas hat
+        das Gasauto die beste Ökobilanz überhaupt.</p>
+      <p>Rund <b>150 Tankstellen</b> gibt es im Land – gemessen an etwa 3400 Benzinstationen
+        ist das wenig, aber deutlich mehr als beim Wasserstoff. Als Privatauto blieb es
+        trotzdem ein Flop: Es fehlten grössere Modelle, und das Elektroauto machte das Rennen.
+        Im Lieferverkehr fahren die Grossverteiler dagegen ganze Biogasflotten.</p>
+      <p class="zuk-fazit">Das Beispiel zeigt, dass die beste Ökobilanz allein nichts nützt.
+        Durchsetzen kann sich nur, was auch <b>zum Alltag passt</b>.</p>
+    </div>
+
+  </div>
+
+  <p class="m-text nach">Und der rote Faden aus den anderen Reitern? Er hält auch hier.
+    Ob Fusion, Erdwärme oder Holzgas – am Ende steht überall dieselbe Maschine:
+    ein Generator, in dem sich etwas dreht.</p>
+</section><!-- /tab-zukunft -->
+
 <div class="wissen">
   <div class="karte">
     <div class="k-tit">Der Schweizer Strommix 2024</div>
@@ -770,7 +1103,10 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
 
 <p class="quelle">Bild: KI-generierte Schnittbild-Illustration · Zahlen: Bundesamt für Energie (BFE),
   Elektrizitätsbilanz 2024 (definitiv); Windkraft Schweiz: Suisse Eole / BFE;
-  Gezeitenkraftwerke: Betreiber- und Länderangaben · Aufbereitet für den ABU-Unterricht.</p>
+  Gezeitenkraftwerke: Betreiber- und Länderangaben; Planungs- und Bauzeiten: Suisse Eole,
+  KKW Gösgen, UVEK, Runder Tisch Wasserkraft; Zukunftstechnologien: ITER / Max-Planck-Institut
+  für Plasmaphysik, EnergieSchweiz, Bulletin electrosuisse · Stand Juli 2026 ·
+  Aufbereitet für den ABU-Unterricht.</p>
 <footer>© 2026 Samuel Mollet · HKV Aarau · realisiert mit Claude (Anthropic)</footer>
 
 <script>
@@ -1558,13 +1894,17 @@ baueTab('tab-gezeiten', GEZEITEN);
                   akw:     document.getElementById('tab-akw'),
                   solar:   document.getElementById('tab-solar'),
                   wind:    document.getElementById('tab-wind'),
-                  gezeiten:document.getElementById('tab-gezeiten')};
+                  gezeiten:document.getElementById('tab-gezeiten'),
+                  dauer:   document.getElementById('tab-dauer'),
+                  zukunft: document.getElementById('tab-zukunft')};
   const koepfe = Array.from(document.querySelectorAll('.kopf-var'));
   const titel  = {wasser:  'Strom aus den Alpen – das Wasserkraftwerk im Schnittbild',
                   akw:     'Strom aus dem Atom – das Kernkraftwerk im Schnittbild',
                   solar:   'Strom vom eigenen Dach – die Solaranlage im Schnittbild',
                   wind:    'Strom aus dem Wind – die Windkraftanlage im Schnittbild',
-                  gezeiten:'Strom aus Ebbe und Flut – das Gezeitenkraftwerk im Schnittbild'};
+                  gezeiten:'Strom aus Ebbe und Flut – das Gezeitenkraftwerk im Schnittbild',
+                  dauer:   'Vom ersten Plan bis zum ersten Strom – wie lange dauert das?',
+                  zukunft: 'Und morgen? – Energieformen zwischen Labor und Baustelle'};
 
   function ausHash(){
     const h = location.hash.replace('#','');
