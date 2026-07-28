@@ -1,0 +1,234 @@
+<!DOCTYPE html><html lang="de-CH"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Vorschau Berufsgruppen-Kacheln</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--papier);color:var(--tinte);padding:34px}
+h1{font-size:22px;margin-bottom:6px} p.sub{color:var(--grau);font-size:14px;margin-bottom:22px}
+h2{font-size:15px;margin:30px 0 10px;color:var(--hkv)}
+.gitter{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px;max-width:1240px}
+:root{
+  --hkv:#1F4E78;        /* HKV-Blau */
+  --hkv-tief:#163a5a;
+  --tinte:#152332;      /* Text */
+  --grau:#5b6b7d;       /* gedämpfter Text */
+  --papier:#f3f6fa;     /* Hintergrund */
+  --karte:#ffffff;
+  --linie:#e2e8f1;
+  --ocker:#9a6300;      /* warmer Akzent, sparsam */
+}
+.karte{
+  display:flex;flex-direction:column;
+  background:var(--karte);
+  border:1px solid var(--linie);
+  border-left:3px solid var(--hkv);
+  border-radius:10px;
+  padding:1.35rem 1.4rem 1.3rem;
+  text-decoration:none;color:inherit;
+  transition:transform .22s cubic-bezier(.4,0,.2,1),box-shadow .22s,border-left-width .22s,border-left-color .22s;
+  box-shadow:0 1px 2px rgba(21,35,50,.04);
+}
+.karte[hidden]{display:none}
+.karte:hover,.karte:focus-visible{
+  transform:translateY(-3px);
+  box-shadow:0 12px 28px rgba(31,78,120,.13);
+  border-left-width:6px;
+  border-left-color:var(--hkv-tief);
+  outline:none;
+}
+.karte:focus-visible{box-shadow:0 0 0 3px rgba(31,78,120,.35),0 12px 28px rgba(31,78,120,.13)}
+/* ------- Themenfarben pro Kachel ------- */
+.karte[data-kat="wirtschaft"]{background:#FBF4E4;border-left-color:#C08A2D}
+.karte[data-kat="wirtschaft"]:hover,.karte[data-kat="wirtschaft"]:focus-visible{border-left-color:#9A6C1E}
+.karte[data-kat="politik"]{background:#ECF3FA;border-left-color:#1F4E78}
+.karte[data-kat="politik"]:hover,.karte[data-kat="politik"]:focus-visible{border-left-color:#153A5B}
+.karte[data-kat="oekologie"]{background:#EDF6EB;border-left-color:#4E7A46}
+.karte[data-kat="oekologie"]:hover,.karte[data-kat="oekologie"]:focus-visible{border-left-color:#3A5E34}
+.karte[data-kat="gesundheit"]{background:#FBEFEE;border-left-color:#B4564E}
+.karte[data-kat="gesundheit"]:hover,.karte[data-kat="gesundheit"]:focus-visible{border-left-color:#8E403A}
+.karte[data-kat="lernen"]{background:#F2EFF9;border-left-color:#6C5AA8}
+.karte[data-kat="lernen"]:hover,.karte[data-kat="lernen"]:focus-visible{border-left-color:#514386}
+.karte[data-kat="rechner"]{background:#EAF4F4;border-left-color:#2E6B77}
+.karte[data-kat="rechner"]:hover,.karte[data-kat="rechner"]:focus-visible{border-left-color:#1F4E58}
+/* ------- Kachel-Deko ------- */
+.karte{position:relative}
+.k-deko{
+  position:absolute; right:14px; bottom:14px; height:58px; width:auto;
+  pointer-events:none; filter:drop-shadow(0 2px 3px rgba(0,0,0,.28));
+}
+.karte-1875{min-height:200px}
+.k-deko-turm{right:18px; bottom:14px; height:min(72%,230px); filter:drop-shadow(0 4px 10px rgba(0,0,0,.32))}
+.k-kopf{
+  display:flex;justify-content:space-between;align-items:baseline;gap:.7rem;
+  margin-bottom:.5rem;
+}
+.k-thema{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ocker);
+}
+.k-typ{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--grau);border:1px solid var(--linie);border-radius:999px;
+  padding:.14rem .55rem;white-space:nowrap;
+}
+.k-titel{
+  font-family:'Fraunces',serif;font-weight:600;
+  font-size:1.32rem;line-height:1.15;color:var(--hkv);
+  margin-bottom:.5rem;
+}
+.k-text{font-size:.9rem;color:var(--grau);line-height:1.55;flex:1}
+.k-einsatz{
+  font-size:.74rem;color:#8a97a6;
+  margin-top:.75rem;
+}
+.k-aktion{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ocker);
+  margin-top:.8rem;display:inline-flex;align-items:center;gap:.4rem;font-weight:500;
+}
+.k-aktion .pfeil{transition:transform .22s cubic-bezier(.4,0,.2,1)}
+.karte:hover .k-aktion .pfeil,.karte:focus-visible .k-aktion .pfeil{transform:translateX(4px)}
+/* ── „In Arbeit"-Kennzeichnung ── */
+.karte{overflow:hidden}
+.karte[data-wip]{border-left-style:dashed}
+.karte[data-wip] .k-kopf{flex-direction:column;align-items:flex-start;gap:.3rem;padding-right:44px}
+.karte[data-wip]::before{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:repeating-linear-gradient(-45deg,rgba(244,196,0,.10) 0 14px,rgba(244,196,0,0) 14px 28px);
+}
+.wip-ribbon{
+  position:absolute; top:16px; right:-44px; width:160px; z-index:2;
+  transform:rotate(45deg);
+  background:#F4C400; color:#3a2c00;
+  font-family:'JetBrains Mono',monospace; font-size:.58rem; font-weight:700;
+  letter-spacing:.1em; text-transform:uppercase; text-align:center;
+  padding:.34rem 0; box-shadow:0 2px 6px rgba(0,0,0,.22);
+  border-top:1px solid rgba(255,255,255,.55); border-bottom:1px solid rgba(0,0,0,.18);
+}
+.wip-tag{
+  display:inline-flex;align-items:center;gap:.35rem;
+  font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.06em;
+  text-transform:uppercase;color:#7a5a00;font-weight:700;
+  background:#FCEFB8;border:1px solid #EBD37A;border-radius:999px;
+  padding:.16rem .55rem;margin-top:.6rem;width:fit-content;
+}
+.karte{opacity:0;animation:rise .5s cubic-bezier(.2,.7,.3,1) forwards}
+.karte:nth-child(1){animation-delay:.06s}
+.karte:nth-child(2){animation-delay:.13s}
+.karte:nth-child(3){animation-delay:.20s}
+.karte:nth-child(4){animation-delay:.27s}
+.karte:nth-child(5){animation-delay:.34s}
+.karte:nth-child(6){animation-delay:.41s}
+.karte:nth-child(7){animation-delay:.48s}
+.karte:nth-child(8){animation-delay:.55s}
+.karte:nth-child(9){animation-delay:.62s}
+.karte:nth-child(10){animation-delay:.69s}
+.karte:nth-child(11){animation-delay:.76s}
+.k-deko-figur{right:-22px;bottom:-8px;height:172px;filter:drop-shadow(-5px 5px 10px rgba(0,0,0,.18))}
+.gitter .karte{padding-right:6.2rem}
+.gitter .k-text{padding-right:.2rem}
+.variante-b .karte,.variante-c .karte{padding-right:1.4rem}
+
+.variante-b .karte{padding:1.35rem 1.4rem 200px;text-align:center}
+.variante-b .k-kopf{justify-content:center}
+.variante-b .k-deko-figur{right:auto;left:50%;transform:translateX(-50%);bottom:0;height:210px;filter:drop-shadow(0 6px 12px rgba(0,0,0,.16))}
+.variante-b .k-aktion{align-self:center}
+
+.variante-c .karte{padding:0 1.4rem 1.3rem}
+.variante-c .k-deko-figur{display:none}
+.variante-c .k-band{margin:0 -1.4rem 1rem;height:158px;position:relative;overflow:hidden;
+  background:linear-gradient(160deg,#e9f0f8,#d7e5f2);border-radius:8px 8px 0 0}
+.variante-c .k-band img{position:absolute;left:50%;transform:translateX(-50%);top:6px;height:290px}
+.karte{opacity:1 !important;animation:none !important}
+</style></head><body>
+<h1>Berufsgruppen-Figuren als Kachel-Deko</h1>
+<p class="sub">Drei Satz-Varianten mit denselben freigestellten Figuren – Pharma, Detailhandel, Bank.</p>
+
+<h2>Variante A – Figur rechts unten (wie der 1875-Turm)</h2>
+<div class="gitter">
+      <a class="karte" href="#" data-kat="lernen">
+        <div class="k-kopf"><span class="k-thema">Berufsfeld · Apotheke</span></div>
+        <div class="k-titel">Pharma-Assistentin</div>
+        <p class="k-text">Rezept, Dosierung und Beratung am HV – wo ABU im Berufsalltag auftaucht.</p>
+        <div class="k-einsatz">Einstieg · Berufsbezug</div>
+        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
+        <img class="k-deko k-deko-figur" src="kachel_figur_pharma.png" alt="">
+      </a>
+
+      <a class="karte" href="#" data-kat="lernen">
+        <div class="k-kopf"><span class="k-thema">Berufsfeld · Migros</span></div>
+        <div class="k-titel">Detailhandel</div>
+        <p class="k-text">Sortiment, Kasse, Reklamation – Kaufvertrag und Konsum ganz konkret.</p>
+        <div class="k-einsatz">Einstieg · Berufsbezug</div>
+        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
+        <img class="k-deko k-deko-figur" src="kachel_figur_detailhandel.png" alt="">
+      </a>
+
+      <a class="karte" href="#" data-kat="lernen">
+        <div class="k-kopf"><span class="k-thema">Berufsfeld · AKB</span></div>
+        <div class="k-titel">Kauffrau Bank</div>
+        <p class="k-text">Zahlungsverkehr, Budget, Zins – Geld und Recht aus erster Hand.</p>
+        <div class="k-einsatz">Einstieg · Berufsbezug</div>
+        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
+        <img class="k-deko k-deko-figur" src="kachel_figur_bank.png" alt="">
+      </a></div>
+
+<h2>Variante B – Figur zentriert unter dem Text</h2>
+<div class="variante-b"><div class="gitter">
+      <a class="karte" href="#" data-kat="lernen">
+        <div class="k-kopf"><span class="k-thema">Berufsfeld · Apotheke</span></div>
+        <div class="k-titel">Pharma-Assistentin</div>
+        <p class="k-text">Rezept, Dosierung und Beratung am HV – wo ABU im Berufsalltag auftaucht.</p>
+        <div class="k-einsatz">Einstieg · Berufsbezug</div>
+        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
+        <img class="k-deko k-deko-figur" src="kachel_figur_pharma.png" alt="">
+      </a>
+
+      <a class="karte" href="#" data-kat="lernen">
+        <div class="k-kopf"><span class="k-thema">Berufsfeld · Migros</span></div>
+        <div class="k-titel">Detailhandel</div>
+        <p class="k-text">Sortiment, Kasse, Reklamation – Kaufvertrag und Konsum ganz konkret.</p>
+        <div class="k-einsatz">Einstieg · Berufsbezug</div>
+        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
+        <img class="k-deko k-deko-figur" src="kachel_figur_detailhandel.png" alt="">
+      </a>
+
+      <a class="karte" href="#" data-kat="lernen">
+        <div class="k-kopf"><span class="k-thema">Berufsfeld · AKB</span></div>
+        <div class="k-titel">Kauffrau Bank</div>
+        <p class="k-text">Zahlungsverkehr, Budget, Zins – Geld und Recht aus erster Hand.</p>
+        <div class="k-einsatz">Einstieg · Berufsbezug</div>
+        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
+        <img class="k-deko k-deko-figur" src="kachel_figur_bank.png" alt="">
+      </a></div></div>
+
+<h2>Variante C – Figur im Kopfband der Kachel</h2>
+<div class="variante-c"><div class="gitter">
+      <a class="karte" href="#" data-kat="lernen">
+        <div class="k-band"><img src="kachel_figur_pharma.png" alt=""></div><div class="k-kopf"><span class="k-thema">Berufsfeld · Apotheke</span></div>
+        <div class="k-titel">Pharma-Assistentin</div>
+        <p class="k-text">Rezept, Dosierung und Beratung am HV – wo ABU im Berufsalltag auftaucht.</p>
+        <div class="k-einsatz">Einstieg · Berufsbezug</div>
+        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
+        <img class="k-deko k-deko-figur" src="kachel_figur_pharma.png" alt="">
+      </a>
+
+      <a class="karte" href="#" data-kat="lernen">
+        <div class="k-band"><img src="kachel_figur_detailhandel.png" alt=""></div><div class="k-kopf"><span class="k-thema">Berufsfeld · Migros</span></div>
+        <div class="k-titel">Detailhandel</div>
+        <p class="k-text">Sortiment, Kasse, Reklamation – Kaufvertrag und Konsum ganz konkret.</p>
+        <div class="k-einsatz">Einstieg · Berufsbezug</div>
+        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
+        <img class="k-deko k-deko-figur" src="kachel_figur_detailhandel.png" alt="">
+      </a>
+
+      <a class="karte" href="#" data-kat="lernen">
+        <div class="k-band"><img src="kachel_figur_bank.png" alt=""></div><div class="k-kopf"><span class="k-thema">Berufsfeld · AKB</span></div>
+        <div class="k-titel">Kauffrau Bank</div>
+        <p class="k-text">Zahlungsverkehr, Budget, Zins – Geld und Recht aus erster Hand.</p>
+        <div class="k-einsatz">Einstieg · Berufsbezug</div>
+        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
+        <img class="k-deko k-deko-figur" src="kachel_figur_bank.png" alt="">
+      </a></div></div>
+</body></html>
