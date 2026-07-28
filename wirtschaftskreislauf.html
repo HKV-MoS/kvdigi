@@ -7,8 +7,8 @@
 <style>
   *{ box-sizing:border-box; margin:0; padding:0; }
   :root{
-    --geld:#1E9E62; --geld-dk:#14764A;      /* Geldstrom  – grün  */
-    --real:#C08A1E; --real-dk:#8F6412;      /* Realstrom  – ocker */
+    --geld:#C08A1E; --geld-dk:#8F6412;      /* Geldstrom  – gold  */
+    --real:#1E9E62; --real-dk:#14764A;      /* Güterstrom – grün  */
     --aktiv:#1F6F8B;                        /* Petrol – aktive Elemente */
     --ink:#1B2A35; --muted:#5F7480;
     --line:#E3EAEE; --bg:#F6F8F9; --card:#FFFFFF;
@@ -45,6 +45,11 @@
 
   .toggles{ display:flex; gap:8px; flex-wrap:wrap; padding:10px 14px; border-bottom:1px solid var(--line); align-items:center; }
   .toggles .tlabel{ font-size:12px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; color:var(--muted); }
+  .toggles.filters{ background:#FAFCFD; }
+  .chip{ font:inherit; font-size:13px; font-weight:700; padding:7px 13px; border-radius:999px; min-height:38px;
+         border:1.5px solid var(--line); background:#fff; color:var(--muted); cursor:pointer; transition:all .15s; }
+  .chip:hover{ border-color:#B9CBD4; }
+  .chip.on{ background:var(--aktiv); border-color:var(--aktiv); color:#fff; }
   .toggle{ font:inherit; font-size:13.5px; font-weight:700; padding:8px 13px; border-radius:10px; min-height:42px;
            border:1.5px solid var(--line); background:#fff; color:var(--muted); cursor:pointer;
            display:inline-flex; align-items:center; gap:8px; transition:all .15s; }
@@ -57,18 +62,18 @@
   /* Die Bühne bleibt vollständig sichtbar: Höhe begrenzt, Seitenverhältnis erhalten. */
   svg.board{ display:block; width:100%; height:auto; max-height:calc(100vh - 260px); }
 
-  /* ---------- Akteurskarten ---------- */
+  /* ---------- Akteure: isometrische Gebäude ---------- */
   .actor{ cursor:pointer; }
-  .actor .cardbg{ fill:#fff; stroke:var(--line); stroke-width:2;
-                  filter:drop-shadow(0 3px 8px rgba(20,50,80,.10)); transition:stroke .18s, filter .18s; }
-  .actor .aname{ font-size:26px; font-weight:800; fill:var(--ink); }
-  .actor .arole{ font-size:15px; font-weight:600; fill:var(--muted); }
-  .actor:hover .cardbg{ stroke:#B9CBD4; }
-  .actor.active .cardbg{ stroke:var(--aktiv); stroke-width:3.5; filter:drop-shadow(0 4px 14px rgba(31,111,139,.28)); }
-  .actor.visited .cardbg{ stroke:#BCD6DF; }
-  .actor.dim{ opacity:.3; }
-  .actor .icon{ fill:none; stroke:var(--aktiv); stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round;
-                color:var(--aktiv); }
+  .actor .bld{ transition:transform .18s ease-out; transform-box:fill-box; transform-origin:50% 90%; }
+  .actor .hit{ fill:#000; opacity:0; }
+  .actor .ground{ fill:#233A48; opacity:.10; }
+  .actor .plate{ transition:filter .18s; filter:drop-shadow(0 3px 8px rgba(20,50,80,.20)); }
+  .actor .aname{ font-size:25px; font-weight:800; fill:#fff; text-anchor:middle; letter-spacing:-.2px; }
+  .actor .arole{ font-size:17px; font-weight:600; fill:var(--muted); text-anchor:middle; }
+  .actor:hover .bld{ transform:scale(1.035); }
+  .actor.active .bld{ transform:scale(1.05); }
+  .actor.active .plate{ filter:drop-shadow(0 5px 16px rgba(31,111,139,.42)); }
+  .actor.dim{ opacity:.28; }
   .actor.hidden, .flow.hidden, .flowlabel.hidden{ display:none; }
 
   /* ---------- Klick-Animationen der Akteure ---------- */
@@ -79,7 +84,7 @@
 
   /* Karte hüpft kurz */
   @keyframes cardPop{ 0%,100%{ transform:translateY(0); } 35%{ transform:translateY(-6px); } 70%{ transform:translateY(-1px); } }
-  .actor.pop .cardbg{ animation:cardPop .5s ease-out; }
+  .actor.pop .bld{ animation:cardPop .55s ease-out; }
 
   /* Rauchwölkchen (Haushalte: Kamin, Unternehmen: Fabrikschlot) */
   @keyframes puff{
@@ -167,10 +172,10 @@
   .flowlabel.dim{ opacity:.15; }
 
   /* Gegenstrom-Hinweis in der Infokarte */
-  .pairbox{ background:#FFF9EC; border-left:4px solid var(--real); border-radius:0 10px 10px 0;
+  .pairbox{ background:#F7FAFB; border-left:4px solid var(--aktiv); border-radius:0 10px 10px 0;
             padding:10px 13px; margin-bottom:12px; font-size:13.5px; color:#6b5216; }
   .pairbox .pl{ display:block; font-size:10.5px; font-weight:800; letter-spacing:.7px;
-                text-transform:uppercase; color:var(--real-dk); margin-bottom:3px; }
+                text-transform:uppercase; color:var(--aktiv); margin-bottom:3px; }
   .pairbox .pname{ font-weight:800; }
 
   /* ---------- Legende ---------- */
@@ -191,8 +196,8 @@
   .panel p{ color:#3a4d59; margin-bottom:12px; font-size:14.5px; }
   .badge{ display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:800;
           padding:4px 10px; border-radius:20px; margin-bottom:9px; }
-  .badge.geld{ background:#E4F3EB; color:var(--geld-dk); }
-  .badge.real{ background:#FBF0DA; color:var(--real-dk); }
+  .badge.geld{ background:#FBF0DA; color:var(--geld-dk); }
+  .badge.real{ background:#E4F3EB; color:var(--real-dk); }
 
   .qbox{ background:#F2F6F8; border-left:4px solid var(--aktiv); border-radius:0 10px 10px 0;
          padding:11px 13px; font-size:13.5px; color:#33505d; }
@@ -226,21 +231,48 @@
              margin-bottom:6px; border:1.5px solid var(--line); border-radius:10px; background:#fff;
              cursor:pointer; transition:all .12s; min-height:46px; }
   .quiz-opt:hover:enabled{ background:#F2F6F8; }
-  .quiz-opt.correct{ background:#E4F3EB; border-color:var(--geld); color:var(--geld-dk); font-weight:700; }
+  .quiz-opt.correct{ background:#E4F3EB; border-color:var(--real); color:var(--real-dk); font-weight:700; }
   .quiz-opt.wrong{ background:#FBEAE8; border-color:#C0392B; color:#93291D; }
   .quiz-fb{ font-size:13px; font-weight:700; margin-top:5px; }
   .quiz-result{ margin-top:16px; padding:13px; border-radius:11px; background:#EAF3F6;
                 font-size:15px; font-weight:800; color:var(--aktiv); text-align:center; }
 
+  .tsel-l{ display:block; font-size:11.5px; font-weight:800; letter-spacing:.6px; text-transform:uppercase;
+           color:var(--muted); margin-bottom:5px; }
+  .tsel{ font:inherit; font-size:13.5px; font-weight:700; width:100%; padding:9px 11px; margin-bottom:10px;
+         border:1.5px solid var(--line); border-radius:10px; background:#fff; color:var(--ink); cursor:pointer; min-height:42px; }
+  /* ---------- Dezente Mikroanimationen ---------- */
+  .live{ pointer-events:none; }
+  @keyframes smokeUp{
+    0%{ opacity:0; transform:translate(0,0) scale(.5); }
+    20%{ opacity:.45; }
+    100%{ opacity:0; transform:translate(14px,-46px) scale(2.2); }
+  }
+  .live .smoke{ transform-box:fill-box; transform-origin:center; animation-name:smokeUp;
+                animation-duration:7s; animation-timing-function:ease-out; animation-iteration-count:infinite; opacity:0; }
+  @keyframes lampGlow{ 0%,100%{ opacity:.18; } 50%{ opacity:.62; } }
+  .live .lamp{ animation-name:lampGlow; animation-duration:9s; animation-timing-function:ease-in-out;
+               animation-iteration-count:infinite; opacity:.18; }
+  @keyframes blipGlow{ 0%,100%{ opacity:.25; } 45%{ opacity:.85; } 55%{ opacity:.4; } }
+  .live .blip{ animation-name:blipGlow; animation-duration:5.5s; animation-timing-function:ease-in-out;
+               animation-iteration-count:infinite; opacity:.25; }
+  @keyframes screenGlow{ 0%,100%{ opacity:.10; } 50%{ opacity:.30; } }
+  .live .screen{ animation-name:screenGlow; animation-duration:8s;
+               animation-timing-function:ease-in-out; animation-iteration-count:infinite; opacity:.10; }
+  .actor.dim .live{ opacity:0; }
+
   .footer{ max-width:1560px; margin:6px auto 22px; padding:0 16px; color:var(--muted); font-size:12px; }
   .footer .cr{ margin-top:6px; color:#9DB0BA; }
 
+  /* Reduzierte Bewegung: alles wird deutlich langsamer, nichts wird abgeschaltet.
+     Die wandernden Symbole laufen über SMIL und werden in JS verlangsamt (SLOW). */
   @media (prefers-reduced-motion:reduce){
-    .flowsym{ display:none; }
-    .actor.pop .cardbg, .actor.pop .fx-puff, .actor.pop .fx-gavel,
-    .actor.pop .fx-coin, .actor.pop .fx-globe, .actor.pop .fx-car{ animation:none !important; }
-    .fx, .actor.pop .fx-ship{ opacity:0 !important; }
-    *{ transition:none !important; }
+    .live .smoke{ animation-duration:21s; }
+    .live .lamp{  animation-duration:27s; }
+    .live .blip{  animation-duration:17s; }
+    .live .screen{ animation-duration:24s; }
+    .actor.pop .bld{ animation-duration:1.7s; }
+    *{ transition-duration:.5s !important; }
   }
 </style>
 </head>
@@ -259,7 +291,8 @@
     <div class="toolbar">
       <div class="modeswitch" role="tablist" aria-label="Modus wählen">
         <button class="mode-opt active" id="m-einfach" role="tab" aria-selected="true">Einfacher Kreislauf</button>
-        <button class="mode-opt" id="m-erweitert" role="tab" aria-selected="false">Erweiterter Kreislauf</button>
+        <button class="mode-opt" id="m-erweitert" role="tab" aria-selected="false">Erweitert</button>
+        <button class="mode-opt" id="m-voll" role="tab" aria-selected="false">Vollständig</button>
       </div>
       <div class="spacer"></div>
       <button class="btn ghost sm" id="pause-btn" aria-pressed="false">⏸ Animation pausieren</button>
@@ -271,36 +304,47 @@
       <button class="toggle" data-actor="staat" disabled aria-pressed="false"><span class="dot"></span>Staat</button>
       <button class="toggle" data-actor="bank" disabled aria-pressed="false"><span class="dot"></span>Banken</button>
       <button class="toggle" data-actor="aus" disabled aria-pressed="false"><span class="dot"></span>Ausland</button>
+      <button class="toggle" data-actor="kap" disabled aria-pressed="false"><span class="dot"></span>Kapitalmarkt</button>
+    </div>
+
+    <div class="toggles filters">
+      <span class="tlabel">Lernmodus</span>
+      <button class="chip on" data-cat="alle" aria-pressed="true">Alles</button>
+      <button class="chip" data-cat="geld" aria-pressed="false">💰 Nur Geld</button>
+      <button class="chip" data-cat="gueter" aria-pressed="false">📦 Nur Güter</button>
+      <button class="chip" data-cat="arbeit" aria-pressed="false">👷 Nur Arbeit</button>
+      <button class="chip" data-cat="steuern" aria-pressed="false">🏛 Nur Steuern</button>
+      <button class="chip" data-cat="kapital" aria-pressed="false">📈 Nur Kapital</button>
     </div>
 
     <div class="scene">
-      <svg class="board" id="board" viewBox="0 0 1600 900" role="img" aria-label="Diagramm des Wirtschaftskreislaufs">
+      <svg class="board" id="board" viewBox="0 0 1800 1280" role="img" aria-label="Diagramm des Wirtschaftskreislaufs">
         <defs>
           <!-- Farbverläufe: userSpaceOnUse, da gerade Linien eine Bounding-Box
                ohne Höhe haben und objectBoundingBox-Gradienten dort nicht rendern.
                Helle Töne, damit Icons und Beschriftungen gut lesbar bleiben. -->
-          <linearGradient id="gr-geld" gradientUnits="userSpaceOnUse" x1="150" y1="0" x2="1500" y2="0">
-            <stop offset="0%" stop-color="#A8E3C4"/><stop offset="100%" stop-color="#7FD1A8"/>
+          <linearGradient id="gr-geld" gradientUnits="userSpaceOnUse" x1="60" y1="0" x2="1760" y2="0">
+            <stop offset="0%" stop-color="#F5DFAE"/><stop offset="100%" stop-color="#E8C787"/>
           </linearGradient>
-          <linearGradient id="gr-real" gradientUnits="userSpaceOnUse" x1="150" y1="0" x2="1500" y2="0">
-            <stop offset="0%" stop-color="#F3DCA8"/><stop offset="100%" stop-color="#E8C787"/>
+          <linearGradient id="gr-real" gradientUnits="userSpaceOnUse" x1="60" y1="0" x2="1760" y2="0">
+            <stop offset="0%" stop-color="#AEE6C9"/><stop offset="100%" stop-color="#7FD1A8"/>
           </linearGradient>
-          <linearGradient id="gr-geld-a" gradientUnits="userSpaceOnUse" x1="150" y1="0" x2="1500" y2="0">
-            <stop offset="0%" stop-color="#6FCB9B"/><stop offset="100%" stop-color="#43B37F"/>
-          </linearGradient>
-          <linearGradient id="gr-real-a" gradientUnits="userSpaceOnUse" x1="150" y1="0" x2="1500" y2="0">
+          <linearGradient id="gr-geld-a" gradientUnits="userSpaceOnUse" x1="60" y1="0" x2="1760" y2="0">
             <stop offset="0%" stop-color="#E8C787"/><stop offset="100%" stop-color="#D6AC5C"/>
+          </linearGradient>
+          <linearGradient id="gr-real-a" gradientUnits="userSpaceOnUse" x1="60" y1="0" x2="1760" y2="0">
+            <stop offset="0%" stop-color="#6FCB9B"/><stop offset="100%" stop-color="#43B37F"/>
           </linearGradient>
 
           <!-- Pfeilspitzen bleiben kräftig, damit die Richtung klar erkennbar ist -->
-          <marker id="ah-geld" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse">
-            <path d="M1,1 L11,6 L1,11 L3,6 Z" fill="#2FA96F"/></marker>
-          <marker id="ah-geld-a" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse">
-            <path d="M1,1 L11,6 L1,11 L3,6 Z" fill="#14764A"/></marker>
-          <marker id="ah-real" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse">
+          <marker id="ah-geld" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="1.75" markerHeight="1.75" orient="auto-start-reverse">
             <path d="M1,1 L11,6 L1,11 L3,6 Z" fill="#C99A3C"/></marker>
-          <marker id="ah-real-a" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse">
+          <marker id="ah-geld-a" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="1.75" markerHeight="1.75" orient="auto-start-reverse">
             <path d="M1,1 L11,6 L1,11 L3,6 Z" fill="#8F6412"/></marker>
+          <marker id="ah-real" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="1.75" markerHeight="1.75" orient="auto-start-reverse">
+            <path d="M1,1 L11,6 L1,11 L3,6 Z" fill="#2FA96F"/></marker>
+          <marker id="ah-real-a" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="1.75" markerHeight="1.75" orient="auto-start-reverse">
+            <path d="M1,1 L11,6 L1,11 L3,6 Z" fill="#14764A"/></marker>
         </defs>
         <g id="flows"></g>
         <g id="labels"></g>
@@ -309,8 +353,8 @@
     </div>
 
     <div class="legend">
-      <span class="item"><span class="swatch sw-geld"></span>Geldstrom (durchgezogen)</span>
-      <span class="item"><span class="swatch sw-real"></span>Güter-/Leistungsstrom (gestrichelt)</span>
+      <span class="item"><span class="swatch sw-geld"></span>Geldstrom – Gold (durchgezogen)</span>
+      <span class="item"><span class="swatch sw-real"></span>Güter- und Leistungsstrom – Grün (gestrichelt)</span>
       <span class="note">Die Pfeilspitze zeigt die Richtung.</span>
     </div>
   </div>
@@ -334,20 +378,26 @@
     </div>
 
     <div class="tour">
+      <label class="tsel-l" for="t-sel">Rundgang oder Geschichte</label>
+      <select class="tsel" id="t-sel">
+        <option value="rundgang">Rundgang durch den Kreislauf</option>
+        <option value="note">Die Reise einer 20-Franken-Note</option>
+        <option value="alex">Ein Tag im Leben von Alex</option>
+      </select>
       <div class="tstep" id="t-step">Geführte Tour</div>
       <div class="tnav">
         <button class="btn ghost sm" id="t-prev" disabled>← Zurück</button>
-        <button class="btn sm" id="t-start">▶ Tour starten</button>
+        <button class="btn sm" id="t-start">▶ Starten</button>
         <button class="btn ghost sm" id="t-next" disabled>Weiter →</button>
       </div>
-      <button class="btn ghost sm" id="t-reset" style="width:100%;margin-top:7px;justify-content:center;">Tour zurücksetzen</button>
+      <button class="btn ghost sm" id="t-reset" style="width:100%;margin-top:7px;justify-content:center;">Zurücksetzen</button>
       <div class="progress" id="progress" aria-hidden="true"></div>
     </div>
   </aside>
 </div>
 
 <div class="footer">
-  Interaktive Lernfolie zum Wirtschaftskreislauf · Grün = Geldstrom · Ocker = Güter- und Leistungsstrom.
+  Interaktive Lernfolie zum Wirtschaftskreislauf · Gold = Geldstrom · Grün = Güter- und Leistungsstrom.
   <div class="cr">© 2026 Samuel Mollet · HKV Aarau · realisiert mit Claude (Anthropic)</div>
 </div>
 
@@ -367,14 +417,22 @@
       Pfeil einen eigenen Korridor bekommt und keine Kreuzungen entstehen.
       ========================================================================== */
 const A = {
-  staat: { x:800,  y:110, w:260, h:110, name:'Staat',       role:'Steuern · Leistungen', core:false },
-  hh:    { x:250,  y:450, w:290, h:184, name:'Haushalte',   role:'Arbeit · Konsum',      core:true  },
-  un:    { x:1050, y:450, w:290, h:184, name:'Unternehmen', role:'Produktion · Löhne',   core:true  },
-  bank:  { x:650,  y:780, w:260, h:110, name:'Banken',      role:'Sparen · Kredite',     core:false },
-  aus:   { x:1420, y:760, w:240, h:110, name:'Ausland',     role:'Import · Export',      core:false },
+  un:    { x:850,  y:171,  w:392, img:'wk_unternehmen.png', ar:718/423, col:'#2C6BAA', lvl:1,
+           name:'Unternehmen', role:'Produktion · Löhne',      pdy:-30 },
+  staat: { x:850,  y:630,  w:295, img:'wk_staat.png',       ar:629/414, col:'#C0392B', lvl:2,
+           name:'Staat',       role:'Steuern · Leistungen',   pdy:-30 },
+  hh:    { x:850,  y:1088, w:350, img:'wk_haushalte.png',   ar:611/391, col:'#E07B26', lvl:1,
+           name:'Haushalte',   role:'Arbeit · Konsum',        pdy:12 },
+  bank:  { x:210,  y:630,  w:294, img:'wk_banken.png',      ar:573/390, col:'#12A0A8', lvl:2,
+           name:'Banken',      role:'Sparen · Kredite',       pdy:12 },
+  aus:   { x:1500, y:285,  w:300, img:'wk_ausland.png',     ar:606/439, col:'#3B9E4A', lvl:3,
+           name:'Ausland',     role:'Import · Export',        pdy:12 },
+  kap:   { x:1500, y:960,  w:280, img:'wk_finanzmarkt.png', ar:566/358, col:'#7B54B8', lvl:3,
+           name:'Kapitalmarkt',role:'Aktien · Obligationen',  pdy:12 },
 };
+Object.values(A).forEach(a=>{ a.h = a.w / a.ar; a.core = a.lvl===1; });
 const E = k => { const a=A[k]; return { l:a.x-a.w/2, r:a.x+a.w/2, t:a.y-a.h/2, b:a.y+a.h/2 }; };
-const hh=E('hh'), un=E('un'), st=E('staat'), bk=E('bank'), au=E('aus');
+const hh=E('hh'), un=E('un'), st=E('staat'), bk=E('bank'), au=E('aus'), km=E('kap');
 
 /* ==========================================================================
    2. STRÖME – jeder Pfeil läuft auf einer EIGENEN Spur (orthogonale Pfade).
@@ -384,128 +442,159 @@ const hh=E('hh'), un=E('un'), st=E('staat'), bk=E('bank'), au=E('aus');
       Gegenläufigkeit (Merksatz) unmittelbar sichtbar.
       ========================================================================== */
 const F = [
-  { id:'arbeit', sym:'arm', pair:'lohn', pairText:'Die Haushalte geben Arbeit – die Unternehmen bezahlen dafür Lohn.', type:'real', core:true, from:'hh', to:'un',
-    d:`M${hh.r},378 L${un.l},378`, lx:720, ly:385, anchor:'middle', onband:true,
+  /* ---- KERN: Haushalte unten <-> Unternehmen oben.
+     Links das Paar Arbeit/Lohn, rechts das Paar Güter/Konsum.
+     Beide Paare laufen gegenläufig – das ist der Merksatz.        ---- */
+  { id:'arbeit', sym:'arm', cats:['arbeit'], pair:'lohn', pairText:'Die Haushalte geben Arbeit – die Unternehmen bezahlen dafür Lohn.', type:'real', core:true, from:'hh', to:'un',
+    d:'M715,976 C620,930 560,850 560,700 C560,530 620,400 686,287', lx:508, ly:706, anchor:'end',
     title:'Arbeit', ft:'Haushalte → Unternehmen',
     text:'Die Haushalte stellen den Unternehmen ihre Arbeitskraft zur Verfügung. Sie ist die Grundlage jeder Produktion.',
     q:'Welche Arbeit leisten Sie oder Ihre Familie für ein Unternehmen?' },
 
-  { id:'lohn', pair:'arbeit', pairText:'Die Haushalte geben Arbeit – die Unternehmen bezahlen dafür Lohn.', type:'geld', core:true, from:'un', to:'hh',
-    d:`M${un.l},426 L${hh.r},426`, lx:720, ly:433, anchor:'middle', onband:true,
+  { id:'lohn', cats:['geld','arbeit'], pair:'arbeit', pairText:'Die Haushalte geben Arbeit – die Unternehmen bezahlen dafür Lohn.', type:'geld', core:true, from:'un', to:'hh',
+    d:'M742,287 C690,400 660,520 660,700 C660,860 700,935 770,976', lx:706, ly:606, anchor:'start',
     title:'Lohn', ft:'Unternehmen → Haushalte',
     text:'Für die geleistete Arbeit zahlen die Unternehmen Löhne. Dieses Einkommen finanziert den Konsum der Haushalte.',
     q:'Wofür geben Sie Ihren Lohn oder Ihr Lehrlingsgehalt aus?' },
 
-  { id:'gueter', sym:'paket', pair:'konsum', pairText:'Die Unternehmen liefern Güter – die Haushalte bezahlen dafür mit Konsumausgaben.', type:'real', core:true, from:'un', to:'hh',
-    d:`M${un.l},474 L${hh.r},474`, lx:720, ly:481, anchor:'middle', onband:true,
+  { id:'gueter', sym:'paket', cats:['gueter'], pair:'konsum', pairText:'Die Unternehmen liefern Güter – die Haushalte bezahlen dafür mit Konsumausgaben.', type:'real', core:true, from:'un', to:'hh',
+    d:'M1028,287 C1150,410 1240,540 1240,720 C1240,900 1150,985 1032,1024', lx:1262, ly:706, anchor:'start',
     title:'Güter & Dienstleistungen', ft:'Unternehmen → Haushalte',
     text:'Die Unternehmen liefern Produkte und Dienstleistungen an die Haushalte – der reale Gegenwert zum bezahlten Geld.',
     q:'Welche Dienstleistung haben Sie zuletzt genutzt?' },
 
-  { id:'konsum', pair:'gueter', pairText:'Die Unternehmen liefern Güter – die Haushalte bezahlen dafür mit Konsumausgaben.', type:'geld', core:true, from:'hh', to:'un',
-    d:`M${hh.r},522 L${un.l},522`, lx:720, ly:529, anchor:'middle', onband:true,
+  { id:'konsum', cats:['geld','gueter'], pair:'gueter', pairText:'Die Unternehmen liefern Güter – die Haushalte bezahlen dafür mit Konsumausgaben.', type:'geld', core:true, from:'hh', to:'un',
+    d:'M985,976 C1075,930 1135,850 1135,700 C1135,530 1055,405 975,287', lx:1090, ly:606, anchor:'end',
     title:'Konsumausgaben', ft:'Haushalte → Unternehmen',
     text:'Haushalte bezahlen Unternehmen für Güter und Dienstleistungen. Dieses Geld ist der Umsatz der Unternehmen.',
     q:'Was haben Sie diese Woche gekauft, das zu diesem Strom passt?' },
 
-  /* ---- STAAT (oben) – gestaffelte Spuren.
-     Regel: je weiter aussen die vertikale Spur, desto höher das waagrechte
-     Segment. Dadurch kreuzt kein Pfeil einen anderen.                     ---- */
-  { id:'st-hh-steuern', pair:'st-hh-leist', pairText:'Der Staat erbringt Leistungen – die Haushalte finanzieren sie mit Steuern.', type:'geld', actor:'staat', from:'hh', to:'staat',
-    d:`M340,${hh.t} L340,250 L${st.l},250`, lx:334, ly:330, anchor:'end',
+  /* ---- STAAT in der Mitte: drei Spuren nach oben, drei nach unten ---- */
+  { id:'st-hh-steuern', cats:['geld','steuern'], pair:'st-hh-leist', pairText:'Der Staat erbringt Leistungen – die Haushalte finanzieren sie mit Steuern.', type:'geld', actor:'staat', from:'hh', to:'staat',
+    d:'M812,976 C800,900 796,810 800,727', lx:794, ly:786, anchor:'end',
     title:'Steuern', ft:'Haushalte → Staat',
     text:'Haushalte zahlen Einkommenssteuern und Abgaben an den Staat.',
     q:'Welche Steuern zahlen Erwachsene in der Schweiz?' },
 
-  { id:'st-hh-transfer', soloText:'Transferzahlungen sind eine Leistung ohne direkte Gegenleistung – der Staat verteilt um.', type:'geld', actor:'staat', from:'staat', to:'hh',
-    d:`M${st.l},140 L270,140 L270,${hh.t}`, lx:264, ly:270, anchor:'end',
+  { id:'st-hh-transfer', cats:['geld','steuern'], soloText:'Transferzahlungen sind eine Leistung ohne direkte Gegenleistung – der Staat verteilt um.', type:'geld', actor:'staat', from:'staat', to:'hh',
+    d:'M868,727 C868,810 868,900 868,976', lx:876, ly:874, anchor:'start',
     title:'Transferzahlungen', ft:'Staat → Haushalte',
     text:'Der Staat zahlt Renten, Sozialhilfe und Stipendien an die Haushalte zurück.',
     q:'Welche Transferzahlungen kennen Sie?' },
 
-  { id:'st-hh-leist', sym:'gov', pair:'st-hh-steuern', pairText:'Der Staat erbringt Leistungen – die Haushalte finanzieren sie mit Steuern.', type:'real', actor:'staat', from:'staat', to:'hh',
-    d:`M${st.l},95 L190,95 L190,${hh.t}`, lx:184, ly:180, anchor:'end',
+  { id:'st-hh-leist', sym:'gov', cats:['gueter','steuern'], pair:'st-hh-steuern', pairText:'Der Staat erbringt Leistungen – die Haushalte finanzieren sie mit Steuern.', type:'real', actor:'staat', from:'staat', to:'hh',
+    d:'M932,727 C938,810 940,900 936,976', lx:948, ly:952, anchor:'start',
     title:'Öffentliche Leistungen', ft:'Staat → Haushalte',
     text:'Bildung, Sicherheit, Strassen: Der Staat erbringt Leistungen, die alle nutzen können.',
     q:'Welche öffentliche Leistung nutzen Sie täglich?' },
 
-  { id:'st-un-steuern', pair:'st-un-leist', pairText:'Der Staat erbringt Leistungen – die Unternehmen finanzieren sie mit Steuern und Abgaben.', type:'geld', actor:'staat', from:'un', to:'staat',
-    d:`M960,${un.t} L960,250 L${st.r},250`, lx:966, ly:330, anchor:'start',
+  { id:'st-un-steuern', cats:['geld','steuern'], pair:'st-un-leist', pairText:'Der Staat erbringt Leistungen – die Unternehmen finanzieren sie mit Steuern und Abgaben.', type:'geld', actor:'staat', from:'un', to:'staat',
+    d:'M812,287 C800,370 796,450 800,533', lx:794, ly:322, anchor:'end',
     title:'Steuern / Abgaben', ft:'Unternehmen → Staat',
     text:'Unternehmen führen Gewinnsteuern und Abgaben an den Staat ab.',
     q:'Warum zahlen auch Unternehmen Steuern?' },
 
-  { id:'st-un-subv', soloText:'Subventionen sind eine Unterstützung ohne direkte Gegenleistung der Unternehmen.', type:'geld', actor:'staat', from:'staat', to:'un',
-    d:`M${st.r},140 L1030,140 L1030,${un.t}`, lx:1036, ly:270, anchor:'start',
+  { id:'st-un-subv', cats:['geld','steuern'], soloText:'Subventionen sind eine Unterstützung ohne direkte Gegenleistung der Unternehmen.', type:'geld', actor:'staat', from:'staat', to:'un',
+    d:'M868,533 C868,450 868,370 868,287', lx:876, ly:416, anchor:'start',
     title:'Aufträge / Subventionen', ft:'Staat → Unternehmen',
     text:'Der Staat vergibt öffentliche Aufträge und unterstützt Unternehmen mit Subventionen.',
     q:'Warum unterstützt der Staat gewisse Branchen?' },
 
-  { id:'st-un-leist', sym:'gov', pair:'st-un-steuern', pairText:'Der Staat erbringt Leistungen – die Unternehmen finanzieren sie mit Steuern und Abgaben.', type:'real', actor:'staat', from:'staat', to:'un',
-    d:`M${st.r},95 L1110,95 L1110,${un.t}`, lx:1118, ly:180, anchor:'start',
+  { id:'st-un-leist', sym:'gov', cats:['gueter','steuern'], pair:'st-un-steuern', pairText:'Der Staat erbringt Leistungen – die Unternehmen finanzieren sie mit Steuern und Abgaben.', type:'real', actor:'staat', from:'staat', to:'un',
+    d:'M932,533 C938,450 940,370 936,287', lx:948, ly:504, anchor:'start',
     title:'Öffentliche Leistungen', ft:'Staat → Unternehmen',
     text:'Auch Unternehmen profitieren von Infrastruktur, Rechtssicherheit und ausgebildeten Fachkräften.',
     q:'Welche Infrastruktur braucht ein Unternehmen?' },
 
-  /* ---- BANKEN (unten) – gleiche Staffelungsregel, nach unten gespiegelt ---- */
-  { id:'bk-hh-sparen', pair:'bk-hh-zins', pairText:'Die Haushalte stellen Geld zur Verfügung – die Bank vergütet es mit Zinsen.', type:'geld', actor:'bank', from:'hh', to:'bank',
-    d:`M190,${hh.b} L190,815 L${bk.l},815`, lx:184, ly:700, anchor:'end',
+  /* ---- BANKEN links: je zwei Spuren nach oben und nach unten ---- */
+  { id:'bk-hh-sparen', cats:['geld','kapital'], pair:'bk-hh-zins', pairText:'Die Haushalte stellen Geld zur Verfügung – die Bank vergütet es mit Zinsen.', type:'geld', actor:'bank', from:'hh', to:'bank',
+    d:'M676,1140 C500,1195 260,1150 200,1010 C168,930 172,830 186,730', lx:430, ly:1210, anchor:'middle',
     title:'Sparen', ft:'Haushalte → Banken',
     text:'Haushalte legen einen Teil ihres Einkommens bei den Banken an, statt ihn auszugeben.',
     q:'Warum sparen Menschen überhaupt?' },
 
-  { id:'bk-hh-zins', pair:'bk-hh-sparen', pairText:'Die Haushalte stellen Geld zur Verfügung – die Bank vergütet es mit Zinsen.', type:'geld', actor:'bank', from:'bank', to:'hh',
-    d:`M${bk.l},745 L340,745 L340,${hh.b}`, lx:346, ly:640, anchor:'start',
+  { id:'bk-hh-zins', cats:['geld','kapital'], pair:'bk-hh-sparen', pairText:'Die Haushalte stellen Geld zur Verfügung – die Bank vergütet es mit Zinsen.', type:'geld', actor:'bank', from:'bank', to:'hh',
+    d:'M262,730 C280,860 300,1010 420,1060 C500,1094 600,1090 676,1082', lx:430, ly:1042, anchor:'middle',
     title:'Zinsen', ft:'Banken → Haushalte',
     text:'Für das angelegte Geld erhalten die Haushalte Zinsen von der Bank.',
     q:'Was ist ein Zins – einfach erklärt?' },
 
-  { id:'bk-un-kredit', pair:'bk-un-zins', pairText:'Die Bank stellt Kapital bereit – die Unternehmen zahlen es mit Zinsen zurück.', type:'geld', actor:'bank', from:'bank', to:'un',
-    d:`M${bk.r},745 L960,745 L960,${un.b}`, lx:954, ly:640, anchor:'end',
+  { id:'bk-un-kredit', cats:['geld','kapital'], pair:'bk-un-zins', pairText:'Die Bank stellt Kapital bereit – die Unternehmen zahlen es mit Zinsen zurück.', type:'geld', actor:'bank', from:'bank', to:'un',
+    d:'M186,530 C172,380 230,220 400,150 C480,118 570,116 654,124', lx:400, ly:96, anchor:'middle',
     title:'Kredite', ft:'Banken → Unternehmen',
     text:'Die Banken stellen den Unternehmen Kapital als Kredit zur Verfügung. Damit werden Investitionen finanziert.',
     q:'Wofür braucht ein Unternehmen einen Kredit?' },
 
-  { id:'bk-un-zins', pair:'bk-un-kredit', pairText:'Die Bank stellt Kapital bereit – die Unternehmen zahlen es mit Zinsen zurück.', type:'geld', actor:'bank', from:'un', to:'bank',
-    d:`M1110,${un.b} L1110,815 L${bk.r},815`, lx:1118, ly:700, anchor:'start',
+  { id:'bk-un-zins', cats:['geld','kapital'], pair:'bk-un-kredit', pairText:'Die Bank stellt Kapital bereit – die Unternehmen zahlen es mit Zinsen zurück.', type:'geld', actor:'bank', from:'un', to:'bank',
+    d:'M654,196 C560,190 470,200 400,240 C310,292 268,390 258,528', lx:400, ly:284, anchor:'middle',
     title:'Zinsen / Rückzahlung', ft:'Unternehmen → Banken',
     text:'Die Unternehmen zahlen den Kredit zurück und entrichten dafür Zinsen.',
     q:'Warum verlangt eine Bank Zinsen?' },
 
-  /* ---- AUSLAND (unten rechts) – eigene Spuren zu den Unternehmen ---- */
-  { id:'au-export', sym:'paket', pair:'au-exporterloes', pairText:'Die Unternehmen liefern Güter ins Ausland – dafür fliessen Exporterlöse zurück.', type:'real', actor:'aus', from:'un', to:'aus',
-    d:`M${un.r},414 L1520,414 L1520,${au.t}`, lx:1528, ly:380, anchor:'end',
+  /* ---- AUSLAND rechts oben: vier Spuren zu den Unternehmen ---- */
+  { id:'au-export', sym:'paket', cats:['gueter'], pair:'au-exporterloes', pairText:'Die Unternehmen liefern Güter ins Ausland – dafür fliessen Exporterlöse zurück.', type:'real', actor:'aus', from:'un', to:'aus',
+    d:'M1046,102 C1150,104 1250,140 1350,205', lx:1150, ly:88, anchor:'middle',
     title:'Exporte', ft:'Unternehmen → Ausland',
     text:'Schweizer Unternehmen verkaufen Güter und Dienstleistungen ins Ausland.',
     q:'Welche Schweizer Produkte sind im Ausland gefragt?' },
 
-  { id:'au-exporterloes', pair:'au-export', pairText:'Die Unternehmen liefern Güter ins Ausland – dafür fliessen Exporterlöse zurück.', type:'geld', actor:'aus', from:'aus', to:'un',
-    d:`M1450,${au.t} L1450,458 L${un.r},458`, lx:1442, ly:560, anchor:'end',
+  { id:'au-exporterloes', cats:['geld'], pair:'au-export', pairText:'Die Unternehmen liefern Güter ins Ausland – dafür fliessen Exporterlöse zurück.', type:'geld', actor:'aus', from:'aus', to:'un',
+    d:'M1350,258 C1250,196 1150,158 1046,154', lx:1198, ly:150, anchor:'middle',
     title:'Exporterlöse', ft:'Ausland → Unternehmen',
     text:'Für die Exporte fliesst Geld aus dem Ausland zurück zu den Unternehmen.',
     q:'Warum ist der Export für die Schweiz wichtig?' },
 
-  { id:'au-import', sym:'paket', pair:'au-importzahl', pairText:'Das Ausland liefert Güter – die Unternehmen bezahlen dafür.', type:'real', actor:'aus', from:'aus', to:'un',
-    d:`M${au.l},735 L1210,735 L1210,${un.b}`, lx:1218, ly:755, anchor:'start',
+  { id:'au-import', sym:'paket', cats:['gueter'], pair:'au-importzahl', pairText:'Das Ausland liefert Güter – die Unternehmen bezahlen dafür.', type:'real', actor:'aus', from:'aus', to:'un',
+    d:'M1350,311 C1250,250 1150,212 1046,206', lx:1198, ly:246, anchor:'middle',
     title:'Importe', ft:'Ausland → Unternehmen',
     text:'Unternehmen beziehen Waren und Vorleistungen aus dem Ausland.',
     q:'Welches Produkt in Ihrem Alltag wurde importiert?' },
 
-  { id:'au-importzahl', pair:'au-import', pairText:'Das Ausland liefert Güter – die Unternehmen bezahlen dafür.', type:'geld', actor:'aus', from:'un', to:'aus',
-    d:`M1160,${un.b} L1160,790 L${au.l},790`, lx:1168, ly:610, anchor:'start',
+  { id:'au-importzahl', cats:['geld'], pair:'au-import', pairText:'Das Ausland liefert Güter – die Unternehmen bezahlen dafür.', type:'geld', actor:'aus', from:'un', to:'aus',
+    d:'M1046,258 C1150,262 1252,300 1350,364', lx:1200, ly:344, anchor:'middle',
     title:'Importzahlungen', ft:'Unternehmen → Ausland',
     text:'Für die importierten Güter fliesst Geld ins Ausland ab.',
     q:'Warum importiert die Schweiz überhaupt?' },
+
+  /* ---- KAPITALMARKT rechts unten: Haushalte legen an, Unternehmen holen
+     sich Kapital. Die beiden Unternehmens-Spuren laufen aussen herum.  ---- */
+  { id:'km-hh-kapital', cats:['geld','kapital'], pair:'km-hh-ertrag', pairText:'Die Haushalte legen Kapital an – dafür erhalten sie Zinsen und Dividenden.', type:'geld', actor:'kap', from:'hh', to:'kap',
+    d:'M1026,1080 C1150,1066 1270,1010 1360,946', lx:1190, ly:1024, anchor:'middle',
+    title:'Kapital anlegen', ft:'Haushalte → Kapitalmarkt',
+    text:'Wer Aktien oder Obligationen kauft, gibt sein Geld direkt einem Unternehmen oder dem Staat – nicht der Bank.',
+    q:'Was ist der Unterschied zwischen einem Sparkonto und einer Aktie?' },
+
+  { id:'km-hh-ertrag', cats:['geld','kapital'], pair:'km-hh-kapital', pairText:'Die Haushalte legen Kapital an – dafür erhalten sie Zinsen und Dividenden.', type:'geld', actor:'kap', from:'kap', to:'hh',
+    d:'M1360,998 C1270,1064 1150,1120 1026,1132', lx:1190, ly:1160, anchor:'middle',
+    title:'Zinsen & Dividenden', ft:'Kapitalmarkt → Haushalte',
+    text:'Obligationen werfen Zinsen ab, Aktien Dividenden. Beides ist die Gegenleistung für das bereitgestellte Kapital.',
+    q:'Warum kann eine Aktie auch an Wert verlieren?' },
+
+  { id:'km-un-kapital', cats:['geld','kapital'], pair:'km-un-ertrag', pairText:'Der Kapitalmarkt stellt Kapital bereit – die Unternehmen zahlen Zinsen und Dividenden.', type:'geld', actor:'kap', from:'kap', to:'un',
+    d:'M1556,872 C1700,838 1758,620 1745,400 C1730,150 1420,30 1150,40 C1060,44 1000,52 966,60', lx:1360, ly:22, anchor:'middle',
+    title:'Kapital / Beteiligungen', ft:'Kapitalmarkt → Unternehmen',
+    text:'Unternehmen beschaffen sich Geld, indem sie Aktien oder Obligationen ausgeben. Die Bank ist dabei nur Vermittlerin.',
+    q:'Warum geht ein Unternehmen an die Börse?' },
+
+  { id:'km-un-ertrag', cats:['geld','kapital'], pair:'km-un-kapital', pairText:'Der Kapitalmarkt stellt Kapital bereit – die Unternehmen zahlen Zinsen und Dividenden.', type:'geld', actor:'kap', from:'un', to:'kap',
+    d:'M902,64 C1120,14 1470,44 1620,152 C1694,208 1700,500 1690,672 C1684,796 1640,850 1568,868', lx:1360, ly:92, anchor:'middle',
+    title:'Zinsen & Dividenden', ft:'Unternehmen → Kapitalmarkt',
+    text:'Die Unternehmen zahlen Zinsen auf Obligationen und schütten einen Teil des Gewinns als Dividende aus.',
+    q:'Woher nimmt ein Unternehmen das Geld für die Dividende?' },
 ];
 
 /* ==========================================================================
    3. ZUSTAND
    ========================================================================== */
-const state = { mode:'einfach', staat:false, bank:false, aus:false, paused:false };
+const state = { mode:'einfach', cat:'alle', staat:false, bank:false, aus:false, kap:false, paused:false };
+const LV = { einfach:1, erweitert:2, voll:3 };
 let tourOn = false, tourIdx = 0, inTourStep = false;
 const visited = new Set();
 
 const NS = 'http://www.w3.org/2000/svg';
+// Bei «reduzierte Bewegung» wird alles langsamer, nie abgeschaltet.
+const REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const SLOW = REDUCED ? 3 : 1;
 const el = id => document.getElementById(id);
 const flowsG = el('flows'), labelsG = el('labels'), actorsG = el('actors');
 
@@ -609,6 +698,66 @@ function icon(kind){
 /* ==========================================================================
    5. AKTEURSKARTEN ZEICHNEN
    ========================================================================== */
+/* Sehr dezente Mikroanimationen: Rauch, Licht, Kursanzeige, Wasser.
+   Positionen als Anteil der Bildbreite/-höhe, damit sie mitskalieren. */
+function liveFx(key,a){
+  const L = a.x-a.w/2, T = a.y-a.h/2;
+  const px = fx => L + fx*a.w, py = fy => T + fy*a.h;
+  const g = document.createElementNS(NS,'g');
+  g.setAttribute('class','live');
+  const add = (tag,attrs,cls) => {
+    const e = document.createElementNS(NS,tag);
+    for(const k in attrs) e.setAttribute(k,attrs[k]);
+    if(cls) e.setAttribute('class',cls);
+    g.appendChild(e); return e;
+  };
+
+  if(key==='un'){
+    // Rauchwölkchen über den Kaminen
+    [[0.780,0.028,0],[0.855,0.050,2.3],[0.780,0.028,4.6]].forEach(([fx,fy,d],i)=>{
+      const c = add('circle',{cx:px(fx),cy:py(fy),r:a.w*0.021,fill:'#8FA3AE'},'smoke s'+(i+1));
+      c.style.animationDelay = d+'s';
+    });
+    return g;
+  }
+  if(key==='hh'){
+    // warmes Licht in drei Fenstern
+    [[0.428,0.705,0.050,0.112,0],[0.693,0.715,0.052,0.124,2.1],[0.322,0.446,0.034,0.074,4.4]]
+    .forEach(([fx,fy,fw,fh,d])=>{
+      const r = add('rect',{x:px(fx)-a.w*fw/2,y:py(fy)-a.h*fh/2,width:a.w*fw,height:a.h*fh,
+                            rx:a.w*0.006,fill:'#FFCE63'},'lamp');
+      r.style.animationDelay = d+'s';
+    });
+    return g;
+  }
+  if(key==='kap'){
+    // die ganze Kursanzeige leuchtet leise auf
+    add('rect',{x:px(0.140),y:py(0.2625),width:a.w*0.220,height:a.h*0.425,
+                rx:a.w*0.008,fill:'#5DF2A8'},'screen');
+    return g;
+  }
+  if(key==='aus'){
+    // Warnlicht zuoberst am Kran
+    add('circle',{cx:px(0.660),cy:py(0.040),r:a.w*0.017,fill:'#FF7A59'},'blip');
+    return g;
+  }
+  if(key==='bank'){
+    // warmes Licht in der Schalterhalle
+    [[0.193,0.732,0.037,0.124,0],[0.189,0.578,0.037,0.113,3.2]].forEach(([fx,fy,fw,fh,d])=>{
+      const r = add('rect',{x:px(fx)-a.w*fw/2,y:py(fy)-a.h*fh/2,width:a.w*fw,height:a.h*fh,
+                            rx:a.w*0.006,fill:'#FFCE63'},'lamp');
+      r.style.animationDelay = d+'s';
+    });
+    return g;
+  }
+  if(key==='staat'){
+    // sanftes Licht im Kuppelsaal
+    add('ellipse',{cx:px(0.450),cy:py(0.215),rx:a.w*0.062,ry:a.h*0.070,fill:'#FFE9A8'},'lamp');
+    return g;
+  }
+  return null;
+}
+
 const actorEls = {};
 Object.entries(A).forEach(([key,a])=>{
   const g = document.createElementNS(NS,'g');
@@ -617,24 +766,46 @@ Object.entries(A).forEach(([key,a])=>{
   g.setAttribute('role','button');
   g.setAttribute('aria-label','Akteur '+a.name+', '+a.role);
 
-  const r = document.createElementNS(NS,'rect');
-  r.setAttribute('class','cardbg');
-  r.setAttribute('x',a.x-a.w/2); r.setAttribute('y',a.y-a.h/2);
-  r.setAttribute('width',a.w);   r.setAttribute('height',a.h);
-  r.setAttribute('rx','18');
-  g.appendChild(r);
+  const L = a.x-a.w/2, T = a.y-a.h/2;
 
-  const ic = icon(key);
-  ic.setAttribute('transform','translate('+(a.x-a.w/2+40)+','+a.y+')');
-  g.appendChild(ic);
+  // weicher Bodenschatten, damit die Gebaeude auf einer Flaeche stehen
+  const sh = document.createElementNS(NS,'ellipse');
+  sh.setAttribute('class','ground');
+  sh.setAttribute('cx',a.x); sh.setAttribute('cy',a.y+a.h/2-6);
+  sh.setAttribute('rx',a.w*0.40); sh.setAttribute('ry',a.w*0.055);
+  g.appendChild(sh);
 
-  const tx = a.x - a.w/2 + 72;
+  const im = document.createElementNS(NS,'image');
+  im.setAttribute('class','bld');
+  im.setAttribute('href',a.img);
+  im.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href',a.img);
+  im.setAttribute('x',L); im.setAttribute('y',T);
+  im.setAttribute('width',a.w); im.setAttribute('height',a.h);
+  g.appendChild(im);
+
+  // unsichtbare Klickflaeche (transparente PNG-Bereiche nehmen sonst keine Klicks an)
+  const hit = document.createElementNS(NS,'rect');
+  hit.setAttribute('class','hit');
+  hit.setAttribute('x',L); hit.setAttribute('y',T);
+  hit.setAttribute('width',a.w); hit.setAttribute('height',a.h);
+  g.appendChild(hit);
+
+  const lv = liveFx(key, a);
+  if(lv) g.appendChild(lv);
+
+  // Namensschild in der Akteursfarbe
+  const pw = Math.max(150, a.name.length*15 + 34), ph = 42;
+  const py = a.y + a.h/2 + (a.pdy||12);
+  const pl = document.createElementNS(NS,'rect');
+  pl.setAttribute('class','plate');
+  pl.setAttribute('x',a.x-pw/2); pl.setAttribute('y',py);
+  pl.setAttribute('width',pw);   pl.setAttribute('height',ph);
+  pl.setAttribute('rx',ph/2);    pl.setAttribute('fill',a.col);
+  g.appendChild(pl);
+
   const t1 = document.createElementNS(NS,'text');
-  t1.setAttribute('class','aname'); t1.setAttribute('x',tx); t1.setAttribute('y',a.y-4);
+  t1.setAttribute('class','aname'); t1.setAttribute('x',a.x); t1.setAttribute('y',py+28);
   t1.textContent = a.name; g.appendChild(t1);
-  const t2 = document.createElementNS(NS,'text');
-  t2.setAttribute('class','arole'); t2.setAttribute('x',tx); t2.setAttribute('y',a.y+20);
-  t2.textContent = a.role; g.appendChild(t2);
 
   g.addEventListener('click', ()=> selectActor(key, true));
   g.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); selectActor(key, true); } });
@@ -659,33 +830,33 @@ function flowIcon(f){
   };
 
   if(f.type === 'geld'){
-    // Banknote (grün) – gut sichtbar auf dem Band
-    el('rect',{x:-17,y:-11,width:34,height:22,rx:3.5,fill:'#1E9E62',stroke:'#0B6339','stroke-width':2.4});
-    el('circle',{cx:0,cy:0,r:6.5,fill:'#EAF7F0',stroke:'#0B6339','stroke-width':2});
-    el('path',{d:'M0,-4 L0,4 M-2.6,-2 h5.2 M-2.6,2 h5.2',stroke:'#0B6339','stroke-width':1.9,fill:'none','stroke-linecap':'round'});
-    el('path',{d:'M-13,-7 v14 M13,-7 v14',stroke:'#0B6339','stroke-width':1.5,'stroke-linecap':'round'});
+    // Banknote (dunkles Gold) – gut sichtbar auf dem hellen Goldband
+    el('rect',{x:-17,y:-11,width:34,height:22,rx:3.5,fill:'#8F6412',stroke:'#5E410A','stroke-width':2.4});
+    el('circle',{cx:0,cy:0,r:6.5,fill:'#FBF0DA',stroke:'#5E410A','stroke-width':2});
+    el('path',{d:'M0,-4 L0,4 M-2.6,-2 h5.2 M-2.6,2 h5.2',stroke:'#5E410A','stroke-width':1.9,fill:'none','stroke-linecap':'round'});
+    el('path',{d:'M-13,-7 v14 M13,-7 v14',stroke:'#5E410A','stroke-width':1.5,'stroke-linecap':'round'});
     return g;
   }
 
   // Realströme
   if(f.sym === 'arm'){
     // Person – die Haushalte stellen Arbeitskraft (Menschen) zur Verfügung
-    el('circle',{cx:0,cy:-8,r:5.5,fill:'#C08A1E',stroke:'#7A5510','stroke-width':2.2});
+    el('circle',{cx:0,cy:-8,r:5.5,fill:'#1E9E62',stroke:'#0B6339','stroke-width':2.2});
     el('path',{d:'M-9,11 L-9,1 C-9,-2.5 -5,-4.5 0,-4.5 C5,-4.5 9,-2.5 9,1 L9,11 Z',
-               fill:'#C08A1E',stroke:'#7A5510','stroke-width':2.2,'stroke-linejoin':'round'});
+               fill:'#1E9E62',stroke:'#0B6339','stroke-width':2.2,'stroke-linejoin':'round'});
     return g;
   }
   if(f.sym === 'gov'){
     // Amtsgebäude (öffentliche Leistungen)
-    el('path',{d:'M-15,-3 L0,-14 L15,-3 Z',fill:'#C08A1E',stroke:'#7A5510','stroke-width':2.2});
-    el('rect',{x:-15,y:8,width:30,height:4.5,rx:1.5,fill:'#8F6412'});
+    el('path',{d:'M-15,-3 L0,-14 L15,-3 Z',fill:'#1E9E62',stroke:'#0B6339','stroke-width':2.2});
+    el('rect',{x:-15,y:8,width:30,height:4.5,rx:1.5,fill:'#0B6339'});
     [-11,-4,3,10].forEach(x=>
-      el('rect',{x:x,y:-3,width:3.6,height:11,fill:'#C08A1E',stroke:'#7A5510','stroke-width':1.4}));
+      el('rect',{x:x,y:-3,width:3.6,height:11,fill:'#1E9E62',stroke:'#0B6339','stroke-width':1.4}));
     return g;
   }
   // Standard-Realstrom: Warenkiste (Güter, Import, Export)
-  el('rect',{x:-14,y:-11,width:28,height:22,rx:3,fill:'#C08A1E',stroke:'#7A5510','stroke-width':2.4});
-  el('path',{d:'M-14,-3 h28 M0,-11 v22',stroke:'#8F6412','stroke-width':2.2});
+  el('rect',{x:-14,y:-11,width:28,height:22,rx:3,fill:'#1E9E62',stroke:'#0B6339','stroke-width':2.4});
+  el('path',{d:'M-14,-3 h28 M0,-11 v22',stroke:'#0B6339','stroke-width':2.2});
   return g;
 }
 
@@ -712,7 +883,10 @@ F.forEach(f=>{
   // Fliessendes Symbol statt Punkt: wandert dem Band entlang
   const sym = flowIcon(f);
   const mo = document.createElementNS(NS,'animateMotion');
-  mo.setAttribute('dur', f.type==='geld' ? '6s' : '7s');
+  // Gleiche Geschwindigkeit auf allen Bahnen: Dauer folgt der Pfadlänge.
+  const len = line.getTotalLength ? line.getTotalLength() : 700;
+  const dur = Math.min(16, Math.max(5, len/78)) * SLOW;
+  mo.setAttribute('dur', dur.toFixed(1)+'s');
   mo.setAttribute('repeatCount','indefinite');
   mo.setAttribute('path', f.d);
   sym.appendChild(mo);
@@ -738,8 +912,9 @@ F.forEach(f=>{
 /* ==========================================================================
    7. SICHTBARKEIT
    ========================================================================== */
-const actorVisible = k => A[k].core || (state.mode==='erweitert' && state[k]);
-const flowVisible  = f => f.core ? true : (state.mode==='erweitert' && !!state[f.actor]);
+const actorVisible = k => A[k].lvl===1 || (LV[state.mode] >= A[k].lvl && !!state[k]);
+const catOK = f => state.cat==='alle' || (f.cats||[]).includes(state.cat);
+const flowVisible  = f => (f.core ? true : actorVisible(f.actor)) && catOK(f);
 
 function applyVisibility(){
   Object.keys(A).forEach(k=> actorEls[k].classList.toggle('hidden', !actorVisible(k)));
@@ -749,10 +924,15 @@ function applyVisibility(){
     flowEls[f.id].label.classList.toggle('hidden', !vis);
   });
   document.querySelectorAll('.toggle').forEach(b=>{
-    const a = b.dataset.actor;
-    b.disabled = state.mode!=='erweitert';
-    b.classList.toggle('on', state.mode==='erweitert' && state[a]);
-    b.setAttribute('aria-pressed', String(state.mode==='erweitert' && !!state[a]));
+    const a = b.dataset.actor, ok = LV[state.mode] >= A[a].lvl;
+    b.disabled = !ok;
+    b.classList.toggle('on', ok && !!state[a]);
+    b.setAttribute('aria-pressed', String(ok && !!state[a]));
+  });
+  document.querySelectorAll('.chip').forEach(c=>{
+    const on = c.dataset.cat===state.cat;
+    c.classList.toggle('on', on);
+    c.setAttribute('aria-pressed', String(on));
   });
   const svg = el('board');
   if(state.paused) svg.pauseAnimations(); else svg.unpauseAnimations();
@@ -867,6 +1047,7 @@ function selectActor(key, byUser){
     staat:'Der Staat erhält Steuern und Abgaben. Damit finanziert er öffentliche Leistungen, Transferzahlungen, Aufträge und Subventionen.',
     bank:'Banken sammeln Ersparnisse und stellen Kapital als Kredite zur Verfügung. Dafür erhalten sie Zinsen.',
     aus:'Das Ausland erweitert den Kreislauf: Waren, Dienstleistungen und Geld fliessen über die Landesgrenze hinaus.',
+    kap:'Am Kapitalmarkt geben Anlegerinnen und Anleger ihr Geld direkt einem Unternehmen oder dem Staat – über Aktien und Obligationen. Die Bank ist dabei nur Vermittlerin.',
   };
   const fragen = {
     hh:'Welche Rolle nehmen Sie selbst als Haushalt ein?',
@@ -874,6 +1055,7 @@ function selectActor(key, byUser){
     staat:'Wofür soll der Staat Ihrer Meinung nach Geld ausgeben?',
     bank:'Warum braucht eine Wirtschaft Banken?',
     aus:'Was würde fehlen, wenn die Schweiz keinen Aussenhandel hätte?',
+    kap:'Was ist der Unterschied zwischen einem Sparkonto und einer Aktie?',
   };
   const a = A[key];
   el('p-eyebrow').textContent = 'Akteur';
@@ -888,14 +1070,21 @@ function selectActor(key, byUser){
 
 function resetPanel(){
   clearHighlight();
-  el('p-eyebrow').textContent = state.mode==='einfach' ? 'Einfacher Kreislauf' : 'Erweiterter Kreislauf';
-  el('p-title').textContent   = state.mode==='einfach' ? 'Wer gibt wem was?' : 'Staat, Banken und Ausland';
+  const EB = { einfach:'Einfacher Kreislauf', erweitert:'Erweiterter Kreislauf', voll:'Vollständiger Kreislauf' };
+  const TI = { einfach:'Wer gibt wem was?',    erweitert:'Staat und Banken',      voll:'Ausland und Kapitalmarkt' };
+  el('p-eyebrow').textContent = EB[state.mode];
+  el('p-title').textContent   = TI[state.mode];
   el('p-fromto').hidden = true;
   el('p-badge').hidden  = true;
   el('p-pairbox').hidden = true;
-  el('p-text').textContent = state.mode==='einfach'
-    ? 'Haushalte und Unternehmen tauschen Arbeit und Güter gegen Lohn und Konsumausgaben. Klicken Sie auf einen Akteur oder einen Pfeil.'
-    : 'Schalten Sie Staat, Banken und Ausland zu und beobachten Sie, welche neuen Ströme entstehen.';
+  const TX = {
+    einfach:'Haushalte und Unternehmen tauschen Arbeit und Güter gegen Lohn und Konsumausgaben. Klicken Sie auf einen Akteur oder einen Pfeil.',
+    erweitert:'Staat und Banken kommen dazu. Beobachten Sie, welche neuen Ströme entstehen – und dass jedem Geldstrom weiterhin eine Leistung gegenübersteht.',
+    voll:'Jetzt ist der Kreislauf offen: Waren und Geld überqueren die Landesgrenze, und über den Kapitalmarkt fliesst Geld direkt von den Anlegern zu den Unternehmen.'
+  };
+  el('p-text').textContent = state.cat!=='alle'
+    ? 'Lernmodus aktiv: Es sind nur die ausgewählten Ströme sichtbar. Zurück zur Gesamtsicht mit «Alles».'
+    : TX[state.mode];
   el('p-qbox').hidden = true;
   markVisited();
 }
@@ -909,12 +1098,14 @@ el('board').addEventListener('click', e=>{
    ========================================================================== */
 function applyMode(m){
   state.mode = m;
-  el('m-einfach').classList.toggle('active', m==='einfach');
-  el('m-erweitert').classList.toggle('active', m==='erweitert');
-  el('m-einfach').setAttribute('aria-selected', String(m==='einfach'));
-  el('m-erweitert').setAttribute('aria-selected', String(m==='erweitert'));
-  if(m==='einfach'){ state.staat=state.bank=state.aus=false; }
-  else { state.staat=state.bank=state.aus=true; }
+  ['einfach','erweitert','voll'].forEach(x=>{
+    const b = el('m-'+x);
+    b.classList.toggle('active', m===x);
+    b.setAttribute('aria-selected', String(m===x));
+  });
+  const lv = LV[m];
+  state.staat = state.bank = lv>=2;
+  state.aus   = state.kap  = lv>=3;
   applyVisibility();
 }
 function setMode(m){
@@ -925,10 +1116,20 @@ function setMode(m){
 }
 el('m-einfach').addEventListener('click', ()=> setMode('einfach'));
 el('m-erweitert').addEventListener('click', ()=> setMode('erweitert'));
+el('m-voll').addEventListener('click', ()=> setMode('voll'));
+
+document.querySelectorAll('.chip').forEach(c=>{
+  c.addEventListener('click', ()=>{
+    stopTour();
+    state.cat = c.dataset.cat;
+    applyVisibility();
+    resetPanel();
+  });
+});
 
 document.querySelectorAll('.toggle').forEach(b=>{
   b.addEventListener('click', ()=>{
-    if(state.mode!=='erweitert') return;
+    if(LV[state.mode] < A[b.dataset.actor].lvl) return;
     stopTour();
     const a = b.dataset.actor;
     state[a] = !state[a];
@@ -947,7 +1148,9 @@ el('pause-btn').addEventListener('click', function(){
 /* ==========================================================================
    10. GEFÜHRTE TOUR – erst der einfache, dann der erweiterte Kreislauf
    ========================================================================== */
-const TOUR = [
+const TOURS = {
+
+rundgang: [
   { kind:'mode',  value:'einfach',   title:'Der einfache Kreislauf',
     text:'Wir starten mit den zwei Grundakteuren: den Haushalten und den Unternehmen.' },
   { kind:'actor', value:'hh' },
@@ -957,17 +1160,71 @@ const TOUR = [
   { kind:'flow',  value:'gueter' },
   { kind:'flow',  value:'konsum' },
   { kind:'mode',  value:'erweitert', title:'Der erweiterte Kreislauf',
-    text:'Nun kommen Staat, Banken und Ausland dazu. Beobachten Sie, welche neuen Ströme entstehen.' },
+    text:'Nun kommen der Staat und die Banken dazu. Beobachten Sie, welche neuen Ströme entstehen.' },
   { kind:'actor', value:'staat' },
   { kind:'actor', value:'bank' },
+  { kind:'mode',  value:'voll',      title:'Der vollständige Kreislauf',
+    text:'Zuletzt öffnen wir den Kreislauf nach aussen: das Ausland und der Kapitalmarkt kommen dazu.' },
   { kind:'actor', value:'aus' },
+  { kind:'actor', value:'kap' },
   { kind:'end',   title:'Zusammenfassung',
-    text:'Geld fliesst meist in die Gegenrichtung zu Gütern und Leistungen. Staat, Banken und Ausland erweitern diesen Grundkreislauf – am Prinzip ändert sich nichts.' },
-];
+    text:'Geld fliesst meist in die Gegenrichtung zu Gütern und Leistungen. Staat, Banken, Ausland und Kapitalmarkt erweitern diesen Grundkreislauf – am Prinzip ändert sich nichts.' },
+],
+
+note: [
+  { kind:'mode',  value:'erweitert', title:'Die Reise einer 20-Franken-Note',
+    text:'Wir verfolgen eine einzelne 20-Franken-Note durch den Kreislauf. Sie liegt zu Beginn in der Kasse eines Unternehmens.' },
+  { kind:'flow',  value:'lohn', title:'1 · Als Lohn ausbezahlt',
+    story:'Ende Monat zahlt das Unternehmen Löhne aus. Unsere 20-Franken-Note wandert auf das Konto von Alex – als Gegenleistung für seine Arbeit.' },
+  { kind:'flow',  value:'st-hh-steuern', title:'2 · Ein Teil geht an den Staat',
+    story:'Von jedem Lohnfranken geht ein Teil als Steuer und Sozialabgabe an den Staat. Ein Fünfliber unserer Note bleibt gleich dort.' },
+  { kind:'flow',  value:'konsum', title:'3 · Im Laden ausgegeben',
+    story:'Am Samstag kauft Alex ein. Die Note wandert über die Kasse zurück zu einem Unternehmen – jetzt als Konsumausgabe.' },
+  { kind:'flow',  value:'gueter', title:'4 · Dafür gibt es Ware',
+    story:'In der Gegenrichtung fliesst die Leistung: Alex nimmt Lebensmittel mit nach Hause. Geld und Güter laufen immer gegenläufig.' },
+  { kind:'flow',  value:'bk-hh-sparen', title:'5 · Was übrig bleibt, wird gespart',
+    story:'Was Alex nicht ausgibt, bringt er auf sein Sparkonto. Die Note verlässt den Haushalt und liegt nun bei der Bank.' },
+  { kind:'flow',  value:'bk-un-kredit', title:'6 · Die Bank gibt sie weiter',
+    story:'Die Bank lässt das Geld nicht liegen. Sie verleiht es als Kredit an ein Unternehmen, das eine neue Maschine kauft.' },
+  { kind:'end',   title:'7 · Der Kreis schliesst sich',
+    text:'Die Note ist einmal herum: Unternehmen → Haushalt → Staat → Unternehmen → Bank → Unternehmen. Sie ist dabei nie verschwunden – sie hat nur immer wieder die Besitzerin gewechselt. Genau das meint das Wort «Kreislauf».' },
+],
+
+alex: [
+  { kind:'mode',  value:'voll',      title:'Ein Tag im Leben von Alex',
+    text:'Alex ist 19, im dritten Lehrjahr und wohnt in Aarau. Wir schauen einen ganz normalen Tag an – und sehen, wo er überall im Wirtschaftskreislauf auftaucht.' },
+  { kind:'flow',  value:'arbeit', title:'07:15 · Er geht arbeiten',
+    story:'Alex fährt in den Betrieb und stellt dort seine Arbeitskraft zur Verfügung. Das ist sein Beitrag zum Kreislauf – ein Güter- und Leistungsstrom, kein Geldstrom.' },
+  { kind:'flow',  value:'lohn', title:'Ende Monat · Der Lohn kommt',
+    story:'Für seine Arbeit erhält Alex Lohn. Das Geld fliesst genau in die Gegenrichtung zu seiner Arbeitsleistung.' },
+  { kind:'flow',  value:'st-hh-steuern', title:'Auf der Lohnabrechnung · Abzüge',
+    story:'Auf der Abrechnung stehen AHV, ALV, Pensionskasse und später die Steuerrechnung. Dieser Teil geht direkt an den Staat.' },
+  { kind:'flow',  value:'st-hh-leist', title:'Dafür bekommt er etwas zurück',
+    story:'Berufsschule, Bahnhof, Strassen, Polizei, Spitäler: das alles finanziert der Staat mit genau diesen Abgaben.' },
+  { kind:'flow',  value:'konsum', title:'12:00 · Mittagessen',
+    story:'Alex kauft sich in der Migros ein Sandwich. Sein Geld fliesst als Konsumausgabe zu einem Unternehmen.' },
+  { kind:'flow',  value:'bk-hh-sparen', title:'Abends · Sparen für die Ferien',
+    story:'Was übrig bleibt, legt Alex auf sein Sparkonto. Die Bank verwaltet das Geld – Alex weiss nicht, wer es später als Kredit erhält.' },
+  { kind:'flow',  value:'km-hh-kapital', title:'Sein Vater macht es anders',
+    story:'Alex\u2019 Vater kauft stattdessen Aktien. Damit gibt er sein Geld direkt einem Unternehmen und wird Mitbesitzer – das ist der Unterschied zwischen Bank und Kapitalmarkt.' },
+  { kind:'flow',  value:'au-import', title:'Im Sommer · Ferien und Importe',
+    story:'Das Handy von Alex kommt aus Asien, die Ferien verbringt er in Italien. Damit verlässt Geld die Schweiz – der Kreislauf ist offen.' },
+  { kind:'end',   title:'Alex ist überall',
+    text:'An einem einzigen Tag war Alex Arbeitskraft, Steuerzahler, Konsument, Sparer und Reisender. Jeder von uns steckt gleichzeitig in mehreren Rollen des Kreislaufs – deshalb betrifft uns Wirtschaft immer persönlich.' },
+],
+
+};
+
+let TOUR = TOURS.rundgang;
 
 const progressBox = el('progress');
-TOUR.forEach(()=> progressBox.appendChild(document.createElement('span')));
-const progSpans = Array.from(progressBox.querySelectorAll('span'));
+let progSpans = [];
+function buildProgress(){
+  progressBox.innerHTML = '';
+  TOUR.forEach(()=> progressBox.appendChild(document.createElement('span')));
+  progSpans = Array.from(progressBox.querySelectorAll('span'));
+}
+buildProgress();
 
 function panelPlain(title, text){
   clearHighlight();
@@ -990,7 +1247,11 @@ function renderTourStep(){
   inTourStep = true;   // verhindert, dass select* die Tour stoppt
   if(step.kind==='mode'){ applyMode(step.value); panelPlain(step.title, step.text); }
   else if(step.kind==='actor'){ selectActor(step.value, false); }
-  else if(step.kind==='flow'){  selectFlow(step.value, false); }
+  else if(step.kind==='flow'){
+    selectFlow(step.value, false);
+    if(step.title) el('p-title').textContent = step.title;
+    if(step.story){ el('p-eyebrow').textContent = 'Geschichte'; el('p-text').textContent = step.story; }
+  }
   else if(step.kind==='end'){   panelPlain(step.title, step.text); }
   inTourStep = false;
 }
@@ -998,7 +1259,7 @@ function renderTourStep(){
 function stopTour(){
   if(!tourOn) return;
   tourOn = false;
-  el('t-start').textContent = '▶ Tour starten';
+  el('t-start').textContent = '▶ Starten';
   el('t-prev').disabled = true;
   el('t-next').disabled = true;
 }
@@ -1006,16 +1267,26 @@ function stopTour(){
 el('t-start').addEventListener('click', ()=>{
   if(tourOn){ stopTour(); return; }
   tourOn = true; tourIdx = 0;
-  el('t-start').textContent = '⏹ Tour beenden';
+  el('t-start').textContent = '⏹ Beenden';
   renderTourStep();
 });
 el('t-next').addEventListener('click', ()=>{ if(tourOn && tourIdx<TOUR.length-1){ tourIdx++; renderTourStep(); } });
 el('t-prev').addEventListener('click', ()=>{ if(tourOn && tourIdx>0){ tourIdx--; renderTourStep(); } });
+el('t-sel').addEventListener('change', function(){
+  stopTour();
+  TOUR = TOURS[this.value] || TOURS.rundgang;
+  tourIdx = 0;
+  buildProgress();
+  el('t-step').textContent = this.value==='rundgang' ? 'Geführte Tour' : 'Geschichte';
+  applyMode('einfach');
+  resetPanel();
+});
+
 el('t-reset').addEventListener('click', ()=>{
   stopTour();
   tourIdx = 0;
   progSpans.forEach(s=> s.classList.remove('done'));
-  el('t-step').textContent = 'Geführte Tour';
+  el('t-step').textContent = el('t-sel').value==='rundgang' ? 'Geführte Tour' : 'Geschichte';
   visited.clear();
   applyMode('einfach');
   resetPanel();
