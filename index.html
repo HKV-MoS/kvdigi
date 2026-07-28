@@ -84,6 +84,9 @@ body{
   max-width:62ch;
 }
 .hinweis b{color:var(--tinte);font-weight:700}
+.kvd{color:var(--hkv);font-weight:700;text-decoration:underline;text-decoration-color:rgba(31,78,120,.35);text-underline-offset:3px}
+.kvd:hover,.kvd:focus-visible{text-decoration-color:currentColor}
+.kvd .pfeil-ex{font-size:.82em;opacity:.7;margin-left:.15em}
 .rule{height:1px;background:var(--linie);margin:2.2rem 0 0}
 
 /* ── Abschnitts-Label ── */
@@ -264,7 +267,7 @@ body{
       <p class="lead">Interaktive Folien, Simulationen und Rechner für den allgemeinbildenden Unterricht – direkt nutzbar am Beamer, Tablet oder Laptop.</p>
     </div>
     <div class="hinweis">
-      Die Aufträge, Lernziele und Theorie finden Sie in <b>KV&nbsp;Digital</b>.
+      Die Aufträge, Lernziele und Theorie finden Sie in <a class="kvd" href="https://go.kvdigital.swiss/dashboard" target="_blank" rel="noopener">KV&nbsp;Digital<span class="pfeil-ex">↗</span></a>.
       abu-tools.ch ergänzt den Unterricht mit interaktiven Werkzeugen, die sich dort verlinken lassen.
     </div>
     <div class="rule"></div>
@@ -442,7 +445,7 @@ body{
 
   <footer class="fuss">
     <b>abu-tools.ch</b> — interaktive Werkzeuge für den ABU-Unterricht an der HKV Aarau · S. Mollet, ABU &amp; Sport<br>
-    Aufträge und Lerninhalte: KV Digital.
+    Aufträge und Lerninhalte: <a class="kvd" href="https://go.kvdigital.swiss/dashboard" target="_blank" rel="noopener">KV&nbsp;Digital<span class="pfeil-ex">↗</span></a>
   </footer>
 
 </div>
