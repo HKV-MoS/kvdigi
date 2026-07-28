@@ -62,9 +62,11 @@ body{
 .tw{position:absolute;width:6px;height:6px;border-radius:50%;pointer-events:none;opacity:0;z-index:2;background:radial-gradient(circle,#fffdf2,#ffe9ad 45%,rgba(255,214,120,0) 72%);animation:twk 4.5s ease-in-out infinite}
 @keyframes twk{0%,100%{opacity:0;transform:scale(.3)}50%{opacity:.95;transform:scale(1.1)}}
 .rotor{position:absolute;transform:translate(-50%,-50%);transform-origin:50% 50%;z-index:1;pointer-events:none;will-change:transform}
-.r1{left:75.789%;top:82.988%;width:15.779%;animation:rot 26s linear infinite}
-.r2{left:86.028%;top:88.543%;width:7.733%;animation:rotrev 13.5s linear infinite;filter:drop-shadow(4px 6px 7px rgba(90,70,40,.32))}
-.r3{left:91.266%;top:83.975%;width:4.908%;animation:rot 8.6s linear infinite;filter:drop-shadow(3px 4px 5px rgba(90,70,40,.32))}
+.patch{position:absolute;transform:translate(-50%,-50%);z-index:0;pointer-events:none}
+.p1{left:75.838%;top:81.410%;width:14.333%}
+.r1{left:75.838%;top:81.410%;width:14.333%;animation:rot 26s linear infinite}
+.r2{left:86.054%;top:87.711%;width:7.560%;animation:rotrev 13.5s linear infinite}
+.r3{left:91.283%;top:83.447%;width:4.798%;animation:rot 8.6s linear infinite}
 @keyframes rot{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(360deg)}}
 @keyframes rotrev{from{transform:translate(-50%,-50%) rotate(360deg)}to{transform:translate(-50%,-50%) rotate(0deg)}}
 @media(prefers-reduced-motion:reduce){.tw{animation:none}.shine{display:none}
@@ -251,9 +253,10 @@ body{
       <img class="hero-img" src="abu_hero2.jpg?v=3" alt="Kopf aus goldenen Zahnrädern, die die ABU-Themen bilden">
       <div class="shine"></div>
       <div class="tw" style="left:60%;top:15%"></div><div class="tw" style="left:83%;top:24%;animation-delay:1.6s"></div><div class="tw" style="left:72%;top:38%;animation-delay:2.8s"></div><div class="tw" style="left:82%;top:55%;animation-delay:.9s"></div><div class="tw" style="left:70%;top:62%;animation-delay:3.3s"></div>
-      <img class="rotor r1" src="abu_gear_dot.png?v=3" alt="" aria-hidden="true">
-      <img class="rotor r2 rev" src="abu_gear_solo.png?v=3" alt="" aria-hidden="true">
-      <img class="rotor r3" src="abu_gear_solo.png?v=3" alt="" aria-hidden="true">
+      <img class="patch p1" src="abu_gear_patch.png?v=5" alt="" aria-hidden="true">
+      <img class="rotor r1" src="abu_gear_solo.png?v=5" alt="" aria-hidden="true">
+      <img class="rotor r2" src="abu_gear_solo.png?v=5" alt="" aria-hidden="true">
+      <img class="rotor r3" src="abu_gear_solo.png?v=5" alt="" aria-hidden="true">
     </div>
     <div class="hero-text">
       <div class="eyebrow">HKV Aarau · Allgemeinbildung</div>
@@ -394,6 +397,16 @@ body{
         <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
         <img class="k-deko" src="kachel_hydrant.png?v=4" alt="" onerror="this.style.display=&#39;none&#39;">
       </a>
+
+      <div class="karte" data-kat="lernen" data-wip aria-disabled="true">
+        <span class="wip-ribbon">🚧 Coming soon</span>
+        <div class="k-kopf">
+          <span class="k-thema">Lernspiel</span>
+        </div>
+        <div class="k-titel">1875</div>
+        <p class="k-text">Das nächste Adventure im Stil von «Der Kauf» – aktuell in Entwicklung.</p>
+        <span class="wip-tag">👷 In Entwicklung – bald hier</span>
+      </div>
 
       <a class="karte" href="slp_karte.html" data-kat="lernen">
         <div class="k-thema">Lehrplan · ABU</div>
