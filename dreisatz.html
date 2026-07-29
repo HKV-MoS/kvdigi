@@ -355,6 +355,12 @@
       </div>
       <div class="result-line">📦 Zu viert braucht ihr 3 Stunden.</div>
       <p style="margin-top:10px;"><b>Kontrolle:</b> Das Produkt bleibt gleich: 2 · 6 = 12 und 4 · 3 = 12. ✓</p>
+
+      <figure class="illu">
+        <img id="illu-ungerade" src="dreisatz_ungerader.jpg" loading="lazy"
+             alt="Ungerader Dreisatz am Beispiel Lager: zu zweit 6 Stunden, eine Person 12 Stunden, zu viert 3 Stunden.">
+        <figcaption>Derselbe Weg als Bild – erst auf 1 Person hoch, dann auf 4 Personen herunter. Klicken zum Vergrössern.</figcaption>
+      </figure>
     </div>
 
     <div class="card">
@@ -860,8 +866,9 @@ $('fa-btn').onclick=()=>{
   else renderAnalyse('Fehleranalyse');
 };
 
-const illu=$('illu-gerade');
-if(illu) illu.addEventListener('click',()=>lightboxAuf(illu.getAttribute('src'), illu.getAttribute('alt')));
+document.querySelectorAll('.illu img').forEach(bild=>{
+  bild.addEventListener('click',()=>lightboxAuf(bild.getAttribute('src'), bild.getAttribute('alt')));
+});
 $('lightbox').addEventListener('click', lightboxZu);
 $('feier').addEventListener('click', e=>{ if(e.target.id==='feier') feierZu(); });
 document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ lightboxZu(); feierZu(); } });

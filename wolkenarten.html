@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wolken lesen – HKV Aarau</title>
+<style>
+  *{ box-sizing:border-box; }
+  body{ margin:0; font-family:'Aptos','Segoe UI',system-ui,-apple-system,sans-serif; background:#F4F8FB; color:#1A2B3A; font-size:15px; line-height:1.55; }
+  header{ background:linear-gradient(135deg,#213B42 0%,#3C6E73 100%); color:#fff; padding:18px 22px 22px; box-shadow:0 2px 8px rgba(0,0,0,.12); text-align:center; }
+  .brand-eyebrow{ font-size:11px; font-weight:800; letter-spacing:2.5px; color:#D8AE66; margin-bottom:3px; text-transform:uppercase; }
+  header h1{ margin:0 0 2px; font-size:22px; font-weight:800; letter-spacing:-.3px; }
+  header .sub{ font-size:13px; opacity:.93; max-width:760px; margin:0 auto; }
+  .wrap{ max-width:980px; margin:0 auto; padding:16px; }
+
+  /* Tabs */
+  .tabs{ display:flex; gap:8px; margin:18px 0 4px; flex-wrap:wrap; }
+  .tab{ font-family:inherit; font-size:14px; font-weight:700; padding:9px 18px; border-radius:10px 10px 0 0; border:none; background:transparent; color:#5B6B7A; cursor:pointer; border-bottom:3px solid transparent; transition:all .15s ease; }
+  .tab:hover{ color:#213B42; }
+  .tab.active{ color:#213B42; border-bottom-color:#D8AE66; background:#fff; box-shadow:0 -2px 8px rgba(20,50,80,.05); }
+  .tab:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
+  .panel{ display:none; }
+  .panel.active{ display:block; }
+
+  .card{ background:#fff; border-radius:14px; box-shadow:0 2px 10px rgba(20,50,80,.08); padding:18px 20px; margin-bottom:16px; }
+  .card h2{ margin:0 0 4px; font-size:18px; color:#213B42; font-weight:800; }
+  .card h3{ margin:16px 0 6px; font-size:14px; font-weight:800; color:#3C6E73; text-transform:uppercase; letter-spacing:.5px; }
+  .card p{ margin:6px 0; }
+  .lead{ color:#41585f; }
+  .hl{ background:#FBF3DF; padding:1px 6px; border-radius:5px; font-weight:700; }
+  .tag{ display:inline-block; font-size:11px; font-weight:800; padding:3px 10px; border-radius:999px; letter-spacing:.3px; vertical-align:middle; }
+  .tag.hoch{ background:#E4EEF8; color:#22588F; }
+  .tag.mittel{ background:#E3F1EA; color:#1d7a4a; }
+  .tag.tief{ background:#FBE9DA; color:#B5641E; }
+
+  /* Bilder + Lightbox */
+  .illu{ margin:16px 0 0; }
+  .illu img{ width:100%; height:auto; display:block; border-radius:12px; border:1px solid #E1EBF1;
+             box-shadow:0 2px 10px rgba(20,50,80,.10); cursor:zoom-in; }
+  .illu figcaption{ font-size:12px; color:#8AA0B4; margin-top:6px; }
+  .lightbox{ position:fixed; inset:0; background:rgba(12,26,34,.90); display:none;
+             align-items:center; justify-content:center; padding:22px; z-index:60; cursor:zoom-out; }
+  .lightbox.open{ display:flex; }
+  .lightbox img{ max-width:100%; max-height:100%; border-radius:10px; box-shadow:0 10px 40px rgba(0,0,0,.5); }
+
+  /* Himmel-Querschnitt */
+  .himmel{ position:relative; border-radius:14px; overflow:hidden; border:1px solid #D3E2EC;
+           box-shadow:inset 0 2px 14px rgba(20,50,80,.10); background:#BBD8EE; }
+  .himmel svg{ display:block; width:100%; height:auto; }
+  .wk{ cursor:pointer; }
+  .wk .hit{ fill:transparent; }
+  .wk .bdg circle{ fill:#213B42; stroke:#fff; stroke-width:2.5; transition:fill .15s ease; }
+  .wk .bdg text{ fill:#fff; font-size:15px; font-weight:800; text-anchor:middle; dominant-baseline:central; font-family:inherit; }
+  .wk:hover .bdg circle, .wk:focus-visible .bdg circle{ fill:#D8AE66; }
+  .wk.on .bdg circle{ fill:#D8AE66; stroke:#213B42; }
+  .wk .form{ transition:opacity .2s ease; }
+  .wk.leise{ opacity:.22; }
+  .wk:focus-visible{ outline:none; }
+  .wk:focus-visible .bdg circle{ stroke:#213B42; stroke-width:3.5; }
+  .stockband{ font-size:13px; font-weight:800; fill:#fff; letter-spacing:.4px; }
+  .stockhoehe{ font-size:11px; font-weight:700; fill:rgba(255,255,255,.82); }
+
+  /* Filterchips */
+  .chips{ display:flex; gap:8px; flex-wrap:wrap; margin:14px 0 0; }
+  .chip{ font:inherit; font-size:12.5px; font-weight:700; padding:6px 14px; border-radius:999px;
+         border:1.5px solid #D3E2EC; background:#fff; color:#5B6B7A; cursor:pointer; transition:all .15s ease; }
+  .chip:hover{ border-color:#3C6E73; color:#213B42; }
+  .chip.on{ background:#213B42; border-color:#213B42; color:#fff; }
+  .chip:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
+
+  /* Detailkarte */
+  .detail{ margin-top:14px; border-radius:12px; border:1px solid #E1EBF1; background:#F3F8FC;
+           padding:15px 17px; min-height:104px; }
+  .d-top{ display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+  .d-name{ font-size:19px; font-weight:800; color:#213B42; }
+  .d-kurz{ font-size:13px; font-weight:800; color:#3C6E73; background:#fff; border:1px solid #D3E2EC;
+           border-radius:7px; padding:1px 8px; }
+  .d-dt{ font-size:13px; color:#6a7c88; font-style:italic; }
+  .d-zeile{ display:grid; grid-template-columns:104px 1fr; gap:8px; margin-top:9px; font-size:13.5px; }
+  .d-zeile b{ color:#3C6E73; font-size:11.5px; text-transform:uppercase; letter-spacing:.5px; padding-top:2px; }
+  .d-leer{ color:#8AA0B4; font-size:13.5px; }
+  @media (max-width:560px){ .d-zeile{ grid-template-columns:1fr; gap:1px; } }
+
+  /* Vokabelkarten */
+  .vok{ display:grid; grid-template-columns:repeat(auto-fit,minmax(158px,1fr)); gap:10px; margin-top:12px; }
+  .vokkarte{ background:#F3F8FC; border:1px solid #E1EBF1; border-radius:11px; padding:11px 13px; }
+  .vok-lat{ font-size:16px; font-weight:800; color:#213B42; font-style:italic; }
+  .vok-de{ font-size:13px; color:#41585f; }
+  .vok-was{ font-size:12px; color:#3C6E73; font-weight:700; margin-top:5px; }
+
+  /* Baukasten */
+  .bau{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:12px; align-items:start; }
+  .bauspalte{ display:flex; flex-direction:column; gap:7px; }
+  .bau-tit{ font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.7px; color:#3C6E73; margin-bottom:2px; }
+  .baustein{ font:inherit; text-align:left; cursor:pointer; padding:9px 12px; border-radius:10px;
+             border:1.5px solid #D3E2EC; background:#fff; color:#213B42; font-weight:800; font-size:14.5px;
+             font-style:italic; transition:all .15s ease; }
+  .baustein span{ display:block; font-style:normal; font-weight:600; font-size:11.5px; color:#7C8A97; margin-top:2px; line-height:1.3; }
+  .baustein:hover{ border-color:#3C6E73; transform:translateY(-1px); }
+  .baustein.on{ background:#213B42; border-color:#213B42; color:#fff; }
+  .baustein.on span{ color:rgba(255,255,255,.75); }
+  .baustein:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
+  @media (max-width:620px){ .bau{ grid-template-columns:1fr; } }
+
+  .ergebnis{ margin-top:14px; border-radius:12px; padding:16px 18px; min-height:96px;
+             border:1px solid #E1EBF1; background:#F3F8FC; transition:background .2s ease, border-color .2s ease; }
+  .ergebnis.gibts{ background:#EDF7F1; border-color:#C6E6D3; }
+  .ergebnis.gibtsnicht{ background:#FBF0E5; border-color:#F0D8BF; }
+  .erg-name{ font-size:22px; font-weight:800; color:#213B42; }
+  .erg-name em{ font-style:normal; color:#B5641E; }
+  .erg-urteil{ font-size:13px; font-weight:800; margin-top:4px; }
+  .gibts .erg-urteil{ color:#16603c; }
+  .gibtsnicht .erg-urteil{ color:#B5641E; }
+  .erg-text{ font-size:13.5px; margin-top:8px; color:#41585f; }
+
+  .gefunden{ display:flex; gap:6px; flex-wrap:wrap; margin-top:12px; }
+  .gf{ font-size:11.5px; font-weight:800; padding:3px 10px; border-radius:999px;
+       background:#EEF3F7; color:#A9B7C2; border:1px solid #E1EBF1; }
+  .gf.ok{ background:#E3F1EA; color:#1d7a4a; border-color:#C6E6D3; }
+
+  .footer{ max-width:980px; margin:6px auto 26px; padding:0 18px; }
+  .footer .cr{ color:#94A3B0; font-size:11px; }
+  @media (prefers-reduced-motion:reduce){
+    *{ transition-duration:.5s !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand-eyebrow">HKV Aarau · ABU</div>
+  <h1>Wolken lesen</h1>
+  <div class="sub">Zehn Wolkengattungen, drei Stockwerke, ein System: Wer den Namen versteht, sieht am Himmel, was für ein Wetter kommt.</div>
+</header>
+
+<div class="wrap">
+  <div class="tabs" role="tablist">
+    <button class="tab active" id="tab-himmel" role="tab" aria-selected="true">☁️ Der Himmel</button>
+    <button class="tab" id="tab-namen" role="tab" aria-selected="false">🔤 Namen entschlüsseln</button>
+    <button class="tab" id="tab-gewitter" role="tab" aria-selected="false">⛈️ Die Gewitterwolke</button>
+  </div>
+
+  <div class="panel active" id="panel-himmel">
+
+    <div class="card">
+      <h2>Der Himmel über der Schweiz</h2>
+      <p class="lead">Wolken bestehen aus winzigen Wassertröpfchen oder Eiskristallen. Wo sie hängen, wie sie aussehen und wie sie entstanden sind – daraus ergeben sich zehn Gattungen. Auf dem Bild sehen Sie fast alle auf einmal.</p>
+      <figure class="illu">
+        <img id="illu-landschaft" src="wolken_landschaft.jpg" loading="lazy"
+             alt="Schweizer Seelandschaft mit allen zehn Wolkengattungen: Cirrus, Cirrostratus und Cirrocumulus zuoberst, Altostratus und Altocumulus in der Mitte, Stratus, Stratocumulus und Cumulus tief, rechts ein Cumulonimbus mit Gewitter.">
+        <figcaption>Alle Gattungen an ihrem Platz – Klicken zum Vergrössern. Die Höhenangaben im Bild sind gerundet; wir rechnen mit 0–2 / 2–7 / 7–12 km.</figcaption>
+      </figure>
+    </div>
+
+    <div class="card">
+      <h2>Die drei Stockwerke</h2>
+      <p class="lead">Klicken Sie eine Wolke an – oder eine Zahl. Unten steht dann, woran Sie sie erkennen und was sie fürs Wetter bedeutet.</p>
+
+      <div class="chips" id="filter">
+        <button class="chip on" data-f="alle">Alle zehn</button>
+        <button class="chip" data-f="cumulus">☁️ Haufenwolken</button>
+        <button class="chip" data-f="stratus">▬ Schichtwolken</button>
+        <button class="chip" data-f="regen">🌧️ bringt Niederschlag</button>
+      </div>
+
+      <div class="himmel" style="margin-top:12px;">
+        <svg viewBox="0 0 1180 640" role="img" aria-label="Querschnitt durch die Troposphäre mit den drei Wolkenstockwerken">
+          <defs>
+            <linearGradient id="himmelG" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1F4E78"/>
+              <stop offset="42%" stop-color="#5C93C4"/>
+              <stop offset="80%" stop-color="#A8CDE8"/>
+              <stop offset="100%" stop-color="#D6E9F6"/>
+            </linearGradient>
+            <linearGradient id="bodenG" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#6E9B54"/>
+              <stop offset="100%" stop-color="#48713A"/>
+            </linearGradient>
+            <linearGradient id="wolkeG" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#FFFFFF"/>
+              <stop offset="100%" stop-color="#D9E6F0"/>
+            </linearGradient>
+            <linearGradient id="dunkelG" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#C3CDD6"/>
+              <stop offset="100%" stop-color="#7C8A97"/>
+            </linearGradient>
+            <linearGradient id="cbG2" x1="0.2" y1="0" x2="0.8" y2="1">
+              <stop offset="0%" stop-color="#FFFFFF"/>
+              <stop offset="55%" stop-color="#E4EBF1"/>
+              <stop offset="100%" stop-color="#98A6B3"/>
+            </linearGradient>
+          </defs>
+
+          <rect x="0" y="0" width="1180" height="590" fill="url(#himmelG)"/>
+          <rect x="0" y="590" width="1180" height="50" fill="url(#bodenG)"/>
+
+          <!-- Stockwerk-Trennlinien -->
+          <line x1="120" y1="252" x2="1180" y2="252" stroke="rgba(255,255,255,.55)" stroke-width="2" stroke-dasharray="9 8"/>
+          <line x1="120" y1="424" x2="1180" y2="424" stroke="rgba(255,255,255,.55)" stroke-width="2" stroke-dasharray="9 8"/>
+
+          <!-- Stockwerk-Balken links -->
+          <rect x="0" y="34" width="120" height="218" fill="#22588F" opacity=".92"/>
+          <rect x="0" y="252" width="120" height="172" fill="#2E8B6B" opacity=".92"/>
+          <rect x="0" y="424" width="120" height="166" fill="#D9902F" opacity=".92"/>
+          <text class="stockband" x="60" y="128" text-anchor="middle">HOHE</text>
+          <text class="stockband" x="60" y="146" text-anchor="middle">WOLKEN</text>
+          <text class="stockhoehe" x="60" y="168" text-anchor="middle">7 – 12 km</text>
+          <text class="stockband" x="60" y="325" text-anchor="middle">MITTLERE</text>
+          <text class="stockband" x="60" y="343" text-anchor="middle">WOLKEN</text>
+          <text class="stockhoehe" x="60" y="365" text-anchor="middle">2 – 7 km</text>
+          <text class="stockband" x="60" y="493" text-anchor="middle">TIEFE</text>
+          <text class="stockband" x="60" y="511" text-anchor="middle">WOLKEN</text>
+          <text class="stockhoehe" x="60" y="533" text-anchor="middle">0 – 2 km</text>
+
+          <!-- Tropopause -->
+          <line x1="0" y1="34" x2="1180" y2="34" stroke="#fff" stroke-width="2.5" opacity=".8"/>
+          <text x="1170" y="26" text-anchor="end" font-size="11.5" font-weight="800" fill="#fff" opacity=".9">TROPOPAUSE · 12 km · −55 °C</text>
+
+          <!-- Boden -->
+          <text x="132" y="618" font-size="11.5" font-weight="800" fill="rgba(255,255,255,.9)">0 km · Boden</text>
+
+          <g id="wolken"></g>
+        </svg>
+      </div>
+
+      <div class="detail" id="detail">
+        <div class="d-leer">👆 Noch nichts ausgewählt – klicken Sie eine Wolke im Bild an.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Alles auf einen Blick</h2>
+      <p class="lead">Dieselben Wolken als Übersichtstafel – mit der Entstehung und den wichtigsten Merksätzen. Rechts läuft der Cumulonimbus durch alle drei Stockwerke: Das ist kein Zeichenfehler, sondern genau sein Kennzeichen.</p>
+      <figure class="illu">
+        <img id="illu-tafel" src="wolken_tafel.jpg" loading="lazy"
+             alt="Übersichtstafel der Wolkenarten, nach Stockwerken geordnet, mit Entstehungskette und Höhenvergleich.">
+        <figcaption>Übersichtstafel – Klicken zum Vergrössern. Achtung: Die Höhenangaben auf der Tafel sind gerundet, es gelten 0–2 / 2–7 / 7–12 km.</figcaption>
+      </figure>
+    </div>
+
+  </div>
+
+  <div class="panel" id="panel-namen">
+
+    <div class="card">
+      <h2>Die Namen sind gebaut wie Legosteine</h2>
+      <p class="lead">Wolkennamen muss man nicht auswendig lernen – man kann sie zusammensetzen. Alle kommen aus dem Lateinischen und beschreiben genau zwei Dinge: <b>wie hoch</b> die Wolke hängt und <b>welche Form</b> sie hat. Kommt Niederschlag heraus, gibt es noch eine dritte Silbe dazu.</p>
+
+      <div class="vok">
+        <div class="vokkarte">
+          <div class="vok-lat">cirrus</div>
+          <div class="vok-de">die Locke, das Haar</div>
+          <div class="vok-was">→ hoch oben, fein und faserig</div>
+        </div>
+        <div class="vokkarte">
+          <div class="vok-lat">altus</div>
+          <div class="vok-de">hoch</div>
+          <div class="vok-was">→ mittleres Stockwerk</div>
+        </div>
+        <div class="vokkarte">
+          <div class="vok-lat">cumulus</div>
+          <div class="vok-de">der Haufen</div>
+          <div class="vok-was">→ bauschig, quillt nach oben</div>
+        </div>
+        <div class="vokkarte">
+          <div class="vok-lat">stratus</div>
+          <div class="vok-de">die Decke, ausgebreitet</div>
+          <div class="vok-was">→ flach, liegt in Schichten</div>
+        </div>
+        <div class="vokkarte">
+          <div class="vok-lat">nimbus</div>
+          <div class="vok-de">der Regenguss</div>
+          <div class="vok-was">→ aus dieser Wolke fällt etwas</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Selber zusammensetzen</h2>
+      <p class="lead">Wählen Sie aus jeder Spalte einen Baustein. Nicht jede Kombination gibt es wirklich – gerade das ist die Übung.</p>
+
+      <div class="bau">
+        <div class="bauspalte">
+          <div class="bau-tit">1 · Wie hoch?</div>
+          <button class="baustein" data-slot="hoehe" data-v="tief">— <span>ohne Vorsilbe<br>0–2 km</span></button>
+          <button class="baustein" data-slot="hoehe" data-v="alto">alto- <span>mittel<br>2–7 km</span></button>
+          <button class="baustein" data-slot="hoehe" data-v="cirro">cirro- <span>hoch<br>7–12 km</span></button>
+        </div>
+        <div class="bauspalte">
+          <div class="bau-tit">2 · Welche Form?</div>
+          <button class="baustein" data-slot="form" data-v="cumulus">cumulus <span>Haufen</span></button>
+          <button class="baustein" data-slot="form" data-v="stratus">stratus <span>Schicht</span></button>
+          <button class="baustein" data-slot="form" data-v="stratocumulus">strato&shy;cumulus <span>Schicht mit Ballen</span></button>
+        </div>
+        <div class="bauspalte">
+          <div class="bau-tit">3 · Niederschlag?</div>
+          <button class="baustein" data-slot="nimb" data-v="nein">ohne <span>trocken</span></button>
+          <button class="baustein" data-slot="nimb" data-v="ja">nimb- <span>es fällt etwas</span></button>
+        </div>
+      </div>
+
+      <div class="ergebnis" id="ergebnis">
+        <div class="d-leer">Wählen Sie aus allen drei Spalten einen Baustein.</div>
+      </div>
+
+      <div class="gefunden" id="gefunden"></div>
+    </div>
+
+    <div class="card">
+      <h2>Die Ausnahme: Cirrus</h2>
+      <p><b>Cirrus (Ci)</b> lässt sich nicht zusammensetzen – die Wolke heisst einfach nach ihrer Form: <span class="hl">cirrus = die Locke</span>. Sie ist die höchste von allen, besteht reiner aus Eiskristallen als jede andere und hat gar keine Grundform aus Haufen oder Schicht. Sie ist nur ein paar Federstriche am Himmel.</p>
+      <p>Wenn dünne Cirrus-Federn dichter werden und sich zu einem Schleier verbinden, kommt meist eine Warmfront: <b>Cirrus → Cirrostratus → Altostratus → Nimbostratus</b>. Das ist die typische Abfolge ein bis zwei Tage vor dem Landregen.</p>
+    </div>
+
+  </div>
+
+  <div class="panel" id="panel-gewitter">
+
+    <div class="card">
+      <h2>Cumulonimbus – die einzige Wolke, die durch alle drei Stockwerke geht</h2>
+      <p class="lead">Sie beginnt als harmlose Schönwetterwolke knapp über dem Boden und wächst an einem heissen Nachmittag bis zur Tropopause auf 12 km hinauf. Weiter geht es nicht: Dort oben wird die Luft nicht mehr kälter, die Wolke stösst an eine Decke und läuft seitlich aus. Das ist der Amboss.</p>
+      <p class="lead">Klicken Sie die Zahlen an.</p>
+
+      <div class="himmel" style="margin-top:12px;">
+        <svg viewBox="0 0 1000 700" role="img" aria-label="Schnittbild einer Gewitterwolke mit Amboss, Auf- und Abwinden und den Temperaturgrenzen">
+          <defs>
+            <linearGradient id="gwHimmel" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1B4570"/>
+              <stop offset="55%" stop-color="#5A8FC0"/>
+              <stop offset="100%" stop-color="#9FC6E3"/>
+            </linearGradient>
+            <linearGradient id="cbG" x1="0.2" y1="0" x2="0.8" y2="1">
+              <stop offset="0%" stop-color="#FFFFFF"/>
+              <stop offset="55%" stop-color="#E4EBF1"/>
+              <stop offset="100%" stop-color="#9BA9B6"/>
+            </linearGradient>
+            <radialGradient id="puffS">
+              <stop offset="30%" stop-color="#A2B2C1" stop-opacity=".5"/>
+              <stop offset="100%" stop-color="#A2B2C1" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="puffH">
+              <stop offset="25%" stop-color="#FFFFFF" stop-opacity=".95"/>
+              <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+            </radialGradient>
+            <linearGradient id="regenG" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#7C8A97" stop-opacity=".85"/>
+              <stop offset="100%" stop-color="#7C8A97" stop-opacity=".08"/>
+            </linearGradient>
+          </defs>
+
+          <rect x="0" y="0" width="1000" height="655" fill="url(#gwHimmel)"/>
+          <rect x="0" y="655" width="1000" height="45" fill="#4E7A3E"/>
+
+          <!-- Temperaturlinien -->
+          <line x1="0" y1="104" x2="1000" y2="104" stroke="#fff" stroke-width="2.5" opacity=".85"/>
+          <text x="992" y="96" text-anchor="end" font-size="11.5" font-weight="800" fill="#fff" opacity=".92">TROPOPAUSE · 12 km · −55 °C</text>
+          <line x1="0" y1="258" x2="1000" y2="258" stroke="#BFE0FF" stroke-width="1.8" stroke-dasharray="10 7" opacity=".8"/>
+          <text x="992" y="250" text-anchor="end" font-size="11.5" font-weight="800" fill="#DCEEFF" opacity=".92">−40 °C · nur noch Eiskristalle</text>
+          <line x1="0" y1="432" x2="1000" y2="432" stroke="#FFE3B0" stroke-width="1.8" stroke-dasharray="10 7" opacity=".85"/>
+          <text x="992" y="424" text-anchor="end" font-size="11.5" font-weight="800" fill="#FFEFD2" opacity=".95">0 °C · Nullgradgrenze</text>
+
+          <!-- Wolke: ein zusammenhaengender Koerper, damit keine Blasenkanten entstehen -->
+          <g fill="#F0F5F9">
+            <path d="M400 205 L 396 300 Q 366 344 384 396 Q 356 442 378 492 Q 360 542 394 588 L 692 588 Q 726 542 708 492 Q 732 440 702 396 Q 720 344 690 300 L 686 205 Z"/>
+            <circle cx="404" cy="272" r="42"/><circle cx="686" cy="286" r="46"/>
+            <circle cx="380" cy="378" r="46"/><circle cx="706" cy="392" r="44"/>
+            <circle cx="376" cy="482" r="44"/><circle cx="710" cy="496" r="42"/>
+            <circle cx="470" cy="252" r="52"/><circle cx="600" cy="238" r="48"/>
+            <circle cx="530" cy="352" r="56"/><circle cx="620" cy="450" r="52"/>
+            <circle cx="470" cy="470" r="50"/>
+            <path d="M292 176 Q 352 126 462 130 Q 546 102 646 132 Q 766 126 848 180 Q 798 208 688 214 L 420 214 Q 330 208 292 176 Z"/>
+            <ellipse cx="520" cy="110" rx="70" ry="36" fill="#FDFEFF"/>
+          </g>
+          <!-- weiche Modellierung ohne harte Kreiskanten -->
+          <g>
+            <circle cx="640" cy="300" r="78" fill="url(#puffS)"/>
+            <circle cx="676" cy="430" r="82" fill="url(#puffS)"/>
+            <circle cx="646" cy="530" r="86" fill="url(#puffS)"/>
+            <circle cx="500" cy="536" r="90" fill="url(#puffS)"/>
+            <circle cx="762" cy="182" r="62" fill="url(#puffS)"/>
+            <circle cx="470" cy="262" r="66" fill="url(#puffH)"/>
+            <circle cx="430" cy="392" r="58" fill="url(#puffH)"/>
+            <circle cx="516" cy="146" r="54" fill="url(#puffH)"/>
+            <circle cx="392" cy="176" r="46" fill="url(#puffH)"/>
+          </g>
+          <!-- Basis -->
+          <ellipse cx="543" cy="580" rx="162" ry="30" fill="url(#puffS)"/>
+          <ellipse cx="543" cy="586" rx="150" ry="22" fill="#8F9CA9"/>
+
+          <!-- Niederschlag -->
+          <path d="M474 584 L 682 584 L 702 658 L 454 658 Z" fill="url(#regenG)"/>
+          <g stroke="#DCE9F4" stroke-width="2.2" opacity=".75">
+            <line x1="496" y1="596" x2="486" y2="640"/><line x1="530" y1="600" x2="520" y2="648"/>
+            <line x1="566" y1="594" x2="556" y2="644"/><line x1="602" y1="602" x2="592" y2="650"/>
+            <line x1="640" y1="596" x2="630" y2="642"/><line x1="668" y1="604" x2="658" y2="648"/>
+          </g>
+          <!-- Blitz -->
+          <path d="M418 588 L 396 634 L 416 634 L 398 672 L 442 622 L 420 622 L 438 588 Z" fill="#FFE47A" stroke="#fff" stroke-width="1.4"/>
+
+          <!-- Aufwind -->
+          <g stroke="#E2574C" stroke-width="5" fill="none" stroke-linecap="round" opacity=".9">
+            <path d="M498 560 L 498 300"/><path d="M498 300 L 481 326"/><path d="M498 300 L 515 326"/>
+          </g>
+          <!-- Abwind -->
+          <g stroke="#3C6E73" stroke-width="5" fill="none" stroke-linecap="round" opacity=".9">
+            <path d="M646 330 L 646 566"/><path d="M646 566 L 629 540"/><path d="M646 566 L 663 540"/>
+          </g>
+
+          <g id="stationen"></g>
+        </svg>
+      </div>
+
+      <div class="detail" id="gdetail">
+        <div class="d-leer">👆 Klicken Sie eine Zahl im Bild an.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Warum eine Gewitterwolke so gefährlich ist</h2>
+      <p>In einer Schönwetter-Cumuluswolke steigt die Luft gemütlich. Im Cumulonimbus schiesst sie mit bis zu <span class="hl">100 km/h</span> nach oben – und daneben stürzt kalte Luft genauso schnell wieder herunter. Diese Auf- und Abwinde direkt nebeneinander sind der Grund, warum Flugzeuge um Gewitterwolken herumfliegen und nie hindurch.</p>
+      <p>Sie sind auch der Grund für <b>Hagel</b>: Ein Tropfen wird nach oben gerissen, gefriert, fällt, wird wieder hochgerissen, bekommt eine neue Eisschicht – und das mehrmals. Schneidet man ein Hagelkorn auf, sieht man die Schichten wie Jahresringe. Erst wenn es zu schwer wird, fällt es endgültig herunter.</p>
+    </div>
+
+  </div>
+</div>
+
+<div class="lightbox" id="lightbox"><img id="lightbox-img" src="" alt=""></div>
+
+<div class="footer">
+  <div class="cr">Wolken-Lerneinheit · ABU · HKV Aarau · Samuel Mollet · realisiert mit Claude (Anthropic)</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const SVGNS='http://www.w3.org/2000/svg';
+
+/* ================= Zeichenhelfer ================= */
+const G='url(#wolkeG)', D='url(#dunkelG)';
+function kreise(list, fill){
+  return list.map(k=>'<circle cx="'+k[0]+'" cy="'+k[1]+'" r="'+k[2]+'" fill="'+(fill||G)+'"/>').join('');
+}
+const ZEICHNEN={
+  feder:(x,y)=>'<g stroke="#FFFFFF" stroke-width="4.5" fill="none" stroke-linecap="round" opacity=".92">'+
+    '<path d="M'+(x-72)+' '+(y+16)+' Q '+(x-24)+' '+(y-16)+' '+(x+46)+' '+(y-10)+'"/>'+
+    '<path d="M'+(x+46)+' '+(y-10)+' Q '+(x+66)+' '+(y-12)+' '+(x+78)+' '+(y-26)+'"/>'+
+    '<path d="M'+(x-58)+' '+(y+34)+' Q '+(x-8)+' '+(y+6)+' '+(x+58)+' '+(y+12)+'"/>'+
+    '<path d="M'+(x-30)+' '+(y+50)+' Q '+(x+14)+' '+(y+30)+' '+(x+64)+' '+(y+36)+'"/>'+
+    '<path d="M'+(x-70)+' '+(y+15)+' Q '+(x-80)+' '+(y+2)+' '+(x-92)+' '+(y-2)+'"/>'+
+    '</g>',
+  schleier:(x,y)=>'<g>'+
+    '<ellipse cx="'+x+'" cy="'+(y+18)+'" rx="132" ry="38" fill="#FFFFFF" opacity=".26"/>'+
+    '<ellipse cx="'+(x-14)+'" cy="'+(y+24)+'" rx="106" ry="25" fill="#FFFFFF" opacity=".24"/>'+
+    '<ellipse cx="'+(x+30)+'" cy="'+(y+10)+'" rx="86" ry="19" fill="#FFFFFF" opacity=".22"/>'+
+    '<circle cx="'+x+'" cy="'+(y+18)+'" r="46" fill="none" stroke="#FFF3C4" stroke-width="3" opacity=".85"/>'+
+    '<circle cx="'+x+'" cy="'+(y+18)+'" r="15" fill="#FFF6D8" opacity=".95"/>'+
+    '</g>',
+  flocken:(x,y)=>{ let s='<g opacity=".95">';
+    for(let r=0;r<3;r++) for(let c=0;c<9;c++){
+      const cx=x-96+c*24+(r%2?12:0), cy=y+r*20, rr=7.5-r*0.7;
+      s+='<circle cx="'+cx+'" cy="'+cy+'" r="'+rr+'" fill="#FFFFFF" opacity="'+(0.95-r*0.12)+'"/>';
+    } return s+'</g>'; },
+  schaefchen:(x,y)=>{ let s='<g>';
+    for(let r=0;r<2;r++) for(let c=0;c<7;c++){
+      const cx=x-102+c*34+(r%2?17:0), cy=y+r*26;
+      s+='<ellipse cx="'+cx+'" cy="'+cy+'" rx="19" ry="13" fill="'+(r?'#E5EDF4':'#FFFFFF')+'" opacity=".96"/>';
+    } return s+'</g>'; },
+  grauschleier:(x,y)=>'<g>'+
+    '<ellipse cx="'+x+'" cy="'+y+'" rx="150" ry="26" fill="#C6D4E0" opacity=".92"/>'+
+    '<ellipse cx="'+(x-34)+'" cy="'+(y+15)+'" rx="118" ry="19" fill="#B2C2D1" opacity=".9"/>'+
+    '<ellipse cx="'+(x+40)+'" cy="'+(y-11)+'" rx="104" ry="16" fill="#D2DEE8" opacity=".85"/>'+
+    '<circle cx="'+(x+46)+'" cy="'+(y-1)+'" r="17" fill="#F4EAD0" opacity=".5"/>'+
+    '</g>',
+  dick:(x,y)=>'<g>'+
+    kreise([[x-92,y,32],[x-40,y-12,40],[x+16,y-8,38],[x+70,y+2,32],[x+108,y+12,24]], D)+
+    '<rect x="'+(x-120)+'" y="'+(y-4)+'" width="248" height="40" rx="14" fill="#8B98A5"/>'+
+    '<g stroke="#AFC2D2" stroke-width="2" opacity=".7">'+
+      [0,1,2,3,4,5,6,7].map(i=>'<line x1="'+(x-104+i*30)+'" y1="'+(y+38)+'" x2="'+(x-110+i*30)+'" y2="'+(y+70)+'"/>').join('')+
+    '</g></g>',
+  schicht:(x,y)=>'<g>'+
+    '<ellipse cx="'+x+'" cy="'+y+'" rx="132" ry="21" fill="#B8C7D4"/>'+
+    '<ellipse cx="'+(x-44)+'" cy="'+(y+15)+'" rx="100" ry="15" fill="#A5B7C7"/>'+
+    '<ellipse cx="'+(x+56)+'" cy="'+(y+17)+'" rx="80" ry="13" fill="#AFC0CE"/>'+
+    '<ellipse cx="'+(x-10)+'" cy="'+(y-9)+'" rx="86" ry="12" fill="#CBD8E3"/>'+
+    '</g>',
+  ballen:(x,y)=>'<g>'+
+    kreise([[x-92,y,27],[x-40,y-7,31],[x+14,y-2,29],[x+66,y+3,26],[x+106,y+9,20]])+
+    '<rect x="'+(x-112)+'" y="'+y+'" width="230" height="24" rx="11" fill="#DFE7EE"/>'+
+    '</g>',
+  haufen:(x,y)=>'<g>'+
+    kreise([[x-52,y+8,30],[x-14,y-18,40],[x+30,y-4,33],[x+62,y+12,25]])+
+    '<rect x="'+(x-78)+'" y="'+(y+12)+'" width="152" height="20" rx="10" fill="#E7EDF3"/>'+
+    '</g>',
+  turm:(x)=>{
+    const c='#EFF4F9', d='#D6E0E9';
+    return '<g transform="translate('+(x*0.14).toFixed(2)+',79.8) scale(0.86)">'+
+    '<path d="M'+(x-118)+' 152 Q '+(x-64)+' 100 '+(x+6)+' 104 Q '+(x+78)+' 94 '+(x+120)+' 148 Q '+(x+62)+' 178 '+(x-12)+' 178 Q '+(x-86)+' 176 '+(x-118)+' 152 Z" fill="#FCFDFF"/>'+
+    '<path d="M'+(x-54)+' 172 L '+(x-62)+' 250 Q '+(x-86)+' 306 '+(x-70)+' 356 Q '+(x-92)+' 414 '+(x-70)+' 462 L '+(x-66)+' 502 L '+(x+66)+' 502 L '+(x+70)+' 462 Q '+(x+92)+' 414 '+(x+70)+' 356 Q '+(x+86)+' 306 '+(x+62)+' 250 L '+(x+54)+' 172 Z" fill="'+c+'"/>'+
+    kreise([[x-58,214,36],[x+58,224,34],[x-66,306,38],[x+66,316,36],[x-62,404,36],[x+64,414,34],[x,258,46],[x-4,362,48],[x+6,458,44]], c)+
+    kreise([[x+46,318,26],[x+44,410,25],[x+22,466,27],[x-40,286,22],[x-36,388,21]], d)+
+    '<ellipse cx="'+x+'" cy="502" rx="72" ry="17" fill="#93A0AD"/>'+
+    '<rect x="'+(x-54)+'" y="502" width="108" height="68" fill="#8C99A6" opacity=".45"/>'+
+    '<path d="M'+(x-22)+' 502 L '+(x-38)+' 538 L '+(x-22)+' 538 L '+(x-36)+' 572 L '+(x+6)+' 528 L '+(x-12)+' 528 L '+(x+2)+' 502 Z" fill="#FFE47A"/>'+
+    '</g>';
+  }
+};
+
+/* ================= Wolkendaten ================= */
+const WOLKEN=[
+ {k:'ci', nr:1, name:'Cirrus', kurz:'Ci', dt:'Federwolke', lat:'cirrus = die Locke',
+  stock:'hoch', form:'keine', regen:false, art:'feder', x:250, y:110, bx:250, by:170,
+  aussehen:'Feine weisse Federstriche, wie mit dem Pinsel gezogen. Wirft keinen Schatten, die Sonne scheint ungehindert durch.',
+  besteht:'reine Eiskristalle',
+  wetter:'Schönes Wetter – aber wenn die Federn von Westen her mehr werden und dichter, kommt in ein bis zwei Tagen eine Warmfront mit Regen.'},
+
+ {k:'cs', nr:2, name:'Cirrostratus', kurz:'Cs', dt:'Schleierwolke', lat:'cirro (hoch) + stratus (Schicht)',
+  stock:'hoch', form:'stratus', regen:false, art:'schleier', x:480, y:132, bx:480, by:184,
+  aussehen:'Dünner, milchiger Schleier über den ganzen Himmel. Kennzeichen: ein Halo, also ein Lichtring um Sonne oder Mond.',
+  besteht:'Eiskristalle',
+  wetter:'Der Halo ist ein Warnzeichen: Die Warmfront ist schon näher gekommen. Innerhalb eines Tages wird es meist bedeckt und es beginnt zu regnen.'},
+
+ {k:'cc', nr:3, name:'Cirrocumulus', kurz:'Cc', dt:'Schäfchenwolke',
+  lat:'cirro (hoch) + cumulus (Haufen)',
+  stock:'hoch', form:'cumulus', regen:false, art:'flocken', x:745, y:96, bx:745, by:160,
+  aussehen:'Viele kleine weisse Flöckchen in Reihen, oft wie ein Fischgrätenmuster. Die einzelnen Ballen sind kleiner als ein Fingernagel bei ausgestrecktem Arm.',
+  besteht:'Eiskristalle',
+  wetter:'Meist schön, hält aber selten lange. Cirrocumulus ist die seltenste der zehn Gattungen.'},
+
+ {k:'as', nr:4, name:'Altostratus', kurz:'As', dt:'mittelhohe Schichtwolke',
+  lat:'alto (mittelhoch) + stratus (Schicht)',
+  stock:'mittel', form:'stratus', regen:false, art:'grauschleier', x:275, y:322, bx:275, by:368,
+  aussehen:'Gleichmässige graue Schicht über den ganzen Himmel. Die Sonne ist nur noch als heller Fleck zu ahnen – wie durch Milchglas. Keine Schatten mehr am Boden.',
+  besteht:'Wassertröpfchen und Eiskristalle',
+  wetter:'Die Warmfront ist da. Aus Altostratus fällt noch nichts, aber er verdickt sich meist zu Nimbostratus – dann kommt der Landregen.'},
+
+ {k:'ac', nr:5, name:'Altocumulus', kurz:'Ac', dt:'mittelhohe Schäfchen',
+  lat:'alto (mittelhoch) + cumulus (Haufen)',
+  stock:'mittel', form:'cumulus', regen:false, art:'schaefchen', x:540, y:300, bx:540, by:356,
+  aussehen:'Wellige Felder aus runden Ballen, deutlich grösser als beim Cirrocumulus – etwa daumenbreit bei ausgestrecktem Arm. Unterseite oft leicht grau schattiert.',
+  besteht:'meist Wassertröpfchen',
+  wetter:'Oft ein Vorzeichen für Wetterwechsel. Türmchenförmige Altocumulus am Morgen im Sommer bedeuten: Am Nachmittag kann es gewittern.'},
+
+ {k:'ns', nr:6, name:'Nimbostratus', kurz:'Ns', dt:'Regenschichtwolke',
+  lat:'nimbus (Regenguss) + stratus (Schicht)',
+  stock:'mittel', form:'stratus', regen:true, art:'dick', x:800, y:318, bx:800, by:392,
+  aussehen:'Dicke, dunkelgraue Schicht ohne erkennbare Struktur. Die Sonne ist völlig verdeckt. Reicht oft vom mittleren Stockwerk bis fast auf den Boden.',
+  besteht:'Wassertröpfchen, oben Eiskristalle',
+  wetter:'Der klassische Landregen: gleichmässig, ausdauernd, stundenlang. Kein Gewitter, kein Wind – einfach grau und nass.'},
+
+ {k:'st', nr:7, name:'Stratus', kurz:'St', dt:'Nebelschicht',
+  lat:'stratus = die ausgebreitete Decke',
+  stock:'tief', form:'stratus', regen:true, art:'schicht', x:265, y:512, bx:265, by:552,
+  aussehen:'Tiefe, gleichmässig graue Schicht ohne Konturen. Berührt sie den Boden, heisst dasselbe Ding Nebel. Vom Berg aus schaut man auf ein weisses Meer hinunter.',
+  besteht:'Wassertröpfchen',
+  wetter:'Im Mittelland typisch für den Winter: Hochnebel wochenlang, während es in den Bergen sonnig ist. Höchstens Nieselregen, also Tropfen unter einem halben Millimeter.'},
+
+ {k:'sc', nr:8, name:'Stratocumulus', kurz:'Sc', dt:'Schicht mit Ballen',
+  lat:'strato (Schicht) + cumulus (Haufen)',
+  stock:'tief', form:'beide', regen:false, art:'ballen', x:520, y:472, bx:520, by:516,
+  aussehen:'Grau-weisse Wolkenfelder, die zu grossen Rollen und Walzen zusammengeschoben sind. Zwischen den Ballen blitzt oft blauer Himmel durch.',
+  besteht:'Wassertröpfchen',
+  wetter:'Die häufigste Wolke überhaupt. Meist trocken, höchstens ein paar Tropfen. Entsteht oft am Abend, wenn Cumuluswolken flach auslaufen.'},
+
+ {k:'cu', nr:9, name:'Cumulus', kurz:'Cu', dt:'Haufenwolke, Schönwetterwolke',
+  lat:'cumulus = der Haufen',
+  stock:'tief', form:'cumulus', regen:false, art:'haufen', x:730, y:492, bx:730, by:540,
+  aussehen:'Die Wolke, die Kinder malen: weiss, bauschig, mit scharfen Rändern oben und flacher grauer Unterseite. Alle Cumuluswolken haben ihre Basis auf derselben Höhe.',
+  besteht:'Wassertröpfchen',
+  wetter:'Schönes Wetter. Sie entsteht, wenn die Sonne den Boden aufheizt und warme Luft aufsteigt – deshalb am Vormittag klein, am Nachmittag grösser, am Abend wieder weg.'},
+
+ {k:'cb', nr:10, name:'Cumulonimbus', kurz:'Cb', dt:'Gewitterwolke',
+  lat:'cumulus (Haufen) + nimbus (Regenguss)',
+  stock:'alle drei', form:'cumulus', regen:true, art:'turm', hw:215, hh:430, x:1055, y:0, bx:1055, by:300,
+  aussehen:'Ein gewaltiger Turm vom Boden bis zur Tropopause, oben flach ausgebreitet zu einem Amboss. Von unten fast schwarz, von der Seite strahlend weiss.',
+  besteht:'unten Tröpfchen, oben Eiskristalle',
+  wetter:'Gewitter, Sturmböen, Hagel, Starkregen. Die einzige Wolke, die durch alle drei Stockwerke geht – mehr dazu im Reiter „Die Gewitterwolke".'}
+];
+
+/* ================= Reiter 1: Himmel ================= */
+const STOCKTAG={hoch:'hoch', mittel:'mittel', tief:'tief', 'alle drei':'tief'};
+let gewaehlt=null, filter='alle';
+
+function zeichneHimmel(){
+  const g=$('wolken');
+  g.innerHTML = WOLKEN.map(w=>{
+    const form = ZEICHNEN[w.art](w.x, w.y);
+    return '<g class="wk" id="wk-'+w.k+'" tabindex="0" role="button" aria-label="'+w.name+'">'+
+      '<g class="form">'+form+'</g>'+
+      '<rect class="hit" x="'+(w.x-(w.hw||260)/2)+'" y="'+(w.by-(w.hh||130)*0.54)+'" width="'+(w.hw||260)+'" height="'+(w.hh||130)+'"/>'+
+      '<g class="bdg"><circle cx="'+w.bx+'" cy="'+w.by+'" r="17"/>'+
+      '<text x="'+w.bx+'" y="'+w.by+'">'+w.nr+'</text></g>'+
+      '</g>';
+  }).join('');
+  WOLKEN.forEach(w=>{
+    const el=$('wk-'+w.k);
+    el.addEventListener('click',()=>waehle(w.k));
+    el.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); waehle(w.k); } });
+  });
+}
+
+function passt(w){
+  if(filter==='alle') return true;
+  if(filter==='regen') return w.regen;
+  if(filter==='cumulus') return w.form==='cumulus'||w.form==='beide';
+  if(filter==='stratus') return w.form==='stratus'||w.form==='beide';
+  return true;
+}
+
+function zeichneFilter(){
+  WOLKEN.forEach(w=>{
+    const el=$('wk-'+w.k);
+    el.classList.toggle('leise', !passt(w));
+    el.classList.toggle('on', gewaehlt===w.k);
+  });
+}
+
+function waehle(k){
+  gewaehlt=k;
+  const w=WOLKEN.find(x=>x.k===k);
+  $('detail').innerHTML =
+    '<div class="d-top"><span class="d-name">'+w.name+'</span>'+
+    '<span class="d-kurz">'+w.kurz+'</span>'+
+    '<span class="tag '+STOCKTAG[w.stock]+'">'+w.stock+'</span>'+
+    '<span class="d-dt">'+w.dt+'</span></div>'+
+    '<div class="d-zeile"><b>Name</b><span>'+w.lat+'</span></div>'+
+    '<div class="d-zeile"><b>Aussehen</b><span>'+w.aussehen+'</span></div>'+
+    '<div class="d-zeile"><b>Besteht aus</b><span>'+w.besteht+'</span></div>'+
+    '<div class="d-zeile"><b>Wetter</b><span>'+w.wetter+'</span></div>';
+  zeichneFilter();
+}
+
+$('filter').addEventListener('click',e=>{
+  const b=e.target.closest('.chip'); if(!b) return;
+  filter=b.dataset.f;
+  $('filter').querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c===b));
+  zeichneFilter();
+});
+
+/* ================= Reiter 2: Baukasten ================= */
+const ECHT={
+  'tief|cumulus|nein':       {n:'Cumulus', t:'Die Schönwetterwolke. Bauschig, weiss, mit flacher Unterseite – entsteht, wenn die Sonne den Boden aufheizt.'},
+  'tief|cumulus|ja':         {n:'Cumulonimbus', t:'Die Gewitterwolke. Wächst als einzige durch alle drei Stockwerke bis zur Tropopause und bildet oben einen Amboss.'},
+  'tief|stratus|nein':       {n:'Stratus', t:'Die tiefe Nebelschicht. Berührt sie den Boden, nennen wir sie Nebel. Im Mittelland der Winter-Hochnebel.'},
+  'tief|stratus|ja':         {n:'Nimbostratus', t:'Die Regenschichtwolke – der klassische Landregen. Sie hängt allerdings meist im mittleren Stockwerk, nicht ganz unten.', hinweis:'Fast richtig: Nimbostratus zählt zu den mittelhohen Wolken, auch wenn er bis fast auf den Boden reicht.'},
+  'tief|stratocumulus|nein': {n:'Stratocumulus', t:'Die häufigste Wolke überhaupt: eine Schicht, die zu dicken Rollen und Ballen zusammengeschoben ist.'},
+  'alto|cumulus|nein':       {n:'Altocumulus', t:'Mittelhohe Schäfchen – wellige Felder aus runden Ballen, oft ein Vorzeichen für einen Wetterwechsel.'},
+  'alto|stratus|nein':       {n:'Altostratus', t:'Graue Schicht, durch die die Sonne nur noch wie durch Milchglas scheint. Am Boden gibt es keine Schatten mehr.'},
+  'cirro|cumulus|nein':      {n:'Cirrocumulus', t:'Kleine weisse Flöckchen in Reihen, oft im Fischgrätenmuster. Die seltenste der zehn Gattungen.'},
+  'cirro|stratus|nein':      {n:'Cirrostratus', t:'Dünner Eisschleier über den ganzen Himmel – erkennbar am Halo, dem Lichtring um Sonne oder Mond.'}
+};
+const WARUM={
+  'stratocumulus_hoch':'Stratocumulus gibt es nur zuunterst. Weiter oben sind die Ballen entweder klein (Cirrocumulus) oder gross (Altocumulus) – eine Mischform braucht es dort nicht.',
+  'nimb_hoch':'Aus hohen und mittelhohen Wolken fällt fast nie etwas, was den Boden erreicht. Regen braucht dicke Wolken mit viel Wasser – und die hängen tief.',
+  'nimb_sc':'Aus Stratocumulus fallen höchstens ein paar Tropfen. Für richtigen Niederschlag ist er zu dünn – dafür bräuchte er die Dicke eines Nimbostratus.'
+};
+const wahl={hoehe:null, form:null, nimb:null};
+const geholt=new Set();
+
+function silben(){
+  const h=wahl.hoehe, f=wahl.form, n=wahl.nimb;
+  if(f==='stratocumulus') return (h==='tief'?'':h)+(n==='ja'?'stratocumulonimbus':'stratocumulus');
+  if(n==='ja' && f==='cumulus') return (h==='tief'?'':h)+'cumulonimbus';
+  if(n==='ja' && f==='stratus') return (h==='tief'?'':h==='alto'?'alto':'cirro')+(h==='tief'?'':'')+'nimbostratus';
+  return (h==='tief'?'':h)+f;
+}
+function grossAnfang(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+
+function zeigeErgebnis(){
+  const box=$('ergebnis');
+  box.classList.remove('gibts','gibtsnicht');
+  if(!wahl.hoehe||!wahl.form||!wahl.nimb){
+    box.innerHTML='<div class="d-leer">Wählen Sie aus allen drei Spalten einen Baustein.</div>';
+    return;
+  }
+  const key=wahl.hoehe+'|'+wahl.form+'|'+wahl.nimb;
+  const treffer=ECHT[key];
+  if(treffer){
+    box.classList.add('gibts');
+    geholt.add(treffer.n);
+    box.innerHTML='<div class="erg-name">'+treffer.n+'</div>'+
+      '<div class="erg-urteil">✓ Diese Wolke gibt es wirklich</div>'+
+      '<div class="erg-text">'+treffer.t+'</div>'+
+      (treffer.hinweis?'<div class="erg-text"><b>Hinweis:</b> '+treffer.hinweis+'</div>':'');
+  } else {
+    box.classList.add('gibtsnicht');
+    let warum='Diese Kombination kommt in der Natur nicht vor.';
+    if(wahl.form==='stratocumulus' && wahl.nimb==='ja') warum=WARUM.nimb_sc;
+    else if(wahl.form==='stratocumulus') warum=WARUM.stratocumulus_hoch;
+    else if(wahl.nimb==='ja') warum=WARUM.nimb_hoch;
+    box.innerHTML='<div class="erg-name"><em>'+grossAnfang(silben())+'</em></div>'+
+      '<div class="erg-urteil">✗ Diese Wolke gibt es nicht</div>'+
+      '<div class="erg-text">'+warum+'</div>';
+  }
+  zeigeGefunden();
+}
+function zeigeGefunden(){
+  const alle=['Cumulus','Cumulonimbus','Stratus','Nimbostratus','Stratocumulus','Altocumulus','Altostratus','Cirrocumulus','Cirrostratus'];
+  $('gefunden').innerHTML='<span class="gf ok" style="background:#213B42;color:#fff;border-color:#213B42;">'+
+    geholt.size+' von 9 gefunden</span>'+
+    alle.map(n=>'<span class="gf'+(geholt.has(n)?' ok':'')+'">'+(geholt.has(n)?n:'?')+'</span>').join('');
+}
+
+document.querySelectorAll('.baustein').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const slot=b.dataset.slot;
+    wahl[slot]=b.dataset.v;
+    document.querySelectorAll('.baustein[data-slot="'+slot+'"]').forEach(o=>o.classList.toggle('on',o===b));
+    zeigeErgebnis();
+  });
+});
+
+/* ================= Reiter 3: Gewitterwolke ================= */
+const STATIONEN=[
+ {k:'ueber', nr:1, x:520, y:66, titel:'Überschiessender Bereich',
+  text:'Ein besonders kräftiger Aufwind schiesst über die Tropopause hinaus, wie Wasser, das über den Rand eines Eimers schwappt. Sieht man diese Beule auf einem Satellitenbild, weiss man: Dieses Gewitter ist schwer. Nach wenigen Minuten sinkt sie wieder zurück.'},
+ {k:'amboss', nr:2, x:770, y:158, titel:'Der Amboss',
+  text:'Auf 12 km stösst die Wolke an die Tropopause. Darüber wird die Luft nicht mehr kälter, die aufsteigende Luft ist nicht mehr leichter als ihre Umgebung – sie kann nicht weiter. Also läuft sie seitlich aus und bildet die typische Ambossform. Der Amboss besteht nur noch aus Eiskristallen und zeigt in die Richtung, in die das Gewitter zieht.'},
+ {k:'tropo', nr:3, x:150, y:104, titel:'Tropopause: −55 °C auf 12 km',
+  text:'Die Obergrenze unseres Wetters. In der Troposphäre darunter wird es pro 100 Meter Aufstieg rund 0.6 °C kälter – von etwa 20 °C am Boden bis auf −55 °C hier oben. Darüber, in der Stratosphäre, hört das auf. Verkehrsflugzeuge fliegen genau in dieser ruhigen Zone.'},
+ {k:'m40', nr:4, x:150, y:258, titel:'−40 °C: alles wird zu Eis',
+  text:'Zwischen 0 °C und −40 °C ist es gemischt: Es gibt Eiskristalle und Wassertropfen nebeneinander, die trotz Minusgraden noch flüssig sind – man nennt sie unterkühlt. Sie gefrieren erst, wenn sie etwas berühren. Genau das ist die gefährliche Vereisungszone für Flugzeuge. Unterhalb von −40 °C gibt es nur noch Eis.'},
+ {k:'null', nr:5, x:150, y:432, titel:'Die Nullgradgrenze',
+  text:'Hier ist die Grenze zwischen Regen und Schnee. Im Sommer liegt sie in der Schweiz auf 3500–4000 m, im Winter oft unter 1000 m. Wenn im Wetterbericht die Schneefallgrenze genannt wird, liegt sie meist einige hundert Meter unter der Nullgradgrenze – die Flocken brauchen etwas Zeit zum Schmelzen.'},
+ {k:'auf', nr:6, x:498, y:404, titel:'Der Aufwind',
+  text:'Der Motor des Gewitters. Warme, feuchte Luft steigt mit bis zu 100 km/h nach oben – das sind rund 28 Meter pro Sekunde. Beim Aufsteigen kühlt sie ab, der Wasserdampf kondensiert, und dabei wird Wärme frei. Diese Wärme macht die Luft wieder leichter und treibt sie noch höher. Deshalb schaukelt sich ein Gewitter selbst auf.'},
+ {k:'ab', nr:7, x:646, y:406, titel:'Der Abwind',
+  text:'Regen und Hagel reissen kalte Luft mit nach unten. Trifft dieser Kaltluftschwall auf den Boden, breitet er sich seitlich aus – das ist die Böenfront, die man kurz vor einem Gewitter als plötzlichen kühlen Wind spürt. Auf- und Abwind direkt nebeneinander sind der Grund, warum kein Flugzeug in eine Gewitterwolke fliegt.'},
+ {k:'nieder', nr:8, x:578, y:626, titel:'Niederschlag und Hagel',
+  text:'Aus dem Cumulonimbus fällt alles, was es gibt: Starkregen, Graupel, Hagel. Hagelkörner entstehen, weil ein Tropfen im Aufwind mehrmals nach oben gerissen wird und jedes Mal eine neue Eisschicht bekommt. Schneidet man ein Hagelkorn auf, sieht man diese Schichten wie Jahresringe eines Baums.'},
+ {k:'blitz', nr:9, x:418, y:626, titel:'Der Blitz',
+  text:'In der Wolke reiben Eiskristalle und Graupel aneinander und laden sich elektrisch auf: oben positiv, unten negativ. Wird die Spannung zu gross, entlädt sie sich – der Blitz. Er heizt die Luft schlagartig auf rund 30 000 °C auf, die Luft dehnt sich explosionsartig aus, und das hören wir als Donner. Drei Sekunden zwischen Blitz und Donner sind etwa ein Kilometer.'}
+];
+let gsel=null;
+
+function zeichneStationen(){
+  $('stationen').innerHTML = STATIONEN.map(s=>
+    '<g class="wk" id="st-'+s.k+'" tabindex="0" role="button" aria-label="'+s.titel+'">'+
+    '<circle class="hit" cx="'+s.x+'" cy="'+s.y+'" r="30"/>'+
+    '<g class="bdg"><circle cx="'+s.x+'" cy="'+s.y+'" r="17"/>'+
+    '<text x="'+s.x+'" y="'+s.y+'">'+s.nr+'</text></g></g>').join('');
+  STATIONEN.forEach(s=>{
+    const el=$('st-'+s.k);
+    el.addEventListener('click',()=>waehleStation(s.k));
+    el.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); waehleStation(s.k); } });
+  });
+}
+function waehleStation(k){
+  gsel=k;
+  const s=STATIONEN.find(x=>x.k===k);
+  $('gdetail').innerHTML='<div class="d-top"><span class="d-name">'+s.titel+'</span></div>'+
+    '<div class="erg-text" style="margin-top:6px;">'+s.text+'</div>';
+  STATIONEN.forEach(o=>$('st-'+o.k).classList.toggle('on', o.k===k));
+}
+
+/* ================= Tabs, Lightbox ================= */
+const TABS=['himmel','namen','gewitter'];
+TABS.forEach(t=>{ $('tab-'+t).onclick=()=>switchTab(t); });
+function switchTab(w){
+  TABS.forEach(t=>{
+    const an=(t===w);
+    $('tab-'+t).classList.toggle('active',an);
+    $('tab-'+t).setAttribute('aria-selected',an);
+    $('panel-'+t).classList.toggle('active',an);
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function lightboxAuf(src,alt){ $('lightbox-img').src=src; $('lightbox-img').alt=alt||''; $('lightbox').classList.add('open'); }
+function lightboxZu(){ $('lightbox').classList.remove('open'); }
+document.querySelectorAll('.illu img').forEach(bild=>{
+  bild.addEventListener('click',()=>lightboxAuf(bild.getAttribute('src'), bild.getAttribute('alt')));
+});
+$('lightbox').addEventListener('click', lightboxZu);
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') lightboxZu(); });
+
+/* ================= Start ================= */
+zeichneHimmel();
+zeichneFilter();
+zeichneStationen();
+zeigeGefunden();
+</script>
+</body>
+</html>
