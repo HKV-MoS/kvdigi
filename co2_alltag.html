@@ -45,6 +45,32 @@
   input[type=range]{ flex:1; min-width:220px; accent-color:#3C6E73; height:26px; }
   .kmzahl{ font-size:20px; font-weight:800; color:#213B42; min-width:118px; text-align:right; font-variant-numeric:tabular-nums; }
 
+  /* Eigene Reise */
+  .eigen{ margin-top:16px; padding-top:14px; border-top:1.5px dashed #DCE8F0; }
+  .eigen-tit{ font-size:11.5px; font-weight:800; text-transform:uppercase; letter-spacing:.6px; color:#3C6E73; margin-bottom:9px; }
+  .eigen-zeile{ display:flex; align-items:flex-end; gap:10px; flex-wrap:wrap; }
+  .ac{ position:relative; flex:1 1 200px; min-width:170px; }
+  .ac label{ display:block; font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; color:#8AA0B4; margin-bottom:3px; }
+  .ac input{ font:inherit; font-size:14px; font-weight:700; color:#213B42; width:100%; box-sizing:border-box;
+             padding:8px 12px; border:1.5px solid #D3E2EC; border-radius:10px; background:#fff; }
+  .ac input::placeholder{ font-weight:600; color:#A9BCCB; }
+  .ac input:focus{ outline:none; border-color:#3C6E73; box-shadow:0 0 0 3px rgba(167,210,206,.55); }
+  .ac-liste{ position:absolute; z-index:30; left:0; right:0; top:100%; margin-top:4px; background:#fff;
+             border:1.5px solid #D3E2EC; border-radius:10px; box-shadow:0 8px 22px rgba(33,59,66,.14);
+             max-height:238px; overflow-y:auto; display:none; }
+  .ac-liste.auf{ display:block; }
+  .ac-opt{ display:block; width:100%; box-sizing:border-box; text-align:left; font:inherit; font-size:13.5px;
+           font-weight:700; color:#213B42; padding:7px 12px; border:none; background:transparent; cursor:pointer; }
+  .ac-opt small{ display:block; font-size:10.5px; font-weight:700; color:#8AA0B4; }
+  .ac-opt:hover, .ac-opt.mark{ background:#EDF3F8; }
+  .eigen-btn{ font:inherit; font-size:13px; font-weight:800; padding:9px 18px; border-radius:10px; border:none;
+              background:#213B42; color:#fff; cursor:pointer; transition:background .15s ease; }
+  .eigen-btn:hover{ background:#3C6E73; }
+  .eigen-btn:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
+  .eigen-info{ margin-top:9px; font-size:12px; color:#8AA0B4; line-height:1.55; }
+  .eigen-info b{ color:#213B42; }
+  .eigen-info.warn{ color:#B4643C; }
+
   /* Balken */
   .balken{ margin-top:6px; }
   .zeile{ display:grid; grid-template-columns:64px 152px 1fr 96px; align-items:center; gap:10px;
@@ -67,6 +93,8 @@
     .zeile{ grid-template-columns:44px 1fr 78px; }
     .z-bild{ height:26px; width:40px; }
     .zeile .z-bar{ grid-column:1 / -1; }
+    .ac{ flex:1 1 100%; }
+    .eigen-btn{ flex:1 1 100%; }
   }
 
   /* Teller */
@@ -169,12 +197,30 @@
   <div class="panel active" id="panel-rechnen">
     <div class="card">
       <h2>Wie weit geht die Reise?</h2>
-      <p class="lead">W&auml;hle eine Strecke &ndash; oder schiebe den Regler auf eine eigene Distanz. Die Balken zeigen, wie viel Treibhausgas <b>eine Person</b> auf dieser Strecke verursacht.</p>
+      <p class="lead">W&auml;hle eine Strecke, schiebe den Regler &ndash; oder gib weiter unten zwei eigene Orte ein. Die Balken zeigen, wie viel Treibhausgas <b>eine Person</b> auf dieser Strecke verursacht.</p>
       <div class="chips" id="routen"></div>
       <div class="regler">
         <label for="km">Distanz</label>
         <input type="range" id="km" min="0" max="100" value="30" step="1" aria-label="Distanz in Kilometern">
         <div class="kmzahl" id="kmzahl">45 km</div>
+      </div>
+
+      <div class="eigen">
+        <div class="eigen-tit">Oder eigene Reise eingeben</div>
+        <div class="eigen-zeile">
+          <div class="ac">
+            <label for="von">Von</label>
+            <input type="text" id="von" value="Aarau" autocomplete="off" spellcheck="false" placeholder="Startort">
+            <div class="ac-liste" id="liste-von"></div>
+          </div>
+          <div class="ac">
+            <label for="nach">Nach</label>
+            <input type="text" id="nach" autocomplete="off" spellcheck="false" placeholder="z.&#8239;B. Barcelona">
+            <div class="ac-liste" id="liste-nach"></div>
+          </div>
+          <button class="eigen-btn" id="eigen-los">Strecke berechnen</button>
+        </div>
+        <div class="eigen-info" id="eigen-info"></div>
       </div>
     </div>
 
@@ -316,6 +362,7 @@
         <p><b>Schweizer Pro-Kopf-Emissionen:</b> BAFU, Treibhausgasinventar &ndash; 4,5 t CO&#8322;-eq pro Kopf im Inland (2024). Der Fussabdruck inklusive Ausland liegt bei rund 15 t pro Kopf (2023).</p>
         <p><b>Kreuzfahrtschiff:</b> gesch&auml;tzt. Es gibt keinen offiziellen Schweizer Faktor. Die Umweltberatung Luzern rechnet damit, dass eine Kreuzfahrt pro Kilometer <i>mehr als das Doppelte</i> eines Langstreckenflugs verursacht. Der Wert schwankt stark je nach Schiff, Reisestandard und Auslastung &ndash; deshalb ist er im Diagramm als Sch&auml;tzung markiert.</p>
         <p><b>Motorrad:</b> Der offizielle Faktor bezeichnet einen &laquo;Scooter, Benzin&raquo;. Ein gr&ouml;sseres Motorrad liegt h&ouml;her.</p>
+        <p><b>Eigene Reiseziele:</b> Hinterlegt sind die Koordinaten von 194 Orten. Daraus wird die <b>Luftlinie</b> berechnet &ndash; die k&uuml;rzeste Verbindung auf der Erdkugel. Weil eine echte Reise nie schnurgerade verl&auml;uft, kommt ein Umweg-Zuschlag dazu: auf kurzen Strecken rund ein Viertel, weil Strassen und Schienen T&auml;lern und Bergen ausweichen, auf Langstrecken nur wenige Prozent, weil eine Flugroute der Luftlinie sehr nahe kommt. Das ergibt gute N&auml;herungswerte, aber keine exakten Fahrpl&auml;ne &ndash; wer es genau braucht, schl&auml;gt die Distanz beim SBB-Fahrplan oder bei einem Routenplaner nach und stellt sie mit dem Regler ein.</p>
         <p style="margin-top:12px;"><b>Lebensmittel:</b> Poore &amp; Nemecek, &laquo;Reducing food&rsquo;s environmental impacts through producers and consumers&raquo;, <i>Science</i> 360 (2018), aufbereitet von Our World in Data. Verwendet werden die <b>weltweiten Medianwerte</b> &uuml;ber rund 38'700 Betriebe in 119 L&auml;ndern. Achtung: Man findet f&uuml;r Rindfleisch auch die Zahl 99,5 kg &ndash; das ist der <i>Mittelwert</i> inklusive Verluste in der Lieferkette, nicht der Median.</p>
         <p><b>Wichtig f&uuml;r den Vergleich:</b> Die Reisezahlen sind <i>Schweizer</i> Werte, die Lebensmittelzahlen sind <i>weltweite</i> Durchschnitte. Schweizer Produktion liegt bei manchen Produkten tiefer &ndash; Rindfleisch aus der Schweiz stammt gr&ouml;sstenteils aus Milchviehherden und kommt eher auf 20 bis 25 kg statt 60 kg.</p>
         <p><b>Pizza und Schoggikuchen</b> sind eigene Berechnungen aus den Zutatenwerten und deshalb als Sch&auml;tzung markiert. Die Rechnung steht jeweils im Detailfenster.</p>
@@ -389,11 +436,211 @@ const M = [
 
 const ROUTEN = [
   {n:'Aarau – Zürich',    d:45,   z:'Pendeln'},
-  {n:'Aarau – Genf',       d:220,  z:'Klassenreise'},
-  {n:'Zürich – München',  d:310,  z:'Städtetrip'},
-  {n:'Zürich – Berlin',   d:680,  z:'Städtetrip'},
-  {n:'Zürich – Barcelona',d:1050, z:'Ferien'},
-  {n:'Zürich – New York', d:6300, z:'Fernreise'}
+  {n:'Aarau – Genf',       d:225,  z:'Klassenreise'},
+  {n:'Zürich – München',  d:300,  z:'Städtetrip'},
+  {n:'Zürich – Berlin',   d:750,  z:'Städtetrip'},
+  {n:'Zürich – Barcelona',d:925,  z:'Ferien'},
+  {n:'Zürich – New York', d:6500, z:'Fernreise'}
+];
+
+/* ================= Orte fuer eigene Reisen =================
+   Koordinaten gerundet auf drei Nachkommastellen (Stadtzentrum bzw. Hauptort).
+   Daraus wird die Luftlinie berechnet, nicht die Strassen- oder Schienenroute. */
+const ORTE = [
+{n:'Aarau',r:'AG',la:47.391,lo:8.045,g:'ch',s:'aarau ag'},
+{n:'Zürich',r:'ZH',la:47.377,lo:8.54,g:'ch',s:'zurich zh zuerich zurich'},
+{n:'Bern',r:'BE',la:46.948,lo:7.447,g:'ch',s:'bern be'},
+{n:'Basel',r:'BS',la:47.56,lo:7.588,g:'ch',s:'basel bale bs'},
+{n:'Genf',r:'GE',la:46.204,lo:6.143,g:'ch',s:'genf ge geneva geneve'},
+{n:'Lausanne',r:'VD',la:46.52,lo:6.632,g:'ch',s:'lausanne vd'},
+{n:'Luzern',r:'LU',la:47.05,lo:8.307,g:'ch',s:'luzern lu lucerne'},
+{n:'St. Gallen',r:'SG',la:47.424,lo:9.377,g:'ch',s:'stgallen sg stgallen'},
+{n:'Winterthur',r:'ZH',la:47.5,lo:8.724,g:'ch',s:'winterthur zh'},
+{n:'Lugano',r:'TI',la:46.005,lo:8.951,g:'ch',s:'lugano ti'},
+{n:'Chur',r:'GR',la:46.85,lo:9.532,g:'ch',s:'chur gr'},
+{n:'Sion',r:'VS',la:46.233,lo:7.36,g:'ch',s:'sion sitten vs'},
+{n:'Neuenburg',r:'NE',la:46.99,lo:6.931,g:'ch',s:'neuenburg ne neuchatel'},
+{n:'Fribourg',r:'FR',la:46.806,lo:7.162,g:'ch',s:'fribourg fr freiburg'},
+{n:'Biel',r:'BE',la:47.137,lo:7.247,g:'ch',s:'biel be bienne'},
+{n:'Thun',r:'BE',la:46.758,lo:7.628,g:'ch',s:'thun be'},
+{n:'Schaffhausen',r:'SH',la:47.697,lo:8.635,g:'ch',s:'schaffhausen sh'},
+{n:'Zug',r:'ZG',la:47.166,lo:8.516,g:'ch',s:'zug zg'},
+{n:'Solothurn',r:'SO',la:47.208,lo:7.538,g:'ch',s:'solothurn so'},
+{n:'Olten',r:'SO',la:47.352,lo:7.907,g:'ch',s:'olten so'},
+{n:'Baden',r:'AG',la:47.473,lo:8.306,g:'ch',s:'baden ag'},
+{n:'Wohlen',r:'AG',la:47.351,lo:8.278,g:'ch',s:'wohlen ag'},
+{n:'Lenzburg',r:'AG',la:47.389,lo:8.177,g:'ch',s:'lenzburg ag'},
+{n:'Zofingen',r:'AG',la:47.288,lo:7.945,g:'ch',s:'zofingen ag'},
+{n:'Rheinfelden',r:'AG',la:47.554,lo:7.792,g:'ch',s:'rheinfelden ag'},
+{n:'Brugg',r:'AG',la:47.481,lo:8.208,g:'ch',s:'brugg ag'},
+{n:'Interlaken',r:'BE',la:46.686,lo:7.863,g:'ch',s:'interlaken be'},
+{n:'Zermatt',r:'VS',la:46.021,lo:7.749,g:'ch',s:'zermatt vs'},
+{n:'Davos',r:'GR',la:46.803,lo:9.836,g:'ch',s:'davos gr'},
+{n:'St. Moritz',r:'GR',la:46.498,lo:9.838,g:'ch',s:'stmoritz gr stmoritz'},
+{n:'Locarno',r:'TI',la:46.171,lo:8.799,g:'ch',s:'locarno ti'},
+{n:'Bellinzona',r:'TI',la:46.195,lo:9.024,g:'ch',s:'bellinzona ti'},
+{n:'Grindelwald',r:'BE',la:46.624,lo:8.034,g:'ch',s:'grindelwald be'},
+{n:'Appenzell',r:'AI',la:47.331,lo:9.409,g:'ch',s:'appenzell ai'},
+{n:'Altdorf',r:'UR',la:46.881,lo:8.644,g:'ch',s:'altdorf ur'},
+{n:'Sarnen',r:'OW',la:46.897,lo:8.246,g:'ch',s:'sarnen ow'},
+{n:'Stans',r:'NW',la:46.958,lo:8.366,g:'ch',s:'stans nw'},
+{n:'Glarus',r:'GL',la:47.041,lo:9.068,g:'ch',s:'glarus gl'},
+{n:'Frauenfeld',r:'TG',la:47.557,lo:8.899,g:'ch',s:'frauenfeld tg'},
+{n:'Herisau',r:'AR',la:47.386,lo:9.279,g:'ch',s:'herisau ar'},
+{n:'Liestal',r:'BL',la:47.484,lo:7.735,g:'ch',s:'liestal bl'},
+{n:'Delsberg',r:'JU',la:47.365,lo:7.345,g:'ch',s:'delsberg delemont ju'},
+{n:'Schwyz',r:'SZ',la:47.021,lo:8.653,g:'ch',s:'schwyz sz'},
+{n:'Montreux',r:'VD',la:46.433,lo:6.911,g:'ch',s:'montreux vd'},
+{n:'Vevey',r:'VD',la:46.462,lo:6.843,g:'ch',s:'vevey vd'},
+{n:'Yverdon',r:'VD',la:46.778,lo:6.641,g:'ch',s:'yverdon vd'},
+{n:'Martigny',r:'VS',la:46.103,lo:7.073,g:'ch',s:'martigny vs'},
+{n:'Brig',r:'VS',la:46.316,lo:7.988,g:'ch',s:'brig vs'},
+{n:'Wil',r:'SG',la:47.462,lo:9.045,g:'ch',s:'wil sg'},
+{n:'Uster',r:'ZH',la:47.347,lo:8.721,g:'ch',s:'uster zh'},
+{n:'Rapperswil',r:'SG',la:47.226,lo:8.822,g:'ch',s:'rapperswil sg'},
+{n:'Einsiedeln',r:'SZ',la:47.128,lo:8.745,g:'ch',s:'einsiedeln sz'},
+{n:'Kreuzlingen',r:'TG',la:47.651,lo:9.174,g:'ch',s:'kreuzlingen tg'},
+{n:'Verbier',r:'VS',la:46.096,lo:7.228,g:'ch',s:'verbier vs'},
+{n:'Saas-Fee',r:'VS',la:46.109,lo:7.929,g:'ch',s:'saasfee vs'},
+{n:'Flims',r:'GR',la:46.837,lo:9.284,g:'ch',s:'flims gr'},
+{n:'Andermatt',r:'UR',la:46.635,lo:8.594,g:'ch',s:'andermatt ur'},
+{n:'Engelberg',r:'OW',la:46.821,lo:8.404,g:'ch',s:'engelberg ow'},
+{n:'Adelboden',r:'BE',la:46.492,lo:7.56,g:'ch',s:'adelboden be'},
+{n:'Gstaad',r:'BE',la:46.472,lo:7.286,g:'ch',s:'gstaad be'},
+{n:'Crans-Montana',r:'VS',la:46.312,lo:7.485,g:'ch',s:'cransmontana vs'},
+{n:'Leukerbad',r:'VS',la:46.381,lo:7.629,g:'ch',s:'leukerbad vs'},
+{n:'Scuol',r:'GR',la:46.797,lo:10.297,g:'ch',s:'scuol gr'},
+{n:'Arosa',r:'GR',la:46.783,lo:9.68,g:'ch',s:'arosa gr'},
+{n:'Laax',r:'GR',la:46.807,lo:9.259,g:'ch',s:'laax gr'},
+{n:'Nyon',r:'VD',la:46.383,lo:6.24,g:'ch',s:'nyon vd'},
+{n:'Paris',r:'Frankreich',la:48.857,lo:2.352,g:'eu',s:'paris frankreich'},
+{n:'London',r:'Grossbritannien',la:51.507,lo:-0.128,g:'eu',s:'london grossbritannien'},
+{n:'Berlin',r:'Deutschland',la:52.52,lo:13.405,g:'eu',s:'berlin deutschland'},
+{n:'München',r:'Deutschland',la:48.137,lo:11.575,g:'eu',s:'munchen deutschland muenchen munchen munich'},
+{n:'Hamburg',r:'Deutschland',la:53.551,lo:9.994,g:'eu',s:'hamburg deutschland'},
+{n:'Köln',r:'Deutschland',la:50.938,lo:6.96,g:'eu',s:'koln deutschland'},
+{n:'Frankfurt',r:'Deutschland',la:50.11,lo:8.682,g:'eu',s:'frankfurt deutschland'},
+{n:'Stuttgart',r:'Deutschland',la:48.776,lo:9.183,g:'eu',s:'stuttgart deutschland'},
+{n:'Freiburg i. Br.',r:'Deutschland',la:47.999,lo:7.842,g:'eu',s:'freiburgibr deutschland freiburgbreisgau'},
+{n:'Konstanz',r:'Deutschland',la:47.663,lo:9.176,g:'eu',s:'konstanz deutschland'},
+{n:'Wien',r:'Österreich',la:48.208,lo:16.373,g:'eu',s:'wien osterreich vienna'},
+{n:'Salzburg',r:'Österreich',la:47.803,lo:13.045,g:'eu',s:'salzburg osterreich'},
+{n:'Innsbruck',r:'Österreich',la:47.269,lo:11.404,g:'eu',s:'innsbruck osterreich'},
+{n:'Prag',r:'Tschechien',la:50.088,lo:14.42,g:'eu',s:'prag prague praha tschechien'},
+{n:'Budapest',r:'Ungarn',la:47.498,lo:19.04,g:'eu',s:'budapest ungarn'},
+{n:'Warschau',r:'Polen',la:52.23,lo:21.012,g:'eu',s:'warschau polen warsaw warszawa'},
+{n:'Krakau',r:'Polen',la:50.065,lo:19.945,g:'eu',s:'krakau krakow polen'},
+{n:'Amsterdam',r:'Niederlande',la:52.37,lo:4.895,g:'eu',s:'amsterdam niederlande'},
+{n:'Brüssel',r:'Belgien',la:50.851,lo:4.352,g:'eu',s:'brussel belgien brussels bruxelles'},
+{n:'Kopenhagen',r:'Dänemark',la:55.676,lo:12.568,g:'eu',s:'kopenhagen copenhagen danemark'},
+{n:'Stockholm',r:'Schweden',la:59.329,lo:18.069,g:'eu',s:'stockholm schweden'},
+{n:'Oslo',r:'Norwegen',la:59.914,lo:10.752,g:'eu',s:'oslo norwegen'},
+{n:'Helsinki',r:'Finnland',la:60.17,lo:24.938,g:'eu',s:'helsinki finnland'},
+{n:'Reykjavik',r:'Island',la:64.147,lo:-21.94,g:'eu',s:'reykjavik island'},
+{n:'Dublin',r:'Irland',la:53.35,lo:-6.26,g:'eu',s:'dublin irland'},
+{n:'Edinburgh',r:'Grossbritannien',la:55.953,lo:-3.188,g:'eu',s:'edinburgh grossbritannien'},
+{n:'Madrid',r:'Spanien',la:40.417,lo:-3.704,g:'eu',s:'madrid spanien'},
+{n:'Barcelona',r:'Spanien',la:41.385,lo:2.173,g:'eu',s:'barcelona spanien'},
+{n:'Sevilla',r:'Spanien',la:37.389,lo:-5.984,g:'eu',s:'sevilla seville spanien'},
+{n:'Valencia',r:'Spanien',la:39.47,lo:-0.377,g:'eu',s:'valencia spanien'},
+{n:'Malaga',r:'Spanien',la:36.721,lo:-4.421,g:'eu',s:'malaga spanien'},
+{n:'Palma de Mallorca',r:'Spanien',la:39.57,lo:2.65,g:'eu',s:'palmademallorca mallorca palma spanien'},
+{n:'Ibiza',r:'Spanien',la:38.909,lo:1.432,g:'eu',s:'ibiza spanien'},
+{n:'Teneriffa',r:'Spanien',la:28.464,lo:-16.252,g:'eu',s:'teneriffa spanien tenerife'},
+{n:'Gran Canaria',r:'Spanien',la:28.124,lo:-15.43,g:'eu',s:'grancanaria laspalmas spanien'},
+{n:'Lissabon',r:'Portugal',la:38.722,lo:-9.139,g:'eu',s:'lissabon lisboa lisbon portugal'},
+{n:'Porto',r:'Portugal',la:41.158,lo:-8.629,g:'eu',s:'porto portugal'},
+{n:'Rom',r:'Italien',la:41.903,lo:12.496,g:'eu',s:'rom italien roma rome'},
+{n:'Mailand',r:'Italien',la:45.464,lo:9.19,g:'eu',s:'mailand italien milan milano'},
+{n:'Venedig',r:'Italien',la:45.44,lo:12.316,g:'eu',s:'venedig italien venezia venice'},
+{n:'Florenz',r:'Italien',la:43.77,lo:11.256,g:'eu',s:'florenz firenze italien'},
+{n:'Neapel',r:'Italien',la:40.852,lo:14.268,g:'eu',s:'neapel italien naples napoli'},
+{n:'Palermo',r:'Italien',la:38.116,lo:13.361,g:'eu',s:'palermo italien'},
+{n:'Rimini',r:'Italien',la:44.061,lo:12.566,g:'eu',s:'rimini italien'},
+{n:'Sardinien',r:'Italien',la:39.216,lo:9.113,g:'eu',s:'sardinien cagliari italien'},
+{n:'Nizza',r:'Frankreich',la:43.71,lo:7.262,g:'eu',s:'nizza frankreich nice'},
+{n:'Marseille',r:'Frankreich',la:43.297,lo:5.37,g:'eu',s:'marseille frankreich'},
+{n:'Lyon',r:'Frankreich',la:45.764,lo:4.836,g:'eu',s:'lyon frankreich'},
+{n:'Bordeaux',r:'Frankreich',la:44.838,lo:-0.579,g:'eu',s:'bordeaux frankreich'},
+{n:'Korsika',r:'Frankreich',la:41.926,lo:8.737,g:'eu',s:'korsika ajaccio corse frankreich'},
+{n:'Athen',r:'Griechenland',la:37.984,lo:23.728,g:'eu',s:'athen athens griechenland'},
+{n:'Kreta',r:'Griechenland',la:35.339,lo:25.145,g:'eu',s:'kreta crete griechenland heraklion'},
+{n:'Rhodos',r:'Griechenland',la:36.434,lo:28.218,g:'eu',s:'rhodos griechenland'},
+{n:'Santorin',r:'Griechenland',la:36.393,lo:25.462,g:'eu',s:'santorin griechenland'},
+{n:'Korfu',r:'Griechenland',la:39.624,lo:19.922,g:'eu',s:'korfu corfu griechenland'},
+{n:'Istanbul',r:'Türkei',la:41.008,lo:28.978,g:'eu',s:'istanbul istanbul turkei'},
+{n:'Antalya',r:'Türkei',la:36.897,lo:30.713,g:'eu',s:'antalya tuerkei turkei'},
+{n:'Zagreb',r:'Kroatien',la:45.815,lo:15.982,g:'eu',s:'zagreb kroatien'},
+{n:'Split',r:'Kroatien',la:43.508,lo:16.44,g:'eu',s:'split kroatien'},
+{n:'Dubrovnik',r:'Kroatien',la:42.65,lo:18.094,g:'eu',s:'dubrovnik kroatien'},
+{n:'Belgrad',r:'Serbien',la:44.787,lo:20.449,g:'eu',s:'belgrad serbien'},
+{n:'Sarajevo',r:'Bosnien',la:43.856,lo:18.413,g:'eu',s:'sarajevo bosnien'},
+{n:'Pristina',r:'Kosovo',la:42.663,lo:21.162,g:'eu',s:'pristina kosovo'},
+{n:'Skopje',r:'Nordmazedonien',la:41.996,lo:21.432,g:'eu',s:'skopje nordmazedonien'},
+{n:'Tirana',r:'Albanien',la:41.328,lo:19.818,g:'eu',s:'tirana albanien'},
+{n:'Bukarest',r:'Rumänien',la:44.427,lo:26.103,g:'eu',s:'bukarest bucharest rumanien'},
+{n:'Sofia',r:'Bulgarien',la:42.698,lo:23.322,g:'eu',s:'sofia bulgarien'},
+{n:'Moskau',r:'Russland',la:55.756,lo:37.617,g:'eu',s:'moskau moscow russland'},
+{n:'Kiew',r:'Ukraine',la:50.45,lo:30.523,g:'eu',s:'kiew kiev kyiv ukraine'},
+{n:'Vaduz',r:'Liechtenstein',la:47.141,lo:9.521,g:'eu',s:'vaduz liechtenstein'},
+{n:'New York',r:'USA',la:40.713,lo:-74.006,g:'welt',s:'newyork newyork nyc usa'},
+{n:'Los Angeles',r:'USA',la:34.052,lo:-118.244,g:'welt',s:'losangeles usa'},
+{n:'San Francisco',r:'USA',la:37.775,lo:-122.419,g:'welt',s:'sanfrancisco usa'},
+{n:'Miami',r:'USA',la:25.762,lo:-80.192,g:'welt',s:'miami usa'},
+{n:'Chicago',r:'USA',la:41.878,lo:-87.63,g:'welt',s:'chicago usa'},
+{n:'Las Vegas',r:'USA',la:36.17,lo:-115.139,g:'welt',s:'lasvegas usa'},
+{n:'Orlando',r:'USA',la:28.538,lo:-81.379,g:'welt',s:'orlando usa'},
+{n:'Boston',r:'USA',la:42.36,lo:-71.059,g:'welt',s:'boston usa'},
+{n:'Washington',r:'USA',la:38.907,lo:-77.037,g:'welt',s:'washington usa'},
+{n:'Honolulu',r:'USA',la:21.307,lo:-157.858,g:'welt',s:'honolulu usa'},
+{n:'Toronto',r:'Kanada',la:43.653,lo:-79.383,g:'welt',s:'toronto kanada'},
+{n:'Vancouver',r:'Kanada',la:49.283,lo:-123.121,g:'welt',s:'vancouver kanada'},
+{n:'Montreal',r:'Kanada',la:45.502,lo:-73.567,g:'welt',s:'montreal kanada'},
+{n:'Mexiko-Stadt',r:'Mexiko',la:19.433,lo:-99.133,g:'welt',s:'mexikostadt mexicocity mexiko'},
+{n:'Cancún',r:'Mexiko',la:21.161,lo:-86.851,g:'welt',s:'cancun cancun mexiko'},
+{n:'Havanna',r:'Kuba',la:23.113,lo:-82.366,g:'welt',s:'havanna kuba'},
+{n:'Bogotá',r:'Kolumbien',la:4.711,lo:-74.072,g:'welt',s:'bogota bogota kolumbien'},
+{n:'Lima',r:'Peru',la:-12.046,lo:-77.043,g:'welt',s:'lima peru'},
+{n:'Rio de Janeiro',r:'Brasilien',la:-22.907,lo:-43.173,g:'welt',s:'riodejaneiro brasilien'},
+{n:'São Paulo',r:'Brasilien',la:-23.551,lo:-46.633,g:'welt',s:'saopaulo brasilien saopaulo'},
+{n:'Buenos Aires',r:'Argentinien',la:-34.604,lo:-58.382,g:'welt',s:'buenosaires argentinien'},
+{n:'Santiago de Chile',r:'Chile',la:-33.449,lo:-70.669,g:'welt',s:'santiagodechile chile santiago'},
+{n:'Kairo',r:'Ägypten',la:30.044,lo:31.236,g:'welt',s:'kairo agypten cairo'},
+{n:'Hurghada',r:'Ägypten',la:27.257,lo:33.812,g:'welt',s:'hurghada agypten'},
+{n:'Marrakesch',r:'Marokko',la:31.63,lo:-7.981,g:'welt',s:'marrakesch marokko marrakech marrakesch'},
+{n:'Tunis',r:'Tunesien',la:36.807,lo:10.181,g:'welt',s:'tunis tunesien'},
+{n:'Kapstadt',r:'Südafrika',la:-33.925,lo:18.424,g:'welt',s:'kapstadt capetown sudafrika'},
+{n:'Johannesburg',r:'Südafrika',la:-26.204,lo:28.047,g:'welt',s:'johannesburg sudafrika'},
+{n:'Nairobi',r:'Kenia',la:-1.286,lo:36.817,g:'welt',s:'nairobi kenia'},
+{n:'Lagos',r:'Nigeria',la:6.524,lo:3.379,g:'welt',s:'lagos nigeria'},
+{n:'Addis Abeba',r:'Äthiopien',la:9.03,lo:38.741,g:'welt',s:'addisabeba addisabeba athiopien'},
+{n:'Dakar',r:'Senegal',la:14.716,lo:-17.467,g:'welt',s:'dakar senegal'},
+{n:'Dubai',r:'VAE',la:25.205,lo:55.271,g:'welt',s:'dubai vae'},
+{n:'Doha',r:'Katar',la:25.286,lo:51.531,g:'welt',s:'doha katar'},
+{n:'Tel Aviv',r:'Israel',la:32.085,lo:34.781,g:'welt',s:'telaviv israel'},
+{n:'Teheran',r:'Iran',la:35.689,lo:51.389,g:'welt',s:'teheran iran'},
+{n:'Delhi',r:'Indien',la:28.614,lo:77.209,g:'welt',s:'delhi indien'},
+{n:'Mumbai',r:'Indien',la:19.076,lo:72.878,g:'welt',s:'mumbai indien'},
+{n:'Colombo',r:'Sri Lanka',la:6.927,lo:79.861,g:'welt',s:'colombo srilanka'},
+{n:'Malé',r:'Malediven',la:4.175,lo:73.509,g:'welt',s:'male malediven'},
+{n:'Bangkok',r:'Thailand',la:13.756,lo:100.502,g:'welt',s:'bangkok thailand'},
+{n:'Phuket',r:'Thailand',la:7.884,lo:98.392,g:'welt',s:'phuket thailand'},
+{n:'Singapur',r:'Singapur',la:1.352,lo:103.82,g:'welt',s:'singapur singapur'},
+{n:'Kuala Lumpur',r:'Malaysia',la:3.139,lo:101.687,g:'welt',s:'kualalumpur malaysia'},
+{n:'Bali',r:'Indonesien',la:-8.67,lo:115.212,g:'welt',s:'bali denpasar indonesien'},
+{n:'Jakarta',r:'Indonesien',la:-6.208,lo:106.846,g:'welt',s:'jakarta indonesien'},
+{n:'Hanoi',r:'Vietnam',la:21.028,lo:105.834,g:'welt',s:'hanoi vietnam'},
+{n:'Ho-Chi-Minh-Stadt',r:'Vietnam',la:10.823,lo:106.63,g:'welt',s:'hochiminhstadt saigon vietnam'},
+{n:'Manila',r:'Philippinen',la:14.599,lo:120.984,g:'welt',s:'manila philippinen'},
+{n:'Hongkong',r:'China',la:22.319,lo:114.169,g:'welt',s:'hongkong china hongkong'},
+{n:'Peking',r:'China',la:39.904,lo:116.407,g:'welt',s:'peking beijing china'},
+{n:'Shanghai',r:'China',la:31.23,lo:121.474,g:'welt',s:'shanghai china'},
+{n:'Tokio',r:'Japan',la:35.69,lo:139.692,g:'welt',s:'tokio japan tokyo'},
+{n:'Seoul',r:'Südkorea',la:37.567,lo:126.978,g:'welt',s:'seoul sudkorea'},
+{n:'Taipeh',r:'Taiwan',la:25.033,lo:121.565,g:'welt',s:'taipeh taiwan'},
+{n:'Sydney',r:'Australien',la:-33.869,lo:151.209,g:'welt',s:'sydney australien'},
+{n:'Melbourne',r:'Australien',la:-37.814,lo:144.963,g:'welt',s:'melbourne australien'},
+{n:'Auckland',r:'Neuseeland',la:-36.848,lo:174.763,g:'welt',s:'auckland neuseeland'}
 ];
 
 const BESETZUNG = [
@@ -404,26 +651,134 @@ const BESETZUNG = [
 /* Inlandemissionen Schweiz: 4,5 t CO2-eq pro Kopf und Jahr (BAFU, 2024) */
 const PROKOPF_KG = 4500;
 
-let distanz = 45, gewaehlt = null, besetzt = 1.6;
+let distanz = 45, gewaehlt = null, besetzt = 1.6, strecke = null;
 
 /* ================= Distanz-Regler: exponentiell ================= */
-function reglerZuKm(p){
-  const km = 3 * Math.pow(10000/3, p/100);
+function runde(km){
   if(km < 50)   return Math.round(km/5)*5;
   if(km < 200)  return Math.round(km/10)*10;
   if(km < 1000) return Math.round(km/25)*25;
   return Math.round(km/100)*100;
 }
+function reglerZuKm(p){ return runde(3 * Math.pow(10000/3, p/100)); }
 function kmZuRegler(km){
   return Math.round(100 * Math.log(km/3) / Math.log(10000/3));
+}
+
+/* ================= Eigene Reise ================= */
+/* Luftlinie ueber die Kugel (Haversine), Erdradius 6371 km */
+function luftlinie(a, b){
+  const g = Math.PI/180, R = 6371;
+  const sla = Math.sin((b.la - a.la) * g / 2), slo = Math.sin((b.lo - a.lo) * g / 2);
+  const h = sla*sla + Math.cos(a.la*g) * Math.cos(b.la*g) * slo*slo;
+  return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
+}
+/* Umweg-Zuschlag: kurze Strecken auf Strasse und Schiene sind rund einen Viertel
+   laenger als die Luftlinie, Langstreckenflugrouten nur wenige Prozent. */
+function umweg(d){ return 1.03 + 0.22 * Math.exp(-d/900); }
+
+const UML = {'ä':'a','ö':'o','ü':'u','é':'e','è':'e','ê':'e','á':'a','à':'a','í':'i',
+             'ó':'o','ú':'u','ñ':'n','ç':'c','ã':'a','â':'a','ß':'ss'};
+function norm(t){
+  return String(t).toLowerCase().replace(/[äöüéèêáàíóúñçãâß]/g, c => UML[c]).replace(/[^a-z0-9]/g,'');
+}
+function suche(q){
+  const n = norm(q);
+  if(!n) return [];
+  const ex = [], vorn = [], drin = [];
+  for(const o of ORTE){
+    if(norm(o.n) === n) ex.push(o);
+    else if(o.s.indexOf(n) === 0 || o.s.indexOf(' '+n) > -1) vorn.push(o);
+    else if(o.s.indexOf(n) > 0) drin.push(o);
+  }
+  return ex.concat(vorn, drin).slice(0, 8);
+}
+function finde(t){
+  const n = norm(t);
+  if(!n) return null;
+  return ORTE.find(o => norm(o.n) === n) || suche(t)[0] || null;
+}
+
+const EIGEN_HINT = 'Tippe die ersten Buchstaben &ndash; 194 Orte sind hinterlegt, von Zofingen bis Auckland. ' +
+  'Auch ein Land oder ein Kanton f&uuml;hrt zu Vorschl&auml;gen, etwa &bdquo;Spanien&ldquo; oder &bdquo;VS&ldquo;.';
+const AC = { von:null, nach:null };
+const ACS = { von:{t:[], m:-1}, nach:{t:[], m:-1} };
+
+function acZeichne(feld){
+  const l = $('liste-'+feld), st = ACS[feld];
+  if(!st.t.length){ l.classList.remove('auf'); l.innerHTML = ''; return; }
+  l.innerHTML = st.t.map((o,i) =>
+    '<button type="button" class="ac-opt'+(i===st.m?' mark':'')+'" data-i="'+ORTE.indexOf(o)+'">' +
+    o.n + '<small>' + o.r + '</small></button>').join('');
+  l.classList.add('auf');
+  l.querySelectorAll('.ac-opt').forEach(b=>{
+    b.onmousedown = e => { e.preventDefault(); acWaehle(feld, ORTE[+b.dataset.i]); };
+  });
+}
+function acZu(feld){ ACS[feld].t = []; ACS[feld].m = -1; $('liste-'+feld).classList.remove('auf'); }
+function acWaehle(feld, o){
+  AC[feld] = o;
+  $(feld).value = o.n;
+  acZu(feld);
+  rechneEigene();
+}
+function acInit(feld){
+  const inp = $(feld);
+  inp.addEventListener('input', () => {
+    AC[feld] = null;
+    ACS[feld].t = suche(inp.value);
+    ACS[feld].m = ACS[feld].t.length ? 0 : -1;
+    acZeichne(feld);
+  });
+  inp.addEventListener('keydown', e => {
+    const st = ACS[feld];
+    if(e.key === 'ArrowDown' || e.key === 'ArrowUp'){
+      if(!st.t.length) return;
+      e.preventDefault();
+      st.m = (Math.max(0, st.m) + (e.key === 'ArrowDown' ? 1 : st.t.length - 1)) % st.t.length;
+      acZeichne(feld);
+    } else if(e.key === 'Enter'){
+      e.preventDefault();
+      if(st.t.length && st.m >= 0) acWaehle(feld, st.t[st.m]);
+      else { acZu(feld); rechneEigene(); }
+    } else if(e.key === 'Escape'){
+      acZu(feld);
+    }
+  });
+  inp.addEventListener('blur', () => setTimeout(() => acZu(feld), 130));
+}
+
+function rechneEigene(){
+  const info = $('eigen-info');
+  const a = AC.von || finde($('von').value), b = AC.nach || finde($('nach').value);
+  if(!a || !b){
+    info.className = 'eigen-info warn';
+    info.innerHTML = 'Diesen Ort kenne ich nicht. Nimm einen Vorschlag aus der Liste &ndash; oder stell die Distanz von Hand mit dem Regler ein.';
+    return;
+  }
+  if(a === b){
+    info.className = 'eigen-info warn';
+    info.innerHTML = 'Start und Ziel sind derselbe Ort. W&auml;hle zwei verschiedene.';
+    return;
+  }
+  AC.von = a; AC.nach = b;
+  $('von').value = a.n; $('nach').value = b.n;
+  const luft = luftlinie(a, b);
+  const km = Math.max(5, runde(luft * umweg(luft)));
+  $('km').value = Math.max(0, Math.min(100, kmZuRegler(km)));
+  setzeDistanz(km, a.n + ' – ' + b.n);
+  info.className = 'eigen-info';
+  info.innerHTML = '<b>' + a.n + ' &rarr; ' + b.n + '</b> &middot; Luftlinie ' + chf(Math.round(luft)) +
+    ' km &middot; gerechnet wird mit <b>' + chf(km) + ' km</b>. Der Zuschlag ber&uuml;cksichtigt, dass ' +
+    'Strassen und Schienen Umwege machen, w&auml;hrend eine Flugroute fast der Luftlinie folgt.';
 }
 
 /* ================= Aufbau ================= */
 function zeichneRouten(){
   $('routen').innerHTML = ROUTEN.map(r =>
-    '<button class="chip" data-d="'+r.d+'">'+r.n+'<small>'+chf(r.d)+' km &middot; '+r.z+'</small></button>').join('');
+    '<button class="chip" data-d="'+r.d+'" data-n="'+r.n+'">'+r.n+'<small>'+chf(r.d)+' km &middot; '+r.z+'</small></button>').join('');
   $('routen').querySelectorAll('.chip').forEach(b=>{
-    b.onclick = () => { setzeDistanz(+b.dataset.d); $('km').value = kmZuRegler(+b.dataset.d); };
+    b.onclick = () => { $('km').value = kmZuRegler(+b.dataset.d); setzeDistanz(+b.dataset.d, b.dataset.n); };
   });
 }
 function zeichneBesetzung(){
@@ -454,7 +809,8 @@ function zeichneBalken(){
                  .map(m => ({m:m, g:faktor(m), kg:faktor(m)*distanz/1000}))
                  .sort((a,b) => a.g - b.g);
   const maxKg = Math.max(...sicht.map(o=>o.kg), 0.001);
-  $('chart-titel').innerHTML = 'Treibhausgas pro Person auf ' + chf(distanz) + ' km';
+  $('chart-titel').innerHTML = 'Treibhausgas pro Person auf ' + chf(distanz) + ' km' +
+    (strecke ? ' &middot; ' + strecke : '');
   $('balken').innerHTML = sicht.map(o => {
     const kg = o.kg;
     const anzeige = kg < 1 ? chf(Math.round(kg*1000)) + ' g' : chf(Math.round(kg*10)/10) + ' kg';
@@ -504,8 +860,11 @@ function zeichneEinordnung(sicht){
   $('eotext').innerHTML = txt;
 }
 
-function setzeDistanz(km){
+function setzeDistanz(km, name){
   distanz = km;
+  strecke = name || null;
+  const info = $('eigen-info');
+  if(info){ info.className = 'eigen-info'; info.innerHTML = EIGEN_HINT; }
   $('kmzahl').textContent = chf(km) + ' km';
   $('routen').querySelectorAll('.chip').forEach(b=> b.classList.toggle('on', +b.dataset.d===km));
   const nochDa = M.find(m=>m.k===gewaehlt);
@@ -800,6 +1159,8 @@ zeichneEssbalken();
 zeichneTabelle();
 zeichneEsstabelle();
 zeichneQuiz();
+acInit('von'); acInit('nach');
+$('eigen-los').addEventListener('click', () => { acZu('von'); acZu('nach'); rechneEigene(); });
 $('km').value = kmZuRegler(45);
 setzeDistanz(45);
 </script>
