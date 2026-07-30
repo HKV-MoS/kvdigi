@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CO&#8322; im Alltag &ndash; HKV Aarau</title>
+<style>
+  *{ box-sizing:border-box; }
+  body{ margin:0; font-family:'Aptos','Segoe UI',system-ui,-apple-system,sans-serif; background:#F4F8FB; color:#1A2B3A; font-size:15px; line-height:1.55; }
+  header{ background:linear-gradient(135deg,#213B42 0%,#3C6E73 100%); color:#fff; padding:18px 22px 22px; box-shadow:0 2px 8px rgba(0,0,0,.12); text-align:center; }
+  .brand-eyebrow{ font-size:11px; font-weight:800; letter-spacing:2.5px; color:#D8AE66; margin-bottom:3px; text-transform:uppercase; }
+  header h1{ margin:0 0 2px; font-size:22px; font-weight:800; letter-spacing:-.3px; }
+  header .sub{ font-size:13px; opacity:.93; max-width:760px; margin:0 auto; }
+  .wrap{ max-width:980px; margin:0 auto; padding:16px; }
+
+  /* Tabs */
+  .tabs{ display:flex; gap:8px; margin:18px 0 4px; flex-wrap:wrap; }
+  .tab{ font-family:inherit; font-size:14px; font-weight:700; padding:9px 18px; border-radius:10px 10px 0 0; border:none; background:transparent; color:#5B6B7A; cursor:pointer; border-bottom:3px solid transparent; transition:all .15s ease; }
+  .tab:hover{ color:#213B42; }
+  .tab.active{ color:#213B42; border-bottom-color:#D8AE66; background:#fff; box-shadow:0 -2px 8px rgba(20,50,80,.05); }
+  .tab:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
+  .panel{ display:none; }
+  .panel.active{ display:block; }
+
+  .card{ background:#fff; border-radius:14px; box-shadow:0 2px 10px rgba(20,50,80,.08); padding:18px 20px; margin-bottom:16px; }
+  .card h2{ margin:0 0 4px; font-size:18px; color:#213B42; font-weight:800; }
+  .card h3{ margin:16px 0 6px; font-size:14px; font-weight:800; color:#3C6E73; text-transform:uppercase; letter-spacing:.5px; }
+  .card p{ margin:6px 0; }
+  .lead{ color:#41585f; }
+  .hl{ background:#FBF3DF; padding:1px 6px; border-radius:5px; font-weight:700; }
+  .mini{ font-size:12px; color:#8AA0B4; }
+
+  /* Chips */
+  .chips{ display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 0; }
+  .chip{ font:inherit; font-size:12.5px; font-weight:700; padding:6px 14px; border-radius:999px;
+         border:1.5px solid #D3E2EC; background:#fff; color:#5B6B7A; cursor:pointer; transition:all .15s ease; }
+  .chip:hover{ border-color:#3C6E73; color:#213B42; }
+  .chip.on{ background:#213B42; border-color:#213B42; color:#fff; }
+  .chip:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
+  .chip small{ display:block; font-size:10.5px; font-weight:700; opacity:.62; letter-spacing:.2px; }
+
+  /* Regler */
+  .regler{ display:flex; align-items:center; gap:14px; margin-top:14px; flex-wrap:wrap; }
+  .regler label{ font-size:11.5px; font-weight:800; text-transform:uppercase; letter-spacing:.6px; color:#3C6E73; }
+  input[type=range]{ flex:1; min-width:220px; accent-color:#3C6E73; height:26px; }
+  .kmzahl{ font-size:20px; font-weight:800; color:#213B42; min-width:118px; text-align:right; font-variant-numeric:tabular-nums; }
+
+  /* Balken */
+  .balken{ margin-top:6px; }
+  .zeile{ display:grid; grid-template-columns:64px 152px 1fr 96px; align-items:center; gap:10px;
+          padding:5px 8px; border-radius:10px; cursor:pointer; transition:background .15s ease; border:none;
+          background:transparent; font:inherit; text-align:left; width:100%; }
+  .zeile:hover{ background:#F0F6FA; }
+  .zeile.on{ background:#EDF3F8; box-shadow:inset 0 0 0 1.5px #C3D9E6; }
+  .zeile:focus-visible{ outline:3px solid #A7D2CE; outline-offset:1px; }
+  .z-bild{ height:34px; width:60px; object-fit:contain; object-position:center; image-rendering:pixelated; }
+  .z-name{ font-size:13.5px; font-weight:700; color:#213B42; line-height:1.25; }
+  .z-name em{ display:block; font-style:normal; font-size:11px; font-weight:700; color:#8AA0B4; }
+  .z-bar{ height:19px; border-radius:5px; background:#3C6E73; transition:width .5s cubic-bezier(.4,0,.2,1), background .3s ease; min-width:3px; }
+  .z-bar.gut{ background:#2E8C63; }
+  .z-bar.mittel{ background:#D8AE66; }
+  .z-bar.hoch{ background:#C1663A; }
+  .z-bar.sehrhoch{ background:#9E3B2E; }
+  .z-wert{ font-size:14.5px; font-weight:800; color:#213B42; text-align:right; font-variant-numeric:tabular-nums; }
+  .z-wert em{ display:block; font-style:normal; font-size:10.5px; font-weight:700; color:#8AA0B4; }
+  @media (max-width:640px){
+    .zeile{ grid-template-columns:44px 1fr 78px; }
+    .z-bild{ height:26px; width:40px; }
+    .zeile .z-bar{ grid-column:1 / -1; }
+  }
+
+  /* Teller */
+  .tellergrid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(112px,1fr)); gap:9px; margin-top:12px; }
+  .lm{ font:inherit; cursor:pointer; background:#fff; border:1.5px solid #E1EBF1; border-radius:12px;
+       padding:8px 6px 7px; text-align:center; transition:border-color .15s ease, box-shadow .15s ease; position:relative; }
+  .lm:hover{ border-color:#3C6E73; }
+  .lm.on{ border-color:#3C6E73; box-shadow:0 0 0 2px #CFE4E2 inset; background:#F3F9F8; }
+  .lm:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
+  .lm img{ height:40px; width:100%; object-fit:contain; image-rendering:pixelated; display:block; }
+  .lm-n{ font-size:12px; font-weight:800; color:#213B42; margin-top:4px; line-height:1.2; }
+  .lm-p{ font-size:10px; font-weight:700; color:#8AA0B4; }
+  .lm-z{ position:absolute; top:-7px; right:-7px; min-width:22px; height:22px; border-radius:999px;
+         background:#213B42; color:#fff; font-size:12px; font-weight:800; line-height:22px; padding:0 6px;
+         box-shadow:0 1px 4px rgba(0,0,0,.25); }
+  .tellerbar{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-top:16px;
+              background:#213B42; color:#fff; border-radius:12px; padding:14px 18px; }
+  .tb-zahl{ font-size:30px; font-weight:800; color:#F3D9A4; font-variant-numeric:tabular-nums; line-height:1.1; }
+  .tb-zahl small{ font-size:14px; font-weight:800; opacity:.8; }
+  .tb-txt{ font-size:13.5px; flex:1; min-width:220px; }
+  .tb-txt b{ color:#F3D9A4; }
+  .tb-leer{ font-size:13.5px; opacity:.75; }
+  .tb-reset{ font:inherit; font-size:12px; font-weight:700; padding:6px 13px; border-radius:999px;
+             border:1.5px solid rgba(255,255,255,.35); background:transparent; color:#fff; cursor:pointer; }
+  .tb-reset:hover{ background:rgba(255,255,255,.12); }
+  .tb-reset:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
+
+  .schaetztag{ display:inline-block; font-size:9.5px; font-weight:800; letter-spacing:.4px; text-transform:uppercase;
+               background:#FBE9DA; color:#B5641E; border-radius:4px; padding:0 5px; margin-left:5px; vertical-align:1px; }
+
+  /* Detail */
+  .detail{ margin-top:14px; border-radius:12px; border:1px solid #E1EBF1; background:#F3F8FC; padding:15px 17px; min-height:96px; }
+  .d-top{ display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+  .d-name{ font-size:19px; font-weight:800; color:#213B42; }
+  .d-wert{ font-size:13px; font-weight:800; color:#3C6E73; background:#fff; border:1px solid #D3E2EC; border-radius:7px; padding:1px 8px; }
+  .d-text{ font-size:13.5px; margin-top:8px; color:#41585f; }
+  .d-leer{ color:#8AA0B4; font-size:13.5px; }
+
+  /* Einordnung */
+  .einordnung{ margin-top:14px; border-radius:12px; background:#213B42; color:#fff; padding:15px 18px; }
+  .eo-tit{ font-size:11px; font-weight:800; letter-spacing:1.4px; text-transform:uppercase; color:#D8AE66; }
+  .eo-text{ font-size:14px; margin-top:5px; }
+  .eo-text b{ color:#F3D9A4; }
+
+  /* Erklaerkarten */
+  .grid2{ display:grid; grid-template-columns:repeat(auto-fit,minmax(268px,1fr)); gap:14px; margin-top:12px; }
+  .ek{ background:#F3F8FC; border:1px solid #E1EBF1; border-radius:12px; padding:14px 16px; }
+  .ek-bild{ height:52px; width:auto; max-width:100%; image-rendering:pixelated; display:block; margin-bottom:6px; }
+  .ek h4{ margin:0 0 4px; font-size:15px; font-weight:800; color:#213B42; }
+  .ek p{ margin:4px 0 0; font-size:13px; color:#41585f; }
+
+  /* Tabelle */
+  table{ width:100%; border-collapse:collapse; margin-top:10px; font-size:13px; }
+  th{ text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:.6px; color:#3C6E73; border-bottom:2px solid #E1EBF1; padding:5px 7px; }
+  td{ padding:5px 7px; border-bottom:1px solid #EEF3F7; }
+  td.z{ text-align:right; font-variant-numeric:tabular-nums; font-weight:700; }
+  tbody tr:hover{ background:#F7FBFD; }
+
+  /* Quiz */
+  .frage{ background:#F3F8FC; border:1px solid #E1EBF1; border-radius:12px; padding:15px 17px; margin-top:12px; }
+  .f-nr{ font-size:10.5px; font-weight:800; letter-spacing:1.2px; text-transform:uppercase; color:#3C6E73; }
+  .f-text{ font-size:15.5px; font-weight:800; color:#213B42; margin:3px 0 10px; }
+  .antworten{ display:flex; flex-direction:column; gap:7px; }
+  .antw{ font:inherit; text-align:left; cursor:pointer; padding:9px 13px; border-radius:9px;
+         border:1.5px solid #D3E2EC; background:#fff; color:#213B42; font-size:13.5px; font-weight:600;
+         transition:border-color .15s ease, background .15s ease; }
+  .antw:hover:not(:disabled){ border-color:#3C6E73; }
+  .antw:disabled{ cursor:default; }
+  .antw.richtig{ background:#E3F1EA; border-color:#7CC29B; font-weight:800; }
+  .antw.falsch{ background:#FBE9DA; border-color:#E9B389; }
+  .antw:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
+  .aufloesung{ margin-top:10px; font-size:13px; color:#41585f; background:#fff; border-left:3px solid #D8AE66;
+               border-radius:0 8px 8px 0; padding:9px 13px; display:none; }
+  .aufloesung.zeig{ display:block; }
+  .punkte{ text-align:center; font-size:14px; font-weight:800; color:#213B42; margin-top:16px; }
+
+  .quellen{ font-size:11.5px; color:#8AA0B4; line-height:1.6; }
+  .quellen b{ color:#5B6B7A; }
+  .footer{ max-width:980px; margin:6px auto 26px; padding:0 18px; }
+  .footer .cr{ color:#94A3B0; font-size:11px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand-eyebrow">HKV Aarau &middot; ABU</div>
+  <h1>CO&#8322; im Alltag</h1>
+  <div class="sub">Wie viel Treibhausgas steckt in einer Reise &ndash; und wie viel auf dem Teller? Zwei Vergleiche mit belastbaren Zahlen.</div>
+</header>
+
+<div class="wrap">
+  <div class="tabs" role="tablist">
+    <button class="tab active" id="tab-rechnen" role="tab" aria-selected="true">&#128207; Reisen</button>
+    <button class="tab" id="tab-essen" role="tab" aria-selected="false">&#127860; Essen</button>
+    <button class="tab" id="tab-warum" role="tab" aria-selected="false">&#129300; Warum so verschieden?</button>
+    <button class="tab" id="tab-quiz" role="tab" aria-selected="false">&#127919; Quiz</button>
+  </div>
+
+  <!-- ================= REITER 1 ================= -->
+  <div class="panel active" id="panel-rechnen">
+    <div class="card">
+      <h2>Wie weit geht die Reise?</h2>
+      <p class="lead">W&auml;hle eine Strecke &ndash; oder schiebe den Regler auf eine eigene Distanz. Die Balken zeigen, wie viel Treibhausgas <b>eine Person</b> auf dieser Strecke verursacht.</p>
+      <div class="chips" id="routen"></div>
+      <div class="regler">
+        <label for="km">Distanz</label>
+        <input type="range" id="km" min="0" max="100" value="30" step="1" aria-label="Distanz in Kilometern">
+        <div class="kmzahl" id="kmzahl">45 km</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 id="chart-titel">Treibhausgas pro Person</h2>
+      <p class="lead" style="margin-bottom:10px;">Klick auf einen Balken, um zu sehen, was dahintersteckt. Angezeigt werden nur Verkehrsmittel, die auf dieser Distanz realistisch sind.</p>
+      <div class="balken" id="balken"></div>
+      <div class="detail" id="detail"><div class="d-leer">Klick auf einen Balken f&uuml;r die Erkl&auml;rung.</div></div>
+      <div class="einordnung">
+        <div class="eo-tit">Einordnung</div>
+        <div class="eo-text" id="eotext"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Wie viele sitzen im Auto?</h2>
+      <p class="lead">Der offizielle Wert rechnet mit dem Schweizer Durchschnitt von <span class="hl">1,6 Personen</span> pro Auto. Wer allein f&auml;hrt, verursacht deutlich mehr &ndash; wer zu viert f&auml;hrt, deutlich weniger. Probier es aus:</p>
+      <div class="chips" id="besetzung"></div>
+      <p class="mini" id="besetzunginfo" style="margin-top:10px;"></p>
+    </div>
+  </div>
+
+
+  <!-- ================= REITER 2: ESSEN ================= -->
+  <div class="panel" id="panel-essen">
+    <div class="card">
+      <h2>Was liegt auf dem Teller?</h2>
+      <p class="lead">Klick Lebensmittel an, um sie auf den Teller zu legen &ndash; nochmals klicken legt eine weitere Portion dazu.
+         Unten siehst du, wie viel Treibhausgas dieser Teller verursacht und wie weit man daf&uuml;r Auto fahren k&ouml;nnte.</p>
+      <div class="chips" id="menues"></div>
+      <div class="tellergrid" id="tellergrid"></div>
+      <div class="tellerbar" id="tellerbar"></div>
+    </div>
+
+    <div class="card">
+      <h2 id="essen-titel">Treibhausgas pro Kilogramm</h2>
+      <p class="lead">Klick auf einen Balken f&uuml;r die Erkl&auml;rung. Mit dem Umschalter siehst du den gleichen Vergleich pro &uuml;blicher Portion &ndash;
+         das &auml;ndert die Rangliste deutlich.</p>
+      <div class="chips" id="essmodus"></div>
+      <div class="balken" id="essbalken"></div>
+      <div class="detail" id="essdetail"><div class="d-leer">Klick auf einen Balken f&uuml;r die Erkl&auml;rung.</div></div>
+      <div class="einordnung" id="esseinordnung"></div>
+    </div>
+  </div>
+
+  <!-- ================= REITER 3: WARUM ================= -->
+  <div class="panel" id="panel-warum">
+    <div class="card">
+      <h2>Vier Gr&uuml;nde f&uuml;r die grossen Unterschiede</h2>
+      <p class="lead">Warum stossen zwei gelbe Busse pro Person so unterschiedlich viel aus? Und warum ist ein kurzer Flug pro Kilometer schlechter als ein langer?</p>
+      <div class="grid2">
+        <div class="ek">
+          <img class="ek-bild" src="vm_bus.png" alt="">
+          <h4>1. Die Auslastung entscheidet</h4>
+          <p>Ein Stadtbus f&auml;hrt im Schnitt mit <b>10 Personen</b>, ein Reisecar mit <b>21</b>. Derselbe Fahrzeugtyp, aber pro Person <b>156 g</b> gegen <b>61 g</b> pro Kilometer. Ein Zug mit 207 Personen verteilt seinen Verbrauch auf so viele K&ouml;pfe, dass fast nichts &uuml;brig bleibt.</p>
+          <p>Das ist der wichtigste Hebel &uuml;berhaupt: Nicht das Fahrzeug ist entscheidend, sondern wie voll es ist.</p>
+        </div>
+        <div class="ek">
+          <img class="ek-bild" src="vm_auto.png" alt="">
+          <h4>2. Es z&auml;hlt der ganze Lebensweg</h4>
+          <p>Die Zahlen sind keine Auspuffwerte. Sie enthalten die <b>Herstellung des Fahrzeugs</b>, die Batterie, die F&ouml;rderung und Raffination des Treibstoffs sowie den Bau von Strassen, Schienen und Flugh&auml;fen.</p>
+          <p>Darum ist ein E-Auto auch nicht bei null: Der Strom ist sauber, die Batterie in der Produktion nicht.</p>
+        </div>
+        <div class="ek">
+          <img class="ek-bild" src="vm_zug.png" alt="">
+          <h4>3. Der Strommix macht den Unterschied</h4>
+          <p>Ein E-Auto kommt mit dem Schweizer Strommix auf <b>93 g</b>, mit reinem &Ouml;kostrom auf <b>79 g</b>. Der Schweizer Fernverkehr f&auml;hrt fast vollst&auml;ndig mit Wasserkraft &ndash; darum <b>7 g</b>.</p>
+          <p>Derselbe ICE in Deutschland kommt auf <b>34 g</b>, weil dort mehr Kohle- und Gasstrom im Netz ist. Gleiche Technik, anderes Land, f&uuml;nffacher Wert.</p>
+        </div>
+        <div class="ek">
+          <img class="ek-bild" src="vm_flugzeug.png" alt="">
+          <h4>4. Fliegen: kurz ist schlechter als lang</h4>
+          <p>Start und Steigflug verbrauchen am meisten &ndash; auf einer kurzen Strecke verteilt sich dieser Aufwand auf wenige Kilometer. Darum liegt die <b>Kurzstrecke bei 350 g</b>, die Langstrecke bei <b>263 g</b>.</p>
+          <p>Dazu kommt die <b>H&ouml;henwirkung</b>: Kondensstreifen und Stickoxide in grosser H&ouml;he heizen zus&auml;tzlich auf. Sie ist in diesen Zahlen bereits eingerechnet.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Alle Faktoren im &Uuml;berblick</h2>
+      <p class="lead">Gramm CO&#8322;-&Auml;quivalent pro Personenkilometer. &laquo;CO&#8322;-&Auml;quivalent&raquo; heisst: Alle Treibhausgase werden auf die Wirkung von CO&#8322; umgerechnet.</p>
+      <table>
+        <thead><tr><th>Verkehrsmittel</th><th style="text-align:right;">g CO&#8322;-eq / Pkm</th><th style="text-align:right;">Auslastung</th></tr></thead>
+        <tbody id="tabelle"></tbody>
+      </table>
+      <h3>Zwei Werte, die immer &uuml;berraschen</h3>
+      <p>Der <b>Fernzug (7 g)</b> liegt unter dem <b>Velo (8 g)</b>. Das Velo ist nicht bei null, weil der Mensch die Energie zum Treten aus dem Essen holt &ndash; und Lebensmittel verursachen bei Anbau, Transport und K&uuml;hlung Treibhausgase. Zu Fuss gehen ist aus demselben Grund ebenfalls nicht ganz gratis.</p>
+      <p>Und der <b>Stadtbus (156 g)</b> schneidet schlechter ab als das <b>E-Auto (93 g)</b>. Der Grund ist wieder die Auslastung: Ein Bus f&auml;hrt am Sonntagmorgen genauso wie im Feierabendverkehr, und der Schnitt liegt bei rund zehn Fahrg&auml;sten.</p>
+    </div>
+
+    <div class="card">
+      <h2>Vier Gr&uuml;nde f&uuml;r die Unterschiede auf dem Teller</h2>
+      <p class="lead">Warum verursacht ein Kilogramm Rindfleisch 150-mal so viel wie ein Kilogramm R&uuml;ebli? Es sind vier ganz andere Mechanismen als beim Reisen.</p>
+      <div class="grid2">
+        <div class="ek">
+          <img class="ek-bild" src="es_rind.png" alt="">
+          <h4>1. Wiederk&auml;uer machen Methan</h4>
+          <p>Rinder, Schafe und Ziegen verdauen Gras mit Hilfe von Bakterien im Pansen. Dabei entsteht <b>Methan</b> &ndash; ein Treibhausgas, das &uuml;ber 100 Jahre gerechnet rund <b>28-mal</b> so stark wirkt wie CO&#8322;. Eine Kuh r&uuml;lpst pro Tag etwa 300 Liter davon.</p>
+          <p>Darum liegen Rind, K&auml;se und Butter ganz oben. Poulet und Schwein haben keinen Pansen und darum kein Methanproblem.</p>
+        </div>
+        <div class="ek">
+          <img class="ek-bild" src="es_poulet.png" alt="">
+          <h4>2. Futter rein, Fleisch raus</h4>
+          <p>Jedes Tier frisst mehr, als es an Nahrung liefert. Beim Poulet braucht es rund <b>3 kg Futter</b> f&uuml;r 1 kg Fleisch, beim Rind je nach Haltung <b>7 bis 25 kg</b>. Alles, was auf dem Acker f&uuml;r dieses Futter passiert &ndash; D&uuml;nger, Diesel, Bew&auml;sserung &ndash; steckt am Ende im Fleisch.</p>
+          <p>Deshalb sind pflanzliche Lebensmittel fast immer g&uuml;nstiger: Sie &uuml;berspringen den Umweg &uuml;ber das Tier.</p>
+        </div>
+        <div class="ek">
+          <img class="ek-bild" src="es_schoggi.png" alt="">
+          <h4>3. Wald wird Feld</h4>
+          <p>Wo f&uuml;r Kakao, Soja oder Weideland Regenwald gerodet wird, gibt der Boden <b>jahrzehntelang gespeicherten Kohlenstoff</b> frei. Diese <b>Landnutzungs&auml;nderung</b> ist bei Schokolade und Kaffee der gr&ouml;sste Einzelposten &ndash; gr&ouml;sser als Anbau, Verarbeitung und Transport zusammen.</p>
+          <p>Schokolade aus zertifiziertem Anbau ohne Rodung liegt darum deutlich tiefer als der Durchschnittswert von 19 kg.</p>
+        </div>
+        <div class="ek">
+          <img class="ek-bild" src="es_tomate.png" alt="">
+          <h4>4. Saison schl&auml;gt Herkunft</h4>
+          <p>Der Transport macht bei den meisten Lebensmitteln nur <b>wenige Prozent</b> aus &ndash; ein Containerschiff bewegt eine Tonne Bananen fast gratis um die halbe Welt. Entscheidend ist, <b>wie</b> etwas w&auml;chst.</p>
+          <p>Eine Schweizer Tomate aus dem beheizten Gew&auml;chshaus im M&auml;rz kann mehr verursachen als eine spanische Freilandtomate im August. &laquo;Regional&raquo; ist nur dann besser, wenn es auch <b>saisonal</b> ist.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Alle Lebensmittel im &Uuml;berblick</h2>
+      <p class="lead">Kilogramm CO&#8322;-&Auml;quivalent pro Kilogramm Produkt, weltweiter Medianwert &ndash; und daneben, was eine &uuml;bliche Portion ausmacht.</p>
+      <table>
+        <thead><tr><th>Lebensmittel</th><th style="text-align:right;">kg CO&#8322;-eq / kg</th><th style="text-align:right;">pro Portion</th></tr></thead>
+        <tbody id="esstabelle"></tbody>
+      </table>
+      <h3>Der Vergleich, der h&auml;ngen bleibt</h3>
+      <p>Ein <b>Rindssteak von 150 g</b> verursacht rund <b>9 kg</b> CO&#8322;-eq. Das entspricht <b>40 km im Benzinauto</b> &ndash; ungef&auml;hr Aarau&ndash;Z&uuml;rich und zur&uuml;ck. F&uuml;r dieselbe Menge Treibhausgas k&ouml;nnte man <b>rund 280 R&uuml;ebli</b> essen.</p>
+      <p>Umgekehrt gilt aber auch: Wer einmal weniger fliegt, spart mehr als ein ganzes Jahr Vegi-Men&uuml;s. Ein Flug Z&uuml;rich&ndash;New York und zur&uuml;ck liegt bei rund <b>3'200 kg</b> &ndash; das sind &uuml;ber 350 Rindssteaks.</p>
+    </div>
+
+    <div class="card">
+      <h2>Woher die Zahlen stammen</h2>
+      <div class="quellen">
+        <p><b>Hauptquelle:</b> KBOB / BAFU / astra &laquo;&Ouml;kobilanzdaten im Baubereich &ndash; Transportsysteme&raquo; (2022), Tabelle 2.2. Diese Faktoren beruhen auf dem UVEK-&Ouml;kobilanzdatenbestand und den mobitool-Faktoren und sind der Schweizer Referenzwert.</p>
+        <p><b>Velo und E-Bike:</b> mobitool-Faktoren, zitiert nach SBB (2024).</p>
+        <p><b>Schweizer Pro-Kopf-Emissionen:</b> BAFU, Treibhausgasinventar &ndash; 4,5 t CO&#8322;-eq pro Kopf im Inland (2024). Der Fussabdruck inklusive Ausland liegt bei rund 15 t pro Kopf (2023).</p>
+        <p><b>Kreuzfahrtschiff:</b> gesch&auml;tzt. Es gibt keinen offiziellen Schweizer Faktor. Die Umweltberatung Luzern rechnet damit, dass eine Kreuzfahrt pro Kilometer <i>mehr als das Doppelte</i> eines Langstreckenflugs verursacht. Der Wert schwankt stark je nach Schiff, Reisestandard und Auslastung &ndash; deshalb ist er im Diagramm als Sch&auml;tzung markiert.</p>
+        <p><b>Motorrad:</b> Der offizielle Faktor bezeichnet einen &laquo;Scooter, Benzin&raquo;. Ein gr&ouml;sseres Motorrad liegt h&ouml;her.</p>
+        <p style="margin-top:12px;"><b>Lebensmittel:</b> Poore &amp; Nemecek, &laquo;Reducing food&rsquo;s environmental impacts through producers and consumers&raquo;, <i>Science</i> 360 (2018), aufbereitet von Our World in Data. Verwendet werden die <b>weltweiten Medianwerte</b> &uuml;ber rund 38'700 Betriebe in 119 L&auml;ndern. Achtung: Man findet f&uuml;r Rindfleisch auch die Zahl 99,5 kg &ndash; das ist der <i>Mittelwert</i> inklusive Verluste in der Lieferkette, nicht der Median.</p>
+        <p><b>Wichtig f&uuml;r den Vergleich:</b> Die Reisezahlen sind <i>Schweizer</i> Werte, die Lebensmittelzahlen sind <i>weltweite</i> Durchschnitte. Schweizer Produktion liegt bei manchen Produkten tiefer &ndash; Rindfleisch aus der Schweiz stammt gr&ouml;sstenteils aus Milchviehherden und kommt eher auf 20 bis 25 kg statt 60 kg.</p>
+        <p><b>Pizza und Schoggikuchen</b> sind eigene Berechnungen aus den Zutatenwerten und deshalb als Sch&auml;tzung markiert. Die Rechnung steht jeweils im Detailfenster.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= REITER 4: QUIZ ================= -->
+  <div class="panel" id="panel-quiz">
+    <div class="card">
+      <h2>Neun Fragen</h2>
+      <p class="lead">Jede Frage einmal beantworten. Die Aufl&ouml;sung erscheint sofort.</p>
+      <div id="fragen"></div>
+      <div class="punkte" id="punkte"></div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="cr">CO&#8322; im Alltag &middot; ABU &middot; HKV Aarau &middot; &copy; 2026 Samuel Mollet &middot; realisiert mit Claude (Anthropic)</div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const chf = n => n.toLocaleString('de-CH').replace(/’/g,"'");
+
+/* ================= Daten ================= */
+/* g = Gramm CO2-eq pro Personenkilometer, KBOB/BAFU 2022 Tab. 2.2 sofern nicht anders vermerkt */
+const M = [
+  {k:'segel',  n:'Segelboot',            g:0,   b:'vm_segelboot.png', min:400, max:20000, aus:'–',
+   t:'Ein Segelboot bewegt sich mit Windkraft. Im Betrieb entsteht praktisch kein Treibhausgas – dafür dauert eine Atlantiküberquerung rund drei Wochen statt acht Stunden. Der Vergleich zeigt schön, dass Zeit die eigentliche Währung ist: Wer schnell weit will, zahlt mit Emissionen.', s:true},
+  {k:'fernzug',n:'Fernzug Schweiz',      g:7,   b:'vm_zug.png', min:10, max:400, aus:'207 Pers.',
+   t:'Der Schweizer Fernverkehr fährt fast vollständig mit Strom aus Wasserkraft, und ein voller Zug verteilt diesen Verbrauch auf rund 207 Personen. Das ergibt den tiefsten Wert aller motorisierten Verkehrsmittel – tiefer sogar als das Velo.'},
+  {k:'velo',   n:'Velo',                 g:8,   b:'vm_velo.png', min:0, max:100, aus:'1 Pers.',
+   t:'Velofahren ist nicht ganz bei null. Der Körper braucht Energie, und diese Energie kommt aus dem Essen – Lebensmittel verursachen bei Anbau, Verarbeitung und Transport Treibhausgase. Dazu kommt die Herstellung des Velos. Trotzdem: acht Gramm sind fast nichts.'},
+  {k:'regio',  n:'Regionalzug Schweiz',  g:9,   b:'vm_zug.png', min:0, max:200, aus:'Ø Schweiz',
+   t:'Der Regionalzug hält oft, beschleunigt oft und ist im Schnitt weniger gut besetzt als der Fernverkehr. Darum liegt er leicht über dem Fernzug – aber immer noch bei einem Zwanzigstel eines Autos.'},
+  {k:'ebike',  n:'E-Bike',               g:14,  b:'vm_velo.png', min:0, max:150, aus:'1 Pers.',
+   t:'Beim E-Bike kommt der Akku dazu: seine Herstellung und der Ladestrom. Weil der Motor aber nur unterstützt und das ganze Fahrzeug kaum 25 kg wiegt, bleibt der Wert winzig – rund ein Sechzehntel eines Benzinautos.'},
+  {k:'trolley',n:'Trolleybus',           g:30,  b:'vm_bus.png', min:0, max:30, aus:'Ø Stadt',
+   t:'Der Trolleybus fährt elektrisch am Fahrdraht, also mit Schweizer Strom. Gegenüber dem Dieselbus auf derselben Linie spart er rund vier Fünftel der Emissionen – bei gleicher Auslastung.'},
+  {k:'ice',    n:'Fernzug Deutschland',  g:34,  b:'vm_zug.png', min:150, max:2500, aus:'235 Pers.',
+   t:'Der ICE ist technisch nicht schlechter als ein Schweizer Zug. Aber er fährt mit deutschem Strom, und im deutschen Netz steckt mehr Kohle und Gas. Gleiche Technik, anderes Land, fünffacher Wert – das zeigt, wie stark der Strommix zählt.'},
+  {k:'tram',   n:'Tram',                 g:43,  b:'vm_bus.png', min:0, max:30, aus:'Ø Stadt',
+   t:'Das Tram fährt elektrisch, muss aber ein schweres Fahrzeug ständig beschleunigen und abbremsen, und tagsüber ist es oft halb leer. Dazu kommt der Bau der Gleise mitten in der Stadt.'},
+  {k:'car',    n:'Reisecar',             g:61,  b:'vm_bus.png', min:30, max:2500, aus:'21 Pers.',
+   t:'Der Reisecar ist das günstigste Verkehrsmittel für lange Strecken nach dem Zug. Der Grund ist nicht der Motor – er fährt mit Diesel – sondern die Auslastung: 21 Personen im Schnitt, und er fährt nur, wenn er gebucht ist.'},
+  {k:'eautooe',n:'E-Auto, Ökostrom', g:79,  b:'vm_auto.png', min:0, max:3000, aus:'1,6 Pers.', auto:true,
+   t:'Mit zertifiziertem Ökostrom sinkt der Wert nochmals. Ganz auf null kommt das E-Auto nie: Die Batterie und das Fahrzeug müssen hergestellt, die Strasse gebaut und unterhalten werden.'},
+  {k:'eauto',  n:'E-Auto, CH-Strommix',  g:93,  b:'vm_auto.png', min:0, max:3000, aus:'1,6 Pers.', auto:true,
+   t:'Ein E-Auto mit Schweizer Strom verursacht weniger als die Hälfte eines Benziners. Der grösste Posten ist nicht mehr das Fahren, sondern die Herstellung der Batterie. In einem Land mit Kohlestrom wäre die Bilanz deutlich schlechter.'},
+  {k:'roller', n:'Motorrad / Roller',    g:127, b:'vm_motorrad.png', min:0, max:2000, aus:'1 Pers.',
+   t:'Ein Roller verbraucht wenig Treibstoff und ist leicht in der Herstellung – dafür sitzt fast immer nur eine Person darauf. Unter dem Strich landet er zwischen E-Auto und Benzinauto. Ein grösseres Motorrad liegt höher als dieser Wert.'},
+  {k:'bus',    n:'Linienbus Stadt',      g:156, b:'vm_bus.png', min:0, max:40, aus:'10,2 Pers.',
+   t:'Der Wert überrascht fast alle: Der Stadtbus liegt über dem E-Auto. Er fährt jedoch nach Fahrplan – auch am Sonntagmorgen fast leer – und kommt so auf durchschnittlich zehn Fahrgäste. Je mehr Leute einsteigen, desto besser wird der Wert. In der Hauptverkehrszeit ist der Bus klar besser als jedes Auto.'},
+  {k:'erdgas', n:'Auto Erdgas',          g:168, b:'vm_auto.png', min:0, max:3000, aus:'1,6 Pers.', auto:true,
+   t:'Erdgas verbrennt sauberer als Benzin und Diesel und spart rund einen Viertel gegenüber dem Benziner. Es bleibt aber ein fossiler Brennstoff. Mit Biogas würde der Wert auf 103 g fallen.'},
+  {k:'diesel', n:'Auto Diesel',          g:192, b:'vm_auto.png', min:0, max:3000, aus:'1,6 Pers.', auto:true,
+   t:'Diesel enthält pro Liter mehr Energie als Benzin, und Dieselmotoren arbeiten effizienter. Beim Treibhausgas schneidet der Diesel deshalb etwas besser ab als der Benziner – bei anderen Schadstoffen wie Stickoxiden nicht.'},
+  {k:'benzin', n:'Auto Benzin',          g:225, b:'vm_auto.png', min:0, max:3000, aus:'1,6 Pers.', auto:true,
+   t:'Das ist das meistgefahrene Fahrzeug der Schweiz. Der Wert gilt für durchschnittlich 1,6 Personen im Auto. Wer allein fährt, kommt auf rund 360 g pro Kilometer – mehr als jeder Flug. Zu viert sind es noch 90 g.'},
+  {k:'flugm',  n:'Flug Mittelstrecke',   g:259, b:'vm_flugzeug.png', min:1000, max:4500, aus:'132 Pers.',
+   t:'Mittelstrecke heisst innerhalb Europas und knapp darüber hinaus. Der Wert enthält bereits die Höhenwirkung: Kondensstreifen und Stickoxide in Reiseflughöhe heizen zusätzlich auf.'},
+  {k:'flugl',  n:'Flug Langstrecke',     g:263, b:'vm_flugzeug.png', min:3500, max:20000, aus:'251 Pers.',
+   t:'Pro Kilometer ist die Langstrecke nicht schlimmer als die Mittelstrecke – grosse Flugzeuge sind effizient und gut besetzt. Das Problem ist die Distanz: Ein einziger Flug nach New York und zurück verursacht mehr als ein Drittel der jährlichen Pro-Kopf-Emissionen der Schweiz.'},
+  {k:'flugk',  n:'Flug Kurzstrecke',     g:350, b:'vm_flugzeug.png', min:200, max:1500, aus:'126 Pers.',
+   t:'Der schlechteste Wert aller Verkehrsmittel. Start und Steigflug verbrauchen am meisten Kerosin, und dieser Aufwand verteilt sich auf wenige Kilometer. Dazu sind Kurzstreckenflugzeuge kleiner und schlechter besetzt. Genau diese Strecken lassen sich fast immer mit der Bahn zurücklegen.'},
+  {k:'kreuz',  n:'Kreuzfahrtschiff',     g:500, b:'vm_kreuzfahrt.png', min:400, max:20000, aus:'Ø Schiff',
+   t:'Ein Kreuzfahrtschiff ist ein schwimmendes Hotel: Es bewegt nicht nur Menschen, sondern auch Pools, Restaurants und Klimaanlagen über den Ozean, oft mit Schweröl. Ein offizieller Schweizer Faktor existiert nicht; die Umweltberatung Luzern rechnet mit mehr als dem Doppelten eines Langstreckenflugs. Der Wert schwankt je nach Schiff und Reisestandard sehr stark – darum ist er hier als Schätzung markiert.', s:true}
+];
+
+const ROUTEN = [
+  {n:'Aarau – Zürich',    d:45,   z:'Pendeln'},
+  {n:'Aarau – Genf',       d:220,  z:'Klassenreise'},
+  {n:'Zürich – München',  d:310,  z:'Städtetrip'},
+  {n:'Zürich – Berlin',   d:680,  z:'Städtetrip'},
+  {n:'Zürich – Barcelona',d:1050, z:'Ferien'},
+  {n:'Zürich – New York', d:6300, z:'Fernreise'}
+];
+
+const BESETZUNG = [
+  {v:1.6, n:'Ø 1,6'}, {v:1, n:'1 Person'}, {v:2, n:'2 Personen'},
+  {v:3, n:'3 Personen'}, {v:4, n:'4 Personen'}, {v:5, n:'5 Personen'}
+];
+
+/* Inlandemissionen Schweiz: 4,5 t CO2-eq pro Kopf und Jahr (BAFU, 2024) */
+const PROKOPF_KG = 4500;
+
+let distanz = 45, gewaehlt = null, besetzt = 1.6;
+
+/* ================= Distanz-Regler: exponentiell ================= */
+function reglerZuKm(p){
+  const km = 3 * Math.pow(10000/3, p/100);
+  if(km < 50)   return Math.round(km/5)*5;
+  if(km < 200)  return Math.round(km/10)*10;
+  if(km < 1000) return Math.round(km/25)*25;
+  return Math.round(km/100)*100;
+}
+function kmZuRegler(km){
+  return Math.round(100 * Math.log(km/3) / Math.log(10000/3));
+}
+
+/* ================= Aufbau ================= */
+function zeichneRouten(){
+  $('routen').innerHTML = ROUTEN.map(r =>
+    '<button class="chip" data-d="'+r.d+'">'+r.n+'<small>'+chf(r.d)+' km &middot; '+r.z+'</small></button>').join('');
+  $('routen').querySelectorAll('.chip').forEach(b=>{
+    b.onclick = () => { setzeDistanz(+b.dataset.d); $('km').value = kmZuRegler(+b.dataset.d); };
+  });
+}
+function zeichneBesetzung(){
+  $('besetzung').innerHTML = BESETZUNG.map(b =>
+    '<button class="chip'+(b.v===besetzt?' on':'')+'" data-v="'+b.v+'">'+b.n+'</button>').join('');
+  $('besetzung').querySelectorAll('.chip').forEach(b=>{
+    b.onclick = () => { besetzt = +b.dataset.v; zeichneBesetzung(); zeichneBalken(); };
+  });
+  const bz = M.find(m=>m.k==='benzin');
+  const w = Math.round(bz.g * 1.6 / besetzt);
+  const zug = M.find(m=>m.k==='fernzug').g;
+  $('besetzunginfo').innerHTML = 'Bei <b>'+(besetzt===1.6?'1,6':besetzt)+'</b> Person'+(besetzt===1?'':'en') +
+    ' im Benzinauto: <b>'+chf(w)+' g pro Personenkilometer</b> – das ist das '+
+    chf(Math.round(w/zug))+'-fache des Fernzugs. Die Werte im Diagramm oben passen sich mit an.';
+}
+
+function faktor(m){ return m.auto ? m.g * 1.6 / besetzt : m.g; }
+
+function stufe(g){
+  if(g <= 20)  return 'gut';
+  if(g <= 100) return 'mittel';
+  if(g <= 220) return 'hoch';
+  return 'sehrhoch';
+}
+
+function zeichneBalken(){
+  const sicht = M.filter(m => distanz >= m.min && distanz <= m.max)
+                 .map(m => ({m:m, g:faktor(m), kg:faktor(m)*distanz/1000}))
+                 .sort((a,b) => a.g - b.g);
+  const maxKg = Math.max(...sicht.map(o=>o.kg), 0.001);
+  $('chart-titel').innerHTML = 'Treibhausgas pro Person auf ' + chf(distanz) + ' km';
+  $('balken').innerHTML = sicht.map(o => {
+    const kg = o.kg;
+    const anzeige = kg < 1 ? chf(Math.round(kg*1000)) + ' g' : chf(Math.round(kg*10)/10) + ' kg';
+    return '<button class="zeile'+(gewaehlt===o.m.k?' on':'')+'" data-k="'+o.m.k+'">' +
+      '<img class="z-bild" src="'+o.m.b+'" alt="" onerror="this.style.visibility=\'hidden\'">' +
+      '<span class="z-name">'+o.m.n+(o.m.s?'<span class="schaetztag">Schätzung</span>':'') +
+        '<em>'+chf(Math.round(o.g))+' g pro km</em></span>' +
+      '<span class="z-bar '+stufe(o.g)+'" style="width:'+Math.max(0.6, o.kg/maxKg*100)+'%"></span>' +
+      '<span class="z-wert">'+anzeige+'<em>pro Person</em></span></button>';
+  }).join('');
+  $('balken').querySelectorAll('.zeile').forEach(b=>{
+    b.onclick = () => waehle(b.dataset.k);
+  });
+  zeichneEinordnung(sicht);
+}
+
+function waehle(k){
+  gewaehlt = k;
+  const m = M.find(x=>x.k===k);
+  const kg = faktor(m)*distanz/1000;
+  const anzeige = kg < 1 ? chf(Math.round(kg*1000)) + ' g' : chf(Math.round(kg*10)/10) + ' kg';
+  $('detail').innerHTML =
+    '<div class="d-top"><span class="d-name">'+m.n+'</span>' +
+    '<span class="d-wert">'+chf(Math.round(faktor(m)))+' g pro Personenkilometer</span>' +
+    '<span class="d-wert">'+anzeige+' auf '+chf(distanz)+' km</span>' +
+    '<span class="d-wert">Auslastung: '+m.aus+'</span></div>' +
+    '<div class="d-text">'+m.t+'</div>';
+  document.querySelectorAll('.zeile').forEach(b=> b.classList.toggle('on', b.dataset.k===k));
+}
+
+function zeichneEinordnung(sicht){
+  if(!sicht.length){ $('eotext').textContent = ''; return; }
+  const beste = sicht[0], schlimmste = sicht[sicht.length-1];
+  const f = schlimmste.kg / Math.max(beste.kg, 0.0001);
+  const tage = schlimmste.kg / (PROKOPF_KG/365);
+  let txt = 'Auf dieser Strecke liegt <b>' + beste.m.n + '</b> bei <b>' +
+    (beste.kg<1 ? chf(Math.round(beste.kg*1000))+' g' : chf(Math.round(beste.kg*10)/10)+' kg') +
+    '</b>, <b>' + schlimmste.m.n + '</b> bei <b>' +
+    (schlimmste.kg<1 ? chf(Math.round(schlimmste.kg*1000))+' g' : chf(Math.round(schlimmste.kg*10)/10)+' kg') + '</b>.';
+  if(beste.kg > 0.0001 && isFinite(f) && f >= 2){
+    txt += ' Das ist das <b>' + chf(Math.round(f)) + '-fache</b>.';
+  }
+  txt += '<br>Die Schweiz st&ouml;sst pro Kopf und Jahr rund <b>4,5 Tonnen</b> CO&#8322;-eq im Inland aus. ' +
+    'Die schlechteste Variante dieser Reise entspricht <b>' +
+    (tage < 1 ? chf(Math.round(tage*24)) + ' Stunden' : chf(Math.round(tage*10)/10) + ' Tagen') +
+    '</b> davon.';
+  $('eotext').innerHTML = txt;
+}
+
+function setzeDistanz(km){
+  distanz = km;
+  $('kmzahl').textContent = chf(km) + ' km';
+  $('routen').querySelectorAll('.chip').forEach(b=> b.classList.toggle('on', +b.dataset.d===km));
+  const nochDa = M.find(m=>m.k===gewaehlt);
+  if(!nochDa || km < nochDa.min || km > nochDa.max){
+    gewaehlt = null;
+    $('detail').innerHTML = '<div class="d-leer">Klick auf einen Balken f&uuml;r die Erkl&auml;rung.</div>';
+  }
+  zeichneBalken();
+  if(gewaehlt) waehle(gewaehlt);
+}
+
+$('km').addEventListener('input', e => setzeDistanz(reglerZuKm(+e.target.value)));
+
+/* ================= Tabelle ================= */
+function zeichneTabelle(){
+  $('tabelle').innerHTML = M.slice().sort((a,b)=>a.g-b.g).map(m =>
+    '<tr><td>'+m.n+(m.s?'<span class="schaetztag">Schätzung</span>':'')+'</td>' +
+    '<td class="z">'+(m.g===0?'≈ 0':chf(m.g))+'</td>' +
+    '<td class="z" style="font-weight:600;color:#5B6B7A;">'+m.aus+'</td></tr>').join('');
+}
+
+function zeichneEsstabelle(){
+  const el = $('esstabelle'); if(!el) return;
+  el.innerHTML = E.slice().sort((a,b)=>a.kg-b.kg).map(e =>
+    '<tr><td>'+e.n+(e.s?'<span class="schaetztag">Schätzung</span>':'')+'</td>' +
+    '<td class="z">'+chf(e.kg).replace('.',',')+'</td>' +
+    '<td class="z" style="font-weight:600;color:#5B6B7A;">'+kgText(e.kg*e.p/1000)+'</td></tr>').join('');
+}
+
+/* ================= Quiz ================= */
+const QUIZ = [
+  {f:'Was verursacht pro Kilometer und Person mehr Treibhausgas: das Velo oder der Schweizer Fernzug?',
+   a:['Das Velo','Der Fernzug','Beide genau gleich viel'], r:0,
+   l:'Knapp das Velo: 8 g gegen 7 g. Velofahren ist nicht bei null, weil der Körper die Energie aus dem Essen holt und Lebensmittel Treibhausgase verursachen. Der Fernzug fährt mit Wasserkraft und verteilt seinen Verbrauch auf rund 207 Personen. Beide Werte sind aber so klein, dass der Unterschied im Alltag keine Rolle spielt.'},
+  {f:'Der Stadtbus liegt bei 156 g pro Personenkilometer, das E-Auto bei 93 g. Warum schneidet der Bus schlechter ab?',
+   a:['Weil Dieselmotoren mehr verbrauchen als Elektromotoren','Weil der Bus im Schnitt nur rund zehn Fahrgäste hat','Weil Busse schwerer sind als Autos'], r:1,
+   l:'Die Auslastung ist der Grund. Ein Bus fährt nach Fahrplan, auch am Sonntagmorgen fast leer – im Schnitt sitzen zehn Personen drin. Der Reisecar mit demselben Antrieb, aber 21 Personen, kommt auf 61 g. In der Hauptverkehrszeit ist der Bus klar besser als jedes Auto.'},
+  {f:'Ein Flug über 500 km verursacht pro Kilometer mehr als ein Flug über 8000 km. Weshalb?',
+   a:['Kleine Flugzeuge haben ältere Triebwerke','Start und Steigflug verbrauchen am meisten und verteilen sich auf wenige Kilometer','Auf Kurzstrecken wird tiefer geflogen, wo die Luft dichter ist'], r:1,
+   l:'Der Start ist der teuerste Teil des Flugs. Auf 500 km verteilt sich dieser Aufwand auf wenige Kilometer, auf 8000 km auf sehr viele. Dazu sind Kurzstreckenflugzeuge kleiner und schlechter besetzt: 126 statt 251 Personen. Ergebnis: 350 g gegen 263 g.'},
+  {f:'Vier Kolleginnen fahren zusammen im Benzinauto von Aarau nach Genf. Wie schneiden sie gegenüber der Bahn ab?',
+   a:['Etwa gleich gut','Immer noch rund zehnmal schlechter','Besser als die Bahn, weil das Auto direkt fährt'], r:1,
+   l:'Zu viert sinkt das Auto von 225 g auf rund 90 g pro Person – eine echte Verbesserung. Der Fernzug liegt aber bei 7 g. Vollbesetzt fahren sie also immer noch etwa zwölfmal schlechter als mit dem Zug. Mitfahren lohnt sich, ersetzt die Bahn aber nicht.'},
+  {f:'Der ICE in Deutschland kommt auf 34 g, der Schweizer Fernzug auf 7 g. Was ist der Hauptgrund?',
+   a:['Der ICE fährt schneller und braucht darum mehr Energie','Im deutschen Strommix steckt mehr Kohle und Gas','Deutsche Züge sind schlechter besetzt'], r:1,
+   l:'Der Strommix. Der Schweizer Bahnstrom kommt fast vollständig aus Wasserkraft, im deutschen Netz stecken noch fossile Kraftwerke. Gleiche Technik, anderes Land, fünffacher Wert. Dasselbe gilt für E-Autos: Wo der Strom herkommt, entscheidet mit.'},
+  {f:'Was ist in den Zahlen dieser Folie alles enthalten?',
+   a:['Nur das, was hinten aus dem Auspuff kommt','Auch Herstellung des Fahrzeugs, Treibstoffproduktion und Infrastruktur','Nur der Energieverbrauch während der Fahrt'], r:1,
+   l:'Es sind Lebenszyklus-Werte. Sie enthalten die Herstellung des Fahrzeugs samt Batterie, die Förderung und Raffination des Treibstoffs sowie den Bau und Unterhalt von Strassen, Schienen und Flughäfen. Darum ist auch ein E-Auto nie bei null.'},
+  {f:'Rindfleisch verursacht pro Kilogramm rund 60 kg CO₂-eq, Poulet nur 6 kg. Was ist der wichtigste Grund für den Faktor zehn?',
+   a:['Rinder sind grösser und brauchen mehr Platz','Rinder sind Wiederkäuer und stossen Methan aus','Rindfleisch wird meist weiter transportiert'], r:1,
+   l:'Wiederkäuer verdauen Gras mit Bakterien im Pansen, dabei entsteht Methan – ein Gas, das rund 28-mal so stark wirkt wie CO₂. Dazu kommt die schlechtere Futterverwertung: Für ein Kilo Rindfleisch braucht es je nach Haltung 7 bis 25 Kilo Futter, beim Poulet nur etwa 3. Der Transport spielt bei beiden fast keine Rolle.'},
+  {f:'Was ist im März in der Schweiz klimafreundlicher: eine Schweizer Tomate aus dem Gewächshaus oder eine spanische Freilandtomate?',
+   a:['Immer die Schweizer, weil der Transportweg kürzer ist','Die spanische, weil das Beheizen des Gewächshauses mehr verursacht als der Lastwagen','Beide gleich, Tomate ist Tomate'], r:1,
+   l:'Der Transport macht bei Gemüse meist nur wenige Prozent des Fussabdrucks aus. Ein beheiztes Gewächshaus im Winter dagegen verbraucht sehr viel Energie. «Regional» ist darum nur dann die bessere Wahl, wenn es auch saisonal ist – im August schlägt die Schweizer Freilandtomate jede Importware.'},
+  {f:'Käse liegt pro Kilogramm bei 21 kg CO₂-eq, Poulet bei 6 kg. Wie sieht es pro Portion aus?',
+   a:['Genau gleich, das Verhältnis bleibt','Die Poulet-Portion verursacht mehr, weil man 150 g Poulet, aber nur 30 g Käse isst','Die Käse-Portion verursacht immer noch mehr'], r:1,
+   l:'Pro Portion dreht sich das Bild: 30 g Käse ergeben 0,63 kg, 150 g Poulet 0,90 kg. Das ist die wichtigste Lehre der ganzen Folie – entscheidend ist nicht nur, was auf dem Teller liegt, sondern auch wie viel davon. Ein Kilogramm Käse isst niemand, ein Kilogramm Rindfleisch aber auch nicht.'}
+];
+let beantwortet = 0, richtig = 0;
+
+function zeichneQuiz(){
+  $('fragen').innerHTML = QUIZ.map((q,i) =>
+    '<div class="frage"><div class="f-nr">Frage '+(i+1)+' von '+QUIZ.length+'</div>' +
+    '<div class="f-text">'+q.f+'</div><div class="antworten">' +
+    q.a.map((a,j)=>'<button class="antw" data-q="'+i+'" data-a="'+j+'">'+a+'</button>').join('') +
+    '</div><div class="aufloesung" id="l-'+i+'">'+q.l+'</div></div>').join('');
+  $('fragen').querySelectorAll('.antw').forEach(b=>{
+    b.onclick = () => antworte(+b.dataset.q, +b.dataset.a);
+  });
+  zeigePunkte();
+}
+function antworte(qi, ai){
+  const q = QUIZ[qi];
+  const knoepfe = $('fragen').querySelectorAll('.antw[data-q="'+qi+'"]');
+  if(knoepfe[0].disabled) return;
+  knoepfe.forEach((b,j)=>{
+    b.disabled = true;
+    if(j === q.r) b.classList.add('richtig');
+    else if(j === ai) b.classList.add('falsch');
+  });
+  $('l-'+qi).classList.add('zeig');
+  beantwortet++;
+  if(ai === q.r) richtig++;
+  zeigePunkte();
+}
+function zeigePunkte(){
+  if(!beantwortet){ $('punkte').textContent = ''; return; }
+  let txt = richtig + ' von ' + beantwortet + ' richtig';
+  if(beantwortet === QUIZ.length){
+    if(richtig === QUIZ.length) txt += ' – alles beisammen.';
+    else if(richtig >= 4) txt += ' – solide.';
+    else txt += ' – schau nochmals in den Reiter &laquo;Warum so verschieden?&raquo;.';
+  }
+  $('punkte').innerHTML = txt;
+}
+
+/* ================= Lebensmittel ================= */
+/* kg = kg CO2-eq pro kg Lebensmittel, globaler Medianwert aus Poore & Nemecek (2018),
+   aufbereitet von Our World in Data. p = uebliche Portion in Gramm. */
+const E = [
+  {k:'ruebli', n:'Rüebli',      kg:0.4,  p:80,  pn:'1 Rüebli', b:'es_ruebli.png',
+   t:'Wurzelgemüse ist das Schlusslicht der Tabelle – im besten Sinn. Es wächst im Freiland, braucht keine Heizung, lässt sich monatelang kühl lagern und wird nicht durch ein Tier hindurchgeschleust. Ein Kilo Rüebli verursacht rund 150-mal weniger Treibhausgas als ein Kilo Rindfleisch.'},
+  {k:'apfel',  n:'Apfel',            kg:0.4,  p:150, pn:'1 Apfel', b:'es_apfel.png',
+   t:'Schweizer Äpfel kommen im Herbst direkt vom Baum und liegen den Rest des Jahres im Kaltlager. Das Lager kostet Strom, aber deutlich weniger, als ein Flugtransport kosten würde. Darum bleibt der Apfel auch im April noch bei rund 0,4 kg.'},
+  {k:'banane', n:'Banane',           kg:0.7,  p:120, pn:'1 Banane', b:'es_banane.png',
+   t:'Bananen legen 8000 km zurück – und liegen trotzdem tief. Der Grund: Sie reisen per Schiff, und ein Containerschiff transportiert eine Tonne über einen Kilometer mit sehr wenig Treibstoff. Flöge dieselbe Banane, wäre sie ein Vielfaches teurer fürs Klima.'},
+  {k:'brot',   n:'Brot',             kg:1.4,  p:60,  pn:'1 Scheibe', b:'es_brot.png',
+   t:'Der Wert gilt für Weizen und Roggen inklusive Verarbeitung. Beim Brot fällt zusätzlich das Backen ins Gewicht – ein Ofen läuft stündlich mit mehreren Kilowatt. Zum Vergleich: Rund ein Drittel des in der Schweiz gekauften Brotes landet im Abfall, was den realen Fussabdruck pro gegessener Scheibe erhöht.'},
+  {k:'tomate', n:'Tomate',           kg:1.4,  p:100, pn:'1 Tomate', b:'es_tomate.png',
+   t:'Der Durchschnittswert versteckt eine enorme Spannweite. Eine Freilandtomate aus dem Tessin im August liegt weit unter 1 kg, eine Tomate aus dem beheizten Gewächshaus im Januar kann das Zehnfache erreichen. Bei Gemüse ist die Saison wichtiger als das Herkunftsland.'},
+  {k:'milch',  n:'Milch',            kg:3.0,  p:200, pn:'1 Glas', b:'es_milch.png',
+   t:'Milch ist das erste tierische Produkt in dieser Liste, und man sieht den Sprung sofort. Eine Kuh gibt Methan ab – ein Gas, das rund 28-mal so stark wirkt wie CO₂. Dazu kommt das Futter, das ebenfalls angebaut werden muss.'},
+  {k:'reis',   n:'Reis',             kg:4.0,  p:75,  pn:'1 Portion', b:'es_reis.png',
+   t:'Reis ist das einzige Getreide in dieser Liste mit einem hohen Wert, und das hat einen speziellen Grund: Reisfelder stehen unter Wasser. Im sauerstofffreien Schlamm bilden Bakterien Methan, das direkt in die Luft entweicht. Ein trocken angebautes Getreide wie Weizen hat dieses Problem nicht.'},
+  {k:'eier',   n:'Ei',               kg:4.5,  p:60,  pn:'1 Ei', b:'es_eier.png',
+   t:'Eier liegen im Mittelfeld. Hühner setzen Futter effizient in Nahrung um und geben kein Methan ab – der Fussabdruck stammt fast ganz aus dem Futteranbau. Pro Portion ist ein Ei mit 60 Gramm eine der günstigsten Eiweissquellen überhaupt.'},
+  {k:'fisch',  n:'Fisch (Zucht)',    kg:5.0,  p:130, pn:'1 Filet', b:'es_fisch.png',
+   t:'Zuchtfisch braucht Futter, und ein Teil davon besteht aus wild gefangenem Fisch. Wildfang schneidet je nach Methode sehr unterschiedlich ab: Ein Hering aus dem Ringwadennetz liegt tief, ein Krebstier aus der Grundschleppnetzfischerei kann über 25 kg erreichen. Der Fischname auf der Packung sagt mehr aus als das Wort «Fisch».'},
+  {k:'kuchen', n:'Schoggikuchen',    kg:5.3,  p:100, pn:'1 Stück', b:'es_kuchen.png', s:true,
+   t:'Fertiggerichte stehen nicht in der Studie – diesen Wert haben wir aus den Zutaten gerechnet: Butter 150 g (× 12) = 1,8 – Schokolade 80 g (× 19) = 1,5 – Zucker 220 g (× 3) = 0,7 – Eier 150 g (× 4,5) = 0,7 – Milch 120 g (× 3) = 0,4 – Mehl 220 g (× 1,4) = 0,3. Zusammen rund 5,3 kg. Die Butter allein macht einen Drittel aus.'},
+  {k:'pizza',  n:'Pizza Salami',     kg:5.5,  p:350, pn:'1 Pizza', b:'es_pizza.png', s:true,
+   t:'Auch hier haben wir gerechnet statt nachgeschlagen: Käse 200 g (× 21) = 4,2 – Salami 80 g (× 7) = 0,6 – Mehl 400 g (× 1,4) = 0,6 – Tomaten 250 g (× 1,4) = 0,35. Zusammen gut 5,5 kg pro Kilo Pizza. Der Käse macht drei Viertel aus – eine Pizza Margherita ohne Salami ändert kaum etwas.'},
+  {k:'poulet', n:'Poulet',           kg:6.0,  p:150, pn:'1 Schenkel', b:'es_poulet.png',
+   t:'Poulet ist das klimafreundlichste Fleisch. Hühner brauchen rund 2 kg Futter für 1 kg Zuwachs, ein Rind das Vier- bis Achtfache. Und weil Hühner keine Wiederkäuer sind, entsteht in ihrem Verdauungstrakt kein Methan.'},
+  {k:'schoggi',n:'Schokolade',       kg:19.0, p:25,  pn:'1 Reihe', b:'es_schoggi.png',
+   t:'Der hohe Wert stammt nicht aus der Schweizer Fabrik, sondern aus dem Kakaoanbau. Für neue Kakaoplantagen wird in Westafrika Regenwald geräumt – dieser Landnutzungswandel ist der grösste Posten. Pro Portion relativiert sich das: Eine Reihe wiegt 25 Gramm.'},
+  {k:'kaese',  n:'Käse',        kg:21.0, p:30,  pn:'1 Stück', b:'es_kaese.png',
+   t:'Für 1 kg Hartkäse braucht es rund 10 Liter Milch. Damit vervielfacht sich alles, was schon in der Milch steckt – das Methan der Kuh, das Futter, die Weide. Pro Kilo liegt Käse darum fast so hoch wie Rindfleisch, pro Portion aber sehr viel tiefer, weil niemand 150 Gramm Käse aufs Brot legt.'},
+  {k:'rind',   n:'Rindfleisch',      kg:60.0, p:150, pn:'1 Steak', b:'es_rind.png',
+   t:'Drei Dinge kommen zusammen: Rinder sind Wiederkäuer und stossen Methan aus, sie brauchen sehr viel Futter pro Kilo Fleisch, und für Weide und Futteranbau wird weltweit Wald geräumt. Wichtig für die Schweiz: Der Wert von 60 kg gilt für Tiere aus reinen Fleischherden. Schweizer Rindfleisch stammt grösstenteils von Milchkühen, deren Fussabdruck auf Milch und Fleisch aufgeteilt wird – dieser Wert liegt bei rund 21 kg. Ein Faktor drei, je nachdem welche Zahl man nimmt.'}
+];
+
+const MENUES = [
+  {n:'Znüni',            t:{apfel:1, brot:1, milch:1}},
+  {n:'Vegi-Zmittag',          t:{reis:1, tomate:1, ruebli:1, kaese:1}},
+  {n:'Zmittag mit Poulet',    t:{reis:1, poulet:1, ruebli:1}},
+  {n:'Pizza-Abend',           t:{pizza:1, schoggi:1}},
+  {n:'Steak-Teller',          t:{rind:1, reis:1, tomate:1}}
+];
+
+let teller = {}, essgewaehlt = null, essmodus = 'kg';
+
+/* ================= Essen: Teller ================= */
+function essWert(e){ return essmodus==='kg' ? e.kg : e.kg * e.p / 1000; }
+function essStufe(v){
+  if(essmodus==='kg'){
+    if(v <= 2)  return 'gut';
+    if(v <= 6)  return 'mittel';
+    if(v <= 20) return 'hoch';
+    return 'sehrhoch';
+  }
+  if(v <= 0.2) return 'gut';
+  if(v <= 0.7) return 'mittel';
+  if(v <= 2)   return 'hoch';
+  return 'sehrhoch';
+}
+function kgText(v){
+  if(v < 1) return chf(Math.round(v*1000)) + ' g';
+  return chf(Math.round(v*10)/10).replace('.',',') + ' kg';
+}
+
+function zeichneMenues(){
+  $('menues').innerHTML = MENUES.map((m,i) =>
+    '<button class="chip" data-i="'+i+'">'+m.n+'</button>').join('');
+  $('menues').querySelectorAll('.chip').forEach(b=>{
+    b.onclick = () => { teller = Object.assign({}, MENUES[+b.dataset.i].t); zeichneTeller(); };
+  });
+}
+
+function zeichneTeller(){
+  $('tellergrid').innerHTML = E.map(e => {
+    const z = teller[e.k] || 0;
+    return '<button class="lm'+(z?' on':'')+'" data-k="'+e.k+'">' +
+           (z ? '<span class="lm-z">'+z+'&times;</span>' : '') +
+           '<img src="'+e.b+'" alt="" onerror="this.style.visibility=\'hidden\'">' +
+           '<div class="lm-n">'+e.n+'</div>' +
+           '<div class="lm-p">'+e.pn+' &middot; '+chf(e.p)+' g</div></button>';
+  }).join('');
+  $('tellergrid').querySelectorAll('.lm').forEach(b=>{
+    b.onclick = (ev) => {
+      const k = b.dataset.k;
+      if(ev.shiftKey){ delete teller[k]; }
+      else { teller[k] = (teller[k]||0) + 1; }
+      zeichneTeller();
+    };
+  });
+  zeichneTellerbar();
+}
+
+function zeichneTellerbar(){
+  const posten = E.filter(e => teller[e.k]).map(e => ({e:e, z:teller[e.k], g:e.kg*e.p*teller[e.k]}));
+  if(!posten.length){
+    $('tellerbar').innerHTML = '<div class="tb-leer">Der Teller ist noch leer. Wähle oben ein fertiges Menü oder klick einzelne Lebensmittel an.</div>';
+    return;
+  }
+  const gramm = posten.reduce((a,o)=>a+o.g, 0);
+  const kmAuto = gramm / 225;                       /* Benzinauto, 225 g pro Personenkilometer */
+  const top = posten.slice().sort((a,b)=>b.g-a.g)[0];
+  const anteil = Math.round(top.g / gramm * 100);
+  $('tellerbar').innerHTML =
+    '<div><div class="tb-zahl">'+kgText(gramm/1000)+'</div><div class="mini" style="color:#A7C4CE">CO₂-eq</div></div>' +
+    '<div class="tb-txt">Das entspricht <b>'+chf(Math.round(kmAuto))+' km</b> im Benzinauto ' +
+    '(1 Person, 225 g pro km).<br>Grösster Posten: <b>'+top.e.n+'</b> mit '+anteil+'&nbsp;% des Tellers.</div>' +
+    '<button class="tb-reset" id="tellerreset">Teller leeren</button>';
+  $('tellerreset').onclick = () => { teller = {}; zeichneTeller(); };
+}
+
+/* ================= Essen: Balken ================= */
+function zeichneEssmodus(){
+  $('essmodus').innerHTML =
+    '<button class="chip'+(essmodus==='kg'?' on':'')+'" data-m="kg">pro Kilogramm</button>' +
+    '<button class="chip'+(essmodus==='portion'?' on':'')+'" data-m="portion">pro Portion</button>';
+  $('essmodus').querySelectorAll('.chip').forEach(b=>{
+    b.onclick = () => { essmodus = b.dataset.m; zeichneEssmodus(); zeichneEssbalken(); };
+  });
+  $('essen-titel').innerHTML = essmodus==='kg'
+    ? 'Treibhausgas pro Kilogramm'
+    : 'Treibhausgas pro üblicher Portion';
+}
+
+function zeichneEssbalken(){
+  const sicht = E.map(e => ({e:e, v:essWert(e)})).sort((a,b)=>a.v-b.v);
+  const maxV = Math.max(...sicht.map(o=>o.v));
+  $('essbalken').innerHTML = sicht.map(o => {
+    const unter = essmodus==='kg'
+      ? chf(Math.round(o.e.kg*10)/10).replace('.',',')+' kg pro kg'
+      : o.e.pn+' &middot; '+chf(o.e.p)+' g';
+    return '<button class="zeile'+(essgewaehlt===o.e.k?' on':'')+'" data-k="'+o.e.k+'">' +
+      '<img class="z-bild" src="'+o.e.b+'" alt="" onerror="this.style.visibility=\'hidden\'">' +
+      '<span class="z-name">'+o.e.n+(o.e.s?'<span class="schaetztag">Schätzung</span>':'')+'<em>'+unter+'</em></span>' +
+      '<span class="z-bar '+essStufe(o.v)+'" style="width:'+Math.max(0.6, o.v/maxV*100)+'%"></span>' +
+      '<span class="z-wert">'+kgText(o.v)+'<em>'+(essmodus==='kg'?'pro kg':'pro Portion')+'</em></span></button>';
+  }).join('');
+  $('essbalken').querySelectorAll('.zeile').forEach(b=>{ b.onclick = () => essWaehle(b.dataset.k); });
+  zeichneEssEinordnung();
+}
+
+function essWaehle(k){
+  essgewaehlt = (essgewaehlt===k) ? null : k;
+  const e = E.find(x=>x.k===essgewaehlt);
+  if(!e){ $('essdetail').innerHTML = '<div class="d-leer">Klick auf einen Balken für die Erklärung.</div>'; }
+  else {
+    $('essdetail').innerHTML =
+      '<div class="d-top"><span class="d-name">'+e.n+'</span>' +
+      '<span class="d-wert">'+chf(Math.round(e.kg*10)/10).replace('.',',')+' kg CO₂-eq pro kg</span>' +
+      '<span class="d-wert">'+kgText(e.kg*e.p/1000)+' pro '+e.pn.replace(/^1 /,'')+'</span>' +
+      (e.s?'<span class="schaetztag">Schätzung</span>':'') + '</div>' +
+      '<div class="d-text">'+e.t+'</div>';
+  }
+  zeichneEssbalken();
+}
+
+function zeichneEssEinordnung(){
+  const rind = E.find(e=>e.k==='rind'), ruebli = E.find(e=>e.k==='ruebli');
+  const kaese = E.find(e=>e.k==='kaese'), poulet = E.find(e=>e.k==='poulet');
+  let txt;
+  if(essmodus==='kg'){
+    txt = 'Pro Kilogramm liegt <b>Rüebli</b> bei <b>0,4 kg</b>, <b>Rindfleisch</b> bei <b>60 kg</b>. ' +
+          'Das ist das <b>150-fache</b>.<br>' +
+          'Ein einziges Rindssteak von 150 g verursacht <b>9 kg</b> CO₂-eq – so viel wie <b>40 km</b> Autofahrt.';
+  } else {
+    const kk = kaese.kg*kaese.p/1000, pk = poulet.kg*poulet.p/1000;
+    txt = 'Pro Portion dreht sich das Bild teilweise: <b>Käse</b> liegt pro Kilo fast so hoch wie Rindfleisch, ' +
+          'auf dem Brot sind es aber nur 30 g – also <b>'+kgText(kk)+'</b>. ' +
+          'Ein Pouletschenkel von 150 g kommt dagegen auf <b>'+kgText(pk)+'</b>.<br>' +
+          'Merksatz: Entscheidend ist nicht nur <i>was</i> auf dem Teller liegt, sondern auch <i>wie viel</i> davon.';
+  }
+  $('esseinordnung').innerHTML = '<div class="eo-tit">Einordnung</div><div class="eo-text">'+txt+'</div>';
+}
+
+/* ================= Tabs ================= */
+const TABS = ['rechnen','essen','warum','quiz'];
+TABS.forEach(t=>{ $('tab-'+t).onclick = () => switchTab(t); });
+function switchTab(w){
+  TABS.forEach(t=>{
+    const an = (t===w);
+    $('tab-'+t).classList.toggle('active', an);
+    $('tab-'+t).setAttribute('aria-selected', an);
+    $('panel-'+t).classList.toggle('active', an);
+  });
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ================= Start ================= */
+zeichneRouten();
+zeichneBesetzung();
+zeichneMenues();
+zeichneTeller();
+zeichneEssmodus();
+zeichneEssbalken();
+zeichneTabelle();
+zeichneEsstabelle();
+zeichneQuiz();
+$('km').value = kmZuRegler(45);
+setzeDistanz(45);
+</script>
+</body>
+</html>
