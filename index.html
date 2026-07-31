@@ -53,6 +53,11 @@ body{
 .hero-img{display:block;width:100%;height:auto}
 .hero-text{position:absolute;top:37%;left:clamp(1.1rem,4.5%,3rem);transform:translateY(-50%);width:min(46%,520px);z-index:4}
 @media(max-width:680px){.hero-text{position:static;transform:none;left:auto;width:auto;margin-top:1rem}}
+.hero-cr{position:absolute;left:clamp(1.1rem,4.5%,3rem);bottom:clamp(.6rem,3%,1.5rem);z-index:5;
+         font-size:clamp(9px,.8vw,12px);font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+         color:rgba(255,255,255,.74);text-shadow:0 1px 3px rgba(10,25,45,.5)}
+.hero-cr a{color:inherit;text-decoration:underline;text-underline-offset:2px;text-decoration-color:rgba(255,255,255,.45)}
+.hero-cr a:hover,.hero-cr a:focus-visible{color:#fff;text-decoration-color:#fff}
 .hot{position:absolute;transform:translate(-50%,-50%);border-radius:50%;cursor:pointer;z-index:3}
 .hot .ring{position:absolute;inset:0;border-radius:50%;transition:box-shadow .2s,background .2s;box-shadow:0 0 0 3px rgba(216,174,102,0)}
 .hot:hover .ring{box-shadow:0 0 0 3px rgba(216,174,102,.9),0 0 26px 8px rgba(240,200,110,.55);background:radial-gradient(circle,rgba(255,244,205,.30) 55%,rgba(255,244,205,0) 100%)}
@@ -297,6 +302,7 @@ body{
       <img class="rotor r1" src="abu_gear_solo.png?v=5" alt="" aria-hidden="true">
       <img class="rotor r2" src="abu_gear_solo.png?v=5" alt="" aria-hidden="true">
       <img class="rotor r3" src="abu_gear_solo.png?v=5" alt="" aria-hidden="true">
+      <div class="hero-cr">&copy; 2026 <a href="mailto:samuel.mollet@hkv.ch" title="E-Mail an Samuel Mollet">S.&nbsp;Mollet</a></div>
     </div>
     <div class="hero-text">
       <div class="eyebrow">HKV Aarau · Allgemeinbildung</div>
@@ -531,7 +537,7 @@ body{
   </main>
 
   <footer class="fuss">
-    <b>abu-tools.ch</b> — interaktive Werkzeuge für den ABU-Unterricht an der HKV Aarau · © 2026 S. Mollet, ABU &amp; Sport<br>
+    <b>abu-tools.ch</b> — interaktive Werkzeuge für den ABU-Unterricht an der HKV Aarau · © 2026 <a href="mailto:samuel.mollet@hkv.ch" title="E-Mail an Samuel Mollet" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">S. Mollet</a>, ABU &amp; Sport<br>
     Aufträge und Lerninhalte: <a class="kvd" href="https://go.kvdigital.swiss/dashboard" target="_blank" rel="noopener">KV&nbsp;Digital<span class="pfeil-ex">↗</span></a>
   </footer>
 

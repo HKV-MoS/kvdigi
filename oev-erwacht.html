@@ -15,9 +15,10 @@
   body{ font-family:'Aptos','Segoe UI',system-ui,sans-serif; background:var(--bg);
         color:var(--text); font-size:15px; line-height:1.5; min-height:100vh; }
 
-  header{ padding:16px 24px 12px; border-bottom:1px solid var(--line); }
+  header{ padding:16px 24px 12px; border-bottom:1px solid var(--line); text-align:center;
+           background:linear-gradient(135deg,#213B42 0%,#3C6E73 100%); }
   header h1{ font-size:22px; font-weight:800; letter-spacing:-.3px; }
-  header .sub{ font-size:13.5px; color:var(--muted); margin-top:2px; }
+  header .sub{ font-size:13.5px; color:#BBD3DA; margin-top:2px; }
 
   /* Echte Daten – das darf man zeigen */
   .quelle{ margin:14px 24px 0; padding:10px 14px; border-radius:10px;
@@ -184,7 +185,7 @@
 
 <footer>
   Datenquelle: <span id="f-quelle">opentransportdata.swiss</span> · Open Data · Karte: Natural Earth · aufbereitet für den ABU-Unterricht.
-  <div class="cr">© 2026 Samuel Mollet · HKV Aarau · realisiert mit Claude (Anthropic)</div>
+  <div class="cr">© 2026 <a href="mailto:samuel.mollet@hkv.ch" title="E-Mail an Samuel Mollet" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Samuel Mollet</a> · HKV Aarau · realisiert mit Claude (Anthropic)</div>
 </footer>
 
 <script src="oev_meta.js"></script>

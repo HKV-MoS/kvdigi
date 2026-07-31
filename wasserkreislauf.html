@@ -7,7 +7,7 @@
 <style>
   * { box-sizing: border-box; }
   :root{
-    --hkv:#1F4E78; --hkv2:#2C6BAA;
+    --hkv:#3C6E73; --hkv2:#3C6E73;
     --sky1:#E4F4FF; --sky2:#A7D8F5;
     --water:#2E86C1; --water-deep:#1B5E8A;
     --sun:#FFC83D; --sun-glow:#FFE08A;
@@ -21,8 +21,8 @@
     background:#F4F8FB; color:#1A2B3A; font-size:14px; line-height:1.5;
   }
   header{
-    background:linear-gradient(135deg,#1F4E78 0%,#2C6BAA 100%);
-    color:#fff; padding:16px 24px 14px; box-shadow:0 2px 8px rgba(0,0,0,.1);
+    background:linear-gradient(135deg,#213B42 0%,#3C6E73 100%);
+    color:#fff; padding:16px 24px 14px; box-shadow:0 2px 8px rgba(0,0,0,.1); text-align:center;
   }
   header h1{ margin:0 0 3px; font-size:22px; font-weight:800; letter-spacing:-.3px; }
   header .sub{ font-size:13px; opacity:.92; }
@@ -35,14 +35,14 @@
   .controls{ display:flex; gap:8px; flex-wrap:wrap; }
   .btn{
     font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; border-radius:9px;
-    padding:8px 14px; border:1.5px solid #1F4E78; background:#1F4E78; color:#fff;
+    padding:8px 14px; border:1.5px solid #3C6E73; background:#3C6E73; color:#fff;
     transition:background .15s ease, transform .12s ease, box-shadow .15s ease; display:inline-flex; align-items:center; gap:7px;
   }
-  .btn:hover{ background:#163a5a; transform:translateY(-1px); box-shadow:0 4px 12px rgba(31,78,120,.25); }
+  .btn:hover{ background:#213B42; transform:translateY(-1px); box-shadow:0 4px 12px rgba(60,110,115,.25); }
   .btn:active{ transform:translateY(0); }
-  .btn.ghost{ background:#fff; color:#1F4E78; }
-  .btn.ghost:hover{ background:#EAF3FB; }
-  .btn.ghost[aria-pressed="true"]{ background:#1F4E78; color:#fff; }
+  .btn.ghost{ background:#fff; color:#3C6E73; }
+  .btn.ghost:hover{ background:#EAF2F1; }
+  .btn.ghost[aria-pressed="true"]{ background:#3C6E73; color:#fff; }
   .btn:focus-visible{ outline:3px solid #9Fd0f5; outline-offset:2px; }
 
   .scene{ position:relative; }
@@ -73,11 +73,11 @@
 
   /* Hotspots */
   .hotspot{ cursor:pointer; }
-  .hotspot .hs-dot{ fill:#fff; stroke:#1F4E78; stroke-width:2.5; transition:fill .15s ease, transform .15s ease; }
-  .hotspot .hs-num{ fill:#1F4E78; font-weight:800; font-size:17px; text-anchor:middle; dominant-baseline:central; font-family:inherit; }
-  .hotspot:hover .hs-dot{ fill:#EAF3FB; }
-  .hotspot .hs-ring{ fill:none; stroke:#1F4E78; stroke-width:2.5; opacity:0; }
-  .hotspot.active .hs-dot{ fill:#1F4E78; }
+  .hotspot .hs-dot{ fill:#fff; stroke:#3C6E73; stroke-width:2.5; transition:fill .15s ease, transform .15s ease; }
+  .hotspot .hs-num{ fill:#3C6E73; font-weight:800; font-size:17px; text-anchor:middle; dominant-baseline:central; font-family:inherit; }
+  .hotspot:hover .hs-dot{ fill:#EAF2F1; }
+  .hotspot .hs-ring{ fill:none; stroke:#3C6E73; stroke-width:2.5; opacity:0; }
+  .hotspot.active .hs-dot{ fill:#3C6E73; }
   .hotspot.active .hs-num{ fill:#fff; }
   .hotspot.active .hs-ring{ opacity:1; animation:ping 1.6s ease-out infinite; }
   @keyframes ping{ 0%{ transform:scale(1); opacity:.7;} 100%{ transform:scale(2.4); opacity:0;} }
@@ -85,15 +85,15 @@
 
   /* Lit-Hervorhebung der aktiven Station */
   .litgroup{ transition:filter .25s ease; }
-  .litgroup.lit{ filter:drop-shadow(0 0 7px rgba(255,255,255,.95)) drop-shadow(0 0 3px rgba(31,78,120,.5)); }
+  .litgroup.lit{ filter:drop-shadow(0 0 7px rgba(255,255,255,.95)) drop-shadow(0 0 3px rgba(60,110,115,.5)); }
 
-  .lbl{ font-family:inherit; font-size:12.5px; font-weight:700; fill:#1F4E78; paint-order:stroke; stroke:#fff; stroke-width:3px; stroke-linejoin:round; }
+  .lbl{ font-family:inherit; font-size:12.5px; font-weight:700; fill:#3C6E73; paint-order:stroke; stroke:#fff; stroke-width:3px; stroke-linejoin:round; }
   .lbls-hidden .lbl{ display:none; }
 
   /* Info-Panel */
   .panel{ background:#fff; border-radius:14px; box-shadow:0 2px 10px rgba(20,50,80,.08); padding:18px; align-self:start; position:sticky; top:18px; }
-  .panel .eyebrow{ font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:#2C6BAA; }
-  .panel h2{ margin:4px 0 8px; font-size:19px; color:#1F4E78; font-weight:800; }
+  .panel .eyebrow{ font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:#3C6E73; }
+  .panel h2{ margin:4px 0 8px; font-size:19px; color:#3C6E73; font-weight:800; }
   .panel p{ margin:0 0 14px; color:#37485a; }
   .chips{ display:flex; flex-direction:column; gap:7px; margin-top:6px; }
   .chip{
@@ -102,27 +102,27 @@
     background:#F3F8FC; border:1.5px solid transparent; border-radius:10px; padding:9px 11px;
     transition:background .15s ease, border-color .15s ease, transform .12s ease;
   }
-  .chip:hover{ background:#E7F1FA; transform:translateX(2px); }
-  .chip .num{ flex:0 0 22px; height:22px; border-radius:50%; background:#1F4E78; color:#fff; font-weight:800; font-size:12px; display:flex; align-items:center; justify-content:center; }
-  .chip.active{ background:#E7F1FA; border-color:#1F4E78; }
+  .chip:hover{ background:#E4EFEE; transform:translateX(2px); }
+  .chip .num{ flex:0 0 22px; height:22px; border-radius:50%; background:#3C6E73; color:#fff; font-weight:800; font-size:12px; display:flex; align-items:center; justify-content:center; }
+  .chip.active{ background:#E4EFEE; border-color:#3C6E73; }
   .chip:focus-visible{ outline:3px solid #9Fd0f5; outline-offset:2px; }
 
   .progress{ display:flex; gap:5px; margin-top:14px; }
   .progress span{ flex:1; height:4px; border-radius:3px; background:#E2EBF2; transition:background .3s ease; }
-  .progress span.done{ background:#2C6BAA; }
+  .progress span.done{ background:#3C6E73; }
 
   /* ---- Modus-Umschalter ---- */
   .modeswitch{ display:inline-flex; background:#EAF0F5; border-radius:10px; padding:3px; gap:2px; }
   .mode-opt{ font-family:inherit; font-size:12.5px; font-weight:700; padding:7px 12px; border:none; background:transparent; color:#5B6B7A; border-radius:8px; cursor:pointer; transition:all .15s ease; }
-  .mode-opt.active{ background:#1F4E78; color:#fff; }
+  .mode-opt.active{ background:#3C6E73; color:#fff; }
   .mode-opt:focus-visible{ outline:3px solid #9Fd0f5; outline-offset:2px; }
   body.stoer .mode-opt.active{ background:#C24B1E; }
 
   .btn.sm{ padding:6px 12px; font-size:12.5px; }
 
   /* ---- Mini-Frage ---- */
-  .qbox{ background:#EAF3FB; border-left:4px solid #2C6BAA; border-radius:0 10px 10px 0; padding:10px 13px; margin:0 0 14px; font-size:13px; color:#28455f; }
-  .qbox .qlabel{ display:block; font-size:10.5px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; color:#2C6BAA; margin-bottom:3px; }
+  .qbox{ background:#EAF2F1; border-left:4px solid #3C6E73; border-radius:0 10px 10px 0; padding:10px 13px; margin:0 0 14px; font-size:13px; color:#2A4A4E; }
+  .qbox .qlabel{ display:block; font-size:10.5px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; color:#3C6E73; margin-bottom:3px; }
   body.stoer .qbox{ background:#FBEEE6; border-left-color:#C24B1E; color:#7a3a1e; }
   body.stoer .qbox .qlabel{ color:#C24B1E; }
 
@@ -201,17 +201,17 @@
   .overlay{ position:fixed; inset:0; background:rgba(20,35,50,.55); display:none; align-items:center; justify-content:center; padding:18px; z-index:50; }
   .overlay.open{ display:flex; }
   .modal{ background:#fff; border-radius:16px; max-width:660px; width:100%; max-height:88vh; overflow:auto; padding:22px 24px; box-shadow:0 20px 60px rgba(0,0,0,.3); }
-  .modal h3{ margin:0 0 4px; font-size:20px; color:#1F4E78; font-weight:800; }
+  .modal h3{ margin:0 0 4px; font-size:20px; color:#3C6E73; font-weight:800; }
   .modal .msub{ font-size:13px; color:#5B6B7A; margin-bottom:16px; }
   .modal-x{ float:right; font-size:22px; line-height:1; border:none; background:transparent; cursor:pointer; color:#5B6B7A; padding:0 4px; }
   table.cmp{ width:100%; border-collapse:collapse; font-size:13px; }
   table.cmp th, table.cmp td{ text-align:left; padding:9px 10px; border-bottom:1px solid #EAF0F5; vertical-align:top; }
-  table.cmp th{ font-weight:800; color:#1F4E78; }
-  table.cmp td.norm{ color:#2C6BAA; }
+  table.cmp th{ font-weight:800; color:#3C6E73; }
+  table.cmp td.norm{ color:#3C6E73; }
   table.cmp td.stoer{ color:#C24B1E; }
   table.cmp tr td:first-child{ font-weight:700; color:#1A2B3A; }
 
-  .qgroup-title{ font-size:14px; font-weight:800; color:#1F4E78; margin:16px 0 8px; }
+  .qgroup-title{ font-size:14px; font-weight:800; color:#3C6E73; margin:16px 0 8px; }
   .quiz-q{ margin-bottom:14px; }
   .quiz-q .qtext{ font-size:13.5px; font-weight:700; margin-bottom:7px; }
   .quiz-opt{ display:block; width:100%; text-align:left; font-family:inherit; font-size:13px; padding:8px 11px; margin-bottom:5px; border:1.5px solid #E2EBF2; border-radius:9px; background:#fff; cursor:pointer; transition:all .12s ease; }
@@ -220,7 +220,7 @@
   .quiz-opt.wrong{ background:#FBE9E7; border-color:#D9534F; color:#8a2a26; }
   .quiz-opt:disabled{ cursor:default; }
   .quiz-feedback{ font-size:12.5px; margin-top:4px; font-weight:700; }
-  .quiz-result{ margin-top:14px; padding:12px 14px; border-radius:10px; background:#EAF3FB; font-size:14px; font-weight:700; color:#1F4E78; text-align:center; }
+  .quiz-result{ margin-top:14px; padding:12px 14px; border-radius:10px; background:#EAF2F1; font-size:14px; font-weight:700; color:#3C6E73; text-align:center; }
 
   .footer{ max-width:1320px; margin:4px auto 24px; padding:0 18px; color:#5B6B7A; font-size:11.5px; }
   .footer .copyright{ margin-top:8px; color:#94A3B0; }
@@ -419,10 +419,10 @@
         </g>
 
         <!-- Richtungspfeile des Kreislaufs -->
-        <g fill="none" stroke="#1F4E78" stroke-width="2.5" opacity=".30" stroke-linecap="round" marker-end="url(#arr)">
+        <g fill="none" stroke="#3C6E73" stroke-width="2.5" opacity=".30" stroke-linecap="round" marker-end="url(#arr)">
           <defs>
             <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-              <path d="M0,0 L10,5 L0,10 z" fill="#1F4E78"/>
+              <path d="M0,0 L10,5 L0,10 z" fill="#3C6E73"/>
             </marker>
           </defs>
           <path d="M250,300 C250,240 280,200 320,180"/>
@@ -592,7 +592,7 @@
 
 <div class="footer">
   Interaktive Lernfolie zum Wasserkreislauf · die Sonne treibt den Kreislauf an: Verdunstung → Kondensation → Niederschlag → Abfluss → Versickerung → Sammlung.
-  <div class="copyright">© 2026 Samuel Mollet · HKV Aarau · realisiert mit Claude (Anthropic)</div>
+  <div class="copyright">© 2026 <a href="mailto:samuel.mollet@hkv.ch" title="E-Mail an Samuel Mollet" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Samuel Mollet</a> · HKV Aarau · realisiert mit Claude (Anthropic)</div>
 </div>
 
 <!-- Vergleich-Overlay -->
