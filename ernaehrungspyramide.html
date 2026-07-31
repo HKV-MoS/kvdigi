@@ -984,7 +984,7 @@
     kj.addEventListener("input",()=>{const v=parseFloat(kj.value);kcal.value=isNaN(v)?"":Math.round(v/F);});
   }
 
-  document.getElementById("foot").textContent="Interaktive Lernfolie · © 2026 S. Mollet · ABU · HKV Aarau";
+  document.getElementById("foot").innerHTML="Interaktive Lernfolie · © 2026 <a href='mailto:samuel.mollet@hkv.ch' title='E-Mail an Samuel Mollet' style='color:inherit;text-decoration:underline;text-underline-offset:2px;'>S. Mollet</a> · ABU · HKV Aarau";
 
   buildPyramid();
   buildVitamins();
@@ -1030,7 +1030,7 @@
     mf.appendChild(box);
   });
 
-  document.getElementById("foot").textContent="Interaktive Lernfolie für den ABU-Unterricht · © 2026 Samuel Mollet · HKV Aarau · realisiert mit Claude (Anthropic)";
+  document.getElementById("foot").innerHTML="Interaktive Lernfolie für den ABU-Unterricht · © 2026 <a href='mailto:samuel.mollet@hkv.ch' title='E-Mail an Samuel Mollet' style='color:inherit;text-decoration:underline;text-underline-offset:2px;'>Samuel Mollet</a> · HKV Aarau · realisiert mit Claude (Anthropic)";
 
   buildPyramid();
 </script>

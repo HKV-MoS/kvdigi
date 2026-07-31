@@ -6,7 +6,7 @@
 <title>Strom aus den Alpen – das Wasserkraftwerk im Schnittbild</title>
 <style>
 :root{
-  --hkv:#1F4E78; --hkv-tief:#163a5a; --ink:#152332; --muted:#5b6b7d;
+  --hkv:#3C6E73; --hkv-tief:#213B42; --ink:#152332; --muted:#5b6b7d;
   --papier:#f3f6fa; --card:#ffffff; --line:#e2e8f1; --ocker:#9a6300;
   --wasser:#39C2E0; --strom:#F2C14E; --gruen:#5BA829;
 }
@@ -26,12 +26,12 @@ h1 .accent{color:var(--hkv);}
   border:2px solid transparent;border-bottom:none;border-radius:12px 12px 0 0;
   background:transparent;color:var(--muted);cursor:pointer;position:relative;bottom:-2px;
   display:inline-flex;align-items:center;gap:.5em;transition:all .18s;}
-.reiter-btn:hover{color:var(--hkv);background:rgba(31,78,120,.06);}
+.reiter-btn:hover{color:var(--hkv);background:rgba(60,110,115,.09);}
 .reiter-btn[aria-selected="true"]{background:var(--card);border-color:var(--line);
   color:var(--hkv);box-shadow:0 -3px 0 var(--hkv) inset;}
 .reiter-btn[aria-selected="true"]::after{content:"";position:absolute;left:0;right:0;bottom:-2px;
   height:2px;background:var(--card);}
-.reiter-btn:focus-visible{outline:3px solid rgba(31,78,120,.4);outline-offset:2px;}
+.reiter-btn:focus-visible{outline:3px solid rgba(60,110,115,.45);outline-offset:2px;}
 .reiter-wip{font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
   background:#F4C400;color:#3a2c00;border-radius:999px;padding:2px 8px;}
 
@@ -75,7 +75,7 @@ h1 .accent{color:var(--hkv);}
   transition:all .18s;}
 .m-btn:hover{border-color:var(--hkv);color:var(--hkv);}
 .m-btn[aria-pressed="true"]{background:var(--hkv);border-color:var(--hkv);color:#fff;}
-.m-btn:focus-visible{outline:3px solid rgba(31,78,120,.4);outline-offset:2px;}
+.m-btn:focus-visible{outline:3px solid rgba(60,110,115,.45);outline-offset:2px;}
 .m-text{max-width:76ch;margin:8px auto 0;text-align:center;font-size:13.5px;color:var(--muted);
   background:var(--card);border:1px solid var(--line);border-left:3px solid var(--strom);
   border-radius:0 9px 9px 0;padding:8px 14px;}
@@ -1113,7 +1113,7 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
   für Plasmaphysik, EnergieSchweiz, Bulletin electrosuisse; Holzvergaser Nordkorea:
   Radio Free Asia · Stand Juli 2026 ·
   Aufbereitet für den ABU-Unterricht.</p>
-<footer>© 2026 Samuel Mollet · HKV Aarau · realisiert mit Claude (Anthropic)</footer>
+<footer>© 2026 <a href="mailto:samuel.mollet@hkv.ch" title="E-Mail an Samuel Mollet" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Samuel Mollet</a> · HKV Aarau · realisiert mit Claude (Anthropic)</footer>
 
 <script>
 (function(){
@@ -1146,7 +1146,7 @@ const MODUS_TEXT = {
 
 /* ---------- Strommix 2024 (BFE, definitiv) ---------- */
 const MIX = [
-  ['Speicher-Wasserkraft', 35.7, '#1F4E78'],
+  ['Speicher-Wasserkraft', 35.7, '#3C6E73'],
   ['Lauf-Wasserkraft',     23.9, '#4FA3D1'],
   ['Kernkraft',            28.4, '#8a5a00'],
   ['Photovoltaik',          7.4, '#E0A22E'],

@@ -7,11 +7,11 @@
 <style>
   *{ box-sizing:border-box; }
   body{ margin:0; font-family:'Aptos','Segoe UI',system-ui,-apple-system,sans-serif; background:#F4F8FB; color:#1A2B3A; font-size:14px; line-height:1.5; }
-  header{ background:linear-gradient(135deg,#213B42 0%,#3C6E73 100%); color:#fff; padding:14px 22px 14px; box-shadow:0 2px 8px rgba(0,0,0,.12); }
+  header{ background:linear-gradient(135deg,#213B42 0%,#3C6E73 100%); color:#fff; padding:14px 22px 14px; box-shadow:0 2px 8px rgba(0,0,0,.12); text-align:center; }
   .brand-eyebrow{ font-size:11px; font-weight:800; letter-spacing:2.5px; color:#D8AE66; margin-bottom:3px; text-transform:uppercase; }
   header h1{ margin:0 0 2px; font-size:20px; font-weight:800; letter-spacing:-.3px; }
   header .sub{ font-size:12.5px; opacity:.93; }
-  .profsel{ margin-top:12px; display:flex; flex-direction:column; gap:9px; }
+  .profsel{ margin-top:12px; display:flex; flex-direction:column; gap:9px; max-width:1208px; margin-left:auto; margin-right:auto; width:100%; text-align:left; }
   .pgroup{ background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.10); border-radius:10px; padding:9px 12px 10px; transition:background .14s ease,border-color .14s ease; }
   .pgroup.active{ background:#fff; border-color:#fff; }
   .pgroup.active .plabel{ color:#2E9D6B; }
@@ -133,7 +133,7 @@
 </div>
 
 <div class="footer">
-  <div class="cr" id="cr-line">© 2026 Samuel Mollet · HKV Aarau · APO-Rechner von Jasmin Hürlimann · Detailhandel-Strukturen nach offiziellen Notenrechnern (BDS) · realisiert mit Claude (Anthropic)</div>
+  <div class="cr" id="cr-line">© 2026 <a href="mailto:samuel.mollet@hkv.ch" title="E-Mail an Samuel Mollet" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Samuel Mollet</a> · HKV Aarau · APO-Rechner von Jasmin Hürlimann · Detailhandel-Strukturen nach offiziellen Notenrechnern (BDS) · realisiert mit Claude (Anthropic)</div>
 </div>
 
 <script>
