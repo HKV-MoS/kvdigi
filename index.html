@@ -183,6 +183,20 @@ body{
 .k-deko-flug{height:50px}
 .karte:has(.k-deko-flug) .k-einsatz{padding-right:124px}
 .k-deko-turm{right:18px; bottom:14px; height:min(72%,230px); filter:drop-shadow(0 4px 10px rgba(0,0,0,.32))}
+.k-deko-em{height:66px; right:10px; bottom:12px}
+.karte:has(.k-deko-em) .k-einsatz{padding-right:112px}
+
+/* Countdown-Plakette auf der Kachel */
+.k-count{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.66rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ocker); border:1px solid rgba(216,174,102,.55);
+  border-radius:999px; padding:.16rem .6rem;
+  display:none; align-self:flex-start; margin-top:.55rem;
+  white-space:nowrap; background:rgba(216,174,102,.09);
+}
+.k-count[data-an]{display:inline-block}
+.k-count b{font-weight:600; font-variant-numeric:tabular-nums}
 .k-kopf{
   display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:.35rem .7rem;
   margin-bottom:.5rem;
@@ -379,8 +393,9 @@ body{
         <div class="k-titel">EURO 2028 Spielplan</div>
         <p class="k-text">Alle 51 Spiele der Fussball-EM in Grossbritannien und Irland – mit Turnierbaum, Stadionkarte und der Frage, warum dort noch keine Ländernamen stehen.</p>
         <div class="k-einsatz">Beamer · Aktualität · Namensrechte</div>
+        <span class="k-count" id="emCount"></span>
         <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
-              <img class="k-deko k-deko-mittel" src="kachel_em2028.png?v=1" alt="" onerror="this.style.display=&#39;none&#39;">
+              <img class="k-deko k-deko-em" src="kachel_em2028.png?v=2" alt="" onerror="this.style.display=&#39;none&#39;">
       </a>
 
       <a class="karte" href="notenrechner.html" data-kat="rechner">
@@ -572,6 +587,25 @@ body{
       });
     });
   });
+})();
+
+/* Countdown auf der EURO-2028-Kachel: Anpfiff 9. Juni 2028, Wembley */
+(function(){
+  'use strict';
+  var el = document.getElementById('emCount');
+  if (!el) { return; }
+  var start = new Date(2028, 5, 9, 21, 0, 0);
+  var tage  = Math.ceil((start - new Date()) / 86400000);
+  if (tage > 1) {
+    el.innerHTML = 'Noch <b>' + tage + '</b> Tage';
+  } else if (tage === 1) {
+    el.innerHTML = 'Noch <b>1</b> Tag';
+  } else if (tage > -31) {
+    el.innerHTML = 'Die EM läuft';
+  } else {
+    return;
+  }
+  el.setAttribute('data-an', '');
 })();
 </script>
 </body>
