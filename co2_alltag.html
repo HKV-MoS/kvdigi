@@ -145,6 +145,8 @@
   .ek-bild{ height:52px; width:auto; max-width:100%; image-rendering:pixelated; display:block; margin-bottom:6px; }
   .ek h4{ margin:0 0 4px; font-size:15px; font-weight:800; color:#213B42; }
   .ek p{ margin:4px 0 0; font-size:13px; color:#41585f; }
+  .ek .fn{ margin-top:8px; padding-top:7px; border-top:1px dashed #C9DCE6; font-size:12px; color:#5B7480; }
+  .ek .fn b{ color:#213B42; }
 
   /* Tabelle */
   table{ width:100%; border-collapse:collapse; margin-top:10px; font-size:13px; }
@@ -319,12 +321,13 @@
           <img class="ek-bild" src="es_rind.png" alt="">
           <h4>1. Wiederk&auml;uer machen Methan</h4>
           <p>Rinder, Schafe und Ziegen verdauen Gras mit Hilfe von Bakterien im Pansen. Dabei entsteht <b>Methan</b> &ndash; ein Treibhausgas, das &uuml;ber 100 Jahre gerechnet rund <b>28-mal</b> so stark wirkt wie CO&#8322;. Eine Kuh r&uuml;lpst pro Tag etwa 300 Liter davon.</p>
-          <p>Darum liegen Rind, K&auml;se und Butter ganz oben. Poulet und Schwein haben keinen Pansen und darum kein Methanproblem.</p>
+          <p>Darum liegen Rind, K&auml;se und Butter ganz oben. <b>H&uuml;hner und Schweine</b> haben keinen Pansen und darum kein Methanproblem.</p>
+          <p class="fn"><b>Pansen:</b> der erste und mit Abstand gr&ouml;sste der vier M&auml;gen eines Wiederk&auml;uers &ndash; bei einer Kuh fasst er rund 150 Liter. Darin zerlegen Milliarden von Bakterien das Gras, das die Kuh allein gar nicht verdauen k&ouml;nnte. Als Nebenprodukt dieser G&auml;rung entsteht Methan, das die Kuh gr&ouml;sstenteils wieder ausr&uuml;lpst. H&uuml;hner und Schweine haben nur einen einfachen Magen &ndash; und darum dieses Problem nicht.</p>
         </div>
         <div class="ek">
           <img class="ek-bild" src="es_poulet.png" alt="">
           <h4>2. Futter rein, Fleisch raus</h4>
-          <p>Jedes Tier frisst mehr, als es an Nahrung liefert. Beim Poulet braucht es rund <b>3 kg Futter</b> f&uuml;r 1 kg Fleisch, beim Rind je nach Haltung <b>7 bis 25 kg</b>. Alles, was auf dem Acker f&uuml;r dieses Futter passiert &ndash; D&uuml;nger, Diesel, Bew&auml;sserung &ndash; steckt am Ende im Fleisch.</p>
+          <p>Jedes Tier frisst mehr, als es an Nahrung liefert. Beim Poulet braucht es rund <b>3 kg Futter</b> f&uuml;r 1 kg Fleisch, beim Rind je nach Haltung <b>das Vier- bis Achtfache</b>. Alles, was auf dem Acker f&uuml;r dieses Futter passiert &ndash; D&uuml;nger, Diesel, Bew&auml;sserung &ndash; steckt am Ende im Fleisch.</p>
           <p>Deshalb sind pflanzliche Lebensmittel fast immer g&uuml;nstiger: Sie &uuml;berspringen den Umweg &uuml;ber das Tier.</p>
         </div>
         <div class="ek">
@@ -350,7 +353,7 @@
         <tbody id="esstabelle"></tbody>
       </table>
       <h3>Der Vergleich, der h&auml;ngen bleibt</h3>
-      <p>Ein <b>Rindssteak von 150 g</b> verursacht rund <b>9 kg</b> CO&#8322;-eq. Das entspricht <b>40 km im Benzinauto</b> &ndash; ungef&auml;hr Aarau&ndash;Z&uuml;rich und zur&uuml;ck. F&uuml;r dieselbe Menge Treibhausgas k&ouml;nnte man <b>rund 280 R&uuml;ebli</b> essen.</p>
+      <p>Ein <b>Rindssteak von 150 g</b> verursacht rund <b>9 kg</b> CO&#8322;-eq. Das entspricht <b>40 km im Benzinauto</b> &ndash; ungef&auml;hr die einfache Strecke Aarau&ndash;Z&uuml;rich. F&uuml;r dieselbe Menge Treibhausgas k&ouml;nnte man <b>rund 280 R&uuml;ebli</b> essen.</p>
       <p>Umgekehrt gilt aber auch: Wer einmal weniger fliegt, spart mehr als ein ganzes Jahr Vegi-Men&uuml;s. Ein Flug Z&uuml;rich&ndash;New York und zur&uuml;ck liegt bei rund <b>3'200 kg</b> &ndash; das sind &uuml;ber 350 Rindssteaks.</p>
     </div>
 
@@ -399,11 +402,11 @@ const M = [
   {k:'velo',   n:'Velo',                 g:8,   b:'vm_velo.png', min:0, max:100, aus:'1 Pers.',
    t:'Velofahren ist nicht ganz bei null. Der Körper braucht Energie, und diese Energie kommt aus dem Essen – Lebensmittel verursachen bei Anbau, Verarbeitung und Transport Treibhausgase. Dazu kommt die Herstellung des Velos. Trotzdem: acht Gramm sind fast nichts.'},
   {k:'regio',  n:'Regionalzug Schweiz',  g:9,   b:'vm_zug.png', min:0, max:200, aus:'Ø Schweiz',
-   t:'Der Regionalzug hält oft, beschleunigt oft und ist im Schnitt weniger gut besetzt als der Fernverkehr. Darum liegt er leicht über dem Fernzug – aber immer noch bei einem Zwanzigstel eines Autos.'},
+   t:'Der Regionalzug hält oft, beschleunigt oft und ist im Schnitt weniger gut besetzt als der Fernverkehr. Darum liegt er leicht über dem Fernzug – aber immer noch bei rund einem Fünfundzwanzigstel eines Autos.'},
   {k:'ebike',  n:'E-Bike',               g:14,  b:'vm_velo.png', min:0, max:150, aus:'1 Pers.',
    t:'Beim E-Bike kommt der Akku dazu: seine Herstellung und der Ladestrom. Weil der Motor aber nur unterstützt und das ganze Fahrzeug kaum 25 kg wiegt, bleibt der Wert winzig – rund ein Sechzehntel eines Benzinautos.'},
   {k:'trolley',n:'Trolleybus',           g:30,  b:'vm_bus.png', min:0, max:30, aus:'Ø Stadt',
-   t:'Der Trolleybus fährt elektrisch am Fahrdraht, also mit Schweizer Strom. Gegenüber dem Dieselbus auf derselben Linie spart er rund vier Fünftel der Emissionen – bei gleicher Auslastung.'},
+   t:'Der Trolleybus fährt elektrisch am Fahrdraht, also mit Schweizer Strom. Gegenüber dem Dieselbus auf derselben Linie spart er rund vier Fünftel der Emissionen. Ein Teil davon geht allerdings auf die bessere Auslastung zurück: Trolleybusse fahren im Schnitt mit 19,0 Personen, Dieselbusse mit 10,2.'},
   {k:'ice',    n:'Fernzug Deutschland',  g:34,  b:'vm_zug.png', min:150, max:2500, aus:'235 Pers.',
    t:'Der ICE ist technisch nicht schlechter als ein Schweizer Zug. Aber er fährt mit deutschem Strom, und im deutschen Netz steckt mehr Kohle und Gas. Gleiche Technik, anderes Land, fünffacher Wert – das zeigt, wie stark der Strommix zählt.'},
   {k:'tram',   n:'Tram',                 g:43,  b:'vm_bus.png', min:0, max:30, aus:'Ø Stadt',
@@ -427,7 +430,7 @@ const M = [
   {k:'flugm',  n:'Flug Mittelstrecke',   g:259, b:'vm_flugzeug.png', min:1000, max:4500, aus:'132 Pers.',
    t:'Mittelstrecke heisst innerhalb Europas und knapp darüber hinaus. Der Wert enthält bereits die Höhenwirkung: Kondensstreifen und Stickoxide in Reiseflughöhe heizen zusätzlich auf.'},
   {k:'flugl',  n:'Flug Langstrecke',     g:263, b:'vm_flugzeug.png', min:3500, max:20000, aus:'251 Pers.',
-   t:'Pro Kilometer ist die Langstrecke nicht schlimmer als die Mittelstrecke – grosse Flugzeuge sind effizient und gut besetzt. Das Problem ist die Distanz: Ein einziger Flug nach New York und zurück verursacht mehr als ein Drittel der jährlichen Pro-Kopf-Emissionen der Schweiz.'},
+   t:'Pro Kilometer ist die Langstrecke nicht schlimmer als die Mittelstrecke – grosse Flugzeuge sind effizient und gut besetzt. Das Problem ist die Distanz: Ein einziger Flug nach New York und zurück verursacht rund zwei Drittel der jährlichen Pro-Kopf-Emissionen der Schweiz.'},
   {k:'flugk',  n:'Flug Kurzstrecke',     g:350, b:'vm_flugzeug.png', min:200, max:1500, aus:'126 Pers.',
    t:'Der schlechteste Wert aller Verkehrsmittel. Start und Steigflug verbrauchen am meisten Kerosin, und dieser Aufwand verteilt sich auf wenige Kilometer. Dazu sind Kurzstreckenflugzeuge kleiner und schlechter besetzt. Genau diese Strecken lassen sich fast immer mit der Bahn zurücklegen.'},
   {k:'kreuz',  n:'Kreuzfahrtschiff',     g:500, b:'vm_kreuzfahrt.png', min:400, max:20000, aus:'Ø Schiff',
@@ -906,7 +909,7 @@ const QUIZ = [
    a:['Kleine Flugzeuge haben ältere Triebwerke','Start und Steigflug verbrauchen am meisten und verteilen sich auf wenige Kilometer','Auf Kurzstrecken wird tiefer geflogen, wo die Luft dichter ist'], r:1,
    l:'Der Start ist der teuerste Teil des Flugs. Auf 500 km verteilt sich dieser Aufwand auf wenige Kilometer, auf 8000 km auf sehr viele. Dazu sind Kurzstreckenflugzeuge kleiner und schlechter besetzt: 126 statt 251 Personen. Ergebnis: 350 g gegen 263 g.'},
   {f:'Vier Kolleginnen fahren zusammen im Benzinauto von Aarau nach Genf. Wie schneiden sie gegenüber der Bahn ab?',
-   a:['Etwa gleich gut','Immer noch rund zehnmal schlechter','Besser als die Bahn, weil das Auto direkt fährt'], r:1,
+   a:['Etwa gleich gut','Immer noch rund zwölfmal schlechter','Besser als die Bahn, weil das Auto direkt fährt'], r:1,
    l:'Zu viert sinkt das Auto von 225 g auf rund 90 g pro Person – eine echte Verbesserung. Der Fernzug liegt aber bei 7 g. Vollbesetzt fahren sie also immer noch etwa zwölfmal schlechter als mit dem Zug. Mitfahren lohnt sich, ersetzt die Bahn aber nicht.'},
   {f:'Der ICE in Deutschland kommt auf 34 g, der Schweizer Fernzug auf 7 g. Was ist der Hauptgrund?',
    a:['Der ICE fährt schneller und braucht darum mehr Energie','Im deutschen Strommix steckt mehr Kohle und Gas','Deutsche Züge sind schlechter besetzt'], r:1,
@@ -916,7 +919,7 @@ const QUIZ = [
    l:'Es sind Lebenszyklus-Werte. Sie enthalten die Herstellung des Fahrzeugs samt Batterie, die Förderung und Raffination des Treibstoffs sowie den Bau und Unterhalt von Strassen, Schienen und Flughäfen. Darum ist auch ein E-Auto nie bei null.'},
   {f:'Rindfleisch verursacht pro Kilogramm rund 60 kg CO₂-eq, Poulet nur 6 kg. Was ist der wichtigste Grund für den Faktor zehn?',
    a:['Rinder sind grösser und brauchen mehr Platz','Rinder sind Wiederkäuer und stossen Methan aus','Rindfleisch wird meist weiter transportiert'], r:1,
-   l:'Wiederkäuer verdauen Gras mit Bakterien im Pansen, dabei entsteht Methan – ein Gas, das rund 28-mal so stark wirkt wie CO₂. Dazu kommt die schlechtere Futterverwertung: Für ein Kilo Rindfleisch braucht es je nach Haltung 7 bis 25 Kilo Futter, beim Poulet nur etwa 3. Der Transport spielt bei beiden fast keine Rolle.'},
+   l:'Wiederkäuer verdauen Gras mit Bakterien im Pansen, dabei entsteht Methan – ein Gas, das rund 28-mal so stark wirkt wie CO₂. Dazu kommt die schlechtere Futterverwertung: Für ein Kilo Fleisch braucht ein Rind das Vier- bis Achtfache dessen, was ein Huhn braucht. Der Transport spielt bei beiden fast keine Rolle.'},
   {f:'Was ist im März in der Schweiz klimafreundlicher: eine Schweizer Tomate aus dem Gewächshaus oder eine spanische Freilandtomate?',
    a:['Immer die Schweizer, weil der Transportweg kürzer ist','Die spanische, weil das Beheizen des Gewächshauses mehr verursacht als der Lastwagen','Beide gleich, Tomate ist Tomate'], r:1,
    l:'Der Transport macht bei Gemüse meist nur wenige Prozent des Fussabdrucks aus. Ein beheiztes Gewächshaus im Winter dagegen verbraucht sehr viel Energie. «Regional» ist darum nur dann die bessere Wahl, wenn es auch saisonal ist – im August schlägt die Schweizer Freilandtomate jede Importware.'},
@@ -989,11 +992,11 @@ const E = [
   {k:'pizza',  n:'Pizza Salami',     kg:5.5,  p:350, pn:'1 Pizza', b:'es_pizza.png', s:true,
    t:'Auch hier haben wir gerechnet statt nachgeschlagen: Käse 200 g (× 21) = 4,2 – Salami 80 g (× 7) = 0,6 – Mehl 400 g (× 1,4) = 0,6 – Tomaten 250 g (× 1,4) = 0,35. Zusammen gut 5,5 kg pro Kilo Pizza. Der Käse macht drei Viertel aus – eine Pizza Margherita ohne Salami ändert kaum etwas.'},
   {k:'poulet', n:'Poulet',           kg:6.0,  p:150, pn:'1 Schenkel', b:'es_poulet.png',
-   t:'Poulet ist das klimafreundlichste Fleisch. Hühner brauchen rund 2 kg Futter für 1 kg Zuwachs, ein Rind das Vier- bis Achtfache. Und weil Hühner keine Wiederkäuer sind, entsteht in ihrem Verdauungstrakt kein Methan.'},
+   t:'Poulet ist das klimafreundlichste Fleisch. Hühner brauchen rund 3 kg Futter für 1 kg Fleisch, ein Rind das Vier- bis Achtfache. Und weil Hühner keine Wiederkäuer sind, entsteht in ihrem Verdauungstrakt kein Methan.'},
   {k:'schoggi',n:'Schokolade',       kg:19.0, p:25,  pn:'1 Reihe', b:'es_schoggi.png',
    t:'Der hohe Wert stammt nicht aus der Schweizer Fabrik, sondern aus dem Kakaoanbau. Für neue Kakaoplantagen wird in Westafrika Regenwald geräumt – dieser Landnutzungswandel ist der grösste Posten. Pro Portion relativiert sich das: Eine Reihe wiegt 25 Gramm.'},
   {k:'kaese',  n:'Käse',        kg:21.0, p:30,  pn:'1 Stück', b:'es_kaese.png',
-   t:'Für 1 kg Hartkäse braucht es rund 10 Liter Milch. Damit vervielfacht sich alles, was schon in der Milch steckt – das Methan der Kuh, das Futter, die Weide. Pro Kilo liegt Käse darum fast so hoch wie Rindfleisch, pro Portion aber sehr viel tiefer, weil niemand 150 Gramm Käse aufs Brot legt.'},
+   t:'Für 1 kg Hartkäse braucht es rund 10 Liter Milch. Damit vervielfacht sich alles, was schon in der Milch steckt – das Methan der Kuh, das Futter, die Weide. Pro Kilo liegt Käse darum deutlich über allen anderen Alltagslebensmitteln – wenn auch klar unter Rindfleisch –, pro Portion aber sehr viel tiefer, weil niemand 150 Gramm Käse aufs Brot legt.'},
   {k:'rind',   n:'Rindfleisch',      kg:60.0, p:150, pn:'1 Steak', b:'es_rind.png',
    t:'Drei Dinge kommen zusammen: Rinder sind Wiederkäuer und stossen Methan aus, sie brauchen sehr viel Futter pro Kilo Fleisch, und für Weide und Futteranbau wird weltweit Wald geräumt. Wichtig für die Schweiz: Der Wert von 60 kg gilt für Tiere aus reinen Fleischherden. Schweizer Rindfleisch stammt grösstenteils von Milchkühen, deren Fussabdruck auf Milch und Fleisch aufgeteilt wird – dieser Wert liegt bei rund 21 kg. Ein Faktor drei, je nachdem welche Zahl man nimmt.'}
 ];
@@ -1128,7 +1131,7 @@ function zeichneEssEinordnung(){
           'Ein einziges Rindssteak von 150 g verursacht <b>9 kg</b> CO₂-eq – so viel wie <b>40 km</b> Autofahrt.';
   } else {
     const kk = kaese.kg*kaese.p/1000, pk = poulet.kg*poulet.p/1000;
-    txt = 'Pro Portion dreht sich das Bild teilweise: <b>Käse</b> liegt pro Kilo fast so hoch wie Rindfleisch, ' +
+    txt = 'Pro Portion dreht sich das Bild teilweise: <b>Käse</b> liegt pro Kilo zwar hoch, aber klar unter Rindfleisch, ' +
           'auf dem Brot sind es aber nur 30 g – also <b>'+kgText(kk)+'</b>. ' +
           'Ein Pouletschenkel von 150 g kommt dagegen auf <b>'+kgText(pk)+'</b>.<br>' +
           'Merksatz: Entscheidend ist nicht nur <i>was</i> auf dem Teller liegt, sondern auch <i>wie viel</i> davon.';
