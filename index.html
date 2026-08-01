@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>abu-tools.ch · Interaktive Tools für den ABU-Unterricht – HKV Aarau</title>
 <meta name="description" content="Interaktive Folien, Simulationen und Rechner für den allgemeinbildenden Unterricht an der HKV Aarau – die Ergänzung zu KV Digital.">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
@@ -184,7 +188,9 @@ body{
 .karte:has(.k-deko-flug) .k-einsatz{padding-right:124px}
 .k-deko-turm{right:18px; bottom:14px; height:min(72%,230px); filter:drop-shadow(0 4px 10px rgba(0,0,0,.32))}
 .k-deko-em{height:66px; right:10px; bottom:12px}
+.k-deko-emlogo{height:56px; right:12px; bottom:15px}
 .karte:has(.k-deko-em) .k-einsatz{padding-right:140px}
+.karte:has(.k-deko-emlogo) .k-einsatz{padding-right:148px}
 
 /* Countdown-Plakette auf der Kachel */
 .k-count{
@@ -227,6 +233,42 @@ body{
   margin-top:.8rem;display:inline-flex;align-items:center;gap:.4rem;font-weight:500;
 }
 .k-aktion .pfeil{transition:transform .22s cubic-bezier(.4,0,.2,1)}
+/* ------- Kauf-Knopf + Popup («Der Kauf») ------- */
+.k-kauf{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;font-weight:500;
+  color:#fff;background:var(--ocker);border-radius:999px;
+  padding:.34rem .8rem;margin-top:.8rem;margin-right:.6rem;
+  display:inline-flex;align-items:center;gap:.4rem;cursor:pointer;
+  position:relative;z-index:2;
+}
+.k-kauf:hover,.k-kauf:focus-visible{background:#7d5100}
+.kauf-overlay{
+  position:fixed;inset:0;background:rgba(21,35,50,.55);z-index:60;
+  display:none;align-items:center;justify-content:center;padding:1.2rem;
+}
+.kauf-overlay.offen{display:flex}
+.kauf-dialog{
+  background:var(--karte);border-radius:16px;max-width:420px;width:100%;
+  padding:1.6rem 1.7rem 1.5rem;box-shadow:0 24px 60px rgba(21,35,50,.35);
+  position:relative;
+}
+.kauf-dialog h2{
+  font-family:'Fraunces',serif;font-size:1.35rem;color:var(--tinte);margin:0 0 .8rem;
+}
+.kauf-dialog p{margin:.55rem 0;color:var(--tinte);font-size:.95rem;line-height:1.55}
+.kauf-twint{
+  background:var(--papier);border:1px solid var(--linie);border-radius:12px;
+  padding:.9rem 1rem;margin:.9rem 0;
+}
+.kauf-twint b{font-size:1.15rem}
+.kauf-twint .nr{font-family:'JetBrains Mono',monospace;font-size:1.05rem;white-space:nowrap}
+.kauf-rabatt{color:var(--ocker);font-weight:500}
+.kauf-zu{
+  position:absolute;top:.7rem;right:.8rem;border:0;background:none;cursor:pointer;
+  font-size:1.5rem;line-height:1;color:var(--grau);padding:.3rem;
+}
+.kauf-zu:hover{color:var(--tinte)}
 .karte:hover .k-aktion .pfeil,.karte:focus-visible .k-aktion .pfeil{transform:translateX(4px)}
 
 /* ── „In Arbeit"-Kennzeichnung ── */
@@ -395,7 +437,7 @@ body{
         <div class="k-einsatz">Beamer · Aktualität · Namensrechte</div>
         <span class="k-count" id="emCount"></span>
         <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
-              <img class="k-deko k-deko-em" src="kachel_em2028.png?v=3" alt="" onerror="this.style.display=&#39;none&#39;">
+              <img class="k-deko k-deko-emlogo" src="kachel_em2028_logo.png?v=1" alt="" onerror="this.style.display=&#39;none&#39;">
       </a>
 
       <a class="karte" href="notenrechner.html" data-kat="rechner">
@@ -498,7 +540,7 @@ body{
         <div class="k-titel">Der Kauf</div>
         <p class="k-text">Ein Kaufvertrag, drei Störungen: Lieferverzug, Zahlungsverzug und Mängelrüge als spielbares Dialog-Abenteuer – mit Produktwahl und Rechtsquotient.</p>
         <div class="k-einsatz">Einzelarbeit · drei Wege · Wiederspielwert</div>
-        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
+        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span><span class="k-kauf" id="kaufKnopf" role="button" tabindex="0" aria-haspopup="dialog">Vollversion kaufen</span>
         <img class="k-deko" src="kachel_hydrant.png?v=4" alt="" onerror="this.style.display=&#39;none&#39;">
       </a>
 
@@ -606,6 +648,48 @@ body{
     return;
   }
   el.setAttribute('data-an', '');
+})();
+</script>
+
+<div class="kauf-overlay" id="kaufOverlay" role="dialog" aria-modal="true" aria-labelledby="kaufTitel">
+  <div class="kauf-dialog">
+    <button class="kauf-zu" id="kaufZu" aria-label="Schliessen">×</button>
+    <h2 id="kaufTitel">«Der Kauf» – Vollversion</h2>
+    <p>Demo schon durchgespielt? Die Vollversion gibt es direkt per TWINT – ohne nochmals alles durchzuklicken.</p>
+    <div class="kauf-twint">
+      <p style="margin:0"><b>19.–</b> per TWINT an<br>
+      <span class="nr">076 490 28 00</span><br>
+      Vermerk: <b>«abu»</b></p>
+    </div>
+    <p class="kauf-rabatt">Sei unter den ersten zehn Käuferinnen und Käufern und erhalte 9.– Rabatt.</p>
+  </div>
+</div>
+<script>
+(function(){
+  var knopf = document.getElementById('kaufKnopf');
+  var overlay = document.getElementById('kaufOverlay');
+  var zu = document.getElementById('kaufZu');
+  if(!knopf || !overlay) return;
+  function oeffnen(e){
+    e.preventDefault(); e.stopPropagation();
+    overlay.classList.add('offen');
+    zu.focus();
+  }
+  function schliessen(){
+    overlay.classList.remove('offen');
+    knopf.focus();
+  }
+  knopf.addEventListener('click', oeffnen);
+  knopf.addEventListener('keydown', function(e){
+    if(e.key === 'Enter' || e.key === ' ') oeffnen(e);
+  });
+  zu.addEventListener('click', schliessen);
+  overlay.addEventListener('click', function(e){
+    if(e.target === overlay) schliessen();
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && overlay.classList.contains('offen')) schliessen();
+  });
 })();
 </script>
 </body>
