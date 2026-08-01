@@ -303,7 +303,7 @@
 
     <div class="card">
       <h2>Die Grundidee: über die <span class="hl">1</span> rechnen</h2>
-      <p class="lead">Beim Dreisatz kennen Sie drei Werte und suchen den vierten. Der Trick: Rechnen Sie zuerst auf <b>eine</b> Einheit herunter, dann auf die gesuchte Menge hoch. Zwei Schritte – daher der Name.</p>
+      <p class="lead">Beim Dreisatz kennen Sie drei Werte und suchen den vierten. Der Trick: Rechnen Sie zuerst auf <b>eine</b> Einheit herunter, dann auf die gesuchte Menge hoch. Der Name kommt von den <b>drei</b> gegebenen Werten, aus denen Sie den vierten berechnen.</p>
       <p>Es gibt zwei Arten. Zuerst müssen Sie erkennen, <b>welche</b> vorliegt – das entscheidet, ob Sie multiplizieren oder dividieren.</p>
     </div>
 
@@ -639,9 +639,11 @@ function g_prozent_pro(){
 }
 function g_tempo_pro(){
   if(Math.random()<0.55){ // Geschwindigkeit (Zeit → Strecke)
-    const v=pick(LV.speed);
     const [a,c]=twoDistinct(LV.hoursB);
-    const veh=pick([{n:'Zug',e:'🚂'},{n:'Bus',e:'🚌'},{n:'Velofahrer',e:'🚴'},{n:'Auto',e:'🚗'}]), nm=veh.n;
+    // Tempo passend zum Fahrzeug: sonst faehrt der Velofahrer 120 km/h
+    const veh=pick([{n:'Zug',e:'🚂',sp:[60,80,90,100,120,140]},{n:'Bus',e:'🚌',sp:[40,50,60,70,80]},{n:'Velofahrer',e:'🚴',sp:[15,18,20,24,25,30]},{n:'Auto',e:'🚗',sp:[60,70,80,90,100,120]}]), nm=veh.n;
+    const passend=veh.sp.filter(x=>LV.speed.indexOf(x)>=0);
+    const v=pick(passend.length?passend:veh.sp);
     const b=v*a, ans=v*c;
     return { typ:'pro', kt:'tempo', emoji:veh.e,
       text:`Ein ${nm} fährt in ${a} Stunden ${b} km. Wie weit kommt er in ${c} Stunden bei gleichem Tempo?`,

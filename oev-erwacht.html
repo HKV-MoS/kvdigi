@@ -201,7 +201,7 @@ if (!window.OEV_META){
   return;
 }
 const META = window.OEV_META;
-let VON = 0, BIS = 1440;                 // aktuelles Zeitfenster (Standard 03:00–07:00)
+let VON = 0, BIS = 1440;                 // aktuelles Zeitfenster (Standard: ganzer Tag 00:00–24:00)
 const KATS = ['zug','bus','tram','schiff','berg'];
 const FARBE = { zug:'#F2C14E', bus:'#E2585F', tram:'#3FD4B0', schiff:'#5AA9E6', berg:'#C08BE8' };
 const D = { seg: { zug:[], bus:[], tram:[], schiff:[], berg:[] } };   // Segmente des Fensters
@@ -354,7 +354,7 @@ function male(t){
 /* ---- Panel: Phasen, Zähler, Kategorien, Mini-Chart ------------------- */
 const PHASEN = [
   { bis:240,  p:'Nachtruhe',      tit:'Die Schweiz schläft',
-    txt:'Tiefste Nacht: Nur einzelne Nachtlinien und Betriebsfahrten sind unterwegs – der Rest des Netzes ruht.',
+    txt:'Tiefste Nacht – und trotzdem sind über tausend Fahrten unterwegs: Nachtlinien am Wochenende, Güterzüge und Betriebsfahrten. Der Personenverkehr am Tag ist aber ein Vielfaches davon.',
     frage:'Wer ist um diese Zeit unterwegs – und warum?' },
   { bis:270,  p:'Betriebsbeginn', tit:'Die ersten Achsen rollen',
     txt:'Die Depots öffnen, der Fernverkehr startet zuerst. Wer um 05:00 in Zürich einsteigen will, dessen Zug ist längst unterwegs.',
@@ -369,7 +369,7 @@ const PHASEN = [
     txt:'Das Netz läuft auf Hochtouren und verbindet Stadt, Agglomeration und Bergtäler – Tausende Fahrten gleichzeitig, aber nur eine Handvoll Schiffe.',
     frage:'Nur wenige Schiffe, aber Tausende Busse: Was sagt das über die Rolle der Verkehrsmittel?' },
   { bis:960,  p:'Tagesbetrieb',   tit:'Der lange Takt des Tages',
-    txt:'Die Pendlerspitze flacht ab, doch das Netz bleibt dicht: Einkaufs-, Schul- und Freizeitverkehr prägen nun das Bild.',
+    txt:'Nach der Morgenspitze läuft das Netz auf hohem Niveau weiter und zieht gegen den Nachmittag erneut an: Einkaufs-, Schul- und Freizeitverkehr prägen nun das Bild.',
     frage:'Woran erkennen Sie auf der Karte den Unterschied zwischen Pendler- und Tagesverkehr?' },
   { bis:1140, p:'Abendspitze',    tit:'Die zweite Welle',
     txt:'Feierabend: Jetzt fährt die Schweiz am dichtesten – die Tagesspitze liegt am Nachmittag, höher als am Morgen.',
