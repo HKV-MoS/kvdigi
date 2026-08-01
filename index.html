@@ -205,6 +205,15 @@ body{
 }
 .k-count[data-an]{display:inline-block}
 .k-count b{font-weight:600; font-variant-numeric:tabular-nums}
+.k-start{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.66rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ocker); border:1px solid rgba(216,174,102,.55);
+  border-radius:999px; padding:.16rem .6rem;
+  display:inline-block; align-self:flex-start; margin-top:.55rem;
+  white-space:nowrap; background:rgba(216,174,102,.09);
+}
+.k-start b{font-weight:600; font-variant-numeric:tabular-nums}
 .k-kopf{
   display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:.35rem .7rem;
   margin-bottom:.5rem;
@@ -542,6 +551,7 @@ body{
         <div class="k-titel">Der Kauf</div>
         <p class="k-text">Ein Kaufvertrag, drei Störungen: Lieferverzug, Zahlungsverzug und Mängelrüge als spielbares Dialog-Abenteuer – mit Produktwahl und Rechtsquotient.</p>
         <div class="k-einsatz">Einzelarbeit · drei Wege · Wiederspielwert</div>
+        <span class="k-start">Start Verkauf <b>1.8.2026</b></span>
         <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span><span class="k-kauf" id="kaufKnopf" role="button" tabindex="0" aria-haspopup="dialog">Vollversion kaufen</span>
         <img class="k-deko k-deko-hkv" src="kachel_hkv_banner.png?v=1" alt="" onerror="this.style.display=&#39;none&#39;">
       </a>
