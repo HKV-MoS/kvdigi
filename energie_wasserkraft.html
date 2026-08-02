@@ -13,7 +13,14 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--papier);
   color:var(--ink);line-height:1.55;border-top:4px solid var(--hkv);padding:26px clamp(14px,3vw,40px) 40px;}
-header{max-width:1240px;margin:0 auto;text-align:center;}
+header{text-align:center;
+  margin:-26px calc(0px - clamp(14px,3vw,40px)) 0;
+  padding:20px clamp(14px,3vw,40px) 18px;
+  background:linear-gradient(135deg,#213B42 0%,#3C6E73 100%);
+  color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.1);}
+header h1 .accent{color:#D8AE66;}
+header .subtitle{color:rgba(255,255,255,.85);}
+header .lead{color:rgba(255,255,255,.78);}
 h1{font-size:clamp(24px,3.4vw,34px);letter-spacing:-.01em;}
 h1 .accent{color:var(--hkv);}
 .subtitle{color:var(--muted);font-size:15px;margin-top:4px;}
@@ -1947,6 +1954,51 @@ baueTab('tab-gezeiten', GEZEITEN);
   // Deep-Links: …#akw und …#solar öffnen direkt den passenden Reiter
   zeige(ausHash(), false);
   window.addEventListener('hashchange', () => zeige(ausHash(), false));
+})();
+</script>
+<style>
+/* Zoomleiste: +/- und Vollbild, unten rechts */
+.zoomleiste{position:fixed; right:14px; bottom:14px; z-index:99999; display:flex; gap:7px;}
+.zoomleiste button{width:36px; height:36px; border-radius:10px; padding:0;
+  border:1px solid rgba(21,35,50,.16); background:rgba(255,255,255,.94); color:#152332;
+  font-size:18px; line-height:1; cursor:pointer; box-shadow:0 2px 10px rgba(21,35,50,.15);}
+.zoomleiste button:hover{background:#fff; border-color:rgba(21,35,50,.35)}
+@media print{.zoomleiste{display:none}}
+</style>
+<script>
+(function(){
+  var z = (window.self !== window.top) ? 0.82 : 1;
+  var leiste = document.createElement('div');
+  leiste.className = 'zoomleiste';
+  function setZ(nz){
+    z = Math.max(0.5, Math.min(1.4, Math.round(nz*100)/100));
+    document.body.style.zoom = z;
+    leiste.style.zoom = 1/z;   /* Leiste bleibt gleich gross */
+  }
+  function mk(txt, titel, fn){
+    var b = document.createElement('button');
+    b.type = 'button'; b.textContent = txt; b.title = titel;
+    b.setAttribute('aria-label', titel);
+    b.addEventListener('click', fn);
+    leiste.appendChild(b);
+  }
+  mk('\u2212', 'Kleiner', function(){ setZ(z - 0.1); });
+  mk('+', 'Gr\u00f6sser', function(){ setZ(z + 0.1); });
+  if(!document.getElementById('vollbild')){
+    mk('\u26f6', 'Vollbild (Esc beendet)', function(){
+      var drin = document.fullscreenElement || document.webkitFullscreenElement;
+      if(drin){
+        (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+      } else {
+        var el = document.documentElement;
+        var p = el.requestFullscreen ? el.requestFullscreen()
+              : el.webkitRequestFullscreen ? el.webkitRequestFullscreen() : null;
+        if(p && p.catch) p.catch(function(){});
+      }
+    });
+  }
+  document.body.appendChild(leiste);
+  setZ(z);
 })();
 </script>
 </body>
