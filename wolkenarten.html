@@ -785,7 +785,7 @@ zeigeGefunden();
 </script>
 <style>
 /* Zoomleiste: +/- und Vollbild, unten rechts */
-.zoomleiste{position:fixed; right:14px; bottom:14px; z-index:99999; display:flex; gap:7px;}
+.zoomleiste{position:fixed; right:14px; top:14px; z-index:99999; display:flex; gap:7px;}
 .zoomleiste button{width:36px; height:36px; border-radius:10px; padding:0;
   border:1px solid rgba(21,35,50,.16); background:rgba(255,255,255,.94); color:#152332;
   font-size:18px; line-height:1; cursor:pointer; box-shadow:0 2px 10px rgba(21,35,50,.15);}
@@ -824,6 +824,7 @@ zeigeGefunden();
       }
     });
   }
+  if(document.getElementById('vollbild')){ leiste.style.right = '78px'; }
   document.body.appendChild(leiste);
   setZ(z);
 })();
