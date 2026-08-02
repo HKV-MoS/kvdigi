@@ -214,6 +214,10 @@ body{
   white-space:nowrap; background:rgba(216,174,102,.09);
 }
 .k-start b{font-weight:600; font-variant-numeric:tabular-nums}
+/* ------- Wunschbox-Kachel ------- */
+.karte-wunsch{border:1.5px dashed rgba(154,99,0,.45); background:rgba(216,174,102,.05);}
+.karte-wunsch .k-icon{color:var(--ocker); border-color:rgba(154,108,30,.3);}
+.karte-wunsch .k-titel{color:var(--ocker);}
 .k-kopf{
   display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:.35rem .7rem;
   margin-bottom:.5rem;
@@ -614,6 +618,18 @@ body{
               <img class="k-deko k-deko-flug" src="kachel_flugzeug.png?v=1" alt="" onerror="this.style.display=&#39;none&#39;">
       </a>
 
+      <a class="karte karte-wunsch" href="mailto:samuel.mollet@hkv.ch?subject=Wunsch%3A%20interaktive%20Folie&amp;body=Hallo%20Herr%20Mollet%0A%0AIch%20w%C3%BCnsche%20mir%20eine%20interaktive%20Folie%20zu%3A%0A%0A" data-kat="wunsch">
+        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 18h5"/><path d="M10 21h4"/><path d="M12 3a6.2 6.2 0 0 0-3.4 11.4c.8.55 1.4 1.4 1.4 2.35V17h4v-.25c0-.95.6-1.8 1.4-2.35A6.2 6.2 0 0 0 12 3z"/></svg></span>
+        <div class="k-kopf">
+          <span class="k-thema">Mitmachen</span>
+          <span class="k-typ">Wunschbox</span>
+        </div>
+        <div class="k-titel">Wunschbox</div>
+        <p class="k-text">Welche interaktive Folie fehlt dir? Schreib mir deinen Wunsch – die besten Ideen landen auf der Werkbank.</p>
+        <div class="k-einsatz">samuel.mollet@hkv.ch · 1 Minute</div>
+        <span class="k-aktion">Wunsch senden <span class="pfeil">→</span></span>
+      </a>
+
     </div>
   </main>
 
@@ -635,7 +651,7 @@ body{
       var wahl = chip.dataset.filter;
       chips.forEach(function(c){ c.setAttribute('aria-pressed', String(c === chip)); });
       karten.forEach(function(k){
-        var zeigen = (wahl === 'alle') || (k.dataset.kat === wahl);
+        var zeigen = (wahl === 'alle') || (k.dataset.kat === wahl) || k.classList.contains('karte-wunsch');
         if (zeigen) { k.removeAttribute('hidden'); }
         else        { k.setAttribute('hidden',''); }
       });
