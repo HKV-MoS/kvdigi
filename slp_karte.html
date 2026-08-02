@@ -141,8 +141,13 @@
   }
   .toast.zeig{opacity:1;}
 </style>
+<style>
+/* Kompaktmodus im iframe (KV Digital): alles etwas kleiner */
+html.eingebettet body{ zoom:.82; }
+</style>
 </head>
 <body>
+<script>if(window.self!==window.top){document.documentElement.classList.add('eingebettet');}</script>
 <div class="hero-zone" id="heroZone">
   <div class="hero-halter">
     <div class="hero-rahmen" id="heroRahmen">

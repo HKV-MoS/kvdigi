@@ -124,8 +124,13 @@
     *{ transition-duration:.5s !important; }
   }
 </style>
+<style>
+/* Kompaktmodus im iframe (KV Digital): alles etwas kleiner */
+html.eingebettet body{ zoom:.82; }
+</style>
 </head>
 <body>
+<script>if(window.self!==window.top){document.documentElement.classList.add('eingebettet');}</script>
 
 <header>
   <div class="brand-eyebrow">HKV Aarau · ABU</div>

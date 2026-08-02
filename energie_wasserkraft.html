@@ -229,8 +229,13 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
 .qfeed.show{display:block;}
 @media (prefers-reduced-motion:reduce){ .dreh{display:none;} }
 </style>
+<style>
+/* Kompaktmodus im iframe (KV Digital): alles etwas kleiner */
+html.eingebettet body{ zoom:.82; }
+</style>
 </head>
 <body>
+<script>if(window.self!==window.top){document.documentElement.classList.add('eingebettet');}</script>
 
 <header>
   <div class="kopf-var" data-fuer="wasser">

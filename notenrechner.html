@@ -101,8 +101,13 @@
   .footer .cr{ color:#94A3B0; font-size:11px; }
   @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
 </style>
+<style>
+/* Kompaktmodus im iframe (KV Digital): alles etwas kleiner */
+html.eingebettet body{ zoom:.82; }
+</style>
 </head>
 <body>
+<script>if(window.self!==window.top){document.documentElement.classList.add('eingebettet');}</script>
 
 <header>
   <div class="brand-eyebrow">HKV Aarau</div>

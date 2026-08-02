@@ -282,8 +282,13 @@ footer { margin-top: 22px; padding: 14px; text-align: center; color: var(--muted
   header h1 { font-size: 17px; }
 }
 </style>
+<style>
+/* Kompaktmodus im iframe (KV Digital): alles etwas kleiner */
+html.eingebettet body{ zoom:.82; }
+</style>
 </head>
 <body>
+<script>if(window.self!==window.top){document.documentElement.classList.add('eingebettet');}</script>
 <div class="container">
 
 <header>
