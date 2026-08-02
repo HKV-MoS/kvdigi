@@ -94,6 +94,21 @@ body{
   max-width:62ch;
 }
 .hinweis b{color:var(--tinte);font-weight:700}
+.hinweis-zeile{display:flex; gap:14px; flex-wrap:wrap; align-items:stretch;}
+.hinweis-zeile .hinweis{flex:1 1 380px;}
+.wunschbox{
+  margin-top:1.3rem; flex:0 1 360px;
+  display:flex; align-items:center; gap:1rem;
+  padding:.85rem 1.1rem;
+  background:var(--karte); border:1px solid var(--linie);
+  border-left:3px solid var(--ocker); border-radius:8px;
+  font-size:.88rem; color:var(--grau); text-decoration:none;
+  transition:border-color .18s, box-shadow .18s;
+}
+.wunschbox:hover,.wunschbox:focus-visible{border-color:rgba(154,99,0,.55); box-shadow:0 4px 14px rgba(154,99,0,.12);}
+.wunschbox img{height:62px; width:auto; flex:0 0 auto; filter:drop-shadow(0 2px 3px rgba(0,0,0,.22));}
+.wunschbox b{color:var(--ocker); font-weight:700; display:block; margin-bottom:.15rem;}
+.wunschbox .wb-mail{display:block; margin-top:.25rem; font-size:.78rem; color:#8a97a6;}
 .kvd{color:var(--hkv);font-weight:700;text-decoration:underline;text-decoration-color:rgba(31,78,120,.35);text-underline-offset:3px}
 .kvd:hover,.kvd:focus-visible{text-decoration-color:currentColor}
 .kvd .pfeil-ex{font-size:.82em;opacity:.7;margin-left:.15em}
@@ -214,10 +229,6 @@ body{
   white-space:nowrap; background:rgba(216,174,102,.09);
 }
 .k-start b{font-weight:600; font-variant-numeric:tabular-nums}
-/* ------- Wunschbox-Kachel ------- */
-.karte-wunsch{border:1.5px dashed rgba(154,99,0,.45); background:rgba(216,174,102,.05);}
-.karte-wunsch .k-icon{color:var(--ocker); border-color:rgba(154,108,30,.3);}
-.karte-wunsch .k-titel{color:var(--ocker);}
 .k-kopf{
   display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:.35rem .7rem;
   margin-bottom:.5rem;
@@ -381,9 +392,16 @@ body{
       <p class="lead">Interaktive Folien, Simulationen und Rechner für den allgemeinbildenden Unterricht – direkt nutzbar am Beamer, Tablet oder Laptop.</p>
     </div>
     </div><!-- /hero-buehne -->
+    <div class="hinweis-zeile">
     <div class="hinweis">
       Die Aufträge, Lernziele und Theorie finden Sie in <a class="kvd" href="https://go.kvdigital.swiss/dashboard" target="_blank" rel="noopener">KV&nbsp;Digital<span class="pfeil-ex">↗</span></a>.
       abu-tools.ch ergänzt den Unterricht mit interaktiven Werkzeugen, die sich dort verlinken lassen.
+    </div>
+    <a class="wunschbox" id="wunschbox" href="mailto:samuel.mollet@hkv.ch?subject=Wunsch%3A%20interaktive%20Folie&body=Hallo%20Herr%20Mollet%0A%0AIch%20w%C3%BCnsche%20mir%20eine%20interaktive%20Folie%20zu%3A%0A%0A">
+      <img id="wunschPost" src="wunschbox_post_0.png?v=1" alt="" onerror="this.style.display='none'">
+      <span><b>Wunschbox</b>Welche interaktive Folie fehlt dir? Schreib mir deinen Wunsch.
+      <span class="wb-mail">samuel.mollet@hkv.ch</span></span>
+    </a>
     </div>
     <div class="rule"></div>
   </header>
@@ -618,17 +636,6 @@ body{
               <img class="k-deko k-deko-flug" src="kachel_flugzeug.png?v=1" alt="" onerror="this.style.display=&#39;none&#39;">
       </a>
 
-      <a class="karte karte-wunsch" href="mailto:samuel.mollet@hkv.ch?subject=Wunsch%3A%20interaktive%20Folie&amp;body=Hallo%20Herr%20Mollet%0A%0AIch%20w%C3%BCnsche%20mir%20eine%20interaktive%20Folie%20zu%3A%0A%0A" data-kat="wunsch">
-        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 18h5"/><path d="M10 21h4"/><path d="M12 3a6.2 6.2 0 0 0-3.4 11.4c.8.55 1.4 1.4 1.4 2.35V17h4v-.25c0-.95.6-1.8 1.4-2.35A6.2 6.2 0 0 0 12 3z"/></svg></span>
-        <div class="k-kopf">
-          <span class="k-thema">Mitmachen</span>
-          <span class="k-typ">Wunschbox</span>
-        </div>
-        <div class="k-titel">Wunschbox</div>
-        <p class="k-text">Welche interaktive Folie fehlt dir? Schreib mir deinen Wunsch – die besten Ideen landen auf der Werkbank.</p>
-        <div class="k-einsatz">samuel.mollet@hkv.ch · 1 Minute</div>
-        <span class="k-aktion">Wunsch senden <span class="pfeil">→</span></span>
-      </a>
 
     </div>
   </main>
@@ -651,7 +658,7 @@ body{
       var wahl = chip.dataset.filter;
       chips.forEach(function(c){ c.setAttribute('aria-pressed', String(c === chip)); });
       karten.forEach(function(k){
-        var zeigen = (wahl === 'alle') || (k.dataset.kat === wahl) || k.classList.contains('karte-wunsch');
+        var zeigen = (wahl === 'alle') || (k.dataset.kat === wahl);
         if (zeigen) { k.removeAttribute('hidden'); }
         else        { k.setAttribute('hidden',''); }
       });
@@ -718,6 +725,28 @@ body{
   document.addEventListener('keydown', function(e){
     if(e.key === 'Escape' && overlay.classList.contains('offen')) schliessen();
   });
+})();
+
+/* Wunschbox: Faehnchen hebt sich beim Drueberfahren */
+(function(){
+  var box = document.getElementById('wunschbox');
+  var bild = document.getElementById('wunschPost');
+  if(!box || !bild) return;
+  var pfade = ['wunschbox_post_0.png?v=1','wunschbox_post_1.png?v=1','wunschbox_post_2.png?v=1'];
+  pfade.forEach(function(p){ var i = new Image(); i.src = p; });
+  var stufe = 0, timer = null;
+  function lauf(ziel){
+    clearInterval(timer);
+    timer = setInterval(function(){
+      if(stufe === ziel){ clearInterval(timer); return; }
+      stufe += (ziel > stufe) ? 1 : -1;
+      bild.src = pfade[stufe];
+    }, 90);
+  }
+  box.addEventListener('mouseenter', function(){ lauf(2); });
+  box.addEventListener('mouseleave', function(){ lauf(0); });
+  box.addEventListener('focus', function(){ lauf(2); });
+  box.addEventListener('blur', function(){ lauf(0); });
 })();
 </script>
 </body>
