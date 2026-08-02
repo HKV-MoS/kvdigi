@@ -50,7 +50,15 @@
   thead th{background:#F4F0E6; font-size:.72rem; color:var(--petrol); text-align:left; position:sticky; top:0;}
   thead .lj{background:var(--petrol); color:#fff; font-size:.7rem; letter-spacing:1.5px; text-align:center;}
   thead .tt{font-size:.78rem;}
-  thead .tt small{display:block; font-weight:normal; color:#6a6659; font-size:.66rem; margin-top:2px;}
+  thead .t-export{
+  display:block; margin:.35rem auto 0; padding:.14rem .55rem;
+  font-family:'JetBrains Mono',monospace; font-size:.6rem; letter-spacing:.06em;
+  color:inherit; background:none; border:1px solid currentColor; border-radius:999px;
+  cursor:pointer; opacity:.55;
+}
+.t-export:hover,.t-export:focus-visible{opacity:1}
+@media print{.t-export{display:none}}
+.tt small{display:block; font-weight:normal; color:#6a6659; font-size:.66rem; margin-top:2px;}
   tbody th{background:#F9F6EE; font-size:.72rem; color:#4a463c; text-align:right; width:96px; font-weight:600;}
   .trenn th{
     background:var(--petrol); color:#fff; text-align:left !important;
@@ -213,7 +221,7 @@ const FARBE = {1:'var(--t1)',2:'var(--t2)',3:'var(--t3)',4:'var(--t4)',5:'var(--
 const tabelle = document.getElementById('karte');
 let kopf = '<thead><tr><th></th><th class="lj" colspan="3">1. LEHRJAHR</th><th class="lj" colspan="3">2. LEHRJAHR</th><th class="lj">3. LEHRJAHR · + SCHLUSSARBEIT</th></tr><tr><th></th>';
 for(let t=1;t<=7;t++){
-  kopf += '<th class="tt" style="color:'+FARBE[t]+'"><span class="tico">'+THEMEN[t].ico+'</span> T'+t+' · '+THEMEN[t].titel+'<small>'+THEMEN[t].lekt+' Lektionen</small></th>';
+  kopf += '<th class="tt" style="color:'+FARBE[t]+'"><span class="tico">'+THEMEN[t].ico+'</span> T'+t+' · '+THEMEN[t].titel+'<small>'+THEMEN[t].lekt+' Lektionen</small><button class="t-export" data-t="'+t+'" type="button" title="Thema '+t+' als Word-Datei herunterladen">⤓ Word</button></th>';
 }
 kopf += '</tr></thead>';
 let rumpf = '<tbody>';
@@ -281,6 +289,37 @@ tabelle.addEventListener('click', ev=>{
   h += '<p class="quelle">Quelle: Aargauer Schullehrplan Allgemeinbildung, Anhang 2 zur V ABU vom 27. Mai 2026 (SAR 422.214)</p>';
   document.getElementById('panel-inhalt').innerHTML = h;
   document.getElementById('panel').classList.add('offen');
+});
+
+/* ---- Thema-Export als Word-Datei (.doc, editierbar) ---- */
+function exportThema(t){
+  const th = THEMEN[t];
+  const esc = x => String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  let b = '<h1>T'+t+' · '+esc(th.titel)+'</h1>';
+  b += '<p class="meta">'+th.lj+'. Lehrjahr · '+th.lekt+' Lektionen (Empfehlung) · Kompetenzbereich Gesellschaft</p>';
+  DATEN.komp.filter(k=>k.thema===t).forEach(k=>{
+    b += '<h2>'+esc(k.nr)+' — '+esc(k.text)+'</h2>';
+    if(k.beispiele.length) b += '<h3>Umsetzungsbeispiele (unverbindlich)</h3><ul>'+k.beispiele.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>';
+    if(k.aspekte.length)   b += '<h3>Aspekte Gesellschaft</h3><ul>'+k.aspekte.map(a=>'<li><b>'+esc(a.a)+':</b> '+esc(a.s)+'</li>').join('')+'</ul>';
+    if(k.sprache.length)   b += '<h3>Sprache &amp; Kommunikation — Förderfokus</h3><ul>'+k.sprache.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>';
+    if(k.schluessel.length)b += '<h3>Schlüsselkompetenzen</h3><ul>'+k.schluessel.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>';
+  });
+  b += '<hr><p class="meta">Quelle: Aargauer Schullehrplan Allgemeinbildung, Anhang 2 zur V ABU vom 27. Mai 2026 (SAR 422.214) · Export aus abu-tools.ch/slp_karte.html</p>';
+  const doc = '<html><head><meta charset="utf-8"><title>SLP T'+t+'</title><style>'
+    + 'body{font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#152332;line-height:1.4}'
+    + 'h1{font-size:16pt;margin-bottom:2pt} h2{font-size:13pt;margin:14pt 0 4pt} h3{font-size:10.5pt;margin:8pt 0 2pt;color:#5b6b7d;text-transform:uppercase;letter-spacing:.4pt}'
+    + 'ul{margin:2pt 0 6pt 16pt} li{margin:1pt 0} .meta{color:#5b6b7d;font-size:9.5pt}'
+    + '</style></head><body>'+b+'</body></html>';
+  const blob = new Blob(['\ufeff'+doc], {type:'application/msword;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'SLP_Thema_'+t+'.doc';
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+tabelle.addEventListener('click', ev=>{
+  const b = ev.target.closest('.t-export');
+  if(b) exportThema(Number(b.getAttribute('data-t')));
 });
 
 /* ---- Suche ---- */
