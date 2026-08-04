@@ -18,7 +18,7 @@
   .berufswahl.aus{ display:none; }
   .bw-lead{ font-size:13px; opacity:.95; margin:0 0 10px; }
   .bw-lead b{ color:#F3CE8E; }
-  .bw-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  .bw-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:10px; }
   .bw-mehr-ico{ font-size:44px; line-height:1; margin:26px 0 10px; }
   .bw-top5{ display:none; margin-top:12px; padding:14px 16px; border-radius:14px;
     background:linear-gradient(170deg,#FFFFFF 0%,#E2EFEE 100%);
@@ -307,6 +307,14 @@ html.eingebettet body{ zoom:.82; }
           <span class="bw-cta">Trainer starten →</span>
         </span>
       </button>
+      <button type="button" class="bw-karte" id="bwPflege" aria-expanded="false">
+        <img src="kachel_figur_fage.png" alt="">
+        <span class="bw-txt">
+          <span class="bw-tit">Pflegeberufe</span>
+          <span class="bw-satz">FaGe, FaBe und AGS – rechnen im Gesundheits- und Betreuungsalltag.</span>
+          <span class="bw-cta">Auswählen →</span>
+        </span>
+      </button>
       <button type="button" class="bw-karte" id="bwMehr" aria-expanded="false">
         <span class="bw-mehr-ico" aria-hidden="true">🎓</span>
         <span class="bw-txt">
@@ -315,6 +323,14 @@ html.eingebettet body{ zoom:.82; }
           <span class="bw-cta">Auswählen →</span>
         </span>
       </button>
+    </div>
+    <div class="bw-top5" id="bwPflegePanel">
+      <p class="t5-lead">Pflege- und Betreuungsberufe – wählen Sie Ihren:</p>
+      <div class="t5-zeile">
+        <button type="button" data-niv="fage"><b>EFZ</b> Fachfrau/Fachmann Gesundheit</button>
+        <button type="button" data-niv="fabe"><b>EFZ</b> Fachfrau/Fachmann Betreuung</button>
+        <button type="button" data-niv="ags"><b>EBA</b> Assistent/in Gesundheit und Soziales</button>
+      </div>
     </div>
     <div class="bw-top5" id="bwTop5">
       <p class="t5-lead">Die fünf meistgelernten Lehrberufe der Schweiz – wählen Sie Ihren:</p>
@@ -451,6 +467,7 @@ html.eingebettet body{ zoom:.82; }
           <button class="chip" data-niv="kv">🏢 KV</button>
           <button class="chip" data-niv="pharma">💊 Apotheke</button>
           <button class="chip" data-niv="fage">🩺 FaGe</button>
+          <button class="chip" data-niv="ags">🩹 AGS EBA</button>
           <button class="chip" data-niv="fabe">🧸 FaBe</button>
           <button class="chip" data-niv="inf">💻 Informatik</button>
         </div>
@@ -638,6 +655,14 @@ const LEVELS={
     cons:[6,7,8,9], distV:[125,150,175,200,250,300],
     antiK:[48,60,72,120,144], antiKein:[144,180,240,300,360,720],
     antiDist:[{d:360,sp:[60,72,90,120]},{d:480,sp:[60,80,120]},{d:600,sp:[60,75,100,120,150]}] },
+  ags:{ label:'AGS EBA', typ:'pro', contexts:['lohn','einkauf'],
+    lohn:[15,16,18,20], hoursA:[2,3,4,5,6],
+    preise:[0.50,0.80,1.00,1.20,1.50], stk:[2,3,4,5,6,8],
+    prozPer1:[2,3,5], prozX:[10,20,25,50], prozC:[100,50,10,20],
+    speed:[40,50,60,80], hoursB:[2,3,4,5],
+    cons:[5,6,8], distV:[100,200,300],
+    antiK:[12,24,36,48], antiKein:[24,36,48,60],
+    antiDist:[{d:120,sp:[30,40,60]},{d:240,sp:[40,60,80,120]}] },
   fage:{ label:'FaGe', typ:'beide', contexts:['lohn','einkauf','prozent','tempo'],
     lohn:[22,24,26,28,30], hoursA:[4,5,6,7,8,9,12],
     preise:[0.80,1.20,1.50,2.50,3.50,4.20], stk:[3,4,5,6,8,10,12],
@@ -946,9 +971,10 @@ const FIGUREN={
   dhefz: { bild:'kachel_figur_detailhandel.png', text:'Detailhandels&shy;fachfrau EFZ' },
   kv:    { bild:'kachel_figur_bank.png',         text:'Kauffrau EFZ · Bank' },
   pharma:{ bild:'kachel_figur_pharma.png',       text:'Fachfrau Apotheke EFZ' },
-  fage:  { bild:null, text:'Fachfrau Gesundheit EFZ' },
+  fage:  { bild:'kachel_figur_fage.png', text:'Fachfrau Gesundheit EFZ' },
+  ags:   { bild:null, text:'Assistentin Gesundheit und Soziales EBA' },
   fabe:  { bild:null, text:'Fachmann Betreuung EFZ' },
-  inf:   { bild:null, text:'Informatikerin EFZ' },
+  inf:   { bild:'kachel_figur_informatik.png', text:'Informatikerin EFZ' },
 };
 function setzeFigur(key){
   const f=FIGUREN[key]||FIGUREN.dhefz, img=$('figurImg'), lab=$('figurLabel');
@@ -979,14 +1005,23 @@ document.querySelectorAll('.bw-karte[data-niv]').forEach(b=>{
   b.addEventListener('click',()=>{ applyLevel(b.dataset.niv); switchTab('trainer'); });
 });
 (function(){
-  const mehr=document.getElementById('bwMehr'), panel=document.getElementById('bwTop5');
-  if(!mehr||!panel) return;
-  mehr.addEventListener('click',()=>{
-    const offen=panel.classList.toggle('offen');
-    mehr.setAttribute('aria-expanded', offen ? 'true' : 'false');
-  });
-  panel.querySelectorAll('button[data-niv]').forEach(b=>{
-    b.addEventListener('click',()=>{ applyLevel(b.dataset.niv); switchTab('trainer'); });
+  const paare=[['bwMehr','bwTop5'],['bwPflege','bwPflegePanel']];
+  paare.forEach(([kid,pid])=>{
+    const knopf=document.getElementById(kid), panel=document.getElementById(pid);
+    if(!knopf||!panel) return;
+    knopf.addEventListener('click',()=>{
+      const offen=panel.classList.toggle('offen');
+      knopf.setAttribute('aria-expanded', offen ? 'true' : 'false');
+      paare.forEach(([k2,p2])=>{
+        if(p2!==pid){
+          document.getElementById(p2).classList.remove('offen');
+          document.getElementById(k2).setAttribute('aria-expanded','false');
+        }
+      });
+    });
+    panel.querySelectorAll('button[data-niv]').forEach(b=>{
+      b.addEventListener('click',()=>{ applyLevel(b.dataset.niv); switchTab('trainer'); });
+    });
   });
 })();
 
