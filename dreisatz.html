@@ -20,19 +20,13 @@
   .bw-lead b{ color:#F3CE8E; }
   .bw-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
   .bw-mehr-ico{ font-size:44px; line-height:1; margin:26px 0 10px; }
-  .bw-top5{ display:none; margin-top:12px; padding:14px 16px; border-radius:14px;
-    background:linear-gradient(170deg,#FFFFFF 0%,#E2EFEE 100%);
-    border:1px solid rgba(255,255,255,.4); box-shadow:0 3px 12px rgba(0,0,0,.18); color:#213B42; }
-  .bw-top5.offen{ display:block; }
-  .bw-top5 .t5-lead{ font-size:13px; font-weight:800; margin:0 0 8px; }
-  .bw-top5 .t5-zeile{ display:flex; flex-wrap:wrap; gap:8px; }
-  .bw-top5 button{ font:inherit; font-size:13px; font-weight:700; cursor:pointer;
+  .bw-karte-liste{ cursor:default; }
+  .bw-karte-liste:hover{ transform:none; box-shadow:0 3px 12px rgba(0,0,0,.18); }
+  .bw-liste{ display:flex; flex-direction:column; gap:6px; margin-top:8px; }
+  .bw-liste button{ font:inherit; font-size:12.5px; font-weight:700; cursor:pointer;
     border:1.5px solid #3C6E73; border-radius:999px; background:#fff; color:#213B42;
-    padding:7px 13px; display:inline-flex; align-items:center; gap:.45em; }
-  .bw-top5 button:hover{ background:#3C6E73; color:#fff; }
-  .bw-top5 button b{ font-weight:800; color:#B9822F; }
-  .bw-top5 button:hover b{ color:#F3CE8E; }
-  .bw-top5 .t5-quelle{ font-size:11px; color:#5b6b7d; margin:9px 0 0; }
+    padding:6px 10px; display:flex; align-items:center; justify-content:center; gap:.45em; }
+  .bw-liste button:hover{ background:#3C6E73; color:#fff; }
   .bw-karte{ font:inherit; text-align:center; cursor:pointer; display:flex; flex-direction:column;
     align-items:center; padding:0 0 12px; color:#213B42; overflow:hidden;
     border:1px solid rgba(255,255,255,.4); border-radius:14px;
@@ -44,11 +38,11 @@
     display:block; margin:8px 0 2px;
     -webkit-mask-image:linear-gradient(#000 74%,rgba(0,0,0,0) 99%);
             mask-image:linear-gradient(#000 74%,rgba(0,0,0,0) 99%); }
-  .bw-txt{ display:flex; flex-direction:column; padding:0 12px; }
+  .bw-txt{ display:flex; flex-direction:column; padding:0 12px; flex:1; }
   .bw-tit{ font-size:15px; font-weight:800; color:#213B42; }
   .bw-satz{ font-size:12.5px; line-height:1.35; color:#41585f; margin-top:4px; }
   .bw-cta{ font-size:11px; font-weight:800; letter-spacing:.6px; text-transform:uppercase;
-    color:#3C6E73; margin-top:8px; }
+    color:#3C6E73; margin-top:auto; padding-top:8px; }
   @media (max-width:640px){
     .bw-grid{ grid-template-columns:1fr 1fr; gap:9px; }
     .bw-karte{ flex-direction:row; align-items:center; text-align:left; padding:0 12px 0 0; }
@@ -307,31 +301,18 @@ html.eingebettet body{ zoom:.82; }
           <span class="bw-cta">Trainer starten →</span>
         </span>
       </button>
-      <button type="button" class="bw-karte" id="bwMehr" aria-expanded="false">
+      <div class="bw-karte bw-karte-liste">
         <span class="bw-mehr-ico" aria-hidden="true">🎓</span>
         <span class="bw-txt">
           <span class="bw-tit">Weitere Berufe</span>
-          <span class="bw-satz">Die fünf meistgelernten Lehrberufe der Schweiz – von KV bis Informatik.</span>
-          <span class="bw-cta">Auswählen →</span>
+          <span class="bw-liste">
+            <button type="button" data-niv="fage">🩺 FaGe EFZ</button>
+            <button type="button" data-niv="fabe">🧸 FaBe EFZ</button>
+            <button type="button" data-niv="ags">🩹 AGS EBA</button>
+            <button type="button" data-niv="inf">💻 Informatik EFZ</button>
+          </span>
         </span>
-      </button>
-    </div>
-    <div class="bw-top5" id="bwTop5">
-      <p class="t5-lead">Die fünf meistgelernten Lehrberufe der Schweiz – wählen Sie Ihren:</p>
-      <div class="t5-zeile">
-        <button type="button" data-niv="kv"><b>1</b> Kauffrau/Kaufmann EFZ</button>
-        <button type="button" data-niv="fage"><b>2</b> Fachfrau/Fachmann Gesundheit EFZ</button>
-        <button type="button" data-niv="dhefz"><b>3</b> Detailhandelsfachleute EFZ</button>
-        <button type="button" data-niv="fabe"><b>4</b> Fachfrau/Fachmann Betreuung EFZ</button>
-        <button type="button" data-niv="inf"><b>5</b> Informatiker/in EFZ</button>
       </div>
-      <p class="t5-lead" style="margin-top:12px">Pflege- und Betreuungsberufe:</p>
-      <div class="t5-zeile">
-        <button type="button" data-niv="fage"><b>EFZ</b> Fachfrau/Fachmann Gesundheit</button>
-        <button type="button" data-niv="fabe"><b>EFZ</b> Fachfrau/Fachmann Betreuung</button>
-        <button type="button" data-niv="ags"><b>EBA</b> Assistent/in Gesundheit und Soziales</button>
-      </div>
-      <p class="t5-quelle">Rangliste 1–5 nach neu abgeschlossenen Lehrverträgen (Bundesamt für Statistik).</p>
     </div>
   </div>
 </header>
@@ -995,17 +976,9 @@ $('nivChips').addEventListener('click',e=>{ const b=e.target.closest('.chip'); i
 document.querySelectorAll('.bw-karte[data-niv]').forEach(b=>{
   b.addEventListener('click',()=>{ applyLevel(b.dataset.niv); switchTab('trainer'); });
 });
-(function(){
-  const knopf=document.getElementById('bwMehr'), panel=document.getElementById('bwTop5');
-  if(!knopf||!panel) return;
-  knopf.addEventListener('click',()=>{
-    const offen=panel.classList.toggle('offen');
-    knopf.setAttribute('aria-expanded', offen ? 'true' : 'false');
-  });
-  panel.querySelectorAll('button[data-niv]').forEach(b=>{
-    b.addEventListener('click',()=>{ applyLevel(b.dataset.niv); switchTab('trainer'); });
-  });
-})();
+document.querySelectorAll('.bw-liste button[data-niv]').forEach(b=>{
+  b.addEventListener('click',()=>{ applyLevel(b.dataset.niv); switchTab('trainer'); });
+});
 
 
 /* ---------- Pokalregal ---------- */
