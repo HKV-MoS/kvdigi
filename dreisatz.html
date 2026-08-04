@@ -18,7 +18,21 @@
   .berufswahl.aus{ display:none; }
   .bw-lead{ font-size:13px; opacity:.95; margin:0 0 10px; }
   .bw-lead b{ color:#F3CE8E; }
-  .bw-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  .bw-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  .bw-mehr-ico{ font-size:44px; line-height:1; margin:26px 0 10px; }
+  .bw-top5{ display:none; margin-top:12px; padding:14px 16px; border-radius:14px;
+    background:linear-gradient(170deg,#FFFFFF 0%,#E2EFEE 100%);
+    border:1px solid rgba(255,255,255,.4); box-shadow:0 3px 12px rgba(0,0,0,.18); color:#213B42; }
+  .bw-top5.offen{ display:block; }
+  .bw-top5 .t5-lead{ font-size:13px; font-weight:800; margin:0 0 8px; }
+  .bw-top5 .t5-zeile{ display:flex; flex-wrap:wrap; gap:8px; }
+  .bw-top5 button{ font:inherit; font-size:13px; font-weight:700; cursor:pointer;
+    border:1.5px solid #3C6E73; border-radius:999px; background:#fff; color:#213B42;
+    padding:7px 13px; display:inline-flex; align-items:center; gap:.45em; }
+  .bw-top5 button:hover{ background:#3C6E73; color:#fff; }
+  .bw-top5 button b{ font-weight:800; color:#B9822F; }
+  .bw-top5 button:hover b{ color:#F3CE8E; }
+  .bw-top5 .t5-quelle{ font-size:11px; color:#5b6b7d; margin:9px 0 0; }
   .bw-karte{ font:inherit; text-align:center; cursor:pointer; display:flex; flex-direction:column;
     align-items:center; padding:0 0 12px; color:#213B42; overflow:hidden;
     border:1px solid rgba(255,255,255,.4); border-radius:14px;
@@ -36,7 +50,7 @@
   .bw-cta{ font-size:11px; font-weight:800; letter-spacing:.6px; text-transform:uppercase;
     color:#3C6E73; margin-top:8px; }
   @media (max-width:640px){
-    .bw-grid{ grid-template-columns:1fr; gap:9px; }
+    .bw-grid{ grid-template-columns:1fr 1fr; gap:9px; }
     .bw-karte{ flex-direction:row; align-items:center; text-align:left; padding:0 12px 0 0; }
     .bw-karte img{ width:78px; height:88px; margin:6px 0 0; flex:0 0 78px; }
     .bw-satz{ margin-top:2px; }
@@ -293,6 +307,25 @@ html.eingebettet body{ zoom:.82; }
           <span class="bw-cta">Trainer starten →</span>
         </span>
       </button>
+      <button type="button" class="bw-karte" id="bwMehr" aria-expanded="false">
+        <span class="bw-mehr-ico" aria-hidden="true">🎓</span>
+        <span class="bw-txt">
+          <span class="bw-tit">Weitere Berufe</span>
+          <span class="bw-satz">Die fünf meistgelernten Lehrberufe der Schweiz – von KV bis Informatik.</span>
+          <span class="bw-cta">Auswählen →</span>
+        </span>
+      </button>
+    </div>
+    <div class="bw-top5" id="bwTop5">
+      <p class="t5-lead">Die fünf meistgelernten Lehrberufe der Schweiz – wählen Sie Ihren:</p>
+      <div class="t5-zeile">
+        <button type="button" data-niv="kv"><b>1</b> Kauffrau/Kaufmann EFZ</button>
+        <button type="button" data-niv="fage"><b>2</b> Fachfrau/Fachmann Gesundheit EFZ</button>
+        <button type="button" data-niv="dhefz"><b>3</b> Detailhandelsfachleute EFZ</button>
+        <button type="button" data-niv="fabe"><b>4</b> Fachfrau/Fachmann Betreuung EFZ</button>
+        <button type="button" data-niv="inf"><b>5</b> Informatiker/in EFZ</button>
+      </div>
+      <p class="t5-quelle">Rangliste nach neu abgeschlossenen Lehrverträgen (Bundesamt für Statistik).</p>
     </div>
   </div>
 </header>
@@ -417,6 +450,9 @@ html.eingebettet body{ zoom:.82; }
           <button class="chip on" data-niv="dhefz">🏬 DH EFZ</button>
           <button class="chip" data-niv="kv">🏢 KV</button>
           <button class="chip" data-niv="pharma">💊 Apotheke</button>
+          <button class="chip" data-niv="fage">🩺 FaGe</button>
+          <button class="chip" data-niv="fabe">🧸 FaBe</button>
+          <button class="chip" data-niv="inf">💻 Informatik</button>
         </div>
       </div>
       <div class="filters">
@@ -601,6 +637,30 @@ const LEVELS={
     speed:[80,90,100,120], hoursB:[3,4,5,6],
     cons:[6,7,8,9], distV:[125,150,175,200,250,300],
     antiK:[48,60,72,120,144], antiKein:[144,180,240,300,360,720],
+    antiDist:[{d:360,sp:[60,72,90,120]},{d:480,sp:[60,80,120]},{d:600,sp:[60,75,100,120,150]}] },
+  fage:{ label:'FaGe', typ:'beide', contexts:['lohn','einkauf','prozent','tempo'],
+    lohn:[22,24,26,28,30], hoursA:[4,5,6,7,8,9,12],
+    preise:[0.80,1.20,1.50,2.50,3.50,4.20], stk:[3,4,5,6,8,10,12],
+    prozPer1:[1.5,2,2.5,3,4,5,6], prozX:[5,8,10,15,20,25,50], prozC:[100,75,60,80,120],
+    speed:[60,70,80,90,100], hoursB:[3,4,5,6],
+    cons:[5,6,7,8], distV:[100,150,200,250],
+    antiK:[24,36,48,60,72], antiKein:[60,72,120,144,180],
+    antiDist:[{d:240,sp:[40,60,80,120]},{d:300,sp:[50,60,75,100]},{d:360,sp:[60,72,90,120]}] },
+  fabe:{ label:'FaBe', typ:'beide', contexts:['lohn','einkauf','prozent','tempo'],
+    lohn:[20,22,24,25,26], hoursA:[3,4,5,6,7,8],
+    preise:[0.80,1.00,1.20,1.50,2.40,2.50], stk:[3,4,5,6,7,8,10],
+    prozPer1:[1.5,2,2.5,3,4,5], prozX:[5,8,10,12,20,25], prozC:[100,50,75,60,80],
+    speed:[60,70,80,90], hoursB:[2,3,4,5,6],
+    cons:[5,6,7,8], distV:[50,100,150,200],
+    antiK:[24,36,48,60], antiKein:[60,72,120,144],
+    antiDist:[{d:240,sp:[40,60,80,120]},{d:180,sp:[45,60,90]},{d:300,sp:[50,60,75,100]}] },
+  inf:{ label:'Informatik', typ:'beide', contexts:['lohn','einkauf','prozent','tempo'],
+    lohn:[24,26,28,30,32,35], hoursA:[4,5,6,7,8,9,10,12],
+    preise:[1.50,2.40,3.50,4.20,4.80,6.50], stk:[4,5,6,8,10,12,16],
+    prozPer1:[2,2.5,3,4,5,6,8], prozX:[5,8,12,15,20,25,40,60], prozC:[100,75,80,120,150,250],
+    speed:[80,90,100,120], hoursB:[3,4,5,6],
+    cons:[6,7,8,9], distV:[150,200,250,300],
+    antiK:[36,48,60,72,120], antiKein:[120,144,180,240,360],
     antiDist:[{d:360,sp:[60,72,90,120]},{d:480,sp:[60,80,120]},{d:600,sp:[60,75,100,120,150]}] },
 };
 let LV=LEVELS.dhefz;
@@ -886,10 +946,16 @@ const FIGUREN={
   dhefz: { bild:'kachel_figur_detailhandel.png', text:'Detailhandels&shy;fachfrau EFZ' },
   kv:    { bild:'kachel_figur_bank.png',         text:'Kauffrau EFZ · Bank' },
   pharma:{ bild:'kachel_figur_pharma.png',       text:'Fachfrau Apotheke EFZ' },
+  fage:  { bild:null, text:'Fachfrau Gesundheit EFZ' },
+  fabe:  { bild:null, text:'Fachmann Betreuung EFZ' },
+  inf:   { bild:null, text:'Informatikerin EFZ' },
 };
 function setzeFigur(key){
   const f=FIGUREN[key]||FIGUREN.dhefz, img=$('figurImg'), lab=$('figurLabel');
   if(!img||!lab) return;
+  const kasten=img.closest('.berufsfigur');
+  if(!f.bild){ if(kasten) kasten.style.display='none'; lab.innerHTML=f.text; return; }
+  if(kasten) kasten.style.display='';
   const klar=f.text.replace(/&shy;/g,'');
   if(img.getAttribute('src')!==f.bild) img.setAttribute('src',f.bild);
   img.alt='Lernende '+klar;
@@ -908,10 +974,21 @@ function applyLevel(key, skipNew){
 }
 $('nivChips').addEventListener('click',e=>{ const b=e.target.closest('.chip'); if(b) applyLevel(b.dataset.niv); });
 
-/* Direkteinstieg über die drei Berufskarten im Kopf */
-document.querySelectorAll('.bw-karte').forEach(b=>{
+/* Direkteinstieg über die Berufskarten im Kopf */
+document.querySelectorAll('.bw-karte[data-niv]').forEach(b=>{
   b.addEventListener('click',()=>{ applyLevel(b.dataset.niv); switchTab('trainer'); });
 });
+(function(){
+  const mehr=document.getElementById('bwMehr'), panel=document.getElementById('bwTop5');
+  if(!mehr||!panel) return;
+  mehr.addEventListener('click',()=>{
+    const offen=panel.classList.toggle('offen');
+    mehr.setAttribute('aria-expanded', offen ? 'true' : 'false');
+  });
+  panel.querySelectorAll('button[data-niv]').forEach(b=>{
+    b.addEventListener('click',()=>{ applyLevel(b.dataset.niv); switchTab('trainer'); });
+  });
+})();
 
 
 /* ---------- Pokalregal ---------- */
