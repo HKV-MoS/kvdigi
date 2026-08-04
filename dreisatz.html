@@ -276,7 +276,7 @@ html.eingebettet body{ zoom:.82; }
 
 <header>
   <div class="brand-eyebrow">HKV Aarau · ABU</div>
-  <h1>Dreisatz</h1>
+  <h1 id="kopfTitel" title="Zurück zum Start" style="cursor:pointer">Dreisatz</h1>
   <div class="sub">Verstehen und üben: gerader (proportionaler) und ungerader (umgekehrt proportionaler) Dreisatz – mit endlosem Aufgaben-Trainer.</div>
 
   <div class="berufswahl">
@@ -914,6 +914,7 @@ function updateScore(){
 
 /* ---------- Events ---------- */
 $('tab-lernen').onclick=()=>switchTab('lernen');
+$('kopfTitel').addEventListener('click',()=>{ switchTab('lernen'); window.scrollTo({top:0,behavior:'smooth'}); });
 $('tab-trainer').onclick=()=>switchTab('trainer');
 $('goto-trainer').onclick=()=>switchTab('trainer');
 function switchTab(w){
@@ -962,8 +963,8 @@ const FIGUREN={
   kv:    { bild:'kachel_figur_bank.png',         text:'Kauffrau EFZ · Bank' },
   pharma:{ bild:'kachel_figur_pharma.png',       text:'Fachfrau Apotheke EFZ' },
   fage:  { bild:'kachel_figur_fage.png', text:'Fachfrau Gesundheit EFZ' },
-  ags:   { bild:null, text:'Assistentin Gesundheit und Soziales EBA' },
-  fabe:  { bild:null, text:'Fachmann Betreuung EFZ' },
+  ags:   { bild:'kachel_figur_fabe.png', text:'Assistentin Gesundheit und Soziales EBA' },
+  fabe:  { bild:'kachel_figur_fabe.png', text:'Fachfrau Betreuung EFZ' },
   inf:   { bild:'kachel_figur_informatik.png', text:'Informatikerin EFZ' },
 };
 function setzeFigur(key){
