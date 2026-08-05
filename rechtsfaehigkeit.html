@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rechtsfähig – urteilsfähig – handlungsfähig · ABU HKV Aarau</title>
+<meta name="description" content="Die drei Fähigkeiten des Personenrechts (ZGB Art. 11–19) verstehen: interaktive Treppe, Fallbeispiele und Quiz für den ABU-Unterricht.">
+<style>
+:root{
+  --tief:#213B42; --petrol:#3C6E73; --gold:#D8AE66; --papier:#F4F8FB;
+  --ink:#1d2f36; --muted:#5b6b7d; --card:#ffffff; --line:#e2e8f1;
+  --gruen:#2E7D4F; --rot:#B3423A;
+}
+*{box-sizing:border-box}
+html.eingebettet body{ zoom:.82; }
+body{
+  margin:0; font-family:system-ui,-apple-system,'Segoe UI',sans-serif;
+  background:var(--papier); color:var(--ink); line-height:1.55; font-size:15px;
+}
+header{
+  background:linear-gradient(135deg,#213B42 0%,#3C6E73 100%); color:#fff;
+  padding:20px 24px 18px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+header h1{ margin:0 0 4px; font-size:clamp(21px,3vw,28px); letter-spacing:-.3px; }
+header h1 b{ color:var(--gold); font-weight:800; }
+header .sub{ font-size:13.5px; opacity:.88; max-width:70ch; margin:0 auto; }
+.wrap{ max-width:980px; margin:0 auto; padding:18px clamp(12px,3vw,28px) 40px; }
+
+/* Reiter */
+.tabs{ display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin:6px 0 18px; border-bottom:2px solid var(--line); }
+.tab{
+  font:inherit; font-weight:800; font-size:14.5px; padding:10px 18px; cursor:pointer;
+  background:none; border:none; color:var(--muted); border-bottom:3px solid transparent; margin-bottom:-2px;
+}
+.tab:hover{ color:var(--petrol); }
+.tab.an{ color:var(--tief); border-bottom-color:var(--gold); }
+.seite{ display:none; }
+.seite.an{ display:block; }
+
+.card{
+  background:var(--card); border:1px solid var(--line); border-radius:14px;
+  box-shadow:0 2px 10px rgba(20,50,80,.08); padding:18px 20px; margin-bottom:14px;
+}
+h2{ font-size:18px; margin:0 0 10px; color:var(--tief); }
+h3{ font-size:15px; margin:16px 0 6px; color:var(--petrol); }
+.gesetz{
+  display:inline-block; font-size:11px; font-weight:800; letter-spacing:.5px;
+  background:rgba(216,174,102,.16); color:#8a6520; border:1px solid rgba(216,174,102,.5);
+  border-radius:999px; padding:2px 9px; margin-left:6px; vertical-align:middle; white-space:nowrap;
+}
+
+/* Treppe */
+.treppe{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; align-items:end; margin:10px 0 4px; }
+.stufe{
+  border:2px solid var(--line); border-radius:12px; background:#fff; cursor:pointer;
+  padding:14px 14px 12px; text-align:left; font:inherit; transition:all .15s;
+}
+.stufe:hover{ border-color:var(--petrol); transform:translateY(-2px); }
+.stufe.an{ border-color:var(--gold); box-shadow:0 6px 18px rgba(33,59,66,.16); }
+.stufe .ico{ font-size:26px; display:block; margin-bottom:6px; }
+.stufe b{ display:block; font-size:15px; color:var(--tief); }
+.stufe small{ color:var(--muted); }
+.stufe:nth-child(1){ min-height:120px; }
+.stufe:nth-child(2){ min-height:150px; }
+.stufe:nth-child(3){ min-height:180px; }
+.erklaer{ min-height:150px; }
+.erklaer .lead{ color:var(--muted); font-size:13.5px; margin-top:0; }
+.merk{
+  border-left:3px solid var(--gold); background:rgba(216,174,102,.08);
+  padding:10px 14px; border-radius:0 10px 10px 0; margin:12px 0 0; font-size:14px;
+}
+.stufenbild{ display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+.pille{
+  font-size:12.5px; font-weight:700; border-radius:999px; padding:5px 12px;
+  border:1.5px solid var(--line); background:#fff; color:var(--ink);
+}
+.pille.gruen{ border-color:rgba(46,125,79,.5); color:var(--gruen); background:rgba(46,125,79,.07); }
+.pille.rot{ border-color:rgba(179,66,58,.45); color:var(--rot); background:rgba(179,66,58,.06); }
+
+/* Faelle */
+.fall{ margin-bottom:14px; }
+.fall .situation{ font-size:15px; }
+.fall .frage{ font-weight:700; color:var(--tief); margin:8px 0; }
+.antworten{ display:flex; gap:8px; flex-wrap:wrap; }
+.antworten button{
+  font:inherit; font-weight:700; font-size:14px; cursor:pointer;
+  border:2px solid var(--line); border-radius:999px; background:#fff; padding:8px 18px;
+  transition:all .13s;
+}
+.antworten button:hover{ border-color:var(--petrol); }
+.antworten button.richtig{ border-color:var(--gruen); background:rgba(46,125,79,.1); color:var(--gruen); }
+.antworten button.falsch{ border-color:var(--rot); background:rgba(179,66,58,.08); color:var(--rot); }
+.aufloesung{ display:none; margin-top:10px; padding:10px 14px; border-radius:10px; font-size:14px;
+  background:var(--papier); border:1px solid var(--line); }
+.aufloesung.zeig{ display:block; }
+.aufloesung b.ok{ color:var(--gruen); }
+.aufloesung b.nein{ color:var(--rot); }
+
+/* Quiz */
+.qfrage{ font-weight:700; margin-bottom:8px; }
+.qopt{ display:block; width:100%; text-align:left; font:inherit; font-size:14px; cursor:pointer;
+  border:2px solid var(--line); border-radius:10px; background:#fff; padding:9px 13px; margin-bottom:7px; transition:all .12s; }
+.qopt:hover{ border-color:var(--petrol); }
+.qopt.richtig{ border-color:var(--gruen); background:rgba(46,125,79,.1); }
+.qopt.falsch{ border-color:var(--rot); background:rgba(179,66,58,.07); }
+.qstand{ font-weight:800; color:var(--petrol); margin-top:6px; }
+
+footer{ text-align:center; padding:18px 12px 26px; }
+.cr{ color:#94A3B0; font-size:11px; }
+.cr a{ color:inherit; }
+
+/* Zoomleiste */
+.zoomleiste{position:fixed; right:12px; top:12px; z-index:99999; display:flex; gap:2px;
+  background:rgba(255,255,255,.78); border:1px solid rgba(21,35,50,.14); border-radius:999px;
+  padding:3px; box-shadow:0 3px 12px rgba(21,35,50,.18);
+  opacity:.55; transition:opacity .18s; backdrop-filter:blur(4px);}
+.zoomleiste:hover,.zoomleiste:focus-within{opacity:1;}
+.zoomleiste button{width:27px; height:27px; border-radius:999px; padding:0;
+  border:none; background:transparent; color:#152332;
+  font-size:14px; line-height:1; cursor:pointer;}
+.zoomleiste button:hover{background:rgba(21,35,50,.09);}
+@media print{.zoomleiste{display:none}}
+@media (max-width:640px){
+  .treppe{ grid-template-columns:1fr; align-items:stretch; }
+  .stufe:nth-child(n){ min-height:0; }
+  .card table{ display:block; overflow-x:auto; }
+}
+</style>
+</head>
+<body>
+<script>if(window.self!==window.top){document.documentElement.classList.add('eingebettet');}</script>
+
+<header>
+  <h1 id="kopfTitel" title="Zurück zum Start" style="cursor:pointer">Rechtsfähig – urteilsfähig – <b>handlungsfähig</b></h1>
+  <div class="sub">Wer darf was im Recht? Die drei Fähigkeiten des Personenrechts (ZGB Art. 11–19) – mit Fallbeispielen aus dem Alltag von Lernenden.</div>
+</header>
+
+<div class="wrap">
+
+  <div class="tabs" role="tablist">
+    <button class="tab an" data-tab="begriffe" role="tab">🪜 Die drei Begriffe</button>
+    <button class="tab" data-tab="faelle" role="tab">⚖️ Fallbeispiele</button>
+    <button class="tab" data-tab="quiz" role="tab">❓ Quiz</button>
+  </div>
+
+  <!-- ================= BEGRIFFE ================= -->
+  <section class="seite an" id="seite-begriffe">
+    <div class="card">
+      <h2>Die Treppe: Klicken Sie die drei Stufen an</h2>
+      <div class="treppe">
+        <button class="stufe an" data-b="recht" type="button">
+          <span class="ico">🫀</span>
+          <b>Rechtsfähigkeit</b>
+          <small>haben alle Menschen</small>
+        </button>
+        <button class="stufe" data-b="urteil" type="button">
+          <span class="ico">🧠</span>
+          <b>Urteilsfähigkeit</b>
+          <small>vernünftig handeln können</small>
+        </button>
+        <button class="stufe" data-b="handlung" type="button">
+          <span class="ico">✍️</span>
+          <b>Handlungsfähigkeit</b>
+          <small>selbst Verträge schliessen</small>
+        </button>
+      </div>
+    </div>
+
+    <div class="card erklaer" id="erklaerBox"></div>
+
+    <div class="card">
+      <h2>Die vier Stufen im Überblick</h2>
+      <p style="margin-top:0;color:var(--muted);font-size:13.5px">Aus dem Zusammenspiel von Alter und Urteilsfähigkeit ergeben sich vier Gruppen:</p>
+      <table style="width:100%;border-collapse:collapse;font-size:14px">
+        <tr style="text-align:left;color:var(--petrol)">
+          <th style="padding:6px 8px;border-bottom:2px solid var(--line)">Wer?</th>
+          <th style="padding:6px 8px;border-bottom:2px solid var(--line)">Stufe</th>
+          <th style="padding:6px 8px;border-bottom:2px solid var(--line)">Was gilt?</th>
+        </tr>
+        <tr>
+          <td style="padding:8px;border-bottom:1px solid var(--line)">Volljährig <b>und</b> urteilsfähig</td>
+          <td style="padding:8px;border-bottom:1px solid var(--line)"><span class="pille gruen">voll handlungsfähig</span></td>
+          <td style="padding:8px;border-bottom:1px solid var(--line)">Kann alle Verträge selbst gültig abschliessen.</td>
+        </tr>
+        <tr>
+          <td style="padding:8px;border-bottom:1px solid var(--line)">Minderjährig, aber urteilsfähig <small>(z.&nbsp;B. Lernende unter 18)</small></td>
+          <td style="padding:8px;border-bottom:1px solid var(--line)"><span class="pille">beschränkt handlungsfähig</span></td>
+          <td style="padding:8px;border-bottom:1px solid var(--line)">Verträge nur mit Zustimmung der gesetzlichen Vertretung – <b>ausser</b>: unentgeltliche Vorteile (z.&nbsp;B. Geschenke annehmen), geringfügige Alltagsgeschäfte, eigener Lohn und Taschengeld.</td>
+        </tr>
+        <tr>
+          <td style="padding:8px;border-bottom:1px solid var(--line)">Urteilsunfähig <small>(z.&nbsp;B. Kleinkind, schwerer Rausch)</small></td>
+          <td style="padding:8px;border-bottom:1px solid var(--line)"><span class="pille rot">handlungsunfähig</span></td>
+          <td style="padding:8px;border-bottom:1px solid var(--line)">Eigene Handlungen haben keine rechtliche Wirkung – es handelt die gesetzliche Vertretung.</td>
+        </tr>
+        <tr>
+          <td style="padding:8px">Volljährig unter umfassender Beistandschaft</td>
+          <td style="padding:8px"><span class="pille">beschränkt / nicht handlungsfähig</span></td>
+          <td style="padding:8px">Die Beiständin oder der Beistand handelt mit oder für die Person (Erwachsenenschutzrecht).</td>
+        </tr>
+      </table>
+      <p class="merk">💡 <b>Merksatz:</b> Rechte <i>haben</i> kann jeder Mensch – Rechte selbst <i>ausüben</i> kann nur, wer volljährig <b>und</b> urteilsfähig ist.</p>
+    </div>
+  </section>
+
+  <!-- ================= FAELLE ================= -->
+  <section class="seite" id="seite-faelle">
+    <div class="card">
+      <h2>Entscheiden Sie: Gilt das Geschäft?</h2>
+      <p style="margin-top:0;color:var(--muted);font-size:13.5px">Sechs Situationen aus dem Alltag – zuerst selbst urteilen, dann die Auflösung lesen.</p>
+      <div id="faelleListe"></div>
+    </div>
+  </section>
+
+  <!-- ================= QUIZ ================= -->
+  <section class="seite" id="seite-quiz">
+    <div class="card">
+      <h2>Quiz: Sechs Fragen</h2>
+      <div id="quizListe"></div>
+      <p class="qstand" id="qstand"></p>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="cr">abu-tools.ch · Grundlagen: Schweizerisches Zivilgesetzbuch (ZGB), Stand 2026 · © 2026 <a href="mailto:samuel.mollet@hkv.ch" title="E-Mail an Samuel Mollet">S. Mollet</a></div>
+</footer>
+
+<script>
+/* ---------- Reiter ---------- */
+var tabs = document.querySelectorAll('.tab');
+tabs.forEach(function(t){
+  t.addEventListener('click', function(){
+    tabs.forEach(function(x){ x.classList.toggle('an', x===t); });
+    document.querySelectorAll('.seite').forEach(function(s){
+      s.classList.toggle('an', s.id === 'seite-'+t.dataset.tab);
+    });
+  });
+});
+document.getElementById('kopfTitel').addEventListener('click', function(){
+  tabs[0].click();
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+
+/* ---------- Begriffe ---------- */
+var BEGRIFFE = {
+  recht: {
+    titel: 'Rechtsfähigkeit', gesetz: 'ZGB Art. 11',
+    text: '<p class="lead">Die Fähigkeit, Träger von Rechten und Pflichten zu sein.</p>'
+      + '<p><b>Jeder Mensch ist rechtsfähig</b> – vom Neugeborenen bis zur 100-Jährigen, unabhängig von Alter, Herkunft oder Gesundheit. Die Rechtsfähigkeit beginnt mit der Geburt (das ungeborene Kind ist unter dem Vorbehalt rechtsfähig, dass es lebend geboren wird) und endet mit dem Tod.</p>'
+      + '<p>Darum kann schon ein Baby <b>erben</b>, ein Haus <b>besitzen</b> oder beschenkt werden – handeln muss für das Baby aber jemand anderes.</p>'
+  },
+  urteil: {
+    titel: 'Urteilsfähigkeit', gesetz: 'ZGB Art. 16',
+    text: '<p class="lead">Die Fähigkeit, vernunftgemäss zu handeln – zu verstehen, was man tut, und danach zu handeln.</p>'
+      + '<p>Sie kann fehlen wegen <b>Kindesalter</b>, <b>geistiger Behinderung</b>, <b>psychischer Störung</b>, <b>Rausch</b> oder ähnlichen Zuständen.</p>'
+      + '<p>Wichtig: Es gibt <b>keine feste Altersgrenze</b>. Die Urteilsfähigkeit wird <b>für jedes Geschäft einzeln</b> beurteilt: Ein Zehnjähriger ist urteilsfähig genug, um ein Sandwich zu kaufen – aber nicht, um eine Hypothek zu verstehen.</p>'
+  },
+  handlung: {
+    titel: 'Handlungsfähigkeit', gesetz: 'ZGB Art. 12–14',
+    text: '<p class="lead">Die Fähigkeit, durch eigenes Handeln Rechte und Pflichten zu begründen – also selbst gültige Verträge zu schliessen.</p>'
+      + '<p>Dafür braucht es <b>beides</b>: <b>Volljährigkeit</b> (18 Jahre, ZGB Art. 14) <b>und Urteilsfähigkeit</b> (ZGB Art. 13).</p>'
+      + '<p>Wer urteilsfähig, aber minderjährig ist, ist <b>beschränkt handlungsfähig</b> (ZGB Art. 19): Verträge brauchen die Zustimmung der Eltern – ausser bei Geschenken, kleinen Alltagskäufen sowie <b>eigenem Lohn und Taschengeld</b> (ZGB Art. 323).</p>'
+  }
+};
+var erklaerBox = document.getElementById('erklaerBox');
+function zeigeBegriff(key){
+  var b = BEGRIFFE[key];
+  erklaerBox.innerHTML = '<h2>' + b.titel + ' <span class="gesetz">' + b.gesetz + '</span></h2>' + b.text;
+  document.querySelectorAll('.stufe').forEach(function(st){
+    st.classList.toggle('an', st.dataset.b === key);
+  });
+}
+document.querySelectorAll('.stufe').forEach(function(st){
+  st.addEventListener('click', function(){ zeigeBegriff(st.dataset.b); });
+});
+zeigeBegriff('recht');
+
+/* ---------- Fallbeispiele ---------- */
+var FAELLE = [
+  { s: 'Lea (16, Lernende) kauft von ihrem eigenen Lohn ein Occasions-Velo für CHF 300.–.',
+    gilt: true,
+    a: 'Über den <b>eigenen Arbeitserwerb</b> darf eine urteilsfähige minderjährige Person selbst verfügen (ZGB Art. 323). Der Kauf ist gültig – auch ohne Zustimmung der Eltern.' },
+  { s: 'Tim (15) unterschreibt im Laden ein Handy-Abo über 24 Monate für CHF 45.– pro Monat.',
+    gilt: false,
+    a: 'Ein Dauervertrag mit erheblichen Kosten ist <b>kein geringfügiges Alltagsgeschäft</b>. Ohne Zustimmung der gesetzlichen Vertretung ist der Vertrag <b>schwebend unwirksam</b> – die Eltern können ihn genehmigen oder ablehnen (ZGB Art. 19).' },
+  { s: 'Die Grossmutter schenkt Nino (10) zum Geburtstag CHF 50.–.',
+    gilt: true,
+    a: 'Geschenke annehmen ist ein <b>unentgeltlicher Vorteil</b> – das dürfen urteilsfähige Minderjährige ohne Zustimmung (ZGB Art. 19 Abs. 2).' },
+  { s: 'Ein stark betrunkener Gast (35) verschenkt seine Luxusuhr an den Barkeeper.',
+    gilt: false,
+    a: 'Im schweren Rausch fehlt die <b>Urteilsfähigkeit</b> (ZGB Art. 16). Wer urteilsunfähig handelt, kann keine gültigen Geschäfte schliessen (ZGB Art. 18) – die Schenkung ist unwirksam.' },
+  { s: 'Ein sechs Monate altes Baby erbt von seinem Götti ein Ferienhaus.',
+    gilt: true,
+    a: 'Erben setzt nur <b>Rechtsfähigkeit</b> voraus – und die hat jeder Mensch ab Geburt (ZGB Art. 11). Verwalten muss das Haus die gesetzliche Vertretung.' },
+  { s: 'Sara (17) will ihren Lehrvertrag alleine unterschreiben.',
+    gilt: false,
+    a: 'Der Lehrvertrag mit einer minderjährigen Person braucht die <b>Zustimmung der gesetzlichen Vertretung</b> (OR Art. 344a). Sara unterschreibt mit – aber die Eltern müssen ebenfalls zustimmen.' }
+];
+var fl = document.getElementById('faelleListe');
+FAELLE.forEach(function(f, i){
+  var div = document.createElement('div');
+  div.className = 'fall card';
+  div.style.boxShadow = 'none';
+  div.innerHTML = '<div class="situation"><b>Fall ' + (i+1) + ':</b> ' + f.s + '</div>'
+    + '<div class="frage">Gilt das Geschäft?</div>'
+    + '<div class="antworten"><button type="button" data-w="ja">Ja, gültig</button><button type="button" data-w="nein">Nein / nur mit Zustimmung</button></div>'
+    + '<div class="aufloesung"></div>';
+  var knoepfe = div.querySelectorAll('.antworten button');
+  var auf = div.querySelector('.aufloesung');
+  knoepfe.forEach(function(k){
+    k.addEventListener('click', function(){
+      if (auf.classList.contains('zeig')) return;
+      var richtig = (k.dataset.w === 'ja') === f.gilt;
+      k.classList.add(richtig ? 'richtig' : 'falsch');
+      knoepfe.forEach(function(k2){
+        if (k2 !== k && ((k2.dataset.w === 'ja') === f.gilt)) k2.classList.add('richtig');
+      });
+      auf.innerHTML = (f.gilt ? '<b class="ok">✔ Gültig.</b> ' : '<b class="nein">✘ Nicht ohne Weiteres gültig.</b> ') + f.a;
+      auf.classList.add('zeig');
+    });
+  });
+  fl.appendChild(div);
+});
+
+/* ---------- Quiz ---------- */
+var QUIZ = [
+  { f: 'Wer ist in der Schweiz rechtsfähig?',
+    o: ['Alle Menschen ab Geburt', 'Alle ab 18 Jahren', 'Nur urteilsfähige Personen'], r: 0 },
+  { f: 'Was braucht es für die volle Handlungsfähigkeit?',
+    o: ['Nur Volljährigkeit', 'Volljährigkeit und Urteilsfähigkeit', 'Einen Schweizer Pass'], r: 1 },
+  { f: 'Ab welchem Alter ist man urteilsfähig?',
+    o: ['Ab 12 Jahren', 'Ab 16 Jahren', 'Es gibt keine feste Altersgrenze – es kommt aufs Geschäft an'], r: 2 },
+  { f: 'Eine 16-jährige Lernende will ihren Lohn ausgeben. Was gilt?',
+    o: ['Sie braucht immer die Zustimmung der Eltern', 'Über den eigenen Arbeitserwerb darf sie selbst verfügen', 'Der Lehrbetrieb verwaltet den Lohn'], r: 1 },
+  { f: 'Ein urteilsunfähiger Mensch schliesst einen Vertrag ab. Der Vertrag ist …',
+    o: ['gültig', 'gültig, wenn er schriftlich ist', 'grundsätzlich ohne rechtliche Wirkung'], r: 2 },
+  { f: 'Welche Handlung dürfen urteilsfähige Minderjährige ohne Zustimmung vornehmen?',
+    o: ['Ein Auto leasen', 'Ein Geschenk annehmen', 'Einen Kredit aufnehmen'], r: 1 }
+];
+var ql = document.getElementById('quizListe');
+var punkte = 0, beantwortet = 0;
+QUIZ.forEach(function(q, i){
+  var div = document.createElement('div');
+  div.style.marginBottom = '16px';
+  div.innerHTML = '<div class="qfrage">' + (i+1) + '. ' + q.f + '</div>';
+  q.o.forEach(function(opt, j){
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'qopt'; b.textContent = opt;
+    b.addEventListener('click', function(){
+      if (div.dataset.fertig) return;
+      div.dataset.fertig = '1';
+      beantwortet++;
+      if (j === q.r){ b.classList.add('richtig'); punkte++; }
+      else {
+        b.classList.add('falsch');
+        div.querySelectorAll('.qopt')[q.r].classList.add('richtig');
+      }
+      document.getElementById('qstand').textContent =
+        (beantwortet === QUIZ.length)
+          ? 'Ergebnis: ' + punkte + ' von ' + QUIZ.length + ' richtig' + (punkte === QUIZ.length ? ' – ausgezeichnet!' : '')
+          : punkte + ' richtig von ' + beantwortet + ' beantworteten Fragen';
+    });
+    div.appendChild(b);
+  });
+  ql.appendChild(div);
+});
+</script>
+
+<script>
+(function(){
+  var z = (window.self !== window.top) ? 0.82 : 1;
+  var leiste = document.createElement('div');
+  leiste.className = 'zoomleiste';
+  function setZ(nz){
+    z = Math.max(0.5, Math.min(1.4, Math.round(nz*100)/100));
+    document.body.style.zoom = z;
+    leiste.style.zoom = 1/z;
+  }
+  function mk(txt, titel, fn){
+    var b = document.createElement('button');
+    b.type = 'button'; b.textContent = txt; b.title = titel;
+    b.setAttribute('aria-label', titel);
+    b.addEventListener('click', fn);
+    leiste.appendChild(b);
+  }
+  mk('−', 'Kleiner', function(){ setZ(z - 0.1); });
+  mk('+', 'Grösser', function(){ setZ(z + 0.1); });
+  mk('⛶', 'Vollbild (Esc beendet)', function(){
+    var drin = document.fullscreenElement || document.webkitFullscreenElement;
+    if(drin){
+      (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    } else {
+      var el = document.documentElement;
+      var p = el.requestFullscreen ? el.requestFullscreen()
+            : el.webkitRequestFullscreen ? el.webkitRequestFullscreen() : null;
+      if(p && p.catch) p.catch(function(){});
+    }
+  });
+  document.body.appendChild(leiste);
+  setZ(z);
+})();
+</script>
+</body>
+</html>
