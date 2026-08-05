@@ -109,7 +109,7 @@ h3{ font-size:15px; margin:16px 0 6px; color:var(--petrol); }
 .buehne{
   border-radius:16px; overflow:hidden; position:relative;
   background:#060a2a url('millionaer_buehne.jpg?v=1') top center / 100% auto no-repeat;
-  padding:clamp(120px,24vw,265px) clamp(14px,3vw,60px) 28px;
+  padding:38% clamp(14px,3vw,60px) 28px;
   box-shadow:0 8px 30px rgba(6,10,42,.5);
 }
 .buehne::before{
@@ -156,6 +156,42 @@ h3{ font-size:15px; margin:16px 0 6px; color:var(--petrol); }
 }
 .q-neustart:hover{ background:#fff; }
 .buehne .qstand{ color:#F3CE8E; text-align:center; margin-bottom:0; }
+/* Joker */
+.joker-overlay{ position:absolute; top:0; left:0; width:100%; aspect-ratio:3060/1139; pointer-events:none; }
+.joker-overlay button{
+  position:absolute; left:4.3%; width:10.4%; pointer-events:auto;
+  background:transparent; border:none; border-radius:50%; cursor:pointer;
+  transition:box-shadow .15s;
+}
+.joker-overlay button:hover{ box-shadow:0 0 0 3px rgba(243,206,142,.85), 0 0 24px rgba(243,206,142,.6); }
+.joker-overlay #j5050{ top:14.5%; height:17.5%; }
+.joker-overlay #jtel{ top:42.5%; height:19%; }
+.joker-overlay #jpub{ top:70.5%; height:19.5%; }
+.joker-overlay button.verbraucht{ pointer-events:none; background:rgba(4,6,28,.55); }
+.joker-overlay button.verbraucht::after{
+  content:'✕'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  color:#ff7a6e; font-size:clamp(18px,2.6vw,34px); font-weight:800;
+}
+.joker-zeile{ display:none; gap:8px; justify-content:center; margin:0 0 12px; }
+.joker-zeile button{
+  font:inherit; font-weight:800; font-size:13px; cursor:pointer;
+  border:1.5px solid rgba(243,206,142,.7); border-radius:999px; color:#F3CE8E;
+  background:rgba(6,10,42,.6); padding:7px 14px;
+}
+.joker-zeile button.verbraucht{ opacity:.35; pointer-events:none; text-decoration:line-through; }
+.joker-ausgabe{
+  display:none; max-width:640px; margin:0 auto 14px; padding:12px 16px; border-radius:12px;
+  background:rgba(6,10,42,.75); border:1.5px solid rgba(243,206,142,.55); color:#fff; font-size:14px;
+}
+.joker-ausgabe.zeig{ display:block; }
+.joker-ausgabe .balkenzeile{ display:flex; align-items:center; gap:8px; margin:5px 0; }
+.joker-ausgabe .balkenzeile b{ width:22px; color:#F3CE8E; }
+.joker-ausgabe .balken{ height:16px; background:linear-gradient(180deg,#5a79e8,#2c48b8); border-radius:4px; }
+.joker-ausgabe .prozent{ font-size:12.5px; color:#aab4e8; }
+@media (max-width:900px){
+  .joker-overlay{ display:none; }
+  .joker-zeile{ display:flex; flex-wrap:wrap; }
+}
 @media (max-width:640px){
   .buehne .qoptzeile{ grid-template-columns:1fr; }
   .buehne{ background-size:cover; }
@@ -322,7 +358,18 @@ footer{ text-align:center; padding:18px 12px 26px; }
   <!-- ================= QUIZ ================= -->
   <section class="seite" id="seite-quiz">
     <div class="buehne">
+      <div class="joker-overlay" aria-label="Joker">
+        <button type="button" id="j5050" data-joker="fifty" title="50:50-Joker – eine falsche Antwort verschwindet"></button>
+        <button type="button" id="jtel" data-joker="tel" title="Telefonjoker – ein Anruf, ein Tipp"></button>
+        <button type="button" id="jpub" data-joker="pub" title="Publikumsjoker – das Publikum stimmt ab"></button>
+      </div>
       <p class="b-hinweis">Eine falsche Antwort – und die Runde ist vorbei. Jede Runde bringt andere Fragen. <b>Wer schafft 10 am Stück?</b></p>
+      <div class="joker-zeile">
+        <button type="button" data-joker="fifty">50:50</button>
+        <button type="button" data-joker="tel">☎ Telefon</button>
+        <button type="button" data-joker="pub">👥 Publikum</button>
+      </div>
+      <div class="joker-ausgabe" id="jokerAusgabe"></div>
       <div class="leiter" id="qLeiter"></div>
       <div id="quizListe"></div>
       <p class="qstand" id="qstand"></p>
@@ -589,6 +636,7 @@ var POOL = [
 ];
 var ZIEL = 10;
 var runde = [], stufe = 0, best = 0;
+var joker = { fifty:false, tel:false, pub:false };
 try{ best = parseInt(sessionStorage.getItem('recht_quiz_best')||'0',10)||0; }catch(e){}
 var ql = document.getElementById('quizListe');
 var leiter = document.getElementById('qLeiter');
@@ -618,14 +666,73 @@ function zeigeStand(){
 function neueRunde(){
   runde = mischen(POOL).slice(0, ZIEL);
   stufe = 0;
+  joker = { fifty:false, tel:false, pub:false };
+  document.querySelectorAll('[data-joker]').forEach(function(b){ b.classList.remove('verbraucht'); });
   zeichneLeiter(); zeigeStand();
   naechsteFrage();
 }
+var jokerAusgabe = document.getElementById('jokerAusgabe');
+function jokerZu(){ jokerAusgabe.classList.remove('zeig'); jokerAusgabe.innerHTML=''; }
+function verbrauche(name){
+  joker[name] = true;
+  document.querySelectorAll('[data-joker="'+name+'"]').forEach(function(b){ b.classList.add('verbraucht'); });
+}
+function nutzeJoker(name){
+  var q = runde[stufe];
+  if (!q || joker[name] || document.querySelector('.q-ende')) return;
+  var opts = Array.prototype.slice.call(document.querySelectorAll('.qoptzeile .qopt'));
+  if (!opts.length) return;
+  verbrauche(name);
+  if (name === 'fifty'){
+    var falsche = [];
+    opts.forEach(function(b, j){ if (j !== q.r && b.style.visibility !== 'hidden') falsche.push(j); });
+    var weg = falsche[Math.floor(Math.random()*falsche.length)];
+    opts[weg].style.visibility = 'hidden';
+    jokerAusgabe.innerHTML = '<b style="color:#F3CE8E">50:50:</b> Eine falsche Antwort ist gestrichen.';
+    jokerAusgabe.classList.add('zeig');
+  }
+  if (name === 'tel'){
+    var sichtbar = [];
+    opts.forEach(function(b, j){ if (b.style.visibility !== 'hidden') sichtbar.push(j); });
+    var tipp = (Math.random() < 0.75) ? q.r : sichtbar.filter(function(j){ return j !== q.r; })[0];
+    if (tipp === undefined) tipp = q.r;
+    var buchst = ['A','B','C','D'][tipp];
+    jokerAusgabe.innerHTML = '<b style="color:#F3CE8E">☎ Dein Telefonjoker:</b> «Hmm … ich bin ziemlich sicher, es ist <b>' + buchst + '</b>. Aber nagle mich nicht fest!»'
+      + '<div class="prozent" style="margin-top:4px">Telefonjoker liegen meistens richtig – aber nicht immer.</div>';
+    jokerAusgabe.classList.add('zeig');
+  }
+  if (name === 'pub'){
+    var sicht = [];
+    opts.forEach(function(b, j){ if (b.style.visibility !== 'hidden') sicht.push(j); });
+    var korrekt = 45 + Math.floor(Math.random()*31);
+    var rest = 100 - korrekt;
+    var andere = sicht.filter(function(j){ return j !== q.r; });
+    var werte = {};
+    werte[q.r] = korrekt;
+    andere.forEach(function(j, k){
+      if (k === andere.length-1){ werte[j] = rest; }
+      else { var t = Math.floor(Math.random()*rest); werte[j] = t; rest -= t; }
+    });
+    var html = '<b style="color:#F3CE8E">👥 Das Publikum hat abgestimmt:</b>';
+    sicht.forEach(function(j){
+      html += '<div class="balkenzeile"><b>' + ['A','B','C','D'][j] + '</b>'
+        + '<div class="balken" style="width:' + Math.max(3, werte[j]*2.6) + 'px"></div>'
+        + '<span class="prozent">' + werte[j] + ' %</span></div>';
+    });
+    html += '<div class="prozent" style="margin-top:4px">Auch das Publikum kann sich täuschen.</div>';
+    jokerAusgabe.innerHTML = html;
+    jokerAusgabe.classList.add('zeig');
+  }
+}
+document.querySelectorAll('[data-joker]').forEach(function(b){
+  b.addEventListener('click', function(){ nutzeJoker(b.dataset.joker); });
+});
 function merkeBest(){
   if (stufe > best){ best = stufe; try{ sessionStorage.setItem('recht_quiz_best', String(best)); }catch(e){} }
 }
 function naechsteFrage(){
   var q = runde[stufe];
+  jokerZu();
   ql.innerHTML = '';
   var div = document.createElement('div');
   div.innerHTML = '<div class="qfrage raute">Frage ' + (stufe+1) + ' von ' + ZIEL + ': ' + q.f + '</div>';
