@@ -161,8 +161,8 @@ footer{ text-align:center; padding:18px 12px 26px; }
         </button>
         <button class="stufe" data-b="beschraenkt" type="button">
           <span class="ico">🧑‍🎓</span>
-          <b>beschränkte Handlungsunfähigkeit</b>
-          <small>urteilsfähig, aber minderjährig</small>
+          <b>urteilsfähig, aber handlungsunfähig</b>
+          <small>Minderjährige – z.&nbsp;B. Lernende</small>
         </button>
         <button class="stufe" data-b="handlung" type="button">
           <span class="ico">✍️</span>
@@ -190,12 +190,12 @@ footer{ text-align:center; padding:18px 12px 26px; }
         </tr>
         <tr>
           <td style="padding:8px;border-bottom:1px solid var(--line)">Volljährig und urteilsfähig, mit punktueller Einschränkung <small>(z.&nbsp;B. Mitwirkungsbeistandschaft, ZGB Art. 396)</small></td>
-          <td style="padding:8px;border-bottom:1px solid var(--line)"><span class="pille">beschränkt handlungsfähig</span></td>
-          <td style="padding:8px;border-bottom:1px solid var(--line)">Bestimmte Geschäfte brauchen die Zustimmung der Beiständin oder des Beistands.</td>
+          <td style="padding:8px;border-bottom:1px solid var(--line)"><span class="pille">Handlungsfähigkeit eingeschränkt</span></td>
+          <td style="padding:8px;border-bottom:1px solid var(--line)">Bestimmte Geschäfte brauchen die Zustimmung der Beiständin oder des Beistands (ZGB Art. 19d).</td>
         </tr>
         <tr>
           <td style="padding:8px;border-bottom:1px solid var(--line)">Minderjährig, aber urteilsfähig <small>(z.&nbsp;B. Lernende unter 18)</small></td>
-          <td style="padding:8px;border-bottom:1px solid var(--line)"><span class="pille">beschränkt handlungsunfähig</span></td>
+          <td style="padding:8px;border-bottom:1px solid var(--line)"><span class="pille">urteilsfähig, aber handlungsunfähig</span></td>
           <td style="padding:8px;border-bottom:1px solid var(--line)">Verträge nur mit Zustimmung der gesetzlichen Vertretung – <b>ausser</b>: unentgeltliche Vorteile (z.&nbsp;B. Geschenke annehmen), geringfügige Alltagsgeschäfte, eigener Lohn und Taschengeld.</td>
         </tr>
         <tr>
@@ -205,7 +205,7 @@ footer{ text-align:center; padding:18px 12px 26px; }
         </tr>
         <tr>
           <td style="padding:8px">Volljährig unter umfassender Beistandschaft</td>
-          <td style="padding:8px"><span class="pille">beschränkt handlungsunfähig</span></td>
+          <td style="padding:8px"><span class="pille">urteilsfähig, aber handlungsunfähig</span></td>
           <td style="padding:8px">Die Beiständin oder der Beistand handelt mit oder für die Person (Erwachsenenschutzrecht).</td>
         </tr>
       </table>
@@ -268,7 +268,7 @@ var BEGRIFFE = {
       + '<p>Wichtig: Es gibt <b>keine feste Altersgrenze</b>. Die Urteilsfähigkeit wird <b>für jedes Geschäft einzeln</b> beurteilt: Ein Zehnjähriger ist urteilsfähig genug, um ein Sandwich zu kaufen – aber nicht, um eine Hypothek zu verstehen.</p>'
   },
   beschraenkt: {
-    titel: 'Beschränkte Handlungsunfähigkeit', gesetz: 'ZGB Art. 19',
+    titel: 'Urteilsfähige handlungsunfähige Personen', gesetz: 'ZGB Art. 19',
     text: '<p class="lead">Für alle, die urteilsfähig, aber noch nicht volljährig sind – also für die meisten Lernenden.</p>'
       + '<p><b>Grundsatz:</b> Verträge gelten nur mit <b>Zustimmung der gesetzlichen Vertretung</b> (meist die Eltern). Bis zur Zustimmung ist der Vertrag <b>schwebend unwirksam</b> – die Eltern können ihn genehmigen oder ablehnen.</p>'
       + '<p><b>Ohne Zustimmung erlaubt:</b></p>'
@@ -279,7 +279,7 @@ var BEGRIFFE = {
       + '<li><b>Höchstpersönliche Rechte</b> ausüben (ZGB Art. 19c)</li>'
       + '</ul>'
       + '<p>Dasselbe gilt für volljährige Personen unter umfassender Beistandschaft.</p>'
-      + '<p style="font-size:13px;color:var(--muted)"><b>Begriffs-Hinweis:</b> Das ZGB nennt diese Gruppe «urteilsfähige handlungsunfähige Personen» (Randtitel zu Art. 19); manche Lehrmittel sagen vereinfachend «beschränkt handlungsfähig». In der klassischen Vierteilung bezeichnet <b>«beschränkt handlungsfähig»</b> aber eine andere, kleine Gruppe: volljährige Urteilsfähige, deren Handlungsfähigkeit punktuell eingeschränkt ist – z.&nbsp;B. durch eine Mitwirkungsbeistandschaft (ZGB Art. 396).</p>'
+      + '<p style="font-size:13px;color:var(--muted);border-left:3px solid var(--gold);padding:8px 12px;background:rgba(216,174,102,.08);border-radius:0 8px 8px 0"><b>Begriffs-Hinweis:</b> In Lehrmitteln kursieren dafür die Etiketten «beschränkt handlungsunfähig» oder «beschränkt handlungsfähig». Beide sind <b>unscharf und im Gesetz nicht definiert</b> – wir lernen und prüfen sie deshalb nicht. Massgebend ist die Formulierung des ZGB: <b>urteilsfähige handlungsunfähige Personen</b> (Art. 19).</p>'
   },
   handlung: {
     titel: 'Volle Handlungsfähigkeit', gesetz: 'ZGB Art. 12–14',
