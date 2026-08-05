@@ -161,14 +161,14 @@ h3{ font-size:15px; margin:16px 0 6px; color:var(--petrol); }
 /* Joker */
 .joker-overlay{ position:absolute; top:0; left:0; width:100%; aspect-ratio:3060/1139; pointer-events:none; }
 .joker-overlay button{
-  position:absolute; left:4.3%; width:10.4%; pointer-events:auto;
+  position:absolute; width:11.6%; pointer-events:auto;
   background:transparent; border:none; border-radius:50%; cursor:pointer;
   transition:box-shadow .15s;
 }
 .joker-overlay button:hover{ box-shadow:0 0 0 3px rgba(243,206,142,.85), 0 0 24px rgba(243,206,142,.6); }
-.joker-overlay #j5050{ top:14.5%; height:17.5%; }
-.joker-overlay #jtel{ top:42.5%; height:19%; }
-.joker-overlay #jpub{ top:70.5%; height:19.5%; }
+.joker-overlay #j5050{ left:3.8%; top:14.6%; height:15.4%; }
+.joker-overlay #jtel{ left:4.1%; top:41.2%; height:18.4%; }
+.joker-overlay #jpub{ left:3.9%; top:69.6%; height:17.2%; }
 .joker-overlay button.verbraucht{ pointer-events:none; background:rgba(4,6,28,.55); }
 .joker-overlay button.verbraucht::after{
   content:'✕'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
@@ -627,13 +627,13 @@ var POOL = [
   { f:'Ein Baby kann erben, weil es …', o:['handlungsfähig ist','urteilsfähig ist','rechtsfähig ist','von den Eltern vertreten wird'], r:2 },
   { f:'Eine Frau mit Demenz unterschreibt im klaren Moment. Der Vertrag …', o:['ist immer ungültig','kann gültig sein – der Zeitpunkt zählt','gilt nur mit Arztzeugnis','gilt nur mit Zeugen'], r:1 },
   { f:'Die Urteilsfähigkeit wird beurteilt …', o:['einmal fürs ganze Leben','für jedes Geschäft einzeln','nur vom Gericht','ab 16 ist sie automatisch da'], r:1 },
-  { f:'Die Eltern verweigern die Genehmigung endgültig. Der Vertrag …', o:['gilt trotzdem','ist definitiv unwirksam','wandelt sich in Miete','bleibt gültig, weil schon geliefert wurde'], r:1 },
-  { f:'Genehmigen die Eltern nachträglich, gilt der Vertrag …', o:['ab der Genehmigung','von Anfang an','erst ab 18','nur, wenn die KESB zustimmt'], r:1 },
+  { f:'Ein 15-Jähriger hat ohne Eltern ein Handy-Abo abgeschlossen. Die Eltern verweigern die Genehmigung endgültig. Das Abo …', o:['gilt trotzdem','ist definitiv unwirksam','wandelt sich in einen Mietvertrag','bleibt gültig, weil das Handy schon geliefert wurde'], r:1 },
+  { f:'Eine 16-Jährige hat ohne Eltern einen Vertrag abgeschlossen. Genehmigen die Eltern ihn nachträglich, gilt er …', o:['erst ab der Genehmigung','von Anfang an','erst ab ihrem 18. Geburtstag','nur, wenn die KESB zustimmt'], r:1 },
   { f:'Mitwirkungsbeistandschaft (ZGB 396): bezeichnete Geschäfte brauchen …', o:['die Zustimmung des Beistands','einen Gerichtsentscheid','gar nichts','die Zustimmung beider Eltern'], r:0 },
   { f:'Die «Einschränkung der Handlungsfähigkeit» durch Erwachsenenschutz regelt …', o:['ZGB Art. 19d','OR Art. 54','ZGB Art. 11','SVG Art. 91'], r:0 },
   { f:'Ein geschenktes Pferd samt Folgekosten dürfen Minderjährige …', o:['immer annehmen – ein Geschenk','nur mit Zustimmung annehmen','nie annehmen','annehmen, wenn es versichert ist'], r:1 },
   { f:'Höchstpersönliche Rechte üben urteilsfähige Minderjährige …', o:['selbst aus','über die Eltern aus','über die KESB aus','gar nicht aus'], r:0 },
-  { f:'Kann ein Gericht einen Urteilsunfähigen aus Billigkeit zahlen lassen?', o:['Nie','Ja, z. B. wenn er vermögend ist','Nur bei Vorsatz','Nur seine Erben nach dem Tod'], r:1 },
+  { f:'Ein urteilsunfähiger, aber sehr vermögender Mann verletzt einen Passanten. Muss er Schadenersatz zahlen?', o:['Nein – Urteilsunfähige haften nie','Das Gericht kann ihn aus Fairness dazu verpflichten','Nur, wenn er es absichtlich tat','Nur seine Erben nach seinem Tod'], r:1 },
   { f:'Kann ein Hund erben?', o:['Ja, per Testament','Nein – Tiere sind nicht rechtsfähig','Ja, mit KESB-Zustimmung','Nur Hunde mit Stammbaum'], r:1 }
 ];
 var ZIEL = 10;
