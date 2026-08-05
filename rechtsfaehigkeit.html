@@ -105,6 +105,23 @@ h3{ font-size:15px; margin:16px 0 6px; color:var(--petrol); }
 .qopt.richtig{ border-color:var(--gruen); background:rgba(46,125,79,.1); }
 .qopt.falsch{ border-color:var(--rot); background:rgba(179,66,58,.07); }
 .qstand{ font-weight:800; color:var(--petrol); margin-top:6px; }
+.leiter{ display:flex; gap:6px; flex-wrap:wrap; margin:0 0 14px; }
+.leiter span{
+  width:34px; height:34px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:13px; border:2px solid var(--line); color:var(--muted); background:#fff;
+  transition:all .25s;
+}
+.leiter span.geschafft{ border-color:var(--gruen); background:rgba(46,125,79,.12); color:var(--gruen); }
+.leiter span.aktuell{ border-color:var(--gold); background:rgba(216,174,102,.18); color:#8a6520; transform:scale(1.12); }
+.q-ende{ border-radius:12px; padding:16px 18px; margin-top:6px; }
+.q-ende.raus{ background:rgba(179,66,58,.07); border:1.5px solid rgba(179,66,58,.4); }
+.q-ende.sieg{ background:rgba(46,125,79,.09); border:1.5px solid rgba(46,125,79,.45); }
+.q-ende h3{ margin:0 0 6px; }
+.q-neustart{
+  font:inherit; font-weight:800; font-size:14px; cursor:pointer; margin-top:10px;
+  border:none; border-radius:999px; background:var(--petrol); color:#fff; padding:10px 22px;
+}
+.q-neustart:hover{ background:var(--tief); }
 
 footer{ text-align:center; padding:18px 12px 26px; }
 .cr{ color:#94A3B0; font-size:11px; }
@@ -267,7 +284,9 @@ footer{ text-align:center; padding:18px 12px 26px; }
   <!-- ================= QUIZ ================= -->
   <section class="seite" id="seite-quiz">
     <div class="card">
-      <h2>Quiz: Sechs Fragen</h2>
+      <h2>Die Fragenleiter: Wer schafft 10 am Stück?</h2>
+      <p style="margin-top:0;color:var(--muted);font-size:13.5px">Wie bei den Millionärs-Shows: Eine falsche Antwort – und die Runde ist vorbei. Jede neue Runde bringt andere Fragen aus einem Pool von 30.</p>
+      <div class="leiter" id="qLeiter"></div>
       <div id="quizListe"></div>
       <p class="qstand" id="qstand"></p>
     </div>
@@ -497,48 +516,119 @@ zeichneFaelle();
   });
 })();
 
-/* ---------- Quiz ---------- */
-var QUIZ = [
-  { f: 'Wer ist in der Schweiz rechtsfähig?',
-    o: ['Alle Menschen ab Geburt', 'Alle ab 18 Jahren', 'Nur urteilsfähige Personen'], r: 0 },
-  { f: 'Was braucht es für die volle Handlungsfähigkeit?',
-    o: ['Nur Volljährigkeit', 'Volljährigkeit und Urteilsfähigkeit', 'Einen Schweizer Pass'], r: 1 },
-  { f: 'Ab welchem Alter ist man urteilsfähig?',
-    o: ['Ab 12 Jahren', 'Ab 16 Jahren', 'Es gibt keine feste Altersgrenze – es kommt aufs Geschäft an'], r: 2 },
-  { f: 'Eine 16-jährige Lernende will ihren Lohn ausgeben. Was gilt?',
-    o: ['Sie braucht immer die Zustimmung der Eltern', 'Über den eigenen Arbeitserwerb darf sie selbst verfügen', 'Der Lehrbetrieb verwaltet den Lohn'], r: 1 },
-  { f: 'Ein urteilsunfähiger Mensch schliesst einen Vertrag ab. Der Vertrag ist …',
-    o: ['gültig', 'gültig, wenn er schriftlich ist', 'grundsätzlich ohne rechtliche Wirkung'], r: 2 },
-  { f: 'Welche Handlung dürfen urteilsfähige Minderjährige ohne Zustimmung vornehmen?',
-    o: ['Ein Auto leasen', 'Ein Geschenk annehmen', 'Einen Kredit aufnehmen'], r: 1 }
+/* ---------- Quiz: Fragenleiter mit Rausfallen ---------- */
+var POOL = [
+  { f:'Wer ist in der Schweiz rechtsfähig?', o:['Alle Menschen ab Geburt','Alle ab 18 Jahren','Nur urteilsfähige Personen'], r:0 },
+  { f:'Was braucht es für die volle Handlungsfähigkeit?', o:['Nur Volljährigkeit','Volljährigkeit und Urteilsfähigkeit','Einen Schweizer Pass'], r:1 },
+  { f:'Ab welchem Alter ist man urteilsfähig?', o:['Ab 12 Jahren','Ab 16 Jahren','Es gibt keine feste Altersgrenze'], r:2 },
+  { f:'Eine 16-jährige Lernende will ihren Lohn ausgeben. Was gilt?', o:['Immer Zustimmung der Eltern nötig','Über den eigenen Arbeitserwerb verfügt sie selbst','Der Lehrbetrieb verwaltet den Lohn'], r:1 },
+  { f:'Ein Urteilsunfähiger schliesst einen Vertrag. Der Vertrag ist …', o:['gültig','gültig, wenn schriftlich','grundsätzlich ohne rechtliche Wirkung'], r:2 },
+  { f:'Was dürfen urteilsfähige Minderjährige ohne Zustimmung?', o:['Ein Auto leasen','Ein Geschenk annehmen','Einen Kredit aufnehmen'], r:1 },
+  { f:'Wann endet die Rechtsfähigkeit?', o:['Mit der Pensionierung','Mit dem Tod','Mit einer Beistandschaft'], r:1 },
+  { f:'Tim (15) schliesst ohne Eltern ein 24-Monats-Abo ab. Der Vertrag ist …', o:['sofort gültig','schwebend unwirksam','ein Alltagsgeschäft'], r:1 },
+  { f:'Der Lehrvertrag einer 17-Jährigen braucht …', o:['nur ihre Unterschrift','die Zustimmung der gesetzlichen Vertretung','eine Bewilligung der KESB'], r:1 },
+  { f:'Ab wann entscheidet man selbst über sein religiöses Bekenntnis?', o:['Ab 14 Jahren','Ab 16 Jahren','Ab 18 Jahren'], r:1 },
+  { f:'Ein Testament schreiben kann, wer …', o:['urteilsfähig und 18 ist','urteilsfähig und 16 ist','einen Notar beizieht, egal wie alt'], r:0 },
+  { f:'Deniz (17½) will mit Zustimmung der Eltern heiraten. Geht das?', o:['Ja, mit Elternsegen','Nein – Ehefähigkeit verlangt 18','Ja, mit KESB-Bewilligung'], r:1 },
+  { f:'Wer sich betrinkt und dann Schaden anrichtet, …', o:['haftet, weil selbstverschuldet','haftet nie – er war urteilsunfähig','haftet nur bei Vorsatz'], r:0 },
+  { f:'Beim FiaZ ist die Trunkenheit …', o:['ein Entschuldigungsgrund','der Straftatbestand selbst','nur ein Ordnungsproblem'], r:1 },
+  { f:'Emre (15, urteilsfähig) sprayt eine Fassade. Für den Schaden …', o:['haften nur die Eltern','haftet er selbst voll','haftet niemand'], r:1 },
+  { f:'«Urteilsfähige handlungsunfähige Personen» – so steht es in …', o:['ZGB Art. 19','OR Art. 344a','StGB Art. 19'], r:0 },
+  { f:'Das Vermögen Minderjähriger verwalten grundsätzlich …', o:['sie selbst','die Eltern','die Schule'], r:1 },
+  { f:'Über Taschengeld dürfen urteilsfähige Minderjährige …', o:['frei verfügen','nur mit Quittung verfügen','gar nicht verfügen'], r:0 },
+  { f:'Timo (13) kauft ein Sandwich. Der Kauf ist …', o:['schwebend unwirksam','als Alltagsgeschäft gültig','nichtig'], r:1 },
+  { f:'Ein Baby kann erben, weil es …', o:['handlungsfähig ist','urteilsfähig ist','rechtsfähig ist'], r:2 },
+  { f:'Eine Frau mit Demenz unterschreibt im klaren Moment. Der Vertrag …', o:['ist immer ungültig','kann gültig sein – der Zeitpunkt zählt','gilt nur mit Arztzeugnis'], r:1 },
+  { f:'Die Urteilsfähigkeit wird beurteilt …', o:['einmal fürs ganze Leben','für jedes Geschäft einzeln','nur vom Gericht'], r:1 },
+  { f:'Die Eltern verweigern die Genehmigung endgültig. Der Vertrag …', o:['gilt trotzdem','ist definitiv unwirksam','wandelt sich in Miete'], r:1 },
+  { f:'Genehmigen die Eltern nachträglich, gilt der Vertrag …', o:['ab der Genehmigung','von Anfang an','erst ab 18'], r:1 },
+  { f:'Mitwirkungsbeistandschaft (ZGB 396): bezeichnete Geschäfte brauchen …', o:['die Zustimmung des Beistands','einen Gerichtsentscheid','gar nichts'], r:0 },
+  { f:'Die «Einschränkung der Handlungsfähigkeit» durch Erwachsenenschutz regelt …', o:['ZGB Art. 19d','OR Art. 54','ZGB Art. 11'], r:0 },
+  { f:'Ein geschenktes Pferd samt Folgekosten dürfen Minderjährige …', o:['immer annehmen – ein Geschenk','nur mit Zustimmung annehmen','nie annehmen'], r:1 },
+  { f:'Höchstpersönliche Rechte üben urteilsfähige Minderjährige …', o:['selbst aus','über die Eltern aus','über die KESB aus'], r:0 },
+  { f:'Kann ein Gericht einen Urteilsunfähigen aus Billigkeit zahlen lassen?', o:['Nie','Ja, z. B. wenn er vermögend ist','Nur bei Vorsatz'], r:1 },
+  { f:'Kann ein Hund erben?', o:['Ja, per Testament','Nein – Tiere sind nicht rechtsfähig','Ja, mit KESB-Zustimmung'], r:1 }
 ];
+var ZIEL = 10;
+var runde = [], stufe = 0, best = 0;
+try{ best = parseInt(sessionStorage.getItem('recht_quiz_best')||'0',10)||0; }catch(e){}
 var ql = document.getElementById('quizListe');
-var punkte = 0, beantwortet = 0;
-QUIZ.forEach(function(q, i){
+var leiter = document.getElementById('qLeiter');
+var stand = document.getElementById('qstand');
+
+function mischen(arr){
+  var a = arr.slice();
+  for (var i=a.length-1; i>0; i--){
+    var j = Math.floor(Math.random()*(i+1));
+    var t = a[i]; a[i]=a[j]; a[j]=t;
+  }
+  return a;
+}
+function zeichneLeiter(){
+  leiter.innerHTML = '';
+  for (var i=0;i<ZIEL;i++){
+    var sp = document.createElement('span');
+    sp.textContent = i+1;
+    if (i < stufe) sp.className = 'geschafft';
+    else if (i === stufe) sp.className = 'aktuell';
+    leiter.appendChild(sp);
+  }
+}
+function zeigeStand(){
+  stand.textContent = best > 0 ? ('Bestmarke in dieser Sitzung: ' + best + (best>=ZIEL?' – Leiter komplett! 🏆':'')) : '';
+}
+function neueRunde(){
+  runde = mischen(POOL).slice(0, ZIEL);
+  stufe = 0;
+  zeichneLeiter(); zeigeStand();
+  naechsteFrage();
+}
+function merkeBest(){
+  if (stufe > best){ best = stufe; try{ sessionStorage.setItem('recht_quiz_best', String(best)); }catch(e){} }
+}
+function naechsteFrage(){
+  var q = runde[stufe];
+  ql.innerHTML = '';
   var div = document.createElement('div');
-  div.style.marginBottom = '16px';
-  div.innerHTML = '<div class="qfrage">' + (i+1) + '. ' + q.f + '</div>';
+  div.innerHTML = '<div class="qfrage">Frage ' + (stufe+1) + ' von ' + ZIEL + ': ' + q.f + '</div>';
   q.o.forEach(function(opt, j){
     var b = document.createElement('button');
-    b.type = 'button'; b.className = 'qopt'; b.textContent = opt;
+    b.type='button'; b.className='qopt'; b.textContent = opt;
     b.addEventListener('click', function(){
       if (div.dataset.fertig) return;
       div.dataset.fertig = '1';
-      beantwortet++;
-      if (j === q.r){ b.classList.add('richtig'); punkte++; }
-      else {
+      if (j === q.r){
+        b.classList.add('richtig');
+        stufe++;
+        merkeBest();
+        zeichneLeiter(); zeigeStand();
+        if (stufe >= ZIEL){
+          setTimeout(function(){
+            ql.innerHTML = '<div class="q-ende sieg"><h3>🏆 10 am Stück – die Leiter ist komplett!</h3>'
+              + '<p>Sie beherrschen Rechts-, Urteils- und Handlungsfähigkeit. Chapeau.</p>'
+              + '<button type="button" class="q-neustart" id="qNochmal">Neue Runde – neue Fragen</button></div>';
+            document.getElementById('qNochmal').addEventListener('click', neueRunde);
+          }, 550);
+        } else {
+          setTimeout(naechsteFrage, 550);
+        }
+      } else {
         b.classList.add('falsch');
         div.querySelectorAll('.qopt')[q.r].classList.add('richtig');
+        setTimeout(function(){
+          ql.innerHTML = '<div class="q-ende raus"><h3>Ausgeschieden bei Frage ' + (stufe+1) + '</h3>'
+            + '<p>Richtig gewesen wäre: <b>' + q.o[q.r] + '</b></p>'
+            + '<p>Erreichte Stufe: <b>' + stufe + ' von ' + ZIEL + '</b>' + (best>0 ? ' · Bestmarke: ' + best : '') + '</p>'
+            + '<button type="button" class="q-neustart" id="qNochmal">Neue Runde – neue Fragen</button></div>';
+          document.getElementById('qNochmal').addEventListener('click', neueRunde);
+        }, 1100);
       }
-      document.getElementById('qstand').textContent =
-        (beantwortet === QUIZ.length)
-          ? 'Ergebnis: ' + punkte + ' von ' + QUIZ.length + ' richtig' + (punkte === QUIZ.length ? ' – ausgezeichnet!' : '')
-          : punkte + ' richtig von ' + beantwortet + ' beantworteten Fragen';
     });
     div.appendChild(b);
   });
   ql.appendChild(div);
-});
+}
+neueRunde();
 </script>
 
 <script>
