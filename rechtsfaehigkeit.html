@@ -105,23 +105,61 @@ h3{ font-size:15px; margin:16px 0 6px; color:var(--petrol); }
 .qopt.richtig{ border-color:var(--gruen); background:rgba(46,125,79,.1); }
 .qopt.falsch{ border-color:var(--rot); background:rgba(179,66,58,.07); }
 .qstand{ font-weight:800; color:var(--petrol); margin-top:6px; }
-.leiter{ display:flex; gap:6px; flex-wrap:wrap; margin:0 0 14px; }
-.leiter span{
-  width:34px; height:34px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center;
-  font-weight:800; font-size:13px; border:2px solid var(--line); color:var(--muted); background:#fff;
-  transition:all .25s;
+/* Millionaers-Buehne */
+.buehne{
+  border-radius:16px; overflow:hidden; position:relative;
+  background:#060a2a url('millionaer_buehne.jpg?v=1') top center / 100% auto no-repeat;
+  padding:clamp(120px,24vw,265px) clamp(14px,3vw,60px) 28px;
+  box-shadow:0 8px 30px rgba(6,10,42,.5);
 }
-.leiter span.geschafft{ border-color:var(--gruen); background:rgba(46,125,79,.12); color:var(--gruen); }
-.leiter span.aktuell{ border-color:var(--gold); background:rgba(216,174,102,.18); color:#8a6520; transform:scale(1.12); }
-.q-ende{ border-radius:12px; padding:16px 18px; margin-top:6px; }
-.q-ende.raus{ background:rgba(179,66,58,.07); border:1.5px solid rgba(179,66,58,.4); }
-.q-ende.sieg{ background:rgba(46,125,79,.09); border:1.5px solid rgba(46,125,79,.45); }
-.q-ende h3{ margin:0 0 6px; }
+.buehne::before{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(6,10,42,0) 30%, rgba(6,10,42,.55) 55%, rgba(6,10,42,.92) 100%);
+  pointer-events:none;
+}
+.buehne > *{ position:relative; }
+.b-hinweis{ color:#aab4e8; font-size:13px; text-align:center; margin:0 0 10px; }
+.leiter{ display:flex; gap:6px; flex-wrap:wrap; justify-content:center; margin:0 0 16px; }
+.leiter span{
+  width:32px; height:32px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:12.5px; border:2px solid rgba(170,180,232,.45); color:#aab4e8;
+  background:rgba(6,10,42,.55); transition:all .25s;
+}
+.leiter span.geschafft{ border-color:#3fae62; background:rgba(46,125,79,.4); color:#c9f2d6; }
+.leiter span.aktuell{ border-color:#F3CE8E; background:rgba(216,174,102,.3); color:#F3CE8E; transform:scale(1.15); }
+.raute{
+  clip-path:polygon(26px 0, calc(100% - 26px) 0, 100% 50%, calc(100% - 26px) 100%, 26px 100%, 0 50%);
+  background:linear-gradient(180deg,#141d63 0%,#080d3d 55%,#0b1250 100%);
+  border-top:2px solid #5a79e8; border-bottom:2px solid #5a79e8;
+  color:#fff; padding:14px 40px; text-align:center;
+}
+.buehne .qfrage{ font-weight:700; font-size:16.5px; margin:0 auto 16px; max-width:820px; }
+.buehne .qoptzeile{ display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; max-width:860px; margin:0 auto; }
+.buehne .qopt{
+  clip-path:polygon(22px 0, calc(100% - 22px) 0, 100% 50%, calc(100% - 22px) 100%, 22px 100%, 0 50%);
+  background:linear-gradient(180deg,#141d63 0%,#080d3d 55%,#0b1250 100%);
+  border:none; border-top:2px solid #5a79e8; border-bottom:2px solid #5a79e8;
+  color:#fff; font-size:14.5px; text-align:left; padding:12px 16px 12px 34px; margin:0;
+  width:100%; cursor:pointer; transition:background .15s;
+}
+.buehne .qopt:hover{ background:linear-gradient(180deg,#d07b12 0%,#8f4e00 60%,#b06407 100%); border-color:#F3CE8E; }
+.buehne .qopt .buchst{ color:#F3CE8E; font-weight:800; margin-right:.5em; }
+.buehne .qopt.richtig{ background:linear-gradient(180deg,#1f8c46 0%,#0e5427 60%,#15703a 100%); border-color:#7fe0a2; }
+.buehne .qopt.falsch{ background:linear-gradient(180deg,#a3271f 0%,#6b120d 60%,#8a1c15 100%); border-color:#f2a09a; }
+.q-ende{ border-radius:12px; padding:16px 18px; margin:6px auto 0; max-width:640px; text-align:center; color:#fff; }
+.q-ende.raus{ background:rgba(107,18,13,.55); border:1.5px solid rgba(242,160,154,.6); }
+.q-ende.sieg{ background:rgba(14,84,39,.55); border:1.5px solid rgba(127,224,162,.6); }
+.q-ende h3{ margin:0 0 6px; color:#F3CE8E; }
 .q-neustart{
   font:inherit; font-weight:800; font-size:14px; cursor:pointer; margin-top:10px;
-  border:none; border-radius:999px; background:var(--petrol); color:#fff; padding:10px 22px;
+  border:none; border-radius:999px; background:#F3CE8E; color:#213B42; padding:10px 22px;
 }
-.q-neustart:hover{ background:var(--tief); }
+.q-neustart:hover{ background:#fff; }
+.buehne .qstand{ color:#F3CE8E; text-align:center; margin-bottom:0; }
+@media (max-width:640px){
+  .buehne .qoptzeile{ grid-template-columns:1fr; }
+  .buehne{ background-size:cover; }
+}
 
 footer{ text-align:center; padding:18px 12px 26px; }
 .cr{ color:#94A3B0; font-size:11px; }
@@ -168,7 +206,7 @@ footer{ text-align:center; padding:18px 12px 26px; }
       <h2>Die Treppe: Klicken Sie die vier Stufen an</h2>
       <div class="treppe">
         <button class="stufe an" data-b="recht" type="button">
-          <span class="ico">🫀</span>
+          <span class="ico">👶</span>
           <b>Rechtsfähigkeit</b>
           <small>haben alle Menschen</small>
         </button>
@@ -283,9 +321,8 @@ footer{ text-align:center; padding:18px 12px 26px; }
 
   <!-- ================= QUIZ ================= -->
   <section class="seite" id="seite-quiz">
-    <div class="card">
-      <h2>Die Fragenleiter: Wer schafft 10 am Stück?</h2>
-      <p style="margin-top:0;color:var(--muted);font-size:13.5px">Wie bei den Millionärs-Shows: Eine falsche Antwort – und die Runde ist vorbei. Jede neue Runde bringt andere Fragen aus einem Pool von 30.</p>
+    <div class="buehne">
+      <p class="b-hinweis">Eine falsche Antwort – und die Runde ist vorbei. Jede Runde bringt andere Fragen. <b>Wer schafft 10 am Stück?</b></p>
       <div class="leiter" id="qLeiter"></div>
       <div id="quizListe"></div>
       <p class="qstand" id="qstand"></p>
@@ -319,8 +356,9 @@ var BEGRIFFE = {
   recht: {
     titel: 'Rechtsfähigkeit', gesetz: 'ZGB Art. 11',
     text: '<p class="lead">Die Fähigkeit, Träger von Rechten und Pflichten zu sein.</p>'
-      + '<p><b>Jeder Mensch ist rechtsfähig</b> – vom Neugeborenen bis zur 100-Jährigen, unabhängig von Alter, Herkunft oder Gesundheit. Die Rechtsfähigkeit beginnt mit der Geburt (das ungeborene Kind ist unter dem Vorbehalt rechtsfähig, dass es lebend geboren wird) und endet mit dem Tod.</p>'
+      + '<p><b>Jeder Mensch ist rechtsfähig</b> – vom Neugeborenen bis zur 100-Jährigen, unabhängig von Alter, Herkunft oder Gesundheit. Die Rechtsfähigkeit beginnt mit der Geburt und endet mit dem Tod.</p>'
       + '<p>Darum kann schon ein Baby <b>erben</b>, ein Haus <b>besitzen</b> oder beschenkt werden – handeln muss für das Baby aber jemand anderes.</p>'
+      + '<p style="font-size:13px;color:var(--muted);border-left:3px solid var(--gold);padding:8px 12px;background:rgba(216,174,102,.08);border-radius:0 8px 8px 0"><b>Und vor der Geburt?</b> Das ungeborene Kind (der «Nasciturus») ist bereits rechtsfähig – aber nur <b>unter dem Vorbehalt, dass es lebend geboren wird</b> (ZGB Art. 31 Abs. 2). Praktisch wichtig beim Erben: Stirbt der Vater vor der Geburt, erbt das bereits gezeugte Kind mit (ZGB Art. 544) – vorausgesetzt, es kommt lebend zur Welt. Kommt es tot zur Welt, hat es rechtlich nie existiert und der Erbteil fällt an die übrigen Erben.</p>'
   },
   urteil: {
     titel: 'Urteilsfähigkeit', gesetz: 'ZGB Art. 16',
@@ -590,10 +628,14 @@ function naechsteFrage(){
   var q = runde[stufe];
   ql.innerHTML = '';
   var div = document.createElement('div');
-  div.innerHTML = '<div class="qfrage">Frage ' + (stufe+1) + ' von ' + ZIEL + ': ' + q.f + '</div>';
+  div.innerHTML = '<div class="qfrage raute">Frage ' + (stufe+1) + ' von ' + ZIEL + ': ' + q.f + '</div>';
+  var zeile = document.createElement('div');
+  zeile.className = 'qoptzeile';
+  div.appendChild(zeile);
   q.o.forEach(function(opt, j){
     var b = document.createElement('button');
-    b.type='button'; b.className='qopt'; b.textContent = opt;
+    b.type='button'; b.className='qopt';
+    b.innerHTML = '<span class="buchst">' + ['A','B','C','D'][j] + ':</span>' + opt;
     b.addEventListener('click', function(){
       if (div.dataset.fertig) return;
       div.dataset.fertig = '1';
@@ -624,7 +666,7 @@ function naechsteFrage(){
         }, 1100);
       }
     });
-    div.appendChild(b);
+    zeile.appendChild(b);
   });
   ql.appendChild(div);
 }
