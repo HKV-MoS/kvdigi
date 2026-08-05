@@ -141,6 +141,7 @@ footer{ text-align:center; padding:18px 12px 26px; }
   <div class="tabs" role="tablist">
     <button class="tab an" data-tab="begriffe" role="tab">🪜 Die Begriffe</button>
     <button class="tab" data-tab="faelle" role="tab">⚖️ Fallbeispiele</button>
+    <button class="tab" data-tab="ethik" role="tab">🧭 Ethik &amp; Verantwortung</button>
     <button class="tab" data-tab="quiz" role="tab">❓ Quiz</button>
   </div>
 
@@ -216,9 +217,50 @@ footer{ text-align:center; padding:18px 12px 26px; }
   <!-- ================= FAELLE ================= -->
   <section class="seite" id="seite-faelle">
     <div class="card">
-      <h2>Entscheiden Sie: Gilt das Geschäft?</h2>
-      <p style="margin-top:0;color:var(--muted);font-size:13.5px">Sechs Situationen aus dem Alltag – zuerst selbst urteilen, dann die Auflösung lesen.</p>
+      <h2>Entscheiden Sie selbst</h2>
+      <p style="margin-top:0;color:var(--muted);font-size:13.5px">Je zehn Situationen pro Stufe – zuerst selbst urteilen, dann die Auflösung lesen.</p>
+      <div class="antworten" id="levelChips" style="margin-bottom:14px">
+        <button type="button" data-level="einfach" class="richtig" style="border-color:var(--petrol)">🟢 Einfach</button>
+        <button type="button" data-level="mittel">🟡 Mittel</button>
+        <button type="button" data-level="schwierig">🔴 Schwierig</button>
+      </div>
       <div id="faelleListe"></div>
+    </div>
+  </section>
+
+  <!-- ================= ETHIK ================= -->
+  <section class="seite" id="seite-ethik">
+    <div class="card">
+      <h2>Die Behauptung</h2>
+      <p style="font-size:16px"><i>«FiaZ ist doch nicht so schlimm – ich war betrunken, also gar nicht urteilsfähig. Dann kann ich ja nichts dafür.»</i></p>
+      <div class="frage" style="font-weight:700;color:var(--tief);margin:8px 0">Stimmt das?</div>
+      <div class="antworten" id="ethikAntworten">
+        <button type="button" data-w="ja">Stimmt – ohne Urteilsfähigkeit keine Verantwortung</button>
+        <button type="button" data-w="nein">Stimmt nicht</button>
+      </div>
+      <div class="aufloesung" id="ethikAufloesung">
+        <b class="nein">✘ Stimmt nicht – im Gegenteil.</b> Die Urteilsunfähigkeit schützt nur dort, wo man sie <b>nicht selbst verschuldet</b> hat. Wer sich betrinkt, hat die entscheidende Wahl <b>vorher</b> getroffen – nüchtern und voll urteilsfähig.
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Drei Ebenen der Verantwortung</h2>
+      <h3>1. Vertragsrecht <span class="gesetz">ZGB Art. 18</span></h3>
+      <p>Nur hier schützt die Urteilsunfähigkeit: Wer im Vollrausch einen Vertrag unterschreibt, ist daran nicht gebunden.</p>
+      <h3>2. Haftung für Schäden <span class="gesetz">OR Art. 54 Abs. 2</span></h3>
+      <p>Wer sich <b>vorübergehend selbst der Urteilsfähigkeit beraubt</b> (z.&nbsp;B. durch Alkohol oder Drogen), haftet für den in diesem Zustand angerichteten Schaden – ausser er beweist, dass er ohne eigenes Verschulden in den Zustand geriet.</p>
+      <h3>3. Strafrecht <span class="gesetz">StGB Art. 19 Abs. 4 · SVG Art. 91</span></h3>
+      <p>Schuldunfähigkeit entlastet <b>nicht</b>, wenn man sie selbst herbeigeführt hat und die Tat voraussehen konnte – die Juristen nennen das <i>actio libera in causa</i>: die Handlung war «frei in ihrer Ursache», nämlich beim Entscheid zu trinken. Und beim <b>FiaZ</b> ist die Trunkenheit nicht die Entschuldigung, sondern <b>der Straftatbestand selbst</b>: Fahren in fahrunfähigem Zustand (SVG Art. 91) – Busse bis Freiheitsstrafe, Ausweisentzug inklusive.</p>
+      <p class="merk">💡 <b>Merksatz:</b> Die Verantwortung fällt nicht am Steuer – sie fällt beim ersten Glas. Das Recht rechnet dir die nüchterne Entscheidung zu, nicht den betrunkenen Moment.</p>
+    </div>
+
+    <div class="card">
+      <h2>Zum Diskutieren</h2>
+      <ul style="margin:6px 0 4px 18px">
+        <li style="margin-bottom:8px">Wo genau beginnt die Verantwortung an einem Festabend – beim ersten Glas, beim Autoschlüssel, beim Losfahren? Begründen Sie.</li>
+        <li style="margin-bottom:8px">Ist es gerecht, dass dieselbe Urteilsunfähigkeit beim Vertrag schützt, bei der Autofahrt aber nicht? Was wäre die Alternative – und was würde sie für die Opfer bedeuten?</li>
+        <li>Ihre Kollegin will nach zwei Bier noch fahren und sagt: «Ich merke nichts.» Was sagen – und was tun Sie?</li>
+      </ul>
     </div>
   </section>
 
@@ -301,52 +343,159 @@ document.querySelectorAll('.stufe').forEach(function(st){
 });
 zeigeBegriff('recht');
 
-/* ---------- Fallbeispiele ---------- */
-var FAELLE = [
-  { s: 'Lea (16, Lernende) kauft von ihrem eigenen Lohn ein Occasions-Velo für CHF 300.–.',
-    gilt: true,
-    a: 'Über den <b>eigenen Arbeitserwerb</b> darf eine urteilsfähige minderjährige Person selbst verfügen (ZGB Art. 323). Der Kauf ist gültig – auch ohne Zustimmung der Eltern.' },
-  { s: 'Tim (15) unterschreibt im Laden ein Handy-Abo über 24 Monate für CHF 45.– pro Monat.',
-    gilt: false,
-    a: 'Ein Dauervertrag mit erheblichen Kosten ist <b>kein geringfügiges Alltagsgeschäft</b>. Ohne Zustimmung der gesetzlichen Vertretung ist der Vertrag <b>schwebend unwirksam</b> – die Eltern können ihn genehmigen oder ablehnen (ZGB Art. 19).' },
-  { s: 'Die Grossmutter schenkt Nino (10) zum Geburtstag CHF 50.–.',
-    gilt: true,
-    a: 'Geschenke annehmen ist ein <b>unentgeltlicher Vorteil</b> – das dürfen urteilsfähige Minderjährige ohne Zustimmung (ZGB Art. 19 Abs. 2).' },
-  { s: 'Ein stark betrunkener Gast (35) verschenkt seine Luxusuhr an den Barkeeper.',
-    gilt: false,
-    a: 'Im schweren Rausch fehlt die <b>Urteilsfähigkeit</b> (ZGB Art. 16). Wer urteilsunfähig handelt, kann keine gültigen Geschäfte schliessen (ZGB Art. 18) – die Schenkung ist unwirksam.' },
+/* ---------- Fallbeispiele: drei Stufen ---------- */
+var FAELLE = {
+einfach: [
   { s: 'Ein sechs Monate altes Baby erbt von seinem Götti ein Ferienhaus.',
-    gilt: true,
-    a: 'Erben setzt nur <b>Rechtsfähigkeit</b> voraus – und die hat jeder Mensch ab Geburt (ZGB Art. 11). Verwalten muss das Haus die gesetzliche Vertretung.' },
-  { s: 'Sara (17) will ihren Lehrvertrag alleine unterschreiben.',
-    gilt: false,
-    a: 'Der Lehrvertrag mit einer minderjährigen Person braucht die <b>Zustimmung der gesetzlichen Vertretung</b> (OR Art. 344a). Sara unterschreibt mit – aber die Eltern müssen ebenfalls zustimmen.' }
-];
+    f: 'Ist das möglich?', ja: 'Ja', nein: 'Nein', r: 'ja',
+    a: 'Erben setzt nur <b>Rechtsfähigkeit</b> voraus – die hat jeder Mensch ab Geburt (ZGB Art. 11). Verwalten muss das Haus die gesetzliche Vertretung.' },
+  { s: 'Die Grossmutter schenkt Nino (10) zum Geburtstag CHF 50.–.',
+    f: 'Darf Nino das Geld annehmen?', ja: 'Ja', nein: 'Nein', r: 'ja',
+    a: 'Geschenke annehmen ist ein <b>unentgeltlicher Vorteil</b> – das dürfen urteilsfähige Minderjährige ohne Zustimmung (ZGB Art. 19 Abs. 2).' },
+  { s: 'Timo (13) kauft am Kiosk ein Sandwich für CHF 6.50.',
+    f: 'Gilt der Kauf?', ja: 'Ja, gültig', nein: 'Nein', r: 'ja',
+    a: 'Ein <b>geringfügiges Alltagsgeschäft</b> – dafür braucht es keine Zustimmung der Eltern (ZGB Art. 19 Abs. 2).' },
+  { s: 'Ein stark betrunkener Gast (35) verschenkt seine Luxusuhr an den Barkeeper.',
+    f: 'Gilt die Schenkung?', ja: 'Ja, gültig', nein: 'Nein', r: 'nein',
+    a: 'Im schweren Rausch fehlt die <b>Urteilsfähigkeit</b> (ZGB Art. 16) – die Handlung ist ohne rechtliche Wirkung (ZGB Art. 18).' },
+  { s: 'Lara (19) least einen Motorroller für CHF 180.– pro Monat.',
+    f: 'Gilt der Vertrag?', ja: 'Ja, gültig', nein: 'Nein', r: 'ja',
+    a: 'Lara ist <b>volljährig und urteilsfähig</b> – also voll handlungsfähig (ZGB Art. 13). Ob der Vertrag klug ist, ist eine andere Frage.' },
+  { s: 'Ben (15) unterschreibt allein den Kauf eines E-Bikes für CHF 2\'400.–.',
+    f: 'Gilt der Kauf?', ja: 'Ja, gültig', nein: 'Nur mit Zustimmung', r: 'nein',
+    a: 'Kein Alltagsgeschäft, kein eigener Lohn: Ohne <b>Zustimmung der gesetzlichen Vertretung</b> ist der Vertrag schwebend unwirksam (ZGB Art. 19).' },
+  { s: 'Eine geistig fitte 90-Jährige verkauft ihr Auto.',
+    f: 'Gilt der Verkauf?', ja: 'Ja, gültig', nein: 'Nein', r: 'ja',
+    a: 'Hohes Alter allein ändert nichts: Sie ist volljährig und urteilsfähig – <b>voll handlungsfähig</b>.' },
+  { s: 'Ein Kleinkind (3) «verkauft» sein Spielzeugauto an das Nachbarskind.',
+    f: 'Gilt der Verkauf?', ja: 'Ja, gültig', nein: 'Nein', r: 'nein',
+    a: 'Ein Dreijähriges ist für ein solches Geschäft <b>urteilsunfähig</b> – seine Handlungen bleiben ohne rechtliche Wirkung (ZGB Art. 18).' },
+  { s: 'Mia (16) löst den gratis Kino-Gutschein ein, den sie an einem Wettbewerb gewonnen hat.',
+    f: 'Darf sie das ohne Eltern?', ja: 'Ja', nein: 'Nein', r: 'ja',
+    a: 'Ein <b>unentgeltlicher Vorteil</b> – Annahme ohne Zustimmung erlaubt (ZGB Art. 19 Abs. 2).' },
+  { s: 'Frau Steiner will ihr Vermögen ihrem Hund «vererben».',
+    f: 'Kann der Hund erben?', ja: 'Ja', nein: 'Nein', r: 'nein',
+    a: 'Nur <b>Menschen</b> (und juristische Personen) sind rechtsfähig – ein Tier kann nicht erben. Möglich ist nur eine Auflage an Erben, für das Tier zu sorgen.' }
+],
+mittel: [
+  { s: 'Lea (16, Lernende) kauft von ihrem eigenen Lohn ein Occasions-Velo für CHF 300.–.',
+    f: 'Gilt der Kauf?', ja: 'Ja, gültig', nein: 'Nur mit Zustimmung', r: 'ja',
+    a: 'Über den <b>eigenen Arbeitserwerb</b> darf eine urteilsfähige minderjährige Person selbst verfügen (ZGB Art. 323).' },
+  { s: 'Tim (15) unterschreibt ein Handy-Abo über 24 Monate für CHF 45.– pro Monat.',
+    f: 'Gilt der Vertrag?', ja: 'Ja, gültig', nein: 'Nur mit Zustimmung', r: 'nein',
+    a: 'Ein Dauervertrag mit erheblichen Kosten ist kein Alltagsgeschäft: <b>schwebend unwirksam</b>, bis die Eltern zustimmen oder ablehnen (ZGB Art. 19).' },
+  { s: 'Sara (17) will ihren Lehrvertrag ganz allein unterschreiben.',
+    f: 'Reicht ihre Unterschrift?', ja: 'Ja', nein: 'Nein', r: 'nein',
+    a: 'Der Lehrvertrag Minderjähriger braucht die <b>Zustimmung der gesetzlichen Vertretung</b> (OR Art. 344a). Sara unterschreibt mit – die Eltern auch.' },
+  { s: 'Noah (17) zahlt seinen Lehrlingslohn auf sein Jugendkonto ein und hebt davon ab.',
+    f: 'Darf er über das Konto selbst verfügen?', ja: 'Ja', nein: 'Nein', r: 'ja',
+    a: 'Der <b>eigene Arbeitserwerb</b> steht unter seiner Verwaltung und Nutzung (ZGB Art. 323) – das Lohnkonto gehört dazu.' },
+  { s: 'Elif (16) will aus der Kirche austreten. Ihre Eltern sind dagegen.',
+    f: 'Kann sie es trotzdem?', ja: 'Ja', nein: 'Nein', r: 'ja',
+    a: 'Ab dem <b>16. Altersjahr</b> entscheidet man selbst über sein religiöses Bekenntnis (ZGB Art. 303 Abs. 3) – ein <b>höchstpersönliches Recht</b>.' },
+  { s: 'Jan (14) bestellt online Sneakers für CHF 180.– auf Rechnung.',
+    f: 'Gilt der Kauf?', ja: 'Ja, gültig', nein: 'Nur mit Zustimmung', r: 'nein',
+    a: 'CHF 180.– sind für einen 14-Jährigen <b>kein geringfügiges Alltagsgeschäft</b>: schwebend unwirksam ohne Zustimmung. Der Shop trägt das Risiko.' },
+  { s: 'Tims Eltern genehmigen das Handy-Abo aus Fall 2 nachträglich per Mail an den Anbieter.',
+    f: 'Ist der Vertrag jetzt wirksam?', ja: 'Ja', nein: 'Nein', r: 'ja',
+    a: 'Die <b>nachträgliche Genehmigung</b> heilt den schwebend unwirksamen Vertrag – er gilt ab Abschluss.' },
+  { s: 'Luca (17) verkauft die teure Gitarre, die ihm die Eltern geschenkt haben, für CHF 200.–.',
+    f: 'Gilt der Verkauf ohne Zustimmung?', ja: 'Ja', nein: 'Nein', r: 'nein',
+    a: 'Die Gitarre gehört zwar Luca, aber sein Vermögen <b>verwalten die Eltern</b> (ZGB Art. 318). Kein Arbeitserwerb, kein Alltagsgeschäft – Zustimmung nötig.' },
+  { s: 'Nora (16) kauft mit ihrem Taschengeld ein Konzertticket für CHF 60.–.',
+    f: 'Gilt der Kauf?', ja: 'Ja, gültig', nein: 'Nur mit Zustimmung', r: 'ja',
+    a: '<b>Taschengeld</b> ist zur freien Verfügung überlassen – darüber darf sie selbst entscheiden (ZGB Art. 19 Abs. 2 bzw. Art. 323).' },
+  { s: 'Herr B. steht unter Mitwirkungsbeistandschaft; Mietverträge sind davon erfasst. Er unterschreibt allein einen Mietvertrag.',
+    f: 'Gilt der Vertrag?', ja: 'Ja, gültig', nein: 'Nur mit Zustimmung', r: 'nein',
+    a: 'Bei der <b>Mitwirkungsbeistandschaft</b> (ZGB Art. 396) brauchen die bezeichneten Geschäfte die Zustimmung des Beistands – seine Handlungsfähigkeit ist entsprechend eingeschränkt (ZGB Art. 19d).' }
+],
+schwierig: [
+  { s: 'Ein Mann trinkt sich an einem Fest gezielt Mut an und zerbeult auf dem Heimweg drei parkierte Autos.',
+    f: 'Haftet er für den Schaden?', ja: 'Ja', nein: 'Nein, er war urteilsunfähig', r: 'ja',
+    a: 'Wer sich <b>selbst vorübergehend der Urteilsfähigkeit beraubt</b>, haftet für den Schaden, ausser er beweist fehlendes Verschulden (OR Art. 54 Abs. 2).' },
+  { s: 'Emre (15, urteilsfähig) besprayt eine Hausfassade. Der Eigentümer verlangt Schadenersatz.',
+    f: 'Muss Emre zahlen?', ja: 'Ja', nein: 'Nein, er ist minderjährig', r: 'ja',
+    a: 'Urteilsfähige handlungsunfähige Personen sind <b>aus unerlaubter Handlung voll ersatzpflichtig</b> (ZGB Art. 19 Abs. 3). Die Handlungsunfähigkeit schützt nur bei Verträgen.' },
+  { s: 'Eine Frau mit fortgeschrittener Demenz unterschreibt in einem klaren Moment einen einfachen, für sie verständlichen Vertrag.',
+    f: 'Kann der Vertrag gültig sein?', ja: 'Ja', nein: 'Nein', r: 'ja',
+    a: 'Die Urteilsfähigkeit wird <b>im Zeitpunkt der Handlung und bezogen auf das Geschäft</b> beurteilt («luzides Intervall»). War sie in diesem Moment urteilsfähig, gilt der Vertrag.' },
+  { s: 'Lina (17) schreibt von Hand ihr Testament, datiert und unterschreibt es korrekt.',
+    f: 'Ist das Testament gültig?', ja: 'Ja', nein: 'Nein', r: 'nein',
+    a: 'Testieren kann nur, wer <b>18 Jahre alt</b> und urteilsfähig ist (ZGB Art. 467). Die Form war perfekt – das Alter fehlt.' },
+  { s: 'Deniz (17½) will heiraten. Beide Elternpaare sind ausdrücklich einverstanden.',
+    f: 'Kann er heiraten?', ja: 'Ja', nein: 'Nein', r: 'nein',
+    a: '<b>Ehefähigkeit</b> verlangt Volljährigkeit (ZGB Art. 94) – die Zustimmung der Eltern kann das Alter nicht ersetzen.' },
+  { s: 'Elia (12) ist beim Kauf eines Games für CHF 30.– klar urteilsfähig.',
+    f: 'Ist er damit automatisch auch für einen Aktienkauf urteilsfähig?', ja: 'Ja', nein: 'Nein', r: 'nein',
+    a: 'Die Urteilsfähigkeit ist <b>relativ</b>: Sie wird für jedes Geschäft einzeln beurteilt (ZGB Art. 16). Fürs Game ja – für Börsengeschäfte fehlt einem 12-Jährigen das Verständnis.' },
+  { s: 'Die Eltern verweigern die Genehmigung von Tims Handy-Abo endgültig. Das Handy wurde schon benutzt.',
+    f: 'Kann der Anbieter auf dem Abo beharren?', ja: 'Ja', nein: 'Nein', r: 'nein',
+    a: 'Ohne Genehmigung ist der Vertrag <b>definitiv unwirksam</b>. Bereits Geleistetes wird zurückabgewickelt – das Risiko trägt, wer mit Minderjährigen ohne Zustimmung abschliesst.' },
+  { s: 'Die Tante schenkt Ayla (16) ein Pferd – samt Stallmiete, Futter- und Tierarztkosten.',
+    f: 'Darf Ayla ohne Eltern annehmen?', ja: 'Ja, ein Geschenk', nein: 'Nein', r: 'nein',
+    a: 'Ein Geschenk mit <b>erheblichen Folgekosten und Pflichten</b> ist kein «bloss unentgeltlicher Vorteil» mehr (ZGB Art. 19 Abs. 2) – hier braucht es die Zustimmung.' },
+  { s: 'Ein urteilsunfähiger, sehr vermögender Mann verletzt einen Passanten. Diesem drohen hohe Kosten.',
+    f: 'Kann ein Gericht ihn trotzdem zahlen lassen?', ja: 'Ja', nein: 'Nein', r: 'ja',
+    a: 'Aus <b>Billigkeit</b> kann das Gericht auch eine urteilsunfähige Person zu Schadenersatz verpflichten (OR Art. 54 Abs. 1) – etwa wenn sie vermögend und das Opfer bedürftig ist.' },
+  { s: 'Micha schloss mit 17 – mit Zustimmung der Eltern – einen Handyvertrag. Mit 18 will er ihn «wegen Minderjährigkeit» loswerden.',
+    f: 'Kommt er so aus dem Vertrag?', ja: 'Ja', nein: 'Nein', r: 'nein',
+    a: 'Mit der <b>Zustimmung der gesetzlichen Vertretung</b> war der Vertrag von Anfang an gültig (ZGB Art. 19) – die Volljährigkeit ändert daran nichts.' }
+]
+};
+var aktivesLevel = 'einfach';
 var fl = document.getElementById('faelleListe');
-FAELLE.forEach(function(f, i){
-  var div = document.createElement('div');
-  div.className = 'fall card';
-  div.style.boxShadow = 'none';
-  div.innerHTML = '<div class="situation"><b>Fall ' + (i+1) + ':</b> ' + f.s + '</div>'
-    + '<div class="frage">Gilt das Geschäft?</div>'
-    + '<div class="antworten"><button type="button" data-w="ja">Ja, gültig</button><button type="button" data-w="nein">Nein / nur mit Zustimmung</button></div>'
-    + '<div class="aufloesung"></div>';
-  var knoepfe = div.querySelectorAll('.antworten button');
-  var auf = div.querySelector('.aufloesung');
+function zeichneFaelle(){
+  fl.innerHTML = '';
+  FAELLE[aktivesLevel].forEach(function(f, i){
+    var div = document.createElement('div');
+    div.className = 'fall card';
+    div.style.boxShadow = 'none';
+    div.innerHTML = '<div class="situation"><b>Fall ' + (i+1) + ':</b> ' + f.s + '</div>'
+      + '<div class="frage">' + f.f + '</div>'
+      + '<div class="antworten"><button type="button" data-w="ja">' + f.ja + '</button><button type="button" data-w="nein">' + f.nein + '</button></div>'
+      + '<div class="aufloesung"></div>';
+    var knoepfe = div.querySelectorAll('.antworten button');
+    var auf = div.querySelector('.aufloesung');
+    knoepfe.forEach(function(k){
+      k.addEventListener('click', function(){
+        if (auf.classList.contains('zeig')) return;
+        var richtig = k.dataset.w === f.r;
+        k.classList.add(richtig ? 'richtig' : 'falsch');
+        knoepfe.forEach(function(k2){
+          if (k2 !== k && k2.dataset.w === f.r) k2.classList.add('richtig');
+        });
+        auf.innerHTML = (f.r === 'ja' ? '<b class="ok">✔ ' : '<b class="nein">✘ ') + (f.r === 'ja' ? f.ja : f.nein) + '.</b> ' + f.a;
+        auf.classList.add('zeig');
+      });
+    });
+    fl.appendChild(div);
+  });
+}
+document.querySelectorAll('#levelChips button').forEach(function(b){
+  b.addEventListener('click', function(){
+    aktivesLevel = b.dataset.level;
+    document.querySelectorAll('#levelChips button').forEach(function(b2){
+      b2.classList.toggle('richtig', b2 === b);
+      b2.style.borderColor = (b2 === b) ? 'var(--petrol)' : '';
+    });
+    zeichneFaelle();
+  });
+});
+zeichneFaelle();
+
+/* ---------- Ethik: Behauptung ---------- */
+(function(){
+  var knoepfe = document.querySelectorAll('#ethikAntworten button');
+  var auf = document.getElementById('ethikAufloesung');
   knoepfe.forEach(function(k){
     k.addEventListener('click', function(){
       if (auf.classList.contains('zeig')) return;
-      var richtig = (k.dataset.w === 'ja') === f.gilt;
-      k.classList.add(richtig ? 'richtig' : 'falsch');
-      knoepfe.forEach(function(k2){
-        if (k2 !== k && ((k2.dataset.w === 'ja') === f.gilt)) k2.classList.add('richtig');
-      });
-      auf.innerHTML = (f.gilt ? '<b class="ok">✔ Gültig.</b> ' : '<b class="nein">✘ Nicht ohne Weiteres gültig.</b> ') + f.a;
+      k.classList.add(k.dataset.w === 'nein' ? 'richtig' : 'falsch');
+      knoepfe.forEach(function(k2){ if(k2.dataset.w === 'nein') k2.classList.add('richtig'); });
       auf.classList.add('zeig');
     });
   });
-  fl.appendChild(div);
-});
+})();
 
 /* ---------- Quiz ---------- */
 var QUIZ = [
