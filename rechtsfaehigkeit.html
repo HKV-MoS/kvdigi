@@ -605,40 +605,41 @@ zeichneFaelle();
 
 /* ---------- Quiz: Fragenleiter mit Rausfallen ---------- */
 var POOL = [
-  { f:'Wer ist in der Schweiz rechtsfähig?', o:['Alle Menschen ab Geburt','Alle ab 18 Jahren','Nur urteilsfähige Personen'], r:0 },
-  { f:'Was braucht es für die volle Handlungsfähigkeit?', o:['Nur Volljährigkeit','Volljährigkeit und Urteilsfähigkeit','Einen Schweizer Pass'], r:1 },
-  { f:'Ab welchem Alter ist man urteilsfähig?', o:['Ab 12 Jahren','Ab 16 Jahren','Es gibt keine feste Altersgrenze'], r:2 },
-  { f:'Eine 16-jährige Lernende will ihren Lohn ausgeben. Was gilt?', o:['Immer Zustimmung der Eltern nötig','Über den eigenen Arbeitserwerb verfügt sie selbst','Der Lehrbetrieb verwaltet den Lohn'], r:1 },
-  { f:'Ein Urteilsunfähiger schliesst einen Vertrag. Der Vertrag ist …', o:['gültig','gültig, wenn schriftlich','grundsätzlich ohne rechtliche Wirkung'], r:2 },
-  { f:'Was dürfen urteilsfähige Minderjährige ohne Zustimmung?', o:['Ein Auto leasen','Ein Geschenk annehmen','Einen Kredit aufnehmen'], r:1 },
-  { f:'Wann endet die Rechtsfähigkeit?', o:['Mit der Pensionierung','Mit dem Tod','Mit einer Beistandschaft'], r:1 },
-  { f:'Tim (15) schliesst ohne Eltern ein 24-Monats-Abo ab. Der Vertrag ist …', o:['sofort gültig','schwebend unwirksam','ein Alltagsgeschäft'], r:1 },
-  { f:'Der Lehrvertrag einer 17-Jährigen braucht …', o:['nur ihre Unterschrift','die Zustimmung der gesetzlichen Vertretung','eine Bewilligung der KESB'], r:1 },
-  { f:'Ab wann entscheidet man selbst über sein religiöses Bekenntnis?', o:['Ab 14 Jahren','Ab 16 Jahren','Ab 18 Jahren'], r:1 },
-  { f:'Ein Testament schreiben kann, wer …', o:['urteilsfähig und 18 ist','urteilsfähig und 16 ist','einen Notar beizieht, egal wie alt'], r:0 },
-  { f:'Deniz (17½) will mit Zustimmung der Eltern heiraten. Geht das?', o:['Ja, mit Elternsegen','Nein – Ehefähigkeit verlangt 18','Ja, mit KESB-Bewilligung'], r:1 },
-  { f:'Wer sich betrinkt und dann Schaden anrichtet, …', o:['haftet, weil selbstverschuldet','haftet nie – er war urteilsunfähig','haftet nur bei Vorsatz'], r:0 },
-  { f:'Beim FiaZ ist die Trunkenheit …', o:['ein Entschuldigungsgrund','der Straftatbestand selbst','nur ein Ordnungsproblem'], r:1 },
-  { f:'Emre (15, urteilsfähig) sprayt eine Fassade. Für den Schaden …', o:['haften nur die Eltern','haftet er selbst voll','haftet niemand'], r:1 },
-  { f:'«Urteilsfähige handlungsunfähige Personen» – so steht es in …', o:['ZGB Art. 19','OR Art. 344a','StGB Art. 19'], r:0 },
-  { f:'Das Vermögen Minderjähriger verwalten grundsätzlich …', o:['sie selbst','die Eltern','die Schule'], r:1 },
-  { f:'Über Taschengeld dürfen urteilsfähige Minderjährige …', o:['frei verfügen','nur mit Quittung verfügen','gar nicht verfügen'], r:0 },
-  { f:'Timo (13) kauft ein Sandwich. Der Kauf ist …', o:['schwebend unwirksam','als Alltagsgeschäft gültig','nichtig'], r:1 },
-  { f:'Ein Baby kann erben, weil es …', o:['handlungsfähig ist','urteilsfähig ist','rechtsfähig ist'], r:2 },
-  { f:'Eine Frau mit Demenz unterschreibt im klaren Moment. Der Vertrag …', o:['ist immer ungültig','kann gültig sein – der Zeitpunkt zählt','gilt nur mit Arztzeugnis'], r:1 },
-  { f:'Die Urteilsfähigkeit wird beurteilt …', o:['einmal fürs ganze Leben','für jedes Geschäft einzeln','nur vom Gericht'], r:1 },
-  { f:'Die Eltern verweigern die Genehmigung endgültig. Der Vertrag …', o:['gilt trotzdem','ist definitiv unwirksam','wandelt sich in Miete'], r:1 },
-  { f:'Genehmigen die Eltern nachträglich, gilt der Vertrag …', o:['ab der Genehmigung','von Anfang an','erst ab 18'], r:1 },
-  { f:'Mitwirkungsbeistandschaft (ZGB 396): bezeichnete Geschäfte brauchen …', o:['die Zustimmung des Beistands','einen Gerichtsentscheid','gar nichts'], r:0 },
-  { f:'Die «Einschränkung der Handlungsfähigkeit» durch Erwachsenenschutz regelt …', o:['ZGB Art. 19d','OR Art. 54','ZGB Art. 11'], r:0 },
-  { f:'Ein geschenktes Pferd samt Folgekosten dürfen Minderjährige …', o:['immer annehmen – ein Geschenk','nur mit Zustimmung annehmen','nie annehmen'], r:1 },
-  { f:'Höchstpersönliche Rechte üben urteilsfähige Minderjährige …', o:['selbst aus','über die Eltern aus','über die KESB aus'], r:0 },
-  { f:'Kann ein Gericht einen Urteilsunfähigen aus Billigkeit zahlen lassen?', o:['Nie','Ja, z. B. wenn er vermögend ist','Nur bei Vorsatz'], r:1 },
-  { f:'Kann ein Hund erben?', o:['Ja, per Testament','Nein – Tiere sind nicht rechtsfähig','Ja, mit KESB-Zustimmung'], r:1 }
+  { f:'Wer ist in der Schweiz rechtsfähig?', o:['Alle Menschen ab Geburt','Alle ab 18 Jahren','Nur urteilsfähige Personen','Alle ab dem 7. Lebensjahr'], r:0 },
+  { f:'Was braucht es für die volle Handlungsfähigkeit?', o:['Nur Volljährigkeit','Volljährigkeit und Urteilsfähigkeit','Einen Schweizer Pass','Urteilsfähigkeit allein'], r:1 },
+  { f:'Ab welchem Alter ist man urteilsfähig?', o:['Ab 12 Jahren','Ab 16 Jahren','Es gibt keine feste Altersgrenze','Ab 18 Jahren'], r:2 },
+  { f:'Eine 16-jährige Lernende will ihren Lohn ausgeben. Was gilt?', o:['Immer Zustimmung der Eltern nötig','Über den eigenen Arbeitserwerb verfügt sie selbst','Der Lehrbetrieb verwaltet den Lohn','Nur mit Einwilligung der KESB'], r:1 },
+  { f:'Ein Urteilsunfähiger schliesst einen Vertrag. Der Vertrag ist …', o:['gültig','gültig, wenn schriftlich','grundsätzlich ohne rechtliche Wirkung','gültig nach 30 Tagen'], r:2 },
+  { f:'Was dürfen urteilsfähige Minderjährige ohne Zustimmung?', o:['Ein Auto leasen','Ein Geschenk annehmen','Einen Kredit aufnehmen','Ein Handy-Abo abschliessen'], r:1 },
+  { f:'Wann endet die Rechtsfähigkeit?', o:['Mit der Pensionierung','Mit dem Tod','Mit einer Beistandschaft','Mit dem Verlust der Urteilsfähigkeit'], r:1 },
+  { f:'Tim (15) schliesst ohne Eltern ein 24-Monats-Abo ab. Der Vertrag ist …', o:['sofort gültig','schwebend unwirksam','ein Alltagsgeschäft','gültig, weil er urteilsfähig ist'], r:1 },
+  { f:'Der Lehrvertrag einer 17-Jährigen braucht …', o:['nur ihre Unterschrift','die Zustimmung der gesetzlichen Vertretung','eine Bewilligung der KESB','nur die Unterschrift des Lehrbetriebs'], r:1 },
+  { f:'Ab wann entscheidet man selbst über sein religiöses Bekenntnis?', o:['Ab 14 Jahren','Ab 16 Jahren','Ab 18 Jahren','Ab 12 Jahren'], r:1 },
+  { f:'Ein Testament schreiben kann, wer …', o:['urteilsfähig und 18 ist','urteilsfähig und 16 ist','einen Notar beizieht, egal wie alt','verheiratet ist, egal wie alt'], r:0 },
+  { f:'Deniz (17½) will mit Zustimmung der Eltern heiraten. Geht das?', o:['Ja, mit Elternsegen','Nein – Ehefähigkeit verlangt 18','Ja, mit KESB-Bewilligung','Ja, ab 16 mit Gerichtsentscheid'], r:1 },
+  { f:'Wer sich betrinkt und dann Schaden anrichtet, …', o:['haftet, weil selbstverschuldet','haftet nie – er war urteilsunfähig','haftet nur bei Vorsatz','haftet nur, wenn er versichert ist'], r:0 },
+  { f:'Beim FiaZ ist die Trunkenheit …', o:['ein Entschuldigungsgrund','der Straftatbestand selbst','nur ein Ordnungsproblem','Privatsache, solange nichts passiert'], r:1 },
+  { f:'Emre (15, urteilsfähig) sprayt eine Fassade. Für den Schaden …', o:['haften nur die Eltern','haftet er selbst voll','haftet niemand','zahlt immer die Haftpflicht der Eltern'], r:1 },
+  { f:'«Urteilsfähige handlungsunfähige Personen» – so steht es in …', o:['ZGB Art. 19','OR Art. 344a','StGB Art. 19','ZGB Art. 11'], r:0 },
+  { f:'Das Vermögen Minderjähriger verwalten grundsätzlich …', o:['sie selbst','die Eltern','die Schule','die KESB'], r:1 },
+  { f:'Über Taschengeld dürfen urteilsfähige Minderjährige …', o:['frei verfügen','nur mit Quittung verfügen','gar nicht verfügen','nur bis CHF 20.– verfügen'], r:0 },
+  { f:'Timo (13) kauft ein Sandwich. Der Kauf ist …', o:['schwebend unwirksam','als Alltagsgeschäft gültig','nichtig','nur mit Quittung gültig'], r:1 },
+  { f:'Ein Baby kann erben, weil es …', o:['handlungsfähig ist','urteilsfähig ist','rechtsfähig ist','von den Eltern vertreten wird'], r:2 },
+  { f:'Eine Frau mit Demenz unterschreibt im klaren Moment. Der Vertrag …', o:['ist immer ungültig','kann gültig sein – der Zeitpunkt zählt','gilt nur mit Arztzeugnis','gilt nur mit Zeugen'], r:1 },
+  { f:'Die Urteilsfähigkeit wird beurteilt …', o:['einmal fürs ganze Leben','für jedes Geschäft einzeln','nur vom Gericht','ab 16 ist sie automatisch da'], r:1 },
+  { f:'Die Eltern verweigern die Genehmigung endgültig. Der Vertrag …', o:['gilt trotzdem','ist definitiv unwirksam','wandelt sich in Miete','bleibt gültig, weil schon geliefert wurde'], r:1 },
+  { f:'Genehmigen die Eltern nachträglich, gilt der Vertrag …', o:['ab der Genehmigung','von Anfang an','erst ab 18','nur, wenn die KESB zustimmt'], r:1 },
+  { f:'Mitwirkungsbeistandschaft (ZGB 396): bezeichnete Geschäfte brauchen …', o:['die Zustimmung des Beistands','einen Gerichtsentscheid','gar nichts','die Zustimmung beider Eltern'], r:0 },
+  { f:'Die «Einschränkung der Handlungsfähigkeit» durch Erwachsenenschutz regelt …', o:['ZGB Art. 19d','OR Art. 54','ZGB Art. 11','SVG Art. 91'], r:0 },
+  { f:'Ein geschenktes Pferd samt Folgekosten dürfen Minderjährige …', o:['immer annehmen – ein Geschenk','nur mit Zustimmung annehmen','nie annehmen','annehmen, wenn es versichert ist'], r:1 },
+  { f:'Höchstpersönliche Rechte üben urteilsfähige Minderjährige …', o:['selbst aus','über die Eltern aus','über die KESB aus','gar nicht aus'], r:0 },
+  { f:'Kann ein Gericht einen Urteilsunfähigen aus Billigkeit zahlen lassen?', o:['Nie','Ja, z. B. wenn er vermögend ist','Nur bei Vorsatz','Nur seine Erben nach dem Tod'], r:1 },
+  { f:'Kann ein Hund erben?', o:['Ja, per Testament','Nein – Tiere sind nicht rechtsfähig','Ja, mit KESB-Zustimmung','Nur Hunde mit Stammbaum'], r:1 }
 ];
 var ZIEL = 10;
 var runde = [], stufe = 0, best = 0;
 var joker = { fifty:false, tel:false, pub:false };
+var anzeige = { opts:[], korrekt:0 };
 try{ best = parseInt(sessionStorage.getItem('recht_quiz_best')||'0',10)||0; }catch(e){}
 var ql = document.getElementById('quizListe');
 var leiter = document.getElementById('qLeiter');
@@ -687,7 +688,12 @@ function nutzeJoker(name){
   verbrauche(name);
   if (name === 'fifty'){
     var falsche = [];
-    opts.forEach(function(b, j){ if (j !== q.r && b.style.visibility !== 'hidden') falsche.push(j); });
+    opts.forEach(function(b, j){ if (j !== anzeige.korrekt && b.style.visibility !== 'hidden') falsche.push(j); });
+    // bei vier Antworten verschwinden zwei falsche
+    if (falsche.length > 2){
+      var weg2 = falsche.splice(Math.floor(Math.random()*falsche.length), 1)[0];
+      opts[weg2].style.visibility = 'hidden';
+    }
     var weg = falsche[Math.floor(Math.random()*falsche.length)];
     opts[weg].style.visibility = 'hidden';
     jokerAusgabe.innerHTML = '<b style="color:#F3CE8E">50:50:</b> Eine falsche Antwort ist gestrichen.';
@@ -696,8 +702,8 @@ function nutzeJoker(name){
   if (name === 'tel'){
     var sichtbar = [];
     opts.forEach(function(b, j){ if (b.style.visibility !== 'hidden') sichtbar.push(j); });
-    var tipp = (Math.random() < 0.75) ? q.r : sichtbar.filter(function(j){ return j !== q.r; })[0];
-    if (tipp === undefined) tipp = q.r;
+    var tipp = (Math.random() < 0.75) ? anzeige.korrekt : sichtbar.filter(function(j){ return j !== anzeige.korrekt; })[0];
+    if (tipp === undefined) tipp = anzeige.korrekt;
     var buchst = ['A','B','C','D'][tipp];
     jokerAusgabe.innerHTML = '<b style="color:#F3CE8E">☎ Dein Telefonjoker:</b> «Hmm … ich bin ziemlich sicher, es ist <b>' + buchst + '</b>. Aber nagle mich nicht fest!»'
       + '<div class="prozent" style="margin-top:4px">Telefonjoker liegen meistens richtig – aber nicht immer.</div>';
@@ -708,9 +714,9 @@ function nutzeJoker(name){
     opts.forEach(function(b, j){ if (b.style.visibility !== 'hidden') sicht.push(j); });
     var korrekt = 45 + Math.floor(Math.random()*31);
     var rest = 100 - korrekt;
-    var andere = sicht.filter(function(j){ return j !== q.r; });
+    var andere = sicht.filter(function(j){ return j !== anzeige.korrekt; });
     var werte = {};
-    werte[q.r] = korrekt;
+    werte[anzeige.korrekt] = korrekt;
     andere.forEach(function(j, k){
       if (k === andere.length-1){ werte[j] = rest; }
       else { var t = Math.floor(Math.random()*rest); werte[j] = t; rest -= t; }
@@ -735,20 +741,22 @@ function merkeBest(){
 function naechsteFrage(){
   var q = runde[stufe];
   jokerZu();
+  anzeige.opts = mischen(q.o.map(function(t, j){ return { t:t, ok: j === q.r }; }));
+  anzeige.korrekt = anzeige.opts.findIndex(function(o){ return o.ok; });
   ql.innerHTML = '';
   var div = document.createElement('div');
   div.innerHTML = '<div class="qfrage raute">Frage ' + (stufe+1) + ' von ' + ZIEL + ': ' + q.f + '</div>';
   var zeile = document.createElement('div');
   zeile.className = 'qoptzeile';
   div.appendChild(zeile);
-  q.o.forEach(function(opt, j){
+  anzeige.opts.forEach(function(opt, j){
     var b = document.createElement('button');
     b.type='button'; b.className='qopt';
-    b.innerHTML = '<span class="buchst">' + ['A','B','C','D'][j] + ':</span>' + opt;
+    b.innerHTML = '<span class="buchst">' + ['A','B','C','D'][j] + ':</span>' + opt.t;
     b.addEventListener('click', function(){
       if (div.dataset.fertig) return;
       div.dataset.fertig = '1';
-      if (j === q.r){
+      if (j === anzeige.korrekt){
         b.classList.add('richtig');
         stufe++;
         merkeBest();
@@ -767,10 +775,10 @@ function naechsteFrage(){
         }
       } else {
         b.classList.add('falsch');
-        div.querySelectorAll('.qopt')[q.r].classList.add('richtig');
+        div.querySelectorAll('.qopt')[anzeige.korrekt].classList.add('richtig');
         setTimeout(function(){
           ql.innerHTML = '<div class="q-ende raus"><h3>Ausgeschieden bei Frage ' + (stufe+1) + '</h3>'
-            + '<p>Richtig gewesen wäre: <b>' + q.o[q.r] + '</b></p>'
+            + '<p>Richtig gewesen wäre: <b>' + q.o[q.r] + '</b> (' + ['A','B','C','D'][anzeige.korrekt] + ')</p>'
             + '<p>Erreichte Stufe: <b>' + stufe + ' von ' + ZIEL + '</b>' + (best>0 ? ' · Bestmarke: ' + best : '') + '</p>'
             + '<button type="button" class="q-neustart" id="qNochmal">Neue Runde – neue Fragen</button></div>';
           document.getElementById('qNochmal').addEventListener('click', neueRunde);
