@@ -50,7 +50,7 @@ h3{ font-size:15px; margin:16px 0 6px; color:var(--petrol); }
 }
 
 /* Treppe */
-.treppe{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; align-items:end; margin:10px 0 4px; }
+.treppe{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; align-items:end; margin:10px 0 4px; }
 .stufe{
   border:2px solid var(--line); border-radius:12px; background:#fff; cursor:pointer;
   padding:14px 14px 12px; text-align:left; font:inherit; transition:all .15s;
@@ -60,9 +60,10 @@ h3{ font-size:15px; margin:16px 0 6px; color:var(--petrol); }
 .stufe .ico{ font-size:26px; display:block; margin-bottom:6px; }
 .stufe b{ display:block; font-size:15px; color:var(--tief); }
 .stufe small{ color:var(--muted); }
-.stufe:nth-child(1){ min-height:120px; }
-.stufe:nth-child(2){ min-height:150px; }
-.stufe:nth-child(3){ min-height:180px; }
+.stufe:nth-child(1){ min-height:112px; }
+.stufe:nth-child(2){ min-height:138px; }
+.stufe:nth-child(3){ min-height:164px; }
+.stufe:nth-child(4){ min-height:190px; }
 .erklaer{ min-height:150px; }
 .erklaer .lead{ color:var(--muted); font-size:13.5px; margin-top:0; }
 .merk{
@@ -138,7 +139,7 @@ footer{ text-align:center; padding:18px 12px 26px; }
 <div class="wrap">
 
   <div class="tabs" role="tablist">
-    <button class="tab an" data-tab="begriffe" role="tab">🪜 Die drei Begriffe</button>
+    <button class="tab an" data-tab="begriffe" role="tab">🪜 Die Begriffe</button>
     <button class="tab" data-tab="faelle" role="tab">⚖️ Fallbeispiele</button>
     <button class="tab" data-tab="quiz" role="tab">❓ Quiz</button>
   </div>
@@ -146,7 +147,7 @@ footer{ text-align:center; padding:18px 12px 26px; }
   <!-- ================= BEGRIFFE ================= -->
   <section class="seite an" id="seite-begriffe">
     <div class="card">
-      <h2>Die Treppe: Klicken Sie die drei Stufen an</h2>
+      <h2>Die Treppe: Klicken Sie die vier Stufen an</h2>
       <div class="treppe">
         <button class="stufe an" data-b="recht" type="button">
           <span class="ico">🫀</span>
@@ -158,9 +159,14 @@ footer{ text-align:center; padding:18px 12px 26px; }
           <b>Urteilsfähigkeit</b>
           <small>vernünftig handeln können</small>
         </button>
+        <button class="stufe" data-b="beschraenkt" type="button">
+          <span class="ico">🧑‍🎓</span>
+          <b>beschränkte Handlungsfähigkeit</b>
+          <small>urteilsfähig, aber minderjährig</small>
+        </button>
         <button class="stufe" data-b="handlung" type="button">
           <span class="ico">✍️</span>
-          <b>Handlungsfähigkeit</b>
+          <b>volle Handlungsfähigkeit</b>
           <small>selbst Verträge schliessen</small>
         </button>
       </div>
@@ -256,8 +262,22 @@ var BEGRIFFE = {
       + '<p>Sie kann fehlen wegen <b>Kindesalter</b>, <b>geistiger Behinderung</b>, <b>psychischer Störung</b>, <b>Rausch</b> oder ähnlichen Zuständen.</p>'
       + '<p>Wichtig: Es gibt <b>keine feste Altersgrenze</b>. Die Urteilsfähigkeit wird <b>für jedes Geschäft einzeln</b> beurteilt: Ein Zehnjähriger ist urteilsfähig genug, um ein Sandwich zu kaufen – aber nicht, um eine Hypothek zu verstehen.</p>'
   },
+  beschraenkt: {
+    titel: 'Beschränkte Handlungsfähigkeit', gesetz: 'ZGB Art. 19',
+    text: '<p class="lead">Für alle, die urteilsfähig, aber noch nicht volljährig sind – also für die meisten Lernenden.</p>'
+      + '<p><b>Grundsatz:</b> Verträge gelten nur mit <b>Zustimmung der gesetzlichen Vertretung</b> (meist die Eltern). Bis zur Zustimmung ist der Vertrag <b>schwebend unwirksam</b> – die Eltern können ihn genehmigen oder ablehnen.</p>'
+      + '<p><b>Ohne Zustimmung erlaubt:</b></p>'
+      + '<ul style="margin:4px 0 8px 18px">'
+      + '<li><b>Unentgeltliche Vorteile</b> annehmen – z.&nbsp;B. Geschenke (ZGB Art. 19 Abs. 2)</li>'
+      + '<li><b>Geringfügige Alltagsgeschäfte</b> – z.&nbsp;B. das Sandwich am Kiosk</li>'
+      + '<li>Über <b>eigenen Lohn und Taschengeld</b> verfügen (ZGB Art. 323)</li>'
+      + '<li><b>Höchstpersönliche Rechte</b> ausüben (ZGB Art. 19c)</li>'
+      + '</ul>'
+      + '<p>Dasselbe gilt für volljährige Personen unter umfassender Beistandschaft.</p>'
+      + '<p style="font-size:13px;color:var(--muted)"><b>Begriffs-Hinweis:</b> Je nach Lehrmittel heisst diese Gruppe auch <b>«beschränkt handlungsunfähig»</b> – gemeint ist dasselbe. Das ZGB selbst spricht von den «urteilsfähigen handlungsunfähigen Personen» (Randtitel zu Art. 19).</p>'
+  },
   handlung: {
-    titel: 'Handlungsfähigkeit', gesetz: 'ZGB Art. 12–14',
+    titel: 'Volle Handlungsfähigkeit', gesetz: 'ZGB Art. 12–14',
     text: '<p class="lead">Die Fähigkeit, durch eigenes Handeln Rechte und Pflichten zu begründen – also selbst gültige Verträge zu schliessen.</p>'
       + '<p>Dafür braucht es <b>beides</b>: <b>Volljährigkeit</b> (18 Jahre, ZGB Art. 14) <b>und Urteilsfähigkeit</b> (ZGB Art. 13).</p>'
       + '<p>Wer urteilsfähig, aber minderjährig ist, ist <b>beschränkt handlungsfähig</b> (ZGB Art. 19): Verträge brauchen die Zustimmung der Eltern – ausser bei Geschenken, kleinen Alltagskäufen sowie <b>eigenem Lohn und Taschengeld</b> (ZGB Art. 323).</p>'
