@@ -369,6 +369,16 @@ body{
   .karte:nth-child(11){animation-delay:.76s}
   @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 }
+
+/* ------- Sortiermodus: Kacheln frei anordnen ------- */
+#sortChip{margin-left:auto; border-style:dashed;}
+#sortChip[aria-pressed="true"]{background:var(--ocker); border-color:var(--ocker); color:#fff;}
+@media (hover:none){ #sortChip{display:none} }   /* Touch: kein Drag&Drop */
+.grid.sortieren .karte{cursor:grab; border-style:dashed;}
+.grid.sortieren .karte:active{cursor:grabbing;}
+.grid.sortieren .karte.zieht{opacity:.35;}
+.sort-hinweis{display:none; font-size:.8rem; color:var(--grau); margin:-0.4rem 0 1rem;}
+.sort-hinweis.an{display:block;}
 </style>
 </head>
 <body>
@@ -417,7 +427,9 @@ body{
       <button class="chip" type="button" data-filter="oekologie" aria-pressed="false">Ökologie &amp; Mobilität</button>
       <button class="chip" type="button" data-filter="lernen" aria-pressed="false">Lernen &amp; Selbstmanagement</button>
       <button class="chip" type="button" data-filter="rechner" aria-pressed="false">Rechner &amp; Organisation</button>
+      <button class="chip" type="button" id="sortChip" aria-pressed="false" title="Kacheln per Ziehen anordnen">↕ Sortieren</button>
     </div>
+    <p class="sort-hinweis" id="sortHinweis">Kacheln mit der Maus verschieben – die Anordnung bleibt in diesem Browser-Tab erhalten. Zum Öffnen der Tools den Sortiermodus wieder ausschalten.</p>
 
     <div class="grid" id="grid">
 
@@ -650,7 +662,7 @@ body{
 <script>
 (function(){
   'use strict';
-  var chips  = document.querySelectorAll('.chip');
+  var chips  = document.querySelectorAll('.chip[data-filter]');
   var karten = document.querySelectorAll('.karte');
 
   chips.forEach(function(chip){
@@ -725,6 +737,66 @@ body{
   document.addEventListener('keydown', function(e){
     if(e.key === 'Escape' && overlay.classList.contains('offen')) schliessen();
   });
+})();
+
+/* Sortiermodus: Kacheln per Drag & Drop anordnen (Merken pro Tab) */
+(function(){
+  var chip = document.getElementById('sortChip');
+  var grid = document.getElementById('grid');
+  var hinweis = document.getElementById('sortHinweis');
+  if(!chip || !grid) return;
+  var karten = function(){ return Array.prototype.slice.call(grid.querySelectorAll('.karte')); };
+  karten().forEach(function(k, i){
+    k.dataset.key = k.getAttribute('href') || ('karte-' + i);
+  });
+  /* gespeicherte Reihenfolge anwenden */
+  try{
+    var mem = sessionStorage.getItem('kachel_reihenfolge');
+    if(mem){
+      JSON.parse(mem).forEach(function(key){
+        var k = grid.querySelector('.karte[data-key="' + key + '"]');
+        if(k) grid.appendChild(k);
+      });
+    }
+  }catch(e){}
+  function merken(){
+    try{ sessionStorage.setItem('kachel_reihenfolge', JSON.stringify(karten().map(function(k){ return k.dataset.key; }))); }catch(e){}
+  }
+  var an = false, gezogen = null;
+  chip.addEventListener('click', function(){
+    an = !an;
+    chip.setAttribute('aria-pressed', String(an));
+    grid.classList.toggle('sortieren', an);
+    if(hinweis) hinweis.classList.toggle('an', an);
+    karten().forEach(function(k){ k.draggable = an; });
+  });
+  grid.addEventListener('click', function(e){
+    if(an){ e.preventDefault(); }
+  });
+  grid.addEventListener('dragstart', function(e){
+    var k = e.target.closest('.karte');
+    if(!an || !k) return;
+    gezogen = k;
+    k.classList.add('zieht');
+    e.dataTransfer.effectAllowed = 'move';
+    try{ e.dataTransfer.setData('text/plain', k.dataset.key); }catch(err){}
+  });
+  grid.addEventListener('dragend', function(){
+    if(gezogen) gezogen.classList.remove('zieht');
+    gezogen = null;
+    merken();
+  });
+  grid.addEventListener('dragover', function(e){
+    if(!an || !gezogen) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    var ziel = e.target.closest('.karte');
+    if(!ziel || ziel === gezogen) return;
+    var r = ziel.getBoundingClientRect();
+    var davor = (e.clientX - r.left) < r.width / 2;
+    grid.insertBefore(gezogen, davor ? ziel : ziel.nextSibling);
+  });
+  grid.addEventListener('drop', function(e){ if(an) e.preventDefault(); });
 })();
 
 /* Wunschbox: Faehnchen hebt sich beim Drueberfahren */
