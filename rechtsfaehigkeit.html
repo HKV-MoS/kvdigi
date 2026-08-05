@@ -121,8 +121,9 @@ h3{ font-size:15px; margin:16px 0 6px; color:var(--petrol); }
 .b-hinweis{ color:#aab4e8; font-size:13px; text-align:center; margin:0 0 10px; }
 .leiter{ display:flex; gap:6px; flex-wrap:wrap; justify-content:center; margin:0 0 16px; }
 .leiter span{
-  width:32px; height:32px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center;
-  font-weight:800; font-size:12.5px; border:2px solid rgba(170,180,232,.45); color:#aab4e8;
+  height:28px; padding:0 11px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:12px; font-variant-numeric:tabular-nums;
+  border:2px solid rgba(170,180,232,.45); color:#aab4e8;
   background:rgba(6,10,42,.55); transition:all .25s;
 }
 .leiter span.geschafft{ border-color:#3fae62; background:rgba(46,125,79,.4); color:#c9f2d6; }
@@ -158,6 +159,7 @@ h3{ font-size:15px; margin:16px 0 6px; color:var(--petrol); }
 }
 .q-neustart:hover{ background:#fff; }
 .buehne .qstand{ color:#F3CE8E; text-align:center; margin-bottom:0; }
+.q-wert{ text-align:center; color:#F3CE8E; font-weight:800; font-size:15px; margin:0 0 14px; }
 /* Joker */
 .joker-overlay{ position:absolute; top:0; left:0; width:100%; aspect-ratio:3060/1139; pointer-events:none; }
 .joker-overlay button{
@@ -373,6 +375,7 @@ footer{ text-align:center; padding:18px 12px 26px; }
       </div>
       <div class="joker-ausgabe" id="jokerAusgabe"></div>
       <div class="leiter" id="qLeiter"></div>
+      <p class="q-wert" id="qWert"></p>
       <div id="quizListe"></div>
       <p class="qstand" id="qstand"></p>
     </div>
@@ -637,6 +640,8 @@ var POOL = [
   { f:'Kann ein Hund erben?', o:['Ja, per Testament','Nein – Tiere sind nicht rechtsfähig','Ja, mit KESB-Zustimmung','Nur Hunde mit Stammbaum'], r:1 }
 ];
 var ZIEL = 10;
+var BETRAEGE = [100, 200, 300, 500, 1000, 4000, 16000, 64000, 250000, 1000000];
+function geld(n){ return 'CHF ' + String(n).replace(/\B(?=(\d{3})+(?!\d))/g, "'"); }
 var runde = [], stufe = 0, best = 0;
 var joker = { fifty:false, tel:false, pub:false };
 var anzeige = { opts:[], korrekt:0 };
@@ -657,11 +662,14 @@ function zeichneLeiter(){
   leiter.innerHTML = '';
   for (var i=0;i<ZIEL;i++){
     var sp = document.createElement('span');
-    sp.textContent = i+1;
+    sp.textContent = geld(BETRAEGE[i]).replace('CHF ','');
+    sp.title = 'Frage ' + (i+1) + ': ' + geld(BETRAEGE[i]);
     if (i < stufe) sp.className = 'geschafft';
     else if (i === stufe) sp.className = 'aktuell';
     leiter.appendChild(sp);
   }
+  var wert = document.getElementById('qWert');
+  if (wert) wert.textContent = (stufe < ZIEL) ? ('Diese Frage ist ' + geld(BETRAEGE[stufe]) + ' wert') : '';
 }
 function zeigeStand(){
   stand.textContent = best > 0 ? ('Bestmarke in dieser Sitzung: ' + best + (best>=ZIEL?' – Leiter komplett! 🏆':'')) : '';
@@ -765,8 +773,8 @@ function naechsteFrage(){
           setTimeout(function(){
             ql.innerHTML = '<div class="q-ende sieg">'
               + '<img class="sieg-bild" src="millionaer_sieg.jpg?v=1" alt="Der Moderator gratuliert mit Daumen hoch" onerror="this.style.display=&#39;none&#39;">'
-              + '<h3>🏆 10 am Stück – die Leiter ist komplett!</h3>'
-              + '<p>Sie beherrschen Rechts-, Urteils- und Handlungsfähigkeit. Chapeau.</p>'
+              + '<h3>🏆 ' + geld(1000000) + ' – die Leiter ist komplett!</h3>'
+              + '<p>Zehn am Stück: Sie beherrschen Rechts-, Urteils- und Handlungsfähigkeit. Chapeau.</p>'
               + '<button type="button" class="q-neustart" id="qNochmal">Neue Runde – neue Fragen</button></div>';
             document.getElementById('qNochmal').addEventListener('click', neueRunde);
           }, 550);
@@ -779,7 +787,7 @@ function naechsteFrage(){
         setTimeout(function(){
           ql.innerHTML = '<div class="q-ende raus"><h3>Ausgeschieden bei Frage ' + (stufe+1) + '</h3>'
             + '<p>Richtig gewesen wäre: <b>' + q.o[q.r] + '</b> (' + ['A','B','C','D'][anzeige.korrekt] + ')</p>'
-            + '<p>Erreichte Stufe: <b>' + stufe + ' von ' + ZIEL + '</b>' + (best>0 ? ' · Bestmarke: ' + best : '') + '</p>'
+            + '<p>Erspielt: <b>' + geld(stufe > 0 ? BETRAEGE[stufe-1] : 0) + '</b> (Stufe ' + stufe + ' von ' + ZIEL + ')' + (best>0 ? ' · Bestmarke: ' + best : '') + '</p>'
             + '<button type="button" class="q-neustart" id="qNochmal">Neue Runde – neue Fragen</button></div>';
           document.getElementById('qNochmal').addEventListener('click', neueRunde);
         }, 1100);
