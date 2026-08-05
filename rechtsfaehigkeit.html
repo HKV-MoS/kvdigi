@@ -161,13 +161,13 @@ h3{ font-size:15px; margin:16px 0 6px; color:var(--petrol); }
 .buehne .qstand{ color:#F3CE8E; text-align:center; margin-bottom:0; }
 .q-wert{ text-align:center; color:#F3CE8E; font-weight:800; font-size:15px; margin:0 0 14px; }
 .geldleiter{
-  position:absolute; top:3%; right:2.5%; width:clamp(150px,18%,200px);
+  position:absolute; top:2%; right:2.5%; width:clamp(148px,18%,196px);
   background:rgba(4,7,30,.85); border:1.5px solid rgba(243,206,142,.55); border-radius:12px;
-  padding:7px 9px; font-variant-numeric:tabular-nums;
+  padding:5px 8px; font-variant-numeric:tabular-nums;
 }
 .gl-zeile{
   display:flex; justify-content:space-between; align-items:center; gap:8px;
-  padding:2px 8px; border-radius:6px; font-size:12.5px; font-weight:700; color:#aab4e8;
+  padding:1px 8px; border-radius:6px; font-size:11.5px; font-weight:700; color:#aab4e8; line-height:1.55;
 }
 .gl-zeile .gl-nr{ color:rgba(243,206,142,.75); width:18px; text-align:right; }
 .gl-zeile.aktuell{ background:rgba(216,174,102,.32); color:#fff; }
@@ -383,7 +383,7 @@ footer{ text-align:center; padding:18px 12px 26px; }
         <button type="button" id="jpub" data-joker="pub" title="Publikumsjoker – das Publikum stimmt ab"></button>
       </div>
       <div class="geldleiter" id="geldLeiter" aria-label="Gewinnstufen"></div>
-      <p class="b-hinweis">Eine falsche Antwort – und die Runde ist vorbei. Jede Runde bringt andere Fragen. <b>Wer schafft 10 am Stück?</b></p>
+      <p class="b-hinweis">Eine falsche Antwort – und die Runde ist vorbei. Jede Runde bringt andere Fragen. <b>Wer schafft alle 15 bis zur Million?</b></p>
       <div class="joker-zeile">
         <button type="button" data-joker="fifty">50:50</button>
         <button type="button" data-joker="tel">☎ Telefon</button>
@@ -655,8 +655,8 @@ var POOL = [
   { f:'Ein urteilsunfähiger, aber sehr vermögender Mann verletzt einen Passanten. Muss er Schadenersatz zahlen?', o:['Nein – Urteilsunfähige haften nie','Das Gericht kann ihn aus Fairness dazu verpflichten','Nur, wenn er es absichtlich tat','Nur seine Erben nach seinem Tod'], r:1 },
   { f:'Kann ein Hund erben?', o:['Ja, per Testament','Nein – Tiere sind nicht rechtsfähig','Ja, mit KESB-Zustimmung','Nur Hunde mit Stammbaum'], r:1 }
 ];
-var ZIEL = 10;
-var BETRAEGE = [100, 200, 500, 1000, 4000, 16000, 64000, 125000, 250000, 1000000];
+var ZIEL = 15;
+var BETRAEGE = [100, 200, 300, 500, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 125000, 250000, 500000, 1000000];
 function geld(n){ return 'CHF ' + String(n).replace(/\B(?=(\d{3})+(?!\d))/g, "'"); }
 var runde = [], stufe = 0, best = 0;
 var joker = { fifty:false, tel:false, pub:false };
@@ -800,7 +800,7 @@ function naechsteFrage(){
             ql.innerHTML = '<div class="q-ende sieg">'
               + '<img class="sieg-bild" src="millionaer_sieg.jpg?v=1" alt="Der Moderator gratuliert mit Daumen hoch" onerror="this.style.display=&#39;none&#39;">'
               + '<h3>🏆 ' + geld(1000000) + ' – die Leiter ist komplett!</h3>'
-              + '<p>Zehn am Stück: Sie beherrschen Rechts-, Urteils- und Handlungsfähigkeit. Chapeau.</p>'
+              + '<p>Fünfzehn am Stück: Sie beherrschen Rechts-, Urteils- und Handlungsfähigkeit. Chapeau.</p>'
               + '<button type="button" class="q-neustart" id="qNochmal">Neue Runde – neue Fragen</button></div>';
             document.getElementById('qNochmal').addEventListener('click', neueRunde);
           }, 550);
