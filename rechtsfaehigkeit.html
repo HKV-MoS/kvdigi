@@ -150,6 +150,8 @@ h3{ font-size:15px; margin:16px 0 6px; color:var(--petrol); }
 .q-ende.raus{ background:rgba(107,18,13,.55); border:1.5px solid rgba(242,160,154,.6); }
 .q-ende.sieg{ background:rgba(14,84,39,.55); border:1.5px solid rgba(127,224,162,.6); }
 .q-ende h3{ margin:0 0 6px; color:#F3CE8E; }
+.sieg-bild{ width:min(420px,100%); border-radius:12px; display:block; margin:0 auto 12px;
+  border:2px solid rgba(243,206,142,.6); box-shadow:0 8px 26px rgba(0,0,0,.5); }
 .q-neustart{
   font:inherit; font-weight:800; font-size:14px; cursor:pointer; margin-top:10px;
   border:none; border-radius:999px; background:#F3CE8E; color:#213B42; padding:10px 22px;
@@ -753,7 +755,9 @@ function naechsteFrage(){
         zeichneLeiter(); zeigeStand();
         if (stufe >= ZIEL){
           setTimeout(function(){
-            ql.innerHTML = '<div class="q-ende sieg"><h3>🏆 10 am Stück – die Leiter ist komplett!</h3>'
+            ql.innerHTML = '<div class="q-ende sieg">'
+              + '<img class="sieg-bild" src="millionaer_sieg.jpg?v=1" alt="Der Moderator gratuliert mit Daumen hoch" onerror="this.style.display=&#39;none&#39;">'
+              + '<h3>🏆 10 am Stück – die Leiter ist komplett!</h3>'
               + '<p>Sie beherrschen Rechts-, Urteils- und Handlungsfähigkeit. Chapeau.</p>'
               + '<button type="button" class="q-neustart" id="qNochmal">Neue Runde – neue Fragen</button></div>';
             document.getElementById('qNochmal').addEventListener('click', neueRunde);
