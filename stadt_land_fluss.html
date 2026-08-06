@@ -55,6 +55,19 @@ h3{ font-size:14px; margin:14px 0 6px; color:var(--petrol); text-transform:upper
 .kat.an{ background:var(--tief); color:#fff; border-color:var(--tief); }
 .kat.an::before{ content:'✓ '; color:var(--gold); }
 .kat.eigen.an{ background:var(--petrol); border-color:var(--petrol); }
+.kat-wrap{ display:inline-flex; align-items:center; }
+.kat-wrap .kat{ border-top-right-radius:0; border-bottom-right-radius:0; border-right:none; }
+.kat-weg{
+  font:inherit; font-size:13px; font-weight:800; cursor:pointer; color:var(--rot);
+  border:1.5px solid var(--line); border-left:none; border-radius:0 999px 999px 0;
+  background:#fff; padding:6px 11px 6px 8px; line-height:1.35;
+}
+.kat-weg:hover{ background:rgba(179,66,58,.1); border-color:rgba(179,66,58,.5); }
+.eigen-box{
+  border:1.5px dashed rgba(216,174,102,.6); background:rgba(216,174,102,.07);
+  border-radius:12px; padding:12px 14px; margin-top:10px;
+}
+.eigen-box h3{ margin-top:0; }
 .eingabe{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
 .eingabe input{
   font:inherit; font-size:14px; padding:8px 12px; border:1.5px solid var(--line);
@@ -259,10 +272,13 @@ footer{ text-align:center; padding:18px 12px 26px; }
       <p class="lead">Klicken Sie die gewünschten Spalten an – <b>drei bis acht</b> passen gut auf ein A4-Blatt. Unten können Sie eigene Kategorien ergänzen.</p>
       <div id="katListe"></div>
 
-      <h3>Eigene Kategorie</h3>
-      <div class="eingabe">
-        <input type="text" id="eigenFeld" placeholder="z. B. Versicherung, Grundrecht, App …" maxlength="34">
-        <button class="knopf" type="button" id="eigenAdd">Hinzufügen</button>
+      <div class="eigen-box">
+        <h3>✏️ Eigene Kategorien</h3>
+        <p class="lead" style="margin-bottom:6px">Was Ihnen fehlt, tippen Sie selbst – <b>mehrere mit Komma getrennt</b>. Eigene Kategorien lassen sich mit dem × wieder löschen.</p>
+        <div class="eingabe">
+          <input type="text" id="eigenFeld" placeholder="z. B. Berühmtes Schwert, Lieblingsserie, Kaugummisorte" maxlength="120">
+          <button class="knopf" type="button" id="eigenAdd">Hinzufügen</button>
+        </div>
       </div>
       <p id="katStand" style="margin:12px 0 0;font-size:13.5px"></p>
     </div>
@@ -408,7 +424,8 @@ var GRUPPEN = [
   { titel:'Wirtschaft &amp; Konsum', k:['Lehrberuf EFZ','Branche','Schweizer Unternehmen','Versicherung','Etwas, das Geld kostet','Steuer oder Abgabe','Zahlungsmittel','Etwas im Warenkorb'] },
   { titel:'Ökologie &amp; Gesundheit', k:['Lebensmittel','Verkehrsmittel','Energieform','Wetter oder Wolke','Sportart','Körperteil','Etwas Recycelbares'] },
   { titel:'Schweiz', k:['See','Berg oder Pass','Schweizer Persönlichkeit','Gericht (Essen)','Brauch oder Fest','Landessprache-Wort'] },
-  { titel:'Sprache &amp; Medien', k:['Medium oder Zeitung','App oder Plattform','Fremdwort','Beruf mit Bildschirm','Etwas, das man abonniert'] }
+  { titel:'Sprache &amp; Medien', k:['Medium oder Zeitung','App oder Plattform','Fremdwort','Beruf mit Bildschirm','Etwas, das man abonniert'] },
+  { titel:'Kurios &amp; Spass 🎉', k:['Berühmtes Schwert','Fabelwesen','Superkraft','Zauberspruch','Videospiel','Fieser Bösewicht','Peinlicher Ohrwurm','Ausrede fürs Zuspätkommen','Etwas, das stinkt','Schlechtes Passwort','Etwas im Portemonnaie','Etwas, das piepst','Etwas, das man nie ausleiht','Berühmtes Duo'] }
 ];
 var START = ['Stadt','Land','Fluss','Beruf','Lebensmittel','Rechtsbegriff'];
 var MAX = 8;
@@ -425,9 +442,22 @@ function zeichneKategorien(){
     katListe.appendChild(zeile);
   });
   if (eigene.length){
-    var h2 = document.createElement('h3'); h2.textContent = 'Eigene'; katListe.appendChild(h2);
+    var h2 = document.createElement('h3'); h2.innerHTML = 'Eigene ✏️'; katListe.appendChild(h2);
     var z2 = document.createElement('div'); z2.className = 'katgruppe';
-    eigene.forEach(function(name){ z2.appendChild(chip(name, true)); });
+    eigene.forEach(function(name){
+      var wrap = document.createElement('span'); wrap.className = 'kat-wrap';
+      wrap.appendChild(chip(name, true));
+      var weg = document.createElement('button');
+      weg.type = 'button'; weg.className = 'kat-weg'; weg.textContent = '×';
+      weg.title = 'Kategorie «' + name + '» löschen';
+      weg.addEventListener('click', function(){
+        eigene = eigene.filter(function(x){ return x !== name; });
+        gewaehlt = gewaehlt.filter(function(x){ return x !== name; });
+        zeichneKategorien(); zeichneBlatt(); zeichneBrett();
+      });
+      wrap.appendChild(weg);
+      z2.appendChild(wrap);
+    });
     katListe.appendChild(z2);
   }
   standAus();
@@ -462,12 +492,15 @@ document.getElementById('eigenFeld').addEventListener('keydown', function(e){
 });
 function eigeneHinzu(){
   var f = document.getElementById('eigenFeld');
-  var name = f.value.trim();
-  if (!name) return;
-  if (eigene.indexOf(name) < 0 && !GRUPPEN.some(function(g){ return g.k.indexOf(name) >= 0; })){
-    eigene.push(name);
-  }
-  if (gewaehlt.indexOf(name) < 0 && gewaehlt.length < MAX) gewaehlt.push(name);
+  var teile = f.value.split(/[,;]/).map(function(t){ return t.trim(); }).filter(Boolean);
+  if (!teile.length) return;
+  teile.forEach(function(name){
+    if (name.length > 34) name = name.slice(0,34);
+    if (eigene.indexOf(name) < 0 && !GRUPPEN.some(function(g){ return g.k.indexOf(name) >= 0; })){
+      eigene.push(name);
+    }
+    if (gewaehlt.indexOf(name) < 0 && gewaehlt.length < MAX) gewaehlt.push(name);
+  });
   f.value = '';
   zeichneKategorien(); zeichneBlatt(); zeichneBrett();
 }
@@ -539,7 +572,11 @@ var IKON = {
   'Körperteil':'🖐','Etwas Recycelbares':'♻️',
   'See':'🏞','Berg oder Pass':'🏔','Schweizer Persönlichkeit':'⭐','Gericht (Essen)':'🍲','Brauch oder Fest':'🎉',
   'Landessprache-Wort':'🗣','Medium oder Zeitung':'📰','App oder Plattform':'📱','Fremdwort':'🔤',
-  'Beruf mit Bildschirm':'💻','Etwas, das man abonniert':'🔁'
+  'Beruf mit Bildschirm':'💻','Etwas, das man abonniert':'🔁',
+  'Berühmtes Schwert':'⚔️','Fabelwesen':'🐉','Superkraft':'🦸','Zauberspruch':'✨','Videospiel':'🎮',
+  'Fieser Bösewicht':'🦹','Peinlicher Ohrwurm':'🎵','Ausrede fürs Zuspätkommen':'🙈','Etwas, das stinkt':'🤢',
+  'Schlechtes Passwort':'🔓','Etwas im Portemonnaie':'👛','Etwas, das piepst':'🔔',
+  'Etwas, das man nie ausleiht':'🙅','Berühmtes Duo':'👯'
 };
 var TOPF = 'ABCDEFGHIJKLMNOPRSTUVWZ'.split('');
 function mischen(a){
