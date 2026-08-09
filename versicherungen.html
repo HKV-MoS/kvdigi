@@ -30,6 +30,7 @@ header .sub{ font-size:13.5px; opacity:.88; max-width:74ch; margin:0 auto; }
 }
 .faden b{ color:var(--gold); }
 .wrap{ max-width:1000px; margin:0 auto; padding:16px clamp(12px,3vw,28px) 40px; }
+.hero{ display:block; width:100%; height:auto; max-height:min(46vh,470px); object-fit:cover; object-position:center 42%; }
 
 .tabs{ display:flex; gap:5px; justify-content:center; flex-wrap:wrap; margin:6px 0 18px; border-bottom:2px solid var(--line); }
 .tab{
@@ -66,7 +67,114 @@ h3{ font-size:14px; margin:16px 0 6px; color:var(--petrol); text-transform:upper
 }
 .quelle{ font-size:11.5px; color:#94A3B0; margin-top:10px; }
 
+/* ---- gemeinsame Bausteine ---- */
+.abschnitt-kopf{ display:flex; align-items:flex-start; gap:12px; margin-bottom:12px; }
+.abschnitt-kopf .sig{
+  flex:0 0 auto; width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+  font-size:19px; background:var(--tief); color:#fff;
+}
+.abschnitt-kopf h2{ margin:0 0 2px; font-size:20px; }
+.abschnitt-kopf p{ margin:0; color:var(--muted); font-size:13.5px; }
+.info-box{
+  border-radius:11px; padding:11px 14px; font-size:13.5px; display:flex; gap:10px; align-items:flex-start;
+}
+.info-box .bi{ flex:0 0 auto; font-size:17px; line-height:1.2; }
+.info-box b{ display:block; }
+.info-box.frage{ background:#eef4fb; border:1px solid #cfe0f2; color:#254b73; }
+.info-box.merke{ background:#f1edfb; border:1px solid #d9cef5; color:#4b3c86; }
+.info-box.ueberlege{ background:#fdf6e6; border:1px solid #ecd9a8; color:#7a5b17; }
+
 /* ---- 1 Risiko ---- */
+.risiko-oben{ display:flex; gap:14px; align-items:flex-start; flex-wrap:wrap; justify-content:space-between; }
+.risiko-oben .info-box{ flex:1 1 340px; }
+.karten5{ display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin:16px 0 4px; }
+.pkarte{
+  border:1.5px solid var(--line); border-radius:13px; overflow:hidden; background:#fff;
+  transition:border-color .3s, box-shadow .3s, transform .3s; position:relative;
+}
+.pkarte .pname{
+  font-weight:800; font-size:14.5px; text-align:center; padding:7px 4px 5px;
+}
+.pkarte .pbild{ font-size:44px; text-align:center; line-height:1.15; padding:2px 0 4px; }
+.pkarte .pgeld{
+  border-top:1px solid var(--line); padding:7px 8px 8px; text-align:center; font-size:13px;
+}
+.pkarte .pgeld .betrag{ font-weight:800; font-variant-numeric:tabular-nums; display:block; font-size:14.5px; }
+.pkarte .pgeld .lab{ color:var(--muted); font-size:11.5px; }
+.pkarte.getroffen{ border-color:var(--rot); box-shadow:0 6px 18px rgba(179,66,58,.22); transform:translateY(-3px); }
+.pkarte.getroffen .pname{ color:var(--rot); }
+.pkarte .badge{
+  position:absolute; top:6px; right:6px; background:var(--rot); color:#fff;
+  font-size:10.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase;
+  border-radius:999px; padding:2px 8px;
+}
+.pkarte .ereignis{
+  border-top:1px solid rgba(179,66,58,.35); background:rgba(179,66,58,.07); padding:7px 8px;
+  font-size:12px; text-align:center; color:var(--rot);
+}
+.pkarte .ereignis b{ display:block; font-size:14px; }
+.folge{
+  display:flex; gap:12px; flex-wrap:wrap; justify-content:center; align-items:stretch; margin-top:14px;
+}
+.folge .fbox{ flex:1 1 300px; border-radius:11px; padding:12px 15px; font-size:14.5px; }
+.folge .rechnung-box{ background:rgba(179,66,58,.07); border:1px solid rgba(179,66,58,.35); text-align:center; }
+.folge .rechnung-box .gross{ font-size:19px; font-weight:800; color:var(--rot); display:block; margin-top:3px; }
+
+/* ---- 2 Solidaritaet: Vorlage ---- */
+.soli-grid{ display:grid; grid-template-columns:minmax(220px,1fr) minmax(240px,1.1fr) minmax(260px,1.5fr); gap:14px; align-items:start; }
+.soli-box{ border:1.5px solid var(--line); border-radius:13px; padding:12px 14px; background:#fff; }
+.soli-box .bt{ font-weight:800; text-align:center; color:var(--tief); margin-bottom:8px; font-size:14.5px; }
+.raster100{ display:grid; grid-template-columns:repeat(10,1fr); gap:3px; }
+.raster100 i{
+  aspect-ratio:1; border-radius:50%; background:#cbd8e4; display:block;
+  transition:background-color .35s, transform .35s;
+}
+.raster100 i.zahlt{ background:var(--petrol); }
+.raster100 i.schaden{ background:var(--rot); transform:scale(1.35); }
+.praemie-pille{
+  display:block; text-align:center; background:var(--tief); color:#fff; border-radius:999px;
+  padding:6px 10px; font-weight:800; font-size:13px; margin-top:10px;
+}
+.pool{
+  text-align:center; border:2px solid var(--tief); border-radius:14px 14px 26px 26px;
+  background:linear-gradient(180deg,rgba(33,59,66,.06),rgba(33,59,66,.16)); padding:14px 12px 16px;
+}
+.pool .plab{ font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+.pool .pstand{ font-size:clamp(22px,4.4vw,34px); font-weight:800; color:var(--tief); font-variant-numeric:tabular-nums; }
+.pool .pmuenzen{ font-size:26px; letter-spacing:-4px; }
+.jahr-karten{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
+.jk{ border:1.5px solid var(--line); border-radius:10px; padding:9px 10px; text-align:center; font-size:12.5px; }
+.jk .zahl{ font-weight:800; font-size:15.5px; display:block; }
+.jk .betrag{ font-weight:800; font-variant-numeric:tabular-nums; display:block; margin-top:5px; }
+.jk.ok{ border-color:rgba(46,125,79,.45); background:rgba(46,125,79,.06); } .jk.ok .zahl{ color:var(--gruen); }
+.jk.klein{ border-color:rgba(216,174,102,.6); background:rgba(216,174,102,.09); } .jk.klein .zahl,.jk.klein .betrag{ color:#9a6300; }
+.jk.gross{ border-color:rgba(200,110,50,.5); background:rgba(200,110,50,.07); } .jk.gross .zahl,.jk.gross .betrag{ color:#b25e18; }
+.jk.hoch{ border-color:rgba(179,66,58,.5); background:rgba(179,66,58,.07); } .jk.hoch .zahl,.jk.hoch .betrag{ color:var(--rot); }
+.kette{ display:flex; gap:6px; align-items:stretch; flex-wrap:wrap; justify-content:center; margin-top:6px; }
+.kette .kglied{ flex:1 1 150px; max-width:190px; text-align:center; font-size:12.5px; color:var(--muted); }
+.kette .kglied .kico{
+  width:52px; height:52px; margin:0 auto 6px; border-radius:50%; background:#eef4fb;
+  display:flex; align-items:center; justify-content:center; font-size:25px;
+}
+.kette .pfeil{ align-self:center; color:#9db4cd; font-size:19px; }
+.vorteile{ margin:2px 0 0 0; padding:0; list-style:none; font-size:13.5px; }
+.vorteile li{ padding:4px 0; }
+.vorteile li::before{ content:'✔'; color:var(--gruen); font-weight:800; margin-right:.5em; }
+.ja-nein{ display:flex; gap:9px; flex-wrap:wrap; margin-top:8px; }
+.ja-nein button{
+  font:inherit; font-size:13.5px; font-weight:800; cursor:pointer; padding:8px 18px; border-radius:10px;
+  border:1.5px solid var(--line); background:#fff;
+}
+.ja-nein button:hover{ border-color:var(--petrol); }
+.ja-nein button.richtig{ border-color:var(--gruen); background:rgba(46,125,79,.11); color:var(--gruen); }
+.ja-nein button.falsch{ border-color:var(--rot); background:rgba(179,66,58,.08); color:var(--rot); }
+.ja-nein-auf{ display:none; margin-top:9px; font-size:13.5px; padding:10px 13px; border-radius:10px; background:#fff; border:1px solid var(--line); }
+.ja-nein-auf.zeig{ display:block; }
+@media (max-width:820px){
+  .soli-grid{ grid-template-columns:1fr; }
+  .karten5{ grid-template-columns:repeat(2,1fr); }
+}
+
 .leute{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:14px 0 6px; }
 .person{
   width:110px; text-align:center; padding:10px 6px 12px; border-radius:12px;
@@ -123,6 +231,68 @@ h3{ font-size:14px; margin:16px 0 6px; color:var(--petrol); text-transform:upper
 .balken-2 .b-du{ background:var(--rot); }
 .balken-2 .b-kk{ background:var(--gruen); }
 
+/* ---- 3 Franchise: Vorlage ---- */
+.fr3-grid{ display:grid; grid-template-columns:minmax(190px,.85fr) minmax(230px,1fr) minmax(250px,1.25fr); gap:14px; align-items:start; }
+.person-karte{
+  border:1.5px solid var(--line); border-radius:13px; background:#fff; padding:12px 14px; text-align:center;
+}
+.person-karte .pbild{ font-size:52px; line-height:1.1; }
+.person-karte .pname{ font-weight:800; font-size:19px; color:var(--tief); }
+.person-karte .pzeile{
+  display:flex; justify-content:space-between; align-items:center; gap:8px;
+  font-size:12.5px; color:var(--muted); margin-top:8px; text-align:left;
+}
+.person-karte .pwert{
+  background:#eef4fb; border:1px solid #cfe0f2; color:#254b73; border-radius:8px;
+  padding:3px 10px; font-weight:800; font-size:13px; white-space:nowrap;
+}
+.rbox{ border:1.5px solid var(--line); border-radius:13px; background:#fff; padding:12px 14px; }
+.rbox .rt{
+  font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--petrol);
+  font-weight:800; text-align:center; margin-bottom:8px;
+}
+.rbox .rz{ display:flex; justify-content:space-between; gap:10px; font-size:13.5px; padding:5px 0; border-bottom:1px dashed var(--line); }
+.rbox .rz span:last-child{ font-variant-numeric:tabular-nums; font-weight:700; white-space:nowrap; }
+.rbox .rz.total{ border-bottom:none; border-top:2px solid var(--tief); margin-top:5px; padding-top:8px; font-weight:800; font-size:15px; color:var(--tief); }
+.schritte{ display:grid; gap:9px; }
+.schritt{
+  display:flex; align-items:center; gap:11px; border:1.5px solid var(--line); border-left-width:5px;
+  border-radius:11px; padding:10px 13px; background:#fff; opacity:.3;
+  transition:opacity .45s, transform .45s; transform:translateY(4px);
+}
+.schritt.zeig{ opacity:1; transform:none; }
+.schritt .snr{
+  flex:0 0 auto; width:27px; height:27px; border-radius:50%; color:#fff; font-weight:800; font-size:14px;
+  display:flex; align-items:center; justify-content:center;
+}
+.schritt .stxt{ flex:1 1 auto; font-size:13.5px; font-weight:700; }
+.schritt .stxt small{ display:block; font-weight:400; color:var(--muted); font-size:12px; }
+.schritt .sbet{ font-weight:800; font-size:16px; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.schritt.s1{ border-color:#cfe0f2; border-left-color:var(--blau); }
+.schritt.s1 .snr{ background:var(--blau); } .schritt.s1 .sbet{ color:var(--blau); }
+.schritt.s2{ border-color:#c8e2d2; border-left-color:var(--gruen); }
+.schritt.s2 .snr{ background:var(--gruen); } .schritt.s2 .sbet{ color:var(--gruen); }
+.schritt.s3{ border-color:#f0dcc0; border-left-color:#C97A1E; }
+.schritt.s3 .snr{ background:#C97A1E; } .schritt.s3 .sbet{ color:#C97A1E; }
+.erg-box{
+  border:1.5px solid var(--gold); background:rgba(216,174,102,.1); border-radius:13px;
+  padding:12px 14px; margin-top:14px; display:none;
+}
+.erg-box.zeig{ display:block; }
+.erg-box .et{ font-weight:800; color:var(--tief); text-align:center; margin-bottom:9px; }
+.erg-drei{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.erg-drei > div{ background:#fff; border:1.5px solid var(--line); border-radius:11px; padding:9px 8px; text-align:center; }
+.erg-drei .w{ font-size:19px; font-weight:800; font-variant-numeric:tabular-nums; }
+.erg-drei .l{ font-size:11.5px; color:var(--muted); }
+.erg-drei .du .w{ color:var(--rot); }
+.erg-drei .kk .w{ color:var(--gruen); }
+.erg-drei .tot{ border-color:var(--tief); }
+.erg-drei .tot .w{ color:var(--tief); }
+@media (max-width:820px){
+  .fr3-grid{ grid-template-columns:1fr; }
+  .erg-drei{ grid-template-columns:1fr; }
+}
+
 /* ---- 4 Experiment ---- */
 .regler{ width:100%; margin:6px 0 2px; accent-color:var(--petrol); }
 .fr-wahl{ display:flex; gap:7px; flex-wrap:wrap; margin-bottom:4px; }
@@ -160,6 +330,50 @@ h3{ font-size:14px; margin:16px 0 6px; color:var(--petrol); text-transform:upper
 .ekarte .l{ font-size:11.5px; color:var(--muted); }
 .ekarte.total{ border-color:var(--gold); background:rgba(216,174,102,.1); }
 
+/* ---- 5 Simulation: Vorlage ---- */
+.sim-kopf{ display:flex; gap:12px; align-items:flex-start; flex-wrap:wrap; justify-content:space-between; margin-bottom:14px; }
+.sim-kopf .abschnitt-kopf{ flex:1 1 320px; margin-bottom:0; }
+.sim-kopf .info-box{ flex:0 1 260px; }
+.sim-grid{ display:grid; grid-template-columns:minmax(190px,.72fr) minmax(300px,3fr); gap:14px; align-items:start; }
+.monate{ display:grid; grid-template-columns:repeat(12,1fr); gap:5px; margin:0 0 8px; }
+.monat{
+  border:1.5px solid var(--line); border-radius:9px; padding:6px 3px 7px; text-align:center;
+  font-size:10px; color:var(--muted); background:#fff; min-height:86px;
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+}
+.monat .mkopf{ font-weight:800; font-size:10.5px; letter-spacing:.06em; color:var(--tief); text-transform:uppercase; }
+.monat .mico{ font-size:20px; line-height:1.25; }
+.monat .mtxt{ line-height:1.25; }
+.monat .mbet{ font-weight:800; font-variant-numeric:tabular-nums; color:var(--tief); font-size:11px; }
+.monat.tat{ border-color:rgba(216,174,102,.7); background:rgba(216,174,102,.08); }
+.monat.hoch{ border-color:rgba(179,66,58,.5); background:rgba(179,66,58,.07); }
+.monat.hoch .mbet{ color:var(--rot); }
+.monat.nichtv{ border-color:#cfd8e2; background:#f6f8fb; }
+.monat.nichtv .mbet{ color:var(--muted); }
+.monat.leer .mico{ color:var(--gruen); }
+.zeitachse{ position:relative; display:grid; grid-template-columns:repeat(12,1fr); align-items:center; margin:2px 0 12px; height:16px; }
+.zeitachse::before{ content:""; position:absolute; left:4%; right:4%; top:50%; height:2px; background:#c6d5e4; }
+.zeitachse i{ position:relative; width:9px; height:9px; border-radius:50%; background:#fff; border:2px solid #7ba0c4; margin:0 auto; }
+.zeitachse i.tat{ background:var(--gold); border-color:#b98d38; }
+.zeitachse i.hoch{ background:var(--rot); border-color:var(--rot); width:12px; height:12px; }
+.erg-reihe{ display:grid; grid-template-columns:repeat(auto-fit,minmax(112px,1fr)); gap:8px; }
+.ekarte .s{ font-size:10.5px; color:#94A3B0; display:block; }
+.ekarte.k1 .w{ color:var(--tief); }
+.ekarte.k2 .w{ color:var(--blau); }
+.ekarte.k3 .w{ color:var(--gruen); }
+.ekarte.k4 .w{ color:#C97A1E; }
+.ekarte.k5{ border-color:#c9bced; background:#f4f0fd; }
+.ekarte.k5 .w{ color:#5A3FA8; font-size:23px; }
+.ekarte.k6{ border-color:#d8dfe8; background:#f6f8fb; }
+.ekarte.k6 .w{ color:var(--muted); }
+.fr-wahl.mini{ justify-content:center; gap:5px; }
+.fr-wahl.mini button{ font-size:12px; padding:4px 10px; }
+@media (max-width:900px){
+  .sim-grid{ grid-template-columns:1fr; }
+  .monate{ grid-template-columns:repeat(6,1fr); }
+  .zeitachse{ display:none; }
+}
+
 /* ---- 6 Transfer ---- */
 .fall-liste{ display:grid; gap:10px; }
 .tfall{ border:1.5px solid var(--line); border-radius:11px; padding:12px 14px; background:#fff; }
@@ -181,6 +395,221 @@ h3{ font-size:14px; margin:16px 0 6px; color:var(--petrol); text-transform:upper
 .art.person{ border-top:4px solid var(--blau); }
 .art.sach{ border-top:4px solid var(--gruen); }
 .art.verm{ border-top:4px solid var(--gold); }
+
+/* ---- 6 Zuordnung ---- */
+.chipbox{
+  border:1.5px dashed #c6d5e4; border-radius:13px; padding:10px 12px; background:#fbfdff; margin-bottom:14px;
+}
+.chipbox .ct{ font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); text-align:center; margin-bottom:7px; }
+.chips{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
+.vchip{
+  font:inherit; font-size:13px; font-weight:800; cursor:grab; padding:7px 14px;
+  border:1.5px solid var(--line); border-radius:10px; background:#fff; color:var(--tief);
+  display:inline-flex; align-items:center; gap:7px; transition:transform .15s, box-shadow .15s;
+}
+.vchip:hover{ box-shadow:0 3px 10px rgba(20,50,80,.13); transform:translateY(-1px); }
+.vchip.aktiv{ box-shadow:0 0 0 3px rgba(60,110,115,.3); border-color:var(--petrol); }
+.vchip.c-kk{ border-color:#bfe0cb; background:#f2faf5; color:#1f6b42; }
+.vchip.c-hr{ border-color:#c6dcf3; background:#f2f8fe; color:#22588f; }
+.vchip.c-hp{ border-color:#d3caf0; background:#f6f4fe; color:#4b3c86; }
+.vchip.c-mf{ border-color:#f0dcbb; background:#fdf8ef; color:#96631a; }
+.vchip.c-ke{ border-color:#d8dfe8; background:#f7f9fc; color:#5b6b7d; }
+.fallgrid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:11px; }
+.fkarte{ border:1.5px solid var(--line); border-radius:13px; background:#fff; padding:11px 12px; display:flex; flex-direction:column; gap:7px; }
+.fkarte .fkopf{ display:flex; align-items:center; gap:8px; }
+.fkarte .fbuchst{
+  flex:0 0 auto; width:23px; height:23px; border-radius:50%; background:var(--tief); color:#fff;
+  font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center;
+}
+.fkarte .ftitel{ font-weight:800; font-size:14px; color:var(--tief); }
+.fkarte .fbild{
+  border-radius:10px; background:linear-gradient(160deg,#eef4fb,#e3ecf6); text-align:center;
+  font-size:44px; line-height:1.35; padding:8px 0;
+}
+.fkarte .ftext{ font-size:12.5px; color:var(--muted); flex:1 1 auto; }
+.fkarte .ftext b{ color:var(--ink); }
+.zone{
+  border:1.5px dashed #b9c8d8; border-radius:10px; padding:9px 10px; text-align:center;
+  font-size:12.5px; color:#8c9cad; background:#fbfdff; cursor:pointer; min-height:40px;
+  display:flex; align-items:center; justify-content:center; gap:6px;
+}
+.zone.ueber{ border-color:var(--petrol); background:rgba(60,110,115,.08); color:var(--petrol); }
+.zone.voll{ border-style:solid; border-color:var(--tief); color:var(--tief); font-weight:800; background:#fff; }
+.zone.richtig{ border-color:var(--gruen); background:rgba(46,125,79,.1); color:var(--gruen); }
+.zone.falsch{ border-color:var(--rot); background:rgba(179,66,58,.08); color:var(--rot); }
+.zone .loes{ display:block; font-size:11.5px; font-weight:400; color:var(--muted); }
+.tippleiste{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px;
+  border:1.5px solid #ddd6f3; background:#f7f5fd; border-radius:13px; padding:12px 14px; margin-top:14px;
+}
+.tippleiste > div{ display:flex; gap:9px; align-items:flex-start; font-size:12.5px; color:#4b3c86; }
+.tippleiste .ti{ font-size:19px; line-height:1.1; }
+.tippleiste b{ display:block; }
+
+/* ---- 7 Kategorien ---- */
+.kat3{ display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:11px; }
+.katkarte{ border:1.5px solid var(--line); border-radius:13px; background:#fff; padding:12px 14px; }
+.katkarte .kk1{ display:flex; align-items:center; gap:9px; margin-bottom:6px; }
+.katkarte .kico{
+  flex:0 0 auto; width:30px; height:30px; border-radius:50%; color:#fff; font-size:15px;
+  display:flex; align-items:center; justify-content:center;
+}
+.katkarte .ktit{ font-weight:800; font-size:15px; }
+.katkarte .ktxt{ font-size:12.5px; color:var(--muted); }
+.katkarte .kbild{ border-radius:10px; text-align:center; font-size:40px; padding:9px 0; margin:8px 0; }
+.katkarte .kbsp{ border-radius:9px; padding:8px 11px; font-size:12.5px; }
+.katkarte .kbsp b{ display:block; margin-bottom:3px; }
+.katkarte .kbsp ul{ margin:0; padding-left:16px; }
+.kat-pers{ border-top:4px solid var(--gruen); } .kat-pers .kico{ background:var(--gruen); } .kat-pers .ktit{ color:var(--gruen); }
+.kat-pers .kbild{ background:#f2faf5; } .kat-pers .kbsp{ background:#f2faf5; color:#1f6b42; }
+.kat-sach{ border-top:4px solid var(--blau); } .kat-sach .kico{ background:var(--blau); } .kat-sach .ktit{ color:var(--blau); }
+.kat-sach .kbild{ background:#f2f8fe; } .kat-sach .kbsp{ background:#f2f8fe; color:#22588f; }
+.kat-verm{ border-top:4px solid #C9A227; } .kat-verm .kico{ background:#C9A227; } .kat-verm .ktit{ color:#9a7a12; }
+.kat-verm .kbild{ background:#fdf8ef; } .kat-verm .kbsp{ background:#fdf8ef; color:#96631a; }
+.sortier{ display:grid; grid-template-columns:repeat(3,1fr); gap:11px; margin-top:10px; }
+.sortier .sz{
+  border:1.5px dashed #b9c8d8; border-radius:12px; padding:10px; min-height:112px; background:#fbfdff;
+}
+.sortier .sz.ueber{ border-color:var(--petrol); background:rgba(60,110,115,.07); }
+.sortier .sz .szt{ font-weight:800; font-size:13px; text-align:center; margin-bottom:7px; }
+.sortier .sz .abl{ display:flex; flex-direction:column; gap:5px; }
+.gchip{
+  font:inherit; font-size:12.5px; font-weight:700; cursor:grab; padding:6px 11px;
+  border:1.5px solid var(--line); border-radius:9px; background:#fff; text-align:left;
+}
+.gchip.aktiv{ box-shadow:0 0 0 3px rgba(60,110,115,.3); border-color:var(--petrol); }
+.gchip.richtig{ border-color:var(--gruen); background:rgba(46,125,79,.1); color:var(--gruen); }
+.gchip.falsch{ border-color:var(--rot); background:rgba(179,66,58,.08); color:var(--rot); }
+@media (max-width:640px){ .sortier{ grid-template-columns:1fr; } }
+
+/* ---- 8 Pflicht ---- */
+.pflicht2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; align-items:start; }
+.pfeld{ border-radius:13px; padding:12px 14px; }
+.pfeld.obl{ border:1.5px solid #f0c9c6; background:#fdf4f3; }
+.pfeld.fre{ border:1.5px solid #c6e2d1; background:#f3faf6; }
+.pfeld .pt{ font-weight:800; font-size:15.5px; margin-bottom:2px; }
+.pfeld.obl .pt{ color:var(--rot); } .pfeld.fre .pt{ color:var(--gruen); }
+.pfeld .pu{ font-size:12.5px; color:var(--muted); margin-bottom:9px; }
+.picons{ display:grid; grid-template-columns:repeat(auto-fit,minmax(88px,1fr)); gap:8px; }
+.picons > div{ text-align:center; font-size:11.5px; line-height:1.3; }
+.picons .pi{
+  width:44px; height:44px; margin:0 auto 5px; border-radius:11px; color:#fff; font-size:21px;
+  display:flex; align-items:center; justify-content:center;
+}
+.pfeld.obl .pi{ background:#C0433A; } .pfeld.fre .pi{ background:#2E7D4F; }
+.picons b{ display:block; }
+.picons small{ color:var(--muted); }
+@media (max-width:760px){ .pflicht2{ grid-template-columns:1fr; } }
+
+/* ---- 9 Mini-Challenge O/F ---- */
+.oftab{ display:grid; gap:7px; margin-top:6px; }
+.ofz{
+  display:flex; align-items:center; gap:10px; border:1.5px solid var(--line); border-radius:11px;
+  padding:8px 12px; background:#fff;
+}
+.ofz .ofi{ font-size:19px; flex:0 0 auto; }
+.ofz{ flex-wrap:wrap; }
+.ofz .ofn{ flex:1 1 120px; min-width:0; overflow-wrap:anywhere; font-size:13.5px; font-weight:700; }
+.ofz .ofk{ display:flex; gap:6px; flex:0 0 auto; }
+.ofz .ofk button{
+  font:inherit; font-weight:800; font-size:13px; cursor:pointer; width:33px; height:33px; border-radius:50%;
+  border:1.5px solid var(--line); background:#fff; color:var(--muted);
+}
+.ofz .ofk button:hover{ border-color:var(--petrol); color:var(--petrol); }
+.ofz .ofk button.richtig{ border-color:var(--gruen); background:rgba(46,125,79,.13); color:var(--gruen); }
+.ofz .ofk button.falsch{ border-color:var(--rot); background:rgba(179,66,58,.1); color:var(--rot); }
+.ofz .ofa{ flex:1 1 100%; font-size:12.5px; color:var(--muted); display:none; }
+.ofz.fertig .ofa{ display:block; }
+
+/* ---- 10 Finale Challenge ---- */
+.fin-kopf{ display:flex; gap:12px; align-items:flex-start; flex-wrap:wrap; justify-content:space-between; }
+.fin-kopf .abschnitt-kopf{ flex:1 1 340px; margin-bottom:0; }
+.denk{
+  flex:0 1 300px; border:1.5px solid #ecd9a8; background:#fdf9ef; border-radius:12px; padding:10px 13px;
+  font-size:12.5px; color:#7a5b17;
+}
+.denk b{ display:block; margin-bottom:4px; }
+.denk ul{ margin:0; padding-left:16px; }
+.aufgabe{
+  display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:center;
+  border:1.5px solid var(--line); border-radius:12px; background:#fff; padding:10px 14px; margin:14px 0;
+  font-size:13.5px;
+}
+.aufgabe .ziel{ font-size:19px; }
+.aufgabe .pill{ background:var(--tief); color:#fff; border-radius:999px; padding:6px 14px; font-weight:800; font-size:13px; }
+.zieh{ display:grid; grid-template-columns:repeat(auto-fit,minmax(235px,1fr)); gap:10px; }
+.zkarte{
+  border:1.5px solid var(--line); border-radius:12px; background:#fff; padding:10px 11px; cursor:grab;
+  transition:transform .15s, box-shadow .15s, opacity .3s;
+}
+.zkarte:hover{ box-shadow:0 4px 14px rgba(20,50,80,.14); transform:translateY(-2px); }
+.zkarte.aktiv{ box-shadow:0 0 0 3px rgba(60,110,115,.3); border-color:var(--petrol); }
+.zkarte.weg{ opacity:.28; pointer-events:none; }
+.zkarte .zk1{ display:flex; align-items:center; gap:7px; margin-bottom:5px; }
+.zkarte .zb{
+  width:21px; height:21px; border-radius:50%; color:#fff; font-size:11.5px; font-weight:800;
+  display:flex; align-items:center; justify-content:center; background:var(--tief); flex:0 0 auto;
+}
+.zkarte .zt{ font-weight:800; font-size:13.5px; color:var(--tief); }
+.zkarte .zbild{ border-radius:9px; background:linear-gradient(160deg,#eef4fb,#e3ecf6); text-align:center; font-size:34px; padding:6px 0; margin-bottom:5px; }
+.zkarte .zx{ font-size:12px; color:var(--muted); }
+.eimer{ display:grid; grid-template-columns:repeat(auto-fit,minmax(158px,1fr)); gap:9px; margin-top:14px; }
+.eimer .ei{ border:1.5px solid var(--line); border-radius:12px; background:#fff; padding:10px 11px; }
+.eimer .ei .en{ font-weight:800; font-size:13.5px; display:flex; align-items:center; gap:7px; }
+.eimer .ei .eo{ font-size:11.5px; color:var(--muted); margin:1px 0 7px 25px; }
+.eimer .ei .abl{
+  border:1.5px dashed #b9c8d8; border-radius:10px; min-height:52px; padding:7px; background:#fbfdff;
+  display:flex; flex-direction:column; gap:5px; font-size:12px; color:#8c9cad; align-items:stretch; justify-content:center; text-align:center;
+}
+.eimer .ei.ueber .abl{ border-color:var(--petrol); background:rgba(60,110,115,.08); }
+.eimer .ei .abl .abk{
+  border:1.5px solid var(--line); border-radius:8px; background:#fff; padding:5px 8px;
+  font-size:12px; font-weight:700; color:var(--ink); text-align:left; cursor:pointer;
+}
+.eimer .ei .abl .abk.richtig{ border-color:var(--gruen); background:rgba(46,125,79,.1); color:var(--gruen); }
+.eimer .ei .abl .abk.falsch{ border-color:var(--rot); background:rgba(179,66,58,.08); color:var(--rot); }
+.eimer .ei.e-kk .en{ color:#1f6b42; } .eimer .ei.e-kk{ border-top:4px solid var(--gruen); }
+.eimer .ei.e-hr .en{ color:#22588f; } .eimer .ei.e-hr{ border-top:4px solid var(--blau); }
+.eimer .ei.e-hp .en{ color:#4b3c86; } .eimer .ei.e-hp{ border-top:4px solid #6B4FBB; }
+.eimer .ei.e-mf .en{ color:#96631a; } .eimer .ei.e-mf{ border-top:4px solid #C97A1E; }
+.eimer .ei.e-ke .en{ color:#5b6b7d; } .eimer .ei.e-ke{ border-top:4px solid #94A3B0; }
+.super{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px;
+  border:1.5px solid #ecd9a8; background:#fdf9ef; border-radius:13px; padding:14px 16px; margin-top:14px;
+  display:none;
+}
+.super.zeig{ display:grid; }
+.super > div{ display:flex; gap:9px; align-items:flex-start; font-size:12.5px; color:#7a5b17; }
+.super .si{ font-size:20px; line-height:1.1; }
+.super b{ display:block; color:var(--tief); }
+
+.super{ grid-template-columns:1fr; }
+.super.zeig{ display:block; }
+.sukopf{ display:flex; gap:12px; align-items:flex-start; flex-wrap:wrap; }
+.sukopf .suhaken{
+  flex:0 0 auto; width:34px; height:34px; border-radius:50%; background:var(--gruen); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:800;
+}
+.sukopf > div:nth-child(2){ flex:1 1 300px; }
+.sut{ margin:0; font-size:19px; color:var(--tief); text-transform:none; letter-spacing:0; }
+.sup{ margin:2px 0 0; font-size:13px; color:#7a5b17; }
+.blase{
+  flex:0 1 250px; position:relative; background:#fff; border:1.5px solid #ecd9a8; border-radius:12px;
+  padding:9px 12px; font-size:12.5px; color:var(--tief); font-style:italic;
+}
+.sudrei{ display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; margin-top:12px; }
+.sudrei > div{ display:flex; gap:9px; align-items:flex-start; font-size:12.5px; color:#7a5b17; }
+.sudrei .si{ font-size:20px; line-height:1.1; }
+.sudrei b{ display:block; color:var(--tief); }
+
+/* ---- Zusammenfassung ---- */
+.wichtig{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px;
+  border:1.5px solid #ecd9a8; background:#fdf9ef; border-radius:13px; padding:14px 16px; margin-top:14px;
+}
+.wichtig > div{ display:flex; gap:9px; align-items:flex-start; font-size:12.5px; color:#7a5b17; }
+.wichtig .wi{ font-size:20px; line-height:1.1; }
+.wichtig b{ display:block; color:var(--tief); }
 
 /* ---- 7 Challenge ---- */
 .ch-frage{ font-weight:700; margin-bottom:8px; }
@@ -223,74 +652,192 @@ footer{ text-align:center; padding:18px 12px 26px; }
 <header>
   <h1 id="kopfTitel" title="Zurück zum Anfang" style="cursor:pointer">Versicherungen – <b>vom Risiko zur Franchise</b></h1>
   <div class="sub">Zuerst verstehen, <i>warum</i> es Versicherungen gibt. Dann rechnen.</div>
-  <div class="faden">Risiko → Solidarität → <b>Versicherung</b> → Prämie → Franchise → Selbstbehalt → Anwendung</div>
+  <div class="faden">Risiko → Solidarität → <b>Versicherung</b> → Franchise → Selbstbehalt → Zufall → Anwendung</div>
 </header>
+
+<img class="hero" src="versicherungen_hero.jpg?v=2" alt="Fünf Lernende stehen ruhig hinter einem grossen, leuchtenden Schutzschild. Rundherum passieren die Risiken: ein Wasserschaden in der Wohnung, ein Velounfall mit einem Auto, ein gesprungenes Smartphone, eine kranke Frau im Bett und eine Auffahrkollision." onerror="this.style.display='none'">
 
 <div class="wrap">
 
   <div class="tabs" role="tablist">
     <button class="tab an" data-tab="risiko" role="tab"><span class="nr">1</span>Risiko</button>
     <button class="tab" data-tab="topf" role="tab"><span class="nr">2</span>Solidarität</button>
-    <button class="tab" data-tab="rechnung" role="tab"><span class="nr">3</span>Franchise</button>
+    <button class="tab" data-tab="rechnung" role="tab"><span class="nr">3</span>Krankenkasse</button>
     <button class="tab" data-tab="experiment" role="tab"><span class="nr">4</span>Experiment</button>
     <button class="tab" data-tab="simulation" role="tab"><span class="nr">5</span>Ihr Jahr</button>
-    <button class="tab" data-tab="transfer" role="tab"><span class="nr">6</span>Andere</button>
-    <button class="tab" data-tab="challenge" role="tab"><span class="nr">7</span>Challenge</button>
+    <button class="tab" data-tab="transfer" role="tab"><span class="nr">6</span>Wer zahlt?</button>
+    <button class="tab" data-tab="kategorien" role="tab"><span class="nr">7</span>Kategorien</button>
+    <button class="tab" data-tab="pflicht" role="tab"><span class="nr">8</span>Pflicht?</button>
+    <button class="tab" data-tab="challenge" role="tab"><span class="nr">9</span>Mini-Quiz</button>
+    <button class="tab" data-tab="final" role="tab"><span class="nr">10</span>Challenge</button>
   </div>
 
   <!-- ================= 1 RISIKO ================= -->
   <section class="seite an" id="seite-risiko">
     <div class="card">
-      <h2>Fünf Lernende, fünf Sparkonten</h2>
-      <p class="lead">Alle fünf haben im ersten Lehrjahr etwas zur Seite gelegt. Dann passiert etwas – aber niemand weiss vorher, wem.</p>
-      <div class="leute" id="leute"></div>
-      <div class="mitte" style="margin-top:12px">
-        <button class="knopf gross" type="button" id="risikoKnopf">⚡ Was passiert diesen Monat?</button>
+      <div class="abschnitt-kopf">
+        <span class="sig">🛡</span>
+        <div>
+          <h2>1. Risiko: Was, wenn etwas passiert?</h2>
+          <p>Alle fünf haben etwas gespart. Dann passiert etwas – niemand weiss vorher, wem.</p>
+        </div>
       </div>
-      <div id="risikoText" style="margin-top:14px"></div>
-    </div>
 
-    <div class="card" id="risikoFrage" style="display:none">
-      <h2>Die Leitfrage</h2>
-      <p style="font-size:16px">Eine Spitalrechnung von <b>CHF 18'000</b> kann niemand aus dem Sparheft zahlen. Sie trifft nur eine Person – <b>aber treffen könnte sie jede.</b></p>
-      <p style="font-size:16px;margin-bottom:0"><b>Wie kann man sich gegen ein Risiko schützen, das man selbst nicht tragen könnte?</b></p>
-      <p class="merk">💡 Ein <b>Risiko</b> ist ein Ereignis, das <i>eintreten kann</i>, aber nicht muss – und wenn es eintritt, kostet es Geld. Genau dafür gibt es Versicherungen.</p>
+      <div class="risiko-oben">
+        <div class="info-box frage">
+          <span class="bi">❓</span>
+          <span><b>Leitfrage</b>Wie kann man sich gegen ein solches finanzielles Risiko schützen?</span>
+        </div>
+        <button class="knopf gross" type="button" id="risikoKnopf">🎲 Was passiert diesen Monat?</button>
+      </div>
+
+      <div class="karten5" id="karten5"></div>
+      <div class="folge" id="risikoFolge"></div>
     </div>
   </section>
 
   <!-- ================= 2 SOLIDARITÄT ================= -->
   <section class="seite" id="seite-topf">
     <div class="card">
-      <h2>Der gemeinsame Topf</h2>
-      <p class="lead">100 Personen zahlen je <b>CHF 300</b> pro Jahr ein. Niemand weiss, wen es trifft – aber gemeinsam kann die Gruppe tragen, was einzelne ruinieren würde.</p>
-      <div class="topf-buehne">
-        <div class="punkte" id="punkte"></div>
-        <div class="topf">
-          <div class="lab">Im Topf</div>
-          <div class="stand" id="topfStand">CHF 0</div>
+      <div class="abschnitt-kopf">
+        <span class="sig">👥</span>
+        <div>
+          <h2>2. Solidaritätsprinzip – gemeinsam tragen wir Risiken</h2>
+          <p>Viele zahlen regelmässig Prämien in einen gemeinsamen Topf. Nur wenige haben einen Schaden – der Topf hilft ihnen.</p>
         </div>
       </div>
-      <div class="bilanz" id="bilanz"></div>
-      <div class="mitte" style="margin-top:14px">
+
+      <div class="info-box merke" style="margin-bottom:14px">
+        <span class="bi">💡</span>
+        <span><b>Merke</b>Versicherung ist Solidarität: Viele bezahlen ein, damit wenige im Ernstfall finanziell nicht allein sind.</span>
+      </div>
+
+      <div class="soli-grid">
+        <div class="soli-box">
+          <div class="bt">100 Personen</div>
+          <div class="raster100" id="raster100"></div>
+          <span class="praemie-pille">Jede zahlt CHF 300 pro Jahr</span>
+        </div>
+
+        <div class="soli-box" style="border:none;background:none;padding:0">
+          <div class="pool">
+            <div class="pmuenzen">🪙🪙🪙</div>
+            <div class="plab">Versicherungs-Pool</div>
+            <div class="pstand" id="poolStand">CHF 0</div>
+          </div>
+          <p class="lead" style="text-align:center;margin:10px 0 0">Geld aus dem Pool wird im Schadensfall ausbezahlt.</p>
+        </div>
+
+        <div class="soli-box">
+          <div class="bt">Im gleichen Jahr</div>
+          <div class="jahr-karten" id="jahrKarten"></div>
+          <div id="soliBilanz" style="margin-top:10px"></div>
+        </div>
+      </div>
+
+      <div class="mitte" style="margin-top:16px">
         <button class="knopf gross" type="button" id="topfKnopf">▶ Ein Jahr durchspielen</button>
         <button class="knopf zweit" type="button" id="topfReset">↺ Zurücksetzen</button>
       </div>
-      <div id="topfFazit"></div>
+
+      <h3>So funktioniert es</h3>
+      <div class="kette">
+        <div class="kglied"><div class="kico">👨‍👩‍👧</div>Viele Personen mit ähnlichen Risiken</div>
+        <div class="pfeil">→</div>
+        <div class="kglied"><div class="kico">🐷</div>Alle zahlen regelmässig eine Prämie ein</div>
+        <div class="pfeil">→</div>
+        <div class="kglied"><div class="kico">🫙</div>Das Geld fliesst in einen gemeinsamen Pool</div>
+        <div class="pfeil">→</div>
+        <div class="kglied"><div class="kico">🛟</div>Wer einen Schaden hat, erhält Unterstützung</div>
+        <div class="pfeil">→</div>
+        <div class="kglied"><div class="kico">🤝</div>So bleibt niemand mit hohen Kosten allein</div>
+      </div>
+
+      <h3>Vorteile für alle</h3>
+      <ul class="vorteile">
+        <li>Finanzieller Schutz im Ernstfall</li>
+        <li>Planbare, regelmässige Prämien statt unkalkulierbarer Risiken</li>
+        <li>Unterstützung durch die Gemeinschaft</li>
+        <li>Mehr Sicherheit im Alltag</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="info-box ueberlege">
+        <span class="bi">❓</span>
+        <span><b>Überlege</b>«Ich war dieses Jahr nie krank. Also habe ich meine Krankenkassenprämien umsonst bezahlt.»</span>
+      </div>
+      <div class="ja-nein" id="soliMeinung">
+        <button type="button" data-w="ja">👍 Stimmt</button>
+        <button type="button" data-w="nein">👎 Stimmt nicht</button>
+      </div>
+      <div class="ja-nein-auf" id="soliAuf">
+        <b style="color:var(--gruen)">Richtig: Stimmt nicht.</b> Sie haben nicht eine Behandlung bezahlt, sondern sich <b>gegen das Risiko abgesichert</b>, dass Sie einmal hohe Kosten haben.
+        Ein Jahr ohne Krankheit ist kein verlorenes Geld – es ist ein gutes Jahr. Und Ihre Prämie hat jemand anderem geholfen, dessen Jahr weniger gut lief.
+      </div>
     </div>
   </section>
 
   <!-- ================= 3 FRANCHISE ================= -->
   <section class="seite" id="seite-rechnung">
     <div class="card">
-      <h2>Eine Rechnung von CHF 2'500 – wer zahlt was?</h2>
-      <p class="lead">Sie haben die Grundfranchise von CHF 300 gewählt. Klicken Sie sich Schritt für Schritt durch.</p>
-      <div class="rechnung" id="rechnung"></div>
-      <div class="mitte" style="margin-top:12px">
-        <button class="knopf" type="button" id="rechnungKnopf">Nächster Schritt →</button>
-        <button class="knopf zweit" type="button" id="rechnungReset">↺ Nochmals</button>
+      <div class="abschnitt-kopf">
+        <span class="sig">🏥</span>
+        <div>
+          <h2>3. Krankenkasse – Franchise und Selbstbehalt</h2>
+          <p>Mia war krank. Die Rechnung beträgt CHF 2'500. Wer zahlt welchen Teil? Schritt für Schritt.</p>
+        </div>
       </div>
-      <div id="rechnungBalken" style="max-width:560px;margin:14px auto 0"></div>
-      <p class="merk" id="rechnungMerk" style="display:none">💡 <b>Franchise</b> = der Betrag, den Sie pro Jahr zuerst selbst zahlen. <b>Selbstbehalt</b> = 10 % von allem, was darüber liegt – höchstens CHF 700 pro Jahr für Erwachsene (CHF 350 für Kinder). Danach zahlt die Krankenkasse alles.</p>
+
+      <div class="fr3-grid">
+        <div class="person-karte">
+          <div class="pbild">👧</div>
+          <div class="pname">Mia</div>
+          <div class="pzeile"><span>Franchise gewählt</span><span class="pwert">CHF 300</span></div>
+          <div class="pzeile"><span>Selbstbehalt</span><span class="pwert">10 %</span></div>
+          <div class="pzeile"><span>Rechnung total</span><span class="pwert">CHF 2'500</span></div>
+        </div>
+
+        <div class="rbox">
+          <div class="rt">Arztrechnung</div>
+          <div class="rz"><span>🩺 Arztkonsultationen</span><span>CHF 600</span></div>
+          <div class="rz"><span>🧪 Laboranalysen</span><span>CHF 800</span></div>
+          <div class="rz"><span>💊 Medikamente</span><span>CHF 400</span></div>
+          <div class="rz"><span>🩻 Untersuchungen</span><span>CHF 700</span></div>
+          <div class="rz total"><span>Total</span><span>CHF 2'500</span></div>
+        </div>
+
+        <div>
+          <div class="schritte" id="schritte"></div>
+          <div class="mitte" style="margin-top:12px">
+            <button class="knopf" type="button" id="rechnungKnopf">Nächster Schritt →</button>
+            <button class="knopf zweit" type="button" id="rechnungReset">↺ Nochmals</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="erg-box" id="ergBox">
+        <div class="et">Das Ergebnis</div>
+        <div class="erg-drei">
+          <div class="du"><div class="w">CHF 520</div><div class="l">bezahlt Mia selbst</div></div>
+          <div class="kk"><div class="w">CHF 1'980</div><div class="l">bezahlt die Krankenkasse</div></div>
+          <div class="tot"><div class="w">CHF 2'500</div><div class="l">Total der Rechnung</div></div>
+        </div>
+        <div id="rechnungBalken" style="max-width:620px;margin:12px auto 0"></div>
+      </div>
+
+      <div class="info-box merke" style="margin-top:14px">
+        <span class="bi">💡</span>
+        <span><b>Merke</b><b style="display:inline">Franchise</b> = der Betrag, den Sie pro Jahr zuerst selbst bezahlen.
+        <b style="display:inline">Selbstbehalt</b> = 10 % von allem, was darüber liegt – höchstens CHF 700 pro Jahr
+        für Erwachsene (CHF 350 für Kinder). Danach übernimmt die Krankenkasse alles.</span>
+      </div>
+
+      <div class="info-box ueberlege" style="margin-top:10px">
+        <span class="bi">❓</span>
+        <span><b>Überlege</b>Warum ist die Prämie bei einer höheren Franchise tiefer? Und wo liegt der Haken?</span>
+      </div>
+
       <p class="quelle">Kostenbeteiligung nach KVG/KVV, Stand 2026: Grundfranchise CHF 300, Selbstbehalt 10 %, Maximum CHF 700 pro Jahr (Erwachsene). Dazu kommt bei Spitalaufenthalt ein Beitrag von CHF 15 pro Tag – <b>nicht</b> für Kinder und Personen in Ausbildung bis 25.</p>
     </div>
   </section>
@@ -298,8 +845,17 @@ footer{ text-align:center; padding:18px 12px 26px; }
   <!-- ================= 4 EXPERIMENT ================= -->
   <section class="seite" id="seite-experiment">
     <div class="card">
-      <h2>Franchise-Experiment</h2>
-      <p class="lead">Schieben Sie die Gesundheitskosten eines Jahres – und sehen Sie, welche Franchise am Ende am günstigsten wäre.</p>
+      <div class="abschnitt-kopf">
+        <span class="sig">🧮</span>
+        <div>
+          <h2>4. Franchise-Experiment</h2>
+          <p>Schieben Sie die Gesundheitskosten eines Jahres – und sehen Sie, welche Franchise am Ende am günstigsten wäre.</p>
+        </div>
+      </div>
+      <div class="info-box frage" style="margin-bottom:12px">
+        <span class="bi">❓</span>
+        <span><b>Leitfrage</b>Lohnt sich eine hohe Franchise – und ab welchen Gesundheitskosten kippt es?</span>
+      </div>
 
       <h3>Wer sind Sie?</h3>
       <div class="fr-wahl" id="gruppeWahl">
@@ -329,66 +885,286 @@ footer{ text-align:center; padding:18px 12px 26px; }
   <!-- ================= 5 SIMULATION ================= -->
   <section class="seite" id="seite-simulation">
     <div class="card">
-      <h2>Ihr Jahr – wie läuft es aus?</h2>
-      <p class="lead">Franchise wählen, Jahr starten. Der Zufall entscheidet, was passiert – wie im echten Leben.</p>
-      <div class="fr-wahl" id="simFrWahl"></div>
-      <div class="mitte" style="margin-top:10px">
-        <button class="knopf gross" type="button" id="simStart">▶ Jahr starten</button>
+      <div class="sim-kopf">
+        <div class="abschnitt-kopf">
+          <span class="sig">🎲</span>
+          <div>
+            <h2>5. Ihr Jahr – der Zufall entscheidet</h2>
+            <p>Simulieren Sie ein Jahr mit zufälligen Gesundheitskosten. Am Ende sehen Sie, wie viel Sie selbst bezahlen müssen.</p>
+          </div>
+        </div>
+        <button class="knopf gross" type="button" id="simStart">🎲 Jahr simulieren</button>
+        <div class="info-box frage">
+          <span class="bi">💡</span>
+          <span><b>Zufall</b>Er bestimmt, wann und wie oft Sie Leistungen brauchen – nicht Sie.</span>
+        </div>
       </div>
-      <div class="monate" id="simMonate"></div>
-      <div class="log" id="simLog"></div>
-      <div class="ergebnis" id="simErgebnis"></div>
+
+      <div class="sim-grid">
+        <div>
+          <div class="person-karte">
+            <div class="pbild">👧</div>
+            <div class="pname">Mia</div>
+            <div class="pzeile" style="display:block"><span>Franchise gewählt</span>
+              <div class="fr-wahl mini" id="simFrWahl" style="margin-top:6px"></div>
+            </div>
+            <div class="pzeile"><span>Selbstbehalt</span><span class="pwert">10 %</span></div>
+            <div class="pzeile"><span>Prämie pro Jahr</span><span class="pwert" id="simPraemie">–</span></div>
+          </div>
+          <div class="info-box ueberlege" style="margin-top:10px">
+            <span class="bi">🛡</span>
+            <span><b>Ihre Wahl</b>wirkt sich direkt auf die Kosten aus.</span>
+          </div>
+        </div>
+
+        <div>
+          <div class="monate" id="simMonate"></div>
+          <div class="zeitachse" id="simAchse"></div>
+          <div class="erg-reihe" id="simErgebnis"></div>
+        </div>
+      </div>
+
       <p class="merk" id="simFazit" style="display:none"></p>
+      <p class="quelle">Zahnbehandlungen und Brillen ab 18 zahlt die Grundversicherung <b>nicht</b> – solche Positionen erscheinen grau und laufen nicht über Franchise und Selbstbehalt.</p>
     </div>
   </section>
 
-  <!-- ================= 6 TRANSFER ================= -->
+  <!-- ================= 6 WER ZAHLT ================= -->
   <section class="seite" id="seite-transfer">
     <div class="card">
-      <h2>Welche Versicherung zahlt?</h2>
-      <p class="lead">Sechs Situationen aus dem Alltag – ordnen Sie zu.</p>
-      <div class="fall-liste" id="transferListe"></div>
-    </div>
-
-    <div class="card">
-      <h2>Drei Arten von Versicherungen</h2>
-      <div class="arten">
-        <div class="art person">
-          <b>👤 Personenversicherung</b>
-          <span class="bsp">Schützt <i>Menschen</i> bei Krankheit, Unfall, Invalidität, Alter oder Tod.<br>Krankenkasse · Unfallversicherung · AHV/IV · Pensionskasse · Lebensversicherung</span>
-        </div>
-        <div class="art sach">
-          <b>📦 Sachversicherung</b>
-          <span class="bsp">Schützt <i>Gegenstände</i>, die beschädigt werden oder verloren gehen.<br>Hausrat · Kasko · Gebäudeversicherung · Reisegepäck</span>
-        </div>
-        <div class="art verm">
-          <b>💰 Vermögensversicherung</b>
-          <span class="bsp">Schützt Ihr <i>Vermögen</i>, wenn Sie jemand anderem Schaden zufügen oder Geld verlieren.<br>Privathaftpflicht · Motorfahrzeug-Haftpflicht · Rechtsschutz</span>
+      <div class="abschnitt-kopf">
+        <span class="sig">🧩</span>
+        <div>
+          <h2>6. Welche Versicherung zahlt?</h2>
+          <p>Ordnen Sie jede Situation der richtigen Versicherung zu – ziehen oder antippen.</p>
         </div>
       </div>
-      <p class="merk">💡 <b>Faustregel:</b> Zahlt die Versicherung für <i>mich</i> (Person), für <i>meine Sachen</i> (Sache) oder für den <i>Schaden, den ich anderen zufüge</i> (Vermögen)?</p>
-    </div>
 
-    <div class="card">
-      <h2>Obligatorisch oder freiwillig?</h2>
-      <p class="lead">Diese drei muss in der Schweiz jede und jeder haben:</p>
-      <ul style="margin:4px 0 8px 18px">
-        <li><b>Krankenversicherung (Grundversicherung)</b> – für alle mit Wohnsitz in der Schweiz, KVG Art. 3</li>
-        <li><b>Motorfahrzeug-Haftpflicht</b> – wer ein Fahrzeug immatrikuliert, SVG Art. 63</li>
-        <li><b>AHV/IV/EO</b> – für alle Erwerbstätigen und Wohnhaften, über den Lohnabzug</li>
-      </ul>
-      <p style="margin-bottom:0">Dazu kommt die <b>Unfallversicherung (UVG)</b>: Wer mehr als 8 Stunden pro Woche arbeitet, ist über den Betrieb obligatorisch gegen Unfall versichert – dann kann man den Unfallschutz bei der Krankenkasse abmelden und spart Prämie.</p>
-      <p class="merk">💡 <b>Privathaftpflicht</b> ist <i>freiwillig</i> – aber praktisch unverzichtbar: Ohne sie zahlen Sie einen Schaden, den Sie verursachen, lebenslang aus dem eigenen Sack. Viele Vermieter verlangen sie im Mietvertrag.</p>
+      <div class="chipbox">
+        <div class="ct">Versicherungen</div>
+        <div class="chips" id="vChips">
+          <button class="vchip c-kk" type="button" draggable="true" data-w="kk">🛡 Krankenkasse</button>
+          <button class="vchip c-hr" type="button" draggable="true" data-w="hr">🏠 Hausratversicherung</button>
+          <button class="vchip c-hp" type="button" draggable="true" data-w="hp">👤 Privathaftpflicht</button>
+          <button class="vchip c-mf" type="button" draggable="true" data-w="mf">🚗 Motorfahrzeug-Haftpflicht</button>
+          <button class="vchip c-ke" type="button" draggable="true" data-w="ke">— Keine Versicherung</button>
+        </div>
+      </div>
+
+      <div class="fallgrid" id="fallGrid"></div>
+
+      <div class="mitte" style="margin-top:14px">
+        <button class="knopf gross" type="button" id="zuoPruefen">✓ Lösung prüfen</button>
+        <button class="knopf zweit" type="button" id="zuoReset">↺ Nochmals</button>
+      </div>
+      <p class="ch-stand" id="zuoStand"></p>
+
+      <div class="tippleiste">
+        <div><span class="ti">👥</span><span><b>Wer ist betroffen?</b>Eine Person, eine Sache oder Ihr Vermögen?</span></div>
+        <div><span class="ti">⚠️</span><span><b>Wer verursacht den Schaden?</b>Sie selbst oder eine andere Person?</span></div>
+        <div><span class="ti">🏠</span><span><b>Was ist versichert?</b>Ein Schaden bei Ihnen oder bei anderen?</span></div>
+      </div>
     </div>
   </section>
 
-  <!-- ================= 7 CHALLENGE ================= -->
+  <!-- ================= 7 KATEGORIEN ================= -->
+  <section class="seite" id="seite-kategorien">
+    <div class="card">
+      <div class="abschnitt-kopf">
+        <span class="sig">🗂</span>
+        <div>
+          <h2>7. Personen, Sachen oder Vermögen?</h2>
+          <p>Versicherungen schützen unterschiedliche Dinge. Sie lassen sich in drei Gruppen einteilen.</p>
+        </div>
+      </div>
+
+      <div class="kat3">
+        <div class="katkarte kat-pers">
+          <div class="kk1"><span class="kico">👤</span><span class="ktit">Personenversicherungen</span></div>
+          <div class="ktxt">Sie schützen die Gesundheit und das Leben von Personen.</div>
+          <div class="kbild">🧑‍⚕️</div>
+          <div class="kbsp"><b>Beispiele</b><ul>
+            <li>Krankenversicherung</li><li>Unfallversicherung (UVG)</li>
+            <li>AHV / IV, Pensionskasse</li><li>Lebensversicherung</li></ul></div>
+        </div>
+        <div class="katkarte kat-sach">
+          <div class="kk1"><span class="kico">🏠</span><span class="ktit">Sachversicherungen</span></div>
+          <div class="ktxt">Sie schützen Gegenstände und Sachen.</div>
+          <div class="kbild">🛋</div>
+          <div class="kbsp"><b>Beispiele</b><ul>
+            <li>Hausratversicherung</li><li>Gebäudeversicherung</li>
+            <li>Kaskoversicherung</li><li>Reisegepäck</li></ul></div>
+        </div>
+        <div class="katkarte kat-verm">
+          <div class="kk1"><span class="kico">💰</span><span class="ktit">Vermögensversicherungen</span></div>
+          <div class="ktxt">Sie schützen das Vermögen und die finanziellen Interessen.</div>
+          <div class="kbild">📈</div>
+          <div class="kbsp"><b>Beispiele</b><ul>
+            <li>Privathaftpflicht</li><li>Motorfahrzeug-Haftpflicht</li>
+            <li>Rechtsschutzversicherung</li><li>Betriebsunterbruch</li></ul></div>
+        </div>
+      </div>
+
+      <div class="info-box ueberlege" style="margin-top:14px">
+        <span class="bi">❓</span>
+        <span><b>Überlege</b>In welche Kategorie gehört die jeweilige Versicherung? Ziehen oder antippen.</span>
+      </div>
+
+      <div class="chipbox" style="margin-top:10px">
+        <div class="ct">Versicherungen einsortieren</div>
+        <div class="chips" id="gChips"></div>
+      </div>
+      <div class="sortier" id="sortier">
+        <div class="sz" data-r="pers"><div class="szt" style="color:var(--gruen)">Person</div><div class="abl"></div></div>
+        <div class="sz" data-r="sach"><div class="szt" style="color:var(--blau)">Sache</div><div class="abl"></div></div>
+        <div class="sz" data-r="verm"><div class="szt" style="color:#9a7a12">Vermögen</div><div class="abl"></div></div>
+      </div>
+      <div class="mitte" style="margin-top:12px">
+        <button class="knopf" type="button" id="katPruefen">✓ Lösung prüfen</button>
+        <button class="knopf zweit" type="button" id="katReset">↺ Nochmals</button>
+      </div>
+      <p class="ch-stand" id="katStand"></p>
+
+      <div class="info-box merke" style="margin-top:12px">
+        <span class="bi">💡</span>
+        <span><b>Faustregel</b>Zahlt die Versicherung für <i>mich</i> (Person), für <i>meine Sachen</i> (Sache)
+        oder für den <i>Schaden, den ich anderen zufüge</i> (Vermögen)?</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 8 PFLICHT ================= -->
+  <section class="seite" id="seite-pflicht">
+    <div class="card">
+      <div class="abschnitt-kopf">
+        <span class="sig">🇨🇭</span>
+        <div>
+          <h2>8. Obligatorisch oder freiwillig?</h2>
+          <p>In der Schweiz gibt es sowohl verpflichtende als auch freiwillige Versicherungen.</p>
+        </div>
+      </div>
+
+      <div class="pflicht2">
+        <div class="pfeld obl">
+          <div class="pt">Obligatorisch (Pflicht)</div>
+          <div class="pu">Gesetzlich vorgeschrieben – alle müssen sie abschliessen.</div>
+          <div class="picons">
+            <div><span class="pi">🏥</span><b>Krankenversicherung</b><small>Grundversicherung, KVG Art. 3</small></div>
+            <div><span class="pi">🚗</span><b>Motorfahrzeug-Haftpflicht</b><small>SVG Art. 63</small></div>
+            <div><span class="pi">👷</span><b>Unfallversicherung</b><small>UVG, ab 8 h Arbeit pro Woche</small></div>
+            <div><span class="pi">👴</span><b>AHV / IV / EO</b><small>Sozialversicherungen</small></div>
+          </div>
+        </div>
+        <div class="pfeld fre">
+          <div class="pt">Freiwillig (frei wählbar)</div>
+          <div class="pu">Nicht vorgeschrieben – Sie entscheiden selbst, ob und welche Sie abschliessen.</div>
+          <div class="picons">
+            <div><span class="pi">🏠</span><b>Hausratversicherung</b><small>oft im Mietvertrag verlangt</small></div>
+            <div><span class="pi">👤</span><b>Privathaftpflicht</b><small>praktisch unverzichtbar</small></div>
+            <div><span class="pi">✈️</span><b>Reiseversicherung</b><small>Annullierung, Rückreise</small></div>
+            <div><span class="pi">📈</span><b>Spar- / Lebensversicherung</b><small>Vorsorge Säule 3a</small></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box merke" style="margin-top:14px">
+        <span class="bi">💡</span>
+        <span><b>Merke</b>Obligatorische Versicherungen sichern Risiken ab, die für die <b style="display:inline">Gesellschaft</b>
+        besonders wichtig sind. Freiwillige Versicherungen bieten zusätzlichen Schutz – je nach persönlicher Lebenssituation.</span>
+      </div>
+      <p class="quelle">Die Unfalldeckung ist obligatorisch über den Betrieb, sobald Sie mehr als 8 Stunden pro Woche arbeiten (UVG Art. 1a, UVV Art. 13) – dann können Sie den Unfallschutz bei der Krankenkasse abmelden und sparen Prämie. Im Kanton Aargau ist zusätzlich die <b>Gebäudeversicherung</b> für Eigentümerinnen und Eigentümer obligatorisch.</p>
+    </div>
+  </section>
+
+  <!-- ================= 9 CHALLENGE ================= -->
   <section class="seite" id="seite-challenge">
     <div class="card">
-      <h2>Mini-Challenge: fünf Fälle</h2>
-      <p class="lead">Jetzt gilt's. Direktes Feedback nach jeder Antwort.</p>
+      <div class="abschnitt-kopf">
+        <span class="sig">🏆</span>
+        <div>
+          <h2>9. Mini-Challenge</h2>
+          <p>Entscheiden Sie, ob die folgenden Versicherungen obligatorisch (O) oder freiwillig (F) sind.</p>
+        </div>
+      </div>
+      <div class="oftab" id="ofTab"></div>
+      <p class="ch-stand" id="ofStand"></p>
+    </div>
+
+    <div class="card">
+      <h2>Und jetzt gerechnet – fünf Fälle</h2>
+      <p class="lead">Franchise, Selbstbehalt, Zuständigkeit. Direktes Feedback nach jeder Antwort.</p>
       <div id="challengeListe"></div>
       <p class="ch-stand" id="chStand"></p>
+
+    </div>
+  </section>
+
+
+  <!-- ================= 10 FINALE CHALLENGE ================= -->
+  <section class="seite" id="seite-final">
+    <div class="card">
+      <div class="fin-kopf">
+        <div class="abschnitt-kopf">
+          <span class="sig">🏆</span>
+          <div>
+            <h2>10. Challenge – zeigen Sie, was Sie können</h2>
+            <p>Sie wissen jetzt, wie Versicherungen funktionieren. Ordnen Sie die Situationen der richtigen Versicherung zu.</p>
+          </div>
+        </div>
+        <div class="denk">
+          <b>💡 Denken Sie daran</b>
+          <ul>
+            <li>Wer oder was ist betroffen?</li>
+            <li>Wohin gehört das Risiko?</li>
+            <li>Obligatorisch oder freiwillig?</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="aufgabe">
+        <span class="ziel">🎯</span>
+        <span><b>Ihre Aufgabe:</b> Welche Versicherung kommt für jede Situation auf?</span>
+        <span>→</span>
+        <span class="pill">Karten in die passende Versicherung ziehen</span>
+      </div>
+
+      <div class="zieh" id="ziehKarten"></div>
+      <div class="eimer" id="eimer"></div>
+
+      <div class="mitte" style="margin-top:14px">
+        <button class="knopf gross" type="button" id="finPruefen">✓ Lösung prüfen</button>
+        <button class="knopf zweit" type="button" id="finReset">↺ Nochmals</button>
+      </div>
+      <p class="ch-stand" id="finStand"></p>
+      <div id="finAuf"></div>
+
+      <div class="super" id="superBar">
+        <div class="sukopf">
+          <span class="suhaken">✔</span>
+          <div>
+            <h3 class="sut">Super! Sie haben es verstanden.</h3>
+            <p class="sup">Versicherungen schützen vor finanziellen Risiken – dank Solidarität, klarer Regeln und einer klugen Wahl.</p>
+          </div>
+          <div class="blase">«Viele tragen gemeinsam – so muss niemand alles allein tragen.»</div>
+        </div>
+        <div class="sudrei">
+          <div><span class="si">👥</span><span><b>Gemeinsam</b>sind wir stärker – das ist Solidarität.</span></div>
+          <div><span class="si">☂️</span><span><b>Versicherungen schützen</b>dann, wenn es tatsächlich passiert.</span></div>
+          <div><span class="si">🚀</span><span><b>Sie sind bereit</b>Gut verstanden – gut geschützt.</span></div>
+        </div>
+      </div>
+
+      <h3 style="text-align:center;margin-top:18px">Das Wichtigste in Kürze</h3>
+      <div class="wichtig">
+        <div><span class="wi">🤝</span><span><b>Gemeinsam</b>tragen wir Risiken – niemand steht allein da.</span></div>
+        <div><span class="wi">🛡</span><span><b>Franchise &amp; Selbstbehalt</b>bestimmen, wie viel Sie selbst bezahlen.</span></div>
+        <div><span class="wi">☂️</span><span><b>Die richtige Versicherung</b>schützt im richtigen Moment.</span></div>
+        <div><span class="wi">⚖️</span><span><b>Obligatorisch oder freiwillig</b>klug wählen und vergleichen.</span></div>
+        <div><span class="wi">❤️</span><span><b>Solidarität</b>macht den Unterschied.</span></div>
+      </div>
+      <p class="lead" style="text-align:center;margin:12px 0 0">
+        👍 <b>Gut gemacht.</b> Jetzt wissen Sie, wie Versicherungen funktionieren – im Alltag und in Ihrem Leben.
+      </p>
     </div>
   </section>
 
@@ -425,157 +1201,184 @@ document.getElementById('kopfTitel').addEventListener('click', function(){
 
 /* ================= 1 RISIKO ================= */
 var LEUTE = [
-  { name:'Lea', kopf:'🧑‍🎓', konto:2400 },
-  { name:'Ben', kopf:'👨‍🔧', konto:1800 },
-  { name:'Mia', kopf:'👩‍💼', konto:3100 },
-  { name:'Nico', kopf:'🧑‍🍳', konto:900 },
-  { name:'Sara', kopf:'👩‍⚕️', konto:2200 }
+  { name:'Lena', kopf:'👩', konto:4200, farbe:'#7C4DBE', dat:'Ihr'  },
+  { name:'Noah', kopf:'👦', konto:3800, farbe:'#2C6BAA', dat:'Ihm'  },
+  { name:'Elif', kopf:'🧕', konto:5100, farbe:'#2E7D4F', dat:'Ihr'  },
+  { name:'Luca', kopf:'🧒', konto:4600, farbe:'#C97A1E', dat:'Ihm'  },
+  { name:'Mia',  kopf:'👧', konto:3900, farbe:'#C4547F', dat:'Ihr'  }
 ];
+var R_UNFALL = 18000;
 var risikoStufe = 0, getroffen = -1;
-function zeichneLeute(){
+
+function zeichneKarten5(){
   var h = '';
   LEUTE.forEach(function(p, i){
-    var kl = (i === getroffen && risikoStufe >= 2) ? ' getroffen' : '';
-    var lage = '';
-    if (i === getroffen && risikoStufe === 1) lage = '⚡ Unfall!';
-    if (i === getroffen && risikoStufe >= 2) lage = 'Rechnung: ' + fr(18000);
-    h += '<div class="person'+kl+'"><div class="kopf">'+p.kopf+'</div>'
-       + '<div class="name">'+p.name+'</div>'
-       + '<div class="konto">'+fr(risikoStufe >= 2 && i === getroffen ? 0 : p.konto)+'</div>'
-       + '<div class="lage">'+lage+'</div></div>';
+    var trifft = (i === getroffen);
+    h += '<div class="pkarte'+(trifft && risikoStufe>=1 ? ' getroffen' : '')+'">'
+       + (trifft && risikoStufe>=1 ? '<span class="badge">Unfall</span>' : '')
+       + '<div class="pname" style="color:'+p.farbe+'">'+p.name+'</div>'
+       + '<div class="pbild">'+p.kopf+'</div>'
+       + '<div class="pgeld"><span class="betrag">'+fr(p.konto)+'</span><span class="lab">Erspartes</span></div>'
+       + (trifft && risikoStufe>=1
+            ? '<div class="ereignis">Spitalrechnung<b>'+fr(R_UNFALL)+'</b></div>' : '')
+       + '</div>';
   });
-  document.getElementById('leute').innerHTML = h;
+  document.getElementById('karten5').innerHTML = h;
 }
+
 document.getElementById('risikoKnopf').addEventListener('click', function(){
-  var k = this, t = document.getElementById('risikoText');
+  var k = this, f = document.getElementById('risikoFolge');
   if (risikoStufe === 0){
     getroffen = zufall(0, LEUTE.length-1);
     risikoStufe = 1;
-    zeichneLeute();
-    t.innerHTML = '<p style="font-size:16px"><b>'+LEUTE[getroffen].name+'</b> stürzt beim Snowboarden und muss vier Tage ins Spital. '
-                + 'Operation, Röntgen, Physiotherapie.</p>';
-    k.textContent = '💸 Die Rechnung kommt';
+    zeichneKarten5();
+    var p = LEUTE[getroffen];
+    f.innerHTML =
+        '<div class="fbox rechnung-box"><b>'+p.name+' stürzt beim Snowboarden.</b>'
+      + ' Vier Tage Spital, Operation, Röntgen, Physiotherapie.'
+      + '<span class="gross">'+fr(R_UNFALL)+'</span></div>';
+    k.textContent = '💸 Kann ' + p.name + ' das bezahlen?';
   } else if (risikoStufe === 1){
     risikoStufe = 2;
-    zeichneLeute();
     var p = LEUTE[getroffen];
-    var fehlt = 18000 - p.konto;
-    t.innerHTML = '<p style="font-size:16px">Die Rechnung beträgt <b>'+fr(18000)+'</b>. '
-      + p.name + ' hat ' + fr(p.konto) + ' gespart – es fehlen <b style="color:var(--rot)">'+fr(fehlt)+'</b>.</p>'
-      + '<p style="font-size:16px">Ohne Versicherung: Schulden, Betreibung, jahrelange Abzahlung. '
-      + 'Und das für einen Sturz, den auch jede und jeder andere hier hätte haben können.</p>';
-    k.textContent = '↺ Nochmals';
-    document.getElementById('risikoFrage').style.display = '';
+    var fehlt = R_UNFALL - p.konto;
+    f.innerHTML =
+        '<div class="fbox rechnung-box">'+p.name+' hat nur <b>'+fr(p.konto)+'</b> gespart.'
+      + '<span class="gross">'+p.dat+' fehlen '+fr(fehlt)+'</span></div>'
+      + '<div class="fbox info-box ueberlege"><span class="bi">❓</span><span><b>Überlege</b>'
+      + 'Ohne Versicherung: Schulden, Betreibung, jahrelange Abzahlung – für einen Sturz, '
+      + 'den auch jede und jeder andere hier hätte haben können. '
+      + 'Wie könnten die fünf dieses Risiko gemeinsam tragen?</span></div>';
+    k.textContent = '↺ Nochmals – wen trifft es diesmal?';
   } else {
     risikoStufe = 0; getroffen = -1;
-    zeichneLeute();
-    t.innerHTML = '';
-    k.textContent = '⚡ Was passiert diesen Monat?';
-    document.getElementById('risikoFrage').style.display = 'none';
+    zeichneKarten5();
+    f.innerHTML = '';
+    k.textContent = '🎲 Was passiert diesen Monat?';
   }
 });
-zeichneLeute();
+zeichneKarten5();
 
 /* ================= 2 SOLIDARITÄT ================= */
 var N_LEUTE = 100, BEITRAG = 300;
+var POOL_EIN = N_LEUTE * BEITRAG;                 /* 30'000 */
+var JAHR = [
+  { kl:'ok',    zahl:92, betrag:0,     txt:'brauchen keine Leistung',   punkte:[] },
+  { kl:'klein', zahl:5,  betrag:600,   txt:'kleinere Behandlungen',     punkte:[7,19,41,63,88] },
+  { kl:'gross', zahl:2,  betrag:5000,  txt:'grössere Eingriffe',        punkte:[26,72] },
+  { kl:'hoch',  zahl:1,  betrag:18000, txt:'sehr hohe Kosten (Unfall)', punkte:[54] }
+];
+var POOL_AUS = JAHR.reduce(function(a,z){ return a + z.zahl*z.betrag; }, 0);   /* 31'000 */
 var topfLauf = null;
-function zeichnePunkte(){
+
+function zeichneRaster100(){
   var h = '';
   for (var i=0;i<N_LEUTE;i++) h += '<i></i>';
-  document.getElementById('punkte').innerHTML = h;
-  document.getElementById('topfStand').textContent = fr(0);
-  document.getElementById('bilanz').innerHTML = '';
-  document.getElementById('topfFazit').innerHTML = '';
+  var r = document.getElementById('raster100');
+  r.innerHTML = h;
+  document.getElementById('poolStand').textContent = fr(0);
+  document.getElementById('jahrKarten').innerHTML = '<p class="lead" style="grid-column:1/-1;text-align:center;margin:6px 0">Starten Sie das Jahr – hier erscheint, wer eine Leistung braucht.</p>';
+  document.getElementById('soliBilanz').innerHTML = '';
+}
+function jahrKarte(z){
+  return '<div class="jk '+z.kl+'"><span class="zahl">'+z.zahl+'</span>'+z.txt
+       + '<span class="betrag">'+(z.betrag ? 'je '+fr(z.betrag) : fr(0))+'</span></div>';
 }
 document.getElementById('topfReset').addEventListener('click', function(){
   clearInterval(topfLauf); topfLauf = null;
-  zeichnePunkte();
+  zeichneRaster100();
   document.getElementById('topfKnopf').disabled = false;
 });
 document.getElementById('topfKnopf').addEventListener('click', function(){
   var knopf = this;
   knopf.disabled = true;
-  zeichnePunkte();
-  var pk = document.querySelectorAll('#punkte i');
+  zeichneRaster100();
+  var pk = document.querySelectorAll('#raster100 i');
   var stand = 0, i = 0;
-  var standEl = document.getElementById('topfStand');
-  /* Phase 1: alle zahlen ein */
+  var standEl = document.getElementById('poolStand');
   topfLauf = setInterval(function(){
     if (i >= N_LEUTE){
       clearInterval(topfLauf);
-      schaeden(stand, pk, knopf);
+      schadenPhase(pk, knopf);
       return;
     }
     pk[i].classList.add('zahlt');
     stand += BEITRAG;
     standEl.textContent = fr(stand);
     i++;
-  }, 22);
+  }, 18);
 });
-function schaeden(stand, pk, knopf){
-  /* Phase 2: einige erleiden Schaeden */
-  var faelle = [
-    { i: 7,  betrag: 18000, was:'Spital nach Sportunfall' },
-    { i: 34, betrag: 4200,  was:'Blinddarm-Operation' },
-    { i: 61, betrag: 2600,  was:'Lungenentzündung' },
-    { i: 88, betrag: 1500,  was:'Physiotherapie nach Bandscheibenvorfall' }
-  ];
-  var k = 0, ausbezahlt = 0;
-  var standEl = document.getElementById('topfStand');
+function schadenPhase(pk, knopf){
+  var jk = document.getElementById('jahrKarten');
+  var standEl = document.getElementById('poolStand');
+  var k = 0, aus = 0;
   var lauf = setInterval(function(){
-    if (k >= faelle.length){
+    if (k >= JAHR.length){
       clearInterval(lauf);
-      var rest = stand - ausbezahlt;
-      document.getElementById('bilanz').innerHTML =
-          '<div class="bkarte ein"><div class="w">'+fr(stand)+'</div><div class="l">100 × '+fr(BEITRAG)+' eingezahlt</div></div>'
-        + '<div class="bkarte aus"><div class="w">'+fr(ausbezahlt)+'</div><div class="l">an 4 Personen ausbezahlt</div></div>'
-        + '<div class="bkarte"><div class="w">'+fr(rest)+'</div><div class="l">bleibt im Topf</div></div>';
-      document.getElementById('topfFazit').innerHTML =
-          '<p class="merk">💡 <b>Das Solidaritätsprinzip:</b> Alle zahlen einen kleinen, planbaren Betrag. '
-        + 'Wenige bekommen viel – nämlich die, die es trifft. '
-        + '<b>'+fr(BEITRAG)+' tun niemandem weh. '+fr(18000)+' schon.</b></p>'
-        + '<p class="lead" style="margin-top:10px">Genau so funktioniert jede Versicherung: '
-        + 'Aus <i>vielen kleinen Prämien</i> wird <i>ein grosser Schutz</i>. '
-        + 'Wer nichts braucht, hat nicht verloren – er hat ein Jahr ohne Unglück gehabt.</p>';
+      bilanzZeigen();
       knopf.disabled = false;
       return;
     }
-    var f = faelle[k];
-    pk[f.i].classList.add('schaden');
-    ausbezahlt += f.betrag;
-    standEl.textContent = fr(stand - ausbezahlt);
+    var z = JAHR[k];
+    z.punkte.forEach(function(ix){ pk[ix].classList.add('schaden'); });
+    aus += z.zahl * z.betrag;
+    standEl.textContent = fr(POOL_EIN - aus);
+    jk.insertAdjacentHTML('beforeend', jahrKarte(z));
     k++;
-  }, 520);
+  }, 620);
 }
-zeichnePunkte();
+function bilanzZeigen(){
+  var diff = POOL_EIN - POOL_AUS;
+  document.getElementById('soliBilanz').innerHTML =
+      '<div class="bilanz">'
+    + '<div class="bkarte ein"><div class="w">'+fr(POOL_EIN)+'</div><div class="l">eingezahlt (100 × '+fr(BEITRAG)+')</div></div>'
+    + '<div class="bkarte aus"><div class="w">'+fr(POOL_AUS)+'</div><div class="l">ausbezahlt an 8 Personen</div></div>'
+    + '<div class="bkarte'+(diff<0?' aus':'')+'"><div class="w">'+(diff<0?'−':'')+fr(Math.abs(diff))+'</div><div class="l">'+(diff<0?'fehlen im Pool':'bleibt im Pool')+'</div></div>'
+    + '</div>'
+    + '<p class="merk" style="margin-top:12px">💡 <b>Der Pool reicht dieses Jahr nicht.</b> '
+    + fr(POOL_EIN)+' kamen herein, '+fr(POOL_AUS)+' mussten hinaus – es fehlen <b>'+fr(Math.abs(diff))+'</b>. '
+    + 'Genau darum steigen Prämien: Sie müssen decken, was die Gemeinschaft tatsächlich braucht. '
+    + 'Und trotzdem: <b>'+fr(BEITRAG)+' tun niemandem weh. '+fr(18000)+' schon.</b></p>';
+}
+document.getElementById('soliMeinung').querySelectorAll('button').forEach(function(b){
+  b.addEventListener('click', function(){
+    var m = document.getElementById('soliMeinung');
+    if (m.dataset.fertig) return;
+    m.dataset.fertig = '1';
+    b.classList.add(b.dataset.w === 'nein' ? 'richtig' : 'falsch');
+    if (b.dataset.w === 'ja') m.querySelector('[data-w="nein"]').classList.add('richtig');
+    document.getElementById('soliAuf').classList.add('zeig');
+  });
+});
+zeichneRaster100();
 
 /* ================= 3 FRANCHISE & SELBSTBEHALT ================= */
 var R_SCHRITTE = [
-  { kl:'',      txt:'Rechnung vom Spital',            sub:'Notfall, Röntgen, Behandlung', betrag:2500, vz:'' },
-  { kl:'du',    txt:'1. Franchise – Sie zahlen zuerst', sub:'Ihre gewählte Franchise: CHF 300', betrag:300, vz:'−' },
-  { kl:'',      txt:'Rest nach der Franchise',        sub:'2500 − 300', betrag:2200, vz:'' },
-  { kl:'du',    txt:'2. Selbstbehalt – 10 % vom Rest', sub:'10 % von 2200 (Maximum CHF 700 pro Jahr)', betrag:220, vz:'−' },
-  { kl:'kk',    txt:'3. Die Krankenkasse zahlt',      sub:'2200 − 220', betrag:1980, vz:'' },
-  { kl:'summe', txt:'Sie bezahlen insgesamt',         sub:'300 Franchise + 220 Selbstbehalt', betrag:520, vz:'' }
+  { kl:'s1', nr:'1', tit:'Franchise',   sub:'Mia bezahlt zuerst ihre gewählte Franchise',        betrag:300  },
+  { kl:'s2', nr:'2', tit:'Selbstbehalt', sub:'10 % vom Rest (2\'500 − 300 = 2\'200)',             betrag:220  },
+  { kl:'s3', nr:'3', tit:'Krankenkasse', sub:'übernimmt alles Übrige (2\'200 − 220)',             betrag:1980 }
 ];
 var rStufe = 0;
 function zeichneRechnung(){
   var h = '';
   R_SCHRITTE.forEach(function(s, i){
-    h += '<div class="rzeile '+s.kl+(i < rStufe ? ' zeig':'')+'">'
-       + '<div class="txt">'+s.txt+'<small>'+s.sub+'</small></div>'
-       + '<div class="betrag">'+s.vz+fr(s.betrag)+'</div></div>';
+    h += '<div class="schritt '+s.kl+(i < rStufe ? ' zeig':'')+'">'
+       + '<span class="snr">'+s.nr+'</span>'
+       + '<span class="stxt">'+s.tit+'<small>'+s.sub+'</small></span>'
+       + '<span class="sbet">'+fr(s.betrag)+'</span></div>';
   });
-  document.getElementById('rechnung').innerHTML = h;
+  document.getElementById('schritte').innerHTML = h;
+
+  var box = document.getElementById('ergBox');
   var bal = document.getElementById('rechnungBalken');
   if (rStufe >= R_SCHRITTE.length){
-    bal.innerHTML = '<div class="balken-2"><span class="b-du" style="width:20.8%">Sie 520</span>'
+    box.classList.add('zeig');
+    bal.innerHTML = '<div class="balken-2"><span class="b-du" style="width:20.8%">Mia 520</span>'
                   + '<span class="b-kk" style="width:79.2%">Krankenkasse 1980</span></div>'
-                  + '<div class="lead" style="text-align:center">Von CHF 2\'500 tragen Sie rund <b>21 %</b>.</div>';
-    document.getElementById('rechnungMerk').style.display = '';
+                  + '<div class="lead" style="text-align:center;margin:6px 0 0">Von CHF 2\'500 trägt Mia rund <b>21 %</b>.</div>';
   } else {
+    box.classList.remove('zeig');
     bal.innerHTML = '';
-    document.getElementById('rechnungMerk').style.display = 'none';
   }
 }
 document.getElementById('rechnungKnopf').addEventListener('click', function(){
@@ -697,68 +1500,108 @@ zeichneFrWahl();
 rechneExp();
 
 /* ================= 5 SIMULATION ================= */
-var EREIGNISSE = [
-  { ico:'🩺', was:'Arztbesuch wegen Grippe',        min:120,  max:260,  deckt:true },
-  { ico:'💊', was:'Medikamente aus der Apotheke',   min:40,   max:180,  deckt:true },
-  { ico:'🦷', was:'Zahnarzt: Loch gefüllt',         min:250,  max:600,  deckt:false, hinweis:'Zahnbehandlungen zahlt die Grundversicherung <b>nicht</b>.' },
-  { ico:'🚑', was:'Notfall nach Sturz',             min:400,  max:900,  deckt:true },
-  { ico:'🩻', was:'Röntgen und Kontrolle',          min:280,  max:650,  deckt:true },
-  { ico:'🧘', was:'Physiotherapie (9 Sitzungen)',   min:450,  max:800,  deckt:true },
-  { ico:'👓', was:'Neue Brille',                    min:250,  max:500,  deckt:false, hinweis:'Brillen zahlt die Grundversicherung ab 18 <b>nicht</b> mehr.' },
-  { ico:'🏥', was:'Spitalaufenthalt (3 Tage)',      min:4200, max:9000, deckt:true },
-  { ico:'🤧', was:'Zweiter Arztbesuch',             min:110,  max:240,  deckt:true },
-  { ico:'💉', was:'Impfung und Blutbild',           min:90,   max:220,  deckt:true }
+var MONATE = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+var KLEIN = [
+  { ico:'🩺', was:'Arzt',        min:100, max:260, deckt:true },
+  { ico:'💊', was:'Medikamente', min:40,  max:180, deckt:true },
+  { ico:'🧘', was:'Physio',      min:150, max:320, deckt:true },
+  { ico:'💉', was:'Impfung',     min:80,  max:200, deckt:true },
+  { ico:'🩻', was:'Röntgen',     min:220, max:480, deckt:true },
+  { ico:'🦷', was:'Zahnarzt',    min:180, max:520, deckt:false },
+  { ico:'👓', was:'Brille',      min:250, max:480, deckt:false }
+];
+var GROSS = [
+  { ico:'🛏', was:'Unfall',   min:2800, max:6500, deckt:true },
+  { ico:'🚑', was:'Notfall',  min:1400, max:3200, deckt:true },
+  { ico:'🏥', was:'Operation',min:3500, max:9000, deckt:true }
 ];
 var simFr = 300;
+
+function simPraemieZeigen(){
+  var el = document.getElementById('simPraemie');
+  if (el) el.textContent = fr(praemieMonat('jung', simFr) * 12);
+}
 function zeichneSimFr(){
-  var G = GRUPPEN.jung;
   var h = '';
-  G.fr.forEach(function(f){
+  GRUPPEN.jung.fr.forEach(function(f){
     h += '<button type="button" data-f="'+f+'"'+(f===simFr?' class="an"':'')+'>'+fr(f)+'</button>';
   });
-  document.getElementById('simFrWahl').innerHTML = h;
-  document.getElementById('simFrWahl').querySelectorAll('button').forEach(function(b){
-    b.addEventListener('click', function(){ simFr = parseInt(b.dataset.f,10); zeichneSimFr(); });
+  var w = document.getElementById('simFrWahl');
+  w.innerHTML = h;
+  w.querySelectorAll('button').forEach(function(b){
+    b.addEventListener('click', function(){
+      simFr = parseInt(b.dataset.f,10);
+      zeichneSimFr(); simPraemieZeigen();
+      if (letztesJahr) auswerten(letztesJahr);
+    });
   });
+  simPraemieZeigen();
 }
-document.getElementById('simStart').addEventListener('click', function(){
-  var MON = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
-  var anzahl = zufall(1, 5);
-  var gewaehlt = [];
-  var pool = EREIGNISSE.slice();
-  for (var i=0;i<anzahl && pool.length;i++){
-    var e = pool.splice(Math.floor(Math.random()*pool.length), 1)[0];
-    gewaehlt.push({ e:e, monat: zufall(0,11), betrag: zufall(e.min, e.max) });
-  }
-  gewaehlt.sort(function(a,b){ return a.monat - b.monat; });
 
-  var hm = '';
+var letztesJahr = null;
+
+function jahrWuerfeln(){
+  var jahr = [];
   for (var m=0;m<12;m++){
-    var hier = gewaehlt.filter(function(g){ return g.monat === m; });
-    hm += '<div class="monat'+(hier.length?' tat':'')+'">'
-        + '<span class="ico">'+(hier.length ? hier.map(function(g){ return g.e.ico; }).join('') : '·')+'</span>'
-        + MON[m]+'</div>';
+    var e = null;
+    if (Math.random() < 0.34){
+      var v = KLEIN[Math.floor(Math.random()*KLEIN.length)];
+      e = { ico:v.ico, was:v.was, deckt:v.deckt, betrag: zufall(v.min, v.max), gross:false };
+    }
+    jahr.push(e);
   }
-  document.getElementById('simMonate').innerHTML = hm;
+  if (Math.random() < 0.45){
+    var g = GROSS[Math.floor(Math.random()*GROSS.length)];
+    var m2 = zufall(0,11);
+    jahr[m2] = { ico:g.ico, was:g.was, deckt:true, betrag: zufall(g.min, g.max), gross:true };
+  }
+  return jahr;
+}
 
-  var gedeckt = 0, selbst = 0, hl = '';
-  gewaehlt.forEach(function(g){
-    if (g.e.deckt){ gedeckt += g.betrag; hl += '<div><span>'+g.e.ico+' '+g.e.was+'</span><span>'+fr(g.betrag)+'</span></div>'; }
-    else { selbst += g.betrag; hl += '<div class="nicht"><span>'+g.e.ico+' '+g.e.was+' – nicht versichert</span><span>'+fr(g.betrag)+'</span></div>'; }
+function zeichneJahr(jahr){
+  var hm = '', ha = '';
+  jahr.forEach(function(e, m){
+    if (!e){
+      hm += '<div class="monat leer"><span class="mkopf">'+MONATE[m]+'</span>'
+          + '<span class="mico">✅</span><span class="mtxt">Nichts</span></div>';
+      ha += '<i></i>';
+    } else {
+      var kl = e.gross ? ' hoch' : (e.deckt ? ' tat' : ' nichtv');
+      hm += '<div class="monat'+kl+'"><span class="mkopf">'+MONATE[m]+'</span>'
+          + '<span class="mico">'+e.ico+'</span>'
+          + '<span class="mtxt">'+e.was+(e.deckt?'':'<br>nicht vers.')+'</span>'
+          + '<span class="mbet">'+fr(e.betrag)+'</span></div>';
+      ha += '<i class="'+(e.gross?'hoch':'tat')+'"></i>';
+    }
   });
-  if (!gewaehlt.length) hl = '<div><span>Ein Jahr ohne Arztbesuch – Glück gehabt.</span><span>'+fr(0)+'</span></div>';
-  document.getElementById('simLog').innerHTML = hl;
+  document.getElementById('simMonate').innerHTML = hm;
+  document.getElementById('simAchse').innerHTML = ha;
+}
 
+function auswerten(jahr){
+  var gedeckt = 0, selbst = 0;
+  jahr.forEach(function(e){
+    if (!e) return;
+    if (e.deckt) gedeckt += e.betrag; else selbst += e.betrag;
+  });
+  var a = eigenAnteil('jung', simFr, gedeckt);
+  var ueber = Math.max(0, gedeckt - a.franchise);
+  var kasse = gedeckt - a.franchise - a.sb;
+
+  var h = '<div class="ekarte k1"><div class="w">'+fr(gedeckt+selbst)+'</div><div class="l">Gesundheitskosten</div><span class="s">alles zusammen</span></div>'
+        + '<div class="ekarte k2"><div class="w">'+fr(a.franchise)+'</div><div class="l">Franchise</div><span class="s">von '+fr(simFr)+' gewählt</span></div>'
+        + '<div class="ekarte k3"><div class="w">'+fr(a.sb)+'</div><div class="l">Selbstbehalt (10 %)</div><span class="s">von '+fr(ueber)+'</span></div>'
+        + '<div class="ekarte k4"><div class="w">'+fr(kasse)+'</div><div class="l">Krankenkasse zahlt</div><span class="s">Restbetrag</span></div>';
+  if (selbst > 0){
+    h += '<div class="ekarte k6"><div class="w">'+fr(selbst)+'</div><div class="l">nicht versichert</div><span class="s">Zahnarzt / Brille</span></div>';
+  }
+  h += '<div class="ekarte k5"><div class="w">'+fr(a.total + selbst)+'</div><div class="l">Ihre Kosten dieses Jahr</div>'
+     + '<span class="s">Franchise + Selbstbehalt'+(selbst>0?' + nicht versichert':'')+'</span></div>';
+  document.getElementById('simErgebnis').innerHTML = h;
+
+  /* Waere eine andere Franchise besser gewesen? Praemie mitgerechnet. */
   var pj = praemieMonat('jung', simFr) * 12;
-  var e = eigenAnteil('jung', simFr, gedeckt);
-  var total = pj + e.total + selbst;
-  document.getElementById('simErgebnis').innerHTML =
-      '<div class="ekarte"><div class="w">'+fr(pj)+'</div><div class="l">Prämie (Franchise '+fr(simFr)+')</div></div>'
-    + '<div class="ekarte"><div class="w">'+fr(e.total)+'</div><div class="l">Franchise + Selbstbehalt</div></div>'
-    + '<div class="ekarte"><div class="w">'+fr(selbst)+'</div><div class="l">nicht versichert</div></div>'
-    + '<div class="ekarte total"><div class="w">'+fr(total)+'</div><div class="l">Ihr Jahr total</div></div>';
-
-  /* Waere eine andere Franchise besser gewesen? */
+  var total = pj + a.total + selbst;
   var beste = null;
   GRUPPEN.jung.fr.forEach(function(f){
     var t = praemieMonat('jung', f)*12 + eigenAnteil('jung', f, gedeckt).total + selbst;
@@ -766,61 +1609,237 @@ document.getElementById('simStart').addEventListener('click', function(){
   });
   var fz = document.getElementById('simFazit');
   fz.style.display = '';
+  var kopf = '🧾 Mit Prämie gerechnet kostet dieses Jahr <b>'+fr(total)+'</b> ('+fr(pj)+' Prämie + '+fr(a.total+selbst)+' selbst). ';
   if (beste.f === simFr){
-    fz.innerHTML = '✅ Mit Franchise <b>'+fr(simFr)+'</b> haben Sie in diesem Jahr die günstigste Wahl getroffen. '
-                 + 'Aber Achtung: Das wusste vorher niemand – auch Sie nicht.';
+    fz.innerHTML = kopf + '✅ Franchise <b>'+fr(simFr)+'</b> war für dieses Jahr die günstigste Wahl – aber das wusste vorher niemand.';
   } else {
-    fz.innerHTML = '💡 Mit Franchise <b>'+fr(beste.f)+'</b> hätte dieses Jahr <b>'+fr(total - beste.t)+'</b> weniger gekostet ('+fr(beste.t)+' statt '+fr(total)+'). '
-                 + 'Im Voraus konnte man das nicht wissen – <b>die Franchise ist immer eine Wette auf das eigene Jahr.</b>';
+    fz.innerHTML = kopf + '💡 Mit Franchise <b>'+fr(beste.f)+'</b> wären es nur <b>'+fr(beste.t)+'</b> gewesen – '
+      + fr(total - beste.t) + ' weniger. Im Voraus war das nicht zu wissen: <b>Die Franchise ist immer eine Wette auf das eigene Jahr.</b>';
   }
+}
+
+document.getElementById('simStart').addEventListener('click', function(){
+  letztesJahr = jahrWuerfeln();
+  zeichneJahr(letztesJahr);
+  auswerten(letztesJahr);
 });
 zeichneSimFr();
 
-/* ================= 6 TRANSFER ================= */
-var TFAELLE = [
-  { sit:'Beim Fussball schiessen Sie den Ball ins Fenster des Nachbarn. Scheibe kaputt: CHF 800.',
-    opts:['Privathaftpflicht','Hausrat','Krankenkasse','Motorfahrzeug-Haftpflicht'], r:0,
-    auf:'Die <b>Privathaftpflicht</b> zahlt Schäden, die <i>Sie anderen</i> zufügen. Sie ist freiwillig, aber jede und jeder sollte sie haben.' },
-  { sit:'Bei Ihnen zu Hause brennt es. Möbel, Kleider und Computer sind zerstört.',
-    opts:['Gebäudeversicherung','Hausrat','Privathaftpflicht','Krankenkasse'], r:1,
-    auf:'Der <b>Hausrat</b> versichert Ihre beweglichen Sachen. Das <i>Gebäude</i> selbst versichert die Eigentümerin – im Kanton Aargau über die kantonale Gebäudeversicherung.' },
-  { sit:'Sie fahren mit dem Auto in ein parkiertes Fahrzeug. Fremdschaden: CHF 6\'000.',
-    opts:['Privathaftpflicht','Kasko','Motorfahrzeug-Haftpflicht','Hausrat'], r:2,
-    auf:'Die <b>Motorfahrzeug-Haftpflicht</b> ist obligatorisch (SVG Art. 63) und zahlt den Schaden am <i>anderen</i> Fahrzeug. Ihr eigenes Auto deckt nur eine Kasko.' },
-  { sit:'Sie stürzen in der Freizeit vom Velo und brechen sich das Handgelenk. Sie arbeiten 100 %.',
-    opts:['Krankenkasse','Unfallversicherung über den Betrieb','Privathaftpflicht','Invalidenversicherung'], r:1,
-    auf:'Wer mehr als 8 Stunden pro Woche arbeitet, ist über den Betrieb auch für <b>Freizeitunfälle</b> versichert (UVG). Darum kann man den Unfallschutz bei der Krankenkasse abmelden.' },
-  { sit:'Sie haben eine Lungenentzündung und brauchen Antibiotika und zwei Arztbesuche.',
-    opts:['Unfallversicherung','Krankenkasse (Grundversicherung)','Hausrat','Privathaftpflicht'], r:1,
-    auf:'Krankheit deckt die <b>Grundversicherung</b> – abzüglich Franchise und Selbstbehalt. Sie ist für alle in der Schweiz obligatorisch (KVG Art. 3).' },
-  { sit:'Ihr Handy fällt Ihnen selbst aus der Hand, das Display ist gesprungen.',
-    opts:['Privathaftpflicht','Hausrat','Keine – Sie zahlen selbst','Krankenkasse'], r:2,
-    auf:'Selbst verursachte Schäden am <i>eigenen</i> Eigentum zahlt niemand. Der Hausrat deckt Feuer, Wasser und Diebstahl zu Hause – nicht Ihr Missgeschick unterwegs. Nur eine freiwillige Zusatzversicherung («Handyversicherung») würde greifen.' }
-];
-var tl = document.getElementById('transferListe');
-TFAELLE.forEach(function(f, i){
-  var d = document.createElement('div');
-  d.className = 'tfall';
-  var oh = '';
-  f.opts.forEach(function(o, j){ oh += '<button type="button" data-j="'+j+'">'+esc(o)+'</button>'; });
-  d.innerHTML = '<div class="sit"><b>'+(i+1)+'.</b> '+esc(f.sit)+'</div><div class="opts">'+oh+'</div><div class="auf"></div>';
-  var kn = d.querySelectorAll('.opts button');
-  var auf = d.querySelector('.auf');
-  kn.forEach(function(b){
-    b.addEventListener('click', function(){
-      if (d.dataset.fertig) return;
-      d.dataset.fertig = '1';
-      var j = parseInt(b.dataset.j, 10);
-      b.classList.add(j === f.r ? 'richtig' : 'falsch');
-      if (j !== f.r) kn[f.r].classList.add('richtig');
-      auf.innerHTML = (j === f.r ? '<b style="color:var(--gruen)">✔ Richtig.</b> ' : '<b style="color:var(--rot)">✘ Nicht ganz.</b> ') + f.auf;
-      auf.classList.add('zeig');
-    });
-  });
-  tl.appendChild(d);
-});
+/* ---------- gemeinsames Ziehen & Ablegen ---------- */
+var gezogen = null;   /* aktuell aufgenommenes Element */
 
-/* ================= 7 CHALLENGE ================= */
+function machZiehbar(el, nutzlast){
+  el.dataset.last = nutzlast;
+  el.setAttribute('draggable','true');
+  el.addEventListener('dragstart', function(ev){
+    gezogen = el;
+    el.classList.add('aktiv');
+    try { ev.dataTransfer.setData('text/plain', nutzlast); } catch(e){}
+    ev.dataTransfer.effectAllowed = 'copyMove';
+  });
+  el.addEventListener('dragend', function(){ el.classList.remove('aktiv'); });
+  el.addEventListener('click', function(){
+    if (gezogen === el){ el.classList.remove('aktiv'); gezogen = null; return; }
+    if (gezogen) gezogen.classList.remove('aktiv');
+    gezogen = el; el.classList.add('aktiv');
+  });
+}
+function machZiel(el, hover, ablegen){
+  el.addEventListener('dragover', function(ev){ ev.preventDefault(); ev.dataTransfer.dropEffect='move'; hover(true); });
+  el.addEventListener('dragenter', function(ev){ ev.preventDefault(); hover(true); });
+  el.addEventListener('dragleave', function(){ hover(false); });
+  el.addEventListener('drop', function(ev){
+    ev.preventDefault(); hover(false);
+    if (gezogen){ var g = gezogen; gezogen = null; g.classList.remove('aktiv'); ablegen(g); }
+  });
+  el.addEventListener('click', function(){
+    if (gezogen){ var g = gezogen; gezogen = null; g.classList.remove('aktiv'); ablegen(g); }
+  });
+}
+
+/* ================= 6 WELCHE VERSICHERUNG ZAHLT ================= */
+var VERS = {
+  kk: { lab:'🛡 Krankenkasse',             kurz:'Krankenkasse' },
+  hr: { lab:'🏠 Hausratversicherung',      kurz:'Hausrat' },
+  hp: { lab:'👤 Privathaftpflicht',        kurz:'Privathaftpflicht' },
+  mf: { lab:'🚗 Motorfahrzeug-Haftpflicht',kurz:'MF-Haftpflicht' },
+  ke: { lab:'— Keine Versicherung',                 kurz:'Keine' }
+};
+var FAELLE6 = [
+  { b:'A', tit:'Velounfall',       ico:'🚴', r:'hp',
+    txt:'Luca fährt mit dem Velo in ein parkiertes Auto. Am Auto entsteht ein Schaden von <b>CHF 2\'800</b>.',
+    auf:'Luca beschädigt <i>fremdes</i> Eigentum. Das ist ein Fall für seine <b>Privathaftpflicht</b> – freiwillig, aber unverzichtbar.' },
+  { b:'B', tit:'Wohnungsbrand',    ico:'🔥', r:'hr',
+    txt:'In Elias Wohnung bricht ein Feuer aus. Möbel und TV werden zerstört. Schaden: <b>CHF 35\'000</b>.',
+    auf:'Die <b>Hausratversicherung</b> deckt bewegliche Sachen in der Wohnung (Feuer, Wasser, Diebstahl). Das Gebäude selbst versichert die Eigentümerschaft.' },
+  { b:'C', tit:'Smartphone kaputt',ico:'📱', r:'ke',
+    txt:'Saras Smartphone fällt ihr selbst aus der Hand, das Display ist gesprungen. Kosten: <b>CHF 450</b>.',
+    auf:'Selbst verursachte Schäden am <i>eigenen</i> Eigentum zahlt niemand. Nur eine freiwillige Zusatzversicherung («Handyversicherung») würde greifen.' },
+  { b:'D', tit:'Krankheit',        ico:'🤒', r:'kk',
+    txt:'Mia hat eine Grippe und muss zum Arzt, Medikamente inklusive. Kosten: <b>CHF 210</b>.',
+    auf:'Krankheit deckt die <b>Grundversicherung</b> – abzüglich Franchise und Selbstbehalt. Bei CHF 210 und Franchise 300 zahlt Mia allerdings alles selbst.' },
+  { b:'E', tit:'Autounfall',       ico:'🚗', r:'mf',
+    txt:'Noah fährt mit dem Auto und verursacht einen Unfall. Der andere Fahrer hat einen Schaden von <b>CHF 6\'500</b>.',
+    auf:'Die <b>Motorfahrzeug-Haftpflicht</b> ist obligatorisch (SVG Art. 63) und zahlt den Schaden am <i>anderen</i> Fahrzeug. Noahs eigenes Auto deckt nur eine Kasko.' },
+  { b:'F', tit:'Einbruchdiebstahl',ico:'🕵', r:'hr',
+    txt:'Bei Elif wird eingebrochen. Ihr Laptop und andere Sachen werden gestohlen. Schaden: <b>CHF 1\'900</b>.',
+    auf:'Einbruchdiebstahl zu Hause ist im <b>Hausrat</b> versichert. Sachen, die unterwegs gestohlen werden, nur mit dem Zusatz «einfacher Diebstahl auswärts».' }
+];
+(function(){
+  var grid = document.getElementById('fallGrid');
+  document.getElementById('vChips').querySelectorAll('.vchip').forEach(function(c){
+    machZiehbar(c, c.dataset.w);
+  });
+  function aufbauen(){
+    grid.innerHTML = '';
+    FAELLE6.forEach(function(f){
+      var d = document.createElement('div');
+      d.className = 'fkarte';
+      d.innerHTML = '<div class="fkopf"><span class="fbuchst">'+f.b+'</span><span class="ftitel">'+f.tit+'</span></div>'
+                  + '<div class="fbild">'+f.ico+'</div>'
+                  + '<div class="ftext">'+f.txt+'</div>'
+                  + '<div class="zone" data-r="'+f.r+'">Hierhin ziehen oder antippen</div>'
+                  + '<div class="tfall-auf" style="display:none;font-size:12.5px;color:var(--muted);"></div>';
+      var z = d.querySelector('.zone');
+      machZiel(z,
+        function(an){ z.classList.toggle('ueber', an); },
+        function(chip){
+          z.dataset.gewaehlt = chip.dataset.last;
+          z.textContent = VERS[chip.dataset.last].lab;
+          z.classList.add('voll');
+          z.classList.remove('richtig','falsch');
+          d.querySelector('.tfall-auf').style.display = 'none';
+        });
+      grid.appendChild(d);
+    });
+    document.getElementById('zuoStand').textContent = '';
+  }
+  document.getElementById('zuoPruefen').addEventListener('click', function(){
+    var richtig = 0, offen = 0;
+    grid.querySelectorAll('.fkarte').forEach(function(d, i){
+      var z = d.querySelector('.zone');
+      var a = d.querySelector('.tfall-auf');
+      if (!z.dataset.gewaehlt){ offen++; return; }
+      var ok = z.dataset.gewaehlt === z.dataset.r;
+      z.classList.toggle('richtig', ok);
+      z.classList.toggle('falsch', !ok);
+      if (ok) richtig++;
+      a.style.display = '';
+      a.innerHTML = (ok ? '<b style="color:var(--gruen)">✔ Richtig.</b> '
+                        : '<b style="color:var(--rot)">✘ Nicht ganz</b> – richtig wäre <b>'+VERS[z.dataset.r].kurz+'</b>. ')
+                  + FAELLE6[i].auf;
+    });
+    document.getElementById('zuoStand').textContent =
+      offen ? (richtig + ' von ' + (FAELLE6.length-offen) + ' richtig – ' + offen + ' noch offen')
+            : (richtig + ' von ' + FAELLE6.length + ' richtig' + (richtig===FAELLE6.length ? ' – perfekt!' : ''));
+  });
+  document.getElementById('zuoReset').addEventListener('click', aufbauen);
+  aufbauen();
+})();
+
+/* ================= 7 KATEGORIEN ================= */
+var KATS = { pers:'Person', sach:'Sache', verm:'Vermögen' };
+var GARTEN = [
+  { t:'🏥 Krankenversicherung',        r:'pers' },
+  { t:'👷 Unfallversicherung (UVG)',   r:'pers' },
+  { t:'👴 Lebensversicherung',         r:'pers' },
+  { t:'🛋 Hausratversicherung',        r:'sach' },
+  { t:'🏘 Gebäudeversicherung',        r:'sach' },
+  { t:'🚙 Kaskoversicherung',          r:'sach' },
+  { t:'👤 Privathaftpflicht',          r:'verm' },
+  { t:'⚖️ Rechtsschutzversicherung',            r:'verm' },
+  { t:'🚗 Motorfahrzeug-Haftpflicht',  r:'verm' }
+];
+(function(){
+  var box = document.getElementById('gChips');
+  var zonen = document.getElementById('sortier').querySelectorAll('.sz');
+  function aufbauen(){
+    box.innerHTML = '';
+    zonen.forEach(function(z){ z.querySelector('.abl').innerHTML = ''; });
+    GARTEN.slice().sort(function(){ return Math.random() - .5; }).forEach(function(g){
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'gchip'; b.innerHTML = g.t;
+      b.dataset.r = g.r;
+      machZiehbar(b, g.r);
+      box.appendChild(b);
+    });
+    document.getElementById('katStand').textContent = '';
+  }
+  zonen.forEach(function(z){
+    machZiel(z,
+      function(an){ z.classList.toggle('ueber', an); },
+      function(chip){
+        chip.classList.remove('richtig','falsch');
+        z.querySelector('.abl').appendChild(chip);
+      });
+  });
+  document.getElementById('katPruefen').addEventListener('click', function(){
+    var richtig = 0, gesetzt = 0;
+    zonen.forEach(function(z){
+      z.querySelectorAll('.gchip').forEach(function(c){
+        gesetzt++;
+        var ok = c.dataset.r === z.dataset.r;
+        c.classList.toggle('richtig', ok);
+        c.classList.toggle('falsch', !ok);
+        if (ok) richtig++;
+      });
+    });
+    var offen = GARTEN.length - gesetzt;
+    document.getElementById('katStand').textContent =
+      richtig + ' von ' + GARTEN.length + ' richtig eingeordnet'
+      + (offen ? ' – ' + offen + ' noch nicht zugeteilt' : (richtig===GARTEN.length ? ' – perfekt!' : ''));
+  });
+  document.getElementById('katReset').addEventListener('click', aufbauen);
+  aufbauen();
+})();
+
+/* ================= 9 MINI-QUIZ: obligatorisch oder freiwillig ================= */
+var OFLISTE = [
+  { ico:'🏥', n:'Krankenversicherung (Grundversicherung)', r:'O',
+    a:'Für alle mit Wohnsitz in der Schweiz obligatorisch – KVG Art. 3.' },
+  { ico:'🏠', n:'Hausratversicherung', r:'F',
+    a:'Freiwillig – viele Vermieter verlangen sie aber im Mietvertrag.' },
+  { ico:'🚗', n:'Motorfahrzeug-Haftpflicht', r:'O',
+    a:'Ohne sie gibt es keine Nummernschilder – SVG Art. 63.' },
+  { ico:'✈️', n:'Reiseversicherung', r:'F',
+    a:'Freiwillig. Sinnvoll bei teuren Buchungen, sonst oft schon über die Kreditkarte gedeckt.' },
+  { ico:'👷', n:'Unfallversicherung über den Betrieb', r:'O',
+    a:'Obligatorisch ab mehr als 8 Arbeitsstunden pro Woche – UVG. Dann Unfalldeckung bei der Krankenkasse abmelden und Prämie sparen.' },
+  { ico:'👤', n:'Privathaftpflicht', r:'F',
+    a:'Freiwillig – aber praktisch unverzichtbar. Ohne sie zahlen Sie fremde Schäden lebenslang selbst.' }
+];
+(function(){
+  var t = document.getElementById('ofTab');
+  var richtig = 0, offen = 0;
+  OFLISTE.forEach(function(q){
+    var d = document.createElement('div');
+    d.className = 'ofz';
+    d.innerHTML = '<span class="ofi">'+q.ico+'</span><span class="ofn">'+esc(q.n)+'</span>'
+                + '<span class="ofk"><button type="button" data-v="O" title="obligatorisch">O</button>'
+                + '<button type="button" data-v="F" title="freiwillig">F</button></span>'
+                + '<span class="ofa"></span>';
+    var kn = d.querySelectorAll('.ofk button');
+    kn.forEach(function(b){
+      b.addEventListener('click', function(){
+        if (d.dataset.fertig) return;
+        d.dataset.fertig = '1'; d.classList.add('fertig'); offen++;
+        var ok = b.dataset.v === q.r;
+        b.classList.add(ok ? 'richtig' : 'falsch');
+        if (!ok) d.querySelector('[data-v="'+q.r+'"]').classList.add('richtig');
+        if (ok) richtig++;
+        d.querySelector('.ofa').innerHTML =
+          (ok ? '<b style="color:var(--gruen)">✔ Richtig.</b> ' : '<b style="color:var(--rot)">✘ Leider nein.</b> ') + q.a;
+        document.getElementById('ofStand').textContent =
+          (offen === OFLISTE.length)
+            ? 'Ergebnis: ' + richtig + ' von ' + OFLISTE.length + ' richtig' + (richtig===OFLISTE.length ? ' – perfekt!' : '')
+            : richtig + ' von ' + offen + ' richtig';
+      });
+    });
+    t.appendChild(d);
+  });
+})();
+
+/* ================= 9b RECHNEN-CHALLENGE ================= */
 var CHALLENGE = [
   { f:'Ihre Franchise beträgt CHF 500. Sie haben im Jahr Arztkosten von CHF 400. Wie viel zahlt die Krankenkasse?',
     o:['CHF 400','CHF 360','CHF 0','CHF 40'], r:2,
@@ -838,35 +1857,125 @@ var CHALLENGE = [
     o:['Ihre Hausratversicherung','Ihre Privathaftpflicht','Ihre Krankenkasse','Die Unfallversicherung'], r:1,
     a:'Schäden an <i>fremdem</i> Eigentum deckt die <b>Privathaftpflicht</b>. Ohne sie zahlen Sie aus dem eigenen Sack.' }
 ];
-var chl = document.getElementById('challengeListe');
-var chPunkte = 0, chOffen = 0;
-CHALLENGE.forEach(function(q, i){
-  var d = document.createElement('div');
-  d.style.marginBottom = '18px';
-  d.innerHTML = '<div class="ch-frage">'+(i+1)+'. '+esc(q.f)+'</div>';
-  var auf = document.createElement('div');
-  auf.className = 'ch-auf';
-  q.o.forEach(function(opt, j){
-    var b = document.createElement('button');
-    b.type = 'button'; b.className = 'ch-opt'; b.textContent = opt;
-    b.addEventListener('click', function(){
-      if (d.dataset.fertig) return;
-      d.dataset.fertig = '1';
-      chOffen++;
-      if (j === q.r){ b.classList.add('richtig'); chPunkte++; }
-      else { b.classList.add('falsch'); d.querySelectorAll('.ch-opt')[q.r].classList.add('richtig'); }
-      auf.innerHTML = (j === q.r ? '<b style="color:var(--gruen)">✔ Richtig.</b> ' : '<b style="color:var(--rot)">✘ Leider nein.</b> ') + q.a;
-      auf.classList.add('zeig');
-      document.getElementById('chStand').textContent =
-        (chOffen === CHALLENGE.length)
-          ? 'Ergebnis: ' + chPunkte + ' von ' + CHALLENGE.length + ' richtig' + (chPunkte === CHALLENGE.length ? ' – perfekt!' : '')
-          : chPunkte + ' von ' + chOffen + ' richtig';
+(function(){
+  var chl = document.getElementById('challengeListe');
+  var chPunkte = 0, chOffen = 0;
+  CHALLENGE.forEach(function(q, i){
+    var d = document.createElement('div');
+    d.style.marginBottom = '18px';
+    d.innerHTML = '<div class="ch-frage">'+(i+1)+'. '+esc(q.f)+'</div>';
+    var auf = document.createElement('div');
+    auf.className = 'ch-auf';
+    q.o.forEach(function(opt, j){
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'ch-opt'; b.textContent = opt;
+      b.addEventListener('click', function(){
+        if (d.dataset.fertig) return;
+        d.dataset.fertig = '1'; chOffen++;
+        if (j === q.r){ b.classList.add('richtig'); chPunkte++; }
+        else { b.classList.add('falsch'); d.querySelectorAll('.ch-opt')[q.r].classList.add('richtig'); }
+        auf.innerHTML = (j === q.r ? '<b style="color:var(--gruen)">✔ Richtig.</b> ' : '<b style="color:var(--rot)">✘ Leider nein.</b> ') + q.a;
+        auf.classList.add('zeig');
+        document.getElementById('chStand').textContent =
+          (chOffen === CHALLENGE.length)
+            ? 'Ergebnis: ' + chPunkte + ' von ' + CHALLENGE.length + ' richtig' + (chPunkte === CHALLENGE.length ? ' – perfekt!' : '')
+            : chPunkte + ' von ' + chOffen + ' richtig';
+      });
+      d.appendChild(b);
     });
-    d.appendChild(b);
+    d.appendChild(auf);
+    chl.appendChild(d);
   });
-  d.appendChild(auf);
-  chl.appendChild(d);
-});
+})();
+
+/* ================= 10 FINALE CHALLENGE ================= */
+var EIMER = [
+  { k:'kk', ico:'🛡', n:'Krankenkasse',              o:'obligatorisch' },
+  { k:'hr', ico:'🏠', n:'Hausratversicherung',       o:'freiwillig' },
+  { k:'hp', ico:'👤', n:'Privathaftpflicht',         o:'freiwillig' },
+  { k:'mf', ico:'🚗', n:'Motorfahrzeug-Haftpflicht', o:'obligatorisch' },
+  { k:'ke', ico:'🚫', n:'Keine Versicherung',        o:'oder selbst bezahlen' }
+];
+(function(){
+  var kartenBox = document.getElementById('ziehKarten');
+  var eimerBox = document.getElementById('eimer');
+
+  function aufbauen(){
+    kartenBox.innerHTML = '';
+    eimerBox.innerHTML = '';
+    document.getElementById('finStand').textContent = '';
+    document.getElementById('finAuf').innerHTML = '';
+    document.getElementById('superBar').classList.remove('zeig');
+
+    FAELLE6.forEach(function(f){
+      var d = document.createElement('div');
+      d.className = 'zkarte';
+      d.dataset.r = f.r; d.dataset.b = f.b;
+      d.innerHTML = '<div class="zk1"><span class="zb">'+f.b+'</span><span class="zt">'+f.tit+'</span></div>'
+                  + '<div class="zbild">'+f.ico+'</div>'
+                  + '<div class="zx">'+f.txt+'</div>';
+      machZiehbar(d, f.b);
+      kartenBox.appendChild(d);
+    });
+
+    EIMER.forEach(function(e){
+      var d = document.createElement('div');
+      d.className = 'ei e-'+e.k;
+      d.dataset.k = e.k;
+      d.innerHTML = '<div class="en"><span>'+e.ico+'</span><span>'+e.n+'</span></div>'
+                  + '<div class="eo">('+e.o+')</div>'
+                  + '<div class="abl">Karte hier ablegen</div>';
+      var abl = d.querySelector('.abl');
+      machZiel(d,
+        function(an){ d.classList.toggle('ueber', an); },
+        function(karte){
+          if (!karte.classList.contains('zkarte')) return;
+          if (abl.dataset.leer !== '0'){ abl.textContent = ''; abl.dataset.leer = '0'; }
+          var chip = document.createElement('div');
+          chip.className = 'abk';
+          chip.dataset.b = karte.dataset.b;
+          chip.dataset.r = karte.dataset.r;
+          chip.dataset.k = e.k;
+          chip.textContent = karte.dataset.b + ' · ' + karte.querySelector('.zt').textContent;
+          chip.title = 'Antippen, um die Karte zurückzulegen';
+          chip.addEventListener('click', function(ev){
+            ev.stopPropagation();
+            chip.remove();
+            karte.classList.remove('weg');
+            if (!abl.querySelector('.abk')){ abl.textContent = 'Karte hier ablegen'; abl.dataset.leer = '1'; }
+          });
+          abl.appendChild(chip);
+          karte.classList.add('weg');
+        });
+      abl.dataset.leer = '1';
+      eimerBox.appendChild(d);
+    });
+  }
+
+  document.getElementById('finPruefen').addEventListener('click', function(){
+    var richtig = 0, gelegt = 0, h = '';
+    eimerBox.querySelectorAll('.abk').forEach(function(c){
+      gelegt++;
+      var ok = c.dataset.r === c.dataset.k;
+      c.classList.toggle('richtig', ok);
+      c.classList.toggle('falsch', !ok);
+      if (ok) richtig++;
+      else {
+        var f = FAELLE6.filter(function(x){ return x.b === c.dataset.b; })[0];
+        h += '<p class="merk" style="margin-top:8px"><b>'+f.b+' '+f.tit+':</b> richtig wäre <b>'
+           + VERS[f.r].kurz + '</b>. ' + f.auf + '</p>';
+      }
+    });
+    var offen = FAELLE6.length - gelegt;
+    document.getElementById('finAuf').innerHTML = h;
+    document.getElementById('finStand').textContent =
+      richtig + ' von ' + FAELLE6.length + ' richtig'
+      + (offen ? ' – ' + offen + ' Karte' + (offen>1?'n':'') + ' noch nicht abgelegt' : (richtig===FAELLE6.length ? ' – perfekt!' : ''));
+    document.getElementById('superBar').classList.toggle('zeig', richtig === FAELLE6.length);
+  });
+  document.getElementById('finReset').addEventListener('click', aufbauen);
+  aufbauen();
+})();
 </script>
 
 <script>
