@@ -95,7 +95,14 @@ h3{ font-size:14px; margin:16px 0 6px; color:var(--petrol); text-transform:upper
 .pkarte .pname{
   font-weight:800; font-size:14.5px; text-align:center; padding:7px 4px 5px;
 }
-.pkarte .pbild{ font-size:44px; text-align:center; line-height:1.15; padding:2px 0 4px; }
+.pkarte .pbild{ text-align:center; padding:4px 0 6px; }
+.pav{
+  display:block; margin:0 auto; border-radius:50%; object-fit:cover; object-position:center top;
+  border:2px solid rgba(33,59,66,.14); background:#eef2f7;
+}
+.pkarte .pav{ width:74px; height:74px; }
+.person-karte .pav{ width:104px; height:104px; }
+@media (max-width:820px){ .pkarte .pav{ width:88px; height:88px; } }
 .pkarte .pgeld{
   border-top:1px solid var(--line); padding:7px 8px 8px; text-align:center; font-size:13px;
 }
@@ -104,10 +111,11 @@ h3{ font-size:14px; margin:16px 0 6px; color:var(--petrol); text-transform:upper
 .pkarte.getroffen{ border-color:var(--rot); box-shadow:0 6px 18px rgba(179,66,58,.22); transform:translateY(-3px); }
 .pkarte.getroffen .pname{ color:var(--rot); }
 .pkarte .badge{
-  position:absolute; top:6px; right:6px; background:var(--rot); color:#fff;
+  display:block; margin:7px auto 0; width:max-content; background:var(--rot); color:#fff;
   font-size:10.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase;
-  border-radius:999px; padding:2px 8px;
+  border-radius:999px; padding:2px 10px;
 }
+.pkarte .platz{ display:block; height:19px; margin-top:7px; }
 .pkarte .ereignis{
   border-top:1px solid rgba(179,66,58,.35); background:rgba(179,66,58,.07); padding:7px 8px;
   font-size:12px; text-align:center; color:var(--rot);
@@ -791,7 +799,7 @@ footer{ text-align:center; padding:18px 12px 26px; }
 
       <div class="fr3-grid">
         <div class="person-karte">
-          <div class="pbild">👧</div>
+          <div class="pbild"><img class="pav" src="vers_mia.png?v=1" alt="Mia" style="background:rgba(196,84,127,.10);border-color:rgba(196,84,127,.45)"></div>
           <div class="pname">Mia</div>
           <div class="pzeile"><span>Franchise gewählt</span><span class="pwert">CHF 300</span></div>
           <div class="pzeile"><span>Selbstbehalt</span><span class="pwert">10 %</span></div>
@@ -903,7 +911,7 @@ footer{ text-align:center; padding:18px 12px 26px; }
       <div class="sim-grid">
         <div>
           <div class="person-karte">
-            <div class="pbild">👧</div>
+            <div class="pbild"><img class="pav" src="vers_mia.png?v=1" alt="Mia" style="background:rgba(196,84,127,.10);border-color:rgba(196,84,127,.45)"></div>
             <div class="pname">Mia</div>
             <div class="pzeile" style="display:block"><span>Franchise gewählt</span>
               <div class="fr-wahl mini" id="simFrWahl" style="margin-top:6px"></div>
@@ -1201,11 +1209,11 @@ document.getElementById('kopfTitel').addEventListener('click', function(){
 
 /* ================= 1 RISIKO ================= */
 var LEUTE = [
-  { name:'Lena', kopf:'👩', konto:4200, farbe:'#7C4DBE', dat:'Ihr'  },
-  { name:'Noah', kopf:'👦', konto:3800, farbe:'#2C6BAA', dat:'Ihm'  },
-  { name:'Elif', kopf:'🧕', konto:5100, farbe:'#2E7D4F', dat:'Ihr'  },
-  { name:'Luca', kopf:'🧒', konto:4600, farbe:'#C97A1E', dat:'Ihm'  },
-  { name:'Mia',  kopf:'👧', konto:3900, farbe:'#C4547F', dat:'Ihr'  }
+  { name:'Lena', bild:'vers_lena.png', konto:4200, farbe:'#7C4DBE', rgb:'124,77,190',  dat:'Ihr' },
+  { name:'Noah', bild:'vers_noah.png', konto:3800, farbe:'#2C6BAA', rgb:'44,107,170',  dat:'Ihm' },
+  { name:'Elif', bild:'vers_elif.png', konto:5100, farbe:'#2E7D4F', rgb:'46,125,79',   dat:'Ihr' },
+  { name:'Luca', bild:'vers_luca.png', konto:4600, farbe:'#C97A1E', rgb:'201,122,30',  dat:'Ihm' },
+  { name:'Mia',  bild:'vers_mia.png',  konto:3900, farbe:'#C4547F', rgb:'196,84,127',  dat:'Ihr' }
 ];
 var R_UNFALL = 18000;
 var risikoStufe = 0, getroffen = -1;
@@ -1215,9 +1223,10 @@ function zeichneKarten5(){
   LEUTE.forEach(function(p, i){
     var trifft = (i === getroffen);
     h += '<div class="pkarte'+(trifft && risikoStufe>=1 ? ' getroffen' : '')+'">'
-       + (trifft && risikoStufe>=1 ? '<span class="badge">Unfall</span>' : '')
+       + (trifft && risikoStufe>=1 ? '<span class="badge">Unfall</span>' : '<span class="platz"></span>')
        + '<div class="pname" style="color:'+p.farbe+'">'+p.name+'</div>'
-       + '<div class="pbild">'+p.kopf+'</div>'
+       + '<div class="pbild"><img class="pav" src="'+p.bild+'?v=1" alt="'+p.name+'" loading="lazy" '
+       + 'style="background:rgba('+p.rgb+',.10);border-color:rgba('+p.rgb+',.45)"></div>'
        + '<div class="pgeld"><span class="betrag">'+fr(p.konto)+'</span><span class="lab">Erspartes</span></div>'
        + (trifft && risikoStufe>=1
             ? '<div class="ereignis">Spitalrechnung<b>'+fr(R_UNFALL)+'</b></div>' : '')
