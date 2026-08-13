@@ -473,7 +473,8 @@ footer{ text-align:center; padding:18px 12px 26px; }
   <div class="cr">abu-tools.ch · Grundlagen: Schweizerisches Zivilgesetzbuch (ZGB), Stand 2026 · © 2026 <a href="mailto:samuel.mollet@hkv.ch" title="E-Mail an Samuel Mollet">S. Mollet</a></div>
 </footer>
 
-<script src="quizmusik.js?v=1"></script>
+<script src="quizmusik.js?v=2"></script>
+<script>if (window.QuizMusik) QuizMusik.aktiv(false);</script>
 
 <script>
 /* ---------- Reiter ---------- */
@@ -484,7 +485,7 @@ tabs.forEach(function(t){
     document.querySelectorAll('.seite').forEach(function(s){
       s.classList.toggle('an', s.id === 'seite-'+t.dataset.tab);
     });
-    if (window.QuizMusik && t.dataset.tab !== 'quiz') QuizMusik.stopp();
+    if (window.QuizMusik) QuizMusik.aktiv(t.dataset.tab === 'quiz');
   });
 });
 document.getElementById('kopfTitel').addEventListener('click', function(){
@@ -871,6 +872,7 @@ function naechsteFrage(){
         zeichneLeiter(); zeigeStand();
         if (stufe >= ZIEL){
           setTimeout(function(){
+            if (window.QuizMusik) QuizMusik.sieg();
             ql.innerHTML = '<div class="q-ende sieg">'
               + '<img class="sieg-bild" src="millionaer_sieg.jpg?v=1" alt="Der Moderator gratuliert mit Daumen hoch" onerror="this.style.display=&#39;none&#39;">'
               + '<h3>🏆 ' + geld(1000000) + ' – die Leiter ist komplett!</h3>'
