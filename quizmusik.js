@@ -1,17 +1,22 @@
 /*!
  * quizmusik.js – gemeinsame Quizmusik fuer abu-tools
  *
- * Einbinden (am Ende der Seite, vor </body>):
- *   <script src="quizmusik.js?v=1"></script>
+ * Einbinden (vor dem Quizskript, sonst bleibt Frage 1 stumm):
+ *   <script src="quizmusik.js?v=2"></script>
  *
  * Im Quiz aufrufen:
  *   QuizMusik.frage(istLetzteFrage)   // Musik zur Frage starten
  *   QuizMusik.stopp()                 // beim Antworten / Rundenende
+ *   QuizMusik.sieg()                  // Fanfare, wenn das Quiz geschafft ist
+ *   QuizMusik.aktiv(true|false)       // nur dort, wo das Quiz sichtbar ist
  *
- * Ohne weitere Konfiguration laeuft millionaer_musik.mp3; bei
- * QuizMusik.frage(true) laeuft millionaer_musik_final.mp3.
- * Die Tonspur startet erst nach der ersten Interaktion auf der Seite –
- * das verlangen die Browser so. Ein Schalter unten rechts blendet sie aus.
+ * aktiv(false) blendet den Schalter aus und haelt die Musik an, ohne die
+ * angemeldete Tonspur zu vergessen – beim naechsten aktiv(true) laeuft sie
+ * weiter. Seiten, die aktiv() nie aufrufen, verhalten sich wie bisher.
+ *
+ * Dateien: millionaer_musik.mp3 (Standard), millionaer_musik_final.mp3
+ * (letzte Frage), millionaer_musik_sieg.mp3 (Fanfare, einmalig).
+ * Fehlt eine Datei, passiert schlicht nichts.
  */
 (function (global) {
   'use strict';
@@ -19,33 +24,35 @@
   var cfg = {
     standard: 'millionaer_musik.mp3?v=1',
     final: 'millionaer_musik_final.mp3?v=1',
+    sieg: 'millionaer_musik_sieg.mp3?v=1',
     lautstaerke: 0.30,
     lautstaerkeFinal: 0.34,
+    lautstaerkeSieg: 0.42,
     an: true                    // Grundeinstellung: Musik eingeschaltet
   };
 
   var spuren = {};              // url -> Audio
   var aktuell = null;           // laufendes Audio
-  var wunsch = null;            // {url, vol} – was laufen soll, sobald erlaubt
+  var wunsch = null;            // {url, vol, schleife} – was laufen soll
   var freigegeben = false;      // Browser erlaubt Wiedergabe
+  var imBereich = true;         // ist das Quiz gerade sichtbar?
   var schalter = null;
 
-  function hole(url, vol) {
+  function hole(url, vol, schleife) {
     if (!spuren[url]) {
       var a = new Audio(url);
-      a.loop = true;
       a.preload = 'auto';
+      a.addEventListener('error', function () { /* Datei fehlt: still bleiben */ });
       spuren[url] = a;
     }
+    spuren[url].loop = schleife !== false;
     spuren[url].volume = vol;
     return spuren[url];
   }
 
   function ausblenden(a) {
     if (!a || a.paused) return;
-    var start = a.volume;
-    var schritte = 12;
-    var i = 0;
+    var start = a.volume, i = 0, schritte = 12;
     var t = setInterval(function () {
       i++;
       a.volume = Math.max(0, start * (1 - i / schritte));
@@ -59,8 +66,8 @@
   }
 
   function spiele() {
-    if (!wunsch || !cfg.an) return;
-    var a = hole(wunsch.url, wunsch.vol);
+    if (!wunsch || !cfg.an || !imBereich) return;
+    var a = hole(wunsch.url, wunsch.vol, wunsch.schleife);
     if (aktuell && aktuell !== a) ausblenden(aktuell);
     aktuell = a;
     if (a.paused) {
@@ -68,7 +75,7 @@
       var p = a.play();
       if (p && p.catch) {
         p.then(function () { freigegeben = true; })
-         .catch(function () { freigegeben = false; });   // wartet auf Klick
+         .catch(function () { freigegeben = false; });
       }
     }
   }
@@ -81,7 +88,7 @@
       ['pointerdown', 'keydown', 'touchstart'].forEach(function (e2) {
         document.removeEventListener(e2, einmal);
       });
-    }, { once: false });
+    });
   });
 
   function zeichneSchalter() {
@@ -89,7 +96,6 @@
     schalter = document.createElement('button');
     schalter.type = 'button';
     schalter.id = 'quizMusikSchalter';
-    schalter.setAttribute('aria-pressed', String(cfg.an));
     schalter.style.cssText =
       'position:fixed;right:14px;bottom:14px;z-index:8000;' +
       'font:600 13px/1 system-ui,-apple-system,sans-serif;' +
@@ -107,10 +113,10 @@
     schalter.textContent = cfg.an ? '🔊 Musik' : '🔇 Musik';
     schalter.title = cfg.an ? 'Quizmusik ausschalten' : 'Quizmusik einschalten';
     schalter.setAttribute('aria-pressed', String(cfg.an));
+    schalter.style.display = imBereich ? '' : 'none';
   }
 
   var QuizMusik = {
-    /* Einstellungen ueberschreiben, z. B. andere Dateinamen oder an:false */
     init: function (opt) {
       for (var k in (opt || {})) if (opt.hasOwnProperty(k)) cfg[k] = opt[k];
       beschrifte();
@@ -125,11 +131,26 @@
       if (freigegeben) spiele();
     },
 
-    /* Musik anhalten (Antwort geklickt, Runde vorbei, Reiter gewechselt) */
+    /* Siegesfanfare - laeuft einmal durch, nicht in Schleife */
+    sieg: function () {
+      wunsch = { url: cfg.sieg, vol: cfg.lautstaerkeSieg, schleife: false };
+      if (freigegeben) spiele();
+    },
+
+    /* Musik anhalten (Antwort geklickt, Runde vorbei) */
     stopp: function () {
       wunsch = null;
       ausblenden(aktuell);
       aktuell = null;
+    },
+
+    /* Quiz sichtbar oder nicht: steuert Schalter und Wiedergabe */
+    aktiv: function (ja) {
+      imBereich = !!ja;
+      beschrifte();
+      if (!imBereich) { ausblenden(aktuell); aktuell = null; }
+      else if (wunsch && freigegeben) spiele();
+      return imBereich;
     },
 
     umschalten: function () {
