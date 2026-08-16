@@ -64,7 +64,7 @@
   /* Feste Bühne im Seitenverhältnis des Panoramas: so deckt sich das SVG-Raster
      (1000 x 364) exakt mit dem Foto – nichts wird verzerrt, höchstens minim beschnitten.
      Sollte das gelieferte Bild ein anderes Verhältnis haben: nur diese eine Zahl ändern. */
-  :root{ --buehne: 4 / 3; }
+  :root{ --buehne: 8 / 3; }
   .scene img.foto{
     position:absolute; inset:0; display:block; width:100%; height:100%; object-fit:cover;
     transition:filter .6s ease, opacity .4s ease;
@@ -179,10 +179,10 @@
 
   /* ---------- Marken (Hotspots) ---------- */
   .marke{ cursor:pointer; }
-  .marke .m-kreis{ fill:rgba(255,255,255,.94); stroke:var(--hkv); stroke-width:3; transition:fill .18s ease, stroke .3s ease; }
-  .marke .m-txt{ fill:var(--hkv); font-weight:800; font-size:19px; text-anchor:middle; dominant-baseline:central; font-family:inherit; transition:fill .18s ease; }
+  .marke .m-kreis{ fill:rgba(255,255,255,.94); stroke:var(--hkv); stroke-width:2.2; transition:fill .18s ease, stroke .3s ease; }
+  .marke .m-txt{ fill:var(--hkv); font-weight:800; font-size:14px; text-anchor:middle; dominant-baseline:central; font-family:inherit; transition:fill .18s ease; }
   .marke:hover .m-kreis{ fill:var(--hkv-lt); }
-  .marke .m-ring{ fill:none; stroke:var(--hkv); stroke-width:3; opacity:0; transform-box:fill-box; transform-origin:center; }
+  .marke .m-ring{ fill:none; stroke:var(--hkv); stroke-width:2.2; opacity:0; transform-box:fill-box; transform-origin:center; }
   .marke.aktiv .m-kreis{ fill:var(--hkv); }
   .marke.aktiv .m-txt{ fill:#fff; }
   .marke.aktiv .m-ring{ opacity:1; animation:pochen 1.7s ease-out infinite; }
@@ -191,7 +191,7 @@
 
   /* Nebenpfad-Marken: abgerundetes Quadrat statt Kreis */
   .marke.neben .m-kreis{ stroke:var(--neben); }
-  .marke.neben .m-txt{ font-size:18px; fill:var(--neben); }
+  .marke.neben .m-txt{ font-size:13px; fill:var(--neben); }
   .marke.neben:hover .m-kreis{ fill:var(--neben-lt); }
   .marke.neben .m-ring{ stroke:var(--neben); }
   .marke.neben.aktiv .m-kreis{ fill:var(--neben); }
@@ -207,9 +207,9 @@
   /* ---------- Beschriftungen ---------- */
   .fahne{ transition:opacity .3s ease; }
   .fahne rect{ fill:rgba(255,255,255,.90); stroke:rgba(60,110,115,.35); stroke-width:1; }
-  .fahne text{ font-family:inherit; font-size:15px; font-weight:700; fill:var(--hkv); dominant-baseline:central; }
+  .fahne text{ font-family:inherit; font-size:11.5px; font-weight:700; fill:var(--hkv); dominant-baseline:central; }
   .fahne.neben rect{ stroke:rgba(31,111,139,.35); }
-  .fahne.neben text{ fill:var(--neben); font-size:14.5px; }
+  .fahne.neben text{ fill:var(--neben); font-size:11px; }
   body.stoer .fahne rect{ stroke:rgba(194,75,30,.35); }
   body.stoer .fahne text{ fill:var(--stoer); }
   body.ohne-fahnen .fahne{ opacity:0; }
@@ -348,7 +348,7 @@ html.eingebettet body{ zoom:.82; }
       <div class="fallback"></div>
 
       <!-- Ebene 1: Animationen, nicht klickbar -->
-      <svg class="ebene klicklos" id="fx" viewBox="0 0 1000 750" preserveAspectRatio="none" aria-hidden="true">
+      <svg class="ebene klicklos" id="fx" viewBox="0 0 1000 375" preserveAspectRatio="none" aria-hidden="true">
         <defs>
           <radialGradient id="gSonne" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stop-color="#FFF3C4" stop-opacity=".95"/>
@@ -361,136 +361,135 @@ html.eingebettet body{ zoom:.82; }
             <stop offset="100%" stop-color="#000" stop-opacity="0"/>
           </radialGradient>
           <mask id="mSpot">
-            <rect x="0" y="0" width="1000" height="750" fill="#fff"/>
-            <g id="spotgruppe" transform="translate(500,375)">
-              <ellipse rx="215" ry="170" fill="url(#gSpot)"/>
+            <rect x="0" y="0" width="1000" height="375" fill="#fff"/>
+            <g id="spotgruppe" transform="translate(500,188)">
+              <ellipse rx="132" ry="96" fill="url(#gSpot)"/>
             </g>
           </mask>
         </defs>
 
         <!-- Sonne, oben links ueber dem See -->
         <g id="fx-sonne">
-          <circle class="sonne-schein" cx="79" cy="117" r="102" fill="url(#gSonne)"/>
-          <g class="sonne-strahlen" transform="translate(79,117)">
-            <g fill="none" stroke="#FFE9A8" stroke-width="3" stroke-linecap="round" opacity=".38">
-              <line x1="0" y1="-58" x2="0" y2="-86"/><line x1="0" y1="58" x2="0" y2="86"/>
-              <line x1="-58" y1="0" x2="-86" y2="0"/><line x1="58" y1="0" x2="86" y2="0"/>
-              <line x1="-41" y1="-41" x2="-61" y2="-61"/><line x1="41" y1="41" x2="61" y2="61"/>
-              <line x1="-41" y1="41" x2="-61" y2="61"/><line x1="41" y1="-41" x2="61" y2="-61"/>
+          <circle class="sonne-schein" cx="78" cy="40" r="56" fill="url(#gSonne)"/>
+          <g class="sonne-strahlen" transform="translate(78,40)">
+            <g fill="none" stroke="#FFE9A8" stroke-width="2" stroke-linecap="round" opacity=".35">
+              <line x1="0" y1="-32" x2="0" y2="-48"/><line x1="0" y1="32" x2="0" y2="48"/>
+              <line x1="-32" y1="0" x2="-48" y2="0"/><line x1="32" y1="0" x2="48" y2="0"/>
+              <line x1="-23" y1="-23" x2="-34" y2="-34"/><line x1="23" y1="23" x2="34" y2="34"/>
+              <line x1="-23" y1="23" x2="-34" y2="34"/><line x1="23" y1="-23" x2="34" y2="-23"/>
             </g>
           </g>
         </g>
 
         <!-- Station 1: Verdunstung ueber dem glitzernden See -->
-        <g id="fx-verdunstung" fill="#FFFFFF" opacity=".62">
-          <ellipse class="dampf" cx="58"  cy="512" rx="7"  ry="11" style="animation-delay:0s"/>
-          <ellipse class="dampf" cx="104" cy="524" rx="9"  ry="14" style="animation-delay:1.3s"/>
-          <ellipse class="dampf" cx="152" cy="506" rx="6"  ry="10" style="animation-delay:2.6s"/>
-          <ellipse class="dampf" cx="200" cy="520" rx="8"  ry="12" style="animation-delay:.7s"/>
-          <ellipse class="dampf" cx="248" cy="508" rx="7"  ry="11" style="animation-delay:3.4s"/>
-          <ellipse class="dampf" cx="128" cy="536" rx="5"  ry="8"  style="animation-delay:4.4s"/>
-          <ellipse class="dampf" cx="222" cy="498" rx="6"  ry="9"  style="animation-delay:2s"/>
+        <g id="fx-verdunstung" fill="#FFFFFF" opacity=".6">
+          <ellipse class="dampf" cx="46"  cy="272" rx="5" ry="8"  style="animation-delay:0s"/>
+          <ellipse class="dampf" cx="86"  cy="280" rx="6" ry="9"  style="animation-delay:1.3s"/>
+          <ellipse class="dampf" cx="126" cy="268" rx="4" ry="7"  style="animation-delay:2.6s"/>
+          <ellipse class="dampf" cx="166" cy="278" rx="6" ry="9"  style="animation-delay:.7s"/>
+          <ellipse class="dampf" cx="206" cy="266" rx="5" ry="8"  style="animation-delay:3.4s"/>
+          <ellipse class="dampf" cx="106" cy="290" rx="4" ry="6"  style="animation-delay:4.4s"/>
+          <ellipse class="dampf" cx="186" cy="256" rx="4" ry="7"  style="animation-delay:2s"/>
         </g>
 
         <!-- Nebenpfad A: Transpiration aus dem Nadelwald rechts -->
-        <g id="fx-transpiration" fill="#E4F5E9" opacity=".45">
-          <ellipse class="transp-dampf" cx="866" cy="430" rx="6" ry="9"  style="animation-delay:0s"/>
-          <ellipse class="transp-dampf" cx="906" cy="418" rx="7" ry="10" style="animation-delay:1.1s"/>
-          <ellipse class="transp-dampf" cx="946" cy="432" rx="5" ry="8"  style="animation-delay:2.3s"/>
-          <ellipse class="transp-dampf" cx="984" cy="416" rx="6" ry="9"  style="animation-delay:3.2s"/>
-          <ellipse class="transp-dampf" cx="924" cy="444" rx="4" ry="7"  style="animation-delay:1.8s"/>
+        <g id="fx-transpiration" fill="#E4F5E9" opacity=".5">
+          <ellipse class="transp-dampf" cx="884" cy="222" rx="4" ry="6" style="animation-delay:0s"/>
+          <ellipse class="transp-dampf" cx="916" cy="214" rx="5" ry="7" style="animation-delay:1.1s"/>
+          <ellipse class="transp-dampf" cx="948" cy="226" rx="4" ry="6" style="animation-delay:2.3s"/>
+          <ellipse class="transp-dampf" cx="980" cy="212" rx="5" ry="7" style="animation-delay:3.2s"/>
+          <ellipse class="transp-dampf" cx="930" cy="234" rx="3" ry="5" style="animation-delay:1.8s"/>
         </g>
 
-        <!-- Station 3: Regen aus der dunklen Wolke rechts oben -->
-        <g id="fx-regen" stroke="#EAF6FF" stroke-width="2.2" stroke-linecap="round" opacity=".6">
-          <line class="regen" x1="700" y1="104" x2="695" y2="126" style="animation-delay:0s"/>
-          <line class="regen" x1="732" y1="96"  x2="727" y2="118" style="animation-delay:.42s"/>
-          <line class="regen" x1="764" y1="108" x2="759" y2="130" style="animation-delay:.8s"/>
-          <line class="regen" x1="796" y1="94"  x2="791" y2="116" style="animation-delay:.2s"/>
-          <line class="regen" x1="828" y1="106" x2="823" y2="128" style="animation-delay:1s"/>
-          <line class="regen" x1="860" y1="98"  x2="855" y2="120" style="animation-delay:.6s"/>
-          <line class="regen" x1="892" y1="110" x2="887" y2="132" style="animation-delay:1.3s"/>
-          <line class="regen" x1="716" y1="124" x2="711" y2="146" style="animation-delay:1.15s"/>
-          <line class="regen" x1="812" y1="126" x2="807" y2="148" style="animation-delay:.95s"/>
-          <line class="regen" x1="876" y1="128" x2="871" y2="150" style="animation-delay:.32s"/>
+        <!-- Station 3: Regen aus den Wolken ueber den Gipfeln -->
+        <g id="fx-regen" stroke="#EAF6FF" stroke-width="1.8" stroke-linecap="round" opacity=".7">
+          <line class="regen" x1="614" y1="50" x2="611" y2="64" style="animation-delay:0s"/>
+          <line class="regen" x1="640" y1="44" x2="637" y2="58" style="animation-delay:.42s"/>
+          <line class="regen" x1="666" y1="52" x2="663" y2="66" style="animation-delay:.8s"/>
+          <line class="regen" x1="692" y1="42" x2="689" y2="56" style="animation-delay:.2s"/>
+          <line class="regen" x1="718" y1="50" x2="715" y2="64" style="animation-delay:1s"/>
+          <line class="regen" x1="744" y1="46" x2="741" y2="60" style="animation-delay:.6s"/>
+          <line class="regen" x1="628" y1="62" x2="625" y2="76" style="animation-delay:1.15s"/>
+          <line class="regen" x1="704" y1="64" x2="701" y2="78" style="animation-delay:.95s"/>
+          <line class="regen" x1="756" y1="60" x2="753" y2="74" style="animation-delay:.32s"/>
         </g>
 
         <!-- Station 3b: Schneefall ueber den Gipfeln -->
-        <g id="fx-schnee" fill="#FFFFFF" opacity=".7">
-          <circle class="flocke" cx="576" cy="176" r="2.4" style="animation-delay:0s"/>
-          <circle class="flocke" cx="618" cy="164" r="2"   style="animation-delay:1.2s"/>
-          <circle class="flocke" cx="660" cy="180" r="2.6" style="animation-delay:2.4s"/>
-          <circle class="flocke" cx="702" cy="168" r="2.1" style="animation-delay:3.6s"/>
-          <circle class="flocke" cx="598" cy="190" r="2.2" style="animation-delay:4.6s"/>
-          <circle class="flocke" cx="680" cy="156" r="2.3" style="animation-delay:1.8s"/>
+        <g id="fx-schnee" fill="#FFFFFF" opacity=".75">
+          <circle class="flocke" cx="700" cy="72" r="1.8" style="animation-delay:0s"/>
+          <circle class="flocke" cx="740" cy="64" r="1.5" style="animation-delay:1.2s"/>
+          <circle class="flocke" cx="782" cy="76" r="1.9" style="animation-delay:2.4s"/>
+          <circle class="flocke" cx="824" cy="68" r="1.6" style="animation-delay:3.6s"/>
+          <circle class="flocke" cx="720" cy="84" r="1.7" style="animation-delay:4.6s"/>
+          <circle class="flocke" cx="800" cy="58" r="1.7" style="animation-delay:1.8s"/>
         </g>
 
         <!-- Nebenpfad B: Schmelzwasser vom Gletscher -->
-        <path id="fx-schmelz" class="schmelz-strom" d="M796,268 C790,292 782,310 772,330"
-              fill="none" stroke="#CFEBFF" stroke-width="3.2" stroke-linecap="round" opacity=".9"/>
+        <path id="fx-schmelz" class="schmelz-strom" d="M792,146 C786,160 780,170 772,180"
+              fill="none" stroke="#CFEBFF" stroke-width="2.4" stroke-linecap="round" opacity=".9"/>
 
         <!-- Station 4: Bach und Fluss bis in den See -->
         <path id="fx-fluss" class="fluss-strom"
-              d="M772,330 C740,390 706,440 672,486 C640,530 598,564 536,602 C470,638 380,662 288,676"
-              fill="none" stroke="#F0FAFF" stroke-width="4.4" stroke-linecap="round" opacity=".7"/>
+              d="M772,180 C748,202 716,226 680,246 C640,268 590,290 520,310 C462,326 412,334 372,338"
+              fill="none" stroke="#F0FAFF" stroke-width="3.2" stroke-linecap="round" opacity=".7"/>
 
         <!-- Station 5: Versickerung durch den Bodenquerschnitt -->
-        <g id="fx-sicker" class="sicker" stroke="#8FD0F5" stroke-width="2.8" stroke-linecap="round" fill="none" opacity=".8">
-          <path d="M548,604 L545,672"/>
-          <path d="M638,598 L635,668"/>
-          <path d="M728,606 L725,676"/>
-          <path d="M818,600 L815,670"/>
-          <path d="M908,608 L905,678"/>
+        <g id="fx-sicker" class="sicker" stroke="#8FD0F5" stroke-width="2" stroke-linecap="round" fill="none" opacity=".8">
+          <path d="M694,312 L692,348"/>
+          <path d="M762,306 L760,344"/>
+          <path d="M830,314 L828,350"/>
+          <path d="M898,308 L896,346"/>
+          <path d="M962,316 L960,352"/>
         </g>
 
         <!-- Station 5b: Grundwasserstrom im Kiesbett -->
-        <path id="fx-gw" class="gw-strom" d="M996,694 L516,680"
-              fill="none" stroke="#CFEBFF" stroke-width="4" stroke-linecap="round" opacity=".7"/>
+        <path id="fx-gw" class="gw-strom" d="M990,358 L636,350"
+              fill="none" stroke="#CFEBFF" stroke-width="3" stroke-linecap="round" opacity=".7"/>
 
         <!-- Nebenpfad C: Quelle, das Grundwasser tritt wieder aus -->
-        <path id="fx-quelle" class="quell-strom" d="M512,678 C492,664 472,650 456,638"
-              fill="none" stroke="#CFEBFF" stroke-width="3.2" stroke-linecap="round" opacity=".9"/>
+        <path id="fx-quelle" class="quell-strom" d="M634,350 C616,344 598,338 580,334"
+              fill="none" stroke="#CFEBFF" stroke-width="2.4" stroke-linecap="round" opacity=".9"/>
 
         <!-- Station 6: Wellen auf dem See -->
         <g id="fx-wellen" fill="none" stroke="#FFFFFF" stroke-linecap="round" opacity=".4">
-          <path class="welle" d="M14,528 q26,-6 52,0 t52,0 t52,0" stroke-width="2.2" style="animation-delay:0s"/>
-          <path class="welle" d="M40,588 q26,-6 52,0 t52,0 t52,0" stroke-width="2"   style="animation-delay:2.6s"/>
-          <path class="welle" d="M10,648 q26,-6 52,0 t52,0"       stroke-width="2.1" style="animation-delay:5s"/>
+          <path class="welle" d="M12,236 q22,-5 44,0 t44,0 t44,0" stroke-width="1.8" style="animation-delay:0s"/>
+          <path class="welle" d="M34,272 q22,-5 44,0 t44,0 t44,0" stroke-width="1.6" style="animation-delay:2.6s"/>
+          <path class="welle" d="M8,306  q22,-5 44,0 t44,0"       stroke-width="1.7" style="animation-delay:5s"/>
         </g>
 
         <!-- Voegel ueber dem See -->
         <g id="fx-voegel" opacity=".4">
-          <g class="vogel-zug" transform="translate(180,208)" style="animation-delay:0s">
-            <g class="vogel-fluegel"><path d="M0,0 q6,-6 12,0 q6,-6 12,0" fill="none" stroke="#3A4C5A" stroke-width="1.8"/></g>
+          <g class="vogel-zug" transform="translate(210,96)" style="animation-delay:0s">
+            <g class="vogel-fluegel"><path d="M0,0 q5,-5 10,0 q5,-5 10,0" fill="none" stroke="#3A4C5A" stroke-width="1.4"/></g>
           </g>
-          <g class="vogel-zug" transform="translate(146,238)" style="animation-delay:6s">
-            <g class="vogel-fluegel" style="animation-delay:.3s"><path d="M0,0 q5,-5 10,0 q5,-5 10,0" fill="none" stroke="#3A4C5A" stroke-width="1.5"/></g>
+          <g class="vogel-zug" transform="translate(176,118)" style="animation-delay:6s">
+            <g class="vogel-fluegel" style="animation-delay:.3s"><path d="M0,0 q4,-4 8,0 q4,-4 8,0" fill="none" stroke="#3A4C5A" stroke-width="1.2"/></g>
           </g>
-          <g class="vogel-zug" transform="translate(206,262)" style="animation-delay:13s">
-            <g class="vogel-fluegel" style="animation-delay:.6s"><path d="M0,0 q5,-5 11,0 q5,-5 11,0" fill="none" stroke="#3A4C5A" stroke-width="1.6"/></g>
+          <g class="vogel-zug" transform="translate(236,132)" style="animation-delay:13s">
+            <g class="vogel-fluegel" style="animation-delay:.6s"><path d="M0,0 q4,-4 9,0 q4,-4 9,0" fill="none" stroke="#3A4C5A" stroke-width="1.3"/></g>
           </g>
         </g>
 
         <!-- Stoermodus-Effekte -->
         <g id="fx-stoer" style="display:none">
-          <!-- Hitzeflimmern ueber dem ausgetrockneten Boden rechts -->
+          <!-- Hitzeflimmern ueber Parkplatz und Trockenboden rechts -->
           <g class="hitze" opacity=".2">
-            <rect x="760" y="470" width="240" height="70" fill="url(#gSonne)"/>
+            <rect x="700" y="228" width="300" height="56" fill="url(#gSonne)"/>
           </g>
           <!-- Beregnungsanlage auf dem Feld -->
-          <g id="fx-sprenger" stroke="#DFF2FF" stroke-width="2" stroke-linecap="round" opacity=".8">
-            <path class="sprenger-strahl" d="M432,436 q22,-24 44,0" fill="none" style="animation-delay:0s"/>
-            <path class="sprenger-strahl" d="M486,428 q22,-24 44,0" fill="none" style="animation-delay:.9s"/>
-            <path class="sprenger-strahl" d="M540,436 q22,-24 44,0" fill="none" style="animation-delay:1.7s"/>
+          <g id="fx-sprenger" stroke="#DFF2FF" stroke-width="1.6" stroke-linecap="round" opacity=".85">
+            <path class="sprenger-strahl" d="M424,206 q18,-20 36,0" fill="none" style="animation-delay:0s"/>
+            <path class="sprenger-strahl" d="M470,200 q18,-20 36,0" fill="none" style="animation-delay:.9s"/>
+            <path class="sprenger-strahl" d="M516,206 q18,-20 36,0" fill="none" style="animation-delay:1.7s"/>
           </g>
           <!-- Wasser wird aus dem Grundwasser hochgepumpt -->
-          <path id="fx-pumpe" class="pumpen-strom" d="M636,676 L636,606"
-                fill="none" stroke="#8FD0F5" stroke-width="3.2" stroke-linecap="round"
-                stroke-dasharray="7 9" opacity=".9"/>
+          <path id="fx-pumpe" class="pumpen-strom" d="M628,352 L628,300"
+                fill="none" stroke="#8FD0F5" stroke-width="2.6" stroke-linecap="round"
+                stroke-dasharray="6 8" opacity=".9"/>
         </g>
 
         <!-- Spotlight-Abdunklung -->
-        <rect id="dimmer" x="0" y="0" width="1000" height="750" fill="#0C2032" opacity="0" mask="url(#mSpot)"/>
+        <rect id="dimmer" x="0" y="0" width="1000" height="375" fill="#0C2032" opacity="0" mask="url(#mSpot)"/>
       </svg>
 
       <div class="wischmarke links">Gestört</div>
@@ -507,7 +506,7 @@ html.eingebettet body{ zoom:.82; }
       </div>
 
       <!-- Ebene 2: Beschriftungen und Marken, klickbar -->
-      <svg class="ebene" id="marken" viewBox="0 0 1000 750" preserveAspectRatio="none">
+      <svg class="ebene" id="marken" viewBox="0 0 1000 375" preserveAspectRatio="none">
         <g id="fahnen-normal"></g>
         <g id="fahnen-stoer" style="display:none"></g>
         <g id="marken-normal"></g>
@@ -624,37 +623,37 @@ const MERKSATZ = {
 
 /* --- Sechs Hauptstationen --------------------------------------------- */
 const STATIONEN = [
-  { id:1, sym:'1', pos:[150,430], fahne:[172,430,'Verdunstung','r'],
+  { id:1, sym:'1', pos:[150,250], fahne:[168,250,'Verdunstung','r'],
     eyebrow:'Station 1 von 6', title:'Verdunstung & Transpiration',
     text:'Die Sonne erwärmt das Wasser in Meeren, Seen, Flüssen und im Boden. Ein Teil geht als unsichtbarer Wasserdampf in die Luft. Dazu kommen die Pflanzen: Sie ziehen Wasser über die Wurzeln aus dem Boden und geben es über die Blätter wieder ab. Für beides zusammen gibt es einen Fachbegriff – Evapotranspiration.',
     fakt:'Von den <b>1’440 mm</b> Niederschlag pro Jahr verdunsten in der Schweiz rund <b>460 mm</b> wieder – etwa ein Drittel.',
     q:'Wo sehen Sie Verdunstung im Alltag – und wo findet sie statt, ohne dass Sie etwas sehen?' },
 
-  { id:2, sym:'2', pos:[352,108], fahne:[374,108,'Kondensation','r'],
+  { id:2, sym:'2', pos:[330,50], fahne:[348,50,'Kondensation','r'],
     eyebrow:'Station 2 von 6', title:'Kondensation',
     text:'In der Höhe ist die Luft kälter, und kalte Luft kann weniger Wasserdampf halten. Der Dampf lagert sich an winzigen Staub- und Salzteilchen an und wird wieder flüssig: Er kondensiert zu Tröpfchen. Milliarden solcher Tröpfchen zusammen ergeben eine Wolke.',
     fakt:'Faustregel: Pro Grad Erwärmung kann die Luft rund <b>6 bis 7 Prozent</b> mehr Wasserdampf aufnehmen. Deshalb werden Gewitter heftiger, wenn es wärmer wird.',
     q:'Warum beschlägt der Spiegel nach dem Duschen – und warum wird er wieder klar, wenn Sie lüften?' },
 
-  { id:3, sym:'3', pos:[790,118], fahne:[768,118,'Niederschlag','l'],
+  { id:3, sym:'3', pos:[688,40], fahne:[670,40,'Niederschlag','l'],
     eyebrow:'Station 3 von 6', title:'Niederschlag',
     text:'Werden die Tröpfchen zu schwer, fallen sie zu Boden: als Regen, Schnee, Graupel oder Hagel. Schnee ist dabei der Sonderfall – er bleibt liegen und wird zum Zwischenspeicher. Was im Dezember auf 2’000 Metern fällt, erreicht den Bach vielleicht erst im Mai.',
     fakt:'Die Klimaszenarien für die Schweiz erwarten <b>nassere Winter</b> und <b>trockenere Sommer</b> – und intensivere Starkniederschläge.',
     q:'Warum ist es für ein Wasserkraftwerk im Mittelland wichtig, wie viel Schnee im Januar in den Bergen liegt?' },
 
-  { id:4, sym:'4', pos:[584,534], fahne:[562,534,'Abfluss','l'],
+  { id:4, sym:'4', pos:[596,268], fahne:[578,268,'Abfluss','l'],
     eyebrow:'Station 4 von 6', title:'Abfluss',
     text:'Ein Teil des Niederschlags fliesst oberirdisch ab: über Hänge, in Rinnsalen, Bächen und Flüssen, weiter in Seen und ins Meer. Dazu kommt im Frühling das Schmelzwasser aus Schnee und Gletschern. Wie schnell das geht, hängt stark vom Boden ab – Wald und Wiese bremsen, Asphalt nicht.',
     fakt:'Rund <b>990 mm</b> der 1’440 mm Jahresniederschlag fliessen in der Schweiz ab – gut zwei Drittel. Die Schweiz ist damit das «Wasserschloss Europas».',
     q:'Wohin fliesst eigentlich das Wasser, das bei Ihnen zu Hause auf die Strasse regnet?' },
 
-  { id:5, sym:'5', pos:[716,664], fahne:[694,664,'Grundwasser','l'],
+  { id:5, sym:'5', pos:[832,334], fahne:[814,334,'Grundwasser','l'],
     eyebrow:'Station 5 von 6', title:'Versickerung & Grundwasser',
     text:'Ein anderer Teil sickert durch Boden, Kies und Sand in die Tiefe und sammelt sich als Grundwasser. Der Boden wirkt dabei als Filter. Wichtig: Grundwasser steht nicht still und ist keine Endstation – es fliesst langsam weiter, oft nur wenige Meter pro Tag, und tritt an anderer Stelle wieder aus.',
     fakt:'Über <b>80 Prozent</b> des Schweizer Trinkwassers stammen aus Grundwasser und Quellen, nur rund <b>20 Prozent</b> aus Seen.',
     q:'Warum ist es heikel, wenn in einem Grundwasserschutzgebiet gebaut oder gedüngt wird?' },
 
-  { id:6, sym:'6', pos:[100,596], fahne:[122,596,'Sammlung & Meer','r'],
+  { id:6, sym:'6', pos:[92,330], fahne:[110,330,'Sammlung & Meer','r'],
     eyebrow:'Station 6 von 6', title:'Sammlung & Meer',
     text:'Wasser sammelt sich in Bächen, Flüssen, Seen und schliesslich im Meer. Von dort verdunstet es wieder – der Kreislauf beginnt von vorn. Aber er beginnt nicht für alle gleich schnell: Ein Tropfen an der Meeresoberfläche ist in Tagen wieder in der Luft, tiefes Meerwasser braucht Jahrtausende.',
     fakt:'Rund <b>97 Prozent</b> des Wassers auf der Erde ist Salzwasser. Vom Süsswasser steckt der grösste Teil in Eis und Grundwasser.',
@@ -663,19 +662,19 @@ const STATIONEN = [
 
 /* --- Drei Nebenpfade ---------------------------------------------------- */
 const NEBENPFADE = [
-  { id:'n1', sym:'🌳', pos:[912,386], fahne:[890,386,'Transpiration','l'],
+  { id:'n1', sym:'🌳', pos:[944,172], fahne:[926,172,'Transpiration','l'],
     eyebrow:'Nebenpfad · Transpiration', title:'Die Pflanzen verdunsten mit',
     text:'Pflanzen nehmen Wasser über die Wurzeln auf, transportieren es bis in die Blätter und geben es dort über winzige Öffnungen wieder an die Luft ab. Ein einzelner grosser Laubbaum schafft an einem heissen Sommertag mehrere hundert Liter. Ein Wald ist deshalb eine riesige Verdunstungsfläche – und kühlt seine Umgebung spürbar ab.',
     fakt:'Verdunstung aus Böden und Gewässern plus Transpiration der Pflanzen ergibt zusammen die <b>Evapotranspiration</b>.',
     q:'Warum ist es im Wald an einem heissen Tag deutlich kühler als auf einem asphaltierten Parkplatz?' },
 
-  { id:'n2', sym:'🏔', pos:[790,268], fahne:[768,268,'Schneeschmelze','l'],
+  { id:'n2', sym:'🏔', pos:[788,128], fahne:[770,128,'Schneeschmelze','l'],
     eyebrow:'Nebenpfad · Schneeschmelze', title:'Der Speicher der Schweiz',
     text:'Schnee und Gletscher sind ein Zwischenspeicher: Sie halten den Winterniederschlag fest und geben ihn erst im Frühling und Sommer als Schmelzwasser ab – genau dann, wenn Landwirtschaft, Kraftwerke und Flüsse ihn am nötigsten brauchen. Dieser Speicher schrumpft.',
     fakt:'Seit dem Jahr 2000 ist rund <b>40 Prozent</b> des Schweizer Gletschereises verschwunden – allein in den letzten zehn Jahren fast ein Viertel.',
     q:'Was bedeutet ein schneearmer Winter für den Sommer danach?' },
 
-  { id:'n3', sym:'💧', pos:[452,632], fahne:[474,632,'Quelle','r'],
+  { id:'n3', sym:'💧', pos:[612,336], fahne:[594,336,'Quelle','l'],
     eyebrow:'Nebenpfad · Quelle', title:'Grundwasser kommt zurück',
     text:'Versickern ist keine Sackgasse. Grundwasser fliesst unterirdisch weiter und tritt dort wieder aus, wo eine wasserundurchlässige Schicht an die Oberfläche stösst: als Quelle. Von dort speist es Bäche, Flüsse und Seen. Umgekehrt gilt auch: Ein Fluss kann Grundwasser nachfüllen. Die beiden hängen zusammen.',
     fakt:'Rund <b>40 Prozent</b> des Schweizer Trinkwassers kommt direkt aus Quellen – ganz ohne Pumpe.',
@@ -684,25 +683,25 @@ const NEBENPFADE = [
 
 /* --- Vier menschliche Eingriffe ---------------------------------------- */
 const STOERUNGEN = [
-  { id:1, sym:'🏙', pos:[168,436], fahne:[190,436,'Siedlung & Asphalt','r'],
+  { id:1, sym:'🏙', pos:[150,200], fahne:[168,200,'Siedlung & Asphalt','r'],
     eyebrow:'Eingriff 1 von 4', title:'Siedlung & versiegelte Flächen',
     text:'Strassen, Dächer, Parkplätze und Plätze versiegeln den Boden. Regen kann dort nicht mehr versickern und fliesst sofort oberirdisch ab. Zwei Folgen zugleich: Der Kanalisation kommt bei Gewittern zu viel Wasser auf einmal, und dem Grundwasser fehlt der Nachschub.',
     fakt:'In der Schweiz werden pro Jahr fast <b>18 km²</b> Boden zusätzlich versiegelt – <b>mehr als ein halber Quadratmeter pro Sekunde</b>.',
     q:'Welche Flächen rund um die HKV könnte man entsiegeln – und was würde das bringen?' },
 
-  { id:2, sym:'🌾', pos:[506,412], fahne:[528,412,'Landwirtschaft','r'],
+  { id:2, sym:'🌾', pos:[500,200], fahne:[518,200,'Landwirtschaft','r'],
     eyebrow:'Eingriff 2 von 4', title:'Landwirtschaft: Bewässerung & Einträge',
     text:'Felder werden bewässert – und zwar genau dann, wenn ohnehin wenig Wasser da ist. Dazu kommen Dünger und Pflanzenschutzmittel: Was nicht von den Pflanzen aufgenommen wird, sickert mit dem Regen ins Grundwasser oder wird in den nächsten Bach geschwemmt.',
     fakt:'Im trockenen Sommer <b>2022</b> brauchte die Schweizer Landwirtschaft rund <b>41 Mio. m³</b> Bewässerungswasser, im nassen 2021 nur <b>9,5 Mio. m³</b>.',
     q:'Warum ist es ein Problem, wenn Bewässerung und Trockenheit zeitlich zusammenfallen?' },
 
-  { id:3, sym:'🚰', pos:[636,578], fahne:[614,578,'Wasserentnahme','l'],
+  { id:3, sym:'🚰', pos:[628,284], fahne:[610,284,'Wasserentnahme','l'],
     eyebrow:'Eingriff 3 von 4', title:'Wasserentnahme & Nutzung',
     text:'Wir entnehmen Wasser aus Grundwasser, Quellen und Seen – für Haushalte, Gewerbe und Industrie. Solange nicht mehr entnommen wird, als sich neu bildet, geht das gut. Bei anhaltender Trockenheit oder Übernutzung sinkt der Grundwasserspiegel, Quellen versiegen, Brunnen müssen tiefer gebohrt werden.',
     fakt:'Zu Hause verbraucht jede Person in der Schweiz rund <b>140 Liter</b> pro Tag. Mit Gewerbe, Industrie und Leitungsverlusten sind es <b>276 Liter</b> pro Kopf und Tag.',
     q:'Welche drei Handgriffe im Alltag sparen am meisten Wasser?' },
 
-  { id:4, sym:'🌡', pos:[214,96], fahne:[236,96,'Erwärmung','r'],
+  { id:4, sym:'🌡', pos:[196,62], fahne:[214,62,'Erwärmung','r'],
     eyebrow:'Eingriff 4 von 4', title:'Erwärmung: der Kreislauf beschleunigt',
     text:'Wärmere Luft nimmt mehr Wasserdampf auf. Der Kreislauf läuft schneller – aber nicht gleichmässiger, sondern ungleicher: Es verändern sich Menge, Zeitpunkt und Verteilung des Wassers. Die Winter werden nasser, die Sommer trockener, der Schneespeicher kleiner, und wenn es regnet, dann heftiger.',
     fakt:'Die Klimaszenarien erwarten <b>nassere Winter</b>, <b>trockenere Sommer</b>, häufigere und längere Trockenperioden sowie intensivere Starkniederschläge.',
@@ -795,8 +794,8 @@ function baueMarke(eintrag, art){
     'aria-label': eintrag.eyebrow + ': ' + eintrag.title
   });
   g.dataset.ziel = art + ':' + eintrag.id;
-  g.appendChild(el('circle', { 'class':'m-ring', r:19 }));
-  g.appendChild(el('circle', { 'class':'m-kreis', r:19 }));
+  g.appendChild(el('circle', { 'class':'m-ring', r:14 }));
+  g.appendChild(el('circle', { 'class':'m-kreis', r:14 }));
   const t = el('text', { 'class':'m-txt' });
   t.textContent = eintrag.sym;
   g.appendChild(t);
@@ -810,9 +809,9 @@ function baueFahne(eintrag, art){
   const [x, y, txt, seite] = eintrag.fahne;
   const links = (seite === 'l');
   const g = el('g', { 'class':'fahne' + (art === 'neben' ? ' neben' : '') });
-  const r = el('rect', { x:x, y:y-13, width:10, height:26, rx:8 });
+  const r = el('rect', { x:x, y:y-9.5, width:10, height:19, rx:6 });
   g.appendChild(r);
-  const t = el('text', { x: links ? x-11 : x+11, y:y+1, 'text-anchor': links ? 'end' : 'start' });
+  const t = el('text', { x: links ? x-8 : x+8, y:y+1, 'text-anchor': links ? 'end' : 'start' });
   t.textContent = txt;
   g.appendChild(t);
   fahnenZumMessen.push([r, t, x, links]);
@@ -822,8 +821,8 @@ function fahnenMessen(){
   fahnenZumMessen.forEach(([r, t, x, links]) => {
     let b = 0;
     try { b = t.getBBox().width; } catch(e){ b = 0; }
-    if (!b) b = t.textContent.length * 7.2;
-    const w = Math.round(b + 22);
+    if (!b) b = t.textContent.length * 5.5;
+    const w = Math.round(b + 16);
     r.setAttribute('width', w);
     r.setAttribute('x', links ? x - w : x);
   });
