@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHF 299.– pro Monat – wirklich nur CHF 299?</title>
+<style>
+  * { box-sizing: border-box; }
+  :root{
+    --hkv:#3C6E73; --hkv-dk:#213B42; --hkv-lt:#EAF2F1;
+    --warn:#C24B1E; --warn-dk:#8E3512; --warn-lt:#FBEEE6;
+    --gold:#D9A441;
+    --ink:#1A2B3A; --muted:#5B6B7A;
+    --nacht:#0B0E12; --nacht2:#151A21;
+  }
+  body{
+    margin:0; font-family:'Aptos','Segoe UI',system-ui,-apple-system,sans-serif;
+    background:#F4F8FB; color:var(--ink); font-size:14px; line-height:1.5;
+  }
+  header{
+    background:linear-gradient(135deg,#0B0E12 0%,#213B42 55%,#3C6E73 100%);
+    color:#fff; padding:16px 24px 14px; box-shadow:0 2px 8px rgba(0,0,0,.14); text-align:center;
+  }
+  header h1{ margin:0 0 3px; font-size:22px; font-weight:800; letter-spacing:-.3px; }
+  header .sub{ font-size:13px; opacity:.9; }
+
+  .wrap{ max-width:1400px; margin:0 auto; padding:18px; display:grid; grid-template-columns:1fr 360px; gap:18px; }
+  @media (max-width:1000px){ .wrap{ grid-template-columns:1fr; } }
+
+  .karte{ background:#fff; border-radius:14px; box-shadow:0 2px 10px rgba(20,50,80,.08); overflow:hidden; align-self:start; }
+  .kopfleiste{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:11px 13px; border-bottom:1px solid #EAF0F5; }
+  .schalter{ display:flex; gap:7px; flex-wrap:wrap; align-items:center; }
+
+  .btn{
+    font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer; border-radius:9px;
+    padding:7px 13px; border:1.5px solid var(--hkv); background:var(--hkv); color:#fff;
+    transition:background .15s ease, transform .12s ease, box-shadow .15s ease;
+    display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+  }
+  .btn:hover{ background:var(--hkv-dk); transform:translateY(-1px); box-shadow:0 4px 12px rgba(60,110,115,.25); }
+  .btn:active{ transform:translateY(0); }
+  .btn.geist{ background:#fff; color:var(--hkv); }
+  .btn.geist:hover{ background:var(--hkv-lt); }
+  .btn:focus-visible{ outline:3px solid #9FD0F5; outline-offset:2px; }
+  .btn:disabled{ opacity:.4; cursor:not-allowed; transform:none; }
+  .btn.gross{ font-size:14px; padding:11px 20px; }
+  .btn.warn{ border-color:var(--warn); background:var(--warn); }
+  .btn.warn:hover{ background:var(--warn-dk); box-shadow:0 4px 12px rgba(194,75,30,.3); }
+
+  .modus{ display:inline-flex; background:#EAF0F5; border-radius:10px; padding:3px; gap:2px; }
+  .modus button{ font-family:inherit; font-size:12.5px; font-weight:700; padding:6px 13px; border:none;
+    background:transparent; color:var(--muted); border-radius:8px; cursor:pointer; transition:all .15s ease; white-space:nowrap; }
+  .modus button.an{ background:var(--hkv); color:#fff; }
+  .modus button:focus-visible{ outline:3px solid #9FD0F5; outline-offset:2px; }
+
+  /* ================= Showroom ================= */
+  .buehne{ position:relative; aspect-ratio:3/2; background:var(--nacht); overflow:hidden; user-select:none; }
+  .buehne img.foto{
+    position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+    filter:brightness(.30) contrast(1.05) saturate(.75);
+    transition:filter 1.1s cubic-bezier(.4,0,.2,1);
+  }
+  .buehne .dunkel{
+    position:absolute; inset:0; background:radial-gradient(ellipse 60% 55% at 42% 62%, rgba(0,0,0,0) 0%, rgba(0,0,0,.55) 60%, rgba(0,0,0,.88) 100%);
+    transition:opacity 1.1s ease; pointer-events:none;
+  }
+  /* Scheinwerfer, die nacheinander angehen */
+  .lampe{
+    position:absolute; width:42%; height:70%; pointer-events:none; opacity:0;
+    background:radial-gradient(ellipse at center, rgba(255,238,200,.34) 0%, rgba(255,238,200,.12) 38%, rgba(255,238,200,0) 72%);
+    transition:opacity 1s ease;
+  }
+  .lampe.an{ opacity:1; }
+  .l1{ left:-6%;  top:-14%; }
+  .l2{ left:24%;  top:-20%; }
+  .l3{ left:54%;  top:-14%; }
+  .l4{ left:-2%;  top:34%;  }
+  .l5{ left:30%;  top:40%;  }
+  .l6{ left:58%;  top:36%;  }
+  .l7{ left:44%;  top:-4%;  }
+
+  /* Preis-Anzeige */
+  .preisfeld{
+    position:absolute; right:3.5%; top:6%; text-align:right; pointer-events:none; z-index:3;
+    text-shadow:0 2px 24px rgba(0,0,0,.85), 0 0 60px rgba(0,0,0,.6);
+  }
+  .preisfeld .oben{ font-size:11px; font-weight:800; letter-spacing:2.4px; text-transform:uppercase; color:#C9D6DE; margin-bottom:2px; }
+  .preisfeld .zahl{
+    font-size:clamp(30px, 5.4vw, 70px); font-weight:800; line-height:.95; letter-spacing:-2px;
+    color:#fff; font-variant-numeric:tabular-nums;
+    transition:color .5s ease;
+  }
+  .preisfeld .zahl small{ font-size:.42em; font-weight:700; letter-spacing:0; opacity:.85; }
+  .preisfeld.heiss .zahl{ color:#FFB566; }
+  .preisfeld .unten{ font-size:12px; font-weight:700; color:#9FB0BC; margin-top:5px; letter-spacing:.4px; }
+  .preisfeld .vergleich{ font-size:12px; font-weight:700; color:#8B9AA6; margin-top:9px; }
+  .preisfeld .vergleich s{ opacity:.75; }
+
+  .werbespruch{
+    position:absolute; left:4%; bottom:6%; z-index:3; max-width:44%; pointer-events:none;
+    color:#E6EDF2; font-size:clamp(12px,1.5vw,16px); font-weight:600; line-height:1.45;
+    text-shadow:0 2px 18px rgba(0,0,0,.9);
+    transition:opacity .5s ease;
+  }
+  .werbespruch b{ color:#fff; }
+
+  /* Kostenschilder, die um das Auto auftauchen */
+  .schild{
+    position:absolute; z-index:4; min-width:118px;
+    background:rgba(14,20,26,.82); border:1px solid rgba(255,255,255,.22);
+    border-left:3px solid var(--gold); border-radius:9px; padding:7px 11px;
+    color:#fff; backdrop-filter:blur(6px);
+    opacity:0; transform:translateY(10px) scale(.94);
+    transition:opacity .45s ease, transform .45s cubic-bezier(.34,1.3,.64,1);
+    pointer-events:none;
+  }
+  .schild.da{ opacity:1; transform:translateY(0) scale(1); }
+  .schild .was{ font-size:10.5px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; color:#C7D3DB; }
+  .schild .fr{ font-size:16px; font-weight:800; font-variant-numeric:tabular-nums; margin-top:1px; }
+  .schild.rot{ border-left-color:#E2703A; }
+  .schild.gruen{ border-left-color:#63B37A; }
+
+  .fortschritt{ display:flex; gap:4px; padding:9px 13px; background:#F7FAFC; border-top:1px solid #EAF0F5; }
+  .fortschritt span{ flex:1; height:4px; border-radius:3px; background:#DDE6EC; transition:background .35s ease; }
+  .fortschritt span.fertig{ background:var(--gold); }
+
+  .buehnenfuss{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; padding:12px 13px; }
+
+  /* ================= Panel ================= */
+  .panel{ background:#fff; border-radius:14px; box-shadow:0 2px 10px rgba(20,50,80,.08); padding:17px; align-self:start; position:sticky; top:14px; max-height:calc(100vh - 28px); overflow:auto; }
+  .panel .auge{ font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--hkv); }
+  .panel h2{ margin:4px 0 8px; font-size:19px; color:var(--hkv); font-weight:800; }
+  .panel p.haupt{ margin:0 0 12px; color:#37485A; }
+  .kopfbereich{ display:flex; flex-direction:column; }
+
+  .fakt{ background:#F1F7FA; border-radius:10px; padding:9px 12px; font-size:12.5px; color:#2C4654; margin:0 0 12px; }
+  .fakt b{ color:var(--hkv); }
+  .fakt.warnung{ background:var(--warn-lt); color:#6E3A20; }
+  .fakt.warnung b{ color:var(--warn); }
+
+  .frage{ background:var(--hkv-lt); border-left:4px solid var(--hkv); border-radius:0 10px 10px 0; padding:9px 12px; margin:0 0 13px; font-size:13px; color:#2A4A4E; }
+  .frage .etikett{ display:block; font-size:10.5px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; color:var(--hkv); margin-bottom:3px; }
+
+  /* Rechnungstabelle */
+  table.rechnung{ width:100%; border-collapse:collapse; font-size:13px; margin-bottom:12px; }
+  table.rechnung td{ padding:6px 2px; border-bottom:1px solid #EEF3F7; }
+  table.rechnung td.fr{ text-align:right; font-variant-numeric:tabular-nums; font-weight:700; white-space:nowrap; }
+  table.rechnung tr.neu td{ color:var(--warn); }
+  table.rechnung tr.summe td{ border-top:2px solid var(--ink); border-bottom:none; padding-top:9px; font-weight:800; font-size:15px; }
+  table.rechnung tr.blass td{ color:#93A3AF; }
+
+  /* Regler */
+  .regler{ margin-bottom:13px; }
+  .regler label{ display:flex; justify-content:space-between; align-items:baseline; font-size:12.5px; font-weight:700; color:#37485A; margin-bottom:4px; }
+  .regler label .wert{ font-variant-numeric:tabular-nums; color:var(--hkv); font-size:13.5px; }
+  .regler input[type=range]{ width:100%; accent-color:var(--hkv); }
+  .regler .hinweis{ font-size:11px; color:#8496A5; margin-top:2px; }
+
+  /* Zwei Spalten Vergleich */
+  .gegen{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; }
+  .saeule{ border-radius:11px; padding:11px 12px; border:1.5px solid #E2EBF2; background:#F8FBFD; }
+  .saeule.leas{ border-color:#D8C79B; background:#FDFAF2; }
+  .saeule.kauf{ border-color:#B9D8C4; background:#F4FBF6; }
+  .saeule h3{ margin:0 0 7px; font-size:13px; font-weight:800; letter-spacing:.3px; text-transform:uppercase; }
+  .saeule.leas h3{ color:#8A6A1E; }
+  .saeule.kauf h3{ color:#2F7A4C; }
+  .saeule dl{ margin:0; font-size:12.5px; }
+  .saeule dl div{ display:flex; justify-content:space-between; gap:8px; padding:3px 0; border-bottom:1px solid rgba(0,0,0,.06); }
+  .saeule dl div:last-child{ border-bottom:none; }
+  .saeule dt{ color:#5B6B7A; }
+  .saeule dd{ margin:0; font-variant-numeric:tabular-nums; font-weight:700; white-space:nowrap; }
+  .saeule .gross{ font-size:19px; font-weight:800; margin-top:7px; font-variant-numeric:tabular-nums; }
+  .urteil{ border-radius:11px; padding:11px 13px; font-size:13px; font-weight:600; line-height:1.5; }
+  .urteil.gleich{ background:#F1F7FA; color:#2C4654; }
+  .urteil.teuer{ background:var(--warn-lt); color:#7A3A1E; }
+  .urteil b{ font-weight:800; }
+
+  /* Warnkarten */
+  .karten{ display:grid; grid-template-columns:repeat(auto-fill,minmax(215px,1fr)); gap:11px; padding:14px; }
+  .wkarte{
+    background:#fff; border:1.5px solid #E8DED3; border-left:4px solid var(--warn); border-radius:11px;
+    padding:12px 13px; cursor:pointer; text-align:left; font-family:inherit;
+    transition:transform .14s ease, box-shadow .14s ease, border-color .14s ease;
+  }
+  .wkarte:hover{ transform:translateY(-2px); box-shadow:0 6px 18px rgba(140,80,40,.14); }
+  .wkarte:focus-visible{ outline:3px solid #9FD0F5; outline-offset:2px; }
+  .wkarte.gut{ border-left-color:#3E9D63; border-color:#D6E8DC; }
+  .wkarte .sym{ font-size:22px; line-height:1; }
+  .wkarte h4{ margin:7px 0 4px; font-size:14px; font-weight:800; color:var(--ink); }
+  .wkarte p{ margin:0; font-size:12.5px; color:#5B6B7A; line-height:1.45; }
+  .wkarte .zahl{ display:inline-block; margin-top:7px; font-size:12.5px; font-weight:800; color:var(--warn); font-variant-numeric:tabular-nums; }
+  .wkarte.gut .zahl{ color:#2F7A4C; }
+
+  /* Overlays */
+  .overlay{ position:fixed; inset:0; background:rgba(12,20,28,.62); display:none; align-items:center; justify-content:center; padding:18px; z-index:60; }
+  .overlay.offen{ display:flex; }
+  .modal{ background:#fff; border-radius:16px; max-width:720px; width:100%; max-height:88vh; overflow:auto; padding:22px 24px; box-shadow:0 20px 60px rgba(0,0,0,.35); }
+  .modal h3{ margin:0 0 4px; font-size:20px; color:var(--hkv); font-weight:800; }
+  .modal .unter{ font-size:13px; color:var(--muted); margin-bottom:16px; }
+  .modal-x{ float:right; font-size:22px; line-height:1; border:none; background:transparent; cursor:pointer; color:var(--muted); padding:0 4px; }
+  table.tab{ width:100%; border-collapse:collapse; font-size:13px; }
+  table.tab th, table.tab td{ text-align:left; padding:8px 10px; border-bottom:1px solid #EAF0F5; vertical-align:top; }
+  table.tab th{ font-weight:800; color:var(--hkv); }
+  table.tab td.fr{ text-align:right; font-variant-numeric:tabular-nums; font-weight:700; white-space:nowrap; }
+  .qliste{ margin:0; padding-left:18px; font-size:12.5px; color:#3B4E5E; }
+  .qliste li{ margin-bottom:8px; }
+  .qliste a{ color:var(--hkv); text-underline-offset:2px; word-break:break-word; }
+
+  .qgruppe{ font-size:13.5px; font-weight:800; color:var(--hkv); margin:16px 0 8px; }
+  .quizfrage{ margin-bottom:14px; }
+  .quizfrage .qtext{ font-size:13.5px; font-weight:700; margin-bottom:7px; }
+  .qopt{ display:block; width:100%; text-align:left; font-family:inherit; font-size:13px; padding:8px 11px; margin-bottom:5px;
+    border:1.5px solid #E2EBF2; border-radius:9px; background:#fff; cursor:pointer; transition:all .12s ease; }
+  .qopt:hover{ background:#F3F8FC; }
+  .qopt.richtig{ background:#E4F5EA; border-color:#3E9D63; color:#1E5C37; font-weight:700; }
+  .qopt.falsch{ background:#FBE9E7; border-color:#D9534F; color:#8A2A26; }
+  .qopt:disabled{ cursor:default; }
+  .qfb{ font-size:12.5px; margin-top:4px; font-weight:700; }
+  .qerg{ margin-top:14px; padding:12px 14px; border-radius:10px; background:var(--hkv-lt); font-size:14px; font-weight:700; color:var(--hkv); text-align:center; }
+
+  .fuss{ max-width:1400px; margin:4px auto 24px; padding:0 18px; color:var(--muted); font-size:11.5px; }
+  .fuss .copy{ margin-top:8px; color:#94A3B0; }
+
+  @media (prefers-reduced-motion: reduce){
+    .buehne img.foto, .dunkel, .lampe, .schild{ transition:none !important; }
+  }
+</style>
+<style>
+html.eingebettet body{ zoom:.82; }
+</style>
+</head>
+<body>
+<script>if(window.self!==window.top){document.documentElement.classList.add('eingebettet');}</script>
+
+<header>
+  <h1>CHF 299.– pro Monat – wirklich nur CHF 299?</h1>
+  <div class="sub">Was ein Autoleasing tatsächlich kostet · ABU-Unterricht HKV Aarau</div>
+</header>
+
+<div class="wrap">
+  <div>
+    <div class="karte">
+      <div class="kopfleiste">
+        <div class="schalter">
+          <div class="modus" role="tablist" aria-label="Bereich wählen">
+            <button id="m-rechnung" class="an" role="tab" aria-selected="true">Die Rechnung</button>
+            <button id="m-vergleich" role="tab" aria-selected="false">Leasen oder kaufen</button>
+            <button id="m-vergessen" role="tab" aria-selected="false">Was viele vergessen</button>
+          </div>
+        </div>
+        <div style="font-size:11.5px;color:#8496A5;" id="tipp">Tipp: auf «Weiter» klicken – mit jedem Schritt geht ein Licht an</div>
+      </div>
+
+      <!-- ---------- Showroom ---------- -->
+      <div class="buehne" id="buehne">
+        <img class="foto" id="foto" src="leasing_showroom.jpg" alt="Dunkler Showroom mit einem schwarzen Auto">
+        <div class="dunkel" id="dunkel"></div>
+        <div class="lampe l1" data-l="1"></div>
+        <div class="lampe l2" data-l="2"></div>
+        <div class="lampe l3" data-l="3"></div>
+        <div class="lampe l4" data-l="4"></div>
+        <div class="lampe l5" data-l="5"></div>
+        <div class="lampe l6" data-l="6"></div>
+        <div class="lampe l7" data-l="7"></div>
+
+        <div class="preisfeld" id="preisfeld">
+          <div class="oben" id="preis-oben">Leasing ab</div>
+          <div class="zahl" id="preis-zahl">299.–<small> / Mt.</small></div>
+          <div class="unten" id="preis-unten">Neuwagen CHF 34'900.–</div>
+          <div class="vergleich" id="preis-vergleich" hidden></div>
+        </div>
+
+        <div class="werbespruch" id="werbespruch">
+          <b>«Fahr los. Ab CHF 299.– im Monat.»</b><br>
+          Klingt machbar, oder? Schauen wir, was in der Anzeige nicht steht.
+        </div>
+
+        <div id="schilder"></div>
+      </div>
+
+      <div class="fortschritt" id="fortschritt" aria-hidden="true"></div>
+
+      <div class="buehnenfuss">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn geist" id="zurueck" disabled>← Zurück</button>
+          <button class="btn gross" id="weiter">Weiter →</button>
+          <button class="btn geist" id="neustart">Von vorn</button>
+        </div>
+        <div style="font-size:11.5px;color:#8496A5;" id="schrittzaehler">Schritt 0 von 7</div>
+      </div>
+
+      <!-- ---------- Warnkarten ---------- -->
+      <div class="karten" id="karten" hidden></div>
+    </div>
+  </div>
+
+  <!-- ---------- Panel ---------- -->
+  <aside class="panel" id="panel">
+    <div class="kopfbereich" id="kopfbereich">
+      <div class="auge" id="p-auge">Die Werbung</div>
+      <h2 id="p-titel">CHF 299.– pro Monat</h2>
+      <p class="haupt" id="p-text"></p>
+      <div class="fakt" id="p-fakt" hidden></div>
+      <div class="frage" id="p-fragebox" hidden><span class="etikett">Zum Nachdenken</span><span id="p-frage"></span></div>
+    </div>
+
+    <div id="p-inhalt"></div>
+
+    <div style="margin-top:14px;padding-top:12px;border-top:1px solid #EAF0F5;display:flex;gap:6px;flex-wrap:wrap;">
+      <button class="btn geist" id="b-quiz">Quiz</button>
+      <button class="btn geist" id="b-recht">Deine Rechte</button>
+      <button class="btn geist" id="b-quellen">Zahlen &amp; Quellen</button>
+    </div>
+  </aside>
+</div>
+
+<div class="fuss">
+  Interaktive Lernfolie zum Autoleasing · aus CHF 299.– werden CHF 971.– · Leasing ist nicht schlecht – entscheidend ist, dass man die Gesamtkosten und die Verpflichtungen kennt.
+  <div class="copy">© 2026 <a href="mailto:samuel.mollet@hkv.ch" title="E-Mail an Samuel Mollet" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Samuel Mollet</a> · HKV Aarau · realisiert mit Claude (Anthropic)</div>
+</div>
+
+<!-- Overlay: Rechte -->
+<div class="overlay" id="ov-recht" role="dialog" aria-modal="true" aria-label="Deine Rechte beim Leasing">
+  <div class="modal">
+    <button class="modal-x" data-zu="ov-recht" aria-label="Schliessen">×</button>
+    <h3>Deine Rechte beim Leasing</h3>
+    <p class="unter">Autoleasing ist rechtlich ein Konsumkredit. Das Konsumkreditgesetz (KKG) schützt dich – wenn du weisst, wie.</p>
+    <table class="tab" id="rechtetabelle"></table>
+  </div>
+</div>
+
+<!-- Overlay: Quellen -->
+<div class="overlay" id="ov-quellen" role="dialog" aria-modal="true" aria-label="Zahlen und Quellen">
+  <div class="modal">
+    <button class="modal-x" data-zu="ov-quellen" aria-label="Schliessen">×</button>
+    <h3>Zahlen &amp; Quellen</h3>
+    <p class="unter">Stand August 2026. Wo eine Zahl eine Annahme ist, steht es dabei.</p>
+    <ul class="qliste" id="quellenliste"></ul>
+  </div>
+</div>
+
+<!-- Overlay: Quiz -->
+<div class="overlay" id="ov-quiz" role="dialog" aria-modal="true" aria-label="Quiz zum Leasing">
+  <div class="modal">
+    <button class="modal-x" data-zu="ov-quiz" aria-label="Schliessen">×</button>
+    <h3>Quiz: Leasing</h3>
+    <p class="unter">Zehn Fragen zu Kosten, Verpflichtungen und Rechten.</p>
+    <div id="quizkoerper"></div>
+    <div class="qerg" id="quizergebnis" hidden></div>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   1 · Das Beispielauto und die Zahlen
+   ========================================================================= */
+
+var AUTO = {
+  preis:      34900,   /* Neuwagenpreis in der Werbung */
+  sonder:      6980,   /* Sonderzahlung, 20 Prozent */
+  monate:        48,
+  kmVertrag:  10000,   /* im Leasingvertrag inbegriffen */
+  zins:         0.9,   /* effektiver Jahreszins in Prozent, Aktionszins */
+  restwert:   14300    /* Schaetzung nach 48 Monaten */
+};
+
+var KOSTEN = {
+  vollkaskoJahr:  2400,   /* Annahme: 19-jaehrig, Neulenkerin, Selbstbehalt 1000 */
+  steuerJahr:      291,   /* Kanton Aargau, neues Verkehrssteuergesetz seit 1.1.2026 */
+  serviceJahr:    1200,   /* Service, Reifen, Reparaturen - Annahme */
+  verbrauch:         6,   /* Liter pro 100 km */
+  benzin:         1.97,   /* Franken pro Liter, TCS August 2026 */
+  mehrkmRappen:     25,   /* Rappen pro Mehrkilometer */
+  kmWirklich:    15000    /* was viele tatsaechlich fahren */
+};
+
+function fr(x){
+  return (Math.round(x * 20) / 20).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, "'");
+}
+function frGanz(x){
+  return Math.round(x).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "'");
+}
+
+var treibstoffMt = AUTO.kmVertrag * KOSTEN.verbrauch / 100 * KOSTEN.benzin / 12;
+var mehrkmMt     = (KOSTEN.kmWirklich - AUTO.kmVertrag) * KOSTEN.mehrkmRappen / 100 / 12;
+
+/* --- Die sieben Schritte der Aufdeckung --- */
+var SCHRITTE = [
+  { was:'Leasingrate',            fr: 299,                          pos:[6,15],
+    auge:'Schritt 1 von 7', titel:'Die Rate aus der Werbung',
+    text:'CHF 299.– pro Monat, 48 Monate lang. Das ist die Zahl, die gross auf dem Plakat steht. Sie ist nicht gelogen – sie ist nur nicht die ganze Rechnung.',
+    fakt:'Damit die Rate so tief ist, braucht es eine <b>Sonderzahlung von 20 Prozent</b>, eine Laufzeit von <b>48 Monaten</b> und einen <b>Aktionszins von 0.9 %</b>.',
+    q:'Warum wirbt ein Autohaus mit der Monatsrate und nicht mit dem Preis?' },
+
+  { was:'Sonderzahlung',          fr: 6980/48,                      pos:[6,29],
+    auge:'Schritt 2 von 7', titel:'Die Sonderzahlung',
+    text:'Bevor du losfährst, willst du CHF 6’980.– auf den Tisch legen – 20 Prozent des Kaufpreises. Dieses Geld ist weg. Rechnet man es auf die 48 Monate um, sind es CHF 145.40 pro Monat, die in der Werbung fehlen.',
+    fakt:'Ohne Sonderzahlung wäre die Rate rund <b>CHF 448.–</b> statt 299. Die tiefe Rate ist erkauft.',
+    q:'Woher nimmt eine 19-jährige Person CHF 6’980.– für die Sonderzahlung?' },
+
+  { was:'Vollkasko',              fr: 2400/12,                      pos:[6,49],
+    auge:'Schritt 3 von 7', titel:'Vollkasko – nicht freiwillig',
+    text:'Gesetzlich vorgeschrieben ist nur die Haftpflicht. Die Leasinggesellschaft verlangt aber im Vertrag eine Vollkasko, denn das Auto gehört ihr. Für eine 19-jährige Person ohne Schadenfreiheitsrabatt ist das der teuerste Posten nach der Rate.',
+    fakt:'Junglenkende unter 25 haben in der Regel <b>CHF 1’000.– Selbstbehalt</b>. Der TCS rechnet für 2026 mit <b>14 % höheren Kaskoprämien</b>.',
+    q:'Warum zahlt eine 19-jährige Person mehr Prämie als eine 45-jährige?' },
+
+  { was:'Verkehrssteuer',         fr: 291/12,                       pos:[6,63],
+    auge:'Schritt 4 von 7', titel:'Verkehrssteuer Kanton Aargau',
+    text:'Jedes Jahr im Frühling kommt die Rechnung vom Strassenverkehrsamt. Seit dem 1. Januar 2026 rechnet der Aargau technologieneutral: nach Gewicht und nach Leistung, nicht mehr nach Hubraum.',
+    fakt:'Offizielles Beispiel des Kantons: 2’120 kg und 110 kW ergeben <b>CHF 291.– im Jahr</b>. Elektroautos bekommen 20 % Abzug beim Gewicht und 30 % bei der Leistung.',
+    q:'Weshalb besteuert der Kanton neu Gewicht und Leistung statt Hubraum?' },
+
+  { was:'Service & Reifen',       fr: 1200/12,                      pos:[64,50],
+    auge:'Schritt 5 von 7', titel:'Service, Reifen, Reparaturen',
+    text:'Im Leasingvertrag steht meist, dass der Service beim Markenvertreter gemacht werden muss – die günstige Garage um die Ecke fällt weg. Dazu kommen zwei Sätze Reifen, Bremsen, Batterie, Scheibenwischer.',
+    fakt:'Ohne den vorgeschriebenen Service kann die Leasinggesellschaft bei der Rückgabe <b>Abzüge machen</b> oder Nachbesserung verlangen.',
+    q:'Was kostet mehr: ein Satz Winterreifen oder ein grosser Service?' },
+
+  { was:'Treibstoff',             fr: treibstoffMt,                 pos:[64,64],
+    auge:'Schritt 6 von 7', titel:'Treibstoff',
+    text:'10’000 Kilometer im Jahr bei 6 Litern auf 100 Kilometer sind 600 Liter. Bei CHF 1.97 pro Liter macht das CHF 1’182.– im Jahr – und die Preise schwanken.',
+    fakt:'Benzin 95 kostet aktuell <b>CHF 1.97</b> pro Liter, Diesel <b>CHF 2.22</b>. Haushaltsstrom liegt bei <b>27,7 Rappen</b> pro Kilowattstunde.',
+    q:'Wie viel würde dasselbe Auto als Elektroauto an Energie kosten?' },
+
+  { was:'Mehrkilometer',          fr: mehrkmMt,                     pos:[34,82], art:'rot',
+    auge:'Schritt 7 von 7', titel:'Die Kilometerfalle',
+    text:'Im Vertrag stehen 10’000 Kilometer pro Jahr. Wer pendelt, Kollegen besucht und in die Ferien fährt, kommt schnell auf 15’000. Jeder Kilometer darüber wird bei der Rückgabe nachverrechnet – und zwar auf einen Schlag.',
+    fakt:'Die Ansätze reichen von 5 bis fast 40 Rappen pro Kilometer. Hier gerechnet mit <b>25 Rappen</b>: 5’000 Mehrkilometer pro Jahr kosten über vier Jahre <b>CHF 5’000.–</b>.',
+    q:'Wie viele Kilometer fährst du realistisch in einem Jahr?' }
+];
+
+var ANFANG = {
+  auge:'Die Werbung',
+  titel:'CHF 299.– pro Monat',
+  text:'Ein Neuwagen für CHF 34’900.–, und unten am Plakat steht klein: «Leasing ab CHF 299.– im Monat». Das sind etwa zwei Abende Ausgang. Klingt machbar. Klicken Sie auf «Weiter» – mit jedem Schritt geht im Showroom ein Licht an, und es kommt eine Zahl dazu, die auf dem Plakat nicht steht.',
+  fakt:'Nach sieben Schritten wissen Sie, was das Auto <b>wirklich</b> pro Monat kostet.',
+  q:'Was schätzen Sie: Wie viel kostet dieses Auto tatsächlich pro Monat?'
+};
+
+var SCHLUSS = {
+  auge:'Ergebnis',
+  titel:'Aus CHF 299.– werden CHF 971.–',
+  text:'Wer die vereinbarten 10’000 Kilometer einhält, zahlt CHF 867.15 im Monat. Wer wie die meisten 15’000 fährt, CHF 971.35. Das ist mehr als das Dreifache der beworbenen Rate – und über die ganze Laufzeit sind es CHF 53’600.–, Sonderzahlung eingerechnet.',
+  fakt:'Wichtig: Keine dieser Zahlen ist unfair oder versteckt. Sie stehen alle im Vertrag. Sie stehen nur nicht <b>auf dem Plakat</b>.',
+  q:'Bei welchem Nettolohn könnten Sie sich CHF 900.– im Monat für ein Auto leisten?'
+};
+
+/* --- Warnkarten --- */
+var WARNKARTEN = [
+  { sym:'🚗', titel:'Das Auto gehört dir nicht', art:'warn',
+    text:'Eigentümerin bleibt während der ganzen Laufzeit die Leasinggesellschaft. Im Fahrzeugausweis stehst du nur als Halter oder Halterin – zusammen mit dem Sperrvermerk Code 178, «Halterwechsel verboten».',
+    zahl:'Code 178 im Fahrzeugausweis' },
+  { sym:'🛣️', titel:'Mehr Kilometer gefahren', art:'warn',
+    text:'Jeder Kilometer über der vereinbarten Zahl wird bei der Rückgabe nachverrechnet. Die Ansätze reichen von 5 bis fast 40 Rappen. Ein realer Fall aus dem Kassensturz: 12’000 Mehrkilometer.',
+    zahl:'über CHF 5’000.– nachgezahlt' },
+  { sym:'💸', titel:'Rate nicht mehr bezahlbar', art:'warn',
+    text:'Aussteigen geht – aber teuer. Bei vorzeitiger Rückgabe werden alle bisherigen Raten rückwirkend zum höheren Satz der kürzeren Laufzeit neu berechnet. Im Kassensturz-Fall wurde ein Auto nach gut einem statt vier Jahren zurückgegeben.',
+    zahl:'CHF 9’766.30 Schlussrechnung' },
+  { sym:'🩹', titel:'Kratzer bei der Rückgabe', art:'warn',
+    text:'Bei der Rückgabe wird das Fahrzeug protokolliert. Normale Gebrauchsspuren sind in Ordnung, alles darüber wird verrechnet – Dellen, Kratzer, Steinschläge in der Scheibe, Brandlöcher im Sitz.',
+    zahl:'Fotografieren Sie das Auto bei Übernahme' },
+  { sym:'🛡️', titel:'Vollkasko ist Pflicht – vertraglich', art:'warn',
+    text:'Gesetzlich vorgeschrieben ist nur die Haftpflicht. Die Vollkasko verlangt der Leasingvertrag, weil das Auto der Gesellschaft gehört. Die Schadenansprüche musst du an sie abtreten.',
+    zahl:'grösster Posten nach der Rate' },
+  { sym:'🔧', titel:'Service nach Vorschrift', art:'warn',
+    text:'Der Vertrag schreibt in der Regel den Service beim Markenvertreter vor, in festen Intervallen. Wer die günstigere Garage nimmt oder einen Service auslässt, riskiert Abzüge bei der Rückgabe.',
+    zahl:'freie Garagenwahl entfällt' },
+  { sym:'📋', titel:'Der Vertrag wird registriert', art:'warn',
+    text:'Jeder Leasingvertrag wird der Zentralstelle für Kreditinformation ZEK gemeldet. Auch ein abgelehnter Antrag wird eingetragen – und bleibt zwei Jahre stehen. Zahlungsrückstände fünf Jahre.',
+    zahl:'beeinflusst spätere Kredite' },
+  { sym:'🔞', titel:'Unter 18 geht gar nichts', art:'warn',
+    text:'Ein Leasingvertrag ist weder ein unentgeltlicher Vorteil noch ein geringfügiges Alltagsgeschäft. Minderjährige brauchen nach ZGB Artikel 19 zwingend die Zustimmung der gesetzlichen Vertretung.',
+    zahl:'ZGB Art. 19' },
+  { sym:'✅', titel:'14 Tage Widerrufsrecht', art:'gut',
+    text:'Du kannst den Vertrag innerhalb von 14 Tagen schriftlich widerrufen – ohne Begründung. Der Leasingvertrag muss dich auf dieses Recht hinweisen.',
+    zahl:'KKG Art. 16' },
+  { sym:'✅', titel:'Höchstzins 10 Prozent', art:'gut',
+    text:'Seit dem 1. Januar 2026 darf beim Leasing höchstens ein effektiver Jahreszins von 10 Prozent verlangt werden. Vorher waren es 11 Prozent.',
+    zahl:'Verordnung des EJPD' },
+  { sym:'✅', titel:'Die Firma muss rechnen', art:'gut',
+    text:'Bevor sie dir ein Leasing gibt, muss die Gesellschaft prüfen, ob du es dir leisten kannst – inklusive Versicherung, Treibstoff und Service. Fehlt diese Prüfung, ist der Vertrag nichtig.',
+    zahl:'KKG Art. 28–32' }
+];
+
+/* --- Quiz --- */
+var QUIZ = [
+  { grp:'Die Kosten', q:'Die Werbung nennt CHF 299.– pro Monat. Was kostet das Auto tatsächlich pro Monat, wenn Sie die vereinbarten 10’000 km einhalten?',
+    opts:['Etwa CHF 400.–','Etwa CHF 870.–','Etwa CHF 1’500.–'], r:1,
+    fb:'Rate, Sonderzahlung, Vollkasko, Steuer, Service und Treibstoff ergeben zusammen rund CHF 867.– – fast das Dreifache.' },
+  { grp:'Die Kosten', q:'Welcher Posten ist nach der Leasingrate der teuerste?',
+    opts:['Die Verkehrssteuer','Die Vollkasko','Die Reifen'], r:1,
+    fb:'Für eine junge Person ohne Schadenfreiheitsrabatt ist die Vollkasko der zweitgrösste Brocken.' },
+  { grp:'Die Kosten', q:'Wozu dient die Sonderzahlung von 20 Prozent?',
+    opts:['Sie senkt die Monatsrate','Sie ist eine Kaution und kommt zurück','Sie ersetzt die Vollkasko'], r:0,
+    fb:'Sie drückt die beworbene Rate. Ohne sie wären es rund CHF 448.– statt 299. Zurück kommt sie nicht.' },
+  { grp:'Die Verpflichtungen', q:'Wem gehört das Auto während der Leasingdauer?',
+    opts:['Dir, sobald die erste Rate bezahlt ist','Der Leasinggesellschaft','Je zur Hälfte beiden'], r:1,
+    fb:'Eigentümerin bleibt die Leasinggesellschaft. Im Fahrzeugausweis steht Code 178, Halterwechsel verboten.' },
+  { grp:'Die Verpflichtungen', q:'Du fährst 15’000 statt der vereinbarten 10’000 Kilometer pro Jahr. Was passiert?',
+    opts:['Nichts, die Zahl ist nur ein Richtwert','Die Mehrkilometer werden bei der Rückgabe verrechnet','Der Vertrag verlängert sich automatisch'], r:1,
+    fb:'Bei 25 Rappen pro Kilometer sind das über vier Jahre CHF 5’000.– auf einen Schlag.' },
+  { grp:'Die Verpflichtungen', q:'Ist die Vollkasko beim Leasing gesetzlich vorgeschrieben?',
+    opts:['Ja, das Strassenverkehrsgesetz verlangt sie','Nein, aber der Leasingvertrag verlangt sie','Nein, sie ist völlig freiwillig'], r:1,
+    fb:'Gesetzlich Pflicht ist nur die Haftpflicht. Die Vollkasko verlangt der Vertrag, weil das Auto der Gesellschaft gehört.' },
+  { grp:'Deine Rechte', q:'Wie lange kannst du einen Leasingvertrag widerrufen?',
+    opts:['7 Tage','14 Tage','30 Tage'], r:1,
+    fb:'14 Tage, schriftlich und ohne Begründung. Der Vertrag muss dich darauf hinweisen. KKG Artikel 16.' },
+  { grp:'Deine Rechte', q:'Wie hoch darf der effektive Jahreszins beim Leasing höchstens sein?',
+    opts:['5 Prozent','10 Prozent','15 Prozent'], r:1,
+    fb:'Seit dem 1. Januar 2026 sind es 10 Prozent. Davor waren 11 Prozent erlaubt.' },
+  { grp:'Deine Rechte', q:'Du bist 17 und möchtest ein Auto leasen. Geht das?',
+    opts:['Ja, mit einem eigenen Lohnausweis','Nein, nur mit Zustimmung der Eltern','Ja, ab dem Führerausweis'], r:1,
+    fb:'ZGB Artikel 19: Ein Leasingvertrag ist kein geringfügiges Alltagsgeschäft. Ohne Zustimmung ist er unwirksam.' },
+  { grp:'Deine Rechte', q:'Du kannst die Rate nicht mehr zahlen und gibst das Auto vorzeitig zurück. Was gilt?',
+    opts:['Du zahlst nur die bisherigen Raten','Alle Raten werden rückwirkend höher berechnet','Der Vertrag endet ohne Kosten'], r:1,
+    fb:'Genau das macht es teuer. Im Kassensturz-Fall ergab das eine Schlussrechnung von CHF 9’766.30.' }
+];
+
+var RECHTE = [
+  ['Autoleasing ist ein Konsumkredit','Das Konsumkreditgesetz gilt, wenn es um eine bewegliche Sache für den privaten Gebrauch geht und der Vertrag bei vorzeitiger Auflösung höhere Raten vorsieht. Praktisch alle Privatleasingverträge erfüllen das.','KKG Art. 1 Abs. 2 lit. a'],
+  ['14 Tage Widerruf','Schriftlich, ohne Begründung. Der Vertrag muss dich auf dieses Recht und die Frist hinweisen.','KKG Art. 16'],
+  ['Höchstzins 10 Prozent','Seit 1.1.2026. Für Kreditkarten und Überziehungskredite sind es 12 Prozent.','Verordnung des EJPD über den Höchstzinssatz'],
+  ['Kreditfähigkeitsprüfung','Die Gesellschaft muss prüfen, ob du die Raten aus dem pfändbaren Teil deines Einkommens zahlen kannst – Betriebskosten wie Versicherung, Treibstoff und Service eingerechnet. Fehlt die Prüfung, ist der Vertrag nichtig.','KKG Art. 28–32'],
+  ['Vorzeitige Rückgabe','Kündigung jederzeit mit 30 Tagen Frist auf Ende einer dreimonatigen Leasingdauer. Geschuldet ist die rückwirkende Neuberechnung zum höheren Satz – plus Mehrkilometer und Schäden.','KKG Art. 17 Abs. 3'],
+  ['Minderjährige','Ohne Zustimmung der gesetzlichen Vertretung ist der Vertrag unwirksam; erhaltene Leistungen sind zurückzuerstatten.','ZGB Art. 19'],
+  ['Eigentum','Eigentümerin bleibt die Leasinggesellschaft. Du bist Halter oder Halterin; im Fahrzeugausweis steht Code 178, Halterwechsel verboten.','SVG / Fahrzeugausweis'],
+  ['ZEK-Eintrag','Der Vertrag wird der Zentralstelle für Kreditinformation gemeldet. Ein abgelehnter Antrag bleibt 2 Jahre gespeichert, ein Zahlungsrückstand 5 Jahre.','ZEK']
+];
+
+var QUELLEN = [
+  ['Höchstzinssatz Leasing 10 % seit 1.1.2026 (vorher 11 %); 12 % nur für Überziehungs- und Kartenkredite','Verordnung des EJPD über den Höchstzinssatz für Konsumkredite, Art. 1','https://www.admin.ch/de/newnsb/DDMAgqQLfpn8NHgjWIIrt'],
+  ['Konsumkreditgesetz: Geltung für Leasing, Widerrufsrecht 14 Tage, Kreditfähigkeitsprüfung, vorzeitige Rückgabe','KKG, SR 221.214.1','https://www.schuldeninfo.ch/files/_documents/stichwoerter/2022-02%20stichwort%20leasing.pdf'],
+  ['Vorzeitige Rückgabe: realer Fall mit Schlussrechnung CHF 9’766.30 (CHF 3’500 Auflösung, über CHF 5’000 für 12’000 Mehrkilometer)','SRF Kassensturz','https://www.srf.ch/sendungen/kassensturz-espresso/konsum-leasing-bei-vorzeitiger-rueckgabe-schnappt-die-schuldenfalle-zu'],
+  ['Verkehrssteuer Aargau seit 1.1.2026 nach Gewicht und Leistung; Beispiel 2’120 kg / 110 kW = CHF 291 pro Jahr','Kanton Aargau','https://www.ag.ch/de/themen/mobilitaet-verkehr/strassenverkehr/steuern-gebuehren/neue-verkehrssteuer-2026'],
+  ['Vollkasko beim Leasing vertraglich verlangt, nicht gesetzlich; Selbstbehalt CHF 1’000 für Junglenkende unter 25','TCS','https://www.tcs.ch/de/testberichte-ratgeber/ratgeber/versicherungen/auto/fahranfaenger.php'],
+  ['Kilometerkosten 2026: 74 Rappen pro km, CHF 11’112 pro Jahr; Kaskoprämien +14 %','TCS, Medienmitteilung 6.1.2026','https://www.tcs.ch/assets/docs/presse/2026/250106-medienmitteilung-kilometerkosten.pdf'],
+  ['Treibstoffpreise August 2026: Benzin 95 CHF 1.97, Diesel CHF 2.22 pro Liter','TCS','https://www.tcs.ch/de/camping-reisen/reiseinformationen/wissenswertes/fahrkosten-gebuehren/benzinpreise.php'],
+  ['Haushaltsstrom 2026: 27,7 Rappen pro kWh (Musterhaushalt H4)','ElCom / Bund','https://www.admin.ch/de/newnsb/8nuE_fvwnfqCu8OHNOwKu'],
+  ['Mehrkilometer: Ansätze von 5 bis fast 40 Rappen pro Kilometer, hier gerechnet mit 25 Rappen','AXA / Beobachter','https://www.beobachter.ch/konsum/kauf-leasing/mit-vollgas-in-die-leasing-falle-267096'],
+  ['Wertverlust Neuwagen: rund 25 % im ersten Jahr, nach drei Jahren noch etwa die Hälfte','SRF Kassensturz / AutoScout24','https://www.srf.ch/sendungen/kassensturz-espresso/umwelt-und-verkehr-wie-autos-enorm-an-wert-verlieren'],
+  ['ANNAHME, nicht belegt: Vollkaskoprämie CHF 2’400 pro Jahr für eine 19-jährige Neulenkerin. Belegt ist nur, dass junge Fahrende bis CHF 2’513 pro Jahr mehr zahlen als 70-jährige. Für eine echte Zahl einen Prämienrechner benutzen.','bonus.ch / cash','https://www.cash.ch/news/top-news/autoversicherung-je-nach-alter-und-herkunft-tausende-franken-teurer-946455'],
+  ['ANNAHME, nicht belegt: Service, Reifen und Reparaturen CHF 1’200 pro Jahr. Der TCS publiziert die Einzelposten seit 2026 nicht mehr frei.','—','']
+];
+
+/* =========================================================================
+   2 · Showroom-Steuerung
+   ========================================================================= */
+
+var buehne     = document.getElementById('buehne');
+var foto       = document.getElementById('foto');
+var dunkel     = document.getElementById('dunkel');
+var lampen     = Array.prototype.slice.call(document.querySelectorAll('.lampe'));
+var schilderEl = document.getElementById('schilder');
+var preisfeld  = document.getElementById('preisfeld');
+var preisOben  = document.getElementById('preis-oben');
+var preisZahl  = document.getElementById('preis-zahl');
+var preisUnten = document.getElementById('preis-unten');
+var preisVergl = document.getElementById('preis-vergleich');
+var werbung    = document.getElementById('werbespruch');
+var fortBar    = document.getElementById('fortschritt');
+var zaehler    = document.getElementById('schrittzaehler');
+
+var pAuge   = document.getElementById('p-auge');
+var pTitel  = document.getElementById('p-titel');
+var pText   = document.getElementById('p-text');
+var pFakt   = document.getElementById('p-fakt');
+var pFrageB = document.getElementById('p-fragebox');
+var pFrage  = document.getElementById('p-frage');
+var pInhalt = document.getElementById('p-inhalt');
+var kopfber = document.getElementById('kopfbereich');
+
+var zurueckBtn = document.getElementById('zurueck');
+var weiterBtn  = document.getElementById('weiter');
+var neustartBtn= document.getElementById('neustart');
+var kartenEl   = document.getElementById('karten');
+var tippEl     = document.getElementById('tipp');
+
+var schritt = 0;          /* 0 = nur Werbung, 1..7 = aufgedeckt */
+var bereich = 'rechnung'; /* rechnung | vergleich | vergessen */
+
+/* Schilder einmalig bauen */
+SCHRITTE.forEach(function(s, i){
+  var d = document.createElement('div');
+  d.className = 'schild' + (s.art === 'rot' ? ' rot' : '');
+  d.style.left = s.pos[0] + '%';
+  d.style.top  = s.pos[1] + '%';
+  d.innerHTML = '<div class="was">' + s.was + '</div><div class="fr">CHF ' + fr(s.fr) + '</div>';
+  d.dataset.nr = String(i + 1);
+  schilderEl.appendChild(d);
+});
+/* Fortschrittsbalken */
+SCHRITTE.forEach(function(){ fortBar.appendChild(document.createElement('span')); });
+
+function summeBis(n){
+  var s = 0;
+  for (var i = 0; i < n && i < SCHRITTE.length; i++) s += SCHRITTE[i].fr;
+  return s;
+}
+
+function zeigeText(o){
+  pAuge.textContent = o.auge;
+  pTitel.textContent = o.titel;
+  pText.textContent = o.text;
+  if (o.fakt){ pFakt.innerHTML = o.fakt; pFakt.hidden = false; } else pFakt.hidden = true;
+  if (o.q){ pFrage.textContent = o.q; pFrageB.hidden = false; } else pFrageB.hidden = true;
+}
+
+function rechnungstabelle(n){
+  var h = '<table class="rechnung">';
+  SCHRITTE.forEach(function(s, i){
+    var klasse = i < n ? (i === n - 1 ? 'neu' : '') : 'blass';
+    var betrag = i < n ? 'CHF ' + fr(s.fr) : '· · ·';
+    h += '<tr class="' + klasse + '"><td>' + s.was + '</td><td class="fr">' + betrag + '</td></tr>';
+  });
+  h += '<tr class="summe"><td>' + (n >= SCHRITTE.length ? 'Tatsächlich pro Monat' : 'Bisher pro Monat') +
+       '</td><td class="fr">CHF ' + fr(summeBis(n)) + '</td></tr>';
+  h += '</table>';
+  if (n >= SCHRITTE.length){
+    h += '<div class="urteil teuer">Beworben waren <b>CHF 299.–</b>. Tatsächlich sind es <b>CHF ' + fr(summeBis(6)) +
+         '</b> pro Monat – und mit Mehrkilometern <b>CHF ' + fr(summeBis(7)) + '</b>. Das ist das <b>' +
+         (summeBis(7) / 299).toFixed(1).replace('.', ',') + '-fache</b> der beworbenen Rate.</div>';
+  }
+  return h;
+}
+
+function zeichne(){
+  /* Licht */
+  var stufe = Math.min(schritt, SCHRITTE.length);
+  var hell = 0.30 + stufe * 0.085;
+  foto.style.filter = 'brightness(' + hell.toFixed(3) + ') contrast(1.05) saturate(' + (0.75 + stufe * 0.035).toFixed(2) + ')';
+  dunkel.style.opacity = String(Math.max(0, 1 - stufe * 0.13));
+  lampen.forEach(function(l){ l.classList.toggle('an', Number(l.dataset.l) <= stufe); });
+
+  /* Schilder */
+  Array.prototype.slice.call(schilderEl.children).forEach(function(d){
+    d.classList.toggle('da', Number(d.dataset.nr) <= stufe);
+  });
+
+  /* Preisanzeige */
+  if (schritt === 0){
+    preisOben.textContent = 'Leasing ab';
+    preisZahl.innerHTML = '299.–<small> / Mt.</small>';
+    preisUnten.textContent = 'Neuwagen CHF 34’900.–';
+    preisVergl.hidden = true;
+    preisfeld.classList.remove('heiss');
+    werbung.style.opacity = '1';
+  } else {
+    preisOben.textContent = 'Tatsächliche Kosten';
+    preisZahl.innerHTML = fr(summeBis(stufe)) + '<small> / Mt.</small>';
+    preisUnten.textContent = schritt > SCHRITTE.length ? 'alles eingerechnet' : 'Schritt ' + stufe + ' von ' + SCHRITTE.length;
+    preisVergl.hidden = false;
+    preisVergl.innerHTML = 'beworben: <s>CHF 299.–</s>';
+    preisfeld.classList.toggle('heiss', stufe >= 3);
+    werbung.style.opacity = '0';
+  }
+
+  /* Fortschritt */
+  Array.prototype.slice.call(fortBar.children).forEach(function(sp, i){
+    sp.classList.toggle('fertig', i < stufe);
+  });
+  zaehler.textContent = schritt > SCHRITTE.length ? 'Ergebnis' : 'Schritt ' + stufe + ' von ' + SCHRITTE.length;
+
+  /* Panel */
+  if (schritt === 0){ zeigeText(ANFANG); pInhalt.innerHTML = rechnungstabelle(0); }
+  else if (schritt > SCHRITTE.length){ zeigeText(SCHLUSS); pInhalt.innerHTML = rechnungstabelle(SCHRITTE.length); }
+  else { zeigeText(SCHRITTE[schritt - 1]); pInhalt.innerHTML = rechnungstabelle(schritt); }
+
+  zurueckBtn.disabled = schritt === 0;
+  weiterBtn.disabled  = schritt > SCHRITTE.length;
+  weiterBtn.textContent = schritt === 0 ? 'Aufdecken →' : (schritt === SCHRITTE.length ? 'Ergebnis →' : 'Weiter →');
+}
+
+weiterBtn.addEventListener('click', function(){ if (schritt <= SCHRITTE.length){ schritt++; zeichne(); } });
+zurueckBtn.addEventListener('click', function(){ if (schritt > 0){ schritt--; zeichne(); } });
+neustartBtn.addEventListener('click', function(){ schritt = 0; zeichne(); });
+buehne.addEventListener('click', function(){
+  if (bereich === 'rechnung' && schritt <= SCHRITTE.length){ schritt++; zeichne(); }
+});
+
+/* =========================================================================
+   3 · Leasen oder kaufen
+   ========================================================================= */
+
+var V = { anzahlung:20, monate:48, kmJahr:10000, zins:0.9 };
+
+function restwertVon(preis, monate, kmJahr){
+  var basis = preis * Math.exp(-0.0185 * monate);
+  var korr  = 1 - Math.max(0, (kmJahr - 10000) / 1000) * 0.008;
+  return Math.max(preis * 0.12, basis * korr);
+}
+function leasingrate(preis, anzahlung, restwert, monate, zinsProzent){
+  var K = preis - anzahlung;
+  var i = zinsProzent / 100 / 12;
+  if (i < 1e-9) return (K - restwert) / monate;
+  var disk = Math.pow(1 + i, -monate);
+  return (K - restwert * disk) * (i / (1 - disk));
+}
+
+function vergleichZeichnen(){
+  var anz  = AUTO.preis * V.anzahlung / 100;
+  var rw   = restwertVon(AUTO.preis, V.monate, V.kmJahr);
+  var rate = leasingrate(AUTO.preis, anz, rw, V.monate, V.zins);
+  var jahre = V.monate / 12;
+
+  var leasTotal = anz + rate * V.monate;
+  var kaufVerlust = AUTO.preis - rw;
+
+  /* Betriebskosten sind in beiden Fällen gleich und deshalb nicht Teil des Vergleichs */
+  var unterschied = leasTotal - kaufVerlust;
+
+  var h = '';
+  h += '<div class="gegen">';
+  h += '<div class="saeule leas"><h3>Leasen</h3><dl>' +
+       '<div><dt>Sonderzahlung</dt><dd>' + frGanz(anz) + '</dd></div>' +
+       '<div><dt>Rate pro Monat</dt><dd>' + fr(rate) + '</dd></div>' +
+       '<div><dt>' + V.monate + ' Raten</dt><dd>' + frGanz(rate * V.monate) + '</dd></div>' +
+       '<div><dt>Auto danach</dt><dd>weg</dd></div>' +
+       '</dl><div class="gross">CHF ' + frGanz(leasTotal) + '</div></div>';
+  h += '<div class="saeule kauf"><h3>Bar kaufen</h3><dl>' +
+       '<div><dt>Kaufpreis</dt><dd>' + frGanz(AUTO.preis) + '</dd></div>' +
+       '<div><dt>Wert nach ' + jahre + ' Jahren</dt><dd>' + frGanz(rw) + '</dd></div>' +
+       '<div><dt>Wertverlust</dt><dd>' + frGanz(kaufVerlust) + '</dd></div>' +
+       '<div><dt>Auto danach</dt><dd>gehört dir</dd></div>' +
+       '</dl><div class="gross">CHF ' + frGanz(kaufVerlust) + '</div></div>';
+  h += '</div>';
+
+  if (Math.abs(unterschied) < 1200){
+    h += '<div class="urteil gleich">Bei diesem Zins kostet Leasen <b>etwa gleich viel</b> wie Kaufen – der Unterschied beträgt nur CHF ' +
+         frGanz(Math.abs(unterschied)) + '. Der Haken liegt woanders: Beim Kauf haben Sie am Schluss ein Auto im Wert von CHF ' +
+         frGanz(rw) + ', beim Leasing nichts. Dafür brauchen Sie beim Kauf CHF ' + frGanz(AUTO.preis) + ' sofort.</div>';
+  } else if (unterschied > 0){
+    h += '<div class="urteil teuer">Leasen kostet hier <b>CHF ' + frGanz(unterschied) + ' mehr</b> als Kaufen – und am Schluss haben Sie kein Auto. ' +
+         'Bei ' + V.zins.toFixed(1).replace('.', ',') + ' % Zins zahlen Sie den Preis für die Bequemlichkeit, nicht CHF ' + frGanz(AUTO.preis) + ' auf einmal aufbringen zu müssen.</div>';
+  } else {
+    h += '<div class="urteil gleich">In dieser Konstellation ist Leasen sogar <b>CHF ' + frGanz(-unterschied) + ' günstiger</b> als Kaufen. ' +
+         'Das kommt bei Aktionszinsen vor. Beachten Sie aber: Das Auto gehört Ihnen am Schluss trotzdem nicht.</div>';
+  }
+  h += '<div class="fakt" style="margin-top:12px">Versicherung, Steuer, Service und Treibstoff fallen in <b>beiden</b> Fällen an – rund CHF ' +
+       fr((KOSTEN.vollkaskoJahr + KOSTEN.steuerJahr + KOSTEN.serviceJahr + V.kmJahr * KOSTEN.verbrauch / 100 * KOSTEN.benzin) / 12) +
+       ' pro Monat. Sie sind hier bewusst weggelassen, damit der Vergleich sauber bleibt.</div>';
+
+  h += '<div class="regler"><label>Sonderzahlung <span class="wert" id="w-anz">' + V.anzahlung + ' % · CHF ' + frGanz(anz) + '</span></label>' +
+       '<input type="range" id="r-anz" min="0" max="30" step="5" value="' + V.anzahlung + '"><div class="hinweis">Je mehr Sie anzahlen, desto tiefer die Rate – das Geld ist aber weg.</div></div>';
+  h += '<div class="regler"><label>Laufzeit <span class="wert" id="w-mon">' + V.monate + ' Monate</span></label>' +
+       '<input type="range" id="r-mon" min="24" max="60" step="12" value="' + V.monate + '"><div class="hinweis">Länger heisst tiefere Rate, aber mehr Zins und ein älteres Auto am Schluss.</div></div>';
+  h += '<div class="regler"><label>Kilometer pro Jahr <span class="wert" id="w-km">' + frGanz(V.kmJahr) + ' km</span></label>' +
+       '<input type="range" id="r-km" min="5000" max="30000" step="2500" value="' + V.kmJahr + '"><div class="hinweis">Mehr Kilometer drücken den Restwert – und damit steigt die Rate.</div></div>';
+  h += '<div class="regler"><label>Effektiver Jahreszins <span class="wert" id="w-zins">' + V.zins.toFixed(1).replace('.', ',') + ' %</span></label>' +
+       '<input type="range" id="r-zins" min="0" max="10" step="0.1" value="' + V.zins + '"><div class="hinweis">0.9 % ist ein Aktionszins. Erlaubt sind höchstens 10 %. Schieben Sie ihn hoch.</div></div>';
+
+  pInhalt.innerHTML = h;
+
+  function bind(id, feld, formatiere){
+    var el = document.getElementById(id);
+    el.addEventListener('input', function(){
+      V[feld] = parseFloat(el.value);
+      vergleichZeichnen();
+      var neu = document.getElementById(id);
+      if (neu){ neu.focus(); }
+    });
+  }
+  bind('r-anz', 'anzahlung');
+  bind('r-mon', 'monate');
+  bind('r-km', 'kmJahr');
+  bind('r-zins', 'zins');
+
+  /* Bühne: bei hohem Zins wird es ungemütlich */
+  var stufe = Math.min(7, Math.round(V.zins / 1.5) + 3);
+  schritt = stufe;
+  var hell = 0.30 + stufe * 0.085;
+  foto.style.filter = 'brightness(' + hell.toFixed(3) + ') contrast(1.05) saturate(' + (0.75 + stufe * 0.035).toFixed(2) + ')';
+  dunkel.style.opacity = String(Math.max(0, 1 - stufe * 0.13));
+  lampen.forEach(function(l){ l.classList.toggle('an', Number(l.dataset.l) <= stufe); });
+  Array.prototype.slice.call(schilderEl.children).forEach(function(d){ d.classList.remove('da'); });
+  preisOben.textContent = 'Leasingrate';
+  preisZahl.innerHTML = fr(rate) + '<small> / Mt.</small>';
+  preisUnten.textContent = V.monate + ' Monate · ' + frGanz(V.kmJahr) + ' km/Jahr · ' + V.zins.toFixed(1).replace('.', ',') + ' %';
+  preisVergl.hidden = false;
+  preisVergl.innerHTML = 'Total mit Sonderzahlung: CHF ' + frGanz(leasTotal);
+  preisfeld.classList.toggle('heiss', V.zins >= 4);
+  werbung.style.opacity = '0';
+}
+
+/* =========================================================================
+   4 · Was viele vergessen
+   ========================================================================= */
+
+function kartenBauen(){
+  kartenEl.innerHTML = '';
+  WARNKARTEN.forEach(function(k){
+    var b = document.createElement('button');
+    b.className = 'wkarte' + (k.art === 'gut' ? ' gut' : '');
+    b.type = 'button';
+    b.innerHTML = '<div class="sym">' + k.sym + '</div><h4>' + k.titel + '</h4><p>' + k.text + '</p><span class="zahl">' + k.zahl + '</span>';
+    kartenEl.appendChild(b);
+  });
+}
+
+/* =========================================================================
+   5 · Bereiche umschalten
+   ========================================================================= */
+
+var mRechnung  = document.getElementById('m-rechnung');
+var mVergleich = document.getElementById('m-vergleich');
+var mVergessen = document.getElementById('m-vergessen');
+
+function setzeBereich(b){
+  if (bereich === b) return;
+  bereich = b;
+  [[mRechnung,'rechnung'],[mVergleich,'vergleich'],[mVergessen,'vergessen']].forEach(function(p){
+    p[0].classList.toggle('an', b === p[1]);
+    p[0].setAttribute('aria-selected', String(b === p[1]));
+  });
+
+  var istRechnung = (b === 'rechnung');
+  document.querySelector('.buehnenfuss').style.display = istRechnung ? 'flex' : 'none';
+  fortBar.style.display = istRechnung ? 'flex' : 'none';
+  kartenEl.hidden = (b !== 'vergessen');
+  buehne.style.display = (b === 'vergessen') ? 'none' : 'block';
+
+  if (b === 'rechnung'){
+    tippEl.textContent = 'Tipp: auf «Weiter» klicken – mit jedem Schritt geht ein Licht an';
+    zeichne();
+  } else if (b === 'vergleich'){
+    tippEl.textContent = 'Tipp: den Zinsregler nach rechts schieben';
+    zeigeText({
+      auge:'Leasen oder kaufen',
+      titel:'Dasselbe Auto, zwei Wege',
+      text:'Links leasen, rechts bar kaufen – derselbe Wagen für CHF 34’900.–. Verschieben Sie Sonderzahlung, Laufzeit, Kilometer und Zins und schauen Sie zu, wie sich das Verhältnis dreht. Der spannendste Regler ist der letzte.',
+      fakt:'Beim <b>Aktionszins von 0.9 %</b> kostet Leasen etwa gleich viel wie Kaufen. Ab rund <b>3 %</b> kippt es deutlich.',
+      q:'Warum bieten Autohäuser überhaupt Aktionszinsen unter 1 Prozent an?'
+    });
+    vergleichZeichnen();
+  } else {
+    tippEl.textContent = 'Rot: Verpflichtungen · Grün: deine Rechte';
+    zeigeText({
+      auge:'Was viele vergessen',
+      titel:'Es geht nicht nur ums Geld',
+      text:'Ein Leasingvertrag bindet dich vier Jahre lang. In dieser Zeit gehört das Auto nicht dir, du darfst nicht beliebig viel fahren, nicht in jede Garage, und aussteigen ist teuer. Die roten Karten zeigen die Verpflichtungen, die grünen deine Rechte.',
+      fakt:'Und trotzdem: Leasing ist nicht per se schlecht. Es ist <b>planbar</b> – wenn man weiss, worauf man sich einlässt.',
+      q:'Welche der elf Karten hat Sie am meisten überrascht?'
+    });
+    pInhalt.innerHTML = '<div class="urteil gleich">Merksatz für die Prüfung: <b>Leasing kann planbar sein – entscheidend ist, dass du die Gesamtkosten und die Verpflichtungen kennst.</b></div>';
+    kartenBauen();
+  }
+  kopfhoeheSetzen();
+}
+
+mRechnung.addEventListener('click', function(){ setzeBereich('rechnung'); });
+mVergleich.addEventListener('click', function(){ setzeBereich('vergleich'); });
+mVergessen.addEventListener('click', function(){ setzeBereich('vergessen'); });
+
+/* =========================================================================
+   6 · Overlays, Quiz, Quellen
+   ========================================================================= */
+
+function auf(id){ document.getElementById(id).classList.add('offen'); }
+document.getElementById('b-recht').addEventListener('click', function(){ auf('ov-recht'); });
+document.getElementById('b-quellen').addEventListener('click', function(){ auf('ov-quellen'); });
+document.getElementById('b-quiz').addEventListener('click', function(){ quizBauen(); auf('ov-quiz'); });
+document.querySelectorAll('[data-zu]').forEach(function(b){
+  b.addEventListener('click', function(){ document.getElementById(b.dataset.zu).classList.remove('offen'); });
+});
+document.querySelectorAll('.overlay').forEach(function(o){
+  o.addEventListener('click', function(e){ if (e.target === o) o.classList.remove('offen'); });
+});
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Escape') document.querySelectorAll('.overlay.offen').forEach(function(o){ o.classList.remove('offen'); });
+});
+
+var rechteTab = document.getElementById('rechtetabelle');
+rechteTab.innerHTML = '<tr><th>Thema</th><th>Was gilt</th><th>Grundlage</th></tr>' +
+  RECHTE.map(function(r){ return '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td><td>' + r[2] + '</td></tr>'; }).join('');
+
+var quellenListe = document.getElementById('quellenliste');
+QUELLEN.forEach(function(q){
+  var li = document.createElement('li');
+  li.innerHTML = q[0] + (q[2] ? '<br><a href="' + q[2] + '" target="_blank" rel="noopener">' + q[1] + '</a>' : '<br>' + q[1]);
+  quellenListe.appendChild(li);
+});
+
+var quizKoerper = document.getElementById('quizkoerper');
+var quizErg = document.getElementById('quizergebnis');
+function quizBauen(){
+  quizKoerper.innerHTML = '';
+  quizErg.hidden = true;
+  var beantwortet = 0, richtig = 0, letzte = '';
+  QUIZ.forEach(function(item, qi){
+    if (item.grp !== letzte){
+      var t = document.createElement('div');
+      t.className = 'qgruppe'; t.textContent = item.grp;
+      quizKoerper.appendChild(t); letzte = item.grp;
+    }
+    var box = document.createElement('div'); box.className = 'quizfrage';
+    var f = document.createElement('div'); f.className = 'qtext';
+    f.textContent = (qi + 1) + '. ' + item.q;
+    box.appendChild(f);
+    var fb = document.createElement('div'); fb.className = 'qfb'; fb.hidden = true;
+    item.opts.forEach(function(opt, oi){
+      var b = document.createElement('button');
+      b.className = 'qopt'; b.textContent = opt;
+      b.addEventListener('click', function(){
+        if (box.dataset.fertig) return;
+        box.dataset.fertig = '1'; beantwortet++;
+        box.querySelectorAll('.qopt').forEach(function(ob, idx){
+          ob.disabled = true;
+          if (idx === item.r) ob.classList.add('richtig');
+        });
+        if (oi === item.r){ richtig++; fb.style.color = '#1E5C37'; fb.textContent = '✓ Richtig. ' + item.fb; }
+        else { b.classList.add('falsch'); fb.style.color = '#8A2A26'; fb.textContent = '✗ ' + item.fb; }
+        fb.hidden = false;
+        if (beantwortet === QUIZ.length){
+          quizErg.hidden = false;
+          quizErg.textContent = 'Ergebnis: ' + richtig + ' von ' + QUIZ.length + ' richtig.';
+        }
+      });
+      box.appendChild(b);
+    });
+    box.appendChild(fb);
+    quizKoerper.appendChild(box);
+  });
+}
+
+/* =========================================================================
+   7 · Panelhöhe einfrieren, damit nichts springt
+   ========================================================================= */
+
+function kopfhoeheSetzen(){
+  var sicher = {
+    auge: pAuge.textContent, tit: pTitel.textContent, txt: pText.textContent,
+    fakt: pFakt.innerHTML, faktAus: pFakt.hidden,
+    frage: pFrage.textContent, qAus: pFrageB.hidden
+  };
+  kopfber.style.minHeight = '0px';
+  var hoch = 0;
+  [ANFANG, SCHLUSS].concat(SCHRITTE).forEach(function(o){
+    pAuge.textContent = o.auge; pTitel.textContent = o.titel; pText.textContent = o.text;
+    if (o.fakt){ pFakt.innerHTML = o.fakt; pFakt.hidden = false; } else pFakt.hidden = true;
+    if (o.q){ pFrage.textContent = o.q; pFrageB.hidden = false; } else pFrageB.hidden = true;
+    hoch = Math.max(hoch, kopfber.offsetHeight);
+  });
+  pAuge.textContent = sicher.auge; pTitel.textContent = sicher.tit; pText.textContent = sicher.txt;
+  pFakt.innerHTML = sicher.fakt; pFakt.hidden = sicher.faktAus;
+  pFrage.textContent = sicher.frage; pFrageB.hidden = sicher.qAus;
+  kopfber.style.minHeight = hoch + 'px';
+}
+var messTimer = null;
+window.addEventListener('resize', function(){
+  clearTimeout(messTimer);
+  messTimer = setTimeout(kopfhoeheSetzen, 180);
+});
+
+/* Bild fehlt? Dann wenigstens sauber dunkel bleiben. */
+foto.addEventListener('error', function(){
+  foto.style.display = 'none';
+  buehne.style.background = 'radial-gradient(ellipse at 42% 60%, #26313C 0%, #0B0E12 70%)';
+});
+
+/* =========================================================================
+   8 · Start
+   ========================================================================= */
+zeichne();
+kopfhoeheSetzen();
+</script>
+
+<style>
+.zoomleiste{position:fixed; right:12px; top:12px; z-index:99999; display:flex; gap:2px;
+  background:rgba(255,255,255,.78); border:1px solid rgba(21,35,50,.14); border-radius:999px;
+  padding:3px; box-shadow:0 3px 12px rgba(21,35,50,.18);
+  opacity:.55; transition:opacity .18s; backdrop-filter:blur(4px);}
+.zoomleiste:hover,.zoomleiste:focus-within{opacity:1;}
+.zoomleiste button{width:27px; height:27px; border-radius:999px; padding:0;
+  border:none; background:transparent; color:#152332;
+  font-size:14px; line-height:1; cursor:pointer;}
+.zoomleiste button:hover{background:rgba(21,35,50,.09);}
+@media print{.zoomleiste{display:none}}
+</style>
+<script>
+(function(){
+  var z = (window.self !== window.top) ? 0.82 : 1;
+  var leiste = document.createElement('div');
+  leiste.className = 'zoomleiste';
+  function setZ(nz){
+    z = Math.max(0.5, Math.min(1.4, Math.round(nz*100)/100));
+    document.body.style.zoom = z;
+    leiste.style.zoom = 1/z;
+  }
+  function mk(txt, titel, fn){
+    var b = document.createElement('button');
+    b.type = 'button'; b.textContent = txt; b.title = titel;
+    b.setAttribute('aria-label', titel);
+    b.addEventListener('click', fn);
+    leiste.appendChild(b);
+  }
+  mk('−', 'Kleiner', function(){ setZ(z - 0.1); });
+  mk('+', 'Grösser', function(){ setZ(z + 0.1); });
+  mk('⛶', 'Vollbild (Esc beendet)', function(){
+    var drin = document.fullscreenElement || document.webkitFullscreenElement;
+    if(drin){ (document.exitFullscreen || document.webkitExitFullscreen).call(document); }
+    else {
+      var el = document.documentElement;
+      var p = el.requestFullscreen ? el.requestFullscreen()
+            : el.webkitRequestFullscreen ? el.webkitRequestFullscreen() : null;
+      if(p && p.catch) p.catch(function(){});
+    }
+  });
+  document.body.appendChild(leiste);
+  setZ(z);
+})();
+</script>
+</body>
+</html>
