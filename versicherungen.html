@@ -130,6 +130,27 @@ h3{ font-size:14px; margin:16px 0 6px; color:var(--petrol); text-transform:upper
 .folge .fbox{ flex:1 1 300px; border-radius:11px; padding:12px 15px; font-size:14.5px; }
 .folge .rechnung-box{ background:rgba(179,66,58,.07); border:1px solid rgba(179,66,58,.35); text-align:center; }
 .folge .rechnung-box .gross{ font-size:19px; font-weight:800; color:var(--rot); display:block; margin-top:3px; }
+.folge .aufschluesselung{ flex:1 1 100%; background:#fff; border:1px solid var(--line); }
+.folge .aufschluesselung h4{ margin:0 0 9px; font-size:14.5px; color:var(--tief); }
+.rzweig{
+  display:inline-block; font-size:11.5px; font-weight:700; letter-spacing:.02em;
+  background:rgba(60,110,115,.10); color:var(--petrol);
+  border-radius:999px; padding:3px 10px; margin-bottom:9px;
+}
+.rtab{ width:100%; border-collapse:collapse; font-size:13.5px; }
+.rtab th{
+  text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.07em;
+  color:var(--muted); font-weight:800; padding:0 0 6px; border-bottom:1px solid var(--line);
+}
+.rtab th.re, .rtab td.re{ text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.rtab td{ padding:7px 0; border-bottom:1px solid #f2f6fa; vertical-align:top; }
+.rtab td .men{ display:block; color:var(--muted); font-size:12px; }
+.rtab tfoot td{
+  padding-top:9px; border-top:2px solid var(--tief); border-bottom:none;
+  font-weight:800; font-size:15px;
+}
+.rfuss{ font-size:11.5px; color:#94A3B0; margin-top:10px; line-height:1.5; }
+.rfuss b{ color:var(--muted); }
 
 /* ---- 2 Solidaritaet: Vorlage ---- */
 .soli-grid{ display:grid; grid-template-columns:minmax(220px,1fr) minmax(240px,1.1fr) minmax(260px,1.5fr); gap:14px; align-items:start; }
@@ -1230,50 +1251,223 @@ var LEUTE = [
   { name:'Luca', bild:'vers_luca.png', konto:4600, farbe:'#C97A1E', rgb:'201,122,30',  dat:'Ihm' },
   { name:'Mia',  bild:'vers_mia.png',  konto:3900, farbe:'#C4547F', rgb:'196,84,127',  dat:'Ihr' }
 ];
-var R_UNFALL = 18000;
-var risikoStufe = 0, getroffen = -1;
+
+var R_UNFALL = 18000;   /* Snowboard-Fall - dieselbe Zahl taucht in Kapitel 2 auf */
+
+/* Ereignispool. betrag ist immer die Summe der Positionen (wird beim Laden geprüft).
+   Alle Zahlen sind gerundete Beispielwerte nach Schweizer Richtwerten. */
+var EREIGNISSE = [
+  { kurz:'Spitalrechnung', zweig:'Unfallversicherung (UVG)',
+    text:'stürzt beim Snowboarden und bricht sich den Unterschenkel.',
+    detail:'Rettung von der Piste, Operation, drei Tage Spital, Physiotherapie.',
+    betrag:R_UNFALL,
+    pos:[ ['Rettungstransport mit der Ambulanz','', 1400],
+          ['Notfallaufnahme, Röntgen und CT','', 1100],
+          ['Operation Unterschenkel, mit Anästhesie','', 6800],
+          ['Stationärer Aufenthalt','3 Tage à 2’600', 7800],
+          ['Physiotherapie','12 Sitzungen à 50', 600],
+          ['Gehstützen, Medikamente, Verbandsmaterial','', 300] ],
+    fuss:['transport','spital'] },
+
+  { kurz:'Spitalrechnung', zweig:'Unfallversicherung (UVG)',
+    text:'reisst sich im Fussballtraining das Kreuzband.',
+    detail:'MRI, Operation, ein Tag Spital, danach ein halbes Jahr Physiotherapie.',
+    betrag:12400,
+    pos:[ ['Notfall und MRI des Knies','', 800],
+          ['Operation Kreuzband, mit Anästhesie','', 7200],
+          ['Stationärer Aufenthalt','1 Tag', 2600],
+          ['Physiotherapie','30 Sitzungen à 50', 1500],
+          ['Knieschiene und Material','', 300] ],
+    fuss:['spital'] },
+
+  { kurz:'Spitalrechnung', zweig:'Krankenkasse – keine Unfallversicherung',
+    text:'wacht nachts mit starken Bauchschmerzen auf: Blinddarm.',
+    detail:'Das ist eine Krankheit, kein Unfall. Zuständig ist die Krankenkasse.',
+    betrag:11600,
+    pos:[ ['Notfallabklärung, Ultraschall, Labor','', 800],
+          ['Operation Blinddarm, mit Anästhesie','', 5000],
+          ['Stationärer Aufenthalt','2 Tage à 2’600', 5200],
+          ['Medikamente und Nachkontrolle','', 600] ],
+    fuss:['spital','franchise'] },
+
+  { kurz:'Zahnarztrechnung', zweig:'Unfallversicherung (UVG)',
+    text:'schlägt im Schwimmbad mit dem Gesicht auf den Beckenrand.',
+    detail:'Zwei Schneidezähne sind abgebrochen.',
+    betrag:4800,
+    pos:[ ['Notfallbehandlung und Röntgen','', 350],
+          ['Wurzelbehandlung','2 Zähne', 1450],
+          ['Kronen','2 Stück', 2600],
+          ['Nachkontrollen','', 400] ],
+    fuss:['zahn'] },
+
+  { kurz:'Spitalrechnung', zweig:'Unfallversicherung (UVG)',
+    text:'stürzt mit dem E-Bike und bricht sich das Schlüsselbein.',
+    detail:'Ambulanz, Operation mit Platte, ein Tag Spital.',
+    betrag:10700,
+    pos:[ ['Rettungstransport mit der Ambulanz','', 1200],
+          ['Notfallaufnahme und Röntgen','', 600],
+          ['Operation Schlüsselbein, mit Anästhesie','', 5400],
+          ['Stationärer Aufenthalt','1 Tag', 2600],
+          ['Physiotherapie','14 Sitzungen à 50', 700],
+          ['Medikamente und Material','', 200] ],
+    fuss:['transport','spital'] },
+
+  { kurz:'Schadenrechnung', zweig:'Privathaftpflicht',
+    text:'stösst im Schulzimmer den Laptop einer Kollegin vom Tisch.',
+    detail:'Das Gerät ist nicht mehr zu retten – für den Schaden haftet man selbst.',
+    betrag:2400,
+    pos:[ ['Ersatzgerät gleicher Klasse','', 1900],
+          ['Datenrettung von der defekten Festplatte','', 350],
+          ['Gutachten und Versand','', 150] ],
+    fuss:['haftpflicht'] },
+
+  { kurz:'Schadenrechnung', zweig:'Privathaftpflicht',
+    text:'lässt in der WG den Wasserhahn laufen – das Wasser läuft eine Etage tiefer.',
+    detail:'Boden, Wände und die Möbel der Nachbarin sind beschädigt.',
+    betrag:6300,
+    pos:[ ['Bautrockner','10 Tage', 1800],
+          ['Parkett ersetzen','22 m²', 3300],
+          ['Malerarbeiten','', 900],
+          ['Beschädigte Möbel der Nachbarin','', 300] ],
+    fuss:['haftpflicht'] },
+
+  { kurz:'Verlust', zweig:'Hausrat mit Diebstahl auswärts',
+    text:'kommt aus dem Training – E-Bike und Handy sind weg.',
+    detail:'Gestohlen wurde ausserhalb der Wohnung. Das deckt nicht jede Police.',
+    betrag:2250,
+    pos:[ ['E-Bike','', 1800],
+          ['Mobiltelefon','', 350],
+          ['Neues Schloss und Ersatz-SIM','', 100] ],
+    fuss:['hausrat'] },
+
+  { kurz:'Spitalrechnung', zweig:'Reiseversicherung mit Rücktransport',
+    text:'verunfallt in den Ferien im Ausland.',
+    detail:'Behandlung vor Ort und Rückflug im Ambulanzflugzeug.',
+    betrag:26000,
+    pos:[ ['Spital vor Ort','5 Tage', 9000],
+          ['Operation im Ausland','', 7500],
+          ['Rücktransport im Ambulanzflugzeug','', 8000],
+          ['Begleitperson und Umbuchung','', 1500] ],
+    fuss:['ausland'] }
+];
+
+var R_FUSS = {
+  transport: 'Rettungstransport: Bei einer <b>Krankheit</b> zahlt die Grundversicherung höchstens '
+           + '500 Franken pro Jahr an den Transport, den Rest trägt man selbst. Nach einem '
+           + '<b>Unfall</b> übernimmt ihn die Unfallversicherung.',
+  spital:    'Spitaltag: Ein Akutspital verrechnet im Schnitt rund 2’600 Franken pro Tag. '
+           + 'Ab 18 kommt ein Spitalkostenbeitrag von 15 Franken pro Tag dazu – BL in Ausbildung '
+           + 'sind bis 25 davon befreit.',
+  franchise: 'Bei Krankheit zahlt man Franchise und Selbstbehalt selbst, bei einem Unfall über die '
+           + 'Unfallversicherung nicht.',
+  zahn:      'Zahnschäden zahlt die Krankenkasse nur, wenn sie durch einen <b>Unfall</b> entstanden '
+           + 'sind. Karies und Zahnspangen sind Privatsache.',
+  haftpflicht:'Wer einer anderen Person einen Schaden zufügt, haftet dafür – auch als '
+           + 'Minderjährige oder Minderjähriger, sofern urteilsfähig. Dafür gibt es die '
+           + 'Privathaftpflicht.',
+  hausrat:   'Diebstahl auswärts ist im Hausrat nicht automatisch eingeschlossen, sondern eine '
+           + 'Zusatzdeckung. Ein Blick in die Police lohnt sich.',
+  ausland:   'Rücktransporte zahlt die Grundversicherung nicht. Dafür braucht es eine '
+           + 'Reiseversicherung oder eine entsprechende Zusatzversicherung.'
+};
+
+/* Sicherheitsnetz: Summe der Positionen muss dem Betrag entsprechen */
+EREIGNISSE.forEach(function(e, i){
+  var summe = e.pos.reduce(function(a, p){ return a + p[2]; }, 0);
+  if (summe !== e.betrag && window.console) {
+    console.warn('Ereignis ' + i + ': Positionen ergeben ' + summe + ', Betrag ist ' + e.betrag);
+  }
+});
+
+var risikoStufe = 0, getroffen = -1, ereignis = 0, letztesEreignis = -1;
+
+function aktEreignis(){ return EREIGNISSE[ereignis]; }
 
 function zeichneKarten5(){
-  var h = '';
+  var e = aktEreignis(), h = '';
   LEUTE.forEach(function(p, i){
     var trifft = (i === getroffen);
     h += '<div class="pkarte'+(trifft && risikoStufe>=1 ? ' getroffen' : '')+'">'
-       + (trifft && risikoStufe>=1 ? '<span class="badge">Unfall</span>' : '<span class="platz"></span>')
+       + (trifft && risikoStufe>=1 ? '<span class="badge">Ereignis</span>' : '<span class="platz"></span>')
        + '<div class="pname" style="color:'+p.farbe+'">'+p.name+'</div>'
        + '<div class="pbild"><img class="pav" src="'+p.bild+'?v=1" alt="'+p.name+'" loading="lazy" '
        + 'style="background:rgba('+p.rgb+',.10);border-color:rgba('+p.rgb+',.45)"></div>'
        + '<div class="pgeld"><span class="betrag">'+fr(p.konto)+'</span><span class="lab">Erspartes</span></div>'
        + (trifft && risikoStufe>=1
-            ? '<div class="ereignis">Spitalrechnung<b>'+fr(R_UNFALL)+'</b></div>' : '')
+            ? '<div class="ereignis">'+e.kurz+'<b>'+fr(e.betrag)+'</b></div>' : '')
        + '</div>';
   });
   document.getElementById('karten5').innerHTML = h;
 }
 
+function zieheEreignis(){
+  var i;
+  do { i = zufall(0, EREIGNISSE.length-1); }
+  while (EREIGNISSE.length > 1 && i === letztesEreignis);
+  letztesEreignis = i;
+  return i;
+}
+
+function rechnungHtml(e){
+  var h = '<div class="fbox info-box aufschluesselung"><div style="width:100%">'
+        + '<span class="rzweig">'+e.zweig+'</span>'
+        + '<h4>Woraus besteht diese Rechnung?</h4>'
+        + '<table class="rtab"><thead><tr>'
+        + '<th>Position</th><th class="re">Betrag</th></tr></thead><tbody>';
+  e.pos.forEach(function(p){
+    h += '<tr><td>'+p[0]+(p[1] ? '<span class="men">'+p[1]+'</span>' : '')
+       + '</td><td class="re">'+fr(p[2])+'</td></tr>';
+  });
+  h += '</tbody><tfoot><tr><td>Total</td><td class="re">'+fr(e.betrag)+'</td></tr></tfoot></table>';
+
+  var noten = (e.fuss || []).map(function(k){ return R_FUSS[k]; }).filter(Boolean);
+  h += '<p class="rfuss"><b>Gerundete Beispielwerte</b> nach Schweizer Richtwerten – '
+     + 'eine echte Rechnung ist länger und je nach Kanton und Spital verschieden.';
+  noten.forEach(function(n){ h += '<br>· ' + n; });
+  h += '</p></div></div>';
+  return h;
+}
+
 document.getElementById('risikoKnopf').addEventListener('click', function(){
   var k = this, f = document.getElementById('risikoFolge');
+
   if (risikoStufe === 0){
     getroffen = zufall(0, LEUTE.length-1);
+    ereignis  = zieheEreignis();
     risikoStufe = 1;
     zeichneKarten5();
-    var p = LEUTE[getroffen];
+    var p = LEUTE[getroffen], e = aktEreignis();
     f.innerHTML =
-        '<div class="fbox rechnung-box"><b>'+p.name+' stürzt beim Snowboarden.</b>'
-      + ' Vier Tage Spital, Operation, Röntgen, Physiotherapie.'
-      + '<span class="gross">'+fr(R_UNFALL)+'</span></div>';
+        '<div class="fbox rechnung-box"><b>'+p.name+' '+e.text+'</b> '+e.detail
+      + '<span class="gross">'+fr(e.betrag)+'</span></div>';
     k.textContent = '💸 Kann ' + p.name + ' das bezahlen?';
+
   } else if (risikoStufe === 1){
     risikoStufe = 2;
-    var p = LEUTE[getroffen];
-    var fehlt = R_UNFALL - p.konto;
-    f.innerHTML =
-        '<div class="fbox rechnung-box">'+p.name+' hat nur <b>'+fr(p.konto)+'</b> gespart.'
-      + '<span class="gross">'+p.dat+' fehlen '+fr(fehlt)+'</span></div>'
-      + '<div class="fbox info-box ueberlege"><span class="bi">❓</span><span><b>Überlege</b>'
-      + 'Ohne Versicherung: Schulden, Betreibung, jahrelange Abzahlung – für einen Sturz, '
-      + 'den auch jede und jeder andere hier hätte haben können. '
-      + 'Wie könnten die fünf dieses Risiko gemeinsam tragen?</span></div>';
+    var p2 = LEUTE[getroffen], e2 = aktEreignis();
+    if (e2.betrag > p2.konto){
+      f.innerHTML =
+          '<div class="fbox rechnung-box">'+p2.name+' hat nur <b>'+fr(p2.konto)+'</b> gespart.'
+        + '<span class="gross">'+p2.dat+' fehlen '+fr(e2.betrag - p2.konto)+'</span></div>'
+        + '<div class="fbox info-box ueberlege"><span class="bi">❓</span><span><b>Überlege</b>'
+        + 'Ohne Versicherung: Schulden, Betreibung, jahrelange Abzahlung – für ein Ereignis, '
+        + 'das auch jede und jeder andere hier hätte haben können. '
+        + 'Wie könnten die fünf dieses Risiko gemeinsam tragen?</span></div>';
+    } else {
+      f.innerHTML =
+          '<div class="fbox rechnung-box">'+p2.name+' hat <b>'+fr(p2.konto)+'</b> gespart und kann bezahlen.'
+        + '<span class="gross">Übrig bleiben '+fr(p2.konto - e2.betrag)+'</span></div>'
+        + '<div class="fbox info-box ueberlege"><span class="bi">❓</span><span><b>Überlege</b>'
+        + 'Diesmal reicht es knapp – das Ersparte ist danach aber fast weg, und der nächste '
+        + 'Schaden kommt bestimmt. Wie könnten die fünf dieses Risiko gemeinsam tragen?</span></div>';
+    }
+    k.textContent = '🧾 Woraus besteht diese Rechnung?';
+
+  } else if (risikoStufe === 2){
+    risikoStufe = 3;
+    f.innerHTML += rechnungHtml(aktEreignis());
     k.textContent = '↺ Nochmals – wen trifft es diesmal?';
+
   } else {
     risikoStufe = 0; getroffen = -1;
     zeichneKarten5();
