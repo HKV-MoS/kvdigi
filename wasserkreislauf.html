@@ -7,231 +7,268 @@
 <style>
   * { box-sizing: border-box; }
   :root{
-    --hkv:#3C6E73; --hkv2:#3C6E73;
-    --sky1:#E4F4FF; --sky2:#A7D8F5;
-    --water:#2E86C1; --water-deep:#1B5E8A;
-    --sun:#FFC83D; --sun-glow:#FFE08A;
-    --grass:#6BA368; --grass-dk:#4E7A4A;
-    --earth:#B98C5A; --earth-dk:#9A7044;
-    --gw:#7FB8E6;
+    --hkv:#3C6E73; --hkv-dk:#213B42; --hkv-lt:#EAF2F1;
+    --stoer:#C24B1E; --stoer-dk:#A6431B; --stoer-lt:#FBEEE6;
+    --neben:#1F6F8B; --neben-lt:#E6F1F6;
     --ink:#1A2B3A; --muted:#5B6B7A;
   }
   body{
     margin:0; font-family:'Aptos','Segoe UI',system-ui,-apple-system,sans-serif;
-    background:#F4F8FB; color:#1A2B3A; font-size:14px; line-height:1.5;
+    background:#F4F8FB; color:var(--ink); font-size:14px; line-height:1.5;
   }
   header{
     background:linear-gradient(135deg,#213B42 0%,#3C6E73 100%);
     color:#fff; padding:16px 24px 14px; box-shadow:0 2px 8px rgba(0,0,0,.1); text-align:center;
+    transition:background .4s ease;
   }
   header h1{ margin:0 0 3px; font-size:22px; font-weight:800; letter-spacing:-.3px; }
   header .sub{ font-size:13px; opacity:.92; }
+  body.stoer header{ background:linear-gradient(135deg,#7E3315 0%,#C24B1E 100%); }
 
-  .wrap{ max-width:1320px; margin:0 auto; padding:18px; display:grid; grid-template-columns:1fr 330px; gap:18px; }
-  @media (max-width:900px){ .wrap{ grid-template-columns:1fr; } }
+  .wrap{ max-width:1400px; margin:0 auto; padding:18px; display:grid; grid-template-columns:1fr 350px; gap:18px; }
+  @media (max-width:980px){ .wrap{ grid-template-columns:1fr; } }
 
-  .stage-card{ background:#fff; border-radius:14px; box-shadow:0 2px 10px rgba(20,50,80,.08); overflow:hidden; }
-  .scene-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:12px 14px; border-bottom:1px solid #EAF0F5; }
-  .controls{ display:flex; gap:8px; flex-wrap:wrap; }
+  .stage-card{ background:#fff; border-radius:14px; box-shadow:0 2px 10px rgba(20,50,80,.08); overflow:hidden; align-self:start; }
+  .scene-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:11px 13px; border-bottom:1px solid #EAF0F5; }
+  .controls{ display:flex; gap:7px; flex-wrap:wrap; align-items:center; }
   .btn{
-    font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; border-radius:9px;
-    padding:8px 14px; border:1.5px solid #3C6E73; background:#3C6E73; color:#fff;
-    transition:background .15s ease, transform .12s ease, box-shadow .15s ease; display:inline-flex; align-items:center; gap:7px;
+    font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer; border-radius:9px;
+    padding:7px 12px; border:1.5px solid var(--hkv); background:var(--hkv); color:#fff;
+    transition:background .15s ease, transform .12s ease, box-shadow .15s ease, border-color .3s ease;
+    display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
   }
-  .btn:hover{ background:#213B42; transform:translateY(-1px); box-shadow:0 4px 12px rgba(60,110,115,.25); }
+  .btn:hover{ background:var(--hkv-dk); transform:translateY(-1px); box-shadow:0 4px 12px rgba(60,110,115,.25); }
   .btn:active{ transform:translateY(0); }
-  .btn.ghost{ background:#fff; color:#3C6E73; }
-  .btn.ghost:hover{ background:#EAF2F1; }
-  .btn.ghost[aria-pressed="true"]{ background:#3C6E73; color:#fff; }
-  .btn:focus-visible{ outline:3px solid #9Fd0f5; outline-offset:2px; }
+  .btn.ghost{ background:#fff; color:var(--hkv); }
+  .btn.ghost:hover{ background:var(--hkv-lt); }
+  .btn.ghost[aria-pressed="true"]{ background:var(--hkv); color:#fff; }
+  .btn:focus-visible{ outline:3px solid #9FD0F5; outline-offset:2px; }
+  .btn:disabled{ opacity:.45; cursor:not-allowed; }
+  .btn.sm{ padding:6px 11px; font-size:12.5px; }
+  body.stoer .btn{ border-color:var(--stoer); background:var(--stoer); }
+  body.stoer .btn:hover{ background:var(--stoer-dk); box-shadow:0 4px 12px rgba(194,75,30,.25); }
+  body.stoer .btn.ghost{ background:#fff; color:var(--stoer); }
+  body.stoer .btn.ghost:hover{ background:var(--stoer-lt); }
+  body.stoer .btn.ghost[aria-pressed="true"]{ background:var(--stoer); color:#fff; }
 
-  .scene{ position:relative; }
-  svg.scene-svg{ display:block; width:100%; height:auto; }
+  .modeswitch{ display:inline-flex; background:#EAF0F5; border-radius:10px; padding:3px; gap:2px; }
+  .mode-opt{ font-family:inherit; font-size:12.5px; font-weight:700; padding:6px 12px; border:none; background:transparent; color:var(--muted); border-radius:8px; cursor:pointer; transition:all .15s ease; white-space:nowrap; }
+  .mode-opt.active{ background:var(--hkv); color:#fff; }
+  .mode-opt:focus-visible{ outline:3px solid #9FD0F5; outline-offset:2px; }
+  body.stoer .mode-opt.active{ background:var(--stoer); }
 
-  /* ---- Animationen ---- */
-  @keyframes sunPulse{ 0%,100%{ transform:scale(1); opacity:.55;} 50%{ transform:scale(1.08); opacity:.8;} }
-  @keyframes sunRays{ to{ transform:rotate(360deg);} }
-  @keyframes drift{ 0%{ transform:translateX(0);} 50%{ transform:translateX(26px);} 100%{ transform:translateX(0);} }
-  @keyframes driftSlow{ 0%{ transform:translateX(0);} 50%{ transform:translateX(-22px);} 100%{ transform:translateX(0);} }
-  @keyframes rise{ 0%{ transform:translateY(0) scale(.7); opacity:0;} 15%{opacity:.85;} 80%{opacity:.7;} 100%{ transform:translateY(-150px) scale(1.25); opacity:0;} }
-  @keyframes fall{ 0%{ transform:translateY(0); opacity:0;} 12%{opacity:.9;} 90%{opacity:.9;} 100%{ transform:translateY(150px); opacity:0;} }
-  @keyframes waveMove{ 0%{ transform:translateX(0);} 100%{ transform:translateX(-80px);} }
-  @keyframes flow{ to{ stroke-dashoffset:-200; } }
-  @keyframes gwflow{ to{ stroke-dashoffset:-120; } }
+  .tipp{ font-size:11.5px; color:#8496A5; }
 
-  .sun-glow{ transform-box:fill-box; transform-origin:center; animation:sunPulse 3.6s ease-in-out infinite; }
-  .sun-rays{ transform-box:fill-box; transform-origin:center; animation:sunRays 60s linear infinite; }
-  #g-kondensation .cloud{ transform-box:fill-box; }
-  .cloud.c1{ animation:drift 14s ease-in-out infinite; }
-  .cloud.c2{ animation:driftSlow 18s ease-in-out infinite; }
-  .cloud.c3{ animation:drift 11s ease-in-out infinite; }
-  .vapor{ transform-box:fill-box; animation:rise 5s ease-in infinite; }
-  .drop{ transform-box:fill-box; animation:fall 1.5s linear infinite; }
-  .waves{ animation:waveMove 7s linear infinite; }
-  .river-flow{ stroke-dasharray:14 10; animation:flow 4s linear infinite; }
-  .gw-flow{ stroke-dasharray:10 12; animation:gwflow 5s linear infinite; }
+  /* ---------- Bühne: Foto + SVG-Overlay ---------- */
+  .scene{ position:relative; background:#0E2233; line-height:0; aspect-ratio:var(--buehne); }
+  /* Feste Bühne im Seitenverhältnis des Panoramas: so deckt sich das SVG-Raster
+     (1000 x 364) exakt mit dem Foto – nichts wird verzerrt, höchstens minim beschnitten.
+     Sollte das gelieferte Bild ein anderes Verhältnis haben: nur diese eine Zahl ändern. */
+  :root{ --buehne: 4 / 3; }
+  .scene img.foto{
+    position:absolute; inset:0; display:block; width:100%; height:100%; object-fit:cover;
+    transition:filter .6s ease, opacity .4s ease;
+  }
+  .scene img.foto.aus{ display:none; }
+  .scene .fallback{
+    display:none; position:absolute; inset:0;
+    background:linear-gradient(180deg,#DCEEFB 0%,#A7D8F5 34%,#7FC4E8 35%,#2E86C1 62%,#123E5C 100%);
+  }
+  .scene.kein-bild .fallback{ display:block; }
+  .scene .fehlhinweis{
+    display:none; position:absolute; left:50%; top:14px; transform:translateX(-50%);
+    background:rgba(255,255,255,.94); color:#8A3B1C; font-size:12px; font-weight:700;
+    padding:7px 13px; border-radius:9px; line-height:1.35; text-align:center; max-width:80%;
+    box-shadow:0 3px 12px rgba(0,0,0,.2); z-index:4;
+  }
+  .scene.kein-bild .fehlhinweis{ display:block; }
 
-  /* Hotspots */
-  .hotspot{ cursor:pointer; }
-  .hotspot .hs-dot{ fill:#fff; stroke:#3C6E73; stroke-width:2.5; transition:fill .15s ease, transform .15s ease; }
-  .hotspot .hs-num{ fill:#3C6E73; font-weight:800; font-size:17px; text-anchor:middle; dominant-baseline:central; font-family:inherit; }
-  .hotspot:hover .hs-dot{ fill:#EAF2F1; }
-  .hotspot .hs-ring{ fill:none; stroke:#3C6E73; stroke-width:2.5; opacity:0; }
-  .hotspot.active .hs-dot{ fill:#3C6E73; }
-  .hotspot.active .hs-num{ fill:#fff; }
-  .hotspot.active .hs-ring{ opacity:1; animation:ping 1.6s ease-out infinite; }
-  @keyframes ping{ 0%{ transform:scale(1); opacity:.7;} 100%{ transform:scale(2.4); opacity:0;} }
-  .hs-ring{ transform-box:fill-box; transform-origin:center; }
+  svg.ebene{ position:absolute; inset:0; width:100%; height:100%; overflow:hidden; }
+  svg#marken{ overflow:visible; }
+  svg.ebene.klicklos{ pointer-events:none; }
 
-  /* Lit-Hervorhebung der aktiven Station */
-  .litgroup{ transition:filter .25s ease; }
-  .litgroup.lit{ filter:drop-shadow(0 0 7px rgba(255,255,255,.95)) drop-shadow(0 0 3px rgba(60,110,115,.5)); }
+  /* Störmodus: Foto wechseln, sonst Farbstich als Notlösung */
+  body.stoer .scene img.foto.nur-normal{ display:none; }
+  .scene img.foto.nur-stoer{ display:none; }
+  body.stoer .scene img.foto.nur-stoer{ display:block; }
+  /* Notlösung, falls nur das natürliche Bild vorhanden ist: Farbstich statt zweites Foto */
+  body.stoer .scene.ein-bild img.foto.nur-normal{ display:block; filter:saturate(.72) sepia(.26) contrast(1.06) brightness(1.03); }
 
-  .lbl{ font-family:inherit; font-size:12.5px; font-weight:700; fill:#3C6E73; paint-order:stroke; stroke:#fff; stroke-width:3px; stroke-linejoin:round; }
-  .lbls-hidden .lbl{ display:none; }
+  /* ---------- Animationen ---------- */
+  @keyframes sonnePuls{ 0%,100%{ opacity:.30; transform:scale(1);} 50%{ opacity:.55; transform:scale(1.10);} }
+  @keyframes strahlDreh{ to{ transform:rotate(360deg);} }
+  @keyframes steigen{ 0%{ transform:translateY(0) scale(.55); opacity:0;} 12%{ opacity:.75;} 72%{ opacity:.45;} 100%{ transform:translateY(-130px) scale(1.5); opacity:0;} }
+  @keyframes steigenKurz{ 0%{ transform:translateY(0) scale(.5); opacity:0;} 15%{ opacity:.7;} 70%{ opacity:.35;} 100%{ transform:translateY(-72px) scale(1.35); opacity:0;} }
+  @keyframes regenFall{ 0%{ transform:translateY(0); opacity:0;} 10%{ opacity:.85;} 88%{ opacity:.85;} 100%{ transform:translateY(120px); opacity:0;} }
+  @keyframes flockeFall{ 0%{ transform:translate(0,0); opacity:0;} 12%{ opacity:.9;} 85%{ opacity:.8;} 100%{ transform:translate(11px,86px); opacity:0;} }
+  @keyframes fliessen{ to{ stroke-dashoffset:-260; } }
+  @keyframes fliessenLangsam{ to{ stroke-dashoffset:-140; } }
+  @keyframes sickern{ to{ stroke-dashoffset:-52; } }
+  @keyframes quellen{ to{ stroke-dashoffset:-64; } }
+  @keyframes wellen{ 0%,100%{ transform:translateX(0); opacity:.5;} 50%{ transform:translateX(16px); opacity:.75;} }
+  @keyframes vogelZieh{ 0%{ transform:translate(0,0);} 100%{ transform:translate(340px,-26px);} }
+  @keyframes vogelSchlag{ 0%,100%{ transform:scaleY(1);} 50%{ transform:scaleY(.42);} }
+  @keyframes pochen{ 0%{ transform:scale(1); opacity:.65;} 100%{ transform:scale(2.5); opacity:0;} }
+  @keyframes flimmern{ 0%,100%{ transform:translateY(0) scaleY(1);} 50%{ transform:translateY(-2px) scaleY(1.04);} }
 
-  /* Info-Panel */
-  .panel{ background:#fff; border-radius:14px; box-shadow:0 2px 10px rgba(20,50,80,.08); padding:18px; align-self:start; position:sticky; top:18px; }
-  .panel .eyebrow{ font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:#3C6E73; }
-  .panel h2{ margin:4px 0 8px; font-size:19px; color:#3C6E73; font-weight:800; }
-  .panel p{ margin:0 0 14px; color:#37485a; }
-  .chips{ display:flex; flex-direction:column; gap:7px; margin-top:6px; }
+  .sonne-schein{ transform-box:fill-box; transform-origin:center; animation:sonnePuls 4.2s ease-in-out infinite; }
+  .sonne-strahlen{ transform-box:fill-box; transform-origin:center; animation:strahlDreh 90s linear infinite; }
+  .dampf{ transform-box:fill-box; animation:steigen 6s ease-in infinite; }
+  .transp-dampf{ transform-box:fill-box; animation:steigenKurz 4.6s ease-in infinite; }
+  .regen{ transform-box:fill-box; animation:regenFall 1.25s linear infinite; }
+  .flocke{ transform-box:fill-box; animation:flockeFall 5.4s linear infinite; }
+  .fluss-strom{ stroke-dasharray:20 15; animation:fliessen 4.4s linear infinite; }
+  .schmelz-strom{ stroke-dasharray:9 11; animation:fliessenLangsam 3.6s linear infinite; }
+  .gw-strom{ stroke-dasharray:14 16; animation:fliessenLangsam 7s linear infinite; }
+  .sicker path{ stroke-dasharray:7 9; animation:sickern 2.6s linear infinite; }
+  .quell-strom{ stroke-dasharray:8 10; animation:quellen 2.8s linear infinite; }
+  .welle{ transform-box:fill-box; animation:wellen 8s ease-in-out infinite; }
+  .vogel-zug{ transform-box:fill-box; animation:vogelZieh 26s linear infinite; }
+  .vogel-fluegel{ transform-box:fill-box; transform-origin:center; animation:vogelSchlag 1.1s ease-in-out infinite; }
+  .hitze{ transform-box:fill-box; animation:flimmern 3s ease-in-out infinite; }
+
+  /* Effekte-Schalter */
+  body.ohne-effekte .dampf, body.ohne-effekte .transp-dampf, body.ohne-effekte .regen,
+  body.ohne-effekte .flocke, body.ohne-effekte .fluss-strom, body.ohne-effekte .schmelz-strom,
+  body.ohne-effekte .gw-strom, body.ohne-effekte .sicker path, body.ohne-effekte .quell-strom,
+  body.ohne-effekte .welle, body.ohne-effekte .vogel-zug, body.ohne-effekte .vogel-fluegel,
+  body.ohne-effekte .sonne-schein, body.ohne-effekte .sonne-strahlen, body.ohne-effekte .hitze,
+  body.ohne-effekte .rauch-puff, body.ohne-effekte .sprenger-strahl, body.ohne-effekte .pumpen-strom,
+  body.ohne-effekte .marke.aktiv .m-ring{ animation:none !important; }
+  body.ohne-effekte .dampf, body.ohne-effekte .transp-dampf, body.ohne-effekte .regen, body.ohne-effekte .flocke{ opacity:.5; }
+
+  /* ---------- Marken (Hotspots) ---------- */
+  .marke{ cursor:pointer; }
+  .marke .m-kreis{ fill:rgba(255,255,255,.94); stroke:var(--hkv); stroke-width:3; transition:fill .18s ease, stroke .3s ease; }
+  .marke .m-txt{ fill:var(--hkv); font-weight:800; font-size:19px; text-anchor:middle; dominant-baseline:central; font-family:inherit; transition:fill .18s ease; }
+  .marke:hover .m-kreis{ fill:var(--hkv-lt); }
+  .marke .m-ring{ fill:none; stroke:var(--hkv); stroke-width:3; opacity:0; transform-box:fill-box; transform-origin:center; }
+  .marke.aktiv .m-kreis{ fill:var(--hkv); }
+  .marke.aktiv .m-txt{ fill:#fff; }
+  .marke.aktiv .m-ring{ opacity:1; animation:pochen 1.7s ease-out infinite; }
+  .marke:focus-visible .m-kreis{ stroke-width:4.5; }
+  .marke:focus{ outline:none; }
+
+  /* Nebenpfad-Marken: abgerundetes Quadrat statt Kreis */
+  .marke.neben .m-kreis{ stroke:var(--neben); }
+  .marke.neben .m-txt{ font-size:18px; fill:var(--neben); }
+  .marke.neben:hover .m-kreis{ fill:var(--neben-lt); }
+  .marke.neben .m-ring{ stroke:var(--neben); }
+  .marke.neben.aktiv .m-kreis{ fill:var(--neben); }
+  .marke.neben.aktiv .m-txt{ fill:#fff; }
+
+  body.stoer .marke .m-kreis{ stroke:var(--stoer); }
+  body.stoer .marke .m-txt{ fill:var(--stoer); }
+  body.stoer .marke:hover .m-kreis{ fill:var(--stoer-lt); }
+  body.stoer .marke .m-ring{ stroke:var(--stoer); }
+  body.stoer .marke.aktiv .m-kreis{ fill:var(--stoer); }
+  body.stoer .marke.aktiv .m-txt{ fill:#fff; }
+
+  /* ---------- Beschriftungen ---------- */
+  .fahne{ transition:opacity .3s ease; }
+  .fahne rect{ fill:rgba(255,255,255,.90); stroke:rgba(60,110,115,.35); stroke-width:1; }
+  .fahne text{ font-family:inherit; font-size:15px; font-weight:700; fill:var(--hkv); dominant-baseline:central; }
+  .fahne.neben rect{ stroke:rgba(31,111,139,.35); }
+  .fahne.neben text{ fill:var(--neben); font-size:14.5px; }
+  body.stoer .fahne rect{ stroke:rgba(194,75,30,.35); }
+  body.stoer .fahne text{ fill:var(--stoer); }
+  body.ohne-fahnen .fahne{ opacity:0; }
+
+  /* ---------- Spotlight ---------- */
+  #dimmer{ opacity:0; transition:opacity .45s ease; pointer-events:none; }
+  body.spot-an #dimmer.scharf{ opacity:.58; }
+  #spotgruppe{ transition:transform .55s cubic-bezier(.4,0,.2,1); }
+
+  /* ---------- Info-Panel ---------- */
+  .panel{ background:#fff; border-radius:14px; box-shadow:0 2px 10px rgba(20,50,80,.08); padding:17px; align-self:start; position:sticky; top:14px; max-height:calc(100vh - 28px); overflow:auto; }
+  .panel .eyebrow{ font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--hkv); transition:color .3s ease; }
+  .panel h2{ margin:4px 0 8px; font-size:19px; color:var(--hkv); font-weight:800; transition:color .3s ease; }
+  .panel p.haupt{ margin:0 0 12px; color:#37485A; }
+  body.stoer .panel .eyebrow, body.stoer .panel h2{ color:var(--stoer); }
+  .panel.neben-aktiv .eyebrow, .panel.neben-aktiv h2{ color:var(--neben); }
+
+  .fakt{ background:#F1F7FA; border-radius:10px; padding:9px 12px; font-size:12.5px; color:#2C4654; margin:0 0 12px; }
+  .fakt b{ color:var(--hkv); }
+  body.stoer .fakt{ background:#FBF2EC; color:#6E3A20; }
+  body.stoer .fakt b{ color:var(--stoer); }
+  .panel.neben-aktiv .fakt b{ color:var(--neben); }
+
+  .qbox{ background:var(--hkv-lt); border-left:4px solid var(--hkv); border-radius:0 10px 10px 0; padding:9px 12px; margin:0 0 13px; font-size:13px; color:#2A4A4E; }
+  .qbox .qlabel{ display:block; font-size:10.5px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; color:var(--hkv); margin-bottom:3px; }
+  body.stoer .qbox{ background:var(--stoer-lt); border-left-color:var(--stoer); color:#7A3A1E; }
+  body.stoer .qbox .qlabel{ color:var(--stoer); }
+  .panel.neben-aktiv .qbox{ background:var(--neben-lt); border-left-color:var(--neben); color:#1B4C5E; }
+  .panel.neben-aktiv .qbox .qlabel{ color:var(--neben); }
+
+  .nav{ display:flex; gap:8px; margin-bottom:12px; }
+  .nav .btn{ flex:1; justify-content:center; }
+
+  .chips{ display:flex; flex-direction:column; gap:6px; }
   .chip{
-    display:flex; align-items:center; gap:10px; width:100%; text-align:left; cursor:pointer;
-    font-family:inherit; font-size:13.5px; font-weight:600; color:#1A2B3A;
-    background:#F3F8FC; border:1.5px solid transparent; border-radius:10px; padding:9px 11px;
+    display:flex; align-items:center; gap:9px; width:100%; text-align:left; cursor:pointer;
+    font-family:inherit; font-size:13.5px; font-weight:600; color:var(--ink);
+    background:#F3F8FC; border:1.5px solid transparent; border-radius:10px; padding:8px 10px;
     transition:background .15s ease, border-color .15s ease, transform .12s ease;
   }
-  .chip:hover{ background:#E4EFEE; transform:translateX(2px); }
-  .chip .num{ flex:0 0 22px; height:22px; border-radius:50%; background:#3C6E73; color:#fff; font-weight:800; font-size:12px; display:flex; align-items:center; justify-content:center; }
-  .chip.active{ background:#E4EFEE; border-color:#3C6E73; }
-  .chip:focus-visible{ outline:3px solid #9Fd0f5; outline-offset:2px; }
+  .chip:hover{ background:var(--hkv-lt); transform:translateX(2px); }
+  .chip .num{ flex:0 0 22px; height:22px; border-radius:50%; background:var(--hkv); color:#fff; font-weight:800; font-size:12px; display:flex; align-items:center; justify-content:center; }
+  .chip.aktiv{ background:var(--hkv-lt); border-color:var(--hkv); }
+  .chip:focus-visible{ outline:3px solid #9FD0F5; outline-offset:2px; }
+  .chip.nb .num{ background:var(--neben); border-radius:7px; font-size:12px; }
+  .chip.nb:hover{ background:var(--neben-lt); }
+  .chip.nb.aktiv{ background:var(--neben-lt); border-color:var(--neben); }
+  body.stoer .chip .num{ background:var(--stoer); }
+  body.stoer .chip:hover{ background:var(--stoer-lt); }
+  body.stoer .chip.aktiv{ background:var(--stoer-lt); border-color:var(--stoer); }
 
-  .progress{ display:flex; gap:5px; margin-top:14px; }
+  .gruppentitel{ font-size:10.5px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; color:#8496A5; margin:13px 0 6px; }
+
+  .progress{ display:flex; gap:5px; margin-top:13px; }
   .progress span{ flex:1; height:4px; border-radius:3px; background:#E2EBF2; transition:background .3s ease; }
-  .progress span.done{ background:#3C6E73; }
+  .progress span.done{ background:var(--hkv); }
+  body.stoer .progress span.done{ background:var(--stoer); }
 
-  /* ---- Modus-Umschalter ---- */
-  .modeswitch{ display:inline-flex; background:#EAF0F5; border-radius:10px; padding:3px; gap:2px; }
-  .mode-opt{ font-family:inherit; font-size:12.5px; font-weight:700; padding:7px 12px; border:none; background:transparent; color:#5B6B7A; border-radius:8px; cursor:pointer; transition:all .15s ease; }
-  .mode-opt.active{ background:#3C6E73; color:#fff; }
-  .mode-opt:focus-visible{ outline:3px solid #9Fd0f5; outline-offset:2px; }
-  body.stoer .mode-opt.active{ background:#C24B1E; }
+  .panelfuss{ margin-top:14px; padding-top:12px; border-top:1px solid #EAF0F5; display:flex; gap:6px; flex-wrap:wrap; }
 
-  .btn.sm{ padding:6px 12px; font-size:12.5px; }
+  /* ---------- Overlays ---------- */
+  .overlay{ position:fixed; inset:0; background:rgba(18,32,46,.58); display:none; align-items:center; justify-content:center; padding:18px; z-index:60; }
+  .overlay.offen{ display:flex; }
+  .modal{ background:#fff; border-radius:16px; max-width:720px; width:100%; max-height:88vh; overflow:auto; padding:22px 24px; box-shadow:0 20px 60px rgba(0,0,0,.3); }
+  .modal h3{ margin:0 0 4px; font-size:20px; color:var(--hkv); font-weight:800; }
+  .modal .msub{ font-size:13px; color:var(--muted); margin-bottom:16px; }
+  .modal-x{ float:right; font-size:22px; line-height:1; border:none; background:transparent; cursor:pointer; color:var(--muted); padding:0 4px; }
+  table.tab{ width:100%; border-collapse:collapse; font-size:13px; }
+  table.tab th, table.tab td{ text-align:left; padding:8px 10px; border-bottom:1px solid #EAF0F5; vertical-align:top; }
+  table.tab th{ font-weight:800; color:var(--hkv); }
+  table.tab td.norm{ color:var(--hkv); }
+  table.tab td.stoerf{ color:var(--stoer); }
+  table.tab tr td:first-child{ font-weight:700; color:var(--ink); }
+  table.tab td.zahl{ font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:700; color:var(--neben); }
 
-  /* ---- Mini-Frage ---- */
-  .qbox{ background:#EAF2F1; border-left:4px solid #3C6E73; border-radius:0 10px 10px 0; padding:10px 13px; margin:0 0 14px; font-size:13px; color:#2A4A4E; }
-  .qbox .qlabel{ display:block; font-size:10.5px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; color:#3C6E73; margin-bottom:3px; }
-  body.stoer .qbox{ background:#FBEEE6; border-left-color:#C24B1E; color:#7a3a1e; }
-  body.stoer .qbox .qlabel{ color:#C24B1E; }
-
-  .nav{ display:flex; gap:8px; margin-bottom:14px; }
-  .nav .btn{ flex:1; justify-content:center; }
-  .btn:disabled{ opacity:.45; cursor:not-allowed; }
-
-  /* ---- Gestörter Modus ---- */
-  body.stoer{ background:#FBF4EE; }
-  body.stoer header{ background:linear-gradient(135deg,#A6431B 0%,#D2762E 100%); }
-  body.stoer #sky-rect{ fill:url(#sky-dry); }
-  body.stoer .cloud.c3{ opacity:.3; }
-  body.stoer .cloud.c2{ opacity:.5; }
-  body.stoer .sun-glow{ fill:#FFB03A; }
-  body.stoer .river-flow{ opacity:.45; }
-  .gw-low{ opacity:0; transition:opacity .5s ease; }
-  body.stoer .gw-low{ opacity:.85; }
-  body.stoer .chip.active{ border-color:#C24B1E; background:#FBEEE6; }
-  body.stoer .chip .num{ background:#C24B1E; }
-  body.stoer .panel .eyebrow, body.stoer .panel h2{ color:#C24B1E; }
-  body.stoer .progress span.done{ background:#C24B1E; }
-  body.stoer .hotspot .hs-dot{ stroke:#C24B1E; }
-  body.stoer .hotspot .hs-num{ fill:#C24B1E; }
-  body.stoer .hotspot.active .hs-dot{ fill:#C24B1E; }
-  body.stoer .hotspot.active .hs-num{ fill:#fff; }
-  body.stoer .hotspot .hs-ring{ stroke:#C24B1E; }
-  body.stoer .btn{ border-color:#C24B1E; background:#C24B1E; }
-  body.stoer .btn:hover{ background:#A6431B; box-shadow:0 4px 12px rgba(194,75,30,.25); }
-  body.stoer .btn.ghost{ background:#fff; color:#C24B1E; }
-  body.stoer .btn.ghost[aria-pressed="true"]{ background:#C24B1E; color:#fff; }
-
-  .stoer-only{ display:none; }
-  body.stoer .stoer-only{ display:block; }
-  body.stoer .normal-only{ display:none; }
-  .warnsym{ opacity:0; transition:opacity .4s ease; }
-  body.stoer .warnsym{ opacity:1; }
-
-  /* ---- Szenen-Objekte: Tiere ---- */
-  @keyframes ibexHop{ 0%,70%,100%{ transform:translateY(0);} 78%{ transform:translateY(-13px);} 86%{ transform:translateY(-3px);} 92%{ transform:translateY(-7px);} }
-  @keyframes whaleSwim{ 0%,100%{ transform:translate(0,0) rotate(0deg);} 50%{ transform:translate(14px,-7px) rotate(-3deg);} }
-  @keyframes whaleBlow{ 0%,72%{ opacity:0; transform:translateY(6px) scale(.6);} 78%{ opacity:.9; transform:translateY(0) scale(1);} 92%{ opacity:.35; transform:translateY(-12px) scale(1.3);} 100%{ opacity:0; transform:translateY(-20px) scale(1.5);} }
-  .ibex-hop{ transform-box:fill-box; transform-origin:center bottom; animation:ibexHop 4.5s ease-in-out infinite; }
-  .whale-swim{ transform-box:fill-box; animation:whaleSwim 9s ease-in-out infinite; }
-  .whale-blow{ transform-box:fill-box; animation:whaleBlow 9s ease-in-out infinite; }
-
-  /* ---- Gletscher ---- */
-  .glacier-full{ opacity:.95; transition:opacity .6s ease; }
-  .glacier-melt{ opacity:0; transition:opacity .6s ease; }
-  .meltwater{ opacity:0; transition:opacity .6s ease; }
-  body.stoer .glacier-full{ opacity:0; }
-  body.stoer .glacier-melt{ opacity:.95; }
-  body.stoer .meltwater{ opacity:.9; animation:flow 3s linear infinite; }
-
-  /* ---- Störungs-Objekte ---- */
-  @keyframes planeFly{ 0%{ transform:translate(290px,58px);} 100%{ transform:translate(660px,58px);} }
-  @keyframes contrailFade{ 0%{ opacity:0;} 30%{ opacity:.55;} 100%{ opacity:0;} }
-  @keyframes puffRise{ 0%{ transform:translate(0,0) scale(.5); opacity:.85;} 100%{ transform:translate(16px,-58px) scale(1.7); opacity:0;} }
-  @keyframes tractorMove{ 0%,100%{ transform:translateX(0);} 50%{ transform:translateX(-46px);} }
-  @keyframes sprayFall{ 0%{ transform:translateY(0); opacity:.9;} 100%{ transform:translateY(14px); opacity:0;} }
-  @keyframes seepDown{ to{ stroke-dashoffset:-24; } }
-  @keyframes pumpArm{ 0%,100%{ transform:rotate(-9deg);} 50%{ transform:rotate(9deg);} }
-  @keyframes suckUp{ to{ stroke-dashoffset:-20; } }
-  @keyframes runoffFlow{ to{ stroke-dashoffset:-34; } }
-
-  .plane-fly{ transform-box:fill-box; animation:planeFly 16s linear infinite; }
-  .contrail{ stroke-dasharray:0 1000; animation:contrailFade 16s linear infinite; }
-  .puff{ transform-box:fill-box; animation:puffRise 4s ease-out infinite; }
-  .tractor-move{ transform-box:fill-box; animation:tractorMove 11s ease-in-out infinite; }
-  .spray circle{ transform-box:fill-box; animation:sprayFall 1.4s ease-in infinite; }
-  .seep path{ stroke-dasharray:5 7; animation:seepDown 2.4s linear infinite; }
-  .pump-arm{ transform-box:fill-box; transform-origin:center; animation:pumpArm 1.8s ease-in-out infinite; }
-  .suck path{ stroke-dasharray:5 6; animation:suckUp 1.6s linear infinite; }
-  .runoff{ animation:runoffFlow 2.6s linear infinite; }
-
-  /* ---- Overlay / Vergleich + Quiz ---- */
-  .overlay{ position:fixed; inset:0; background:rgba(20,35,50,.55); display:none; align-items:center; justify-content:center; padding:18px; z-index:50; }
-  .overlay.open{ display:flex; }
-  .modal{ background:#fff; border-radius:16px; max-width:660px; width:100%; max-height:88vh; overflow:auto; padding:22px 24px; box-shadow:0 20px 60px rgba(0,0,0,.3); }
-  .modal h3{ margin:0 0 4px; font-size:20px; color:#3C6E73; font-weight:800; }
-  .modal .msub{ font-size:13px; color:#5B6B7A; margin-bottom:16px; }
-  .modal-x{ float:right; font-size:22px; line-height:1; border:none; background:transparent; cursor:pointer; color:#5B6B7A; padding:0 4px; }
-  table.cmp{ width:100%; border-collapse:collapse; font-size:13px; }
-  table.cmp th, table.cmp td{ text-align:left; padding:9px 10px; border-bottom:1px solid #EAF0F5; vertical-align:top; }
-  table.cmp th{ font-weight:800; color:#3C6E73; }
-  table.cmp td.norm{ color:#3C6E73; }
-  table.cmp td.stoer{ color:#C24B1E; }
-  table.cmp tr td:first-child{ font-weight:700; color:#1A2B3A; }
-
-  .qgroup-title{ font-size:14px; font-weight:800; color:#3C6E73; margin:16px 0 8px; }
-  .quiz-q{ margin-bottom:14px; }
-  .quiz-q .qtext{ font-size:13.5px; font-weight:700; margin-bottom:7px; }
+  .qgruppe{ font-size:13.5px; font-weight:800; color:var(--hkv); margin:16px 0 8px; }
+  .quiz-f{ margin-bottom:14px; }
+  .quiz-f .qtext{ font-size:13.5px; font-weight:700; margin-bottom:7px; }
   .quiz-opt{ display:block; width:100%; text-align:left; font-family:inherit; font-size:13px; padding:8px 11px; margin-bottom:5px; border:1.5px solid #E2EBF2; border-radius:9px; background:#fff; cursor:pointer; transition:all .12s ease; }
   .quiz-opt:hover{ background:#F3F8FC; }
-  .quiz-opt.correct{ background:#E4F5EA; border-color:#3E9D63; color:#1e5c37; font-weight:700; }
-  .quiz-opt.wrong{ background:#FBE9E7; border-color:#D9534F; color:#8a2a26; }
+  .quiz-opt.richtig{ background:#E4F5EA; border-color:#3E9D63; color:#1E5C37; font-weight:700; }
+  .quiz-opt.falsch{ background:#FBE9E7; border-color:#D9534F; color:#8A2A26; }
   .quiz-opt:disabled{ cursor:default; }
-  .quiz-feedback{ font-size:12.5px; margin-top:4px; font-weight:700; }
-  .quiz-result{ margin-top:14px; padding:12px 14px; border-radius:10px; background:#EAF2F1; font-size:14px; font-weight:700; color:#3C6E73; text-align:center; }
+  .quiz-fb{ font-size:12.5px; margin-top:4px; font-weight:700; }
+  .quiz-erg{ margin-top:14px; padding:12px 14px; border-radius:10px; background:var(--hkv-lt); font-size:14px; font-weight:700; color:var(--hkv); text-align:center; }
 
-  .footer{ max-width:1320px; margin:4px auto 24px; padding:0 18px; color:#5B6B7A; font-size:11.5px; }
+  .qlist{ margin:0; padding-left:18px; font-size:12.5px; color:#3B4E5E; }
+  .qlist li{ margin-bottom:7px; }
+  .qlist a{ color:var(--hkv); text-underline-offset:2px; word-break:break-word; }
+
+  .footer{ max-width:1400px; margin:4px auto 24px; padding:0 18px; color:var(--muted); font-size:11.5px; }
   .footer .copyright{ margin-top:8px; color:#94A3B0; }
 
   @media (prefers-reduced-motion: reduce){
-    .sun-glow,.sun-rays,.cloud,.vapor,.drop,.waves,.river-flow,.gw-flow,.hotspot.active .hs-ring,
-    .ibex-hop,.whale-swim,.whale-blow,.plane-fly,.contrail,.puff,.tractor-move,.spray circle,
-    .seep path,.pump-arm,.suck path,.runoff,.meltwater{ animation:none !important; }
-    .vapor,.drop{ opacity:.55; }
-    .whale-blow{ opacity:0; }
-    .plane-fly{ transform:translate(430px,58px); }
+    .sonne-schein,.sonne-strahlen,.dampf,.transp-dampf,.regen,.flocke,.fluss-strom,.schmelz-strom,
+    .gw-strom,.sicker path,.quell-strom,.welle,.vogel-zug,.vogel-fluegel,.hitze,.rauch-puff,
+    .sprenger-strahl,.pumpen-strom,.marke.aktiv .m-ring{ animation:none !important; }
+    .dampf,.transp-dampf,.regen,.flocke{ opacity:.5; }
+    #spotgruppe{ transition:none; }
   }
 </style>
 <style>
@@ -244,7 +281,7 @@ html.eingebettet body{ zoom:.82; }
 
 <header>
   <h1>Der Wasserkreislauf</h1>
-  <div class="sub">Interaktive Folie · Klicken Sie auf eine Station oder starten Sie die Tour · ABU-Unterricht HKV Aarau</div>
+  <div class="sub">Interaktive Folie · sechs Stationen, drei Nebenpfade, ein gestörter Kreislauf · ABU-Unterricht HKV Aarau</div>
 </header>
 
 <div class="wrap">
@@ -252,637 +289,842 @@ html.eingebettet body{ zoom:.82; }
     <div class="scene-head">
       <div class="controls">
         <div class="modeswitch" role="tablist" aria-label="Modus wählen">
-          <button class="mode-opt active" id="mode-normal" role="tab" aria-selected="true">Normaler Kreislauf</button>
+          <button class="mode-opt active" id="mode-normal" role="tab" aria-selected="true">Natürlicher Kreislauf</button>
           <button class="mode-opt" id="mode-stoer" role="tab" aria-selected="false">Gestörter Kreislauf</button>
         </div>
         <button class="btn" id="tour-btn">▶ Tour starten</button>
-        <button class="btn ghost" id="lbl-btn" aria-pressed="true">Beschriftungen</button>
-        <button class="btn ghost" id="compare-btn" hidden>Vergleichen</button>
-        <button class="btn ghost" id="quiz-btn">Quiz</button>
+        <button class="btn ghost" id="fahnen-btn" aria-pressed="true">Beschriftungen</button>
+        <button class="btn ghost" id="spot-btn" aria-pressed="true">Spotlight</button>
+        <button class="btn ghost" id="effekt-btn" aria-pressed="true">Animation</button>
       </div>
-      <div style="font-size:12px;color:#7C8B9A;">Tipp: Zahlen ① – ⑥ anklicken</div>
+      <div class="tipp">Tipp: Zahlen und Symbole im Bild anklicken</div>
     </div>
 
-    <div class="scene">
-      <svg class="scene-svg" viewBox="0 0 1000 620" role="img" aria-label="Animierte Darstellung des Wasserkreislaufs">
+    <div class="scene" id="szene">
+      <div class="fehlhinweis" id="fehlhinweis"></div>
+      <img class="foto nur-normal" id="foto-normal" src="wasserkreislauf_guter_kreislauf.jpg" alt="Landschaft mit Meer, Bergen, Wald und Bodenquerschnitt als Bühne für den Wasserkreislauf">
+      <img class="foto nur-stoer" id="foto-stoer" src="wasserkreislauf_gestoerter_kreislauf.jpg" alt="Dieselbe Landschaft mit Siedlung, Feldern, Staumauer und Grundwasserbrunnen">
+      <div class="fallback"></div>
+
+      <!-- Ebene 1: Animationen, nicht klickbar -->
+      <svg class="ebene klicklos" id="fx" viewBox="0 0 1000 750" preserveAspectRatio="none" aria-hidden="true">
         <defs>
-          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#E4F4FF"/><stop offset="100%" stop-color="#A7D8F5"/>
-          </linearGradient>
-          <linearGradient id="watergrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#5FB0E0"/><stop offset="100%" stop-color="#1B5E8A"/>
-          </linearGradient>
-          <linearGradient id="mtn" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#8FB48A"/><stop offset="100%" stop-color="#4E7A4A"/>
-          </linearGradient>
-          <radialGradient id="sunfill" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#FFE9A8"/><stop offset="70%" stop-color="#FFC83D"/><stop offset="100%" stop-color="#FFB100"/>
+          <radialGradient id="gSonne" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#FFF3C4" stop-opacity=".95"/>
+            <stop offset="55%" stop-color="#FFE08A" stop-opacity=".45"/>
+            <stop offset="100%" stop-color="#FFD36A" stop-opacity="0"/>
           </radialGradient>
-          <linearGradient id="sky-dry" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#FBEAD2"/><stop offset="100%" stop-color="#E8C79A"/>
-          </linearGradient>
+          <radialGradient id="gSpot" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#000" stop-opacity="1"/>
+            <stop offset="46%" stop-color="#000" stop-opacity=".95"/>
+            <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+          </radialGradient>
+          <mask id="mSpot">
+            <rect x="0" y="0" width="1000" height="750" fill="#fff"/>
+            <g id="spotgruppe" transform="translate(500,375)">
+              <ellipse rx="215" ry="170" fill="url(#gSpot)"/>
+            </g>
+          </mask>
         </defs>
 
-        <!-- Himmel -->
-        <rect id="sky-rect" x="0" y="0" width="1000" height="440" fill="url(#sky)"/>
-
-        <!-- Sonne über dem Meer (treibt die Verdunstung an) -->
-        <g transform="translate(140,96)">
-          <circle class="sun-glow" r="62" fill="#FFE08A"/>
-          <g class="sun-rays">
-            <g fill="none" stroke="#FFC83D" stroke-width="4" stroke-linecap="round" opacity=".75">
-              <line x1="0" y1="-54" x2="0" y2="-74"/><line x1="0" y1="54" x2="0" y2="74"/>
-              <line x1="-54" y1="0" x2="-74" y2="0"/><line x1="54" y1="0" x2="74" y2="0"/>
-              <line x1="-38" y1="-38" x2="-52" y2="-52"/><line x1="38" y1="38" x2="52" y2="52"/>
-              <line x1="-38" y1="38" x2="-52" y2="52"/><line x1="38" y1="-38" x2="52" y2="-52"/>
-            </g>
-            <g fill="none" stroke="#FFC83D" stroke-width="3" stroke-linecap="round" opacity=".55">
-              <line x1="-21" y1="-50" x2="-28" y2="-67"/><line x1="21" y1="50" x2="28" y2="67"/>
-              <line x1="21" y1="-50" x2="28" y2="-67"/><line x1="-21" y1="50" x2="-28" y2="67"/>
-              <line x1="-50" y1="-21" x2="-67" y2="-28"/><line x1="50" y1="21" x2="67" y2="28"/>
-              <line x1="50" y1="-21" x2="67" y2="-28"/><line x1="-50" y1="21" x2="-67" y2="28"/>
+        <!-- Sonne, oben links ueber dem See -->
+        <g id="fx-sonne">
+          <circle class="sonne-schein" cx="79" cy="117" r="102" fill="url(#gSonne)"/>
+          <g class="sonne-strahlen" transform="translate(79,117)">
+            <g fill="none" stroke="#FFE9A8" stroke-width="3" stroke-linecap="round" opacity=".38">
+              <line x1="0" y1="-58" x2="0" y2="-86"/><line x1="0" y1="58" x2="0" y2="86"/>
+              <line x1="-58" y1="0" x2="-86" y2="0"/><line x1="58" y1="0" x2="86" y2="0"/>
+              <line x1="-41" y1="-41" x2="-61" y2="-61"/><line x1="41" y1="41" x2="61" y2="61"/>
+              <line x1="-41" y1="41" x2="-61" y2="61"/><line x1="41" y1="-41" x2="61" y2="-61"/>
             </g>
           </g>
-          <circle r="44" fill="url(#sunfill)"/>
         </g>
 
-        <!-- Berge / Land rechts -->
-        <path d="M520,440 L640,250 L720,330 L820,210 L920,330 L1000,290 L1000,440 Z" fill="url(#mtn)"/>
-        <path d="M520,440 L1000,440 L1000,520 L520,520 Z" fill="#6BA368"/>
-        <!-- Schneekappen -->
-        <path d="M640,250 L626,275 L658,275 Z" fill="#fff" opacity=".85"/>
-
-        <!-- Gletscher am Hauptgipfel: gross (normal) / geschmolzen (gestört) -->
-        <g id="gletscher">
-          <path class="glacier-full" d="M820,210 L795,244 L800,268 L830,272 L852,246 L842,238 Z" fill="#E8F6FF" stroke="#A9D8F0" stroke-width="2" opacity=".95"/>
-          <path class="glacier-full" d="M812,232 L806,258 M828,230 L834,256" stroke="#BFE4F7" stroke-width="2.5" fill="none" opacity=".9"/>
-          <path class="glacier-melt" d="M820,210 L808,232 L826,236 L834,228 Z" fill="#E8F6FF" stroke="#A9D8F0" stroke-width="2" opacity=".95"/>
-          <!-- Schmelzwasser-Rinnsal nur im gestörten Modus -->
-          <path class="meltwater" d="M822,238 C818,262 826,286 812,312" fill="none" stroke="#6FC3EE" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 7" opacity=".9"/>
+        <!-- Station 1: Verdunstung ueber dem glitzernden See -->
+        <g id="fx-verdunstung" fill="#FFFFFF" opacity=".62">
+          <ellipse class="dampf" cx="58"  cy="512" rx="7"  ry="11" style="animation-delay:0s"/>
+          <ellipse class="dampf" cx="104" cy="524" rx="9"  ry="14" style="animation-delay:1.3s"/>
+          <ellipse class="dampf" cx="152" cy="506" rx="6"  ry="10" style="animation-delay:2.6s"/>
+          <ellipse class="dampf" cx="200" cy="520" rx="8"  ry="12" style="animation-delay:.7s"/>
+          <ellipse class="dampf" cx="248" cy="508" rx="7"  ry="11" style="animation-delay:3.4s"/>
+          <ellipse class="dampf" cx="128" cy="536" rx="5"  ry="8"  style="animation-delay:4.4s"/>
+          <ellipse class="dampf" cx="222" cy="498" rx="6"  ry="9"  style="animation-delay:2s"/>
         </g>
 
-        <!-- Steinbock auf dem Grat (hüpft) -->
-        <g id="steinbock" transform="translate(690,318)">
-          <g class="ibex-hop">
-            <path d="M-13,0 L-13,-11 L11,-11 L11,0 L7,0 L7,-5 L-9,-5 L-9,0 Z" fill="#8B6F4E"/>
-            <circle cx="14" cy="-15" r="5" fill="#8B6F4E"/>
-            <path d="M12,-19 C9,-27 4,-31 1,-30" fill="none" stroke="#5E4A31" stroke-width="2.2" stroke-linecap="round"/>
-            <path d="M16,-19 C14,-27 9,-32 6,-31" fill="none" stroke="#5E4A31" stroke-width="2.2" stroke-linecap="round"/>
-            <circle cx="16" cy="-16" r="1.1" fill="#2B2116"/>
+        <!-- Nebenpfad A: Transpiration aus dem Nadelwald rechts -->
+        <g id="fx-transpiration" fill="#E4F5E9" opacity=".45">
+          <ellipse class="transp-dampf" cx="866" cy="430" rx="6" ry="9"  style="animation-delay:0s"/>
+          <ellipse class="transp-dampf" cx="906" cy="418" rx="7" ry="10" style="animation-delay:1.1s"/>
+          <ellipse class="transp-dampf" cx="946" cy="432" rx="5" ry="8"  style="animation-delay:2.3s"/>
+          <ellipse class="transp-dampf" cx="984" cy="416" rx="6" ry="9"  style="animation-delay:3.2s"/>
+          <ellipse class="transp-dampf" cx="924" cy="444" rx="4" ry="7"  style="animation-delay:1.8s"/>
+        </g>
+
+        <!-- Station 3: Regen aus der dunklen Wolke rechts oben -->
+        <g id="fx-regen" stroke="#EAF6FF" stroke-width="2.2" stroke-linecap="round" opacity=".6">
+          <line class="regen" x1="700" y1="104" x2="695" y2="126" style="animation-delay:0s"/>
+          <line class="regen" x1="732" y1="96"  x2="727" y2="118" style="animation-delay:.42s"/>
+          <line class="regen" x1="764" y1="108" x2="759" y2="130" style="animation-delay:.8s"/>
+          <line class="regen" x1="796" y1="94"  x2="791" y2="116" style="animation-delay:.2s"/>
+          <line class="regen" x1="828" y1="106" x2="823" y2="128" style="animation-delay:1s"/>
+          <line class="regen" x1="860" y1="98"  x2="855" y2="120" style="animation-delay:.6s"/>
+          <line class="regen" x1="892" y1="110" x2="887" y2="132" style="animation-delay:1.3s"/>
+          <line class="regen" x1="716" y1="124" x2="711" y2="146" style="animation-delay:1.15s"/>
+          <line class="regen" x1="812" y1="126" x2="807" y2="148" style="animation-delay:.95s"/>
+          <line class="regen" x1="876" y1="128" x2="871" y2="150" style="animation-delay:.32s"/>
+        </g>
+
+        <!-- Station 3b: Schneefall ueber den Gipfeln -->
+        <g id="fx-schnee" fill="#FFFFFF" opacity=".7">
+          <circle class="flocke" cx="576" cy="176" r="2.4" style="animation-delay:0s"/>
+          <circle class="flocke" cx="618" cy="164" r="2"   style="animation-delay:1.2s"/>
+          <circle class="flocke" cx="660" cy="180" r="2.6" style="animation-delay:2.4s"/>
+          <circle class="flocke" cx="702" cy="168" r="2.1" style="animation-delay:3.6s"/>
+          <circle class="flocke" cx="598" cy="190" r="2.2" style="animation-delay:4.6s"/>
+          <circle class="flocke" cx="680" cy="156" r="2.3" style="animation-delay:1.8s"/>
+        </g>
+
+        <!-- Nebenpfad B: Schmelzwasser vom Gletscher -->
+        <path id="fx-schmelz" class="schmelz-strom" d="M796,268 C790,292 782,310 772,330"
+              fill="none" stroke="#CFEBFF" stroke-width="3.2" stroke-linecap="round" opacity=".9"/>
+
+        <!-- Station 4: Bach und Fluss bis in den See -->
+        <path id="fx-fluss" class="fluss-strom"
+              d="M772,330 C740,390 706,440 672,486 C640,530 598,564 536,602 C470,638 380,662 288,676"
+              fill="none" stroke="#F0FAFF" stroke-width="4.4" stroke-linecap="round" opacity=".7"/>
+
+        <!-- Station 5: Versickerung durch den Bodenquerschnitt -->
+        <g id="fx-sicker" class="sicker" stroke="#8FD0F5" stroke-width="2.8" stroke-linecap="round" fill="none" opacity=".8">
+          <path d="M548,604 L545,672"/>
+          <path d="M638,598 L635,668"/>
+          <path d="M728,606 L725,676"/>
+          <path d="M818,600 L815,670"/>
+          <path d="M908,608 L905,678"/>
+        </g>
+
+        <!-- Station 5b: Grundwasserstrom im Kiesbett -->
+        <path id="fx-gw" class="gw-strom" d="M996,694 L516,680"
+              fill="none" stroke="#CFEBFF" stroke-width="4" stroke-linecap="round" opacity=".7"/>
+
+        <!-- Nebenpfad C: Quelle, das Grundwasser tritt wieder aus -->
+        <path id="fx-quelle" class="quell-strom" d="M512,678 C492,664 472,650 456,638"
+              fill="none" stroke="#CFEBFF" stroke-width="3.2" stroke-linecap="round" opacity=".9"/>
+
+        <!-- Station 6: Wellen auf dem See -->
+        <g id="fx-wellen" fill="none" stroke="#FFFFFF" stroke-linecap="round" opacity=".4">
+          <path class="welle" d="M14,528 q26,-6 52,0 t52,0 t52,0" stroke-width="2.2" style="animation-delay:0s"/>
+          <path class="welle" d="M40,588 q26,-6 52,0 t52,0 t52,0" stroke-width="2"   style="animation-delay:2.6s"/>
+          <path class="welle" d="M10,648 q26,-6 52,0 t52,0"       stroke-width="2.1" style="animation-delay:5s"/>
+        </g>
+
+        <!-- Voegel ueber dem See -->
+        <g id="fx-voegel" opacity=".4">
+          <g class="vogel-zug" transform="translate(180,208)" style="animation-delay:0s">
+            <g class="vogel-fluegel"><path d="M0,0 q6,-6 12,0 q6,-6 12,0" fill="none" stroke="#3A4C5A" stroke-width="1.8"/></g>
           </g>
-        </g>
-
-        <!-- Erde / Untergrund -->
-        <rect x="0" y="520" width="1000" height="100" fill="#B98C5A"/>
-        <rect x="0" y="560" width="1000" height="60" fill="#9A7044"/>
-
-        <!-- Grundwasser-Band + Fluss-Pfeile (Station 5) -->
-        <g id="g-grundwasser" class="litgroup" data-stage="5">
-          <rect class="gw-normal" x="0" y="530" width="1000" height="22" fill="#7FB8E6" opacity=".55"/>
-          <rect class="gw-low" x="0" y="546" width="1000" height="8" fill="#B98C5A" opacity=".85"/>
-          <path class="gw-flow" d="M940,541 L60,541" fill="none" stroke="#Dff1ff" stroke-width="5" stroke-linecap="round" opacity=".9"/>
-        </g>
-
-        <!-- Meer links -->
-        <g>
-          <rect x="0" y="430" width="470" height="190" fill="url(#watergrad)"/>
-
-          <!-- Buckelwal -->
-          <g id="wal" transform="translate(300,505)">
-            <g class="whale-swim">
-              <path d="M-52,0 C-40,-20 -6,-26 20,-16 C34,-11 42,-3 48,4 C36,10 12,16 -12,12 C-32,9 -46,6 -52,0 Z" fill="#2F4A63"/>
-              <path d="M-52,0 C-40,-6 -14,2 -6,11 C-28,11 -44,6 -52,0 Z" fill="#4A6A85" opacity=".85"/>
-              <path d="M48,4 C56,-4 66,-8 72,-4 C66,2 60,8 56,10 C60,14 62,18 60,21 C54,18 48,10 48,4 Z" fill="#2F4A63"/>
-              <path d="M-8,10 C-2,20 10,24 18,20 C10,16 2,12 -8,10 Z" fill="#3D5C78"/>
-              <circle cx="-40" cy="-5" r="2" fill="#EAF4FA"/>
-              <path d="M-30,-14 q6,-4 12,-1 M-14,-19 q7,-3 13,0" stroke="#5C7C96" stroke-width="1.6" fill="none" opacity=".7"/>
-            </g>
-            <!-- Blas -->
-            <g class="whale-blow" opacity="0">
-              <ellipse cx="-34" cy="-30" rx="4" ry="7" fill="#DFF1FB" opacity=".85"/>
-              <ellipse cx="-38" cy="-42" rx="3" ry="5" fill="#DFF1FB" opacity=".6"/>
-              <ellipse cx="-30" cy="-44" rx="2.6" ry="4.4" fill="#DFF1FB" opacity=".5"/>
-            </g>
+          <g class="vogel-zug" transform="translate(146,238)" style="animation-delay:6s">
+            <g class="vogel-fluegel" style="animation-delay:.3s"><path d="M0,0 q5,-5 10,0 q5,-5 10,0" fill="none" stroke="#3A4C5A" stroke-width="1.5"/></g>
           </g>
-
-          <g class="waves" opacity=".55">
-            <path d="M-80,436 q20,-8 40,0 t40,0 t40,0 t40,0 t40,0 t40,0 t40,0 t40,0 t40,0 t40,0 t40,0 t40,0 t40,0"
-                  fill="none" stroke="#BfE6Fb" stroke-width="3"/>
-          </g>
-        </g>
-
-        <!-- Fluss von den Bergen zurück ins Meer (Station 4) -->
-        <g id="g-abfluss" class="litgroup" data-stage="4">
-          <path d="M812,236 C760,300 690,360 600,400 C540,426 500,432 470,452"
-                fill="none" stroke="#7FB8E6" stroke-width="12" stroke-linecap="round" opacity=".85"/>
-          <path class="river-flow" d="M812,236 C760,300 690,360 600,400 C540,426 500,432 470,452"
-                fill="none" stroke="#EaF6ff" stroke-width="4" stroke-linecap="round"/>
-        </g>
-
-        <!-- Verdunstung: aufsteigender Wasserdampf (Station 1) -->
-        <g id="g-verdunstung" class="litgroup" data-stage="1">
-          <g fill="#EAF6FF">
-            <circle class="vapor" cx="120" cy="420" r="7" style="animation-delay:0s"/>
-            <circle class="vapor" cx="175" cy="420" r="9" style="animation-delay:1.1s"/>
-            <circle class="vapor" cx="230" cy="420" r="6" style="animation-delay:2.2s"/>
-            <circle class="vapor" cx="285" cy="420" r="8" style="animation-delay:.6s"/>
-            <circle class="vapor" cx="335" cy="420" r="7" style="animation-delay:3s"/>
-            <circle class="vapor" cx="200" cy="420" r="5" style="animation-delay:3.8s"/>
-            <circle class="vapor" cx="265" cy="420" r="6" style="animation-delay:1.7s"/>
-          </g>
-        </g>
-
-        <!-- Kondensation: Wolken (Station 2) -->
-        <g id="g-kondensation" class="litgroup" data-stage="2">
-          <g class="cloud c1" fill="#ffffff">
-            <ellipse cx="360" cy="150" rx="46" ry="28"/><ellipse cx="400" cy="138" rx="40" ry="30"/>
-            <ellipse cx="330" cy="160" rx="34" ry="22"/><rect x="320" y="150" width="100" height="26" rx="13"/>
-          </g>
-          <g class="cloud c2" fill="#F4FAFF">
-            <ellipse cx="520" cy="120" rx="40" ry="26"/><ellipse cx="556" cy="132" rx="34" ry="22"/>
-            <ellipse cx="492" cy="132" rx="30" ry="20"/>
-          </g>
-          <!-- Regenwolke (dunkler, über den Bergen) -->
-          <g class="cloud c3" fill="#C9D6E2">
-            <ellipse cx="700" cy="150" rx="52" ry="30"/><ellipse cx="745" cy="138" rx="42" ry="30"/>
-            <ellipse cx="665" cy="162" rx="36" ry="24"/><rect x="655" y="150" width="120" height="28" rx="14"/>
+          <g class="vogel-zug" transform="translate(206,262)" style="animation-delay:13s">
+            <g class="vogel-fluegel" style="animation-delay:.6s"><path d="M0,0 q5,-5 11,0 q5,-5 11,0" fill="none" stroke="#3A4C5A" stroke-width="1.6"/></g>
           </g>
         </g>
 
-        <!-- Niederschlag: Regen unter der Regenwolke (Station 3) -->
-        <g id="g-niederschlag" class="litgroup" data-stage="3">
-          <g stroke="#5FB0E0" stroke-width="3" stroke-linecap="round">
-            <line class="drop" x1="660" y1="186" x2="656" y2="200" style="animation-delay:0s"/>
-            <line class="drop" x1="690" y1="186" x2="686" y2="200" style="animation-delay:.5s"/>
-            <line class="drop" x1="720" y1="186" x2="716" y2="200" style="animation-delay:.9s"/>
-            <line class="drop" x1="750" y1="186" x2="746" y2="200" style="animation-delay:.3s"/>
-            <line class="drop" x1="780" y1="186" x2="776" y2="200" style="animation-delay:1.1s"/>
-            <line class="drop" x1="675" y1="186" x2="671" y2="200" style="animation-delay:1.4s"/>
-            <line class="drop" x1="735" y1="186" x2="731" y2="200" style="animation-delay:.7s"/>
-            <line class="drop" x1="765" y1="186" x2="761" y2="200" style="animation-delay:1.7s"/>
+        <!-- Stoermodus-Effekte -->
+        <g id="fx-stoer" style="display:none">
+          <!-- Hitzeflimmern ueber dem ausgetrockneten Boden rechts -->
+          <g class="hitze" opacity=".2">
+            <rect x="760" y="470" width="240" height="70" fill="url(#gSonne)"/>
           </g>
+          <!-- Beregnungsanlage auf dem Feld -->
+          <g id="fx-sprenger" stroke="#DFF2FF" stroke-width="2" stroke-linecap="round" opacity=".8">
+            <path class="sprenger-strahl" d="M432,436 q22,-24 44,0" fill="none" style="animation-delay:0s"/>
+            <path class="sprenger-strahl" d="M486,428 q22,-24 44,0" fill="none" style="animation-delay:.9s"/>
+            <path class="sprenger-strahl" d="M540,436 q22,-24 44,0" fill="none" style="animation-delay:1.7s"/>
+          </g>
+          <!-- Wasser wird aus dem Grundwasser hochgepumpt -->
+          <path id="fx-pumpe" class="pumpen-strom" d="M636,676 L636,606"
+                fill="none" stroke="#8FD0F5" stroke-width="3.2" stroke-linecap="round"
+                stroke-dasharray="7 9" opacity=".9"/>
         </g>
 
-        <!-- Richtungspfeile des Kreislaufs -->
-        <g fill="none" stroke="#3C6E73" stroke-width="2.5" opacity=".30" stroke-linecap="round" marker-end="url(#arr)">
-          <defs>
-            <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-              <path d="M0,0 L10,5 L0,10 z" fill="#3C6E73"/>
-            </marker>
-          </defs>
-          <path d="M250,300 C250,240 280,200 320,180"/>
-          <path d="M440,150 C540,150 600,150 640,158"/>
-        </g>
+        <!-- Spotlight-Abdunklung -->
+        <rect id="dimmer" x="0" y="0" width="1000" height="750" fill="#0C2032" opacity="0" mask="url(#mSpot)"/>
+      </svg>
 
-        <!-- Beschriftungen -->
-        <g class="labels">
-          <text class="lbl" x="150" y="330">Verdunstung</text>
-          <text class="lbl" x="470" y="92">Kondensation</text>
-          <text class="lbl" x="690" y="250">Niederschlag</text>
-          <text class="lbl" x="556" y="476">Abfluss</text>
-          <text class="lbl" x="598" y="546">Grundwasser</text>
-          <text class="lbl" x="40" y="470" style="fill:#1B5E8A">Meer</text>
-        </g>
-
-        <!-- Störungs-Objekte (nur im gestörten Modus sichtbar) -->
-        <g id="stoer-objekte" class="stoer-only">
-
-          <!-- Flugzeug mit Kondensstreifen (Luftverschmutzung) -->
-          <g id="flugzeug">
-            <path class="contrail" d="M300,64 L560,64" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".55" fill="none"/>
-            <g class="plane-fly">
-              <path d="M0,0 L26,-3 L34,0 L26,3 Z" fill="#5B6B7A"/>
-              <path d="M10,0 L2,-11 L8,-11 L18,-2 Z" fill="#7B8B9A"/>
-              <path d="M10,0 L2,11 L8,11 L18,2 Z" fill="#6B7B8A"/>
-              <path d="M28,0 L24,-6 L27,-6 L31,-1 Z" fill="#7B8B9A"/>
-            </g>
-          </g>
-
-          <!-- Fabrik mit CO2-Rauch (Klimaerwärmung) -->
-          <g id="fabrik" transform="translate(880,382)">
-            <rect x="-34" y="-4" width="68" height="42" fill="#8A97A3"/>
-            <path d="M-34,-4 L-34,-16 L-16,-8 L-16,-20 L2,-10 L2,-4 Z" fill="#7A8793"/>
-            <rect x="14" y="-38" width="11" height="42" fill="#6E7B87"/>
-            <rect x="-28" y="8" width="10" height="10" fill="#C9D4DC"/>
-            <rect x="-12" y="8" width="10" height="10" fill="#C9D4DC"/>
-            <rect x="4" y="8" width="10" height="10" fill="#C9D4DC"/>
-            <g class="smoke">
-              <circle class="puff" cx="19" cy="-44" r="7" fill="#9AA6B1" opacity=".8" style="animation-delay:0s"/>
-              <circle class="puff" cx="19" cy="-44" r="9" fill="#A8B3BD" opacity=".7" style="animation-delay:1.3s"/>
-              <circle class="puff" cx="19" cy="-44" r="6" fill="#8E9AA6" opacity=".75" style="animation-delay:2.6s"/>
-            </g>
-          </g>
-
-          <!-- Versiegelte Stadt / Strasse (Bodenversiegelung) -->
-          <g id="stadt" transform="translate(560,470)">
-            <rect x="-56" y="30" width="150" height="12" fill="#5E6970"/>
-            <g stroke="#E4E9EC" stroke-width="2.4" stroke-dasharray="10 8">
-              <line x1="-52" y1="36" x2="90" y2="36"/>
-            </g>
-            <rect x="-50" y="-16" width="26" height="46" fill="#8FA0AE"/>
-            <rect x="-18" y="-32" width="30" height="62" fill="#7C8D9C"/>
-            <rect x="18" y="-6" width="24" height="36" fill="#93A4B2"/>
-            <rect x="48" y="-22" width="28" height="52" fill="#8596A5"/>
-            <g fill="#DCE6EC">
-              <rect x="-45" y="-9" width="6" height="7"/><rect x="-35" y="-9" width="6" height="7"/>
-              <rect x="-12" y="-25" width="7" height="8"/><rect x="0" y="-25" width="7" height="8"/>
-              <rect x="-12" y="-10" width="7" height="8"/><rect x="0" y="-10" width="7" height="8"/>
-              <rect x="23" y="2" width="6" height="7"/><rect x="33" y="2" width="6" height="7"/>
-              <rect x="54" y="-14" width="7" height="8"/><rect x="65" y="-14" width="7" height="8"/>
-            </g>
-            <!-- Abfliessendes Wasser auf versiegelter Fläche -->
-            <path class="runoff" d="M-52,44 L88,44" stroke="#6FA8CC" stroke-width="4" stroke-linecap="round" stroke-dasharray="8 9" fill="none" opacity=".9"/>
-          </g>
-
-          <!-- Traktor bringt Pestizide aus (Wasserverschmutzung) -->
-          <g id="traktor" transform="translate(700,492)">
-            <g class="tractor-move">
-              <rect x="-16" y="-16" width="20" height="14" rx="2" fill="#C0392B"/>
-              <rect x="-22" y="-4" width="34" height="10" rx="2" fill="#D9503A"/>
-              <circle cx="-14" cy="8" r="7" fill="#33404A"/><circle cx="-14" cy="8" r="2.6" fill="#8A97A3"/>
-              <circle cx="7" cy="9" r="5" fill="#33404A"/><circle cx="7" cy="9" r="2" fill="#8A97A3"/>
-              <rect x="12" y="-2" width="16" height="4" rx="2" fill="#6E7B87"/>
-              <g class="spray">
-                <circle cx="20" cy="6" r="2.2" fill="#A9C64C" opacity=".9" style="animation-delay:0s"/>
-                <circle cx="26" cy="6" r="1.8" fill="#A9C64C" opacity=".9" style="animation-delay:.5s"/>
-                <circle cx="32" cy="6" r="2" fill="#A9C64C" opacity=".9" style="animation-delay:1s"/>
-              </g>
-            </g>
-            <!-- Pestizide sickern in den Boden -->
-            <g class="seep" stroke="#A9C64C" stroke-width="2.6" stroke-linecap="round" fill="none" opacity=".85">
-              <path d="M6,20 L4,44"/><path d="M22,20 L24,44"/><path d="M38,20 L36,44"/>
-            </g>
-          </g>
-
-          <!-- Staumauer am Fluss + Grundwasserpumpe (Übernutzung) -->
-          <g id="staumauer" transform="translate(628,392)">
-            <path d="M-11,-30 L11,-30 L17,34 L-17,34 Z" fill="#9AA6B1" stroke="#7A8794" stroke-width="2"/>
-            <rect x="-11" y="-34" width="22" height="6" rx="2" fill="#8A97A3"/>
-            <g stroke="#8794A0" stroke-width="1.3" opacity=".7">
-              <line x1="-12" y1="-12" x2="12" y2="-12"/><line x1="-14" y1="6" x2="14" y2="6"/><line x1="-16" y1="24" x2="16" y2="24"/>
-            </g>
-          </g>
-          <!-- Grundwasserpumpe auf dem Land -->
-          <g id="pumpe" transform="translate(880,478)">
-            <rect x="-9" y="0" width="18" height="26" fill="#6E7B87"/>
-            <rect x="-3" y="26" width="6" height="42" fill="#5E6970"/>
-            <g class="pump-arm">
-              <rect x="-17" y="-8" width="34" height="6" rx="3" fill="#C0392B"/>
-            </g>
-            <g class="suck" stroke="#6FC3EE" stroke-width="2.6" stroke-linecap="round" fill="none" opacity=".9">
-              <path d="M0,84 L0,66"/>
-            </g>
-          </g>
-
-        </g>
-
-        <!-- Hotspots (klickbar) -->
-        <g id="hotspots">
-          <g class="hotspot" data-stage="1" tabindex="0" role="button" aria-label="Station 1: Verdunstung" transform="translate(245,360)">
-            <circle class="hs-ring" r="17"/><circle class="hs-dot" r="17"/><text class="hs-num">1</text>
-          </g>
-          <g class="hotspot" data-stage="2" tabindex="0" role="button" aria-label="Station 2: Kondensation" transform="translate(560,140)">
-            <circle class="hs-ring" r="17"/><circle class="hs-dot" r="17"/><text class="hs-num">2</text>
-          </g>
-          <g class="hotspot" data-stage="3" tabindex="0" role="button" aria-label="Station 3: Niederschlag" transform="translate(720,300)">
-            <circle class="hs-ring" r="17"/><circle class="hs-dot" r="17"/><text class="hs-num">3</text>
-          </g>
-          <g class="hotspot" data-stage="4" tabindex="0" role="button" aria-label="Station 4: Abfluss und Versickerung" transform="translate(560,430)">
-            <circle class="hs-ring" r="17"/><circle class="hs-dot" r="17"/><text class="hs-num">4</text>
-          </g>
-          <g class="hotspot" data-stage="5" tabindex="0" role="button" aria-label="Station 5: Versickerung und Grundwasser" transform="translate(730,560)">
-            <circle class="hs-ring" r="17"/><circle class="hs-dot" r="17"/><text class="hs-num">5</text>
-          </g>
-          <g class="hotspot" data-stage="6" tabindex="0" role="button" aria-label="Station 6: Sammlung und Meer" transform="translate(90,455)">
-            <circle class="hs-ring" r="17"/><circle class="hs-dot" r="17"/><text class="hs-num">6</text>
-          </g>
-        </g>
-
-        <!-- Störungs-Hotspots (nur im gestörten Modus) -->
-        <g id="stoer-hotspots" class="stoer-only">
-          <g class="hotspot stoer-hs" data-stoer="1" tabindex="0" role="button" aria-label="Störfaktor 1: Klimaerwärmung" transform="translate(930,344)">
-            <circle class="hs-ring" r="17"/><circle class="hs-dot" r="17"/><text class="hs-num warnsym-t">!</text>
-          </g>
-          <g class="hotspot stoer-hs" data-stoer="2" tabindex="0" role="button" aria-label="Störfaktor 2: Luftverschmutzung" transform="translate(430,96)">
-            <circle class="hs-ring" r="17"/><circle class="hs-dot" r="17"/><text class="hs-num">!</text>
-          </g>
-          <g class="hotspot stoer-hs" data-stoer="3" tabindex="0" role="button" aria-label="Störfaktor 3: Bodenversiegelung" transform="translate(500,432)">
-            <circle class="hs-ring" r="17"/><circle class="hs-dot" r="17"/><text class="hs-num">!</text>
-          </g>
-          <g class="hotspot stoer-hs" data-stoer="4" tabindex="0" role="button" aria-label="Störfaktor 4: Wasserverschmutzung" transform="translate(742,470)">
-            <circle class="hs-ring" r="17"/><circle class="hs-dot" r="17"/><text class="hs-num">!</text>
-          </g>
-          <g class="hotspot stoer-hs" data-stoer="5" tabindex="0" role="button" aria-label="Störfaktor 5: Übernutzung des Grundwassers" transform="translate(930,472)">
-            <circle class="hs-ring" r="17"/><circle class="hs-dot" r="17"/><text class="hs-num">!</text>
-          </g>
-        </g>
+      <!-- Ebene 2: Beschriftungen und Marken, klickbar -->
+      <svg class="ebene" id="marken" viewBox="0 0 1000 750" preserveAspectRatio="none">
+        <g id="fahnen-normal"></g>
+        <g id="fahnen-stoer" style="display:none"></g>
+        <g id="marken-normal"></g>
+        <g id="marken-stoer" style="display:none"></g>
       </svg>
     </div>
   </div>
 
   <!-- Info-Panel -->
-  <aside class="panel">
+  <aside class="panel" id="panel">
     <div class="eyebrow" id="p-eyebrow">Übersicht</div>
     <h2 id="p-title">Wasser in Bewegung</h2>
-    <p id="p-text">Wasser verschwindet nie – es wandelt nur ständig seine Form und seinen Ort. Angetrieben von der Sonne durchläuft es immer wieder denselben Kreislauf. Klicken Sie auf eine Zahl oder starten Sie die Tour, um die sechs Stationen zu entdecken.</p>
+    <p class="haupt" id="p-text"></p>
+    <div class="fakt" id="p-fakt" hidden></div>
     <div class="qbox" id="qbox" hidden><span class="qlabel">Zum Nachdenken</span><span id="p-question"></span></div>
-    <div class="nav" id="nav">
+    <div class="nav">
       <button class="btn ghost sm" id="prev-btn" disabled>← Zurück</button>
       <button class="btn ghost sm" id="next-btn">Weiter →</button>
     </div>
-    <div class="chips" id="chips"></div>
-    <div class="progress" id="progress" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div id="chipbereich"></div>
+    <div class="progress" id="progress" aria-hidden="true"></div>
+    <div class="panelfuss">
+      <button class="btn ghost sm" id="verweil-btn">Verweilzeiten</button>
+      <button class="btn ghost sm" id="cmp-btn">Vergleichen</button>
+      <button class="btn ghost sm" id="quiz-btn">Quiz</button>
+      <button class="btn ghost sm" id="quellen-btn">Zahlen &amp; Quellen</button>
+    </div>
   </aside>
 </div>
 
 <div class="footer">
-  Interaktive Lernfolie zum Wasserkreislauf · die Sonne treibt den Kreislauf an: Verdunstung → Kondensation → Niederschlag → Abfluss → Versickerung → Sammlung.
+  Interaktive Lernfolie zum Wasserkreislauf · sechs Hauptstationen, drei Nebenpfade (Transpiration, Schneeschmelze, Quelle) und vier menschliche Eingriffe.
   <div class="copyright">© 2026 <a href="mailto:samuel.mollet@hkv.ch" title="E-Mail an Samuel Mollet" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Samuel Mollet</a> · HKV Aarau · realisiert mit Claude (Anthropic)</div>
 </div>
 
-<!-- Vergleich-Overlay -->
-<div class="overlay" id="cmp-overlay" role="dialog" aria-modal="true" aria-label="Vergleich normal und gestört">
+<!-- Overlay: Vergleich -->
+<div class="overlay" id="cmp-overlay" role="dialog" aria-modal="true" aria-label="Vergleich natürlich und gestört">
   <div class="modal">
-    <button class="modal-x" id="cmp-x" aria-label="Schliessen">×</button>
-    <h3>Normal vs. gestört</h3>
-    <p class="msub">Wie menschliche Eingriffe den natürlichen Wasserkreislauf verändern.</p>
-    <table class="cmp">
-      <tr><th>Faktor</th><th>Natürlicher Kreislauf</th><th>Gestörter Kreislauf</th></tr>
-      <tr><td>Klima</td><td class="norm">Ausgeglichene Temperaturen, stabile Verdunstung.</td><td class="stoer">Erwärmung verstärkt Verdunstung und Wetterextreme.</td></tr>
-      <tr><td>Luft</td><td class="norm">Saubere Luft, klare Wolkenbildung.</td><td class="stoer">Schadstoffe beeinflussen Wolken und führen zu saurem Regen.</td></tr>
-      <tr><td>Boden</td><td class="norm">Wasser versickert und speist das Grundwasser.</td><td class="stoer">Versiegelte Flächen verhindern Versickerung, mehr Oberflächenabfluss und Hochwasser.</td></tr>
-      <tr><td>Gewässer</td><td class="norm">Sauberes Wasser in Flüssen und Seen.</td><td class="stoer">Verschmutzung belastet Gewässer und Grundwasser.</td></tr>
-      <tr><td>Grundwasser</td><td class="norm">Pegel bleibt durch natürliche Neubildung stabil.</td><td class="stoer">Übernutzung senkt den Grundwasserspiegel.</td></tr>
+    <button class="modal-x" data-schliessen="cmp-overlay" aria-label="Schliessen">×</button>
+    <h3>Natürlich vs. gestört</h3>
+    <p class="msub">Wie menschliche Eingriffe den Wasserkreislauf verändern – dieselbe Landschaft, andere Wege.</p>
+    <table class="tab">
+      <tr><th>Stelle im Kreislauf</th><th>Natürlich</th><th>Gestört</th></tr>
+      <tr><td>Verdunstung</td><td class="norm">Sonne und Pflanzen geben rund ein Drittel des Niederschlags zurück an die Luft.</td><td class="stoerf">Höhere Temperaturen: mehr Verdunstung, Böden trocknen im Sommer schneller aus.</td></tr>
+      <tr><td>Niederschlag</td><td class="norm">Über das Jahr verteilt, im Winter als Schnee zwischengespeichert.</td><td class="stoerf">Nassere Winter, trockenere Sommer, seltener Schnee, dafür heftigere Gewitter.</td></tr>
+      <tr><td>Schnee und Gletscher</td><td class="norm">Speichern Winterniederschlag und geben ihn im Frühling ab.</td><td class="stoerf">Der Speicher schrumpft: weniger Schmelzwasser genau dann, wenn es am nötigsten wäre.</td></tr>
+      <tr><td>Versickerung</td><td class="norm">Regen sickert durch Boden und Kies, wird dabei gefiltert.</td><td class="stoerf">Asphalt und Beton lassen nichts durch – die Grundwasserneubildung sinkt.</td></tr>
+      <tr><td>Abfluss</td><td class="norm">Wasser fliesst verzögert ab, Böden puffern den Regen.</td><td class="stoerf">Alles fliesst sofort oberirdisch ab: Erosion, Hochwasser, überlastete Kanalisation.</td></tr>
+      <tr><td>Grundwasser</td><td class="norm">Neubildung und natürlicher Austritt über Quellen halten sich die Waage.</td><td class="stoerf">Entnahme für Trinkwasser, Industrie und Bewässerung – bei geringer Neubildung sinkt der Spiegel.</td></tr>
+      <tr><td>Wasserqualität</td><td class="norm">Der Boden ist der grösste Filter, den wir haben.</td><td class="stoerf">Dünger, Pestizide und Abwasser belasten Gewässer und Grundwasser.</td></tr>
     </table>
   </div>
 </div>
 
-<!-- Quiz-Overlay -->
+<!-- Overlay: Verweilzeiten -->
+<div class="overlay" id="verweil-overlay" role="dialog" aria-modal="true" aria-label="Verweilzeiten des Wassers">
+  <div class="modal">
+    <button class="modal-x" data-schliessen="verweil-overlay" aria-label="Schliessen">×</button>
+    <h3>Wie lange bleibt Wasser wo?</h3>
+    <p class="msub">Es gibt nicht den einen Weg durch den Kreislauf. Je nachdem, wo ein Wassertropfen landet, ist er in einer Woche wieder in der Luft – oder erst in Jahrtausenden.</p>
+    <table class="tab">
+      <tr><th>Speicher</th><th>Typische Verweilzeit</th><th>Was das bedeutet</th></tr>
+      <tr><td>Atmosphäre</td><td class="zahl">rund 10 Tage</td><td>Der schnellste Teil des Kreislaufs. Deshalb ändert sich Wetter so rasch.</td></tr>
+      <tr><td>Flüsse</td><td class="zahl">2 bis 3 Wochen</td><td>Wasser aus dem Aargau ist in wenigen Tagen im Rhein.</td></tr>
+      <tr><td>Bodenfeuchte</td><td class="zahl">Monate</td><td>Deshalb wirkt eine Trockenheit noch lange nach dem letzten Regen nach.</td></tr>
+      <tr><td>Seen</td><td class="zahl">Jahre bis Jahrzehnte</td><td>Was heute in den See gelangt, ist lange nicht wieder draussen.</td></tr>
+      <tr><td>Grundwasser</td><td class="zahl">Jahre bis Jahrtausende</td><td>Eine Verschmutzung ist praktisch nicht rückgängig zu machen.</td></tr>
+      <tr><td>Gletscher und Eis</td><td class="zahl">Jahrhunderte bis Jahrtausende</td><td>Was heute schmilzt, ist vor sehr langer Zeit als Schnee gefallen.</td></tr>
+      <tr><td>Ozean</td><td class="zahl">rund 3'000 Jahre</td><td>Der grösste Speicher – und der langsamste.</td></tr>
+    </table>
+    <p class="msub" style="margin-top:14px;margin-bottom:0">Es sind Grössenordnungen aus der Fachliteratur, keine Messwerte – je nach Quelle weichen sie ab.</p>
+  </div>
+</div>
+
+<!-- Overlay: Quellen -->
+<div class="overlay" id="quellen-overlay" role="dialog" aria-modal="true" aria-label="Zahlen und Quellen">
+  <div class="modal">
+    <button class="modal-x" data-schliessen="quellen-overlay" aria-label="Schliessen">×</button>
+    <h3>Zahlen &amp; Quellen</h3>
+    <p class="msub">Alle Zahlen auf dieser Folie stammen aus amtlichen Schweizer Quellen. Stand August 2026.</p>
+    <ul class="qlist" id="quellenliste"></ul>
+  </div>
+</div>
+
+<!-- Overlay: Quiz -->
 <div class="overlay" id="quiz-overlay" role="dialog" aria-modal="true" aria-label="Quiz zum Wasserkreislauf">
   <div class="modal">
-    <button class="modal-x" id="quiz-x" aria-label="Schliessen">×</button>
+    <button class="modal-x" data-schliessen="quiz-overlay" aria-label="Schliessen">×</button>
     <h3>Quiz: Wasserkreislauf</h3>
-    <p class="msub">Prüfen Sie Ihr Wissen – sechs Fragen zum natürlichen und gestörten Kreislauf.</p>
-    <div id="quiz-body" class="quiz-sec"></div>
-    <div class="quiz-result" id="quiz-result" hidden></div>
+    <p class="msub">Zehn Fragen zum natürlichen und zum gestörten Kreislauf.</p>
+    <div id="quiz-body"></div>
+    <div class="quiz-erg" id="quiz-erg" hidden></div>
   </div>
 </div>
 
 <script>
-  const stages = [
-    { id:1, eyebrow:'Station 1 von 6', title:'Verdunstung', text:'Die Sonne erwärmt das Wasser in Meeren, Seen und Flüssen. Ein Teil verdunstet und steigt als unsichtbarer Wasserdampf nach oben. Auch Pflanzen geben Wasser an die Luft ab.', q:'Wo können Sie Verdunstung im Alltag beobachten?' },
-    { id:2, eyebrow:'Station 2 von 6', title:'Kondensation', text:'In der kühleren Höhe kühlt der Wasserdampf ab und wird wieder flüssig: Er kondensiert zu winzigen Tröpfchen. Unzählige Tröpfchen zusammen bilden die Wolken.', q:'Warum beschlägt ein Spiegel nach dem Duschen?' },
-    { id:3, eyebrow:'Station 3 von 6', title:'Niederschlag', text:'Werden die Tröpfchen in der Wolke zu schwer, fallen sie als Niederschlag zu Boden – je nach Temperatur als Regen, Schnee oder Hagel.', q:'Welche Formen von Niederschlag kennen Sie?' },
-    { id:4, eyebrow:'Station 4 von 6', title:'Abfluss', text:'Ein Teil des Wassers fliesst oberirdisch in Bächen und Flüssen zurück Richtung See oder Meer.', q:'Was passiert mit Regenwasser auf Strassen?' },
-    { id:5, eyebrow:'Station 5 von 6', title:'Versickerung & Grundwasser', text:'Ein anderer Teil versickert im Boden und sammelt sich als Grundwasser. Es fliesst langsam unterirdisch weiter.', q:'Warum ist sauberer Boden wichtig für unser Trinkwasser?' },
-    { id:6, eyebrow:'Station 6 von 6', title:'Sammlung & Meer', text:'Wasser sammelt sich in Seen, Flüssen und Meeren. Von dort steigt es durch Verdunstung wieder auf – der Kreislauf beginnt von vorn.', q:'Warum spricht man von einem Kreislauf und nicht von einem Ablauf?' },
-  ];
-  const intro = { eyebrow:'Übersicht', title:'Wasser in Bewegung', text:'Wasser verschwindet nie – es wandelt nur ständig seine Form und seinen Ort. Angetrieben von der Sonne durchläuft es immer wieder denselben Kreislauf. Klicken Sie auf eine Zahl oder starten Sie die Tour, um die sechs Stationen zu entdecken.' };
-  const merksatz = { eyebrow:'Merksatz', title:'Der Wasserkreislauf', text:'Wasser geht nie verloren – es wechselt nur ständig Form und Ort. Angetrieben von der Sonne durchläuft es immer wieder dieselben Stationen. Der Kreislauf ist kein gerader Ablauf: Wasser nimmt gleichzeitig mehrere Wege (Abfluss, Versickerung, Verdunstung).' };
+/* ==========================================================================
+   1 · Inhalte
+   ========================================================================== */
 
-  const stoerStages = [
-    { id:1, eyebrow:'Störfaktor 1', title:'Klimaerwärmung', text:'Höhere Temperaturen lassen mehr Wasser verdunsten. Der Kreislauf beschleunigt sich, Wetterextreme wie Dürren und Starkregen nehmen zu.', q:'Wie verändert mehr Verdunstung das Wetter?' },
-    { id:2, eyebrow:'Störfaktor 2', title:'Luftverschmutzung', text:'Schadstoffe in der Luft beeinflussen die Wolkenbildung und können sauren Regen verursachen, der Böden und Gewässer belastet.', q:'Was ist saurer Regen und woher kommt er?' },
-    { id:3, eyebrow:'Störfaktor 3', title:'Bodenversiegelung', text:'Strassen, Gebäude und Plätze versiegeln den Boden. Regenwasser kann nicht mehr versickern, fliesst oberirdisch ab – das Hochwasserrisiko steigt, das Grundwasser wird weniger gespeist.', q:'Warum überschwemmen Städte bei Starkregen schneller?' },
-    { id:4, eyebrow:'Störfaktor 4', title:'Wasserverschmutzung', text:'Abwässer, Dünger und Chemikalien gelangen in Flüsse, Seen und ins Grundwasser. Die Wasserqualität sinkt, die Aufbereitung wird aufwändiger.', q:'Wie gelangt Dünger ins Grundwasser?' },
-    { id:5, eyebrow:'Störfaktor 5', title:'Übernutzung des Grundwassers', text:'Wird mehr Grundwasser entnommen als neu gebildet wird, sinkt der Grundwasserspiegel. Brunnen versiegen, Böden trocknen aus.', q:'Was passiert, wenn zu viel Grundwasser entnommen wird?' },
-  ];
+const INTRO = {
+  eyebrow:'Übersicht',
+  title:'Wasser in Bewegung',
+  text:'Wasser geht nie verloren – es wechselt nur ständig Form und Ort. Angetrieben wird das Ganze von der Sonne. Aber Vorsicht: Es gibt nicht den einen festen Weg. Ein Tropfen kann in zehn Tagen wieder in der Luft sein oder Jahrtausende als Gletschereis liegen bleiben. Klicken Sie auf eine Zahl im Bild oder starten Sie die Tour.',
+  fakt:'In der Schweiz fallen im Mittel <b>1’440 Millimeter</b> Niederschlag pro Jahr. Rund <b>460</b> davon verdunsten wieder, gut <b>990</b> fliessen ab.'
+};
 
-  const quizData = [
-    { grp:'Natürlicher Kreislauf', q:'Was treibt den Wasserkreislauf an?', opts:['Der Wind','Die Sonne','Die Schwerkraft allein'], correct:1, fb:'Die Sonnenenergie erwärmt das Wasser und startet die Verdunstung.' },
-    { grp:'Natürlicher Kreislauf', q:'Wie nennt man den Übergang von Wasserdampf zu flüssigen Tröpfchen?', opts:['Verdunstung','Kondensation','Versickerung'], correct:1, fb:'Bei der Kondensation wird gasförmiger Dampf wieder flüssig – so entstehen Wolken.' },
-    { grp:'Natürlicher Kreislauf', q:'Wohin fliesst versickertes Wasser?', opts:['Ins Grundwasser','Direkt in die Wolken','Es verschwindet'], correct:0, fb:'Versickertes Wasser sammelt sich als Grundwasser und fliesst langsam weiter.' },
-    { grp:'Gestörter Kreislauf', q:'Welche Folge hat Bodenversiegelung?', opts:['Mehr Versickerung','Weniger Oberflächenabfluss','Höheres Hochwasserrisiko'], correct:2, fb:'Versiegelte Flächen verhindern das Versickern – das Wasser fliesst oberirdisch ab.' },
-    { grp:'Gestörter Kreislauf', q:'Was bewirkt die Klimaerwärmung im Wasserkreislauf?', opts:['Weniger Verdunstung','Mehr Verdunstung und Wetterextreme','Keine Veränderung'], correct:1, fb:'Höhere Temperaturen verstärken die Verdunstung und die Wetterextreme.' },
-    { grp:'Gestörter Kreislauf', q:'Warum sinkt der Grundwasserspiegel bei Übernutzung?', opts:['Es wird mehr entnommen als neu gebildet','Es regnet zu viel','Der Boden ist zu locker'], correct:0, fb:'Wird mehr Grundwasser entnommen als sich neu bildet, sinkt der Pegel.' },
-  ];
+const MERKSATZ = {
+  eyebrow:'Merksatz',
+  title:'Ein Kreislauf, viele Wege',
+  text:'Wasser verschwindet nicht, es wandert. Die Sonne treibt den Kreislauf an, die Schwerkraft bringt das Wasser zurück nach unten. Entscheidend ist: Der Weg ist nicht festgelegt. Wasser nimmt gleichzeitig mehrere Wege – es verdunstet, fliesst ab, versickert, wird als Schnee oder im Grundwasser zwischengespeichert. Und genau in diese Wege greift der Mensch ein.',
+  fakt:'Deshalb heisst es Kreis<b>lauf</b> und nicht Ab<b>lauf</b>: Es gibt keinen Anfang und kein Ende – und keine einzige Route.'
+};
 
-  const svg = document.querySelector('.scene-svg');
-  const hotspots = Array.from(document.querySelectorAll('.hotspot'));
-  const litgroups = Array.from(document.querySelectorAll('.litgroup'));
-  const pEye = document.getElementById('p-eyebrow');
-  const pTit = document.getElementById('p-title');
-  const pTxt = document.getElementById('p-text');
-  const progress = Array.from(document.querySelectorAll('#progress span'));
-  const chipsBox = document.getElementById('chips');
+/* --- Sechs Hauptstationen --------------------------------------------- */
+const STATIONEN = [
+  { id:1, sym:'1', pos:[150,430], fahne:[172,430,'Verdunstung','r'],
+    eyebrow:'Station 1 von 6', title:'Verdunstung & Transpiration',
+    text:'Die Sonne erwärmt das Wasser in Meeren, Seen, Flüssen und im Boden. Ein Teil geht als unsichtbarer Wasserdampf in die Luft. Dazu kommen die Pflanzen: Sie ziehen Wasser über die Wurzeln aus dem Boden und geben es über die Blätter wieder ab. Für beides zusammen gibt es einen Fachbegriff – Evapotranspiration.',
+    fakt:'Von den <b>1’440 mm</b> Niederschlag pro Jahr verdunsten in der Schweiz rund <b>460 mm</b> wieder – etwa ein Drittel.',
+    q:'Wo sehen Sie Verdunstung im Alltag – und wo findet sie statt, ohne dass Sie etwas sehen?' },
 
-  // Chips aufbauen (abhängig vom Modus)
-  let active = null;
-  let mode = 'normal';
-  let chips = [];
-  function buildChips(){
-    chipsBox.innerHTML = '';
-    currentStages().forEach(s => {
-      const b = document.createElement('button');
-      b.className = 'chip'; b.dataset.stage = s.id;
-      b.innerHTML = '<span class="num">'+s.id+'</span><span>'+s.title+'</span>';
-      b.addEventListener('click', () => setActive(s.id, true));
-      chipsBox.appendChild(b);
-    });
-    chips = Array.from(chipsBox.querySelectorAll('.chip'));
+  { id:2, sym:'2', pos:[352,108], fahne:[374,108,'Kondensation','r'],
+    eyebrow:'Station 2 von 6', title:'Kondensation',
+    text:'In der Höhe ist die Luft kälter, und kalte Luft kann weniger Wasserdampf halten. Der Dampf lagert sich an winzigen Staub- und Salzteilchen an und wird wieder flüssig: Er kondensiert zu Tröpfchen. Milliarden solcher Tröpfchen zusammen ergeben eine Wolke.',
+    fakt:'Faustregel: Pro Grad Erwärmung kann die Luft rund <b>6 bis 7 Prozent</b> mehr Wasserdampf aufnehmen. Deshalb werden Gewitter heftiger, wenn es wärmer wird.',
+    q:'Warum beschlägt der Spiegel nach dem Duschen – und warum wird er wieder klar, wenn Sie lüften?' },
+
+  { id:3, sym:'3', pos:[790,118], fahne:[768,118,'Niederschlag','l'],
+    eyebrow:'Station 3 von 6', title:'Niederschlag',
+    text:'Werden die Tröpfchen zu schwer, fallen sie zu Boden: als Regen, Schnee, Graupel oder Hagel. Schnee ist dabei der Sonderfall – er bleibt liegen und wird zum Zwischenspeicher. Was im Dezember auf 2’000 Metern fällt, erreicht den Bach vielleicht erst im Mai.',
+    fakt:'Die Klimaszenarien für die Schweiz erwarten <b>nassere Winter</b> und <b>trockenere Sommer</b> – und intensivere Starkniederschläge.',
+    q:'Warum ist es für ein Wasserkraftwerk im Mittelland wichtig, wie viel Schnee im Januar in den Bergen liegt?' },
+
+  { id:4, sym:'4', pos:[584,534], fahne:[562,534,'Abfluss','l'],
+    eyebrow:'Station 4 von 6', title:'Abfluss',
+    text:'Ein Teil des Niederschlags fliesst oberirdisch ab: über Hänge, in Rinnsalen, Bächen und Flüssen, weiter in Seen und ins Meer. Dazu kommt im Frühling das Schmelzwasser aus Schnee und Gletschern. Wie schnell das geht, hängt stark vom Boden ab – Wald und Wiese bremsen, Asphalt nicht.',
+    fakt:'Rund <b>990 mm</b> der 1’440 mm Jahresniederschlag fliessen in der Schweiz ab – gut zwei Drittel. Die Schweiz ist damit das «Wasserschloss Europas».',
+    q:'Wohin fliesst eigentlich das Wasser, das bei Ihnen zu Hause auf die Strasse regnet?' },
+
+  { id:5, sym:'5', pos:[716,664], fahne:[694,664,'Grundwasser','l'],
+    eyebrow:'Station 5 von 6', title:'Versickerung & Grundwasser',
+    text:'Ein anderer Teil sickert durch Boden, Kies und Sand in die Tiefe und sammelt sich als Grundwasser. Der Boden wirkt dabei als Filter. Wichtig: Grundwasser steht nicht still und ist keine Endstation – es fliesst langsam weiter, oft nur wenige Meter pro Tag, und tritt an anderer Stelle wieder aus.',
+    fakt:'Über <b>80 Prozent</b> des Schweizer Trinkwassers stammen aus Grundwasser und Quellen, nur rund <b>20 Prozent</b> aus Seen.',
+    q:'Warum ist es heikel, wenn in einem Grundwasserschutzgebiet gebaut oder gedüngt wird?' },
+
+  { id:6, sym:'6', pos:[100,596], fahne:[122,596,'Sammlung & Meer','r'],
+    eyebrow:'Station 6 von 6', title:'Sammlung & Meer',
+    text:'Wasser sammelt sich in Bächen, Flüssen, Seen und schliesslich im Meer. Von dort verdunstet es wieder – der Kreislauf beginnt von vorn. Aber er beginnt nicht für alle gleich schnell: Ein Tropfen an der Meeresoberfläche ist in Tagen wieder in der Luft, tiefes Meerwasser braucht Jahrtausende.',
+    fakt:'Rund <b>97 Prozent</b> des Wassers auf der Erde ist Salzwasser. Vom Süsswasser steckt der grösste Teil in Eis und Grundwasser.',
+    q:'Warum sprechen wir von einem Kreislauf und nicht von einem Ablauf?' }
+];
+
+/* --- Drei Nebenpfade ---------------------------------------------------- */
+const NEBENPFADE = [
+  { id:'n1', sym:'🌳', pos:[912,386], fahne:[890,386,'Transpiration','l'],
+    eyebrow:'Nebenpfad · Transpiration', title:'Die Pflanzen verdunsten mit',
+    text:'Pflanzen nehmen Wasser über die Wurzeln auf, transportieren es bis in die Blätter und geben es dort über winzige Öffnungen wieder an die Luft ab. Ein einzelner grosser Laubbaum schafft an einem heissen Sommertag mehrere hundert Liter. Ein Wald ist deshalb eine riesige Verdunstungsfläche – und kühlt seine Umgebung spürbar ab.',
+    fakt:'Verdunstung aus Böden und Gewässern plus Transpiration der Pflanzen ergibt zusammen die <b>Evapotranspiration</b>.',
+    q:'Warum ist es im Wald an einem heissen Tag deutlich kühler als auf einem asphaltierten Parkplatz?' },
+
+  { id:'n2', sym:'🏔', pos:[790,268], fahne:[768,268,'Schneeschmelze','l'],
+    eyebrow:'Nebenpfad · Schneeschmelze', title:'Der Speicher der Schweiz',
+    text:'Schnee und Gletscher sind ein Zwischenspeicher: Sie halten den Winterniederschlag fest und geben ihn erst im Frühling und Sommer als Schmelzwasser ab – genau dann, wenn Landwirtschaft, Kraftwerke und Flüsse ihn am nötigsten brauchen. Dieser Speicher schrumpft.',
+    fakt:'Seit dem Jahr 2000 ist rund <b>40 Prozent</b> des Schweizer Gletschereises verschwunden – allein in den letzten zehn Jahren fast ein Viertel.',
+    q:'Was bedeutet ein schneearmer Winter für den Sommer danach?' },
+
+  { id:'n3', sym:'💧', pos:[452,632], fahne:[474,632,'Quelle','r'],
+    eyebrow:'Nebenpfad · Quelle', title:'Grundwasser kommt zurück',
+    text:'Versickern ist keine Sackgasse. Grundwasser fliesst unterirdisch weiter und tritt dort wieder aus, wo eine wasserundurchlässige Schicht an die Oberfläche stösst: als Quelle. Von dort speist es Bäche, Flüsse und Seen. Umgekehrt gilt auch: Ein Fluss kann Grundwasser nachfüllen. Die beiden hängen zusammen.',
+    fakt:'Rund <b>40 Prozent</b> des Schweizer Trinkwassers kommt direkt aus Quellen – ganz ohne Pumpe.',
+    q:'Warum führen manche Bäche auch nach Wochen ohne Regen noch Wasser?' }
+];
+
+/* --- Vier menschliche Eingriffe ---------------------------------------- */
+const STOERUNGEN = [
+  { id:1, sym:'🏙', pos:[168,436], fahne:[190,436,'Siedlung & Asphalt','r'],
+    eyebrow:'Eingriff 1 von 4', title:'Siedlung & versiegelte Flächen',
+    text:'Strassen, Dächer, Parkplätze und Plätze versiegeln den Boden. Regen kann dort nicht mehr versickern und fliesst sofort oberirdisch ab. Zwei Folgen zugleich: Der Kanalisation kommt bei Gewittern zu viel Wasser auf einmal, und dem Grundwasser fehlt der Nachschub.',
+    fakt:'In der Schweiz werden pro Jahr fast <b>18 km²</b> Boden zusätzlich versiegelt – <b>mehr als ein halber Quadratmeter pro Sekunde</b>.',
+    q:'Welche Flächen rund um die HKV könnte man entsiegeln – und was würde das bringen?' },
+
+  { id:2, sym:'🌾', pos:[506,412], fahne:[528,412,'Landwirtschaft','r'],
+    eyebrow:'Eingriff 2 von 4', title:'Landwirtschaft: Bewässerung & Einträge',
+    text:'Felder werden bewässert – und zwar genau dann, wenn ohnehin wenig Wasser da ist. Dazu kommen Dünger und Pflanzenschutzmittel: Was nicht von den Pflanzen aufgenommen wird, sickert mit dem Regen ins Grundwasser oder wird in den nächsten Bach geschwemmt.',
+    fakt:'Im trockenen Sommer <b>2022</b> brauchte die Schweizer Landwirtschaft rund <b>41 Mio. m³</b> Bewässerungswasser, im nassen 2021 nur <b>9,5 Mio. m³</b>.',
+    q:'Warum ist es ein Problem, wenn Bewässerung und Trockenheit zeitlich zusammenfallen?' },
+
+  { id:3, sym:'🚰', pos:[636,578], fahne:[614,578,'Wasserentnahme','l'],
+    eyebrow:'Eingriff 3 von 4', title:'Wasserentnahme & Nutzung',
+    text:'Wir entnehmen Wasser aus Grundwasser, Quellen und Seen – für Haushalte, Gewerbe und Industrie. Solange nicht mehr entnommen wird, als sich neu bildet, geht das gut. Bei anhaltender Trockenheit oder Übernutzung sinkt der Grundwasserspiegel, Quellen versiegen, Brunnen müssen tiefer gebohrt werden.',
+    fakt:'Zu Hause verbraucht jede Person in der Schweiz rund <b>140 Liter</b> pro Tag. Mit Gewerbe, Industrie und Leitungsverlusten sind es <b>276 Liter</b> pro Kopf und Tag.',
+    q:'Welche drei Handgriffe im Alltag sparen am meisten Wasser?' },
+
+  { id:4, sym:'🌡', pos:[214,96], fahne:[236,96,'Erwärmung','r'],
+    eyebrow:'Eingriff 4 von 4', title:'Erwärmung: der Kreislauf beschleunigt',
+    text:'Wärmere Luft nimmt mehr Wasserdampf auf. Der Kreislauf läuft schneller – aber nicht gleichmässiger, sondern ungleicher: Es verändern sich Menge, Zeitpunkt und Verteilung des Wassers. Die Winter werden nasser, die Sommer trockener, der Schneespeicher kleiner, und wenn es regnet, dann heftiger.',
+    fakt:'Die Klimaszenarien erwarten <b>nassere Winter</b>, <b>trockenere Sommer</b>, häufigere und längere Trockenperioden sowie intensivere Starkniederschläge.',
+    q:'Wieso können Dürre und Hochwasser im selben Sommer auftreten?' }
+];
+
+const STOER_INTRO = {
+  eyebrow:'Gestörter Kreislauf',
+  title:'Wenn der Mensch eingreift',
+  text:'Dieselbe Landschaft, andere Wege. Der Mensch verändert den Wasserkreislauf an vier Stellen gleichzeitig: Er versiegelt den Boden, entnimmt Wasser, bewässert und verschmutzt, und er heizt über die Treibhausgase das ganze System auf. Klicken Sie auf ein Symbol im Bild.',
+  fakt:'Der Kreislauf hört nicht auf zu funktionieren – aber <b>Menge</b>, <b>Zeitpunkt</b> und <b>Verteilung</b> des Wassers verschieben sich.'
+};
+
+/* --- Quiz --------------------------------------------------------------- */
+const QUIZ = [
+  { grp:'Natürlicher Kreislauf', q:'Was treibt den Wasserkreislauf an?',
+    opts:['Der Wind','Die Sonne','Die Schwerkraft allein'], r:1,
+    fb:'Die Sonnenenergie erwärmt das Wasser und startet die Verdunstung. Die Schwerkraft bringt es wieder nach unten.' },
+  { grp:'Natürlicher Kreislauf', q:'Was bedeutet Evapotranspiration?',
+    opts:['Verdunstung aus Böden und Gewässern plus Wasserabgabe der Pflanzen','Der Übergang von Wasserdampf zu Tröpfchen','Das Versickern von Regen im Boden'], r:0,
+    fb:'Evaporation (Verdunstung) und Transpiration (Wasserabgabe der Pflanzen) zusammen – beides bringt Wasser in die Luft.' },
+  { grp:'Natürlicher Kreislauf', q:'Wie nennt man den Übergang von Wasserdampf zu flüssigen Tröpfchen?',
+    opts:['Verdunstung','Kondensation','Versickerung'], r:1,
+    fb:'Bei der Kondensation wird gasförmiger Dampf wieder flüssig – so entstehen Wolken.' },
+  { grp:'Natürlicher Kreislauf', q:'Welche Rolle spielt Schnee im Wasserkreislauf?',
+    opts:['Gar keine, Schnee ist kein Niederschlag','Er ist ein Zwischenspeicher und fliesst erst im Frühling ab','Er verdunstet direkt, ohne je zu schmelzen'], r:1,
+    fb:'Schnee hält den Winterniederschlag zurück und gibt ihn als Schmelzwasser später ab – für die Schweiz zentral.' },
+  { grp:'Natürlicher Kreislauf', q:'Ist Versickerung das Ende des Weges?',
+    opts:['Ja, im Grundwasser bleibt das Wasser für immer','Nein, Grundwasser fliesst weiter und tritt als Quelle wieder aus','Nein, es verdunstet direkt aus dem Boden zurück in die Wolke'], r:1,
+    fb:'Grundwasser fliesst langsam weiter und speist über Quellen wieder Bäche, Flüsse und Seen.' },
+  { grp:'Natürlicher Kreislauf', q:'Nimmt Wasser immer denselben Weg durch den Kreislauf?',
+    opts:['Ja, die Reihenfolge ist immer gleich','Nein, es gibt viele Wege und sehr unterschiedliche Speicherzeiten','Nur in den Alpen gibt es Abweichungen'], r:1,
+    fb:'Genau das ist der Kern: In der Atmosphäre bleibt Wasser rund zehn Tage, im Ozean rund 3’000 Jahre.' },
+  { grp:'Gestörter Kreislauf', q:'Welche Folge hat Bodenversiegelung?',
+    opts:['Mehr Versickerung','Weniger Oberflächenabfluss','Höheres Hochwasserrisiko und weniger Grundwasserneubildung'], r:2,
+    fb:'Versiegelte Flächen lassen nichts durch – das Wasser fliesst sofort ab und fehlt später im Grundwasser.' },
+  { grp:'Gestörter Kreislauf', q:'Woher stammt der grösste Teil des Schweizer Trinkwassers?',
+    opts:['Aus Grundwasser und Quellen','Aus Seen','Aus Regenwassersammlung'], r:0,
+    fb:'Über 80 Prozent kommen aus dem Boden – rund je die Hälfte davon aus Quellen und aus Grundwasserfassungen.' },
+  { grp:'Gestörter Kreislauf', q:'Was bewirkt die Erwärmung im Wasserkreislauf?',
+    opts:['Weniger Verdunstung','Menge, Zeitpunkt und Verteilung des Wassers verschieben sich','Sie hat keinen messbaren Einfluss'], r:1,
+    fb:'Nassere Winter, trockenere Sommer, weniger Schnee, dafür heftigere Starkniederschläge.' },
+  { grp:'Gestörter Kreislauf', q:'Warum sinkt der Grundwasserspiegel bei Übernutzung?',
+    opts:['Weil mehr entnommen wird, als sich neu bildet','Weil es zu viel regnet','Weil der Boden zu locker ist'], r:0,
+    fb:'Entnahme und Neubildung müssen im Gleichgewicht bleiben – sonst versiegen Quellen und Brunnen.' }
+];
+
+/* --- Quellen ------------------------------------------------------------ */
+const QUELLEN = [
+  ['Wasserbilanz Schweiz: 1’440 mm Niederschlag, 460 mm Verdunstung, 990 mm Abfluss (Referenzperiode 1981–2010)','BAFU / NCCS, Hydro-CH2018','https://www.bafu.admin.ch/de/wasserhaushalt-heute'],
+  ['Herkunft des Trinkwassers: rund 40 % Quellwasser, 40 % Grundwasser, 20 % Seewasser (Betriebsjahr 2023)','SVGW-Wasserstatistik','https://www.aquaetgas.ch/svgw-news/wasser/20250217-wasserstatistik-betriebsjahr-2023/'],
+  ['Wasserverbrauch: rund 140 Liter pro Person und Tag im Haushalt, 276 Liter Gesamtabgabe pro Kopf (2024)','SVGW','https://www.svgw.ch/wasser/kommunikationstools/wasserversorgung/nutzung/'],
+  ['Gletscher: 45,1 km³ Eis Ende 2025, rund 40 % weniger als im Jahr 2000, ein Viertel allein seit 2015','GLAMOS Jahresbericht 2024/25','https://doi.glamos.ch/pubs/annualrep/annualrep_2025.pdf'],
+  ['Bodenversiegelung: fast 18 km² pro Jahr, mehr als ein halber Quadratmeter pro Sekunde','BAFU, Netto null beim Bodenverbrauch','https://www.bafu.admin.ch/de/netto-null-beim-bodenverbrauch'],
+  ['Bewässerung: 41 Mio. m³ im Trockenjahr 2022, 9,5 Mio. m³ im nassen 2021 (Modellschätzung)','Agroscope / BAFU, SwissIrrigationInfo 2025','https://www.bafu.admin.ch/dam/de/sd-web/bmwLQ5eilZtw/SwissIrrigationInfo.pdf'],
+  ['Klimaszenarien: nassere Winter, trockenere Sommer, häufigere Trockenperioden, intensivere Starkniederschläge','NCCS / MeteoSchweiz, Klima CH2025','https://www.nccs.admin.ch/nccs/de/home/klimawandel-und-auswirkungen/schweizer-klimaszenarien-ch2025.html'],
+  ['Verweilzeiten in den Speichern – Grössenordnungen aus der Fachliteratur, keine Messwerte','Britannica, «residence time»','https://www.britannica.com/science/residence-time-hydrologic-cycle']
+];
+
+/* ==========================================================================
+   2 · Aufbau der Bild-Ebene
+   ========================================================================== */
+
+const szene       = document.getElementById('szene');
+const svgMarken   = document.getElementById('marken');
+const gMarkenN    = document.getElementById('marken-normal');
+const gMarkenS    = document.getElementById('marken-stoer');
+const gFahnenN    = document.getElementById('fahnen-normal');
+const gFahnenS    = document.getElementById('fahnen-stoer');
+const NS          = 'http://www.w3.org/2000/svg';
+
+function el(tag, attrs){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  return n;
+}
+
+function baueMarke(eintrag, art){
+  const g = el('g', {
+    'class': 'marke' + (art === 'neben' ? ' neben' : ''),
+    'transform': 'translate(' + eintrag.pos[0] + ',' + eintrag.pos[1] + ')',
+    'tabindex': '0', 'role': 'button',
+    'aria-label': eintrag.eyebrow + ': ' + eintrag.title
+  });
+  g.dataset.ziel = art + ':' + eintrag.id;
+  g.appendChild(el('circle', { 'class':'m-ring', r:19 }));
+  g.appendChild(el('circle', { 'class':'m-kreis', r:19 }));
+  const t = el('text', { 'class':'m-txt' });
+  t.textContent = eintrag.sym;
+  g.appendChild(t);
+  return g;
+}
+
+/* Die Breite der Fahne wird nach dem Einfügen am echten Text gemessen –
+   geschätzte Zeichenbreiten schneiden je nach Schrift die Wörter ab. */
+const fahnenZumMessen = [];
+function baueFahne(eintrag, art){
+  const [x, y, txt, seite] = eintrag.fahne;
+  const links = (seite === 'l');
+  const g = el('g', { 'class':'fahne' + (art === 'neben' ? ' neben' : '') });
+  const r = el('rect', { x:x, y:y-13, width:10, height:26, rx:8 });
+  g.appendChild(r);
+  const t = el('text', { x: links ? x-11 : x+11, y:y+1, 'text-anchor': links ? 'end' : 'start' });
+  t.textContent = txt;
+  g.appendChild(t);
+  fahnenZumMessen.push([r, t, x, links]);
+  return g;
+}
+function fahnenMessen(){
+  fahnenZumMessen.forEach(([r, t, x, links]) => {
+    let b = 0;
+    try { b = t.getBBox().width; } catch(e){ b = 0; }
+    if (!b) b = t.textContent.length * 7.2;
+    const w = Math.round(b + 22);
+    r.setAttribute('width', w);
+    r.setAttribute('x', links ? x - w : x);
+  });
+}
+
+STATIONEN.forEach(s => { gFahnenN.appendChild(baueFahne(s,'haupt')); gMarkenN.appendChild(baueMarke(s,'haupt')); });
+NEBENPFADE.forEach(s => { gFahnenN.appendChild(baueFahne(s,'neben')); gMarkenN.appendChild(baueMarke(s,'neben')); });
+STOERUNGEN.forEach(s => { gFahnenS.appendChild(baueFahne(s,'haupt')); gMarkenS.appendChild(baueMarke(s,'haupt')); });
+
+/* ==========================================================================
+   3 · Panel und Zustand
+   ========================================================================== */
+
+const panel   = document.getElementById('panel');
+const pEye    = document.getElementById('p-eyebrow');
+const pTit    = document.getElementById('p-title');
+const pTxt    = document.getElementById('p-text');
+const pFakt   = document.getElementById('p-fakt');
+const qbox    = document.getElementById('qbox');
+const pFrage  = document.getElementById('p-question');
+const prevBtn = document.getElementById('prev-btn');
+const nextBtn = document.getElementById('next-btn');
+const chipRaum= document.getElementById('chipbereich');
+const fortBar = document.getElementById('progress');
+
+let modus  = 'normal';   /* 'normal' | 'stoer' */
+let aktiv  = null;       /* 'haupt:3' | 'neben:n2' | null */
+
+function liste(){ return modus === 'stoer' ? STOERUNGEN : STATIONEN; }
+function finde(schluessel){
+  if (!schluessel) return null;
+  const [art, id] = schluessel.split(':');
+  if (art === 'neben') return NEBENPFADE.find(x => x.id === id) || null;
+  return liste().find(x => String(x.id) === id) || null;
+}
+
+function baueChips(){
+  chipRaum.innerHTML = '';
+  const machChip = (eintrag, art) => {
+    const b = document.createElement('button');
+    b.className = 'chip' + (art === 'neben' ? ' nb' : '');
+    b.dataset.ziel = art + ':' + eintrag.id;
+    b.innerHTML = '<span class="num">' + eintrag.sym + '</span><span>' + eintrag.title.split(':')[0] + '</span>';
+    b.addEventListener('click', () => setzeAktiv(b.dataset.ziel, true));
+    return b;
+  };
+  const g1 = document.createElement('div'); g1.className = 'chips';
+  liste().forEach(s => g1.appendChild(machChip(s, 'haupt')));
+  chipRaum.appendChild(g1);
+
+  if (modus === 'normal'){
+    const t = document.createElement('div'); t.className = 'gruppentitel';
+    t.textContent = 'Nebenpfade';
+    chipRaum.appendChild(t);
+    const g2 = document.createElement('div'); g2.className = 'chips';
+    NEBENPFADE.forEach(s => g2.appendChild(machChip(s, 'neben')));
+    chipRaum.appendChild(g2);
   }
-  buildChips();
 
-  const qbox = document.getElementById('qbox');
-  const pQuestion = document.getElementById('p-question');
-  const prevBtn = document.getElementById('prev-btn');
-  const nextBtn = document.getElementById('next-btn');
+  fortBar.innerHTML = '';
+  liste().forEach(() => fortBar.appendChild(document.createElement('span')));
+}
 
-  function currentStages(){ return mode === 'stoer' ? stoerStages : stages; }
+function zeigeText(obj, nebenpfad){
+  panel.classList.toggle('neben-aktiv', !!nebenpfad);
+  pEye.textContent = obj.eyebrow;
+  pTit.textContent = obj.title;
+  pTxt.textContent = obj.text;
+  if (obj.fakt){ pFakt.innerHTML = obj.fakt; pFakt.hidden = false; } else pFakt.hidden = true;
+  if (obj.q){ pFrage.textContent = obj.q; qbox.hidden = false; } else qbox.hidden = true;
+}
 
-  function showQuestion(s){
-    if (s && s.q){ pQuestion.textContent = s.q; qbox.hidden = false; }
-    else qbox.hidden = true;
+const spotGruppe = document.getElementById('spotgruppe');
+const dimmer     = document.getElementById('dimmer');
+
+function setzeSpot(pos){
+  if (pos){
+    spotGruppe.setAttribute('transform', 'translate(' + pos[0] + ',' + pos[1] + ')');
+    dimmer.classList.add('scharf');
+  } else {
+    dimmer.classList.remove('scharf');
   }
+}
 
-  function setActive(id, stopTourFlag){
-    if (stopTourFlag) stopTour();
-    active = id;
-    const list = currentStages();
-    const s = list.find(x => x.id === id);
-    if (!s) return;
-    pEye.textContent = s.eyebrow; pTit.textContent = s.title; pTxt.textContent = s.text;
-    showQuestion(s);
-    if (mode === 'normal'){
-      hotspots.forEach(h => h.classList.toggle('active', !h.classList.contains('stoer-hs') && +h.dataset.stage === id));
-      litgroups.forEach(g => g.classList.toggle('lit', +g.dataset.stage === id));
-    } else {
-      hotspots.forEach(h => h.classList.toggle('active', h.classList.contains('stoer-hs') && +h.dataset.stoer === id));
-      litgroups.forEach(g => g.classList.remove('lit'));
+function setzeAktiv(schluessel, tourStoppen){
+  if (tourStoppen) stoppeTour();
+  const obj = finde(schluessel);
+  if (!obj) return;
+  aktiv = schluessel;
+  const istNeben = schluessel.startsWith('neben:');
+  zeigeText(obj, istNeben);
+
+  document.querySelectorAll('.marke').forEach(m => m.classList.toggle('aktiv', m.dataset.ziel === schluessel));
+  document.querySelectorAll('.chip').forEach(c => c.classList.toggle('aktiv', c.dataset.ziel === schluessel));
+
+  const balken = Array.from(fortBar.children);
+  if (istNeben) balken.forEach(b => b.classList.remove('done'));
+  else balken.forEach((b,i) => b.classList.toggle('done', i < Number(obj.id)));
+
+  setzeSpot(obj.pos);
+
+  const l = liste();
+  const idx = istNeben ? -1 : l.findIndex(x => String(x.id) === String(obj.id));
+  prevBtn.disabled = false;
+  nextBtn.textContent = (!istNeben && idx === l.length - 1)
+    ? (modus === 'normal' ? 'Merksatz →' : 'Übersicht →')
+    : 'Weiter →';
+}
+
+function zeigeUebersicht(){
+  aktiv = null;
+  zeigeText(modus === 'stoer' ? STOER_INTRO : INTRO, false);
+  qbox.hidden = true;
+  document.querySelectorAll('.marke').forEach(m => m.classList.remove('aktiv'));
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('aktiv'));
+  Array.from(fortBar.children).forEach(b => b.classList.remove('done'));
+  setzeSpot(null);
+  prevBtn.disabled = true;
+  nextBtn.textContent = 'Weiter →';
+}
+
+function zeigeMerksatz(){
+  stoppeTour();
+  aktiv = 'merksatz';
+  zeigeText(MERKSATZ, false);
+  document.querySelectorAll('.marke').forEach(m => m.classList.remove('aktiv'));
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('aktiv'));
+  Array.from(fortBar.children).forEach(b => b.classList.add('done'));
+  setzeSpot(null);
+  prevBtn.disabled = false;
+  nextBtn.textContent = 'Übersicht →';
+}
+
+/* --- Navigation --------------------------------------------------------- */
+prevBtn.addEventListener('click', () => {
+  const l = liste();
+  if (aktiv === 'merksatz'){ setzeAktiv('haupt:' + l[l.length-1].id, true); return; }
+  if (aktiv == null){ setzeAktiv('haupt:' + l[l.length-1].id, true); return; }
+  if (aktiv.startsWith('neben:')){
+    const i = NEBENPFADE.findIndex(x => 'neben:' + x.id === aktiv);
+    if (i > 0) setzeAktiv('neben:' + NEBENPFADE[i-1].id, true);
+    else setzeAktiv('haupt:' + l[l.length-1].id, true);
+    return;
+  }
+  const i = l.findIndex(x => 'haupt:' + x.id === aktiv);
+  if (i > 0) setzeAktiv('haupt:' + l[i-1].id, true); else zeigeUebersicht();
+});
+
+nextBtn.addEventListener('click', () => {
+  const l = liste();
+  if (aktiv === 'merksatz'){ zeigeUebersicht(); return; }
+  if (aktiv == null){ setzeAktiv('haupt:' + l[0].id, true); return; }
+  if (aktiv.startsWith('neben:')){
+    const i = NEBENPFADE.findIndex(x => 'neben:' + x.id === aktiv);
+    if (i < NEBENPFADE.length - 1) setzeAktiv('neben:' + NEBENPFADE[i+1].id, true);
+    else zeigeMerksatz();
+    return;
+  }
+  const i = l.findIndex(x => 'haupt:' + x.id === aktiv);
+  if (i < l.length - 1){ setzeAktiv('haupt:' + l[i+1].id, true); return; }
+  if (modus === 'normal') setzeAktiv('neben:' + NEBENPFADE[0].id, true);
+  else zeigeUebersicht();
+});
+
+/* --- Marken anklickbar machen ------------------------------------------- */
+svgMarken.addEventListener('click', e => {
+  const m = e.target.closest('.marke');
+  if (m){ setzeAktiv(m.dataset.ziel, true); return; }
+  if (!tourTimer) zeigeUebersicht();
+});
+svgMarken.addEventListener('keydown', e => {
+  const m = e.target.closest('.marke');
+  if (m && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); setzeAktiv(m.dataset.ziel, true); }
+});
+
+/* ==========================================================================
+   4 · Schalter
+   ========================================================================== */
+
+const fahnenBtn = document.getElementById('fahnen-btn');
+fahnenBtn.addEventListener('click', () => {
+  const an = fahnenBtn.getAttribute('aria-pressed') === 'true';
+  fahnenBtn.setAttribute('aria-pressed', String(!an));
+  document.body.classList.toggle('ohne-fahnen', an);
+});
+
+const spotBtn = document.getElementById('spot-btn');
+spotBtn.addEventListener('click', () => {
+  const an = spotBtn.getAttribute('aria-pressed') === 'true';
+  spotBtn.setAttribute('aria-pressed', String(!an));
+  document.body.classList.toggle('spot-an', !an);
+});
+
+const effektBtn = document.getElementById('effekt-btn');
+effektBtn.addEventListener('click', () => {
+  const an = effektBtn.getAttribute('aria-pressed') === 'true';
+  effektBtn.setAttribute('aria-pressed', String(!an));
+  document.body.classList.toggle('ohne-effekte', an);
+});
+
+/* --- Tour --------------------------------------------------------------- */
+const tourBtn = document.getElementById('tour-btn');
+let tourTimer = null, tourSchritt = 0, tourFolge = [];
+
+function tourAufbauen(){
+  tourFolge = liste().map(s => 'haupt:' + s.id);
+  if (modus === 'normal') tourFolge = tourFolge.concat(NEBENPFADE.map(s => 'neben:' + s.id));
+}
+function starteTour(){
+  tourBtn.textContent = '⏸ Tour stoppen';
+  tourAufbauen();
+  tourSchritt = -1;
+  const lauf = () => {
+    tourSchritt++;
+    if (tourSchritt >= tourFolge.length){
+      stoppeTour();
+      if (modus === 'normal') zeigeMerksatz(); else zeigeUebersicht();
+      return;
     }
-    chips.forEach(c => c.classList.toggle('active', +c.dataset.stage === id));
-    progress.forEach((p,i) => p.classList.toggle('done', i < id));
-    prevBtn.disabled = id <= 1;
-    nextBtn.textContent = id >= list.length ? 'Merksatz →' : 'Weiter →';
-  }
+    setzeAktiv(tourFolge[tourSchritt], false);
+    tourTimer = setTimeout(lauf, 4200);
+  };
+  lauf();
+}
+function stoppeTour(){
+  if (tourTimer){ clearTimeout(tourTimer); tourTimer = null; }
+  tourBtn.textContent = '▶ Tour starten';
+}
+tourBtn.addEventListener('click', () => { tourTimer ? stoppeTour() : starteTour(); });
 
-  function clearActive(){
-    active = null;
-    const it = mode === 'stoer'
-      ? { eyebrow:'Gestörter Kreislauf', title:'Wenn der Mensch eingreift', text:'Menschliche Eingriffe verändern den natürlichen Wasserkreislauf. Klicken Sie auf ein Warnzeichen, um die fünf wichtigsten Störfaktoren zu entdecken.' }
-      : intro;
-    pEye.textContent = it.eyebrow; pTit.textContent = it.title; pTxt.textContent = it.text;
-    qbox.hidden = true;
-    hotspots.forEach(h => h.classList.remove('active'));
-    chips.forEach(c => c.classList.remove('active'));
-    litgroups.forEach(g => g.classList.remove('lit'));
-    progress.forEach(p => p.classList.remove('done'));
-    prevBtn.disabled = true;
-    nextBtn.textContent = 'Weiter →';
-  }
+/* --- Modus -------------------------------------------------------------- */
+const modeNormalBtn = document.getElementById('mode-normal');
+const modeStoerBtn  = document.getElementById('mode-stoer');
+const fxStoer       = document.getElementById('fx-stoer');
 
-  function showMerksatz(){
-    stopTour();
-    active = null;
-    pEye.textContent = merksatz.eyebrow; pTit.textContent = merksatz.title; pTxt.textContent = merksatz.text;
-    qbox.hidden = true;
-    hotspots.forEach(h => h.classList.remove('active'));
-    chips.forEach(c => c.classList.remove('active'));
-    litgroups.forEach(g => g.classList.remove('lit'));
-    progress.forEach(p => p.classList.add('done'));
-    prevBtn.disabled = false;
-    nextBtn.textContent = 'Weiter →';
-  }
+function setzeModus(m){
+  if (modus === m) return;
+  stoppeTour();
+  modus = m;
+  const istStoer = (m === 'stoer');
+  document.body.classList.toggle('stoer', istStoer);
+  modeNormalBtn.classList.toggle('active', !istStoer);
+  modeStoerBtn.classList.toggle('active', istStoer);
+  modeNormalBtn.setAttribute('aria-selected', String(!istStoer));
+  modeStoerBtn.setAttribute('aria-selected', String(istStoer));
+  gMarkenN.style.display = istStoer ? 'none' : '';
+  gMarkenS.style.display = istStoer ? '' : 'none';
+  gFahnenN.style.display = istStoer ? 'none' : '';
+  gFahnenS.style.display = istStoer ? '' : 'none';
+  fxStoer.style.display  = istStoer ? '' : 'none';
+  baueChips();
+  zeigeUebersicht();
+}
+modeNormalBtn.addEventListener('click', () => setzeModus('normal'));
+modeStoerBtn.addEventListener('click', () => setzeModus('stoer'));
 
-  prevBtn.addEventListener('click', () => {
-    const list = currentStages();
-    if (active == null){ setActive(list.length, true); return; }
-    if (active > 1) setActive(active - 1, true);
-    else clearActive();
-  });
-  nextBtn.addEventListener('click', () => {
-    const list = currentStages();
-    if (active == null){ setActive(1, true); return; }
-    if (active >= list.length){ if (mode === 'normal') showMerksatz(); else clearActive(); return; }
-    setActive(active + 1, true);
-  });
+/* ==========================================================================
+   5 · Overlays
+   ========================================================================== */
 
-  hotspots.filter(h => !h.classList.contains('stoer-hs')).forEach(h => {
-    const id = +h.dataset.stage;
-    h.addEventListener('click', () => { if (mode === 'normal') setActive(id, true); });
-    h.addEventListener('keydown', e => { if ((e.key==='Enter' || e.key===' ') && mode === 'normal'){ e.preventDefault(); setActive(id, true); } });
-  });
+function oeffne(id){ document.getElementById(id).classList.add('offen'); }
+function schliesse(id){ document.getElementById(id).classList.remove('offen'); }
 
-  // Beschriftungen umschalten
-  const lblBtn = document.getElementById('lbl-btn');
-  lblBtn.addEventListener('click', () => {
-    const on = lblBtn.getAttribute('aria-pressed') === 'true';
-    lblBtn.setAttribute('aria-pressed', String(!on));
-    svg.classList.toggle('lbls-hidden', on);
-  });
+document.getElementById('cmp-btn').addEventListener('click', () => oeffne('cmp-overlay'));
+document.getElementById('verweil-btn').addEventListener('click', () => oeffne('verweil-overlay'));
+document.getElementById('quellen-btn').addEventListener('click', () => oeffne('quellen-overlay'));
+document.getElementById('quiz-btn').addEventListener('click', () => { baueQuiz(); oeffne('quiz-overlay'); });
 
-  // Tour
-  const tourBtn = document.getElementById('tour-btn');
-  let tourTimer = null, tourStep = 0;
-  function startTour(){
-    tourBtn.textContent = '⏸ Tour stoppen';
-    tourStep = 0;
-    const len = currentStages().length;
-    const run = () => {
-      tourStep++;
-      if (tourStep > len){ stopTour(); if (mode === 'normal') showMerksatz(); else clearActive(); return; }
-      setActive(tourStep, false);
-      tourTimer = setTimeout(run, 3400);
-    };
-    run();
-  }
-  function stopTour(){
-    if (tourTimer){ clearTimeout(tourTimer); tourTimer = null; }
-    tourBtn.textContent = '▶ Tour starten';
-  }
-  tourBtn.addEventListener('click', () => { tourTimer ? (stopTour()) : startTour(); });
+document.querySelectorAll('[data-schliessen]').forEach(b => {
+  b.addEventListener('click', () => schliesse(b.dataset.schliessen));
+});
+document.querySelectorAll('.overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('offen'); });
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.querySelectorAll('.overlay.offen').forEach(o => o.classList.remove('offen'));
+});
 
-  // Klick ins Leere schliesst die Hervorhebung
-  svg.addEventListener('click', e => {
-    if (!e.target.closest('.hotspot') && !tourTimer) clearActive();
-  });
+/* --- Quellenliste ------------------------------------------------------- */
+const quellenListe = document.getElementById('quellenliste');
+QUELLEN.forEach(([was, wer, url]) => {
+  const li = document.createElement('li');
+  li.innerHTML = was + '<br><a href="' + url + '" target="_blank" rel="noopener">' + wer + '</a>';
+  quellenListe.appendChild(li);
+});
 
-  // Störungs-Hotspots verdrahten
-  const stoerHotspots = Array.from(document.querySelectorAll('.stoer-hs'));
-  stoerHotspots.forEach(h => {
-    const id = +h.dataset.stoer;
-    h.addEventListener('click', () => setActive(id, true));
-    h.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' '){ e.preventDefault(); setActive(id, true); } });
-  });
+/* --- Quiz --------------------------------------------------------------- */
+const quizBody = document.getElementById('quiz-body');
+const quizErg  = document.getElementById('quiz-erg');
 
-  // ---- Modus-Umschaltung ----
-  const modeNormalBtn = document.getElementById('mode-normal');
-  const modeStoerBtn = document.getElementById('mode-stoer');
-  const compareBtn = document.getElementById('compare-btn');
-  function setMode(m){
-    if (mode === m) return;
-    stopTour();
-    mode = m;
-    document.body.classList.toggle('stoer', m === 'stoer');
-    modeNormalBtn.classList.toggle('active', m === 'normal');
-    modeStoerBtn.classList.toggle('active', m === 'stoer');
-    modeNormalBtn.setAttribute('aria-selected', String(m === 'normal'));
-    modeStoerBtn.setAttribute('aria-selected', String(m === 'stoer'));
-    compareBtn.hidden = (m !== 'stoer');
-    buildChips();
-    clearActive();
-  }
-  modeNormalBtn.addEventListener('click', () => setMode('normal'));
-  modeStoerBtn.addEventListener('click', () => setMode('stoer'));
-
-  // ---- Vergleich-Overlay ----
-  const cmpOverlay = document.getElementById('cmp-overlay');
-  compareBtn.addEventListener('click', () => cmpOverlay.classList.add('open'));
-  document.getElementById('cmp-x').addEventListener('click', () => cmpOverlay.classList.remove('open'));
-  cmpOverlay.addEventListener('click', e => { if (e.target === cmpOverlay) cmpOverlay.classList.remove('open'); });
-
-  // ---- Quiz ----
-  const quizOverlay = document.getElementById('quiz-overlay');
-  const quizBody = document.getElementById('quiz-body');
-  const quizResult = document.getElementById('quiz-result');
-  const quizBtn = document.getElementById('quiz-btn');
-  let answered = 0, correctCount = 0;
-
-  function buildQuiz(){
-    quizBody.innerHTML = ''; answered = 0; correctCount = 0;
-    quizResult.hidden = true;
-    let lastGrp = '';
-    quizData.forEach((item, qi) => {
-      if (item.grp !== lastGrp){
-        const t = document.createElement('div'); t.className = 'qgroup-title'; t.textContent = item.grp;
-        quizBody.appendChild(t); lastGrp = item.grp;
-      }
-      const wrap = document.createElement('div'); wrap.className = 'quiz-q';
-      const qt = document.createElement('div'); qt.className = 'qtext'; qt.textContent = (qi+1)+'. '+item.q;
-      wrap.appendChild(qt);
-      const fb = document.createElement('div'); fb.className = 'quiz-feedback'; fb.hidden = true;
-      item.opts.forEach((opt, oi) => {
-        const b = document.createElement('button'); b.className = 'quiz-opt'; b.textContent = opt;
-        b.addEventListener('click', () => {
-          if (wrap.dataset.done) return;
-          wrap.dataset.done = '1'; answered++;
-          const optButtons = wrap.querySelectorAll('.quiz-opt');
-          optButtons.forEach((ob,idx) => { ob.disabled = true; if (idx === item.correct) ob.classList.add('correct'); });
-          if (oi === item.correct){ correctCount++; fb.style.color = '#1e5c37'; fb.textContent = '✓ Richtig. '+item.fb; }
-          else { b.classList.add('wrong'); fb.style.color = '#8a2a26'; fb.textContent = '✗ '+item.fb; }
-          fb.hidden = false;
-          if (answered === quizData.length){
-            quizResult.hidden = false;
-            quizResult.textContent = 'Ergebnis: '+correctCount+' von '+quizData.length+' richtig.';
-          }
+function baueQuiz(){
+  quizBody.innerHTML = '';
+  quizErg.hidden = true;
+  let beantwortet = 0, richtig = 0, letzteGruppe = '';
+  QUIZ.forEach((item, qi) => {
+    if (item.grp !== letzteGruppe){
+      const t = document.createElement('div');
+      t.className = 'qgruppe'; t.textContent = item.grp;
+      quizBody.appendChild(t); letzteGruppe = item.grp;
+    }
+    const box = document.createElement('div'); box.className = 'quiz-f';
+    const frage = document.createElement('div'); frage.className = 'qtext';
+    frage.textContent = (qi+1) + '. ' + item.q;
+    box.appendChild(frage);
+    const fb = document.createElement('div'); fb.className = 'quiz-fb'; fb.hidden = true;
+    item.opts.forEach((opt, oi) => {
+      const b = document.createElement('button');
+      b.className = 'quiz-opt'; b.textContent = opt;
+      b.addEventListener('click', () => {
+        if (box.dataset.fertig) return;
+        box.dataset.fertig = '1'; beantwortet++;
+        box.querySelectorAll('.quiz-opt').forEach((ob, idx) => {
+          ob.disabled = true;
+          if (idx === item.r) ob.classList.add('richtig');
         });
-        wrap.appendChild(b);
+        if (oi === item.r){ richtig++; fb.style.color = '#1E5C37'; fb.textContent = '✓ Richtig. ' + item.fb; }
+        else { b.classList.add('falsch'); fb.style.color = '#8A2A26'; fb.textContent = '✗ ' + item.fb; }
+        fb.hidden = false;
+        if (beantwortet === QUIZ.length){
+          quizErg.hidden = false;
+          quizErg.textContent = 'Ergebnis: ' + richtig + ' von ' + QUIZ.length + ' richtig.';
+        }
       });
-      wrap.appendChild(fb);
-      quizBody.appendChild(wrap);
+      box.appendChild(b);
     });
-  }
-  quizBtn.addEventListener('click', () => { buildQuiz(); quizOverlay.classList.add('open'); });
-  document.getElementById('quiz-x').addEventListener('click', () => quizOverlay.classList.remove('open'));
-  quizOverlay.addEventListener('click', e => { if (e.target === quizOverlay) quizOverlay.classList.remove('open'); });
-
-  // ESC schliesst Overlays
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape'){ cmpOverlay.classList.remove('open'); quizOverlay.classList.remove('open'); }
+    box.appendChild(fb);
+    quizBody.appendChild(box);
   });
+}
+
+/* ==========================================================================
+   6 · Bild vorhanden?
+   ========================================================================== */
+
+const fotoNormal = document.getElementById('foto-normal');
+const fotoStoer  = document.getElementById('foto-stoer');
+const hinweis    = document.getElementById('fehlhinweis');
+
+fotoNormal.addEventListener('error', () => {
+  szene.classList.add('kein-bild');
+  fotoNormal.classList.add('aus');
+  hinweis.textContent = 'Hintergrundbild wasserkreislauf_guter_kreislauf.jpg fehlt – die Folie läuft, zeigt aber nur die Animationsebene.';
+});
+fotoStoer.addEventListener('error', () => {
+  szene.classList.add('ein-bild');
+  fotoStoer.classList.add('aus');
+});
+
+/* ==========================================================================
+   7 · Start
+   ========================================================================== */
+
+document.body.classList.add('spot-an');
+baueChips();
+zeigeUebersicht();
+fahnenMessen();
+window.addEventListener('load', fahnenMessen);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(fahnenMessen);
 </script>
+
 <style>
-/* Zoomleiste: +/- und Vollbild, unten rechts */
+/* Zoomleiste: +/- und Vollbild, oben rechts */
 .zoomleiste{position:fixed; right:12px; top:12px; z-index:99999; display:flex; gap:2px;
   background:rgba(255,255,255,.78); border:1px solid rgba(21,35,50,.14); border-radius:999px;
   padding:3px; box-shadow:0 3px 12px rgba(21,35,50,.18);
@@ -902,7 +1144,7 @@ html.eingebettet body{ zoom:.82; }
   function setZ(nz){
     z = Math.max(0.5, Math.min(1.4, Math.round(nz*100)/100));
     document.body.style.zoom = z;
-    leiste.style.zoom = 1/z;   /* Leiste bleibt gleich gross */
+    leiste.style.zoom = 1/z;
   }
   function mk(txt, titel, fn){
     var b = document.createElement('button');
@@ -911,10 +1153,10 @@ html.eingebettet body{ zoom:.82; }
     b.addEventListener('click', fn);
     leiste.appendChild(b);
   }
-  mk('\u2212', 'Kleiner', function(){ setZ(z - 0.1); });
-  mk('+', 'Gr\u00f6sser', function(){ setZ(z + 0.1); });
+  mk('−', 'Kleiner', function(){ setZ(z - 0.1); });
+  mk('+', 'Grösser', function(){ setZ(z + 0.1); });
   if(!document.getElementById('vollbild')){
-    mk('\u26f6', 'Vollbild (Esc beendet)', function(){
+    mk('⛶', 'Vollbild (Esc beendet)', function(){
       var drin = document.fullscreenElement || document.webkitFullscreenElement;
       if(drin){
         (document.exitFullscreen || document.webkitExitFullscreen).call(document);
