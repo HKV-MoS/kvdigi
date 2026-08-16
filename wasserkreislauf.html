@@ -88,6 +88,46 @@
   svg.ebene.klicklos{ pointer-events:none; }
 
   /* Störmodus: Foto wechseln, sonst Farbstich als Notlösung */
+  /* ---------- Vergleichsregler: dieselbe Landschaft, links gestört, rechts natürlich ---------- */
+  body.vergleich .scene img.foto.nur-normal{ display:block; }
+  body.vergleich .scene img.foto.nur-stoer{
+    display:block; clip-path:inset(0 calc(100% - var(--wisch,45%)) 0 0);
+    transition:clip-path .55s cubic-bezier(.4,0,.2,1);
+  }
+  .wischleiste{ display:none; position:absolute; top:0; bottom:0; left:var(--wisch,45%); width:0; z-index:4;
+    transition:left .55s cubic-bezier(.4,0,.2,1); }
+  body.zieht .scene img.foto.nur-stoer, body.zieht .wischleiste{ transition:none; }
+  body.vergleich .wischleiste{ display:block; }
+  .wischleiste .linie{ position:absolute; top:0; bottom:0; left:-2px; width:4px;
+    background:#fff; box-shadow:0 0 14px rgba(0,0,0,.5); }
+  .wischleiste .griff{
+    position:absolute; top:50%; left:-23px; margin-top:-23px; width:46px; height:46px;
+    border-radius:50%; border:none; background:#fff; box-shadow:0 3px 16px rgba(0,0,0,.45);
+    cursor:ew-resize; touch-action:none; color:var(--stoer); line-height:0; padding:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .wischleiste .griff:focus-visible{ outline:3px solid #9FD0F5; outline-offset:3px; }
+  .wischmarke{
+    display:none; position:absolute; top:12px; z-index:4; pointer-events:none;
+    font-size:11px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; color:#fff;
+    background:rgba(16,34,48,.62); padding:6px 11px; border-radius:8px; backdrop-filter:blur(3px);
+  }
+  body.vergleich .wischmarke{ display:block; }
+  .wischmarke.links{ left:12px; } .wischmarke.rechts{ right:12px; }
+  body.vergleich #marken, body.vergleich #fx-stoer{ display:none; }
+  body.vergleich .scene{ cursor:ew-resize; }
+  body.vergleich header{ background:linear-gradient(135deg,#213B42 0%,#3C6E73 45%,#C24B1E 100%); }
+  body.vergleich .panel .eyebrow, body.vergleich .panel h2{ color:var(--stoer); }
+  body.vergleich .chip .num{ background:var(--stoer); }
+  body.vergleich .chip:hover{ background:var(--stoer-lt); }
+  body.vergleich .chip.aktiv{ background:var(--stoer-lt); border-color:var(--stoer); }
+  body.vergleich .qbox{ background:var(--stoer-lt); border-left-color:var(--stoer); color:#7A3A1E; }
+  body.vergleich .qbox .qlabel{ color:var(--stoer); }
+  body.vergleich .fakt{ background:#FBF2EC; color:#6E3A20; }
+  body.vergleich .fakt b{ color:var(--stoer); }
+  body.vergleich .mode-opt.active{ background:var(--stoer); }
+  body.vergleich .progress span.done{ background:var(--stoer); }
+
   body.stoer .scene img.foto.nur-normal{ display:none; }
   .scene img.foto.nur-stoer{ display:none; }
   body.stoer .scene img.foto.nur-stoer{ display:block; }
@@ -289,8 +329,9 @@ html.eingebettet body{ zoom:.82; }
     <div class="scene-head">
       <div class="controls">
         <div class="modeswitch" role="tablist" aria-label="Modus wählen">
-          <button class="mode-opt active" id="mode-normal" role="tab" aria-selected="true">Natürlicher Kreislauf</button>
-          <button class="mode-opt" id="mode-stoer" role="tab" aria-selected="false">Gestörter Kreislauf</button>
+          <button class="mode-opt active" id="mode-normal" role="tab" aria-selected="true">Natürlich</button>
+          <button class="mode-opt" id="mode-vergleich" role="tab" aria-selected="false">Vergleich</button>
+          <button class="mode-opt" id="mode-stoer" role="tab" aria-selected="false">Gestört</button>
         </div>
         <button class="btn" id="tour-btn">▶ Tour starten</button>
         <button class="btn ghost" id="fahnen-btn" aria-pressed="true">Beschriftungen</button>
@@ -451,6 +492,19 @@ html.eingebettet body{ zoom:.82; }
         <!-- Spotlight-Abdunklung -->
         <rect id="dimmer" x="0" y="0" width="1000" height="750" fill="#0C2032" opacity="0" mask="url(#mSpot)"/>
       </svg>
+
+      <div class="wischmarke links">Gestört</div>
+      <div class="wischmarke rechts">Natürlich</div>
+      <div class="wischleiste" id="wischleiste">
+        <div class="linie"></div>
+        <button class="griff" id="wischgriff" type="button" aria-label="Regler zwischen gestörtem und natürlichem Kreislauf verschieben"
+                role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="34">
+          <svg viewBox="0 0 40 20" width="26" height="13" aria-hidden="true" focusable="false">
+            <path d="M17,3 L9,10 L17,17 Z" fill="currentColor"/>
+            <path d="M23,3 L31,10 L23,17 Z" fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
 
       <!-- Ebene 2: Beschriftungen und Marken, klickbar -->
       <svg class="ebene" id="marken" viewBox="0 0 1000 750" preserveAspectRatio="none">
@@ -655,6 +709,13 @@ const STOERUNGEN = [
     q:'Wieso können Dürre und Hochwasser im selben Sommer auftreten?' }
 ];
 
+const VERGLEICH_INTRO = {
+  eyebrow:'Vergleich',
+  title:'Dieselbe Landschaft, zwei Zustände',
+  text:'Ziehen Sie den Regler nach rechts. Die Landschaft bleibt dieselbe – Bergkette, Bach und Bodenquerschnitt liegen am gleichen Ort. Was sich ändert, ist der Mensch darin: Siedlung und Asphalt, bewässerte Felder, ein Brunnen im Grundwasser, ausgetrockneter Boden. Klicken Sie unten auf einen Eingriff, dann fährt der Regler von selbst dorthin – oder starten Sie die Tour und lassen Sie ihn durchlaufen.',
+  fakt:'Achten Sie besonders auf den <b>Bodenquerschnitt unten rechts</b>. Dort sehen Sie, was Versiegelung und Entnahme mit dem Grundwasser machen.'
+};
+
 const STOER_INTRO = {
   eyebrow:'Gestörter Kreislauf',
   title:'Wenn der Mensch eingreift',
@@ -791,7 +852,7 @@ const fortBar = document.getElementById('progress');
 let modus  = 'normal';   /* 'normal' | 'stoer' */
 let aktiv  = null;       /* 'haupt:3' | 'neben:n2' | null */
 
-function liste(){ return modus === 'stoer' ? STOERUNGEN : STATIONEN; }
+function liste(){ return (modus === 'stoer' || modus === 'vergleich') ? STOERUNGEN : STATIONEN; }
 function finde(schluessel){
   if (!schluessel) return null;
   const [art, id] = schluessel.split(':');
@@ -862,7 +923,8 @@ function setzeAktiv(schluessel, tourStoppen){
   if (istNeben) balken.forEach(b => b.classList.remove('done'));
   else balken.forEach((b,i) => b.classList.toggle('done', i < Number(obj.id)));
 
-  setzeSpot(obj.pos);
+  if (modus === 'vergleich'){ setzeSpot(null); wischZu(zielWisch(obj)); }
+  else setzeSpot(obj.pos);
 
   const l = liste();
   const idx = istNeben ? -1 : l.findIndex(x => String(x.id) === String(obj.id));
@@ -874,7 +936,7 @@ function setzeAktiv(schluessel, tourStoppen){
 
 function zeigeUebersicht(){
   aktiv = null;
-  zeigeText(modus === 'stoer' ? STOER_INTRO : INTRO, false);
+  zeigeText(modus === 'stoer' ? STOER_INTRO : (modus === 'vergleich' ? VERGLEICH_INTRO : INTRO), false);
   qbox.hidden = true;
   document.querySelectorAll('.marke').forEach(m => m.classList.remove('aktiv'));
   document.querySelectorAll('.chip').forEach(c => c.classList.remove('aktiv'));
@@ -994,30 +1056,77 @@ function stoppeTour(){
 tourBtn.addEventListener('click', () => { tourTimer ? stoppeTour() : starteTour(); });
 
 /* --- Modus -------------------------------------------------------------- */
-const modeNormalBtn = document.getElementById('mode-normal');
-const modeStoerBtn  = document.getElementById('mode-stoer');
-const fxStoer       = document.getElementById('fx-stoer');
+const modeNormalBtn    = document.getElementById('mode-normal');
+const modeVergleichBtn = document.getElementById('mode-vergleich');
+const modeStoerBtn     = document.getElementById('mode-stoer');
+const fxStoer          = document.getElementById('fx-stoer');
 
 function setzeModus(m){
   if (modus === m) return;
   stoppeTour();
   modus = m;
-  const istStoer = (m === 'stoer');
+  const istStoer     = (m === 'stoer');
+  const istVergleich = (m === 'vergleich');
   document.body.classList.toggle('stoer', istStoer);
-  modeNormalBtn.classList.toggle('active', !istStoer);
-  modeStoerBtn.classList.toggle('active', istStoer);
-  modeNormalBtn.setAttribute('aria-selected', String(!istStoer));
-  modeStoerBtn.setAttribute('aria-selected', String(istStoer));
+  document.body.classList.toggle('vergleich', istVergleich);
+  [[modeNormalBtn,'normal'],[modeVergleichBtn,'vergleich'],[modeStoerBtn,'stoer']].forEach(function(paar){
+    paar[0].classList.toggle('active', m === paar[1]);
+    paar[0].setAttribute('aria-selected', String(m === paar[1]));
+  });
   gMarkenN.style.display = istStoer ? 'none' : '';
   gMarkenS.style.display = istStoer ? '' : 'none';
   gFahnenN.style.display = istStoer ? 'none' : '';
   gFahnenS.style.display = istStoer ? '' : 'none';
   fxStoer.style.display  = istStoer ? '' : 'none';
+  if (istVergleich) wischZu(34);
   baueChips();
   zeigeUebersicht();
 }
 modeNormalBtn.addEventListener('click', () => setzeModus('normal'));
+modeVergleichBtn.addEventListener('click', () => setzeModus('vergleich'));
 modeStoerBtn.addEventListener('click', () => setzeModus('stoer'));
+
+/* --- Vergleichsregler ---------------------------------------------------
+   Links liegt die gestörte Landschaft, rechts die natürliche. Wer den Regler
+   nach rechts zieht, sieht den menschlichen Eingriff über die Landschaft
+   wandern – Ursache und Wirkung an derselben Stelle. */
+const wischGriff = document.getElementById('wischgriff');
+let wisch = 34;
+
+function wischZu(prozent){
+  wisch = Math.max(3, Math.min(97, prozent));
+  szene.style.setProperty('--wisch', wisch + '%');
+  wischGriff.setAttribute('aria-valuenow', String(Math.round(wisch)));
+}
+/* Der Regler fährt so weit, dass der gewählte Eingriff gerade freigelegt ist. */
+function zielWisch(obj){ return Math.max(18, Math.min(94, obj.pos[0] / 10 + 13)); }
+
+function ausZeiger(e){
+  const r = szene.getBoundingClientRect();
+  if (!r.width) return;
+  wischZu(((e.clientX - r.left) / r.width) * 100);
+}
+let zieht = false;
+szene.addEventListener('pointerdown', e => {
+  if (modus !== 'vergleich') return;
+  zieht = true; document.body.classList.add('zieht');
+  try { szene.setPointerCapture(e.pointerId); } catch(err){}
+  ausZeiger(e); e.preventDefault();
+});
+szene.addEventListener('pointermove', e => { if (zieht) ausZeiger(e); });
+['pointerup','pointercancel'].forEach(t => szene.addEventListener(t, e => {
+  if (!zieht) return;
+  zieht = false; document.body.classList.remove('zieht');
+  try { szene.releasePointerCapture(e.pointerId); } catch(err){}
+}));
+wischGriff.addEventListener('keydown', e => {
+  const schritt = e.shiftKey ? 10 : 3;
+  if (e.key === 'ArrowLeft'){ wischZu(wisch - schritt); e.preventDefault(); }
+  if (e.key === 'ArrowRight'){ wischZu(wisch + schritt); e.preventDefault(); }
+  if (e.key === 'Home'){ wischZu(3); e.preventDefault(); }
+  if (e.key === 'End'){ wischZu(97); e.preventDefault(); }
+});
+wischZu(34);
 
 /* ==========================================================================
    5 · Overlays
