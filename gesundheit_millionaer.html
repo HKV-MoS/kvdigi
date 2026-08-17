@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gesundheit – Millionärsquiz · ABU HKV Aarau</title>
+<style>
+
+:root{
+  --tief:#213B42; --petrol:#3C6E73; --gold:#D8AE66; --papier:#F4F8FB;
+  --ink:#1d2f36; --muted:#5b6b7d; --card:#ffffff; --line:#e2e8f1;
+  --gruen:#2E7D4F; --rot:#B3423A;
+}
+*{box-sizing:border-box}
+html.eingebettet body{ zoom:.82; }
+body{
+  margin:0; font-family:system-ui,-apple-system,'Segoe UI',sans-serif;
+  background:var(--papier); color:var(--ink); line-height:1.55; font-size:15px;
+}
+header{
+  background:linear-gradient(135deg,#213B42 0%,#3C6E73 100%); color:#fff;
+  padding:20px 24px 18px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+header h1{ margin:0 0 4px; font-size:clamp(21px,3vw,28px); letter-spacing:-.3px; }
+header h1 b{ color:var(--gold); font-weight:800; }
+header .sub{ font-size:13.5px; opacity:.88; max-width:70ch; margin:0 auto; }
+.wrap{ max-width:980px; margin:0 auto; padding:18px clamp(12px,3vw,28px) 40px; }
+
+/* Reiter */
+.tabs{ display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin:6px 0 18px; border-bottom:2px solid var(--line); }
+.tab{
+  font:inherit; font-weight:800; font-size:14.5px; padding:10px 18px; cursor:pointer;
+  background:none; border:none; color:var(--muted); border-bottom:3px solid transparent; margin-bottom:-2px;
+}
+.tab:hover{ color:var(--petrol); }
+.tab.an{ color:var(--tief); border-bottom-color:var(--gold); }
+.seite{ display:none; }
+.seite.an{ display:block; }
+
+.card{
+  background:var(--card); border:1px solid var(--line); border-radius:14px;
+  box-shadow:0 2px 10px rgba(20,50,80,.08); padding:18px 20px; margin-bottom:14px;
+}
+h2{ font-size:18px; margin:0 0 10px; color:var(--tief); }
+h3{ font-size:15px; margin:16px 0 6px; color:var(--petrol); }
+.gesetz{
+  display:inline-block; font-size:11px; font-weight:800; letter-spacing:.5px;
+  background:rgba(216,174,102,.16); color:#8a6520; border:1px solid rgba(216,174,102,.5);
+  border-radius:999px; padding:2px 9px; margin-left:6px; vertical-align:middle; white-space:nowrap;
+}
+
+/* Treppe */
+.treppe{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; align-items:end; margin:10px 0 4px; }
+.stufe{
+  border:2px solid var(--line); border-radius:12px; background:#fff; cursor:pointer;
+  padding:14px 14px 12px; text-align:left; font:inherit; transition:all .15s;
+}
+.stufe:hover{ border-color:var(--petrol); transform:translateY(-2px); }
+.stufe.an{ border-color:var(--gold); box-shadow:0 6px 18px rgba(33,59,66,.16); }
+.stufe .ico{ font-size:26px; display:block; margin-bottom:6px; }
+.stufe b{ display:block; font-size:15px; color:var(--tief); }
+.stufe small{ color:var(--muted); }
+.stufe:nth-child(1){ min-height:112px; }
+.stufe:nth-child(2){ min-height:138px; }
+.stufe:nth-child(3){ min-height:164px; }
+.stufe:nth-child(4){ min-height:190px; }
+.erklaer{ min-height:150px; }
+.erklaer .lead{ color:var(--muted); font-size:13.5px; margin-top:0; }
+/* Altersleiste: die drei festen Grenzen unter der Treppe */
+.altersleiste{ margin:16px 0 2px; }
+.al-band{
+  border:1px dashed var(--petrol); border-radius:9px; background:rgba(60,110,115,.06);
+  color:var(--tief); font-size:13px; padding:7px 11px; margin-bottom:14px;
+}
+.al-band b{ color:var(--petrol); }
+.al-schiene{ position:relative; display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.al-schiene::before{
+  content:''; position:absolute; left:9%; right:9%; top:11px; height:3px; border-radius:2px;
+  background:linear-gradient(90deg,var(--petrol),var(--gold)); opacity:.5;
+}
+.al-punkt{ position:relative; text-align:center; padding-top:26px; }
+.al-punkt::before{
+  content:''; position:absolute; top:4px; left:50%; margin-left:-8px;
+  width:16px; height:16px; border-radius:50%; background:#fff;
+  border:3px solid var(--petrol);
+}
+.al-punkt.jetzt::before{ border-color:var(--gold); box-shadow:0 0 0 4px rgba(216,174,102,.22); }
+.al-punkt b{ display:block; font-size:16px; color:var(--tief); }
+.al-punkt span{ display:block; font-size:12.5px; color:var(--muted); line-height:1.35; margin-top:2px; }
+.al-punkt em{ display:inline-block; margin-top:5px; font-style:normal; }
+@media (max-width:640px){
+  .al-schiene{ grid-template-columns:1fr; gap:16px; }
+  .al-schiene::before{ display:none; }
+  .al-punkt{ padding-top:0; padding-left:30px; text-align:left; }
+  .al-punkt::before{ top:2px; left:0; margin-left:0; }
+}
+.merk{
+  border-left:3px solid var(--gold); background:rgba(216,174,102,.08);
+  padding:10px 14px; border-radius:0 10px 10px 0; margin:12px 0 0; font-size:14px;
+}
+.stufenbild{ display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+.pille{
+  font-size:12.5px; font-weight:700; border-radius:999px; padding:5px 12px;
+  border:1.5px solid var(--line); background:#fff; color:var(--ink);
+}
+.pille.gruen{ border-color:rgba(46,125,79,.5); color:var(--gruen); background:rgba(46,125,79,.07); }
+.pille.rot{ border-color:rgba(179,66,58,.45); color:var(--rot); background:rgba(179,66,58,.06); }
+
+/* Faelle */
+.fall{ margin-bottom:14px; }
+.fall .situation{ font-size:15px; }
+.fall .frage{ font-weight:700; color:var(--tief); margin:8px 0; }
+.antworten{ display:flex; gap:8px; flex-wrap:wrap; }
+.antworten button{
+  font:inherit; font-weight:700; font-size:14px; cursor:pointer;
+  border:2px solid var(--line); border-radius:999px; background:#fff; padding:8px 18px;
+  transition:all .13s;
+}
+.antworten button:hover{ border-color:var(--petrol); }
+.antworten button.richtig{ border-color:var(--gruen); background:rgba(46,125,79,.1); color:var(--gruen); }
+.antworten button.falsch{ border-color:var(--rot); background:rgba(179,66,58,.08); color:var(--rot); }
+.aufloesung{ display:none; margin-top:10px; padding:10px 14px; border-radius:10px; font-size:14px;
+  background:var(--papier); border:1px solid var(--line); }
+.aufloesung.zeig{ display:block; }
+.aufloesung b.ok{ color:var(--gruen); }
+.aufloesung b.nein{ color:var(--rot); }
+
+/* Quiz */
+.qfrage{ font-weight:700; margin-bottom:8px; }
+.qopt{ display:block; width:100%; text-align:left; font:inherit; font-size:14px; cursor:pointer;
+  border:2px solid var(--line); border-radius:10px; background:#fff; padding:9px 13px; margin-bottom:7px; transition:all .12s; }
+.qopt:hover{ border-color:var(--petrol); }
+.qopt.richtig{ border-color:var(--gruen); background:rgba(46,125,79,.1); }
+.qopt.falsch{ border-color:var(--rot); background:rgba(179,66,58,.07); }
+.qstand{ font-weight:800; color:var(--petrol); margin-top:6px; }
+/* Millionaers-Buehne */
+.buehne{
+  border-radius:16px; overflow:hidden; position:relative;
+  background:#060a2a url('millionaer_buehne.jpg?v=1') top center / 100% auto no-repeat;
+  padding:38% clamp(14px,3vw,60px) 28px;
+  box-shadow:0 8px 30px rgba(6,10,42,.5);
+}
+.buehne::before{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(6,10,42,0) 30%, rgba(6,10,42,.55) 55%, rgba(6,10,42,.92) 100%);
+  pointer-events:none;
+}
+.buehne > *{ position:relative; }
+.b-hinweis{ color:#aab4e8; font-size:13px; text-align:center; margin:0 0 10px; }
+.leiter{ display:flex; gap:6px; flex-wrap:wrap; justify-content:center; margin:0 0 16px; }
+.leiter span{
+  height:28px; padding:0 11px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:12px; font-variant-numeric:tabular-nums;
+  border:2px solid rgba(170,180,232,.45); color:#aab4e8;
+  background:rgba(6,10,42,.55); transition:all .25s;
+}
+.leiter span.geschafft{ border-color:#3fae62; background:rgba(46,125,79,.4); color:#c9f2d6; }
+.leiter span.aktuell{ border-color:#F3CE8E; background:rgba(216,174,102,.3); color:#F3CE8E; transform:scale(1.15); }
+.raute{
+  clip-path:polygon(26px 0, calc(100% - 26px) 0, 100% 50%, calc(100% - 26px) 100%, 26px 100%, 0 50%);
+  background:linear-gradient(180deg,#141d63 0%,#080d3d 55%,#0b1250 100%);
+  border-top:2px solid #5a79e8; border-bottom:2px solid #5a79e8;
+  color:#fff; padding:14px 40px; text-align:center;
+}
+.buehne .qfrage{ font-weight:700; font-size:16.5px; margin:0 auto 16px; max-width:820px; }
+.buehne .qoptzeile{ display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; max-width:860px; margin:0 auto; }
+.buehne .qopt{
+  clip-path:polygon(22px 0, calc(100% - 22px) 0, 100% 50%, calc(100% - 22px) 100%, 22px 100%, 0 50%);
+  background:linear-gradient(180deg,#141d63 0%,#080d3d 55%,#0b1250 100%);
+  border:none; border-top:2px solid #5a79e8; border-bottom:2px solid #5a79e8;
+  color:#fff; font-size:14.5px; text-align:left; padding:12px 16px 12px 34px; margin:0;
+  width:100%; cursor:pointer; transition:background .15s;
+}
+.buehne .qopt:hover{ background:linear-gradient(180deg,#d07b12 0%,#8f4e00 60%,#b06407 100%); border-color:#F3CE8E; }
+.buehne .qopt .buchst{ color:#F3CE8E; font-weight:800; margin-right:.5em; }
+.buehne .qopt.richtig{ background:linear-gradient(180deg,#1f8c46 0%,#0e5427 60%,#15703a 100%); border-color:#7fe0a2; }
+.buehne .qopt.falsch{ background:linear-gradient(180deg,#a3271f 0%,#6b120d 60%,#8a1c15 100%); border-color:#f2a09a; }
+.q-ende{ border-radius:12px; padding:16px 18px; margin:6px auto 0; max-width:640px; text-align:center; color:#fff; }
+.q-ende.raus{ background:rgba(107,18,13,.55); border:1.5px solid rgba(242,160,154,.6); }
+.q-ende.sieg{ background:rgba(14,84,39,.55); border:1.5px solid rgba(127,224,162,.6); }
+.q-ende h3{ margin:0 0 6px; color:#F3CE8E; }
+.sieg-bild{ width:min(420px,100%); border-radius:12px; display:block; margin:0 auto 12px;
+  border:2px solid rgba(243,206,142,.6); box-shadow:0 8px 26px rgba(0,0,0,.5); }
+.q-neustart{
+  font:inherit; font-weight:800; font-size:14px; cursor:pointer; margin-top:10px;
+  border:none; border-radius:999px; background:#F3CE8E; color:#213B42; padding:10px 22px;
+}
+.q-neustart:hover{ background:#fff; }
+.buehne .qstand{ color:#F3CE8E; text-align:center; margin-bottom:0; }
+.q-wert{ text-align:center; color:#F3CE8E; font-weight:800; font-size:15px; margin:0 0 14px; }
+.geldleiter{
+  position:absolute; top:2%; right:2.5%; width:clamp(148px,18%,196px);
+  background:rgba(4,7,30,.85); border:1.5px solid rgba(243,206,142,.55); border-radius:12px;
+  padding:5px 8px; font-variant-numeric:tabular-nums;
+}
+.gl-zeile{
+  display:flex; justify-content:space-between; align-items:center; gap:8px;
+  padding:1px 8px; border-radius:6px; font-size:11.5px; font-weight:700; color:#aab4e8; line-height:1.55;
+}
+.gl-zeile .gl-nr{ color:rgba(243,206,142,.75); width:18px; text-align:right; }
+.gl-zeile.aktuell{ background:rgba(216,174,102,.32); color:#fff; }
+.gl-zeile.aktuell .gl-nr{ color:#F3CE8E; }
+.gl-zeile.geschafft{ color:#7fe0a2; }
+@media (min-width:901px){ .leiter{ display:none; } }
+@media (max-width:900px){ .geldleiter{ display:none; } }
+/* Joker */
+.joker-overlay{ position:absolute; top:0; left:0; width:100%; aspect-ratio:3060/1139; pointer-events:none; }
+.joker-overlay button{
+  position:absolute; width:11.6%; pointer-events:auto;
+  background:transparent; border:none; border-radius:50%; cursor:pointer;
+  transition:box-shadow .15s;
+}
+.joker-overlay button:hover{ box-shadow:0 0 0 3px rgba(243,206,142,.85), 0 0 24px rgba(243,206,142,.6); }
+.joker-overlay #j5050{ left:3.8%; top:14.6%; height:15.4%; }
+.joker-overlay #jtel{ left:4.1%; top:41.2%; height:18.4%; }
+.joker-overlay #jpub{ left:3.9%; top:69.6%; height:17.2%; }
+.joker-overlay button.verbraucht{ pointer-events:none; background:rgba(4,6,28,.55); }
+.joker-overlay button.verbraucht::after{
+  content:'✕'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  color:#ff7a6e; font-size:clamp(18px,2.6vw,34px); font-weight:800;
+}
+.joker-zeile{ display:none; gap:8px; justify-content:center; margin:0 0 12px; }
+.joker-zeile button{
+  font:inherit; font-weight:800; font-size:13px; cursor:pointer;
+  border:1.5px solid rgba(243,206,142,.7); border-radius:999px; color:#F3CE8E;
+  background:rgba(6,10,42,.6); padding:7px 14px;
+}
+.joker-zeile button.verbraucht{ opacity:.35; pointer-events:none; text-decoration:line-through; }
+.joker-ausgabe{
+  display:none; max-width:640px; margin:0 auto 14px; padding:12px 16px; border-radius:12px;
+  background:rgba(6,10,42,.75); border:1.5px solid rgba(243,206,142,.55); color:#fff; font-size:14px;
+}
+.joker-ausgabe.zeig{ display:block; }
+.joker-ausgabe .balkenzeile{ display:flex; align-items:center; gap:8px; margin:5px 0; }
+.joker-ausgabe .balkenzeile b{ width:22px; color:#F3CE8E; }
+.joker-ausgabe .balken{ height:16px; background:linear-gradient(180deg,#5a79e8,#2c48b8); border-radius:4px; }
+.joker-ausgabe .prozent{ font-size:12.5px; color:#aab4e8; }
+@media (max-width:900px){
+  .joker-overlay{ display:none; }
+  .joker-zeile{ display:flex; flex-wrap:wrap; }
+}
+@media (max-width:640px){
+  .buehne .qoptzeile{ grid-template-columns:1fr; }
+  .buehne{ background-size:cover; }
+}
+
+footer{ text-align:center; padding:18px 12px 26px; }
+.cr{ color:#94A3B0; font-size:11px; }
+.cr a{ color:inherit; }
+
+/* Zoomleiste */
+.zoomleiste{position:fixed; right:12px; top:12px; z-index:99999; display:flex; gap:2px;
+  background:rgba(255,255,255,.78); border:1px solid rgba(21,35,50,.14); border-radius:999px;
+  padding:3px; box-shadow:0 3px 12px rgba(21,35,50,.18);
+  opacity:.55; transition:opacity .18s; backdrop-filter:blur(4px);}
+.zoomleiste:hover,.zoomleiste:focus-within{opacity:1;}
+.zoomleiste button{width:27px; height:27px; border-radius:999px; padding:0;
+  border:none; background:transparent; color:#152332;
+  font-size:14px; line-height:1; cursor:pointer;}
+.zoomleiste button:hover{background:rgba(21,35,50,.09);}
+@media print{.zoomleiste{display:none}}
+@media (max-width:640px){
+  .treppe{ grid-template-columns:1fr; align-items:stretch; }
+  .stufe:nth-child(n){ min-height:0; }
+  .card table{ display:block; overflow-x:auto; }
+}
+
+/* Uebersichtsgrafik (aus der Personenrecht-Folie uebernommen, hier ungenutzt) */
+.uebersicht-bild{margin:0}
+.uebersicht-bild img{
+  width:100%; height:auto; display:block; border-radius:10px;
+  border:1px solid var(--line); background:#fff; cursor:zoom-in;
+}
+.uebersicht-bild figcaption{
+  margin-top:8px; font-size:12.5px; color:var(--muted);
+}
+#bildLupe{
+  position:fixed; inset:0; z-index:9000; display:none;
+  background:rgba(15,28,33,.92); padding:24px; cursor:zoom-out;
+}
+#bildLupe.an{display:flex; align-items:center; justify-content:center}
+#bildLupe img{max-width:100%; max-height:100%; border-radius:8px}
+#bildLupe .schliessen{
+  position:absolute; top:14px; right:20px; color:#fff; font-size:30px;
+  line-height:1; background:none; border:0; cursor:pointer;
+}
+
+</style>
+<style>
+html.eingebettet body{ zoom:.82; }
+.hinweis-card{ background:var(--card); border:1.5px solid var(--line); border-radius:14px;
+  padding:14px 16px; margin:0 0 16px; box-shadow:0 2px 10px rgba(20,50,80,.06); }
+.hinweis-card h2{ margin:0 0 8px; }
+.hinweis-card p{ margin:0 0 8px; color:var(--muted); font-size:13.5px; }
+.hinweis-card p:last-of-type{ margin-bottom:0; }
+.themen{ display:flex; gap:6px; flex-wrap:wrap; margin-top:11px; }
+.themen span{ font-size:12px; font-weight:700; color:var(--petrol); background:rgba(60,110,115,.09);
+  border:1px solid rgba(60,110,115,.25); border-radius:999px; padding:4px 10px; }
+</style>
+</head>
+<body>
+<script>if(window.self!==window.top){document.documentElement.classList.add('eingebettet');}</script>
+
+<header>
+  <h1>Gesundheit – das <b>Millionärsquiz</b></h1>
+  <div class="sub">Thema 4 «Verantwortung übernehmen», Block Gesundheit: WHO-Definition, Work-Life-Balance, Stress, Ernährung, Essstörungen und Sucht.</div>
+</header>
+
+<div class="wrap">
+  <div class="hinweis-card">
+    <h2>Zum Üben für die Prüfung</h2>
+    <p>Über 60 Fragen im Pool, 15 pro Runde – jede Runde ist anders zusammengesetzt. Eine falsche Antwort beendet die Runde. Drei Joker helfen weiter: 50:50, Telefon und Publikum.</p>
+    <p>Alle Zahlen stammen aus amtlichen Schweizer Quellen: BAG, Bundesamt für Statistik, Bundesamt für Lebensmittelsicherheit, Sucht Schweiz, Gesundheitsförderung Schweiz und WHO. Stand August 2026.</p>
+    <div class="themen">
+      <span>WHO-Definition</span><span>Bewegung</span><span>Work-Life-Balance</span><span>Matrix wichtig und dringend</span>
+      <span>Eustress und Distress</span><span>Stressoren</span><span>Lebensmittelpyramide</span><span>Essstörungen</span>
+      <span>Sucht und Suchtspirale</span><span>Tabak und Alkohol</span><span>Vier-Säulen-Politik</span><span>Beratungsstellen</span>
+      <span>Bericht und Schilderung</span>
+    </div>
+  </div>
+
+  <section class="seite an" id="seite-quiz">
+    <div class="buehne">
+      <div class="joker-overlay" aria-label="Joker">
+        <button type="button" id="j5050" data-joker="fifty" title="50:50-Joker – eine falsche Antwort verschwindet"></button>
+        <button type="button" id="jtel" data-joker="tel" title="Telefonjoker – ein Anruf, ein Tipp"></button>
+        <button type="button" id="jpub" data-joker="pub" title="Publikumsjoker – das Publikum stimmt ab"></button>
+      </div>
+      <div class="geldleiter" id="geldLeiter" aria-label="Gewinnstufen"></div>
+      <p class="b-hinweis">Eine falsche Antwort – und die Runde ist vorbei. Jede Runde bringt andere Fragen. <b>Wer schafft alle 15 bis zur Million?</b></p>
+      <div class="joker-zeile">
+        <button type="button" data-joker="fifty">50:50</button>
+        <button type="button" data-joker="tel">☎ Telefon</button>
+        <button type="button" data-joker="pub">👥 Publikum</button>
+      </div>
+      <div class="joker-ausgabe" id="jokerAusgabe"></div>
+      <div class="leiter" id="qLeiter"></div>
+      <p class="q-wert" id="qWert"></p>
+      <div id="quizListe"></div>
+      <p class="qstand" id="qstand"></p>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <p class="cr">© 2026 <a href="mailto:samuel.mollet@hkv.ch">Samuel Mollet</a> · HKV Aarau · realisiert mit Claude (Anthropic)</p>
+</footer>
+
+<script src="quizmusik.js?v=2"></script>
+<script>
+var POOL = [
+  /* --- Gesundheit allgemein --- */
+  { f:'Wie definiert die WHO Gesundheit?', o:['Als Fehlen von Krankheit','Als Zustand vollständigen körperlichen, geistigen und sozialen Wohlbefindens','Als körperliche Leistungsfähigkeit','Als Abwesenheit von Schmerzen'], r:1 },
+  { f:'Welche drei Dimensionen nennt die WHO-Definition?', o:['körperlich, geistig, sozial','körperlich, seelisch, finanziell','geistig, sozial, beruflich','körperlich, geistig, sportlich'], r:0 },
+  { f:'Was betont die WHO-Definition ausdrücklich?', o:['Gesundheit ist mehr als das Fehlen von Krankheit','Gesundheit ist genau messbar','Gesundheit ist Privatsache','Gesundheit endet mit der Pensionierung'], r:0 },
+  { f:'Die WHO bezeichnet den bestmöglichen Gesundheitszustand als …', o:['Privileg','Grundrecht jedes Menschen','Ziel der Wirtschaft','Aufgabe der Familie'], r:1 },
+  { f:'Wie viel moderate Bewegung pro Woche empfehlen Bund und hepa.ch Erwachsenen?', o:['30 bis 60 Minuten','150 bis 300 Minuten','10 bis 20 Minuten','8 bis 10 Stunden'], r:1 },
+  { f:'Was empfiehlt die Schweizer Bewegungsempfehlung zusätzlich zur Ausdauer?', o:['Mindestens zweimal pro Woche muskelkräftigende Übungen','Täglich eine Stunde Dehnen','Einmal pro Monat einen Wettkampf','Nichts weiter'], r:0 },
+
+  /* --- Work-Life-Balance --- */
+  { f:'Was bedeutet Work-Life-Balance?', o:['Möglichst wenig arbeiten','Ein tragfähiges Gleichgewicht zwischen Arbeit, Erholung und den übrigen Lebensbereichen','Arbeit und Freizeit strikt trennen','Immer erreichbar sein'], r:1 },
+  { f:'Was sagt das Zitat von Paracelsus über die Dosis?', o:['Erst die Menge entscheidet, ob etwas schadet','Alles Natürliche ist gesund','Gift ist immer gefährlich','Medikamente wirken nie schädlich'], r:0 },
+  { f:'Was kann laut Paracelsus bei der Balance schädlich sein?', o:['nur zuwenig','nur zuviel','sowohl zuviel als auch zuwenig','weder das eine noch das andere'], r:2 },
+  { f:'Wozu dient die Matrix «wichtig und dringend»?', o:['Aufgaben nach Priorität ordnen','Arbeitszeiten erfassen','Ferien planen','Noten berechnen'], r:0 },
+  { f:'Eine Aufgabe ist wichtig, aber nicht dringend. Was ist der richtige Umgang?', o:['Sofort erledigen','Einplanen und einen Termin dafür setzen','Sofort delegieren','Streichen'], r:1 },
+  { f:'Eine Aufgabe ist dringend, aber nicht wichtig. Was ist der richtige Umgang?', o:['Selbst und zuerst erledigen','Wenn möglich delegieren oder rasch abhaken','Für nächsten Monat einplanen','Ignorieren und vergessen'], r:1 },
+  { f:'Wie viele Felder hat die Matrix wichtig und dringend?', o:['Zwei','Drei','Vier','Sechs'], r:2 },
+
+  /* --- Stress --- */
+  { f:'Was ist Eustress?', o:['Positiver Stress, der anregt und die Leistung steigert','Stress, der krank macht','Stress am Feierabend','Stress ohne Ursache'], r:0 },
+  { f:'Was ist Distress?', o:['Kurzer Ärger','Belastender Stress, der überfordert und auf Dauer krank macht','Stress im Sport','Angenehme Spannung'], r:1 },
+  { f:'Wer hat die Begriffe Eustress und Distress geprägt?', o:['Sigmund Freud','Hans Selye','Paracelsus','Carl Gustav Jung'], r:1 },
+  { f:'Was bedeuten die Vorsilben in Eustress und Distress?', o:['«eu» heisst gut, «dis» heisst schlecht','«eu» heisst schnell, «dis» heisst langsam','«eu» heisst europäisch','Die Vorsilben bedeuten nichts'], r:0 },
+  { f:'Was ist ein Stressor?', o:['Eine Massnahme gegen Stress','Ein Auslöser, der Stress verursacht','Ein Messgerät','Ein Hormon'], r:1 },
+  { f:'Welches ist ein typischer Stressor im Lehralltag?', o:['Mehrere Prüfungen in derselben Woche','Ein freier Nachmittag','Genug Schlaf','Ein gutes Zeugnis'], r:0 },
+  { f:'Was kann Distress über längere Zeit auslösen?', o:['Bessere Konzentration','Schlafstörungen, Erschöpfung und körperliche Beschwerden','Mehr Appetit auf Gemüse','Nichts Messbares'], r:1 },
+  { f:'Laut Gesundheitsbefragung 2022 erlebt bei der Arbeit fast immer Stress …', o:['jede zwanzigste Person','etwa jede vierte erwerbstätige Person','die Hälfte aller Erwerbstätigen','fast niemand'], r:1 },
+  { f:'Der Job-Stress-Index 2022 zeigt: emotional erschöpft fühlt sich …', o:['rund jede zehnte erwerbstätige Person','rund jede dritte erwerbstätige Person','fast niemand','jede zweite Person'], r:1 },
+
+  /* --- Ernährung --- */
+  { f:'Wie viele Lebensmittelgruppen umfasst die überarbeitete Schweizer Lebensmittelpyramide?', o:['Fünf','Sechs','Acht','Zwölf'], r:2 },
+  { f:'Welche Gruppe steht in der Lebensmittelpyramide ganz unten?', o:['Getränke','Süssigkeiten','Fleisch','Öle und Fette'], r:0 },
+  { f:'Wie viele Portionen Gemüse und Früchte pro Tag empfiehlt die Schweiz?', o:['Drei','Fünf','Sieben','Zehn'], r:1 },
+  { f:'Wie verteilen sich die fünf Portionen Gemüse und Früchte?', o:['3 Gemüse und 2 Früchte','2 Gemüse und 3 Früchte','5 Gemüse und 0 Früchte','beliebig'], r:0 },
+  { f:'Wie gross ist eine Portion Gemüse oder Früchte?', o:['Etwa 120 Gramm oder eine Handvoll','Etwa 500 Gramm','Ein Kilogramm','Ein Teelöffel'], r:0 },
+  { f:'Wie viel sollte man täglich trinken – ungezuckert?', o:['Einen halben Liter','1 bis 2 Liter','4 bis 5 Liter','So viel wie möglich'], r:1 },
+  { f:'Was gilt seit der Überarbeitung der Pyramide für Fruchtsaft?', o:['Er zählt als Portion Früchte','Er zählt nicht mehr zu Gemüse und Früchten','Er ersetzt zwei Portionen','Er ist verboten'], r:1 },
+  { f:'Wo stehen Süssgetränke, Süsses und Salziges in der neuen Pyramide?', o:['An der Basis','In der Mitte','Ganz oben, als optional','Sie fehlen ganz'], r:2 },
+  { f:'Welches Öl wird für den täglichen Gebrauch besonders empfohlen?', o:['Kokosöl','Rapsöl','Palmöl','Butter'], r:1 },
+  { f:'Welche Gruppe ist in der neuen Pyramide erstmals von den Ölen getrennt?', o:['Nüsse und Samen','Kartoffeln','Milchprodukte','Eier'], r:0 },
+  { f:'Wie unterscheidet sich eine Diät von einer Ernährungsumstellung?', o:['Eine Diät ist zeitlich begrenzt, eine Umstellung dauerhaft','Es ist dasselbe','Eine Diät ist immer gesünder','Eine Umstellung dauert eine Woche'], r:0 },
+  { f:'Was ist ein typisches Risiko kurzfristiger Diäten?', o:['Das Gewicht kommt danach zurück','Man wird dauerhaft schlank','Der Stoffwechsel wird schneller','Es gibt keine Risiken'], r:0 },
+
+  /* --- Essstörungen --- */
+  { f:'Was ist das Leitmerkmal der Anorexia nervosa?', o:['Starkes Untergewicht bei grosser Angst vor Gewichtszunahme','Essanfälle mit Erbrechen','Essanfälle ohne Gegensteuern','Kalorienzählen ohne Folgen'], r:0 },
+  { f:'Was kennzeichnet die Bulimia nervosa?', o:['Nur Hungern','Der Wechsel von Essanfällen und gegensteuernden Massnahmen wie Erbrechen','Ausschliesslich vegane Ernährung','Sport im Übermass'], r:1 },
+  { f:'Was unterscheidet die Binge-Eating-Störung von der Bulimie?', o:['Es gibt keine Essanfälle','Die gegensteuernden Massnahmen fehlen','Sie betrifft nur Männer','Sie dauert nur wenige Tage'], r:1 },
+  { f:'Wie viele Menschen in der Schweiz sind im Lauf des Lebens von einer Essstörung betroffen?', o:['Rund 0,1 Prozent','Rund 3,5 Prozent','Rund 15 Prozent','Rund 30 Prozent'], r:1 },
+  { f:'Was gilt für Essstörungen bezüglich Geschlecht?', o:['Nur Frauen sind betroffen','Frauen sind häufiger betroffen, Männer aber ebenfalls','Nur Männer sind betroffen','Beide genau gleich häufig'], r:1 },
+  { f:'Wann beginnen Essstörungen meistens?', o:['Im Kindes- oder frühen Jugendalter','Erst ab vierzig','Nur im Alter','Nach der Pensionierung'], r:0 },
+  { f:'Was sind atypische Essstörungen?', o:['Formen, die nicht alle Kriterien der drei Hauptformen erfüllen','Erfundene Krankheiten','Essstörungen bei Tieren','Nur leichte Fälle ohne Behandlungsbedarf'], r:0 },
+
+  /* --- Sucht --- */
+  { f:'Was ist eine stoffgebundene Sucht?', o:['Abhängigkeit von einer Substanz wie Alkohol oder Nikotin','Abhängigkeit von einem Verhalten','Eine Allergie','Eine Essstörung'], r:0 },
+  { f:'Welches sind Beispiele für eine stoffungebundene Sucht?', o:['Alkohol und Tabak','Glücksspiel und Gaming','Cannabis und Kokain','Medikamente und Koffein'], r:1 },
+  { f:'Welches Merkmal haben alle Suchtformen gemeinsam?', o:['Kontrollverlust','Gewichtszunahme','Schlaflosigkeit','Hautausschlag'], r:0 },
+  { f:'Wie heissen die vier Stationen der Suchtspirale?', o:['Gebrauch, Missbrauch, Gewöhnung, Sucht','Neugier, Spass, Ärger, Reue','Test, Kauf, Konsum, Verzicht','Beginn, Mitte, Ende, Rückfall'], r:0 },
+  { f:'Weshalb spricht man von einer Suchtspirale und nicht von einer Treppe?', o:['Weil die Spirale die Dynamik zeigt und ein Ausstieg in jeder Phase möglich bleibt','Weil es hübscher aussieht','Weil es immer nur abwärts geht','Weil eine Treppe zu wenige Stufen hat'], r:0 },
+  { f:'Was passiert in der Phase Missbrauch?', o:['Man konsumiert, um negative Gefühle oder Situationen zu bewältigen','Man probiert erstmals etwas aus','Man hat die Kontrolle vollständig verloren','Man hört von selbst auf'], r:0 },
+  { f:'Wie viele Menschen sterben in der Schweiz jährlich an den Folgen des Rauchens?', o:['Rund 500','Rund 2000','Rund 9500','Rund 50 000'], r:2 },
+  { f:'Welchen Anteil aller Todesfälle in der Schweiz verursacht Tabak?', o:['Rund 1 Prozent','Rund 14 Prozent','Rund 40 Prozent','Rund 60 Prozent'], r:1 },
+  { f:'Wie viele Menschen in der Schweiz rauchen laut Gesundheitsbefragung 2022?', o:['Rund 5 Prozent','Rund 24 Prozent','Rund 50 Prozent','Rund 70 Prozent'], r:1 },
+  { f:'Ab welchem Alter dürfen in der Schweiz Zigaretten und Vapes abgegeben werden?', o:['Ab 14','Ab 16','Ab 18 in der ganzen Schweiz','Das ist je nach Kanton verschieden'], r:2 },
+  { f:'Was hat das Tabakproduktegesetz vom 1. Oktober 2024 verändert?', o:['Es erlaubt Werbung überall','Es führte ein landesweites Mindestalter von 18 Jahren ein','Es verbot den Verkauf ganz','Es senkte das Alter auf 16'], r:1 },
+  { f:'Ab welchem Alter darf man in der Schweiz Bier und Wein kaufen?', o:['Ab 14','Ab 16','Ab 18','Ab 20'], r:1 },
+  { f:'Ab welchem Alter darf man Spirituosen und Alcopops kaufen?', o:['Ab 16','Ab 18','Ab 20','Ab 21'], r:1 },
+  { f:'In welchem Kanton gilt für alle alkoholischen Getränke 18 Jahre?', o:['Aargau','Tessin','Zürich','Wallis'], r:1 },
+  { f:'Wie viele Menschen sterben in der Schweiz jährlich an den Folgen von Alkohol?', o:['Rund 100','Rund 1600','Rund 12 000','Rund 30 000'], r:1 },
+  { f:'Wie viel reiner Alkohol wird in der Schweiz pro Kopf und Jahr getrunken?', o:['Rund 2 Liter','Rund 7,6 Liter','Rund 20 Liter','Rund 40 Liter'], r:1 },
+
+  /* --- Suchtpolitik --- */
+  { f:'Wie viele Säulen hat die schweizerische Suchtpolitik?', o:['Zwei','Drei','Vier','Sechs'], r:2 },
+  { f:'Welche gehört NICHT zu den vier Säulen der Suchtpolitik?', o:['Prävention und Früherkennung','Therapie und Beratung','Schadensminderung','Steuererhöhung'], r:3 },
+  { f:'Was bedeutet die Säule Schadensminderung?', o:['Den Konsum ganz verbieten','Die Folgen des Konsums für Betroffene und Gesellschaft klein halten','Nur Beratung anbieten','Höhere Bussen verlangen'], r:1 },
+  { f:'Wann wurde die Vier-Säulen-Politik vom Volk im Betäubungsmittelgesetz bestätigt?', o:['In der Abstimmung von 2008','Bereits 1975','Erst 2020','Sie steht nicht im Gesetz'], r:0 },
+
+  /* --- Hilfe holen und Textsorten --- */
+  { f:'Welche Nummer ist die Beratung für Kinder und Jugendliche in der Schweiz?', o:['112','143','147','117'], r:2 },
+  { f:'Was gilt für einen Anruf auf die 147?', o:['Er ist gratis und erscheint auf keiner Telefonrechnung','Er kostet einen Franken pro Minute','Die Eltern werden informiert','Er ist nur werktags möglich'], r:0 },
+  { f:'Welche Nummer erreicht die Dargebotene Hand für alle Lebenskrisen?', o:['143','144','145','146'], r:0 },
+  { f:'Welche Plattform bietet anonyme und kostenlose Suchtberatung im Internet?', o:['safezone.ch','suchtkauf.ch','beratung24.ch','hilfeplus.ch'], r:0 },
+  { f:'Weshalb ist Beratung vertraulich?', o:['Damit Betroffene sich ohne Angst melden können','Damit niemand Statistiken führen muss','Weil es billiger ist','Sie ist nicht vertraulich'], r:0 },
+  { f:'Was kennzeichnet einen Bericht?', o:['Sachlich, nachvollziehbar und in zeitlicher Ordnung','Stimmungsvoll und ausschmückend','In der Ich-Form mit Gefühlen','Als Gedicht verfasst'], r:0 },
+  { f:'Was kennzeichnet eine Schilderung im Unterschied zum Bericht?', o:['Sie will Stimmung und Eindrücke vermitteln','Sie nennt nur Zahlen','Sie ist immer kürzer','Sie hat keine Einleitung'], r:0 }
+];
+
+
+var ZIEL = 15;
+var BETRAEGE = [100, 200, 300, 500, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 125000, 250000, 500000, 1000000];
+function geld(n){ return 'CHF ' + String(n).replace(/\B(?=(\d{3})+(?!\d))/g, "'"); }
+var runde = [], stufe = 0, best = 0;
+var joker = { fifty:false, tel:false, pub:false };
+var anzeige = { opts:[], korrekt:0 };
+try{ best = parseInt(sessionStorage.getItem('gesund_quiz_best')||'0',10)||0; }catch(e){}
+var ql = document.getElementById('quizListe');
+var leiter = document.getElementById('qLeiter');
+var stand = document.getElementById('qstand');
+
+function mischen(arr){
+  var a = arr.slice();
+  for (var i=a.length-1; i>0; i--){
+    var j = Math.floor(Math.random()*(i+1));
+    var t = a[i]; a[i]=a[j]; a[j]=t;
+  }
+  return a;
+}
+function zeichneLeiter(){
+  leiter.innerHTML = '';
+  for (var i=0;i<ZIEL;i++){
+    var sp = document.createElement('span');
+    sp.textContent = geld(BETRAEGE[i]).replace('CHF ','');
+    sp.title = 'Frage ' + (i+1) + ': ' + geld(BETRAEGE[i]);
+    if (i < stufe) sp.className = 'geschafft';
+    else if (i === stufe) sp.className = 'aktuell';
+    leiter.appendChild(sp);
+  }
+  var gl = document.getElementById('geldLeiter');
+  if (gl){
+    gl.innerHTML = '';
+    for (var k=ZIEL-1; k>=0; k--){
+      var z = document.createElement('div');
+      z.className = 'gl-zeile' + (k < stufe ? ' geschafft' : (k === stufe ? ' aktuell' : ''));
+      z.innerHTML = '<span class="gl-nr">' + (k+1) + '</span><span>' + geld(BETRAEGE[k]).replace('CHF ','') + '</span>';
+      gl.appendChild(z);
+    }
+  }
+  var wert = document.getElementById('qWert');
+  if (wert) wert.textContent = (stufe < ZIEL) ? ('Diese Frage ist ' + geld(BETRAEGE[stufe]) + ' wert') : '';
+}
+function zeigeStand(){
+  stand.textContent = best > 0 ? ('Bestmarke in dieser Sitzung: ' + best + (best>=ZIEL?' – Leiter komplett! 🏆':'')) : '';
+}
+function neueRunde(){
+  runde = mischen(POOL).slice(0, ZIEL);
+  stufe = 0;
+  joker = { fifty:false, tel:false, pub:false };
+  document.querySelectorAll('[data-joker]').forEach(function(b){ b.classList.remove('verbraucht'); });
+  zeichneLeiter(); zeigeStand();
+  naechsteFrage();
+}
+var jokerAusgabe = document.getElementById('jokerAusgabe');
+function jokerZu(){ jokerAusgabe.classList.remove('zeig'); jokerAusgabe.innerHTML=''; }
+function verbrauche(name){
+  joker[name] = true;
+  document.querySelectorAll('[data-joker="'+name+'"]').forEach(function(b){ b.classList.add('verbraucht'); });
+}
+function nutzeJoker(name){
+  var q = runde[stufe];
+  if (!q || joker[name] || document.querySelector('.q-ende')) return;
+  var opts = Array.prototype.slice.call(document.querySelectorAll('.qoptzeile .qopt'));
+  if (!opts.length) return;
+  verbrauche(name);
+  if (name === 'fifty'){
+    var falsche = [];
+    opts.forEach(function(b, j){ if (j !== anzeige.korrekt && b.style.visibility !== 'hidden') falsche.push(j); });
+    // bei vier Antworten verschwinden zwei falsche
+    if (falsche.length > 2){
+      var weg2 = falsche.splice(Math.floor(Math.random()*falsche.length), 1)[0];
+      opts[weg2].style.visibility = 'hidden';
+    }
+    var weg = falsche[Math.floor(Math.random()*falsche.length)];
+    opts[weg].style.visibility = 'hidden';
+    jokerAusgabe.innerHTML = '<b style="color:#F3CE8E">50:50:</b> Eine falsche Antwort ist gestrichen.';
+    jokerAusgabe.classList.add('zeig');
+  }
+  if (name === 'tel'){
+    var sichtbar = [];
+    opts.forEach(function(b, j){ if (b.style.visibility !== 'hidden') sichtbar.push(j); });
+    var tipp = (Math.random() < 0.75) ? anzeige.korrekt : sichtbar.filter(function(j){ return j !== anzeige.korrekt; })[0];
+    if (tipp === undefined) tipp = anzeige.korrekt;
+    var buchst = ['A','B','C','D'][tipp];
+    jokerAusgabe.innerHTML = '<b style="color:#F3CE8E">☎ Dein Telefonjoker:</b> «Hmm … ich bin ziemlich sicher, es ist <b>' + buchst + '</b>. Aber nagle mich nicht fest!»'
+      + '<div class="prozent" style="margin-top:4px">Telefonjoker liegen meistens richtig – aber nicht immer.</div>';
+    jokerAusgabe.classList.add('zeig');
+  }
+  if (name === 'pub'){
+    var sicht = [];
+    opts.forEach(function(b, j){ if (b.style.visibility !== 'hidden') sicht.push(j); });
+    var korrekt = 45 + Math.floor(Math.random()*31);
+    var rest = 100 - korrekt;
+    var andere = sicht.filter(function(j){ return j !== anzeige.korrekt; });
+    var werte = {};
+    werte[anzeige.korrekt] = korrekt;
+    andere.forEach(function(j, k){
+      if (k === andere.length-1){ werte[j] = rest; }
+      else { var t = Math.floor(Math.random()*rest); werte[j] = t; rest -= t; }
+    });
+    var html = '<b style="color:#F3CE8E">👥 Das Publikum hat abgestimmt:</b>';
+    sicht.forEach(function(j){
+      html += '<div class="balkenzeile"><b>' + ['A','B','C','D'][j] + '</b>'
+        + '<div class="balken" style="width:' + Math.max(3, werte[j]*2.6) + 'px"></div>'
+        + '<span class="prozent">' + werte[j] + ' %</span></div>';
+    });
+    html += '<div class="prozent" style="margin-top:4px">Auch das Publikum kann sich täuschen.</div>';
+    jokerAusgabe.innerHTML = html;
+    jokerAusgabe.classList.add('zeig');
+  }
+}
+document.querySelectorAll('[data-joker]').forEach(function(b){
+  b.addEventListener('click', function(){ nutzeJoker(b.dataset.joker); });
+});
+function merkeBest(){
+  if (stufe > best){ best = stufe; try{ sessionStorage.setItem('gesund_quiz_best', String(best)); }catch(e){} }
+}
+function naechsteFrage(){
+  var q = runde[stufe];
+  jokerZu();
+  anzeige.opts = mischen(q.o.map(function(t, j){ return { t:t, ok: j === q.r }; }));
+  anzeige.korrekt = anzeige.opts.findIndex(function(o){ return o.ok; });
+  ql.innerHTML = '';
+  var div = document.createElement('div');
+  div.innerHTML = '<div class="qfrage raute">Frage ' + (stufe+1) + ' von ' + ZIEL + ': ' + q.f + '</div>';
+  var zeile = document.createElement('div');
+  zeile.className = 'qoptzeile';
+  div.appendChild(zeile);
+  anzeige.opts.forEach(function(opt, j){
+    var b = document.createElement('button');
+    b.type='button'; b.className='qopt';
+    b.innerHTML = '<span class="buchst">' + ['A','B','C','D'][j] + ':</span>' + opt.t;
+    b.addEventListener('click', function(){
+      if (div.dataset.fertig) return;
+      div.dataset.fertig = '1';
+      if (window.QuizMusik) QuizMusik.stopp();
+      if (j === anzeige.korrekt){
+        b.classList.add('richtig');
+        stufe++;
+        merkeBest();
+        zeichneLeiter(); zeigeStand();
+        if (stufe >= ZIEL){
+          setTimeout(function(){
+            if (window.QuizMusik) QuizMusik.sieg();
+            ql.innerHTML = '<div class="q-ende sieg">'
+              + '<img class="sieg-bild" src="millionaer_sieg.jpg?v=1" alt="Der Moderator gratuliert mit Daumen hoch" onerror="this.style.display=&#39;none&#39;">'
+              + '<h3>🏆 ' + geld(1000000) + ' – die Leiter ist komplett!</h3>'
+              + '<p>Fünfzehn am Stück: WHO, Stress, Ernährung und Sucht sitzen. Chapeau.</p>'
+              + '<button type="button" class="q-neustart" id="qNochmal">Neue Runde – neue Fragen</button></div>';
+            document.getElementById('qNochmal').addEventListener('click', neueRunde);
+          }, 550);
+        } else {
+          setTimeout(naechsteFrage, 550);
+        }
+      } else {
+        b.classList.add('falsch');
+        div.querySelectorAll('.qopt')[anzeige.korrekt].classList.add('richtig');
+        setTimeout(function(){
+          ql.innerHTML = '<div class="q-ende raus"><h3>Ausgeschieden bei Frage ' + (stufe+1) + '</h3>'
+            + '<p>Richtig gewesen wäre: <b>' + q.o[q.r] + '</b> (' + ['A','B','C','D'][anzeige.korrekt] + ')</p>'
+            + '<p>Erspielt: <b>' + geld(stufe > 0 ? BETRAEGE[stufe-1] : 0) + '</b> (Stufe ' + stufe + ' von ' + ZIEL + ')' + (best>0 ? ' · Bestmarke: ' + best : '') + '</p>'
+            + '<button type="button" class="q-neustart" id="qNochmal">Neue Runde – neue Fragen</button></div>';
+          document.getElementById('qNochmal').addEventListener('click', neueRunde);
+        }, 1100);
+      }
+    });
+    zeile.appendChild(b);
+  });
+  ql.appendChild(div);
+  if (window.QuizMusik) QuizMusik.frage(stufe === ZIEL - 1);
+}
+neueRunde();
+</script>
+
+<style>
+.zoomleiste{position:fixed; right:12px; top:12px; z-index:99999; display:flex; gap:2px;
+  background:rgba(255,255,255,.78); border:1px solid rgba(21,35,50,.14); border-radius:999px;
+  padding:3px; box-shadow:0 3px 12px rgba(21,35,50,.18);
+  opacity:.55; transition:opacity .18s; backdrop-filter:blur(4px);}
+.zoomleiste:hover,.zoomleiste:focus-within{opacity:1;}
+.zoomleiste button{width:27px; height:27px; border-radius:999px; padding:0;
+  border:none; background:transparent; color:#152332; font-size:14px; line-height:1; cursor:pointer;}
+.zoomleiste button:hover{background:rgba(21,35,50,.09);}
+@media print{.zoomleiste{display:none}}
+</style>
+<script>
+(function(){
+  var z = (window.self !== window.top) ? 0.82 : 1;
+  var leiste = document.createElement('div');
+  leiste.className = 'zoomleiste';
+  function setZ(nz){ z = Math.max(0.5, Math.min(1.4, Math.round(nz*100)/100));
+    document.body.style.zoom = z; leiste.style.zoom = 1/z; }
+  function mk(txt, titel, fn){ var b=document.createElement('button');
+    b.type='button'; b.textContent=txt; b.title=titel; b.setAttribute('aria-label',titel);
+    b.addEventListener('click',fn); leiste.appendChild(b); }
+  mk('\u2212','Kleiner',function(){ setZ(z-0.1); });
+  mk('+','Gr\u00f6sser',function(){ setZ(z+0.1); });
+  mk('\u26f6','Vollbild (Esc beendet)',function(){
+    var drin = document.fullscreenElement || document.webkitFullscreenElement;
+    if(drin){ (document.exitFullscreen||document.webkitExitFullscreen).call(document); }
+    else { var el=document.documentElement;
+      var p = el.requestFullscreen ? el.requestFullscreen() : el.webkitRequestFullscreen ? el.webkitRequestFullscreen() : null;
+      if(p&&p.catch) p.catch(function(){}); } });
+  document.body.appendChild(leiste); setZ(z);
+})();
+</script>
+</body>
+</html>
