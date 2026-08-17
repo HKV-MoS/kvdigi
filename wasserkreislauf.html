@@ -240,6 +240,10 @@
   .panel.neben-aktiv .qbox{ background:var(--neben-lt); border-left-color:var(--neben); color:#1B4C5E; }
   .panel.neben-aktiv .qbox .qlabel{ color:var(--neben); }
 
+  /* Der Kopfbereich bekommt die Hoehe des laengsten Eintrags, damit die
+     Knoepfe Zurueck und Weiter beim Blaettern nicht springen. */
+  .kopf{ display:flex; flex-direction:column; }
+  .kopf > :last-child{ margin-bottom:auto; }
   .nav{ display:flex; gap:8px; margin-bottom:12px; }
   .nav .btn{ flex:1; justify-content:center; }
 
@@ -517,11 +521,13 @@ html.eingebettet body{ zoom:.82; }
 
   <!-- Info-Panel -->
   <aside class="panel" id="panel">
-    <div class="eyebrow" id="p-eyebrow">Übersicht</div>
-    <h2 id="p-title">Wasser in Bewegung</h2>
-    <p class="haupt" id="p-text"></p>
-    <div class="fakt" id="p-fakt" hidden></div>
-    <div class="qbox" id="qbox" hidden><span class="qlabel">Zum Nachdenken</span><span id="p-question"></span></div>
+    <div class="kopf" id="kopf">
+      <div class="eyebrow" id="p-eyebrow">Übersicht</div>
+      <h2 id="p-title">Wasser in Bewegung</h2>
+      <p class="haupt" id="p-text"></p>
+      <div class="fakt" id="p-fakt" hidden></div>
+      <div class="qbox" id="qbox" hidden><span class="qlabel">Zum Nachdenken</span><span id="p-question"></span></div>
+    </div>
     <div class="nav">
       <button class="btn ghost sm" id="prev-btn" disabled>← Zurück</button>
       <button class="btn ghost sm" id="next-btn">Weiter →</button>
@@ -846,6 +852,7 @@ const pFrage  = document.getElementById('p-question');
 const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
 const chipRaum= document.getElementById('chipbereich');
+const kopf    = document.getElementById('kopf');
 const fortBar = document.getElementById('progress');
 
 let modus  = 'normal';   /* 'normal' | 'stoer' */
@@ -1223,9 +1230,42 @@ fotoStoer.addEventListener('error', () => {
    7 · Start
    ========================================================================== */
 
+/* Misst alle Panel-Texte durch und friert die Kopfhoehe auf den laengsten ein.
+   Wird bei jeder Fenstergroesse neu berechnet. */
+function kopfhoeheSetzen(){
+  const sicher = {
+    eye: pEye.textContent, tit: pTit.textContent, txt: pTxt.textContent,
+    fakt: pFakt.innerHTML, faktAus: pFakt.hidden,
+    frage: pFrage.textContent, qAus: qbox.hidden,
+    klasse: panel.classList.contains('neben-aktiv')
+  };
+  kopf.style.minHeight = '0px';
+  let hoch = 0;
+  [INTRO, MERKSATZ, VERGLEICH_INTRO, STOER_INTRO]
+    .concat(STATIONEN, NEBENPFADE, STOERUNGEN)
+    .forEach(function(o){
+      pEye.textContent = o.eyebrow; pTit.textContent = o.title; pTxt.textContent = o.text;
+      if (o.fakt){ pFakt.innerHTML = o.fakt; pFakt.hidden = false; } else pFakt.hidden = true;
+      if (o.q){ pFrage.textContent = o.q; qbox.hidden = false; } else qbox.hidden = true;
+      hoch = Math.max(hoch, kopf.offsetHeight);
+    });
+  pEye.textContent = sicher.eye; pTit.textContent = sicher.tit; pTxt.textContent = sicher.txt;
+  pFakt.innerHTML = sicher.fakt; pFakt.hidden = sicher.faktAus;
+  pFrage.textContent = sicher.frage; qbox.hidden = sicher.qAus;
+  panel.classList.toggle('neben-aktiv', sicher.klasse);
+  kopf.style.minHeight = hoch + 'px';
+}
+
+let messTimer = null;
+window.addEventListener('resize', function(){
+  clearTimeout(messTimer);
+  messTimer = setTimeout(kopfhoeheSetzen, 180);
+});
+
 document.body.classList.add('spot-an');
 baueChips();
 zeigeUebersicht();
+kopfhoeheSetzen();
 fahnenMessen();
 window.addEventListener('load', fahnenMessen);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(fahnenMessen);
