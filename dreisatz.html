@@ -459,6 +459,7 @@ html.eingebettet body{ zoom:.82; }
             <button class="chip on" data-kt="einkauf">🛒 Einkauf / Mengen</button>
             <button class="chip on" data-kt="prozent">📊 Prozent</button>
             <button class="chip on" data-kt="tempo">🚗 Tempo / Verbrauch</button>
+            <button class="chip on" data-kt="alltag">🎉 Alltag / Budget</button>
           </div>
         </div>
       </div>
@@ -664,7 +665,7 @@ function aktuelleItems(){ return (typeof LV!=='undefined' && LV && ITEM_SETS[LV.
 
 /* ---------- Beruf / Niveau (zugleich Schwierigkeitsgrad) ---------- */
 const LEVELS={
-  eba:{ label:'DH EBA', items:'handel', typ:'pro', contexts:['lohn','einkauf'],
+  eba:{ label:'DH EBA', items:'handel', typ:'pro', contexts:['lohn','einkauf','alltag'],
     lohn:[15,16,18,20], hoursA:[2,3,4,5,6],
     preise:[0.50,0.80,1.00,1.20,1.50], stk:[2,3,4,5,6,8],
     prozPer1:[2,3,5], prozX:[10,20,25,50], prozC:[100,50,10,20],
@@ -672,7 +673,7 @@ const LEVELS={
     cons:[5,6,8], distV:[100,200,300],
     antiK:[12,24,36,48], antiKein:[24,36,48,60],
     antiDist:[{d:120,sp:[30,40,60]},{d:240,sp:[40,60,80,120]}] },
-  dhefz:{ label:'DH EFZ', items:'handel', typ:'beide', contexts:['lohn','einkauf','prozent','tempo'],
+  dhefz:{ label:'DH EFZ', items:'handel', typ:'beide', contexts:['lohn','einkauf','prozent','tempo','alltag'],
     lohn:[18,20,22,24,25], hoursA:[3,4,5,6,7,8],
     preise:[0.80,1.20,1.50,2.40,2.50,3.50], stk:[3,4,5,6,7,8,9,10],
     prozPer1:[1.5,2,2.5,3,4,5], prozX:[5,8,10,12,15,20,25], prozC:[100,50,75,60,80],
@@ -680,7 +681,7 @@ const LEVELS={
     cons:[5,6,7,8], distV:[50,100,150,200,250],
     antiK:[24,36,48,60,72], antiKein:[60,72,120,144,180],
     antiDist:[{d:240,sp:[40,60,80,120]},{d:300,sp:[50,60,75,100]},{d:180,sp:[45,60,90]}] },
-  kv:{ label:'KV', items:'buero', typ:'beide', contexts:['lohn','einkauf','prozent','tempo'],
+  kv:{ label:'KV', items:'buero', typ:'beide', contexts:['lohn','einkauf','prozent','tempo','alltag'],
     lohn:[22,24,25,26,28,30,32], hoursA:[4,5,6,7,8,9,10,12],
     preise:[1.20,1.50,2.40,2.50,3.50,4.20,4.80], stk:[4,5,6,7,8,9,10,12],
     prozPer1:[1.5,2,2.5,3,4,5,6,8], prozX:[5,8,12,15,20,25,40], prozC:[100,75,60,80,120,150],
@@ -688,7 +689,7 @@ const LEVELS={
     cons:[6,7,8,9], distV:[100,150,200,250,300],
     antiK:[36,48,60,72,120], antiKein:[120,144,180,240,300,360],
     antiDist:[{d:300,sp:[50,60,75,100]},{d:360,sp:[60,72,90,120]},{d:480,sp:[60,80,120]}] },
-  pharma:{ label:'Apotheke', items:'apotheke', typ:'beide', contexts:['lohn','einkauf','prozent','tempo'],
+  pharma:{ label:'Apotheke', items:'apotheke', typ:'beide', contexts:['lohn','einkauf','prozent','tempo','alltag'],
     lohn:[24,26,28,30,32,35], hoursA:[4,5,6,7,8,9,10,12],
     preise:[1.20,1.80,2.40,3.50,4.20,4.80,6.50], stk:[4,5,6,7,8,9,10,12,15],
     prozPer1:[1.5,2.5,3,4,5,6,7.5], prozX:[5,8,12,15,20,25,40,60], prozC:[100,75,60,120,150,250],
@@ -696,7 +697,7 @@ const LEVELS={
     cons:[6,7,8,9], distV:[125,150,175,200,250,300],
     antiK:[48,60,72,120,144], antiKein:[144,180,240,300,360,720],
     antiDist:[{d:360,sp:[60,72,90,120]},{d:480,sp:[60,80,120]},{d:600,sp:[60,75,100,120,150]}] },
-  ags:{ label:'AGS EBA', items:'gesundheit', typ:'pro', contexts:['lohn','einkauf'],
+  ags:{ label:'AGS EBA', items:'gesundheit', typ:'pro', contexts:['lohn','einkauf','alltag'],
     lohn:[15,16,18,20], hoursA:[2,3,4,5,6],
     preise:[0.50,0.80,1.00,1.20,1.50], stk:[2,3,4,5,6,8],
     prozPer1:[2,3,5], prozX:[10,20,25,50], prozC:[100,50,10,20],
@@ -704,7 +705,7 @@ const LEVELS={
     cons:[5,6,8], distV:[100,200,300],
     antiK:[12,24,36,48], antiKein:[24,36,48,60],
     antiDist:[{d:120,sp:[30,40,60]},{d:240,sp:[40,60,80,120]}] },
-  fage:{ label:'FaGe', items:'gesundheit', typ:'beide', contexts:['lohn','einkauf','prozent','tempo'],
+  fage:{ label:'FaGe', items:'gesundheit', typ:'beide', contexts:['lohn','einkauf','prozent','tempo','alltag'],
     lohn:[22,24,26,28,30], hoursA:[4,5,6,7,8,9,12],
     preise:[0.80,1.20,1.50,2.50,3.50,4.20], stk:[3,4,5,6,8,10,12],
     prozPer1:[1.5,2,2.5,3,4,5,6], prozX:[5,8,10,15,20,25,50], prozC:[100,75,60,80,120],
@@ -712,7 +713,7 @@ const LEVELS={
     cons:[5,6,7,8], distV:[100,150,200,250],
     antiK:[24,36,48,60,72], antiKein:[60,72,120,144,180],
     antiDist:[{d:240,sp:[40,60,80,120]},{d:300,sp:[50,60,75,100]},{d:360,sp:[60,72,90,120]}] },
-  fabe:{ label:'FaBe', items:'betreuung', typ:'beide', contexts:['lohn','einkauf','prozent','tempo'],
+  fabe:{ label:'FaBe', items:'betreuung', typ:'beide', contexts:['lohn','einkauf','prozent','tempo','alltag'],
     lohn:[20,22,24,25,26], hoursA:[3,4,5,6,7,8],
     preise:[0.80,1.00,1.20,1.50,2.40,2.50], stk:[3,4,5,6,7,8,10],
     prozPer1:[1.5,2,2.5,3,4,5], prozX:[5,8,10,12,20,25], prozC:[100,50,75,60,80],
@@ -720,7 +721,7 @@ const LEVELS={
     cons:[5,6,7,8], distV:[50,100,150,200],
     antiK:[24,36,48,60], antiKein:[60,72,120,144],
     antiDist:[{d:240,sp:[40,60,80,120]},{d:180,sp:[45,60,90]},{d:300,sp:[50,60,75,100]}] },
-  inf:{ label:'Informatik', items:'informatik', typ:'beide', contexts:['lohn','einkauf','prozent','tempo'],
+  inf:{ label:'Informatik', items:'informatik', typ:'beide', contexts:['lohn','einkauf','prozent','tempo','alltag'],
     lohn:[24,26,28,30,32,35], hoursA:[4,5,6,7,8,9,10,12],
     preise:[1.50,2.40,3.50,4.20,4.80,6.50], stk:[4,5,6,8,10,12,16],
     prozPer1:[2,2.5,3,4,5,6,8], prozX:[5,8,12,15,20,25,40,60], prozC:[100,75,80,120,150,250],
@@ -846,14 +847,142 @@ function g_tempo_anti(){
     A:a, B:b, C:c, ansUnit:'Stunden', answer:ans, hint:'Höheres Tempo → weniger Fahrzeit: ungerader Dreisatz. Zuerst die Strecke (Tempo · Zeit), dann durch das neue Tempo.' };
 }
 
+/* ================= ALLTAG =================
+   Situationen aus dem Leben der BL: Budget, Geschenk, Party, Rezept.
+   Bewusst auch mit gesuchter *Menge* statt gesuchtem Preis — das ist die
+   Frageform, die im Alltag am häufigsten vorkommt und bisher fehlte. */
+const ALLTAG_KAUF=[
+  {s:'Rose',           p:'Rosen',           e:'🌹', anlass:'Deine Freundin hat Geburtstag'},
+  {s:'Cupcake',        p:'Cupcakes',        e:'🧁', anlass:'Für die Geburtstagsparty'},
+  {s:'Kinoticket',     p:'Kinotickets',     e:'🎬', anlass:'Ihr wollt ins Kino'},
+  {s:'Badi-Eintritt',  p:'Badi-Eintritte',  e:'🏊', anlass:'Ein Nachmittag in der Badi'},
+  {s:'Glacé',          p:'Glacés',          e:'🍦', anlass:'Nach dem Sporttag'},
+  {s:'Konzertticket',  p:'Konzerttickets',  e:'🎫', anlass:'Ihr wollt ans Openair'}
+];
+const ALLTAG_GESCHENK=[
+  {n:'Parfum',e:'🧴'},{n:'Kopfhörer',e:'🎧'},{n:'Konzertticket',e:'🎫'},
+  {n:'Gutschein',e:'🎁'},{n:'Smartwatch',e:'⌚'},{n:'Rucksack',e:'🎒'}
+];
+const ALLTAG_PARTY=[
+  {p:'Liter Cola',        einh:'L',       pp:0.5,  e:'🥤'},
+  {p:'Beutel Eiswürfel',  einh:'Beutel',  pp:0.25, e:'🧊'},
+  {p:'Stück Pizza',       einh:'Stück',   pp:2,    e:'🍕'},
+  {p:'Packungen Chips',   einh:'Pack.',   pp:0.25, e:'🥔'},
+  {p:'Stück Kuchen',      einh:'Stück',   pp:1.5,  e:'🍰'},
+  {p:'Becher',            einh:'Becher',  pp:2,    e:'🥛'}
+];
+const ALLTAG_REZEPT=[
+  {z:'Reis',      einh:'g',  e:'🍚'},{z:'Mehl',       einh:'g',  e:'🌾'},
+  {z:'Teigwaren', einh:'g',  e:'🍝'},{z:'Milch',      einh:'ml', e:'🥛'},
+  {z:'Zucker',    einh:'g',  e:'🧁'},{z:'Hackfleisch',einh:'g',  e:'🍖'}
+];
+const beutelKauf     = neuerBeutel();
+const beutelGeschenk = neuerBeutel();
+const beutelParty    = neuerBeutel();
+const beutelRezept   = neuerBeutel();
+
+function g_alltag_pro(){
+  const w=Math.random();
+
+  /* --- 1. Budget → Menge: «Wie viele passen in dein Budget?» --- */
+  if(w<0.4){
+    const it=ausBeutel(beutelKauf, ALLTAG_KAUF);
+    const einfach = LV.typ==='pro';
+    const stueckpreis=pick(einfach?[2,5,10]:[2,4,5,10]);
+    const a=pick([2,3,4,5]);
+    const b=stueckpreis*a;
+    let k=pick(einfach?[6,8,10,12]:[6,7,8,9,10,12,14,15]);
+    if(k===a) k+=2;
+    const c=stueckpreis*k;
+    const per1=Math.round((a/b)*1000)/1000;   /* Stück pro Franken */
+    return { typ:'pro', kt:'alltag', emoji:it.e,
+      text:`${it.anlass}. ${a} ${it.p} kosten ${money(b)}. Wie viele ${it.p} bekommst du für ${money(c)}?`,
+      aStr:money(b), bStr:`${a} ${it.p}`, cStr:money(c),
+      calc1:`${a} : ${num(b)} = ${num(per1)}`, per1Str:`CHF 1 → ${num(per1)} ${it.p}`,
+      calc2:`${num(per1)} · ${num(c)} = ${num(k)}`,
+      warum1:`Auf CHF 1 herunter: durch ${num(b)} teilen.`,
+      warum2:`Auf ${money(c)} hoch: mal ${num(c)}.`,
+      A:b, B:a, C:c, ansUnit:it.p, answer:k,
+      hint:'Mehr Geld → mehr Stück: gerader Dreisatz. Achtung, gesucht ist hier die Menge, nicht der Preis. Zuerst: Wie viel bekommst du für CHF 1?' };
+  }
+
+  /* --- 2. Party: mehr Gäste als geplant --- */
+  if(w<0.75){
+    const it=ausBeutel(beutelParty, ALLTAG_PARTY);
+    const a=pick([8,12,16,20]);
+    let c=pick([12,16,20,24,28]);
+    if(c<=a) c=a+8;
+    const b=Math.round(it.pp*a*100)/100;
+    const total=Math.round(it.pp*c*100)/100;
+    const nach=Math.round((total-b)*100)/100;
+    const nachkaufen = Math.random()<0.6;
+    if(nachkaufen){
+      return { typ:'pro', kt:'alltag', emoji:it.e,
+        text:`Du organisierst eine Party. Für ${a} angemeldete Gäste hast du ${num(b)} ${it.p} gekauft. Jetzt kommen ${c} Leute – wie viel musst du noch besorgen?`,
+        aStr:`${a} Gäste`, bStr:`${num(b)} ${it.einh}`, cStr:`${c} Gäste → nachkaufen`,
+        calc1:`${num(b)} : ${a} = ${num(it.pp)}`, per1Str:`1 Gast = ${num(it.pp)} ${it.einh}`,
+        calc2:`${num(it.pp)} · ${c} = ${num(total)}`,
+        calc3:`${num(total)} − ${num(b)} = ${num(nach)}`,
+        warum1:`Auf 1 Gast herunter: durch ${a} teilen.`,
+        warum2:`Auf ${c} Gäste hoch: mal ${c} – so viel brauchst du insgesamt.`,
+        warum3:`Du hast schon ${num(b)} ${it.einh}. Nachkaufen musst du nur die Differenz.`,
+        A:a, B:b, C:c, ansUnit:it.einh, answer:nach,
+        hint:'Mehr Gäste → mehr Vorrat: gerader Dreisatz. Rechne zuerst den Bedarf pro Gast, dann den Gesamtbedarf – und ziehe am Schluss ab, was du schon hast.' };
+    }
+    return { typ:'pro', kt:'alltag', emoji:it.e,
+      text:`Du organisierst eine Party. Für ${a} Gäste rechnest du mit ${num(b)} ${it.p}. Wie viel brauchst du für ${c} Gäste?`,
+      aStr:`${a} Gäste`, bStr:`${num(b)} ${it.einh}`, cStr:`${c} Gäste`,
+      calc1:`${num(b)} : ${a} = ${num(it.pp)}`, per1Str:`1 Gast = ${num(it.pp)} ${it.einh}`,
+      calc2:`${num(it.pp)} · ${c} = ${num(total)}`,
+      warum1:`Auf 1 Gast herunter: durch ${a} teilen.`,
+      warum2:`Auf ${c} Gäste hoch: mal ${c}.`,
+      A:a, B:b, C:c, ansUnit:it.einh, answer:total,
+      hint:'Mehr Gäste → mehr Vorrat: gerader Dreisatz. Zuerst der Bedarf pro Gast (÷), dann mal die Anzahl Gäste.' };
+  }
+
+  /* --- 3. Rezept hochrechnen --- */
+  const it=ausBeutel(beutelRezept, ALLTAG_REZEPT);
+  const proPers=pick([40,50,60,75,80,100,120]);
+  const a=pick([2,3,4,5,6]);
+  let c=pick([2,3,4,5,6,7,8,10]);
+  if(c===a) c=a+2;
+  const b=proPers*a, ans=proPers*c;
+  return { typ:'pro', kt:'alltag', emoji:it.e,
+    text:`Das Rezept ist für ${a} Personen und braucht ${b} ${it.einh} ${it.z}. Ihr seid zu ${c} – wie viel ${it.z} brauchst du?`,
+    aStr:`${a} Pers.`, bStr:`${b} ${it.einh}`, cStr:`${c} Pers.`,
+    calc1:`${b} : ${a} = ${num(proPers)}`, per1Str:`1 Person = ${proPers} ${it.einh}`,
+    calc2:`${num(proPers)} · ${c} = ${num(ans)}`,
+    warum1:`Auf 1 Person herunter: durch ${a} teilen.`,
+    warum2:`Auf ${c} Personen hoch: mal ${c}.`,
+    A:a, B:b, C:c, ansUnit:it.einh, answer:ans,
+    hint:'Mehr Personen → mehr Zutaten: gerader Dreisatz. Zuerst die Menge pro Person (÷), dann mal die Anzahl.' };
+}
+
+function g_alltag_anti(){
+  const K=pick(LV.antiKein);
+  const ds=divisors(K,2,12); if(ds.length<2) return g_alltag_anti();
+  const [a,c]=twoDistinct(ds); if(a===c) return g_alltag_anti();
+  const b=K/a, ans=K/c;
+  const ge=ausBeutel(beutelGeschenk, ALLTAG_GESCHENK);
+  return { typ:'anti', kt:'alltag', emoji:ge.e,
+    text:`Ihr kauft zusammen ein Geschenk: ${ge.n}. Zu ${a} zahlt jede ${money(b)}. Wie viel zahlt jede, wenn ${c} mitmachen?`,
+    aStr:`${a} Pers.`, bStr:money(b), cStr:`${c} Pers.`,
+    calc1:`${a} · ${num(b)} = ${num(K)}`, kStr:`${ge.n} kostet ${money(K)}`,
+    calc2:`${num(K)} : ${c} = ${num(ans)}`,
+    warum1:`Zuerst der Preis des Geschenks: ${a} · ${num(b)} = ${num(K)}.`,
+    warum2:`Auf ${c} Personen: durch ${c} – mehr Leute, weniger pro Kopf.`,
+    A:a, B:b, C:c, ansUnit:'CHF', answer:ans,
+    hint:'Mehr Leute → weniger pro Kopf: ungerader Dreisatz. Rechne zuerst, wie teuer das Geschenk überhaupt ist (mal), dann teile durch die Anzahl.' };
+}
+
 const GENS={
-  pro:{ lohn:g_lohn_pro, einkauf:g_einkauf_pro, prozent:g_prozent_pro, tempo:g_tempo_pro },
-  anti:{ lohn:g_lohn_anti, einkauf:g_einkauf_anti, tempo:g_tempo_anti } // prozent: nur pro
+  pro:{ lohn:g_lohn_pro, einkauf:g_einkauf_pro, prozent:g_prozent_pro, tempo:g_tempo_pro, alltag:g_alltag_pro },
+  anti:{ lohn:g_lohn_anti, einkauf:g_einkauf_anti, tempo:g_tempo_anti, alltag:g_alltag_anti } // prozent: nur pro
 };
 
 /* ---------- Zustand & Auswahl ---------- */
 let selTyp='beide';
-let selKt={lohn:true,einkauf:true,prozent:true,tempo:true};
+let selKt={lohn:true,einkauf:true,prozent:true,tempo:true,alltag:true};
 let cur=null, artChosen=null, answered=false;
 let score={correct:0,total:0,streak:0,best:0};
 let fehler={art:0,gegenart:0,schritt1:0,komma:0,rund:0,rechnen:0};
@@ -895,9 +1024,13 @@ function schemaHTML(g){
   const op1 = g.typ==='pro' ? 'op-div' : 'op-mul';
   const op2 = g.typ==='pro' ? 'op-mul' : 'op-div';
   const s1 = g.typ==='pro' ? `: ${g.aStr.split(' ')[0]}` : `· ${g.aStr.split(' ')[0]}`;
+  const schritt3 = g.calc3
+    ? `<div class="step"><div class="no">3</div><div class="body"><div class="calc">${g.calc3}</div><div class="why">${g.warum3||''}</div></div></div>`
+    : '';
   return `<div class="steps">
     <div class="step"><div class="no">1</div><div class="body"><div class="calc">${g.calc1}</div><div class="why">${g.warum1}</div></div></div>
     <div class="step"><div class="no">2</div><div class="body"><div class="calc">${g.calc2}</div><div class="why">${g.warum2}</div></div></div>
+    ${schritt3}
   </div>
   <div class="result-line">Ergebnis: ${num(g.answer)} ${g.ansUnit==='CHF'?'CHF':g.ansUnit}</div>`;
 }
@@ -1035,7 +1168,7 @@ function applyLevel(key, skipNew){
   $('nivChips').querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.niv===key));
   selTyp=LV.typ;
   $('typChips').querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.typ===selTyp));
-  selKt={lohn:false,einkauf:false,prozent:false,tempo:false};
+  selKt={lohn:false,einkauf:false,prozent:false,tempo:false,alltag:false};
   LV.contexts.forEach(k=>selKt[k]=true);
   $('ktChips').querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',!!selKt[c.dataset.kt]));
   if(!skipNew) neueAufgabe();
