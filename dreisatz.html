@@ -798,11 +798,71 @@ function g_tempo_pro(){
   }
 }
 
+
+/* ---------- Ungerade Szenarien passend zum Beruf ----------
+   Vorher fix: Maler/Arbeiter und ein Futtervorrat für Kühe — in der
+   Informatik gelandet. Jetzt pro Berufsgruppe, Rückfall auf 'handel'. */
+const ANTI_ARBEIT={
+  handel:[['Mitarbeitende','sortieren das Lager','\ud83d\udce6'],['Aushilfen','sortieren die Regale','\ud83d\uded2'],['Personen','gestalten die Aktionsfläche','\ud83c\udff7\ufe0f']],
+  buero:[['Sachbearbeiterinnen','erfassen die Rechnungen','\ud83e\uddfe'],['Personen','digitalisieren das Archiv','\ud83d\uddc4\ufe0f'],['Mitarbeitende','kontrollieren den Versand','\u2709\ufe0f']],
+  apotheke:[['Fachfrauen','kontrollieren das Lager','\ud83d\udc8a'],['Mitarbeitende','kontrollieren die Lieferung','\ud83d\udce6'],['Personen','richten die Wochendosetten','\ud83d\uddd3\ufe0f']],
+  gesundheit:[['Pflegefachfrauen','reinigen die Zimmer','\ud83d\udecf\ufe0f'],['Mitarbeitende','desinfizieren die Station','\ud83e\uddf4'],['Personen','bestücken die Pflegewagen','\ud83d\ude91']],
+  betreuung:[['Betreuerinnen','gestalten den Gruppenraum','\ud83e\uddf8'],['Personen','organisieren das Sommerfest','\ud83c\udfaa'],['Mitarbeitende','reinigen den Spielplatz','\ud83e\uddf9']],
+  informatik:[['Entwicklerinnen','migrieren die Datenbank','\ud83d\uddc3\ufe0f'],['Technikerinnen','verkabeln ein Stockwerk','\ud83d\udd0c'],['Supporterinnen','bearbeiten den Ticketberg','\ud83c\udfab']]
+};
+const ANTI_VORRAT={
+  handel:[
+    {e:'\ud83d\udce6', ein:'1 Filiale', wer:'Filialen', einh:'Tage',
+     text:(a,b,c)=>`Der Vorrat an Tragtaschen reicht bei ${a} Filialen ${b} Tage. Wie lange reicht er bei ${c} Filialen?`,
+     kStr:K=>`1 Filiale = ${K} Tage`},
+    {e:'\ud83e\uddfb', ein:'1 Kasse', wer:'Kassen', einh:'Tage',
+     text:(a,b,c)=>`Eine Rolle Kassenpapier reicht bei ${a} Kassen ${b} Tage. Wie lange reicht der Vorrat bei ${c} Kassen?`,
+     kStr:K=>`1 Kasse = ${K} Tage`}],
+  buero:[
+    {e:'\ud83d\udda8\ufe0f', ein:'1 Person', wer:'Personen', einh:'Tage',
+     text:(a,b,c)=>`Der Papiervorrat reicht bei ${a} Personen ${b} Tage. Wie lange reicht er bei ${c} Personen?`,
+     kStr:K=>`1 Person = ${K} Tage`},
+    {e:'\ud83d\udcbc', ein:'1 Person', wer:'Personen', einh:'Minuten',
+     text:(a,b,c)=>`Die Sitzung dauert gleich lang. Bei ${a} Traktanden bleiben ${b} Minuten pro Traktandum. Wie viele Minuten bleiben bei ${c} Traktanden?`,
+     kStr:K=>`ganze Sitzung = ${K} Minuten`}],
+  apotheke:[
+    {e:'\ud83d\udc8a', ein:'1 Person', wer:'Personen', einh:'Tage',
+     text:(a,b,c)=>`Eine Packung reicht bei ${a} Personen ${b} Tage. Wie lange reicht sie bei ${c} Personen?`,
+     kStr:K=>`1 Person = ${K} Tage`},
+    {e:'\ud83e\uddf4', ein:'1 Standort', wer:'Standorte', einh:'Tage',
+     text:(a,b,c)=>`Der Vorrat an Desinfektionsmittel reicht bei ${a} Standorten ${b} Tage. Wie lange reicht er bei ${c} Standorten?`,
+     kStr:K=>`1 Standort = ${K} Tage`}],
+  gesundheit:[
+    {e:'\ud83e\udde4', ein:'1 Station', wer:'Stationen', einh:'Tage',
+     text:(a,b,c)=>`Der Vorrat an Handschuhen reicht bei ${a} Stationen ${b} Tage. Wie lange reicht er bei ${c} Stationen?`,
+     kStr:K=>`1 Station = ${K} Tage`},
+    {e:'\u23f1\ufe0f', ein:'1 Patientin', wer:'Patientinnen', einh:'Minuten',
+     text:(a,b,c)=>`Die Visite dauert gleich lang. Bei ${a} Patientinnen bleiben ${b} Minuten pro Person. Wie viele Minuten bleiben bei ${c} Patientinnen?`,
+     kStr:K=>`ganze Visite = ${K} Minuten`}],
+  betreuung:[
+    {e:'\ud83c\udfa8', ein:'1 Gruppe', wer:'Gruppen', einh:'Tage',
+     text:(a,b,c)=>`Das Bastelmaterial reicht bei ${a} Gruppen ${b} Tage. Wie lange reicht es bei ${c} Gruppen?`,
+     kStr:K=>`1 Gruppe = ${K} Tage`},
+    {e:'\u23f1\ufe0f', ein:'1 Kind', wer:'Kinder', einh:'Minuten',
+     text:(a,b,c)=>`Die Vorlesezeit bleibt gleich. Bei ${a} Kindern sind das ${b} Minuten pro Kind. Wie viele Minuten sind es bei ${c} Kindern?`,
+     kStr:K=>`ganze Vorlesezeit = ${K} Minuten`}],
+  informatik:[
+    {e:'\ud83d\udc04', ein:'1 Kuh', wer:'Kühe', einh:'Minuten',
+     text:(a,b,c)=>`Der Melkroboter hat pro Durchgang ein festes Zeitfenster. Bei ${a} Kühen bleiben ${b} Minuten pro Kuh. Für wie viele Minuten pro Kuh musst du ihn programmieren, wenn ${c} Kühe durchlaufen?`,
+     kStr:K=>`ganzes Zeitfenster = ${K} Minuten`},
+    {e:'\ud83d\udce1', ein:'1 Gerät', wer:'Geräte', einh:'Mbit/s',
+     text:(a,b,c)=>`Die Leitung wird gleichmässig aufgeteilt. Bei ${a} Geräten bekommt jedes ${b} Mbit/s. Wie viel bekommt jedes bei ${c} Geräten?`,
+     kStr:K=>`ganze Leitung = ${K} Mbit/s`}]
+};
+function antiGruppe(){ return (typeof LV!=='undefined' && LV && LV.items) || 'handel'; }
+const beutelArbeit=neuerBeutel(), beutelVorrat=neuerBeutel();
+
 function g_lohn_anti(){
   const K=pick(LV.antiK);
   const ds=divisors(K,2,12); if(ds.length<2) return g_lohn_anti();
   const [a,c]=twoDistinct(ds); if(a===c) return g_lohn_anti();
-  const b=K/a, ans=K/c, was=pick([['Arbeiter','streichen eine Halle','👷'],['Maler','tapezieren ein Haus','🎨'],['Helfer','räumen ein Lager','📦']]);
+  const b=K/a, ans=K/c;
+  const was=ausBeutel(beutelArbeit, ANTI_ARBEIT[antiGruppe()]||ANTI_ARBEIT.handel);
   return { typ:'anti', kt:'lohn', emoji:was[2],
     text:`${a} ${was[0]} ${was[1]} in ${b} Tagen. Wie lange brauchen ${c} ${was[0]} (gleiches Tempo)?`,
     aStr:`${a} ${was[0]}`, bStr:`${b} Tage`, cStr:`${c} ${was[0]}`,
@@ -824,14 +884,16 @@ function g_einkauf_anti(){
       calc2:`${num(K)} : ${c} = ${num(ans)}`,
       warum1:`Ganzer Betrag: ${a} · ${num(b)} = ${num(K)}.`, warum2:`Auf ${c} Personen: durch ${c} – mehr Köpfe, weniger pro Kopf.`,
       A:a, B:b, C:c, ansUnit:'CHF', answer:ans, hint:'Mehr Personen → weniger pro Kopf: ungerader Dreisatz. Zuerst den ganzen Betrag (mal), dann durch die Personen.' };
-  } else { // Vorrat
-    return { typ:'anti', kt:'einkauf', emoji:'🐄',
-      text:`Ein Futtervorrat reicht für ${a} Kühe genau ${b} Tage. Für wie viele Tage reicht er bei ${c} Kühen?`,
-      aStr:`${a} Kühe`, bStr:`${b} Tage`, cStr:`${c} Kühe`,
-      calc1:`${a} · ${b} = ${K}`, kStr:`1 Kuh = ${K} Tage`,
+  } else { // Vorrat / Kapazität — Szenario passend zum Beruf
+    const v=ausBeutel(beutelVorrat, ANTI_VORRAT[antiGruppe()]||ANTI_VORRAT.handel);
+    return { typ:'anti', kt:'einkauf', emoji:v.e,
+      text:v.text(a,b,c),
+      aStr:`${a} ${v.wer}`, bStr:`${b} ${v.einh}`, cStr:`${c} ${v.wer}`,
+      calc1:`${a} · ${b} = ${K}`, kStr:v.kStr(K),
       calc2:`${K} : ${c} = ${num(ans)}`,
-      warum1:`Auf 1 Kuh: mal ${a} – für eine Kuh reicht es viel länger.`, warum2:`Auf ${c} Kühe: durch ${c} – mehr Tiere, weniger Tage.`,
-      A:a, B:b, C:c, ansUnit:'Tage', answer:ans, hint:'Mehr Tiere → Vorrat reicht kürzer: ungerader Dreisatz. Zuerst mal (1 Kuh), dann durch die Anzahl.' };
+      warum1:`Zuerst aufs Ganze: ${a} · ${b} = ${K} ${v.einh} für ${v.ein}.`,
+      warum2:`Auf ${c} ${v.wer}: durch ${c} – mehr ${v.wer}, weniger ${v.einh}.`,
+      A:a, B:b, C:c, ansUnit:v.einh, answer:ans, hint:'Mehr davon → weniger für jedes Einzelne: ungerader Dreisatz. Zuerst mal (das Ganze), dann durch die Anzahl.' };
   }
 }
 function g_tempo_anti(){
