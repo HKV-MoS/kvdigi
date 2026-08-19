@@ -592,9 +592,79 @@ const num=x=>{ const r=Math.round(x*1000)/1000; return String(parseFloat(r.toFix
 const NAMEN=['Lea','Tim','Mia','Jan','Nora','Elias','Sara','Ben'];
 const ITEMS=[{s:'Brötchen',p:'Brötchen',e:'🥐'},{s:'Heft',p:'Hefte',e:'📓'},{s:'Schraube',p:'Schrauben',e:'🔩'},{s:'Apfel',p:'Äpfel',e:'🍎'},{s:'Kerze',p:'Kerzen',e:'🕯️'},{s:'Tulpe',p:'Tulpen',e:'🌷'}];
 
+/* ---------- Artikel passend zum Beruf ----------
+   Sonst kauft die Fachfrau Gesundheit Schrauben und Tulpen.
+   Zuordnung über LEVELS[key].items, Rückfall auf ITEMS. */
+const ITEM_SETS={
+  handel:[
+    {s:'Apfel',p:'Äpfel',e:'🍎'},{s:'Brötchen',p:'Brötchen',e:'🥐'},
+    {s:'Kerze',p:'Kerzen',e:'🕯️'},{s:'Tulpe',p:'Tulpen',e:'🌷'},
+    {s:'Notizblock',p:'Notizblöcke',e:'🗒️'},{s:'Batterie',p:'Batterien',e:'🔋'},
+    {s:'Zahnbürste',p:'Zahnbürsten',e:'🪥'},{s:'Konservendose',p:'Konservendosen',e:'🥫'},
+    {s:'Schokoladentafel',p:'Schokoladentafeln',e:'🍫'},{s:'Trinkflasche',p:'Trinkflaschen',e:'🧃'}
+  ],
+  buero:[
+    {s:'Ordner',p:'Ordner',e:'📁'},{s:'Couvert',p:'Couverts',e:'✉️'},
+    {s:'Briefmarke',p:'Briefmarken',e:'📮'},{s:'Notizblock',p:'Notizblöcke',e:'🗒️'},
+    {s:'Kugelschreiber',p:'Kugelschreiber',e:'🖊️'},{s:'Druckerpatrone',p:'Druckerpatronen',e:'🖨️'},
+    {s:'Etikette',p:'Etiketten',e:'🏷️'},{s:'Sichtmappe',p:'Sichtmappen',e:'📂'}
+  ],
+  apotheke:[
+    {s:'Pflaster',p:'Pflaster',e:'🩹'},{s:'Salbentube',p:'Salbentuben',e:'🧴'},
+    {s:'Tablettendose',p:'Tablettendosen',e:'💊'},{s:'Fiebermesser',p:'Fiebermesser',e:'🌡️'},
+    {s:'Teeschachtel',p:'Teeschachteln',e:'🍵'},{s:'Sirupflasche',p:'Sirupflaschen',e:'🍯'},
+    {s:'Vitaminpackung',p:'Vitaminpackungen',e:'🟠'},{s:'Schutzmaske',p:'Schutzmasken',e:'😷'}
+  ],
+  gesundheit:[
+    {s:'Verbandspäckchen',p:'Verbandspäckchen',e:'🩹'},{s:'Schachtel Handschuhe',p:'Schachteln Handschuhe',e:'🧤'},
+    {s:'Flasche Desinfektionsmittel',p:'Flaschen Desinfektionsmittel',e:'🧴'},{s:'Fiebermesser',p:'Fiebermesser',e:'🌡️'},
+    {s:'Spritze',p:'Spritzen',e:'💉'},{s:'Mullbinde',p:'Mullbinden',e:'🧻'},
+    {s:'Tablettendose',p:'Tablettendosen',e:'💊'},{s:'Schutzmaske',p:'Schutzmasken',e:'😷'}
+  ],
+  betreuung:[
+    {s:'Malstift',p:'Malstifte',e:'🖍️'},{s:'Bilderbuch',p:'Bilderbücher',e:'📖'},
+    {s:'Bastelschere',p:'Bastelscheren',e:'✂️'},{s:'Znüni-Box',p:'Znüni-Boxen',e:'🥪'},
+    {s:'Spielwürfel',p:'Spielwürfel',e:'🎲'},{s:'Trinkbecher',p:'Trinkbecher',e:'🥤'},
+    {s:'Farbtopf',p:'Farbtöpfe',e:'🎨'},{s:'Wolldecke',p:'Wolldecken',e:'🧶'}
+  ],
+  informatik:[
+    {s:'USB-Stick',p:'USB-Sticks',e:'💾'},{s:'Netzwerkkabel',p:'Netzwerkkabel',e:'🔌'},
+    {s:'Tastatur',p:'Tastaturen',e:'⌨️'},{s:'Maus',p:'Mäuse',e:'🖱️'},
+    {s:'Bildschirm',p:'Bildschirme',e:'🖥️'},{s:'Festplatte',p:'Festplatten',e:'💽'},
+    {s:'Akku',p:'Akkus',e:'🔋'},{s:'Adapter',p:'Adapter',e:'🔗'}
+  ]
+};
+
+/* ---------- Rotation statt blindem Zufall ----------
+   Gemischter Beutel: Jedes Element kommt genau einmal dran, bevor sich
+   eines wiederholt. Ein neuer Beutel beginnt nie mit dem zuletzt Gezogenen. */
+function neuerBeutel(){ return { rest:[], quelle:null, zuletzt:null }; }
+function ausBeutel(beutel, liste){
+  if(!liste || !liste.length) return null;
+  if(liste.length===1){ beutel.zuletzt=liste[0]; return liste[0]; }
+  const gleicheQuelle = beutel.quelle
+    && beutel.quelle.length===liste.length
+    && beutel.quelle.every((x,i)=>x===liste[i]);
+  if(!gleicheQuelle || !beutel.rest.length){
+    beutel.quelle = liste.slice();
+    beutel.rest   = liste.slice();
+    for(let i=beutel.rest.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      const t=beutel.rest[i]; beutel.rest[i]=beutel.rest[j]; beutel.rest[j]=t;
+    }
+    if(beutel.rest.length>1 && beutel.rest[0]===beutel.zuletzt) beutel.rest.push(beutel.rest.shift());
+  }
+  const v = beutel.rest.shift();
+  beutel.zuletzt = v;
+  return v;
+}
+const beutelGen  = neuerBeutel();   /* Aufgabentyp (Lohn / Einkauf / Prozent / Tempo) */
+const beutelItem = neuerBeutel();   /* Artikel innerhalb der Einkaufsaufgaben */
+function aktuelleItems(){ return (typeof LV!=='undefined' && LV && ITEM_SETS[LV.items]) || ITEMS; }
+
 /* ---------- Beruf / Niveau (zugleich Schwierigkeitsgrad) ---------- */
 const LEVELS={
-  eba:{ label:'DH EBA', typ:'pro', contexts:['lohn','einkauf'],
+  eba:{ label:'DH EBA', items:'handel', typ:'pro', contexts:['lohn','einkauf'],
     lohn:[15,16,18,20], hoursA:[2,3,4,5,6],
     preise:[0.50,0.80,1.00,1.20,1.50], stk:[2,3,4,5,6,8],
     prozPer1:[2,3,5], prozX:[10,20,25,50], prozC:[100,50,10,20],
@@ -602,7 +672,7 @@ const LEVELS={
     cons:[5,6,8], distV:[100,200,300],
     antiK:[12,24,36,48], antiKein:[24,36,48,60],
     antiDist:[{d:120,sp:[30,40,60]},{d:240,sp:[40,60,80,120]}] },
-  dhefz:{ label:'DH EFZ', typ:'beide', contexts:['lohn','einkauf','prozent','tempo'],
+  dhefz:{ label:'DH EFZ', items:'handel', typ:'beide', contexts:['lohn','einkauf','prozent','tempo'],
     lohn:[18,20,22,24,25], hoursA:[3,4,5,6,7,8],
     preise:[0.80,1.20,1.50,2.40,2.50,3.50], stk:[3,4,5,6,7,8,9,10],
     prozPer1:[1.5,2,2.5,3,4,5], prozX:[5,8,10,12,15,20,25], prozC:[100,50,75,60,80],
@@ -610,7 +680,7 @@ const LEVELS={
     cons:[5,6,7,8], distV:[50,100,150,200,250],
     antiK:[24,36,48,60,72], antiKein:[60,72,120,144,180],
     antiDist:[{d:240,sp:[40,60,80,120]},{d:300,sp:[50,60,75,100]},{d:180,sp:[45,60,90]}] },
-  kv:{ label:'KV', typ:'beide', contexts:['lohn','einkauf','prozent','tempo'],
+  kv:{ label:'KV', items:'buero', typ:'beide', contexts:['lohn','einkauf','prozent','tempo'],
     lohn:[22,24,25,26,28,30,32], hoursA:[4,5,6,7,8,9,10,12],
     preise:[1.20,1.50,2.40,2.50,3.50,4.20,4.80], stk:[4,5,6,7,8,9,10,12],
     prozPer1:[1.5,2,2.5,3,4,5,6,8], prozX:[5,8,12,15,20,25,40], prozC:[100,75,60,80,120,150],
@@ -618,7 +688,7 @@ const LEVELS={
     cons:[6,7,8,9], distV:[100,150,200,250,300],
     antiK:[36,48,60,72,120], antiKein:[120,144,180,240,300,360],
     antiDist:[{d:300,sp:[50,60,75,100]},{d:360,sp:[60,72,90,120]},{d:480,sp:[60,80,120]}] },
-  pharma:{ label:'Apotheke', typ:'beide', contexts:['lohn','einkauf','prozent','tempo'],
+  pharma:{ label:'Apotheke', items:'apotheke', typ:'beide', contexts:['lohn','einkauf','prozent','tempo'],
     lohn:[24,26,28,30,32,35], hoursA:[4,5,6,7,8,9,10,12],
     preise:[1.20,1.80,2.40,3.50,4.20,4.80,6.50], stk:[4,5,6,7,8,9,10,12,15],
     prozPer1:[1.5,2.5,3,4,5,6,7.5], prozX:[5,8,12,15,20,25,40,60], prozC:[100,75,60,120,150,250],
@@ -626,7 +696,7 @@ const LEVELS={
     cons:[6,7,8,9], distV:[125,150,175,200,250,300],
     antiK:[48,60,72,120,144], antiKein:[144,180,240,300,360,720],
     antiDist:[{d:360,sp:[60,72,90,120]},{d:480,sp:[60,80,120]},{d:600,sp:[60,75,100,120,150]}] },
-  ags:{ label:'AGS EBA', typ:'pro', contexts:['lohn','einkauf'],
+  ags:{ label:'AGS EBA', items:'gesundheit', typ:'pro', contexts:['lohn','einkauf'],
     lohn:[15,16,18,20], hoursA:[2,3,4,5,6],
     preise:[0.50,0.80,1.00,1.20,1.50], stk:[2,3,4,5,6,8],
     prozPer1:[2,3,5], prozX:[10,20,25,50], prozC:[100,50,10,20],
@@ -634,7 +704,7 @@ const LEVELS={
     cons:[5,6,8], distV:[100,200,300],
     antiK:[12,24,36,48], antiKein:[24,36,48,60],
     antiDist:[{d:120,sp:[30,40,60]},{d:240,sp:[40,60,80,120]}] },
-  fage:{ label:'FaGe', typ:'beide', contexts:['lohn','einkauf','prozent','tempo'],
+  fage:{ label:'FaGe', items:'gesundheit', typ:'beide', contexts:['lohn','einkauf','prozent','tempo'],
     lohn:[22,24,26,28,30], hoursA:[4,5,6,7,8,9,12],
     preise:[0.80,1.20,1.50,2.50,3.50,4.20], stk:[3,4,5,6,8,10,12],
     prozPer1:[1.5,2,2.5,3,4,5,6], prozX:[5,8,10,15,20,25,50], prozC:[100,75,60,80,120],
@@ -642,7 +712,7 @@ const LEVELS={
     cons:[5,6,7,8], distV:[100,150,200,250],
     antiK:[24,36,48,60,72], antiKein:[60,72,120,144,180],
     antiDist:[{d:240,sp:[40,60,80,120]},{d:300,sp:[50,60,75,100]},{d:360,sp:[60,72,90,120]}] },
-  fabe:{ label:'FaBe', typ:'beide', contexts:['lohn','einkauf','prozent','tempo'],
+  fabe:{ label:'FaBe', items:'betreuung', typ:'beide', contexts:['lohn','einkauf','prozent','tempo'],
     lohn:[20,22,24,25,26], hoursA:[3,4,5,6,7,8],
     preise:[0.80,1.00,1.20,1.50,2.40,2.50], stk:[3,4,5,6,7,8,10],
     prozPer1:[1.5,2,2.5,3,4,5], prozX:[5,8,10,12,20,25], prozC:[100,50,75,60,80],
@@ -650,7 +720,7 @@ const LEVELS={
     cons:[5,6,7,8], distV:[50,100,150,200],
     antiK:[24,36,48,60], antiKein:[60,72,120,144],
     antiDist:[{d:240,sp:[40,60,80,120]},{d:180,sp:[45,60,90]},{d:300,sp:[50,60,75,100]}] },
-  inf:{ label:'Informatik', typ:'beide', contexts:['lohn','einkauf','prozent','tempo'],
+  inf:{ label:'Informatik', items:'informatik', typ:'beide', contexts:['lohn','einkauf','prozent','tempo'],
     lohn:[24,26,28,30,32,35], hoursA:[4,5,6,7,8,9,10,12],
     preise:[1.50,2.40,3.50,4.20,4.80,6.50], stk:[4,5,6,8,10,12,16],
     prozPer1:[2,2.5,3,4,5,6,8], prozX:[5,8,12,15,20,25,40,60], prozC:[100,75,80,120,150,250],
@@ -676,7 +746,7 @@ function g_lohn_pro(){
 function g_einkauf_pro(){
   const preis=pick(LV.preise);
   const [a,c]=twoDistinct(LV.stk);
-  const b=Math.round(preis*a*100)/100, ans=Math.round(preis*c*100)/100, it=pick(ITEMS);
+  const b=Math.round(preis*a*100)/100, ans=Math.round(preis*c*100)/100, it=ausBeutel(beutelItem, aktuelleItems());
   return { typ:'pro', kt:'einkauf', emoji:it.e,
     text:`${a} ${it.p} kosten ${money(b)}. Was kosten ${c} ${it.p}?`,
     aStr:`${a} ${it.p}`, bStr:money(b), cStr:`${c} ${it.p}`,
@@ -802,7 +872,7 @@ function buildPool(){
 
 function neueAufgabe(){
   const pool=buildPool();
-  cur=pick(pool)();
+  cur=ausBeutel(beutelGen, pool)();
   artChosen=null; answered=false;
   $('qtext').textContent=(cur.emoji?cur.emoji+' ':'')+cur.text;
   $('qmeta').textContent='';
