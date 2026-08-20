@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QV-Trainer Medikamente · Fachfrau/Fachmann Apotheke EFZ</title>
+<style>
+  :root{ --petrol:#183E45; --blau:#1F4E78; --linie:#d9d2c4; --papier:#FBF9F4;
+         --gruen:#4E7A46; --rot:#B4564E; --gold:#C08A2D; }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:"Aptos","Segoe UI",system-ui,sans-serif; background:var(--papier);
+       color:#26241f; padding:18px; line-height:1.45;}
+  .huelle{max-width:1180px; margin:0 auto;}
+
+  h1.titel{color:var(--petrol); font-size:1.5rem;}
+  .unter{color:#6a6659; font-size:.85rem; margin-bottom:14px;}
+
+  .leiste{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:12px;}
+  .leiste input[type=search]{font:inherit; font-size:.9rem; padding:7px 12px; border:1.5px solid var(--linie);
+    border-radius:8px; background:#fff; min-width:230px; flex:1 1 230px;}
+  .chipf{font:inherit; font-size:.78rem; padding:6px 12px; border:1.5px solid var(--linie);
+    border-radius:99px; background:#fff; cursor:pointer; color:#4a463c; white-space:nowrap;}
+  .chipf.an{background:var(--petrol); color:#fff; border-color:var(--petrol);}
+  .modi{display:flex; border:1.5px solid var(--linie); border-radius:99px; overflow:hidden; background:#fff;}
+  .modi button{font:inherit; font-size:.78rem; padding:6px 13px; border:none; background:none;
+    cursor:pointer; color:#4a463c; white-space:nowrap;}
+  .modi button.an{background:var(--petrol); color:#fff;}
+  .zaehler{font-size:.78rem; color:#6a6659; margin-left:auto;}
+  .themenleiste{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px;}
+
+  /* ---------- Liste ---------- */
+  .thema{font-size:.72rem; letter-spacing:1.6px; text-transform:uppercase; color:#8a8478;
+         margin:18px 0 6px; border-bottom:1px solid var(--linie); padding-bottom:3px;
+         display:flex; justify-content:space-between; align-items:baseline;}
+  .thema span{letter-spacing:0; text-transform:none; font-size:.72rem; color:#a09a8c;}
+  .gitter{display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:8px;}
+  .karte{border:1.5px solid var(--linie); border-radius:9px; background:#fff; padding:9px 12px;}
+  .karte b{font-size:.95rem; color:var(--blau); display:block;}
+  .karte em{font-style:normal; font-size:.82rem; color:#6a6659; display:block; margin-top:2px;}
+  .karte em::before{content:"Wirkstoff: "; color:#a09a8c;}
+  mark{background:#F6E08A; padding:0 1px;}
+
+  /* ---------- Übungen ---------- */
+  .buehne{max-width:620px; margin:20px auto; border:1.5px solid var(--linie); border-radius:14px;
+          background:#fff; padding:20px 22px;}
+  .buehne .weg{font-size:.75rem; color:#8a8478; margin-bottom:8px;}
+  .buehne h3{font-size:1.35rem; color:var(--blau); margin-bottom:4px;}
+  .buehne .loesung{margin:12px 0; padding:12px 14px; background:#F3F7F3;
+    border-left:3px solid var(--gruen); border-radius:0 6px 6px 0;}
+  .buehne .loesung b{display:block; font-size:1.05rem; color:var(--petrol);}
+  .buehne .loesung span{font-size:.85rem; color:#5c5852;}
+  .knopf{font:inherit; font-size:.88rem; padding:9px 18px; border:1.5px solid var(--petrol);
+         border-radius:8px; background:var(--petrol); color:#fff; cursor:pointer;}
+  .knopf.hell{background:#fff; color:var(--petrol);}
+  .knopfreihe{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;}
+  .wahl{display:flex; flex-direction:column; gap:7px; margin-top:14px;}
+  .wahl button{font:inherit; font-size:.9rem; text-align:left; padding:10px 14px;
+    border:1.5px solid var(--linie); border-radius:8px; background:#fff; cursor:pointer;}
+  .wahl button:hover:not(:disabled){border-color:var(--petrol);}
+  .wahl button.richtig{background:#E5F0E3; border-color:var(--gruen); font-weight:700;}
+  .wahl button.falsch{background:#F7E4E2; border-color:var(--rot);}
+  .stand{font-size:.8rem; color:#6a6659; margin-top:14px;}
+
+  .merkkopf{display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between;
+    border:1.5px solid var(--petrol); border-radius:10px; padding:10px 14px; margin-bottom:14px;
+    background:#fff; font-size:.9rem;}
+  .merkkopf .knopf{padding:6px 13px; font-size:.82rem;}
+
+  .fuss{margin-top:28px; border-top:1px solid var(--linie); padding-top:10px;
+        font-size:.72rem; color:#8a8478; line-height:1.5;}
+  .fuss a{color:#6a6659;}
+
+  @media print{
+    body{background:#fff; padding:0;}
+    .leiste,.themenleiste,.modi,.zaehler,.merkkopf .knopfreihe,.fuss{display:none !important;}
+    .merkkopf{border:none; padding:0; margin-bottom:8px;}
+    .gitter{grid-template-columns:repeat(3,1fr);}
+    .karte{break-inside:avoid; border-color:#bbb;}
+  }
+</style>
+</head>
+<body>
+<div class="huelle">
+  <h1 class="titel">QV-Trainer Medikamente</h1>
+  <div class="unter">413 Einträge aus der offiziellen Liste von pharmaSuisse für das Qualifikationsverfahren
+    Fachfrau/Fachmann Apotheke EFZ · Ausgabe 2026</div>
+
+  <div class="leiste">
+    <input type="search" id="suche" placeholder="Präparat, Wirkstoff oder Thema suchen …">
+    <span class="modi">
+      <button data-modus="liste" class="an">Liste</button>
+      <button data-modus="karten">Abfragen</button>
+      <button data-modus="thema">Thema zuordnen</button>
+      <button data-modus="wirkstoff">Wirkstoff</button>
+    </span>
+    <button class="chipf" id="offenKnopf" hidden>Offen (0)</button>
+    <span class="zaehler" id="zaehler"></span>
+  </div>
+  <div class="themenleiste" id="themen"></div>
+
+  <div id="ausgabe"></div>
+
+  <div class="fuss">
+    Quelle: «Liste Medikamente und Produkte, Qualifikationsverfahren», Schweizerischer Apothekerverband
+    pharmaSuisse. Die Liste wird jährlich am 1. Februar aktualisiert – vor der Prüfung bitte prüfen, ob eine
+    neuere Ausgabe vorliegt. Massgebend ist immer das Original von pharmaSuisse. Angaben ohne Gewähr.
+  </div>
+</div>
+
+<script data-goatcounter="https://abu-tools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+var DATEN = [{"t":"Erkrankungen der Haut","s":"Roaccutan, Tretinac","w":"Isotretinoin"},{"t":"Erkrankungen der Haut","s":"Minocin","w":"Minocyclin"},{"t":"Erkrankungen der Haut","s":"Cypestra-35","w":""},{"t":"Erkrankungen der Haut","s":"Differin","w":""},{"t":"Erkrankungen der Haut","s":"Fucidin","w":""},{"t":"Erkrankungen der Haut","s":"Dalacin T","w":""},{"t":"Erkrankungen der Haut","s":"Skinoren","w":""},{"t":"Erkrankungen der Haut","s":"Aknichthol","w":""},{"t":"Erkrankungen der Haut","s":"Benzac","w":""},{"t":"Erkrankungen der Haut","s":"Lubexyl","w":""},{"t":"Erkrankungen der Haut","s":"Fenistil","w":""},{"t":"Erkrankungen der Haut","s":"Parapic","w":""},{"t":"Erkrankungen der Haut","s":"Stilex","w":""},{"t":"Erkrankungen der Haut","s":"Elocom","w":""},{"t":"Erkrankungen der Haut","s":"Dermovate","w":""},{"t":"Erkrankungen der Haut","s":"Betnovate","w":""},{"t":"Erkrankungen der Haut","s":"Solarcaine","w":"Lidocain"},{"t":"Erkrankungen der Haut","s":"Antidry calm","w":""},{"t":"Erkrankungen der Haut","s":"Pruri-med","w":""},{"t":"Erkrankungen der Haut","s":"Elidel","w":""},{"t":"Erkrankungen der Haut","s":"Humira","w":""},{"t":"Erkrankungen der Haut","s":"Metoject","w":"Methotrexat"},{"t":"Erkrankungen der Haut","s":"Burgerstein Omega 3","w":"DHA/EPA"},{"t":"Erkrankungen der Haut","s":"Zincream","w":"Zinkoxid"},{"t":"Erkrankungen der Haut","s":"Oxyplastin","w":"Zinkoxid"},{"t":"Erkrankungen der Haut","s":"Imazol","w":"Clotrimazol"},{"t":"Erkrankungen der Haut","s":"Loceryl","w":""},{"t":"Erkrankungen der Haut","s":"Lamisil","w":"Terbinafin"},{"t":"Erkrankungen der Haut","s":"Pevaryl","w":""},{"t":"Erkrankungen der Haut","s":"Curatoderm","w":""},{"t":"Erkrankungen der Haut","s":"Daivobet","w":""},{"t":"Erkrankungen der Haut","s":"Dexeryl","w":""},{"t":"Erkrankungen der Haut","s":"Optiderm","w":""},{"t":"Erkrankungen der Haut","s":"Lubex","w":""},{"t":"Erkrankungen der Haut","s":"Regaine","w":"Minoxidil"},{"t":"Erkrankungen der Haut","s":"Propecia","w":"Finasterid"},{"t":"Erkrankungen der Haut","s":"Purelan","w":"Lanolin"},{"t":"Erkrankungen der Haut","s":"Dermaplast","w":"Alginat"},{"t":"Erkrankungen der Haut","s":"Dermatix","w":"Silikon"},{"t":"Erkrankungen der Haut","s":"Betadine","w":"PVP-Iod"},{"t":"Erkrankungen der Haut","s":"Octenisept","w":"Octenidin"},{"t":"Erkrankungen der Haut","s":"Merfen Classic","w":"Chlorhexidin"},{"t":"Erkrankungen der Haut","s":"Flammazine","w":""},{"t":"Erkrankungen der Haut","s":"Bepanthen Creme/Salbe","w":"Dexpanthenol"},{"t":"Erkrankungen der Haut","s":"Ialugen","w":"Hyaluronsäure"},{"t":"Ernährung","s":"Xenical","w":"Orlistat"},{"t":"Ernährung","s":"Formoline","w":""},{"t":"Ernährung","s":"Vitasprint, Dynamisan","w":""},{"t":"Ernährung","s":"Supradyn pro energy-complex","w":""},{"t":"Ernährung","s":"Berocca MED","w":""},{"t":"Ernährung","s":"Vitarubin","w":""},{"t":"Ernährung","s":"Elevit pronatal","w":""},{"t":"Ernährung","s":"Natalben plus","w":""},{"t":"Ernährung","s":"Andreafol","w":""},{"t":"Ernährung","s":"Gyno-Tardyferon","w":""},{"t":"Ernährung","s":"Pharmaton vital","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Motilium","w":"Domperidon"},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Paspertin","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Creon","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Rennie","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Riopan","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Gaviscon","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Pantozol","w":"Pantoprazol"},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Esomep Mups","w":"Esomeprazol"},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Pylera","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Elotrans","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Itinerol B6","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Zofran","w":"Ondansetron"},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Cariban","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Zintona","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Similasan","w":"Nux vomica"},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Imodium","w":"Loperamid"},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Carbolevure","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Perenterol","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Bioflorin","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Sidroga Schwarztee (Wellness Ceylon)","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Cololyt","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Movicol","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Transipeg","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Laxipeg","w":"Macrogol"},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Macrogol Mepha","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Microlax","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Duphalac","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Metamucil Regular / N Mite","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Agiolax mite / mit Senna","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Mucilar","w":"Avena"},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Paragol N","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Bulboid","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Dulcolax","w":"Bisacodyl"},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Laxoberon","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Midro","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Sidroga Abführtee","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Scheriproct","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Procto Synalar N","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Doxiproct / plus","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Procto-Glyvenol","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Sulgan N","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Flatulex","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"BiGaia","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Buscopan","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Lacdigest","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Gaspan","w":""},{"t":"Beschwerden im Gastrointestinaltrakt","s":"Iberogast","w":""},{"t":"Schmerzen","s":"Dafalgan","w":"Paracetamol"},{"t":"Schmerzen","s":"Aspirin, Aspégic","w":"Acetylsalicylsäure"},{"t":"Schmerzen","s":"Contra-Schmerz plus","w":"Acetylsalicylsäure + Coffein"},{"t":"Schmerzen","s":"Brufen, Algifor, Irfen","w":"Ibuprofen"},{"t":"Schmerzen","s":"Voltaren, Ecofenac, Olfen","w":"Diclofenac"},{"t":"Schmerzen","s":"Aleve","w":"Naproxen"},{"t":"Schmerzen","s":"Ponstan, Mefenacid","w":"Mefenaminsäure"},{"t":"Schmerzen","s":"Novalgin","w":"Metamizol"},{"t":"Schmerzen","s":"Voltaren Emulgel, Ecofenac Lipogel","w":""},{"t":"Schmerzen","s":"Flector EP, Olfen Patch","w":""},{"t":"Schmerzen","s":"Oxynorm","w":""},{"t":"Schmerzen","s":"MST continus","w":"Morphin"},{"t":"Schmerzen","s":"Durogesic","w":"Fentanyl"},{"t":"Schmerzen","s":"Tramal","w":"Tramadol"},{"t":"Schmerzen","s":"Imigran","w":"Sumatriptan"},{"t":"Schmerzen","s":"Maxalt","w":""},{"t":"Schmerzen","s":"Zomig","w":"Zolmitriptan"},{"t":"Schmerzen","s":"Beloc Zok","w":"Metoprolol"},{"t":"Schmerzen","s":"Inderal","w":"Propranolol"},{"t":"Schmerzen","s":"Topamax","w":""},{"t":"HNO","s":"Bucco Tantum","w":""},{"t":"HNO","s":"Strepsils","w":""},{"t":"HNO","s":"Chlorhexamed","w":"Chlorhexidin"},{"t":"HNO","s":"Neo-Angin","w":""},{"t":"HNO","s":"Ciproxin HC","w":""},{"t":"HNO","s":"Panotile","w":""},{"t":"HNO","s":"Cerumenol","w":""},{"t":"HNO","s":"Otriduo","w":""},{"t":"HNO","s":"Triofan Rhinitis","w":""},{"t":"HNO","s":"Triofan Schnupfen","w":""},{"t":"HNO","s":"Otrivin Schnupfen","w":"Xylometazolin"},{"t":"HNO","s":"Rinosedin","w":"Xylometazolin"},{"t":"HNO","s":"Nasivin","w":"Oxymetazolin"},{"t":"HNO","s":"Emser Nasenspray","w":""},{"t":"HNO","s":"Triomer hypertonisch","w":""},{"t":"HNO","s":"Avamys","w":""},{"t":"HNO","s":"Nasonex","w":"Mometason"},{"t":"HNO","s":"Betaserc","w":"Betahistin"},{"t":"HNO","s":"Sinupret/forte","w":""},{"t":"HNO","s":"GeloMyrtol","w":""},{"t":"HNO","s":"Nasobol","w":""},{"t":"Bewegungsapparat","s":"Fosamax","w":"Alendronsäure"},{"t":"Bewegungsapparat","s":"Estrofem N","w":""},{"t":"Bewegungsapparat","s":"Estradot","w":""},{"t":"Bewegungsapparat","s":"Miacalcic","w":""},{"t":"Bewegungsapparat","s":"Celebrex","w":"Celecoxib"},{"t":"Bewegungsapparat","s":"Vimovo","w":"Naproxen + Esomeprazol"},{"t":"Bewegungsapparat","s":"Condrosulf","w":""},{"t":"Bewegungsapparat","s":"Zyloric","w":"Allopurinol"},{"t":"Bewegungsapparat","s":"Mydocalm","w":""},{"t":"Bewegungsapparat","s":"Sirdalud","w":""},{"t":"Bewegungsapparat","s":"Vogel Atrosan","w":""},{"t":"Bewegungsapparat","s":"Kytta Salbe","w":""},{"t":"Bewegungsapparat","s":"Calperos D3","w":""},{"t":"Bewegungsapparat","s":"Calcimagon D3","w":""},{"t":"Bewegungsapparat","s":"Vi-De3","w":""},{"t":"Bewegungsapparat","s":"Magnesiocard","w":""},{"t":"Allergie","s":"Feniallerg","w":""},{"t":"Allergie","s":"Xyzal","w":"Levocetirizin"},{"t":"Allergie","s":"Zyrtec, Cetallerg, Ceteco","w":"Cetirizin"},{"t":"Allergie","s":"Claritine","w":"Loratadin"},{"t":"Allergie","s":"Bilaxten","w":"Bilastin"},{"t":"Allergie","s":"Telfast, Telfastin","w":"Fexofenadin"},{"t":"Allergie","s":"Otri Heuschnupfen","w":""},{"t":"Allergie","s":"EpiPen, EpiPen Junior","w":"Adrenalin"},{"t":"Allergie","s":"Spiricort","w":"Prednisolon"},{"t":"Augen","s":"Livostin","w":""},{"t":"Augen","s":"Zaditen Ophtha","w":""},{"t":"Augen","s":"Opticrom Allergo","w":""},{"t":"Augen","s":"Spersallerg","w":""},{"t":"Augen","s":"Ultracortenol","w":""},{"t":"Augen","s":"Acular","w":""},{"t":"Augen","s":"Indophtal","w":""},{"t":"Augen","s":"AciVision Augensalbe","w":""},{"t":"Augen","s":"Xalatan","w":"Latanoprost"},{"t":"Augen","s":"Cosopt","w":""},{"t":"Augen","s":"Lumigan","w":""},{"t":"Augen","s":"Diamox","w":""},{"t":"Augen","s":"Timoptic-XE","w":""},{"t":"Augen","s":"FML","w":""},{"t":"Augen","s":"Pred forte","w":""},{"t":"Augen","s":"Dexafree","w":""},{"t":"Augen","s":"Tobradex","w":""},{"t":"Augen","s":"Visine classic","w":""},{"t":"Augen","s":"Lacrycon, Lacri-Vision","w":"Hyaluronsäure"},{"t":"Augen","s":"Oculac","w":""},{"t":"Augen","s":"Protagent","w":""},{"t":"Augen","s":"Bepanthen PRO intense","w":""},{"t":"Augen","s":"Optive Plus mit Lipiden","w":""},{"t":"Augen","s":"Visiodoron Euphrasia","w":""},{"t":"Augen","s":"Vitamin A Blache","w":""},{"t":"Augen","s":"Desomedin","w":""},{"t":"Augen","s":"Tobrex","w":""},{"t":"Augen","s":"Floxal","w":""},{"t":"Augen","s":"Fucithalmic","w":""},{"t":"Augen","s":"Vitalux Plus","w":""},{"t":"Atemwege","s":"Axotide","w":""},{"t":"Atemwege","s":"Pulmicort","w":""},{"t":"Atemwege","s":"Seretide","w":""},{"t":"Atemwege","s":"Symbicort","w":""},{"t":"Atemwege","s":"Relvar Ellipta","w":""},{"t":"Atemwege","s":"Oxis","w":""},{"t":"Atemwege","s":"Ventolin","w":""},{"t":"Atemwege","s":"Spiriva","w":""},{"t":"Atemwege","s":"Singulair, Lukair","w":""},{"t":"Atemwege","s":"Solmucol, Ecomucyl","w":"Acetylcystein"},{"t":"Atemwege","s":"Prospan","w":""},{"t":"Atemwege","s":"Umckaloabo, Kaloba","w":""},{"t":"Atemwege","s":"Solmucalm","w":""},{"t":"Atemwege","s":"Paracodin","w":"(Dihydro)-Codein"},{"t":"Atemwege","s":"Resyl Plus","w":""},{"t":"Atemwege","s":"Bexin","w":"Dextromethorphan"},{"t":"Atemwege","s":"Calmerphan","w":""},{"t":"Atemwege","s":"Nitux","w":"Morclofon"},{"t":"Atemwege","s":"Broncho-Vaxom","w":""},{"t":"Atemwege","s":"Tamiflu","w":""},{"t":"Atemwege","s":"Influvac Tetra","w":""},{"t":"Atemwege","s":"Vaxigrip Tetra","w":""},{"t":"Atemwege","s":"Pretuval","w":""},{"t":"Atemwege","s":"NeoCitran","w":""},{"t":"Atemwege","s":"Vicks MediNait","w":""},{"t":"Atemwege","s":"Fluimucil Grippe Day & Night","w":""},{"t":"Gynäkologie","s":"Cerazette","w":""},{"t":"Gynäkologie","s":"Feminac","w":""},{"t":"Gynäkologie","s":"Gyselle","w":""},{"t":"Gynäkologie","s":"Elyfem","w":""},{"t":"Gynäkologie","s":"Gracial","w":""},{"t":"Gynäkologie","s":"Qlaira","w":""},{"t":"Gynäkologie","s":"Evra","w":""},{"t":"Gynäkologie","s":"NuvaRing","w":""},{"t":"Gynäkologie","s":"Norlevo","w":""},{"t":"Gynäkologie","s":"ellaOne","w":""},{"t":"Gynäkologie","s":"Premens","w":""},{"t":"Gynäkologie","s":"Visanne","w":""},{"t":"Gynäkologie","s":"Lactacyd","w":""},{"t":"Gynäkologie","s":"Livial","w":""},{"t":"Gynäkologie","s":"Estradot","w":""},{"t":"Gynäkologie","s":"Femoston/conti","w":""},{"t":"Gynäkologie","s":"Systen conti/sequi","w":""},{"t":"Gynäkologie","s":"Activelle","w":""},{"t":"Gynäkologie","s":"Kliogest N","w":""},{"t":"Gynäkologie","s":"Oestrogel","w":""},{"t":"Gynäkologie","s":"Oestro-Gynaedron","w":""},{"t":"Gynäkologie","s":"Vagifem","w":""},{"t":"Gynäkologie","s":"Duphaston","w":""},{"t":"Gynäkologie","s":"Primolut N","w":""},{"t":"Gynäkologie","s":"Utrogestan","w":""},{"t":"Gynäkologie","s":"Progestogel","w":""},{"t":"Gynäkologie","s":"Cimifemin","w":""},{"t":"Gynäkologie","s":"Vogel Menosan salvia","w":""},{"t":"Gynäkologie","s":"Rebalance","w":""},{"t":"Gynäkologie","s":"Fluomizin","w":""},{"t":"Gynäkologie","s":"Gyno-Pevaryl","w":""},{"t":"Gynäkologie","s":"Gyno-Canesten","w":""},{"t":"Gynäkologie","s":"Dostinex","w":""},{"t":"Urogenitalbeschwerden","s":"Proscar","w":"Finasterid"},{"t":"Urogenitalbeschwerden","s":"Pradif T","w":"Tamsulosin"},{"t":"Urogenitalbeschwerden","s":"Xatral","w":""},{"t":"Urogenitalbeschwerden","s":"Prostagutt-F","w":""},{"t":"Urogenitalbeschwerden","s":"Prosta Urgenin","w":""},{"t":"Urogenitalbeschwerden","s":"Viagra","w":"Sildenafil"},{"t":"Urogenitalbeschwerden","s":"Cialis","w":"Tadalafil"},{"t":"Urogenitalbeschwerden","s":"Furadantin, Uvamin","w":""},{"t":"Urogenitalbeschwerden","s":"Bactrim forte, Nopil forte","w":""},{"t":"Urogenitalbeschwerden","s":"Monuril","w":"Fosfomycin"},{"t":"Urogenitalbeschwerden","s":"Uro-Vaxom","w":""},{"t":"Urogenitalbeschwerden","s":"Detrusitol","w":""},{"t":"Urogenitalbeschwerden","s":"Spasmo-Urgenin Neo","w":""},{"t":"Urogenitalbeschwerden","s":"Vesicare","w":""},{"t":"Urogenitalbeschwerden","s":"Betmiga","w":""},{"t":"Urogenitalbeschwerden","s":"Hänseler Nieren- und Blasendragées S","w":""},{"t":"Urogenitalbeschwerden","s":"Phytopharma Cranberry","w":""},{"t":"Urogenitalbeschwerden","s":"Angocin","w":""},{"t":"Urogenitalbeschwerden","s":"Cystinol","w":""},{"t":"Urogenitalbeschwerden","s":"Femannose","w":"D-Mannose"},{"t":"Herz-Kreislauf","s":"Clexane","w":"Enoxaparin, Heparin"},{"t":"Herz-Kreislauf","s":"Fraxiparine","w":""},{"t":"Herz-Kreislauf","s":"Hepagel","w":""},{"t":"Herz-Kreislauf","s":"Marcoumar","w":""},{"t":"Herz-Kreislauf","s":"Sintrom","w":""},{"t":"Herz-Kreislauf","s":"Xarelto","w":"Rivaroxaban"},{"t":"Herz-Kreislauf","s":"Eliquis","w":""},{"t":"Herz-Kreislauf","s":"Plavix","w":"Clopidogrel"},{"t":"Herz-Kreislauf","s":"Aspirin Cardio, ASS Cardio","w":"Acetylsalicylsäure"},{"t":"Herz-Kreislauf","s":"Nitroderm, Nitrolingual","w":"Nitroglycerin"},{"t":"Herz-Kreislauf","s":"Isoket Spray","w":""},{"t":"Herz-Kreislauf","s":"Sortis","w":"Atorvastatin"},{"t":"Herz-Kreislauf","s":"Crestor","w":"Rosuvastatin"},{"t":"Herz-Kreislauf","s":"Zocor","w":"Simvastatin"},{"t":"Herz-Kreislauf","s":"Ezetrol","w":"Ezetimib"},{"t":"Herz-Kreislauf","s":"Concor, Bilol","w":"Bisoprolol"},{"t":"Herz-Kreislauf","s":"Coversum","w":"Perindopril"},{"t":"Herz-Kreislauf","s":"Zestril","w":"Lisinopril"},{"t":"Herz-Kreislauf","s":"Isoptin","w":""},{"t":"Herz-Kreislauf","s":"Norvasc","w":"Amlodipin"},{"t":"Herz-Kreislauf","s":"Blopress","w":"Candesartan"},{"t":"Herz-Kreislauf","s":"Cosaar","w":"Losartan"},{"t":"Herz-Kreislauf","s":"Diovan","w":"Valsartan"},{"t":"Herz-Kreislauf","s":"Exforge HCT","w":""},{"t":"Herz-Kreislauf","s":"Torem","w":"Torasemid"},{"t":"Herz-Kreislauf","s":"Lasix","w":"Furosemid"},{"t":"Herz-Kreislauf","s":"Aldactone","w":""},{"t":"Herz-Kreislauf","s":"Effortil","w":""},{"t":"Herz-Kreislauf","s":"Daflon","w":""},{"t":"Herz-Kreislauf","s":"Tardyferon","w":"Eisen"},{"t":"Nervensystem","s":"Keppra","w":""},{"t":"Nervensystem","s":"Lamictal","w":""},{"t":"Nervensystem","s":"Depakine","w":"Valproinsäure"},{"t":"Nervensystem","s":"Tegretol","w":"Carbamazepin"},{"t":"Nervensystem","s":"Lyrica","w":"Pregabalin"},{"t":"Nervensystem","s":"Diazepam-Desitin Rectal Tube","w":""},{"t":"Nervensystem","s":"Cymbalta","w":"Duloxetin"},{"t":"Nervensystem","s":"Efexor","w":"Venlafaxin"},{"t":"Nervensystem","s":"Remeron","w":"Mirtazapin"},{"t":"Nervensystem","s":"Zoloft","w":"Sertralin"},{"t":"Nervensystem","s":"Cipralex","w":"Escitalopram"},{"t":"Nervensystem","s":"Trittico","w":"Trazodon"},{"t":"Nervensystem","s":"Brintellix","w":""},{"t":"Nervensystem","s":"Seroquel","w":"Quetiapin"},{"t":"Nervensystem","s":"Risperdal","w":"Risperidon"},{"t":"Nervensystem","s":"Leponex, Clopin eco","w":""},{"t":"Nervensystem","s":"Zyprexa","w":"Olanzapin"},{"t":"Nervensystem","s":"Stilnox","w":"Zolpidem"},{"t":"Nervensystem","s":"Seresta","w":""},{"t":"Nervensystem","s":"Temesta","w":"Lorazepam"},{"t":"Nervensystem","s":"Xanax","w":""},{"t":"Nervensystem","s":"Dormicum","w":""},{"t":"Nervensystem","s":"Quilonorm","w":""},{"t":"Nervensystem","s":"Oyono","w":""},{"t":"Nervensystem","s":"Benocten","w":""},{"t":"Nervensystem","s":"Sanalepsi N","w":""},{"t":"Nervensystem","s":"Circadin","w":""},{"t":"Nervensystem","s":"Zeller Schlaf/forte, Redormin","w":""},{"t":"Nervensystem","s":"Baldriparan für die Nacht","w":""},{"t":"Nervensystem","s":"Remotiv","w":"Johanniskraut"},{"t":"Nervensystem","s":"Jarsin","w":"Johanniskraut"},{"t":"Nervensystem","s":"Neurodol","w":""},{"t":"Nervensystem","s":"Qutenza","w":""},{"t":"Nervensystem","s":"Neurodoron","w":""},{"t":"Infektionen","s":"Encepur","w":""},{"t":"Infektionen","s":"FSME-Immun CC","w":""},{"t":"Infektionen","s":"Twinrix","w":""},{"t":"Infektionen","s":"Priorix Tetra","w":""},{"t":"Infektionen","s":"Gardasil","w":""},{"t":"Infektionen","s":"Vivotif","w":""},{"t":"Infektionen","s":"Diflucan","w":"Fluconazol"},{"t":"Infektionen","s":"Ampho-Moronal","w":""},{"t":"Infektionen","s":"Daktarin Gel","w":""},{"t":"Infektionen","s":"Multilind","w":""},{"t":"Infektionen","s":"Curanel","w":""},{"t":"Infektionen","s":"Augmentin, Co-Amoxi, Co-Amoxicillin","w":""},{"t":"Infektionen","s":"Amoxicillin Sandoz","w":""},{"t":"Infektionen","s":"Norsol","w":"Norfloxacin"},{"t":"Infektionen","s":"Ciproxin","w":"Ciprofloxacin"},{"t":"Infektionen","s":"Doxycyclin Mepha","w":""},{"t":"Infektionen","s":"Klacid","w":"Clarithromycin"},{"t":"Infektionen","s":"Zithromax","w":"Azithromycin"},{"t":"Infektionen","s":"Zinat","w":"Cefuroxim"},{"t":"Infektionen","s":"Flagyl","w":"Metronidazol"},{"t":"Infektionen","s":"Malarone","w":"Atovaquon"},{"t":"Infektionen","s":"Mephaquin","w":"Mefloquin"},{"t":"Infektionen","s":"Valtrex","w":"Valaciclovir"},{"t":"Infektionen","s":"Zovirax","w":"Aciclovir"},{"t":"Infektionen","s":"Zovirax Lip, Aviral","w":"Aciclovir"},{"t":"Infektionen","s":"Fenivir","w":"Penciclovir"},{"t":"Infektionen","s":"Cobantril","w":""},{"t":"Infektionen","s":"Vermox","w":""},{"t":"Infektionen","s":"Elimax","w":""},{"t":"Infektionen","s":"Hedrin Express","w":""},{"t":"Infektionen","s":"Tanno-Hermal","w":""},{"t":"Infektionen","s":"Antibrumm Forte","w":""},{"t":"Hormonelle Erkrankungen","s":"Eltroxin","w":""},{"t":"Hormonelle Erkrankungen","s":"Euthyrox","w":""},{"t":"Hormonelle Erkrankungen","s":"Néo-Mercazole","w":""},{"t":"Hormonelle Erkrankungen","s":"Insulatard HM","w":""},{"t":"Hormonelle Erkrankungen","s":"Novorapid","w":""},{"t":"Hormonelle Erkrankungen","s":"Lantus","w":""},{"t":"Hormonelle Erkrankungen","s":"Toujeo","w":""},{"t":"Hormonelle Erkrankungen","s":"Tresiba","w":""},{"t":"Hormonelle Erkrankungen","s":"Humalog mix","w":""},{"t":"Hormonelle Erkrankungen","s":"Ryzodeg","w":""},{"t":"Hormonelle Erkrankungen","s":"Glucophage, Metfin","w":"Metformin"},{"t":"Hormonelle Erkrankungen","s":"Forxiga","w":""},{"t":"Hormonelle Erkrankungen","s":"Jardiance","w":""},{"t":"Hormonelle Erkrankungen","s":"Diamicron","w":""},{"t":"Hormonelle Erkrankungen","s":"Janumet","w":""},{"t":"Hormonelle Erkrankungen","s":"Rybelsus","w":""},{"t":"Hormonelle Erkrankungen","s":"Ozempic","w":""},{"t":"Hormonelle Erkrankungen","s":"Baqsimi","w":""},{"t":"Hormonelle Erkrankungen","s":"Glucagen","w":""},{"t":"Hormonelle Erkrankungen","s":"Prednison Streuli","w":"Prednison"},{"t":"Hormonelle Erkrankungen","s":"Spiricort","w":"Prednisolon"},{"t":"Weitere wichtige Erkrankungen","s":"Femara","w":""},{"t":"Weitere wichtige Erkrankungen","s":"Androcur","w":""},{"t":"Weitere wichtige Erkrankungen","s":"Glivec","w":""},{"t":"Weitere wichtige Erkrankungen","s":"Norvir","w":""},{"t":"Weitere wichtige Erkrankungen","s":"Truvada","w":""},{"t":"Weitere wichtige Erkrankungen","s":"Rebif","w":""},{"t":"Weitere wichtige Erkrankungen","s":"Sativex","w":""},{"t":"Weitere wichtige Erkrankungen","s":"Imurek","w":""},{"t":"Weitere wichtige Erkrankungen","s":"Prograf","w":""},{"t":"Weitere wichtige Erkrankungen","s":"Sandimmun","w":""},{"t":"Weitere wichtige Erkrankungen","s":"Stalevo","w":""},{"t":"Weitere wichtige Erkrankungen","s":"Neupro","w":""},{"t":"Weitere wichtige Erkrankungen","s":"Madopar","w":""},{"t":"Weitere wichtige Erkrankungen","s":"Elvanse","w":""},{"t":"Weitere wichtige Erkrankungen","s":"Ritalin","w":"Methylphenidat"},{"t":"Weitere wichtige Erkrankungen","s":"Concerta","w":""},{"t":"Weitere wichtige Erkrankungen","s":"Exelon","w":"Rivastigmin"},{"t":"Weitere wichtige Erkrankungen","s":"Akineton","w":""}];
+</script>
+<script>
+(function(){
+  var ausgabe = document.getElementById('ausgabe'),
+      zaehler = document.getElementById('zaehler');
+
+  DATEN.forEach(function(e, i){ e.id = i; });
+
+  var modus = 'liste', suchwort = '', aktiv = {};
+  var offen = {};
+  try{ offen = JSON.parse(localStorage.getItem('qv_offen') || '{}'); }catch(e){ offen = {}; }
+  function offenIds(){ return Object.keys(offen).filter(function(k){ return offen[k]; }); }
+  function offenSichern(){
+    try{ localStorage.setItem('qv_offen', JSON.stringify(offen)); }catch(e){}
+    var n = offenIds().length, k = document.getElementById('offenKnopf');
+    k.hidden = n === 0; k.textContent = 'Offen (' + n + ')';
+  }
+
+  function sicher(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function markiert(s){
+    var h = sicher(s);
+    if (!suchwort) return h;
+    var re = new RegExp('(' + suchwort.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
+    return h.replace(re, '<mark>$1</mark>');
+  }
+  function mische(a){
+    for (var i = a.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i + 1)), h = a[i]; a[i] = a[j]; a[j] = h;
+    }
+    return a;
+  }
+
+  // ---------- Themen-Chips ----------
+  var THEMEN = [];
+  DATEN.forEach(function(e){ if (THEMEN.indexOf(e.t) < 0) THEMEN.push(e.t); });
+  var tl = document.getElementById('themen');
+  THEMEN.forEach(function(t){
+    var b = document.createElement('button');
+    b.className = 'chipf'; b.textContent = t;
+    b.addEventListener('click', function(){
+      aktiv[t] = !aktiv[t]; b.classList.toggle('an', !!aktiv[t]); zeichnen();
+    });
+    tl.appendChild(b);
+  });
+
+  function gefiltert(){
+    var an = Object.keys(aktiv).filter(function(t){ return aktiv[t]; });
+    return DATEN.filter(function(e){
+      if (an.length && an.indexOf(e.t) < 0) return false;
+      if (!suchwort) return true;
+      return (e.t + ' ' + e.s + ' ' + e.w).toLowerCase().indexOf(suchwort) >= 0;
+    });
+  }
+
+  // ---------- Liste ----------
+  function zeichneListe(liste){
+    if (!liste.length){ ausgabe.innerHTML = '<p style="margin:30px 0;color:#8a8478">Nichts gefunden.</p>'; return; }
+    var teile = [], thema = null;
+    THEMEN.forEach(function(t){
+      var im = liste.filter(function(e){ return e.t === t; });
+      if (!im.length) return;
+      teile.push('<div class="thema"><span style="letter-spacing:1.6px;text-transform:uppercase">' +
+        sicher(t) + '</span><span>' + im.length + '</span></div><div class="gitter">');
+      im.forEach(function(e){
+        teile.push('<div class="karte"><b>' + markiert(e.s) + '</b>' +
+          (e.w ? '<em>' + markiert(e.w) + '</em>' : '') + '</div>');
+      });
+      teile.push('</div>');
+    });
+    ausgabe.innerHTML = teile.join('');
+  }
+
+  // ---------- Abfragen (Karteikarte) ----------
+  var kPool = [], kIdx = 0, kGut = 0, kOffen = false;
+  function kStart(liste){ kPool = mische(liste.slice()); kIdx = 0; kGut = 0; kOffen = false; kZeichnen(); }
+  function kZeichnen(){
+    if (!kPool.length){ ausgabe.innerHTML = leer(); return; }
+    if (kIdx >= kPool.length){ ausgabe.innerHTML = ende(kGut, kPool.length, kStart); binde(kStart); return; }
+    var e = kPool[kIdx];
+    ausgabe.innerHTML = '<div class="buehne">' +
+      '<div class="weg">Zu welchem Thema gehört das Präparat – und was ist der Wirkstoff?</div>' +
+      '<h3>' + sicher(e.s) + '</h3>' +
+      (kOffen
+        ? '<div class="loesung"><b>' + sicher(e.t) + '</b>' +
+          '<span>' + (e.w ? 'Wirkstoff: ' + sicher(e.w) : 'kein Wirkstoff in der Liste angegeben') + '</span></div>' +
+          '<div class="knopfreihe"><button class="knopf" id="ja">Gewusst</button>' +
+          '<button class="knopf hell" id="nein">Noch nicht</button></div>'
+        : '<div class="knopfreihe"><button class="knopf" id="auf">Auflösen</button></div>') +
+      '<div class="stand">Karte ' + (kIdx + 1) + ' von ' + kPool.length + ' · gewusst: ' + kGut + '</div></div>';
+    if (!kOffen){
+      document.getElementById('auf').addEventListener('click', function(){ kOffen = true; kZeichnen(); });
+    } else {
+      document.getElementById('ja').addEventListener('click', function(){
+        kGut++; delete offen[e.id]; offenSichern(); kIdx++; kOffen = false; kZeichnen();
+      });
+      document.getElementById('nein').addEventListener('click', function(){
+        offen[e.id] = true; offenSichern(); kIdx++; kOffen = false; kZeichnen();
+      });
+    }
+  }
+
+  // ---------- Auswahlübungen ----------
+  var aPool = [], aIdx = 0, aGut = 0, aWahl = null, aFuer = -1, aArt = 'thema';
+  function aStart(liste, art){
+    aArt = art;
+    var pool = liste.slice();
+    if (art === 'wirkstoff') pool = pool.filter(function(e){ return e.w; });
+    aPool = mische(pool).slice(0, 20);
+    aIdx = 0; aGut = 0; aWahl = null; aFuer = -1; aZeichnen();
+  }
+  function aZeichnen(){
+    if (aPool.length < 4){
+      ausgabe.innerHTML = '<div class="buehne"><h3>Zu wenige Einträge.</h3>' +
+        '<div class="weg">Bitte Suche leeren oder mehr Themen zulassen.</div></div>';
+      return;
+    }
+    if (aIdx >= aPool.length){
+      ausgabe.innerHTML = ende(aGut, aPool.length);
+      binde(function(){ aStart(gefiltert(), aArt); });
+      return;
+    }
+    var e = aPool[aIdx];
+    var richtig = aArt === 'thema' ? e.t : e.w;
+    if (aFuer !== aIdx || !aWahl){
+      var andere = [];
+      (aArt === 'thema' ? THEMEN : DATEN.map(function(x){ return x.w; })).forEach(function(v){
+        if (v && v !== richtig && andere.indexOf(v) < 0) andere.push(v);
+      });
+      aWahl = mische([richtig].concat(mische(andere).slice(0, 3)));
+      aFuer = aIdx;
+    }
+    ausgabe.innerHTML = '<div class="buehne">' +
+      '<div class="weg">' + (aArt === 'thema' ? 'Zu welchem Thema gehört dieses Präparat?'
+                                              : 'Welcher Wirkstoff steckt in diesem Präparat?') + '</div>' +
+      '<h3>' + sicher(e.s) + '</h3>' +
+      '<div class="wahl">' + aWahl.map(function(v, i){
+        return '<button data-i="' + i + '">' + sicher(v) + '</button>';
+      }).join('') + '</div>' +
+      '<div class="stand">Frage ' + (aIdx + 1) + ' von ' + aPool.length + ' · richtig: ' + aGut + '</div></div>';
+    Array.prototype.forEach.call(ausgabe.querySelectorAll('.wahl button'), function(b, i){
+      b.addEventListener('click', function(){
+        var alle = ausgabe.querySelectorAll('.wahl button');
+        Array.prototype.forEach.call(alle, function(x, j){
+          x.disabled = true;
+          if (aWahl[j] === richtig) x.classList.add('richtig');
+        });
+        if (aWahl[i] === richtig){ aGut++; delete offen[e.id]; }
+        else { b.classList.add('falsch'); offen[e.id] = true; }
+        offenSichern();
+        setTimeout(function(){ aIdx++; aZeichnen(); }, 1100);
+      });
+    });
+  }
+
+  function leer(){ return '<p style="margin:30px 0;color:#8a8478">Nichts im aktuellen Filter.</p>'; }
+  function ende(gut, total){
+    var n = offenIds().length;
+    return '<div class="buehne"><h3>Durch.</h3>' +
+      '<div class="weg">' + gut + ' von ' + total + ' richtig.' +
+      (n ? '<br>' + n + ' Einträge stehen auf deiner Merkliste.' : '') + '</div>' +
+      '<div class="knopfreihe"><button class="knopf" id="nochmals">Nochmals</button>' +
+      (n ? '<button class="knopf hell" id="zurListe">Merkliste ansehen</button>' : '') + '</div></div>';
+  }
+  function binde(neustart){
+    var n = document.getElementById('nochmals');
+    if (n) n.addEventListener('click', function(){ neustart(gefiltert()); });
+    var z = document.getElementById('zurListe');
+    if (z) z.addEventListener('click', function(){
+      modus = 'offen';
+      Array.prototype.forEach.call(document.querySelectorAll('.modi button'), function(x){ x.classList.remove('an'); });
+      zeichnen();
+    });
+  }
+
+  // ---------- Merkliste ----------
+  function nurOffene(){
+    var ids = offenIds();
+    return DATEN.filter(function(e){ return ids.indexOf(String(e.id)) >= 0; });
+  }
+  function zeichneOffen(){
+    var liste = nurOffene();
+    if (!liste.length){
+      ausgabe.innerHTML = '<div class="buehne"><h3>Merkliste ist leer.</h3>' +
+        '<div class="weg">Jeder Eintrag, den du falsch hast oder mit «Noch nicht» markierst, landet hier.</div></div>';
+      return;
+    }
+    zeichneListe(liste);
+    ausgabe.insertAdjacentHTML('afterbegin',
+      '<div class="merkkopf"><div><b>Merkliste</b> · ' + liste.length + ' Einträge' +
+      '<br><span style="font-size:.76rem;color:#8a8478">Gespeichert auf diesem Gerät in diesem Browser. ' +
+      'Wer einen Eintrag später richtig hat, nimmt ihn automatisch wieder von der Liste.</span></div>' +
+      '<div class="knopfreihe" style="margin:0">' +
+      '<button class="knopf" id="mDruck">Drucken</button>' +
+      '<button class="knopf hell" id="mUeben">Diese abfragen</button>' +
+      '<button class="knopf hell" id="mLeer">Leeren</button></div></div>');
+    document.getElementById('mDruck').addEventListener('click', function(){
+      zaehle('qv-merkliste-druck', 'QV-Trainer · Merkliste gedruckt', true); window.print();
+    });
+    document.getElementById('mUeben').addEventListener('click', function(){
+      modus = 'karten';
+      Array.prototype.forEach.call(document.querySelectorAll('.modi button'), function(x){
+        x.classList.toggle('an', x.dataset.modus === 'karten');
+      });
+      kStart(nurOffene());
+    });
+    document.getElementById('mLeer').addEventListener('click', function(){
+      offen = {}; offenSichern(); modus = 'liste';
+      Array.prototype.forEach.call(document.querySelectorAll('.modi button'), function(x){
+        x.classList.toggle('an', x.dataset.modus === 'liste');
+      });
+      zeichnen();
+    });
+  }
+
+  // ---------- Zählung ----------
+  function zaehle(pfad, titel, ereignis){
+    function tu(){
+      try{
+        if (window.goatcounter && window.goatcounter.count)
+          window.goatcounter.count({ path: pfad, title: titel, event: !!ereignis });
+      }catch(e){}
+    }
+    tu(); setTimeout(tu, 1400);
+  }
+
+  // ---------- Steuerung ----------
+  var letzterSchluessel = null;
+  function schluessel(){
+    return suchwort + '|' + Object.keys(aktiv).filter(function(t){ return aktiv[t]; }).sort().join(',');
+  }
+  function zeichnen(){
+    var liste = gefiltert();
+    zaehler.textContent = liste.length + ' von ' + DATEN.length + ' Einträgen';
+    var s = schluessel(), neu = (letzterSchluessel !== null && s !== letzterSchluessel);
+    letzterSchluessel = s;
+    if (modus === 'liste')  zeichneListe(liste);
+    if (modus === 'karten'){ if (neu || !kPool.length) kStart(liste); else kZeichnen(); }
+    if (modus === 'thema'){ if (neu || !aPool.length || aArt !== 'thema') aStart(liste, 'thema'); else aZeichnen(); }
+    if (modus === 'wirkstoff'){ if (neu || !aPool.length || aArt !== 'wirkstoff') aStart(liste, 'wirkstoff'); else aZeichnen(); }
+    if (modus === 'offen')  zeichneOffen();
+  }
+
+  document.getElementById('suche').addEventListener('input', function(e){
+    suchwort = e.target.value.trim().toLowerCase(); zeichnen();
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.modi button'), function(b){
+    b.addEventListener('click', function(){
+      Array.prototype.forEach.call(document.querySelectorAll('.modi button'), function(x){ x.classList.remove('an'); });
+      b.classList.add('an'); modus = b.dataset.modus;
+      if (modus !== 'liste') zaehle('qv-' + modus, 'QV-Trainer · ' + modus, true);
+      zeichnen();
+    });
+  });
+  document.getElementById('offenKnopf').addEventListener('click', function(){
+    modus = 'offen';
+    Array.prototype.forEach.call(document.querySelectorAll('.modi button'), function(x){ x.classList.remove('an'); });
+    zeichnen();
+  });
+
+  offenSichern();
+  zeichnen();
+})();
+</script>
+</body>
+</html>
