@@ -312,7 +312,7 @@ var BILDER = {"0":"UklGRvYKAABXRUJQVlA4IOoKAABQMgCdASrIAFwAPqFGnUwmI6KiKDJsIMAUC
     box.id = 'meldebox';
     box.innerHTML = '<div class="innen">' +
       '<h3>Fehler melden</h3>' +
-      '<p>Schreib unten hinein, was nicht stimmt. Dann entweder als Mail öffnen oder den Text kopieren ' +
+      '<p>Schreiben Sie unten hinein, was nicht stimmt. Dann entweder als Mail öffnen oder den Text kopieren ' +
       'und selbst schicken an ' + EMPFAENGER + '.</p>' +
       '<textarea id="meldeText"></textarea>' +
       '<div class="hinweis" id="meldeHinweis"></div>' +
@@ -416,7 +416,7 @@ var BILDER = {"0":"UklGRvYKAABXRUJQVlA4IOoKAABQMgCdASrIAFwAPqFGnUwmI6KiKDJsIMAUC
       var nOffen = offenIds().length;
       ausgabe.innerHTML = '<div class="buehne"><h3>Durch.</h3><div class="info">' +
         lernGewusst + ' von ' + lernPool.length + ' Gruppen gewusst.' +
-        (nOffen ? '<br>' + nOffen + ' Gruppen stehen auf deiner Merkliste.' : '') + '</div>' +
+        (nOffen ? '<br>' + nOffen + ' Gruppen stehen auf Ihrer Merkliste.' : '') + '</div>' +
         '<div class="knopfreihe"><button class="knopf" id="nochmals">Alle nochmals</button>' +
         (nOffen ? '<button class="knopf hell" id="nurOffen">Nur die offenen üben</button>' +
                   '<button class="knopf hell" id="zurListe">Merkliste ansehen</button>' : '') +
@@ -477,7 +477,7 @@ var BILDER = {"0":"UklGRvYKAABXRUJQVlA4IOoKAABQMgCdASrIAFwAPqFGnUwmI6KiKDJsIMAUC
       var nOffenZ = offenIds().length;
       ausgabe.innerHTML = '<div class="buehne"><h3>Fertig.</h3><div class="info">' +
         zoRichtig + ' von ' + zoPool.length + ' richtig zugeordnet.' +
-        (nOffenZ ? '<br>' + nOffenZ + ' Gruppen stehen auf deiner Merkliste.' : '') + '</div>' +
+        (nOffenZ ? '<br>' + nOffenZ + ' Gruppen stehen auf Ihrer Merkliste.' : '') + '</div>' +
         '<div class="knopfreihe"><button class="knopf" id="nochmals">Nochmals</button>' +
         (nOffenZ ? '<button class="knopf hell" id="zurListeZ">Merkliste ansehen</button>' : '') +
         '</div></div>';
@@ -541,7 +541,7 @@ var BILDER = {"0":"UklGRvYKAABXRUJQVlA4IOoKAABQMgCdASrIAFwAPqFGnUwmI6KiKDJsIMAUC
     var liste = nurOffeneGruppen();
     if (!liste.length){
       ausgabe.innerHTML = '<div class="buehne"><h3>Merkliste ist leer.</h3>' +
-        '<div class="info">Im Modus «Abfragen» landet jede Gruppe hier, die du mit «Noch nicht» markierst.</div></div>';
+        '<div class="info">Im Modus «Abfragen» landet jede Gruppe hier, die Sie mit «Noch nicht» markieren.</div></div>';
       return;
     }
     var kopf = '<div class="merkkopf"><div><b>Merkliste</b> · ' + liste.length +
