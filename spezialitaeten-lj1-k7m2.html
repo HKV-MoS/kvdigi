@@ -22,6 +22,9 @@
   #schloss button{font:inherit; font-size:.9rem; padding:9px 22px; border:none; border-radius:8px;
                   background:#E8C87E; color:#26241f; font-weight:700; cursor:pointer;}
   #schlossFehler{color:#F3B0A8; font-size:.85rem; min-height:1.2em;}
+  #schloss .signatur{position:absolute; bottom:18px; left:0; right:0; text-align:center;
+    font-size:.74rem; line-height:1.5; color:#9FC3C0; padding:0 20px;}
+  #schloss .signatur b{color:#E8C87E; font-weight:700;}
 
   h1.titel{color:var(--petrol); font-size:1.5rem;}
   .unter{color:#6a6659; font-size:.85rem; margin-bottom:14px;}
@@ -126,6 +129,8 @@
   <input id="codeFeld" type="password" autocomplete="off" placeholder="Zugangscode">
   <button id="codeKnopf">Öffnen</button>
   <div id="schlossFehler"></div>
+  <div class="signatur">Digitale Umsetzung: <b>Samuel Mollet</b>, HKV Aarau · gebaut mit Claude<br>
+    Inhalt: «Spezialitäten und Produkte», BSDPZ Zürich</div>
 </div>
 
 <div class="huelle" id="inhalt" hidden>
@@ -154,6 +159,7 @@
   <div id="ausgabe"></div>
 
   <div class="fuss">
+    <b>Digitale Umsetzung: Samuel Mollet, HKV Aarau · gebaut mit Claude.</b><br>
     Inhaltliche Grundlage: «Spezialitäten und Produkte», 1. bis 3. Ausbildungsjahr, Version 2024/2025,
     © Berufsschule für Detailhandel und Pharmazie Zürich (BSDPZ). Diese digitale Fassung dient
     ausschliesslich dem Unterricht und ist nicht öffentlich zugänglich. Die Packungsabbildungen stammen
