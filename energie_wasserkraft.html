@@ -195,6 +195,33 @@ h1 .accent{color:var(--hkv);}
 .exot-kopf p{font-size:13px;color:var(--muted);margin-top:2px;}
 .m-text.nach{margin-top:20px;}
 .quelle{max-width:1240px;margin:14px auto 0;font-size:12px;color:var(--muted);text-align:center;}
+/* ---------- Wind: eine Umdrehung ---------- */
+.udr{max-width:1240px;margin:20px auto 0;background:var(--card);border:1px solid var(--line);
+  border-radius:14px;padding:18px 20px 16px;box-shadow:0 6px 18px rgba(21,35,50,.06);}
+.udr h3{font-size:17px;color:var(--hkv);}
+.udr .udr-sub{font-size:13px;color:var(--muted);margin-top:3px;max-width:78ch;}
+.udr-gitter{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:14px;}
+@media(max-width:760px){.udr-gitter{grid-template-columns:1fr;}}
+.udr-k{border:1px solid var(--line);border-radius:11px;overflow:hidden;background:#fbfcfe;}
+.udr-k .kopf{display:flex;align-items:center;gap:8px;padding:9px 12px;background:#eef3f8;
+  border-bottom:1px solid var(--line);}
+.udr-k .kopf .ico{font-size:20px;line-height:1;}
+.udr-k .kopf b{font-size:13.5px;color:var(--ink);}
+.udr-k .kopf span{font-size:11.5px;color:var(--muted);display:block;}
+.udr-z{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:8px 12px;}
+.udr-z + .udr-z{border-top:1px dashed var(--line);}
+.udr-z .lab{font-size:12px;color:var(--muted);}
+.udr-z .wert{font-size:19px;font-weight:800;}
+.udr-z.voll .wert{color:var(--strom);}
+.udr-z.mittel .wert{color:var(--hkv);}
+.udr-z .dazu{font-size:11.5px;color:var(--muted);display:block;text-align:right;}
+.udr-fazit{margin-top:13px;padding-top:11px;border-top:1px dashed var(--line);
+  font-size:13px;color:var(--ink);}
+.udr-fazit b{color:var(--hkv);}
+.udr details{margin-top:10px;}
+.udr summary{cursor:pointer;font-size:12.5px;color:var(--hkv);font-weight:600;}
+.udr details p{font-size:12.5px;color:var(--muted);margin-top:7px;}
+.udr details code{background:#eef3f8;padding:1px 5px;border-radius:4px;font-size:12px;}
 /* ---------- Aktuell-Box ---------- */
 .aktuell-wrap{max-width:1240px;margin:18px auto 0;padding:0 4px;}
 .aktuell{border-left:6px solid #B4564E;}
@@ -655,6 +682,57 @@ html.eingebettet body{ zoom:.82; }
       <p class="p-hint">Tipp am Beamer: mit den Tasten <b>1–9</b> durch die Stationen springen.
         Die Nummern sind im Bild bereits eingezeichnet.</p>
     </aside>
+  </div>
+
+  <div class="udr">
+    <h3>Was eine einzige Umdrehung liefert</h3>
+    <p class="udr-sub">Eine 3-Megawatt-Anlage dreht sich bei voller Leistung rund zwölfmal pro Minute –
+      eine Umdrehung dauert also <b>fünf Sekunden</b>. Nur: So kräftig weht der Wind selten. Darum
+      stehen hier zwei Zahlen nebeneinander.</p>
+
+    <div class="udr-gitter">
+      <div class="udr-k">
+        <div class="kopf"><span class="ico">📱</span><div><b>Handy laden</b><span>rund 15 Wh</span></div></div>
+        <div class="udr-z voll"><span class="lab">bei voller Leistung</span>
+          <span><span class="wert">280×</span><span class="dazu">täglich laden: 9 Monate</span></span></div>
+        <div class="udr-z mittel"><span class="lab">im Jahresschnitt</span>
+          <span><span class="wert">34×</span><span class="dazu">täglich laden: 1 Monat</span></span></div>
+      </div>
+
+      <div class="udr-k">
+        <div class="kopf"><span class="ico">💻</span><div><b>Laptop laden</b><span>rund 55 Wh</span></div></div>
+        <div class="udr-z voll"><span class="lab">bei voller Leistung</span>
+          <span><span class="wert">76×</span><span class="dazu">gut zwei Monate täglich</span></span></div>
+        <div class="udr-z mittel"><span class="lab">im Jahresschnitt</span>
+          <span><span class="wert">9×</span><span class="dazu">eine gute Schulwoche</span></span></div>
+      </div>
+
+      <div class="udr-k">
+        <div class="kopf"><span class="ico">🛴</span><div><b>E-Trottinett laden</b><span>rund 400 Wh</span></div></div>
+        <div class="udr-z voll"><span class="lab">bei voller Leistung</span>
+          <span><span class="wert">10×</span><span class="dazu">rund 250 km Fahrt</span></span></div>
+        <div class="udr-z mittel"><span class="lab">im Jahresschnitt</span>
+          <span><span class="wert">1×</span><span class="dazu">ein voller Akku</span></span></div>
+      </div>
+    </div>
+
+    <p class="udr-fazit"><b>Dieselbe Turbine – zwei sehr verschiedene Zahlen.</b>
+      Der Unterschied ist der Wind, der nicht immer weht. Bei Volllast liefert eine Umdrehung
+      4,2 kWh, im Schweizer Jahresschnitt nur 0,5 kWh. Genau deshalb sagt die <em>installierte
+      Leistung</em> einer Anlage noch nichts darüber, wie viel Strom am Ende ankommt – der
+      häufigste Denkfehler in Diskussionen über Wind und Sonne.</p>
+
+    <details>
+      <summary>So wird gerechnet</summary>
+      <p><b>Bei voller Leistung:</b> 3 000 000 Watt × 5 Sekunden = 15 000 000 Wattsekunden.
+        Geteilt durch 3600 ergibt das 4167 Wattstunden, also <code>4,2 kWh</code>.
+        Ein Handyakku fasst rund 15 Wh → <code>4167 ÷ 15 ≈ 280</code> Ladungen.</p>
+      <p><b>Im Jahresschnitt:</b> Die 50 Schweizer Anlagen liefern zusammen 161 Millionen kWh pro Jahr,
+        also gut 3,2 Millionen kWh je Anlage. Verteilt auf 8760 Stunden sind das im Mittel nur
+        <code>368 kW</code> statt 3000 kW – rund ein Achtel. Entsprechend schrumpfen alle Zahlen.</p>
+      <p>Eine einzelne Anlage deckt damit den privaten Stromverbrauch von etwa
+        <b>2700 Menschen</b> – ungefähr ein Dorf.</p>
+    </details>
   </div>
 </section><!-- /tab-wind -->
 
