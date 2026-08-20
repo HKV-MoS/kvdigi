@@ -86,9 +86,15 @@
   .fuss{margin-top:28px; border-top:1px solid var(--linie); padding-top:10px;
         font-size:.72rem; color:#8a8478; line-height:1.5;}
 
+  .merkkopf{display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between;
+    border:1.5px solid var(--petrol); border-radius:10px; padding:10px 14px; margin-bottom:14px;
+    background:#fff; font-size:.9rem;}
+  .merkkopf .knopf{padding:6px 13px; font-size:.82rem;}
+
   @media print{
     body{background:#fff; padding:0;}
-    .leiste,.modi,#schloss,.zaehler{display:none !important;}
+    .leiste,.modi,#schloss,.zaehler,.merkkopf .knopfreihe,.fuss{display:none !important;}
+    .merkkopf{border:none; padding:0; margin-bottom:8px; font-size:1rem;}
     .gitter{grid-template-columns:repeat(2,1fr);}
     .karte{break-inside:avoid; border-color:#bbb;}
     .kap{break-after:avoid;}
@@ -118,7 +124,7 @@
       <button data-modus="zuordnen">Zuordnen</button>
     </span>
     <button class="chipf an" id="bildKnopf">Bilder</button>
-    <button class="chipf" id="drucken">Drucken</button>
+    <button class="chipf" id="offenKnopf" hidden>Offen (0)</button>
     <span class="zaehler" id="zaehler"></span>
   </div>
 
@@ -160,6 +166,14 @@ var BILDER = {"0":"UklGRvYKAABXRUJQVlA4IOoKAABQMgCdASrIAFwAPqFGnUwmI6KiKDJsIMAUC
 
   // ---------- Zustand ----------
   var modus = 'liste', suchwort = '', codes = {}, aktiv = {}, zeigeBilder = true;
+  var offen = {};
+  try{ offen = JSON.parse(sessionStorage.getItem('spez_offen') || '{}'); }catch(e){ offen = {}; }
+  function offenIds(){ return Object.keys(offen).filter(function(k){ return offen[k]; }); }
+  function offenSichern(){
+    try{ sessionStorage.setItem('spez_offen', JSON.stringify(offen)); }catch(e){}
+    var n = offenIds().length, k = document.getElementById('offenKnopf');
+    if (k){ k.hidden = n === 0; k.textContent = 'Offen (' + n + ')'; }
+  }
   var ausgabe = document.getElementById('ausgabe'), zaehler = document.getElementById('zaehler');
 
   function aufbauen(){
@@ -186,13 +200,12 @@ var BILDER = {"0":"UklGRvYKAABXRUJQVlA4IOoKAABQMgCdASrIAFwAPqFGnUwmI6KiKDJsIMAUC
     bk.addEventListener('click', function(){
       zeigeBilder = !zeigeBilder; bk.classList.toggle('an', zeigeBilder); zeichnen();
     });
-    document.getElementById('drucken').addEventListener('click', function(){
-      modus = 'liste';
-      Array.prototype.forEach.call(document.querySelectorAll('.modi button'), function(x){
-        x.classList.toggle('an', x.dataset.modus === 'liste');
-      });
-      zeichnen(); setTimeout(function(){ window.print(); }, 60);
+    document.getElementById('offenKnopf').addEventListener('click', function(){
+      modus = 'offen';
+      Array.prototype.forEach.call(document.querySelectorAll('.modi button'), function(x){ x.classList.remove('an'); });
+      zeichnen();
     });
+    offenSichern();
     zeichnen();
   }
 
@@ -267,10 +280,23 @@ var BILDER = {"0":"UklGRvYKAABXRUJQVlA4IOoKAABQMgCdASrIAFwAPqFGnUwmI6KiKDJsIMAUC
   function lernZeichnen(){
     if (!lernPool.length){ ausgabe.innerHTML = '<p style="margin:30px 0;color:#8a8478">Keine Gruppen im aktuellen Filter.</p>'; return; }
     if (lernIdx >= lernPool.length){
+      var nOffen = offenIds().length;
       ausgabe.innerHTML = '<div class="buehne"><h3>Durch.</h3><div class="info">' +
-        lernGewusst + ' von ' + lernPool.length + ' Gruppen gewusst.</div>' +
-        '<div class="knopfreihe"><button class="knopf" id="nochmals">Nochmals</button></div></div>';
+        lernGewusst + ' von ' + lernPool.length + ' Gruppen gewusst.' +
+        (nOffen ? '<br>' + nOffen + ' Gruppen stehen auf deiner Merkliste.' : '') + '</div>' +
+        '<div class="knopfreihe"><button class="knopf" id="nochmals">Alle nochmals</button>' +
+        (nOffen ? '<button class="knopf hell" id="nurOffen">Nur die offenen üben</button>' +
+                  '<button class="knopf hell" id="zurListe">Merkliste ansehen</button>' : '') +
+        '</div></div>';
       document.getElementById('nochmals').addEventListener('click', function(){ lernStart(gefiltert()); });
+      if (nOffen){
+        document.getElementById('nurOffen').addEventListener('click', function(){ lernStart(nurOffeneGruppen()); });
+        document.getElementById('zurListe').addEventListener('click', function(){
+          modus = 'offen';
+          Array.prototype.forEach.call(document.querySelectorAll('.modi button'), function(x){ x.classList.remove('an'); });
+          zeichnen();
+        });
+      }
       return;
     }
     var g = lernPool[lernIdx];
@@ -289,8 +315,14 @@ var BILDER = {"0":"UklGRvYKAABXRUJQVlA4IOoKAABQMgCdASrIAFwAPqFGnUwmI6KiKDJsIMAUC
     if (!lernOffen){
       document.getElementById('zeigen').addEventListener('click', function(){ lernOffen = true; lernZeichnen(); });
     } else {
-      document.getElementById('jaKnopf').addEventListener('click', function(){ lernGewusst++; lernIdx++; lernOffen = false; lernZeichnen(); });
-      document.getElementById('neinKnopf').addEventListener('click', function(){ lernIdx++; lernOffen = false; lernZeichnen(); });
+      document.getElementById('jaKnopf').addEventListener('click', function(){
+        lernGewusst++; delete offen[g.id]; offenSichern();
+        lernIdx++; lernOffen = false; lernZeichnen();
+      });
+      document.getElementById('neinKnopf').addEventListener('click', function(){
+        offen[g.id] = true; offenSichern();
+        lernIdx++; lernOffen = false; lernZeichnen();
+      });
     }
   }
 
@@ -347,6 +379,39 @@ var BILDER = {"0":"UklGRvYKAABXRUJQVlA4IOoKAABQMgCdASrIAFwAPqFGnUwmI6KiKDJsIMAUC
     });
   }
 
+  function nurOffeneGruppen(){
+    var ids = offenIds();
+    return DATEN.filter(function(g){ return ids.indexOf(String(g.id)) >= 0; });
+  }
+
+  function zeichneOffen(){
+    var liste = nurOffeneGruppen();
+    if (!liste.length){
+      ausgabe.innerHTML = '<div class="buehne"><h3>Merkliste ist leer.</h3>' +
+        '<div class="info">Im Modus «Abfragen» landet jede Gruppe hier, die du mit «Noch nicht» markierst.</div></div>';
+      return;
+    }
+    var kopf = '<div class="merkkopf"><div><b>Merkliste</b> · ' + liste.length +
+      ' Gruppen · ' + liste.reduce(function(s,g){ return s + g.p.length; }, 0) + ' Präparate</div>' +
+      '<div class="knopfreihe" style="margin:0">' +
+      '<button class="knopf" id="merkDruck">Drucken</button>' +
+      '<button class="knopf hell" id="merkUeben">Diese abfragen</button>' +
+      '<button class="knopf hell" id="merkLeer">Leeren</button></div></div>';
+    zeichneListe(liste);
+    ausgabe.insertAdjacentHTML('afterbegin', kopf);
+    document.getElementById('merkDruck').addEventListener('click', function(){ window.print(); });
+    document.getElementById('merkUeben').addEventListener('click', function(){
+      modus = 'lernen';
+      Array.prototype.forEach.call(document.querySelectorAll('.modi button'), function(x){
+        x.classList.toggle('an', x.dataset.modus === 'lernen');
+      });
+      lernStart(nurOffeneGruppen());
+    });
+    document.getElementById('merkLeer').addEventListener('click', function(){
+      offen = {}; offenSichern(); zeichnen();
+    });
+  }
+
   function zeichnen(){
     var liste = gefiltert();
     zaehler.textContent = liste.length + ' Gruppen · ' +
@@ -354,6 +419,7 @@ var BILDER = {"0":"UklGRvYKAABXRUJQVlA4IOoKAABQMgCdASrIAFwAPqFGnUwmI6KiKDJsIMAUC
     if (modus === 'liste')   zeichneListe(liste);
     if (modus === 'lernen')  lernStart(liste);
     if (modus === 'zuordnen') zoStart(liste);
+    if (modus === 'offen')    zeichneOffen();
   }
   window.__zeichnen = zeichnen;
 })();
