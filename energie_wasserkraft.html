@@ -222,6 +222,29 @@ h1 .accent{color:var(--hkv);}
 .udr summary{cursor:pointer;font-size:12.5px;color:var(--hkv);font-weight:600;}
 .udr details p{font-size:12.5px;color:var(--muted);margin-top:7px;}
 .udr details code{background:#eef3f8;padding:1px 5px;border-radius:4px;font-size:12px;}
+/* ---------- AKW: Kuehlung und Hitze ---------- */
+.hitze{max-width:1240px;margin:20px auto 0;background:var(--card);border:1px solid var(--line);
+  border-left:6px solid #B4564E;border-radius:14px;padding:18px 20px 16px;
+  box-shadow:0 6px 18px rgba(21,35,50,.06);}
+.hitze h3{font-size:17px;color:var(--hkv);}
+.hitze h3::before{content:"🌡️ ";}
+.hitze .hz-sub{font-size:13px;color:var(--muted);margin-top:3px;max-width:78ch;}
+.hz-paar{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;}
+@media(max-width:760px){.hz-paar{grid-template-columns:1fr;}}
+.hz-k{border:1px solid var(--line);border-radius:11px;padding:12px 14px;background:#fbfcfe;}
+.hz-k.warm{background:#fdf5f4;border-color:#f0d9d5;}
+.hz-k b.tit{display:block;font-size:14.5px;color:var(--ink);}
+.hz-k span.art{display:block;font-size:11.5px;color:var(--muted);margin-bottom:8px;}
+.hz-z{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;padding:4px 0;}
+.hz-z + .hz-z{border-top:1px dashed var(--line);}
+.hz-z b{font-weight:800;}
+.hz-k.warm .hz-z b{color:#B4564E;}
+.hz-k.kalt .hz-z b{color:var(--hkv);}
+.hitze p.hz-txt{font-size:13px;line-height:1.55;margin-top:12px;}
+.hitze p.hz-frage{font-size:13px;line-height:1.55;margin-top:11px;padding-top:10px;
+  border-top:1px dashed var(--line);color:var(--ink);}
+.hitze p.hz-frage::before{content:"💬 ";}
+.hitze p.hz-quelle{font-size:11.5px;color:var(--muted);margin-top:9px;}
 /* ---------- Aktuell-Box ---------- */
 .aktuell-wrap{max-width:1240px;margin:18px auto 0;padding:0 4px;}
 .aktuell{border-left:6px solid #B4564E;}
@@ -512,6 +535,46 @@ html.eingebettet body{ zoom:.82; }
       <p class="p-txt"></p>
       <p class="p-hint">Tipp am Beamer: mit den Tasten <b>1–8</b> durch die Stationen springen.</p>
     </aside>
+  </div>
+
+  <div class="hitze">
+    <h3>Wenn der Fluss zu warm wird</h3>
+    <p class="hz-sub">Im Sommer 2026 mussten Schweizer Reaktoren mehrfach ihre Leistung senken –
+      aber nicht alle. Der Unterschied liegt genau in dem Bauteil, das auf dem Schnittbild oben
+      am auffälligsten ist: dem Kühlturm.</p>
+
+    <div class="hz-paar">
+      <div class="hz-k warm">
+        <b class="tit">Beznau I und II</b>
+        <span class="art">Durchlaufkühlung – Wasser direkt aus der Aare</span>
+        <div class="hz-z"><span>Wasserbedarf</span><b>≈ 40'000 Liter/Sekunde</b></div>
+        <div class="hz-z"><span>Drosselung</span><b>ab 25 °C Aaretemperatur</b></div>
+        <div class="hz-z"><span>Sommer 2026</span><b>mehrfach gedrosselt</b></div>
+      </div>
+      <div class="hz-k kalt">
+        <b class="tit">Gösgen und Leibstadt</b>
+        <span class="art">Kühlturm – das Wasser verdunstet im Kreislauf</span>
+        <div class="hz-z"><span>Wasserbedarf Leibstadt</span><b>≈ 2'900 Liter/Sekunde</b></div>
+        <div class="hz-z"><span>Drosselung</span><b>bisher nie nötig</b></div>
+        <div class="hz-z"><span>Rhein aktuell</span><b>400'000 statt 1,2 Mio. l/s</b></div>
+      </div>
+    </div>
+
+    <p class="hz-txt">Beznau ist das älteste Kernkraftwerk der Welt, das noch läuft – und stammt
+      aus einer Zeit ohne Kühlturm. Das Aarewasser fliesst durch den Kondensator und danach
+      erwärmt zurück in den Fluss. Ist die Aare ohnehin schon 25 Grad warm, würde das den Fischen
+      zusetzen. Deshalb muss Axpo drosseln. <b>Der Grund ist Gewässerschutz, nicht Sicherheit.</b></p>
+
+    <p class="hz-txt">In Ungarn stand im selben Sommer das Kernkraftwerk Paks in der Zeitung –
+      aber aus einem anderen Grund: Die Donau führte zu wenig Wasser, um überhaupt genug kühlen
+      zu können. Dort war es tatsächlich eine Sicherheitsfrage. Zwei Länder, zwei Ursachen,
+      fast dieselbe Schlagzeile.</p>
+
+    <p class="hz-frage">Zum Diskutieren: Soll der <b>Schutz der Fische</b> Vorrang haben vor der
+      <b>Stromproduktion</b> – ausgerechnet im Sommer, wenn Klimaanlagen laufen? Und was sagt es
+      über die Zukunft der Wasserkraft und der Kernkraft, wenn Flüsse häufiger 25 Grad erreichen?</p>
+
+    <p class="hz-quelle">Quelle: SRF News, Sommer 2026 · Angaben Axpo, KKL</p>
   </div>
 </section><!-- /tab-akw -->
 
@@ -980,6 +1043,31 @@ html.eingebettet body{ zoom:.82; }
     vorkommt.</p>
 
   <div class="zuk-grid">
+
+    <div class="zuk">
+      <div class="zuk-kopf">
+        <span class="zuk-icon">🔋</span>
+        <div><b>Grossbatterien</b><span class="zuk-unter">Der Tag-Nacht-Ausgleich</span></div>
+      </div>
+      <div class="reife"><i class="an"></i><i class="an"></i><i class="an"></i><i class="an"></i><i class="an"></i>
+        <span>Läuft seit 2026</span></div>
+      <p>Zwanzig Container auf einer Wiese, mehr braucht es nicht: In <b>Kappel SO</b> ging im
+        Sommer 2026 eine Batterie mit <b>80 Megawattstunden</b> ans Netz – genug, um 30'000
+        Haushalte zwei Stunden lang zu versorgen. In <b>Gurtnellen UR</b> folgt ab September 2026
+        eine noch grössere mit rund <b>120 MWh</b>. Drin stecken Lithium-Eisenphosphat-Zellen,
+        fast alle aus China.</p>
+      <p>Das Geschäftsmodell ist simpel: Mittags, wenn die Sonne zu viel Strom liefert und die
+        Preise tief sind, wird geladen. Abends, wenn alle kochen, wird verkauft. Dazu kommt Geld
+        von Swissgrid fürs Stabilisieren des Netzes. Bemerkenswert: Alle diese Anlagen sind
+        <b>privat finanziert, ohne einen Franken Subvention</b>. «Das ist eine rein kommerzielle
+        Angelegenheit», sagt der Chef von Primeo Energie.</p>
+      <p>Der Ausbau ist rasant. Ende 2026 stehen rund <b>430 MWh</b> in der Schweiz, bis 2030 sind
+        über <b>4350 MWh</b> geplant – ein Zehnfaches innert vier Jahren.</p>
+      <p class="zuk-fazit">Batterien und Speicherseen konkurrieren nicht, sie ergänzen sich:
+        Die <b>Batterie</b> verschiebt Strom von mittags auf abends, der <b>Speichersee</b> vom
+        Sommer in den Winter. Christian Schaffner von der ETH bringt es auf den Punkt:
+        «Batterien übernehmen künftig den Tag-Nacht-Ausgleich.»</p>
+    </div>
 
     <div class="zuk">
       <div class="zuk-kopf">
