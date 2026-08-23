@@ -154,7 +154,7 @@
   .c-bas{background-image:url("assets/wappen_bas.png?v=1")}
   .c-yb{background-image:url("assets/wappen_yb.png?v=1")}
   .c-gc{background-image:url("assets/wappen_gc.png?v=1")}
-  .c-win{background-image:url("assets/wappen_win.png?v=1")}
+  .c-win,.c-ww{background-image:url("assets/wappen_win.png?v=1")}
   .c-xam{background-image:url("assets/wappen_xam.png?v=1")}
   .c-sol{background-image:url("assets/wappen_sol.png?v=1")}
   .c-bie{background-image:url("assets/wappen_bie.png?v=1")}
@@ -272,6 +272,10 @@
     <span class="crestbig c-aar" role="img" aria-label="Wappen FC Aarau Frauen"></span>
     <span><span class="tn">Redboots U20</span><span class="ts" data-ts="RBU20">Frauenfussball</span></span>
   </button>
+  <button class="teambtn" data-team="RBU16" aria-pressed="false">
+    <span class="crestbig c-aar" role="img" aria-label="Wappen FC Aarau Frauen"></span>
+    <span><span class="tn">Redboots U16</span><span class="ts" data-ts="RBU16">Frauenfussball</span></span>
+  </button>
   <button class="teambtn" data-team="HSC2" aria-pressed="false">
     <span class="crestbig c-hsc" role="img" aria-label="Wappen HSC Suhr Aarau"></span>
     <span><span class="tn">HSC Suhr Aarau II</span><span class="ts" data-ts="HSC2">Handball · 1. Liga</span></span>
@@ -283,10 +287,6 @@
   <button class="teambtn" data-team="AGO19" aria-pressed="false">
     <span class="crest" style="background:#4A90D9;color:#fff;width:36px;height:36px;font-size:11px;border-radius:8px">AGO</span>
     <span><span class="tn">HSG Aargau Ost U19</span><span class="ts" data-ts="AGO19">Handball · U19 Elite</span></span>
-  </button>
-  <button class="teambtn" data-team="FCLU18" aria-pressed="false">
-    <span class="crestbig c-luz" role="img" aria-label="Wappen FC Luzern"></span>
-    <span><span class="tn">FC Luzern U18</span><span class="ts" data-ts="FCLU18">Frauenfussball</span></span>
   </button>
   <button class="teambtn" data-team="AARFC1" aria-pressed="false">
     <span class="crestbig c-aar" role="img" aria-label="Wappen FC Aarau"></span>
@@ -336,7 +336,7 @@
 </nav>
 
 <footer>
-  Datenquellen: AFV-Matchcenter (FC Aarau: 1. Mannschaft, U-19/U-17/U-16 Elite, Frauen U-18 und U-20; FC Luzern Frauen U-18) ·
+  Datenquellen: AFV-Matchcenter (FC Aarau: 1. Mannschaft, U-19/U-17/U-16 Elite, Frauen U-20/U-18/U-16) ·
   handball.ch-Matchcenter (HSC Suhr Aarau QHL; SG HSC Suhr Aarau II, 1. Liga; HSG Aargau Ost U19 Elite).
   <b>Datenstand: <span class="stand"></span></b> — die Seite aktualisiert sich nicht selbst; Nachführung durch den Sportkoordinator.
   Spiele ohne Uhrzeit sind vom Verband noch nicht angesetzt («Zeit folgt»).<br>
@@ -354,10 +354,10 @@ const TEAMS={
     liga:'Frauen U-18, Meisterschaft'},
   RBU20:{name:'Redboots U20',tag:'RB U20',own:'FC Aarau Frauen U-20',oc:'AAR',sport:'fussball',
     liga:'Frauen U-20, Meisterschaft'},
+  RBU16:{name:'Redboots U16',tag:'RB U16',own:'FC Aarau Frauen U16',oc:'AAR',sport:'fussball',
+    liga:'Frauen U-16, Meisterschaft'},
   HSC2:{name:'HSC Suhr Aarau II',tag:'HSC II',own:'SG HSC Suhr Aarau II',oc:'HSC',sport:'handball',
     liga:'Handball Männer 1. Liga'},
-  FCLU18:{name:'FC Luzern U18',tag:'FCL U18',own:'FC Luzern U18',oc:'LUZ',sport:'fussball',
-    liga:'Frauen U-18, Meisterschaft'},
   AARFC1:{name:'FC Aarau 1. Mannschaft',tag:'FCA 1',own:'FC Aarau',oc:'AAR',sport:'fussball',
     liga:'Challenge League'},
   AARU17:{name:'FC Aarau U-17 Elite',tag:'U-17',own:'FC Aarau',oc:'AAR',sport:'fussball',
@@ -378,9 +378,9 @@ const STUDENTS=[
  {n:'Belz Lukas Josia',k:'K26E',sport:'unihockey',verein:'SV Wiler-Ersigen (U18A/U18C offen)'},
  {n:'Binder Alessandro',k:'K24E',sport:'motorrad'},
  {n:'Binzegger Sharon',k:'K25E',sport:'fussball',teams:['RBU20']},
- {n:'Boqaj Anita',k:'K25B',sport:'fussball',verein:'FC Luzern Frauen — genaue Mannschaft 26/27 offen (08.08. im Umfeld 1. Liga)'},
+ {n:'Boqaj Anita',k:'K25B',sport:'fussball',teams:['RBU16']},
  {n:'Caneiro Ava',k:'K26E',sport:'tanzen',verein:'Spectacolo Dance Academy'},
- {n:'Choudhury Ione',k:'K25B',sport:'fussball',teams:['RBU18']},
+ {n:'Choudhury Ione',k:'K25B',sport:'fussball',teams:['RBU16']},
  {n:'Cimdina Ance Anna',k:'K26E',sport:'volleyball',verein:'Volley Köniz (Team offen)'},
  {n:'Cinque Luis',k:'K25E',sport:'handball',verein:'HSC Suhr Aarau (Team offen)'},
  {n:'Costante Alessio',k:'K24E',sport:'fussball',verein:'FC Aarau — Stufe 26/27 wird geprüft'},
@@ -478,7 +478,8 @@ const CLUBS={
   HZO:{t:'SG HZO',bg:'#F5C400',fg:'#111111'},
   FUT:{t:'BSV Future Bern',bg:'#C8102E',fg:'#111111'},
   LEM:{t:'RG Léman Genève',bg:'#7A1F2B',fg:'#FFFFFF'},
-  NW:{t:'HSG Nordwest',bg:'#A6192E',fg:'#FFFFFF'}
+  NW:{t:'HSG Nordwest',bg:'#A6192E',fg:'#FFFFFF'},
+  WW:{t:'FC Winterthur-Wiesendangen U16',bg:'#C8102E',fg:'#FFFFFF'}
 };
 const M=[
  {d:'2026-08-22',z:'13:30',h:'LUZ',g:'AAR',o:'Sportanlagen Allmend, Luzern',t:'AARU19',res:'8:1'},
@@ -577,28 +578,6 @@ const M=[
  {d:'2027-03-06',z:'18:00',h:'EHR',g:'HSC',o:'Aue, Baden',t:'HSC2'},
  {d:'2027-03-20',z:'18:30',h:'BRU',g:'HSC',o:'Mülimatt, Brugg',t:'HSC2'},
  {d:'2027-04-03',z:'15:30',h:'OLT',g:'HSC',o:'BBZ (Giroud-Halle), Olten',t:'HSC2'},
- {d:'2026-08-29',z:'16:00',h:'LUZ',g:'SER',o:'Sportanlagen Allmend, Luzern',t:'FCLU18'},
- {d:'2026-09-05',z:'14:00',h:'LUZ',g:'TIC',o:'Sportanlagen Allmend, Luzern',t:'FCLU18'},
- {d:'2026-09-12',z:'13:15',h:'YB',g:'LUZ',o:'Kunstrasenfeld Wyler, Bern',t:'FCLU18'},
- {d:'2026-09-26',z:'16:00',h:'LUZ',g:'FCZ',o:'Sportanlagen Allmend, Luzern',t:'FCLU18'},
- {d:'2026-10-03',z:'14:30',h:'SG',g:'LUZ',o:'Stadion Espenmoos, St. Gallen',t:'FCLU18'},
- {d:'2026-10-10',z:'12:00',h:'SG',g:'LUZ',o:'Stadion Espenmoos, St. Gallen',t:'FCLU18'},
- {d:'2026-10-17',z:'16:00',h:'LUZ',g:'GC',o:'Sportanlagen Allmend, Luzern',t:'FCLU18'},
- {d:'2026-10-31',z:'13:00',h:'BAS',g:'LUZ',o:'Sportanlagen St. Jakob, Basel',t:'FCLU18'},
- {d:'2026-11-07',z:'14:45',h:'LS',g:'LUZ',o:'Stade de la Tuilière (Terrain 3), Lausanne',t:'FCLU18'},
- {d:'2026-11-14',z:'16:00',h:'LUZ',g:'AARF',o:'Sportanlagen Allmend, Luzern',t:'FCLU18'},
- {d:'2026-11-21',z:'16:00',h:'AFF',g:'LUZ',o:'Stade Universitaire St-Léonard, Fribourg',t:'FCLU18'},
- {d:'2027-02-13',z:'',h:'SER',g:'LUZ',o:'Stade des Trois-Chêne, Chêne-Bourg',t:'FCLU18'},
- {d:'2027-02-20',z:'',h:'BAS',g:'LUZ',o:'Sportanlagen St. Jakob, Basel',t:'FCLU18'},
- {d:'2027-02-27',z:'',h:'LUZ',g:'YB',o:'Sportanlagen Allmend, Luzern',t:'FCLU18'},
- {d:'2027-03-06',z:'',h:'LUZ',g:'YV',o:'Sportanlagen Allmend, Luzern',t:'FCLU18'},
- {d:'2027-03-13',z:'',h:'FCZ',g:'LUZ',o:'Heerenschürli, Zürich',t:'FCLU18'},
- {d:'2027-03-20',z:'',h:'LUZ',g:'SG',o:'Sportanlagen Allmend, Luzern',t:'FCLU18'},
- {d:'2027-04-03',z:'',h:'LUZ',g:'SER',o:'Sportanlagen Allmend, Luzern',t:'FCLU18'},
- {d:'2027-04-11',z:'',h:'GC',g:'LUZ',o:'GC/Campus, Niederhasli',t:'FCLU18'},
- {d:'2027-05-01',z:'',h:'LUZ',g:'BAS',o:'Sportanlagen Allmend, Luzern',t:'FCLU18'},
- {d:'2027-05-22',z:'',h:'AARF',g:'LUZ',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'FCLU18'},
- {d:'2027-06-05',z:'',h:'LUZ',g:'AFF',o:'Sportanlagen Allmend, Luzern',t:'FCLU18'},
  // FC Aarau 1. Mannschaft - Challenge League Hinrunde (AFV-Feed 24.08.26; Rueckrunde folgt im Feed)
  {d:'2026-08-28',z:'20:15',h:'AAR',g:'XAM',o:'Bruegglifeld, Aarau',t:'AARFC1'},
  {d:'2026-08-31',z:'20:15',h:'FCW',g:'AAR',o:'Lidl Sportpark Bergholz, Wil',t:'AARFC1'},
@@ -709,7 +688,30 @@ const M=[
  {d:'2027-02-20',z:'',h:'FUT',g:'AGO',o:'Halle folgt',t:'AGO19'},
  {d:'2027-02-28',z:'18:00',h:'AGO',g:'LEM',o:'Sporthalle, Obersiggenthal',t:'AGO19'},
  {d:'2027-03-06',z:'',h:'KAD',g:'AGO',o:'Halle folgt',t:'AGO19'},
- {d:'2027-03-20',z:'15:45',h:'AGO',g:'NW',o:'Sporthalle, Obersiggenthal',t:'AGO19'}
+ {d:'2027-03-20',z:'15:45',h:'AGO',g:'NW',o:'Sporthalle, Obersiggenthal',t:'AGO19'},
+ // FC Aarau Frauen U16 / Redboots U16 (AFV-Feed 24.08.26)
+ {d:'2026-08-30',z:'12:00',h:'AAR',g:'YB',o:'Sportanlage Schachen, Aarau (Feld 1)',t:'RBU16'},
+ {d:'2026-09-05',z:'13:00',h:'BAS',g:'AAR',o:'Nachwuchs-Campus Basel, Muenchenstein',t:'RBU16'},
+ {d:'2026-09-13',z:'13:00',h:'AAR',g:'BIE',o:'Sportanlage Schachen, Aarau (Feld 1)',t:'RBU16'},
+ {d:'2026-09-20',z:'11:00',h:'AAR',g:'WW',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'RBU16'},
+ {d:'2026-09-27',z:'14:00',h:'CAR',g:'AAR',o:'Stade de la Fontenette, Carouge',t:'RBU16'},
+ {d:'2026-10-04',z:'13:00',h:'AAR',g:'YV',o:'Sportanlage Schachen, Aarau (Feld 1)',t:'RBU16'},
+ {d:'2026-10-10',z:'14:00',h:'SIO',g:'AAR',o:'Stade Madeleine Boll, Granges',t:'RBU16'},
+ {d:'2026-10-18',z:'13:00',h:'AAR',g:'SOL',o:'Sportanlage Schachen, Aarau (Feld 1)',t:'RBU16'},
+ {d:'2026-10-31',z:'12:00',h:'THU',g:'AAR',o:'Burgerstrasse, Thun',t:'RBU16'},
+ {d:'2026-11-08',z:'15:30',h:'AAR',g:'SER',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'RBU16'},
+ {d:'2026-11-14',z:'16:00',h:'AFF',g:'AAR',o:'Stade Universitaire St-Leonard, Fribourg',t:'RBU16'},
+ {d:'2027-02-27',z:'',h:'LS',g:'AAR',o:'Stade de la Tuiliere (Terrain 3), Lausanne',t:'RBU16'},
+ {d:'2027-03-06',z:'',h:'YB',g:'AAR',o:'Bodenweid, Bern',t:'RBU16'},
+ {d:'2027-03-13',z:'',h:'AAR',g:'BAS',o:'Sportanlage Schachen, Aarau (Feld 1)',t:'RBU16'},
+ {d:'2027-03-20',z:'12:15',h:'BIE',g:'AAR',o:'Pavillon des stades, Biel-Bienne',t:'RBU16'},
+ {d:'2027-04-03',z:'',h:'AAR',g:'CAR',o:'Sportanlage Schachen, Aarau (Feld 1)',t:'RBU16'},
+ {d:'2027-04-10',z:'',h:'YV',g:'AAR',o:'Stade Municipal, Yverdon',t:'RBU16'},
+ {d:'2027-04-24',z:'',h:'AAR',g:'SIO',o:'Sportanlage Schachen, Aarau (Feld 1)',t:'RBU16'},
+ {d:'2027-05-08',z:'',h:'SOL',g:'AAR',o:'Solothurn (Platz folgt)',t:'RBU16'},
+ {d:'2027-05-22',z:'',h:'AAR',g:'THU',o:'Sportanlage Schachen, Aarau (Feld 1)',t:'RBU16'},
+ {d:'2027-05-29',z:'',h:'SER',g:'AAR',o:'Stade des Trois-Chene, Chene-Bourg',t:'RBU16'},
+ {d:'2027-06-05',z:'',h:'AAR',g:'AFF',o:'Sportanlage Schachen, Aarau (Feld 1)',t:'RBU16'}
 ];
 // NATIONALAUSWAHLEN & SONDER-EINSÄTZE (Aufgebote) — von Hand nachführen.
 // {d:'JJJJ-MM-TT', bis:'JJJJ-MM-TT' (optional), z:'HH:MM' (optional), titel, ort, wer:[Namen wie in STUDENTS], sport}
@@ -717,7 +719,7 @@ const E=[
  // Beispiel:
  // {d:'2026-10-05',bis:'2026-10-08',titel:'SHV U19-Nationalteam — Zusammenzug',ort:'OYM, Cham',wer:['Völkle Robin'],sport:'handball'}
 ];
-const IMG_CLUBS=new Set(['HSCU','LUZ','SIO','LS','SER','FCZ','LUG','SG','THU','BAS','YB','GC','WIN','XAM','SOL','BIE','RJ','YV','GCA','ALT','EHR','BRU','OLT','MUO','KRI','FRI','WOH','WIL','MUR','APP','AARF']);
+const IMG_CLUBS=new Set(['HSCU','WW','LUZ','SIO','LS','SER','FCZ','LUG','SG','THU','BAS','YB','GC','WIN','XAM','SOL','BIE','RJ','YV','GCA','ALT','EHR','BRU','OLT','MUO','KRI','FRI','WOH','WIL','MUR','APP','AARF']);
 const WD=['So','Mo','Di','Mi','Do','Fr','Sa'];
 const MON=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
 let selBL=null, selTeam=null, selSport=null, mode='all', onlyFuture=true;
