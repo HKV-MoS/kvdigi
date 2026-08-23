@@ -383,7 +383,7 @@ const STUDENTS=[
  {n:'Choudhury Ione',k:'K25B',sport:'fussball',teams:['RBU16']},
  {n:'Cimdina Ance Anna',k:'K26E',sport:'volleyball',verein:'Volley Köniz (Team offen)'},
  {n:'Cinque Luis',k:'K25E',sport:'handball',verein:'HSC Suhr Aarau (Team offen)'},
- {n:'Costante Alessio',k:'K24E',sport:'fussball',verein:'FC Aarau — Stufe 26/27 wird geprüft'},
+ {n:'Costante Alessio',k:'K24E',sport:'fussball',teams:['AARU17']},
  {n:'Dovoda Matijas',k:'K25E',sport:'fussball',teams:['AARU17']},
  {n:'Freda Sandro',k:'K25E',sport:'kickboxing',verein:'KBC Lotos'},
  {n:'Grossmann Anja',k:'K24E',sport:'radsport'},
@@ -391,7 +391,7 @@ const STUDENTS=[
  {n:'Imhof Diego',k:'K26E',sport:'radsport'},
  {n:'Isler Liam',k:'K25E',sport:'fussball',teams:['AARU17']},
  {n:'Krasniqi Leon',k:'K24B',sport:'fussball',verein:'FC Aarau — Stufe 26/27 wird geprüft'},
- {n:'Lazarevic Pavle',k:'K25E',sport:'fussball',verein:'FC Aarau — Stufe 26/27 wird geprüft'},
+ {n:'Lazarevic Pavle',k:'K25E',sport:'fussball',teams:['AARU17']},
  {n:'Merz Rayla',k:'K26E',sport:'basketball',verein:'BC Alte Kanti Aarau (Team offen)'},
  {n:'Munk Louis',k:'K24E',sport:'radsport'},
  {n:'Nešic Teodora',k:'K26E',sport:'kunstturnen',verein:'Stützpunkt Aargau Lenzburg (STV)'},
@@ -848,7 +848,7 @@ function render(){
     ||'<span class="provisorisch">Noch keine bestätigte Zuordnung für dieses Team.</span>';
   bl.querySelectorAll('button.chip').forEach(ch=>ch.onclick=()=>{selBL=(selBL===+ch.dataset.i)?null:+ch.dataset.i;render();});
   kn.textContent=(selTeam===null||selTeam==='AARU19'
-      ?'FC Aarau: Agho U-19 bestätigt; Dovoda, Simic, Isler U-17 Elite; Vogt 1. Mannschaft (26/27 Leihe zum FC Baden wird geprüft); Costante, Krasniqi, Lazarevic — Stufe offen. '
+      ?'FC Aarau: Agho U-19; Costante, Dovoda, Isler, Lazarevic, Simic U-17 Elite (SFV-Aufstellungen); Vogt 1. Mannschaft (Leihe FC Baden wird geprüft); Krasniqi — Stufe offen. '
       :'')+((selTeam===null||selTeam==='HSC2')
       ?'HSC: Völkle fix im QHL-Kader; Regli und Anderes Perspektivspieler QHL (pendeln mit HSC II). HSC-II-Kader gemäss handball.ch.'
       :'');
