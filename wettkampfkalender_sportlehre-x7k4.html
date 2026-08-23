@@ -75,6 +75,12 @@
   .t.tbd,.tbd{color:var(--away);font-weight:600}
   .match.next{border-left:4px solid var(--accent)}
   .pill.gespielt{background:var(--chipbg);color:var(--muted);border:1px solid var(--line)}
+  .match.event{border-left:4px solid #C8102E}
+  .pill.nati{background:#C8102E;color:#FFFFFF}
+  .natibadge{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;
+    background:#C8102E;color:#FFFFFF;border-radius:5px;font-weight:900;font-size:16px;line-height:1;flex:none}
+  .n7card.nati{border-left-color:#C8102E}
+  .herocard.nati{background:#C8102E;color:#FFFFFF}
   .chip.rboffen{cursor:default;border-style:dashed}
   .chip.rboffen em{font-style:normal;font-size:10.5px;font-weight:700;color:var(--away);
     background:var(--away-soft);border-radius:999px;padding:1px 7px;margin-left:6px}
@@ -541,6 +547,12 @@ const M=[
  {d:'2027-05-22',z:'',h:'AARF',g:'LUZ',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'FCLU18'},
  {d:'2027-06-05',z:'',h:'LUZ',g:'AFF',o:'Sportanlagen Allmend, Luzern',t:'FCLU18'}
 ];
+// NATIONALAUSWAHLEN & SONDER-EINSÄTZE (Aufgebote) — von Hand nachführen.
+// {d:'JJJJ-MM-TT', bis:'JJJJ-MM-TT' (optional), z:'HH:MM' (optional), titel, ort, wer:[Namen wie in STUDENTS], sport}
+const E=[
+ // Beispiel:
+ // {d:'2026-10-05',bis:'2026-10-08',titel:'SHV U19-Nationalteam — Zusammenzug',ort:'OYM, Cham',wer:['Völkle Robin'],sport:'handball'}
+];
 const IMG_CLUBS=new Set(['LUZ','SIO','LS','SER','FCZ','LUG','SG','THU','BAS','YB','GC','WIN','XAM','SOL','BIE','RJ','YV','GCA','ALT','EHR','BRU','OLT','MUO','KRI','FRI','WOH','WIL','MUR','APP','AARF']);
 const WD=['So','Mo','Di','Mi','Do','Fr','Sa'];
 const MON=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
@@ -562,6 +574,30 @@ function inSelection(m){
   if(selTeam&&m.t!==selTeam)return false;
   if(selBL!==null&&m.t!==KADER[selBL].team)return false;
   return true;
+}
+function evInSel(e){
+  if(selSport&&e.sport!==selSport)return false;
+  if(selTeam){const names=KADER.filter(p=>p.team===selTeam).map(p=>p.n);
+    if(!e.wer.some(w=>names.includes(w)))return false;}
+  if(selBL!==null&&!e.wer.includes(KADER[selBL].n))return false;
+  return true;
+}
+function evRange(e){
+  const d1=new Date(e.d);
+  return fmtD(d1)+(e.bis?' – '+fmtD(new Date(e.bis)):'')+(e.z?' · '+e.z:'');
+}
+function evCard(e,t0){
+  const d=new Date(e.d), dEnd=new Date(e.bis||e.d);
+  const isNow=t0>=d&&t0<=dEnd;
+  return `<article class="match event${isNow?' today':(dEnd<t0?' past':'')}">
+    <div class="date"><span class="wd">${WD[d.getDay()]}</span><span class="d">${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.</span>
+    <span class="t">${e.bis?'bis '+String(dEnd.getDate()).padStart(2,'0')+'.'+String(dEnd.getMonth()+1).padStart(2,'0')+'.':(e.z||'ganztags')}</span></div>
+    <div>
+      <div class="teams"><span class="natibadge" aria-hidden="true">+</span> ${e.titel}
+        <span class="pillrow"><span class="pill nati">Nationalauswahl</span>${isNow?'<span class="pill today">Jetzt</span>':''}</span></div>
+      <div class="meta">${evRange(e)} · ${mapsLink(e.ort)}</div>
+      <div class="bl">${e.wer.map(w=>{const s=STUDENTS.find(x=>x.n===w);return `<span>${w}${s?' · '+s.k:''}</span>`;}).join('')}</div>
+    </div></article>`;
 }
 function render(){
   const t0=today();
@@ -588,21 +624,34 @@ function render(){
   if(einzel){
     const s=SPORTS.find(x=>x.key===selSport);
     const wer=STUDENTS.filter(x=>x.sport===selSport);
+    const evs=E.filter(e=>e.sport===selSport).sort((a,b)=>a.d<b.d?-1:1);
     document.getElementById('hero').innerHTML='';
     document.getElementById('list').innerHTML=
       `<div class="einzel"><h3>${s.ico} ${s.label} — ${wer.length} Sportlernende</h3>
        <ul>${wer.map(w=>`<li>${w.n} · ${w.k}${w.verein?' — '+w.verein:''}</li>`).join('')}</ul>
-       <p>Einzelsport — persönliche Wettkampflisten sind angefordert und werden hier eingetragen, sobald sie vorliegen.</p></div>`;
+       <p>Einzelsport — persönliche Wettkampflisten sind angefordert und werden hier eingetragen, sobald sie vorliegen.</p></div>`
+      +evs.map(e=>evCard(e,t0)).join('');
     renderNext7(t0);
     return;
   }
   // Auswahl-Pool (sortiert)
   const sorted=[...M].map((m,i)=>({...m,idx:i})).sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:(a.z||'99')<(b.z||'99')?-1:1);
   const pool=sorted.filter(inSelection);
+  const evPool=E.filter(evInSel).sort((a,b)=>a.d<b.d?-1:1);
   const next=pool.find(m=>new Date(m.d)>=t0);
-  // Hero: nächster Wettkampf der Auswahl
+  const nextEv=evPool.find(e=>new Date(e.bis||e.d)>=t0);
+  // Hero: nächster Einsatz der Auswahl (Spiel oder Aufgebot — was früher kommt)
   const hero=document.getElementById('hero');
-  if(next){
+  const evFirst=nextEv&&(!next||nextEv.d<next.d);
+  if(evFirst){
+    const d=new Date(nextEv.d), dEnd=new Date(nextEv.bis||nextEv.d);
+    const isNow=t0>=d&&t0<=dEnd;
+    hero.innerHTML=`<div class="herocard nati${isNow?' heute':''}">
+      <span class="h-label">${isNow?'Jetzt im Einsatz':'Nächster Einsatz'} · Nationalauswahl</span>
+      <span class="h-when">${evRange(nextEv)}</span>
+      <span class="h-teams">${nextEv.titel}</span>
+      <span class="h-meta">${nextEv.ort} · ${nextEv.wer.join(', ')}</span></div>`;
+  } else if(next){
     const d=new Date(next.d);const heim=next.h===OWN(next.t);
     const isT=d.getTime()===t0.getTime();
     hero.innerHTML=`<a class="herocard${isT?' heute':''}" href="#m-${next.idx}">
@@ -612,12 +661,15 @@ function render(){
       <span class="h-meta">${TEAMS[next.t].tag} · ${next.o} · ${heim?'Heimspiel':'Auswärts'}</span></a>`;
   } else hero.innerHTML='';
   renderNext7(t0);
-  // Kennzahlen (auswahlbezogen)
-  const in7=pool.filter(m=>{const d=new Date(m.d);const e=new Date(t0);e.setDate(e.getDate()+7);return d>=t0&&d<e;});
+  // Kennzahlen (auswahlbezogen, inkl. Aufgebote)
+  const w7=new Date(t0); w7.setDate(w7.getDate()+7);
+  const in7=pool.filter(m=>{const d=new Date(m.d);return d>=t0&&d<w7;});
+  const ev7=evPool.filter(e=>new Date(e.d)<w7&&new Date(e.bis||e.d)>=t0);
   const betroffen=new Set(); in7.forEach(m=>KADER.forEach(p=>{if(p.team===m.t)betroffen.add(p.n);}));
+  ev7.forEach(e=>e.wer.forEach(w=>betroffen.add(w)));
   const heimN=pool.filter(m=>m.h===OWN(m.t)).length;
   document.getElementById('stats').innerHTML=
-    `<div class="stat"><b>${in7.length}</b><span>Wettkämpfe · 7 Tage</span></div>`+
+    `<div class="stat"><b>${in7.length+ev7.length}</b><span>Wettkämpfe · 7 Tage</span></div>`+
     `<div class="stat"><b>${betroffen.size}</b><span>Betroffene Lernende</span></div>`+
     `<div class="stat"><b>${pool.length}</b><span>Spiele in Auswahl</span></div>`+
     `<div class="stat"><b>${heimN} / ${pool.length-heimN}</b><span>Heim / Ausw.</span></div>`;
@@ -652,13 +704,28 @@ function render(){
     if(onlyFuture&&new Date(m.d)<t0)return false;
     return true;
   });
+  // Aufgebote in die chronologische Liste mischen
+  const evRows=evPool.filter(e=>{
+    if(mode!=='all')return false;
+    if(onlyFuture&&new Date(e.bis||e.d)<t0)return false;
+    return true;
+  });
+  const items=[...rows.map(m=>({kind:'m',d:m.d,z:m.z,m})),
+               ...evRows.map(e=>({kind:'e',d:e.d,z:e.z||'',e}))]
+    .sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:(a.z||'99')<(b.z||'99')?-1:1);
   const list=document.getElementById('list');
-  if(!rows.length){list.innerHTML='<p class="empty">Keine Spiele für diese Auswahl.</p>';return;}
+  if(!items.length){list.innerHTML='<p class="empty">Keine Spiele für diese Auswahl.</p>';return;}
   const nextIdx=next?next.idx:-1;
   let html='',curMon='';
-  for(const m of rows){
-    const d=new Date(m.d);
+  for(const it of items){
+    const d=new Date(it.d);
     const monKey=MON[d.getMonth()]+' '+d.getFullYear();
+    if(it.kind==='e'){
+      if(monKey!==curMon){ if(curMon)html+='</div></section>'; html+=`<section class="month"><h3>${monKey}</h3><div>`; curMon=monKey; }
+      html+=evCard(it.e,t0);
+      continue;
+    }
+    const m=it.m;
     if(monKey!==curMon){ if(curMon)html+='</div></section>'; html+=`<section class="month"><h3>${monKey}</h3><div>`; curMon=monKey; }
     const isToday=d.getTime()===t0.getTime();
     const isPast=d<t0;
@@ -686,16 +753,27 @@ function render(){
 function renderNext7(t0){
   const end=new Date(t0); end.setDate(end.getDate()+7);
   const einzel=selSport&&!SPORT_TEAM[selSport];
-  const rows=[...M].filter(m=>{const d=new Date(m.d);return d>=t0&&d<end&&(einzel?true:inSelection(m));})
-    .sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:(a.z||'99')<(b.z||'99')?-1:1);
+  const rows=[...M].filter(m=>{const d=new Date(m.d);return d>=t0&&d<end&&(einzel?false:inSelection(m));})
+    .map(m=>({kind:'m',d:m.d,z:m.z,m}));
+  const evs=E.filter(e=>new Date(e.d)<end&&new Date(e.bis||e.d)>=t0&&(einzel?e.sport===selSport:evInSel(e)))
+    .map(e=>({kind:'e',d:e.d,z:e.z||'',e}));
+  const all=[...rows,...evs].sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:(a.z||'99')<(b.z||'99')?-1:1);
   const g=document.getElementById('n7grid'), h=document.querySelector('.next7 h2');
-  const kontext=selBL!==null?KADER[selBL].n:(selTeam?TEAMS[selTeam].name:(selSport&&!einzel?SPORTS.find(x=>x.key===selSport).label:null));
-  if(!rows.length){
+  const kontext=selBL!==null?KADER[selBL].n:(selTeam?TEAMS[selTeam].name:(selSport?SPORTS.find(x=>x.key===selSport).label:null));
+  if(!all.length){
     h.textContent='Nächste 7 Tage'+(kontext?' — '+kontext:'');
     g.innerHTML=`<div class="n7none">Keine Wettkämpfe in den nächsten 7 Tagen${kontext?' für diese Auswahl':''}.</div>`;return;
   }
-  h.textContent=`Nächste 7 Tage${kontext?' — '+kontext:''} — ${rows.length} ${rows.length===1?'Wettkampf':'Wettkämpfe'}`;
-  g.innerHTML=rows.map(m=>{
+  h.textContent=`Nächste 7 Tage${kontext?' — '+kontext:''} — ${all.length} ${all.length===1?'Wettkampf':'Wettkämpfe'}`;
+  g.innerHTML=all.map(it=>{
+    if(it.kind==='e'){
+      const e=it.e;const isNow=t0>=new Date(e.d)&&t0<=new Date(e.bis||e.d);
+      return `<div class="n7card nati${isNow?' heute':''}">
+        <div class="n7when">${evRange(e)}${isNow?' · JETZT':''}</div>
+        <div class="n7teams">Nationalauswahl: ${e.titel}</div>
+        <div class="n7meta">${e.ort} · ${e.wer.join(', ')}</div></div>`;
+    }
+    const m=it.m;
     const d=new Date(m.d);const heim=m.h===OWN(m.t);const geg=CLUBS[heim?m.g:m.h].t;
     const isT=d.getTime()===t0.getTime();
     return `<div class="n7card${isT?' heute':''}">
