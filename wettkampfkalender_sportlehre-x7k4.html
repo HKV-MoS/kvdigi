@@ -237,7 +237,7 @@
 <header class="kopf">
   <div>
     <div class="eyebrow">Sportlehre · Saison 2026/27</div>
-    <h1>Wettkampfkalender</h1>
+    <h1 id="apptitle" title="Alle Filter zurücksetzen">Wettkampfkalender</h1>
     <p class="sub2">Sportlernende HKV</p>
   </div>
   <div class="kopfrechts">
@@ -369,7 +369,9 @@ const TEAMS={
   HSCQHL:{name:'HSC Suhr Aarau (QHL)',tag:'QHL',own:'HSC Suhr Aarau',oc:'HSC',sport:'handball',
     liga:'Quickline Handball League'},
   AGO19:{name:'HSG Aargau Ost U19 Elite',tag:'AGO U19',own:'HSG Aargau Ost',oc:'AGO',sport:'handball',
-    liga:'Junioren U19 Elite'}
+    liga:'Junioren U19 Elite'},
+  FCZ18:{name:'FC Zürich Frauen U18',tag:'FCZ U18',own:'FC Zürich',oc:'FCZ',sport:'fussball',
+    liga:'Frauen U-18, Meisterschaft'}
 };
 // ZENTRALE LERNENDEN-LISTE — einzige Quelle für Kader, Zählungen und Einzelsport-Panels.
 // team: Teamschlüssel · 'RB?' = Red Boots, U18/U20 offen · ohne team = Zuordnung offen/Einzelsport
@@ -392,13 +394,13 @@ const STUDENTS=[
  {n:'Grüninger Cornelius',k:'K24E',sport:'handball',teams:['HSC2']},
  {n:'Imhof Diego',k:'K26E',sport:'radsport'},
  {n:'Isler Liam',k:'K25E',sport:'fussball',teams:['AARU17']},
- {n:'Krasniqi Leon',k:'K24B',sport:'fussball',teams:['AARU17']},
+ {n:'Krasniqi Leon',k:'K24B',sport:'fussball',verein:'FC Aarau (fix) — Stufe 26/27 wird geprüft'},
  {n:'Lazarevic Pavle',k:'K25E',sport:'fussball',teams:['AARU17']},
  {n:'Merz Rayla',k:'K26E',sport:'basketball',verein:'BC Alte Kanti Aarau · U16-Nationalteam (Point Guard, U16-EM 2026)'},
  {n:'Munk Louis',k:'K24E',sport:'radsport',verein:'Team Walter Fensterbau – Marco Brenner (Junioren)'},
- {n:'Nešic Teodora',k:'K26E',sport:'kunstturnen',verein:'Kutu Stein-Fricktal / RLZ Aargau'},
- {n:'Nietlispach Ben',k:'K25E',sport:'handball',verein:'TV Muri / Regionalauswahl Aargau Plus'},
- {n:'Prenqi Melissa',k:'K26E',sport:'fussball',verein:'FC Zürich U18 Frauen (Spielplan wird eingebaut)'},
+ {n:'Nešic Teodora',k:'K26E',sport:'kunstturnen',verein:'Kutu Fricktal · Regionalkader Aargau (Kaderliste 2026, Jg. 2011)'},
+ {n:'Nietlispach Ben',k:'K25E',sport:'handball',verein:'TV Muri · zusätzlich Regionalauswahl Aargau Plus'},
+ {n:'Prenqi Melissa',k:'K26E',sport:'fussball',teams:['FCZ18']},
  {n:'Regli Timo',k:'DF25D',sport:'handball',teams:['HSC2','HSCQHL']},
  {n:'Salm Jann',k:'K24E',sport:'radsport',verein:'Team Q36.5-Amacx / VC Pfaffnau-Roggliswil · U19-Europameister Bahn (Scratch) 2026'},
  {n:'Scheuber Flavia',k:'K26E',sport:'fussball',teams:['RBU20']},
@@ -406,8 +408,8 @@ const STUDENTS=[
  {n:'Simic Ivan',k:'K25E',sport:'fussball',teams:['AARU17']},
  {n:'Suter Sam',k:'K24E',sport:'handball',teams:['HSC2']},
  {n:'Tupella Aurela',k:'K24E',sport:'fussball',teams:['RBU20']},
- {n:'Vogt Gian',k:'K24E',sport:'fussball',teams:['AARFC1']},
- {n:'Vögtlin Théo',k:'K25E',sport:'kanu',verein:'Kanuclub Brugg · Kanuslalom K1/C1 · Schweizer Nachwuchskader (Junioren-WM Krakau & Junioren-EM Épinal 2026)'},
+ {n:'Vogt Gian',k:'K24E',sport:'fussball',teams:['AARU19']},
+ {n:'Vögtlin Théo',k:'K25E',sport:'kanu',verein:'Kanu Club Brugg · Kanuslalom/Kajak (K1/C1, Kajak Cross) · Schweizer Nachwuchskader (Junioren-WM Krakau & Junioren-EM Épinal 2026)'},
  {n:'Völkle Robin',k:'K24E',sport:'handball',teams:['HSCQHL','HSC2']},
  {n:'Wipf Nicolas',k:'K24E',sport:'handball',teams:['AGO19'],verein:'HSG Siggenthal/Baden-Endingen Herren 1 (Flügel links)'},
  {n:'Zumsteg Saybien',k:'K25E',sport:'radsport',verein:'VMC Gansingen (Saison 2026, Kategorie Anfänger)'}
@@ -481,7 +483,7 @@ const CLUBS={
   FUT:{t:'BSV Future Bern',bg:'#C8102E',fg:'#111111'},
   LEM:{t:'RG Léman Genève',bg:'#7A1F2B',fg:'#FFFFFF'},
   NW:{t:'HSG Nordwest',bg:'#A6192E',fg:'#FFFFFF'},
-  WW:{t:'FC Winterthur-Wiesendangen U16',bg:'#C8102E',fg:'#FFFFFF'}
+  WW:{t:'FC Winterthur-Wiesendangen',bg:'#C8102E',fg:'#FFFFFF'}
 };
 const M=[
  {d:'2026-08-22',z:'13:30',h:'LUZ',g:'AAR',o:'Sportanlagen Allmend, Luzern',t:'AARU19',res:'8:1'},
@@ -713,7 +715,30 @@ const M=[
  {d:'2027-05-08',z:'',h:'SOL',g:'AAR',o:'Solothurn (Platz folgt)',t:'RBU16'},
  {d:'2027-05-22',z:'',h:'AAR',g:'THU',o:'Sportanlage Schachen, Aarau (Feld 1)',t:'RBU16'},
  {d:'2027-05-29',z:'',h:'SER',g:'AAR',o:'Stade des Trois-Chene, Chene-Bourg',t:'RBU16'},
- {d:'2027-06-05',z:'',h:'AAR',g:'AFF',o:'Sportanlage Schachen, Aarau (Feld 1)',t:'RBU16'}
+ {d:'2027-06-05',z:'',h:'AAR',g:'AFF',o:'Sportanlage Schachen, Aarau (Feld 1)',t:'RBU16'},
+ // FC Zürich Frauen U18 (FVRZ-Feed 23.08.26) — Prenqi. Spiele gegen FCA Frauen U18 erscheinen auch bei RB U18.
+ {d:'2026-08-22',z:'13:00',h:'BAS',g:'FCZ',o:'Basel',t:'FCZ18',res:'7:3'},
+ {d:'2026-08-30',z:'11:00',h:'AAR',g:'FCZ',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'FCZ18'},
+ {d:'2026-09-05',z:'18:00',h:'FCZ',g:'WW',o:'Sportanlage Heerenschürli, Zürich',t:'FCZ18'},
+ {d:'2026-09-12',z:'17:00',h:'FCZ',g:'AFF',o:'Sportanlage Heerenschürli, Zürich',t:'FCZ18'},
+ {d:'2026-09-26',z:'16:00',h:'LUZ',g:'FCZ',o:'Sportanlagen Allmend, Luzern',t:'FCZ18'},
+ {d:'2026-10-03',z:'16:00',h:'YB',g:'FCZ',o:'Wyler (Kunstrasen), Bern',t:'FCZ18'},
+ {d:'2026-10-10',z:'',h:'FCZ',g:'SER',o:'Sportanlage Heerenschürli, Zürich',t:'FCZ18'},
+ {d:'2026-10-17',z:'13:15',h:'YB',g:'FCZ',o:'Wyler (Kunstrasen), Bern',t:'FCZ18'},
+ {d:'2026-11-07',z:'17:00',h:'RJ',g:'FCZ',o:'Grünfeld (Kunstrasen 3), Jona',t:'FCZ18'},
+ {d:'2026-11-14',z:'16:00',h:'FCZ',g:'SG',o:'Sportanlage Heerenschürli, Zürich',t:'FCZ18'},
+ {d:'2026-11-22',z:'11:00',h:'GC',g:'FCZ',o:'GC/Campus, Niederhasli',t:'FCZ18'},
+ {d:'2026-11-28',z:'',h:'FCZ',g:'BAS',o:'Sportanlage Heerenschürli, Zürich',t:'FCZ18'},
+ {d:'2027-02-13',z:'',h:'FCZ',g:'AAR',o:'Sportanlage Heerenschürli, Zürich',t:'FCZ18'},
+ {d:'2027-02-20',z:'',h:'FCZ',g:'GC',o:'Sportanlage Heerenschürli, Zürich',t:'FCZ18'},
+ {d:'2027-02-27',z:'',h:'AFF',g:'FCZ',o:'Stade Universitaire St-Léonard, Fribourg',t:'FCZ18'},
+ {d:'2027-03-06',z:'',h:'SOL',g:'FCZ',o:'Stadion FC Solothurn (Nebenplatz 1)',t:'FCZ18'},
+ {d:'2027-03-13',z:'',h:'FCZ',g:'LUZ',o:'Sportanlage Heerenschürli, Zürich',t:'FCZ18'},
+ {d:'2027-03-20',z:'',h:'SER',g:'FCZ',o:'Stade des Trois-Chêne, Chêne-Bourg',t:'FCZ18'},
+ {d:'2027-04-03',z:'',h:'FCZ',g:'THU',o:'Sportanlage Heerenschürli, Zürich',t:'FCZ18'},
+ {d:'2027-04-10',z:'',h:'FCZ',g:'YB',o:'Sportanlage Heerenschürli, Zürich',t:'FCZ18'},
+ {d:'2027-05-22',z:'',h:'SG',g:'FCZ',o:'Stadion Espenmoos, St. Gallen',t:'FCZ18'},
+ {d:'2027-06-05',z:'',h:'FCZ',g:'GC',o:'Sportanlage Heerenschürli, Zürich',t:'FCZ18'}
 ];
 // NATIONALAUSWAHLEN & SONDER-EINSÄTZE (Aufgebote) — von Hand nachführen.
 // {d:'JJJJ-MM-TT', bis:'JJJJ-MM-TT' (optional), z:'HH:MM' (optional), titel, ort, wer:[Namen wie in STUDENTS], sport}
@@ -725,6 +750,8 @@ const IMG_CLUBS=new Set(['HSCU','WW','LUZ','SIO','LS','SER','FCZ','LUG','SG','TH
 const WD=['So','Mo','Di','Mi','Do','Fr','Sa'];
 const MON=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
 let selBL=null, selTeam=null, selSport=null, mode='all', onlyFuture=true;
+document.getElementById('apptitle').style.cursor='pointer';
+document.getElementById('apptitle').onclick=()=>{selBL=null;selTeam=null;selSport=null;mode='all';onlyFuture=true;render();window.scrollTo({top:0});};
 function today(){const t=new Date();return new Date(t.getFullYear(),t.getMonth(),t.getDate());}
 const OWN=t=>TEAMS[t].oc;
 // Spiel gilt als vorbei: Resultat erfasst ODER Anpfiff + 2.5 h verstrichen
@@ -852,9 +879,9 @@ function render(){
     ||'<span class="provisorisch">Noch keine bestätigte Zuordnung für dieses Team.</span>';
   bl.querySelectorAll('button.chip').forEach(ch=>ch.onclick=()=>{selBL=(selBL===+ch.dataset.i)?null:+ch.dataset.i;render();});
   kn.textContent=(selTeam===null||selTeam==='AARU19'
-      ?'FC Aarau: Agho U-19; Costante, Dovoda, Isler, Krasniqi, Lazarevic, Simic U-17 Elite (SFV-Aufstellungen); Simic bereits mit Einsatz in der 1. Mannschaft; Vogt 1. Mannschaft/Nachwuchs — SFV-Aufstellung mit Simic, def. Mittelfeld (Stufe und Leihe FC Baden werden geprüft). '
+      ?'FC Aarau (SFV 26/27): Agho und Vogt (def. MF/IV) U-19 Elite; Aliji, Costante, Dovoda, Isler, Lazarevic, Simic U-17 Elite; Simic bereits mit Einsatz in der 1. Mannschaft; Krasniqi FC Aarau fix, Stufe 26/27 offen. Frauen U-20: Scheuber bestätigt, Tupella Verein bestätigt (Einsatz 26/27 nochmals kontrollieren). '
       :'')+((selTeam===null||selTeam==='HSC2')
-      ?'HSC: Völkle fix im QHL-Kader (rechter Rückraum) und im Schweizer U18-Nationalteam (U18-EM 2026); Regli (Torhüter, Nachwuchs-Nationalteam, QHL-Einsatz 29.07.) und Anderes Perspektivspieler QHL (pendeln mit HSC II). HSC-II-Kader gemäss handball.ch (inkl. Suter); Grüninger: U19-Zuordnung 26/27 in Abklärung.'
+      ?'HSC: Völkle fix im QHL-Kader (rechter Rückraum) und im Schweizer U18-Nationalteam (U18-EM 2026); Regli (Torhüter, Schweizer U19-Nationalteam, QHL-Einsatz 29.07.) und Anderes Perspektivspieler QHL (pendeln mit HSC II). HSC-II-Kader gemäss handball.ch (inkl. Suter); Grüninger: U19-Zuordnung 26/27 in Abklärung.'
       :'');
   // Aktiver Lernenden-Filter: Banner
   const fb=document.getElementById('filterbanner');
