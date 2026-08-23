@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
+<title>Wettkampfkalender Sportlernende HKV</title>
+</head>
+<body>
 <title>Wettkampfkalender Sportlehre</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Public+Sans:wght@400;500;600;700&display=swap">
 <style>
@@ -141,7 +144,7 @@
   .fahne:hover{transform:translateY(2px)}
   .fahne:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
   @media (max-width:520px){ .fahne{width:58px;margin-top:-6px} }
-  .c-aar,.c-aarf{background-image:url("assets/wappen_fcaarau.png?v=1")}
+  .c-aar,.c-aarf{background-image:url("assets/wappen_aar.png?v=1")}
   .c-hsc,.c-hscu{background-image:url("assets/wappen_hsc.png?v=1")}
   .c-luz{background-image:url("assets/wappen_luz.png?v=1")}
   .c-sio{background-image:url("assets/wappen_sio.png?v=1")}
@@ -188,6 +191,8 @@
   .n7card .n7teams{font-weight:600;margin:2px 0}
   .n7card .n7meta{color:var(--muted);font-size:12.5px}
   .n7card.heute{border-left-color:var(--today)}
+  .n7card.gespielt{border-left-color:var(--line)}
+  .n7card.gespielt .n7when,.n7card.gespielt .n7meta{opacity:.6}
   .n7none{color:var(--muted);font-size:13.5px;background:var(--surface);border:1px dashed var(--line);
     border-radius:10px;padding:10px 14px}
   .match.past .teams,.match.past .meta,.match.past .bl,.match.past .date{opacity:.5}
@@ -227,9 +232,6 @@
   footer{margin-top:44px;color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padding-top:14px}
   @media (max-width:520px){ .match{grid-template-columns:54px 1fr} .date .d{font-size:20px} }
 </style>
-</head>
-<body>
-
 
 <div class="wrap">
 <header class="kopf">
@@ -390,15 +392,15 @@ const STUDENTS=[
  {n:'Grüninger Cornelius',k:'K24E',sport:'handball',teams:['HSC2']},
  {n:'Imhof Diego',k:'K26E',sport:'radsport'},
  {n:'Isler Liam',k:'K25E',sport:'fussball',teams:['AARU17']},
- {n:'Krasniqi Leon',k:'K24B',sport:'fussball',verein:'FC Aarau — Stufe 26/27 wird geprüft'},
+ {n:'Krasniqi Leon',k:'K24B',sport:'fussball',teams:['AARU17']},
  {n:'Lazarevic Pavle',k:'K25E',sport:'fussball',teams:['AARU17']},
- {n:'Merz Rayla',k:'K26E',sport:'basketball',verein:'BC Alte Kanti Aarau (Team offen)'},
- {n:'Munk Louis',k:'K24E',sport:'radsport'},
- {n:'Nešic Teodora',k:'K26E',sport:'kunstturnen',verein:'Stützpunkt Aargau Lenzburg (STV)'},
+ {n:'Merz Rayla',k:'K26E',sport:'basketball',verein:'BC Alte Kanti Aarau · U16-Nationalteam (Point Guard, U16-EM 2026)'},
+ {n:'Munk Louis',k:'K24E',sport:'radsport',verein:'Team Walter Fensterbau – Marco Brenner (Junioren)'},
+ {n:'Nešic Teodora',k:'K26E',sport:'kunstturnen',verein:'Kutu Stein-Fricktal / RLZ Aargau'},
  {n:'Nietlispach Ben',k:'K25E',sport:'handball',teams:['HSC2']},
- {n:'Prenqi Melissa',k:'K26E',sport:'fussball',verein:'FC Zürich Nachwuchs (zuletzt U16; Team 26/27 noch bestätigen)'},
+ {n:'Prenqi Melissa',k:'K26E',sport:'fussball',verein:'FC Zürich U18 Frauen (Spielplan wird eingebaut)'},
  {n:'Regli Timo',k:'DF25D',sport:'handball',teams:['HSC2','HSCQHL']},
- {n:'Salm Jann',k:'K24E',sport:'radsport'},
+ {n:'Salm Jann',k:'K24E',sport:'radsport',verein:'Team Q36.5-Amacx / VC Pfaffnau-Roggliswil · U19-Europameister Bahn (Scratch) 2026'},
  {n:'Scheuber Flavia',k:'K26E',sport:'fussball',teams:['RBU20']},
  {n:'Shkodra Anik',k:'K26E',sport:'fussball',teams:['AARU16']},
  {n:'Simic Ivan',k:'K25E',sport:'fussball',teams:['AARU17']},
@@ -407,7 +409,7 @@ const STUDENTS=[
  {n:'Vogt Gian',k:'K24E',sport:'fussball',teams:['AARFC1']},
  {n:'Vögtlin Théo',k:'K25E',sport:'kanu'},
  {n:'Völkle Robin',k:'K24E',sport:'handball',teams:['HSCQHL','HSC2']},
- {n:'Wipf Nicolas',k:'K24E',sport:'handball',teams:['AGO19']},
+ {n:'Wipf Nicolas',k:'K24E',sport:'handball',teams:['AGO19'],verein:'HSG Siggenthal/Baden-Endingen Herren 1 (Flügel links)'},
  {n:'Zumsteg Saybien',k:'K25E',sport:'radsport'}
  // Hoffmann Elin (DF24C), Huber Jamie (BM25), Lovrenovic Damjan (K25E): Sportart noch unbekannt
 ];
@@ -725,6 +727,8 @@ const MON=['Januar','Februar','März','April','Mai','Juni','Juli','August','Sept
 let selBL=null, selTeam=null, selSport=null, mode='all', onlyFuture=true;
 function today(){const t=new Date();return new Date(t.getFullYear(),t.getMonth(),t.getDate());}
 const OWN=t=>TEAMS[t].oc;
+// Spiel gilt als vorbei: Resultat erfasst ODER Anpfiff + 2.5 h verstrichen
+const vorbei=m=>{if(m.res)return true;if(!m.z)return false;const e=new Date(m.d+'T'+m.z);e.setMinutes(e.getMinutes()+150);return e<new Date();};
 const fmtD=(d)=>WD[d.getDay()]+' '+String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.';
 function crest(id,team){
   if(id==='AAR')return `<span class="crestimg c-aar" role="img" aria-label="${TEAMS[team].own}" title="${TEAMS[team].own}"></span>`;
@@ -804,7 +808,7 @@ function render(){
   const sorted=[...M].map((m,i)=>({...m,idx:i})).sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:(a.z||'99')<(b.z||'99')?-1:1);
   const pool=sorted.filter(inSelection);
   const evPool=E.filter(evInSel).sort((a,b)=>a.d<b.d?-1:1);
-  const next=pool.find(m=>new Date(m.d)>=t0);
+  const next=pool.find(m=>new Date(m.d)>=t0&&!vorbei(m));
   const nextEv=evPool.find(e=>new Date(e.bis||e.d)>=t0);
   // Hero: nächster Einsatz der Auswahl (Spiel oder Aufgebot — was früher kommt)
   const hero=document.getElementById('hero');
@@ -848,9 +852,9 @@ function render(){
     ||'<span class="provisorisch">Noch keine bestätigte Zuordnung für dieses Team.</span>';
   bl.querySelectorAll('button.chip').forEach(ch=>ch.onclick=()=>{selBL=(selBL===+ch.dataset.i)?null:+ch.dataset.i;render();});
   kn.textContent=(selTeam===null||selTeam==='AARU19'
-      ?'FC Aarau: Agho U-19; Costante, Dovoda, Isler, Lazarevic, Simic U-17 Elite (SFV-Aufstellungen); Vogt 1. Mannschaft (Leihe FC Baden wird geprüft); Krasniqi — Stufe offen. '
+      ?'FC Aarau: Agho U-19; Costante, Dovoda, Isler, Krasniqi, Lazarevic, Simic U-17 Elite (SFV-Aufstellungen); Simic bereits mit Einsatz in der 1. Mannschaft; Vogt 1. Mannschaft (Leihe FC Baden wird geprüft). '
       :'')+((selTeam===null||selTeam==='HSC2')
-      ?'HSC: Völkle fix im QHL-Kader; Regli und Anderes Perspektivspieler QHL (pendeln mit HSC II). HSC-II-Kader gemäss handball.ch.'
+      ?'HSC: Völkle fix im QHL-Kader; Regli und Anderes Perspektivspieler QHL (pendeln mit HSC II). HSC-II-Kader gemäss handball.ch; Grüninger: U19-Zuordnung 26/27 in Abklärung.'
       :'');
   // Aktiver Lernenden-Filter: Banner
   const fb=document.getElementById('filterbanner');
@@ -940,6 +944,10 @@ function renderNext7(t0){
     const m=it.m;
     const d=new Date(m.d);const heim=m.h===OWN(m.t);const geg=CLUBS[heim?m.g:m.h].t;
     const isT=d.getTime()===t0.getTime();
+    if(m.res)return `<div class="n7card gespielt">
+      <div class="n7when">${fmtD(d)} · Gespielt</div>
+      <div class="n7teams">${TEAMS[m.t].tag}: ${heim?'vs':'bei'} ${geg} <b class="res">${m.res}</b></div>
+      <div class="n7meta">${m.o}</div></div>`;
     return `<div class="n7card${isT?' heute':''}">
       <div class="n7when">${fmtD(d)} · <span class="${m.z?'':'tbd'}">${m.z||'Zeit folgt'}</span>${isT?' · HEUTE':''}</div>
       <div class="n7teams">${TEAMS[m.t].tag}: ${heim?'vs':'bei'} ${geg}</div>
