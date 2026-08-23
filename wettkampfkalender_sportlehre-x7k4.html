@@ -280,6 +280,18 @@
     <span class="crestbig c-luz" role="img" aria-label="Wappen FC Luzern"></span>
     <span><span class="tn">FC Luzern U18</span><span class="ts" data-ts="FCLU18">Frauenfussball</span></span>
   </button>
+  <button class="teambtn" data-team="AARFC1" aria-pressed="false">
+    <span class="crestbig c-aar" role="img" aria-label="Wappen FC Aarau"></span>
+    <span><span class="tn">FC Aarau 1. Mannschaft</span><span class="ts" data-ts="AARFC1">Challenge League</span></span>
+  </button>
+  <button class="teambtn" data-team="AARU17" aria-pressed="false">
+    <span class="crestbig c-aar" role="img" aria-label="Wappen FC Aarau"></span>
+    <span><span class="tn">FC Aarau U-17 Elite</span><span class="ts" data-ts="AARU17">Fussball · Junioren</span></span>
+  </button>
+  <button class="teambtn" data-team="AARU16" aria-pressed="false">
+    <span class="crestbig c-aar" role="img" aria-label="Wappen FC Aarau"></span>
+    <span><span class="tn">FC Aarau U-16 Elite</span><span class="ts" data-ts="AARU16">Fussball · Junioren</span></span>
+  </button>
 </div>
 </div>
 
@@ -316,7 +328,7 @@
 </nav>
 
 <footer>
-  Datenquellen: AFV-Matchcenter (FC Aarau U-19 Elite, FC Aarau Frauen U-18 und U-20) ·
+  Datenquellen: AFV-Matchcenter (FC Aarau: 1. Mannschaft, U-19/U-17/U-16 Elite, Frauen U-18 und U-20; FC Luzern Frauen U-18) ·
   handball.ch-Matchcenter (SG HSC Suhr Aarau II, Männer 1. Liga M1-02).
   <b>Datenstand: <span class="stand"></span></b> — die Seite aktualisiert sich nicht selbst; Nachführung durch den Sportkoordinator.
   Spiele ohne Uhrzeit sind vom Verband noch nicht angesetzt («Zeit folgt»).<br>
@@ -326,7 +338,7 @@
 </div>
 
 <script>
-const STAND='23.08.2026';
+const STAND='24.08.2026';
 const TEAMS={
   AARU19:{name:'FC Aarau U-19 Elite',tag:'U-19',own:'FC Aarau',oc:'AAR',sport:'fussball',
     liga:'U-19 Elite, Meisterschaft'},
@@ -337,53 +349,59 @@ const TEAMS={
   HSC2:{name:'HSC Suhr Aarau II',tag:'HSC II',own:'SG HSC Suhr Aarau II',oc:'HSC',sport:'handball',
     liga:'Handball Männer 1. Liga'},
   FCLU18:{name:'FC Luzern U18',tag:'FCL U18',own:'FC Luzern U18',oc:'LUZ',sport:'fussball',
-    liga:'Frauen U-18, Meisterschaft'}
+    liga:'Frauen U-18, Meisterschaft'},
+  AARFC1:{name:'FC Aarau 1. Mannschaft',tag:'FCA 1',own:'FC Aarau',oc:'AAR',sport:'fussball',
+    liga:'Challenge League'},
+  AARU17:{name:'FC Aarau U-17 Elite',tag:'U-17',own:'FC Aarau',oc:'AAR',sport:'fussball',
+    liga:'U-17 Elite, Meisterschaft'},
+  AARU16:{name:'FC Aarau U-16 Elite',tag:'U-16',own:'FC Aarau',oc:'AAR',sport:'fussball',
+    liga:'U-16 Elite, Meisterschaft'}
 };
 // ZENTRALE LERNENDEN-LISTE — einzige Quelle für Kader, Zählungen und Einzelsport-Panels.
 // team: Teamschlüssel · 'RB?' = Red Boots, U18/U20 offen · ohne team = Zuordnung offen/Einzelsport
 const STUDENTS=[
- {n:'Agho Elijah',k:'K25E',sport:'fussball',team:'AARU19'},
- {n:'Aliji Lorik',k:'K25E',sport:'fussball',verein:'FC Wohlen (Team offen)'},
- {n:'Anderes Finn',k:'K25E',sport:'handball',team:'HSC2'},
+ {n:'Agho Elijah',k:'K25E',sport:'fussball',teams:['AARU19']},
+ {n:'Aliji Lorik',k:'K25E',sport:'fussball',teams:['AARU17']},
+ {n:'Anderes Finn',k:'K25E',sport:'handball',teams:['HSC2']},
  {n:'Belz Lukas Josia',k:'K26E',sport:'unihockey',verein:'SV Wiler-Ersigen (U18A/U18C offen)'},
  {n:'Binder Alessandro',k:'K24E',sport:'motorrad'},
- {n:'Binzegger Sharon',k:'K25E',sport:'fussball',team:'RB?'},
- {n:'Boqaj Anita',k:'K25B',sport:'fussball',team:'FCLU18'},
+ {n:'Binzegger Sharon',k:'K25E',sport:'fussball',teams:['RBU20','RBU18']},
+ {n:'Boqaj Anita',k:'K25B',sport:'fussball',verein:'FC Luzern Frauen — genaue Mannschaft 26/27 offen (08.08. im Umfeld 1. Liga)'},
  {n:'Caneiro Ava',k:'K26E',sport:'tanzen',verein:'Spectacolo Dance Academy'},
- {n:'Choudhury Ione',k:'K25B',sport:'fussball',team:'RB?'},
+ {n:'Choudhury Ione',k:'K25B',sport:'fussball',teams:['RBU18']},
  {n:'Cimdina Ance Anna',k:'K26E',sport:'volleyball',verein:'Volley Köniz (Team offen)'},
  {n:'Cinque Luis',k:'K25E',sport:'handball',verein:'HSC Suhr Aarau (Team offen)'},
- {n:'Costante Alessio',k:'K24E',sport:'fussball',team:'AARU19'},
- {n:'Dovoda Matijas',k:'K25E',sport:'fussball',team:'AARU19'},
+ {n:'Costante Alessio',k:'K24E',sport:'fussball',verein:'FC Aarau — Stufe 26/27 wird geprüft'},
+ {n:'Dovoda Matijas',k:'K25E',sport:'fussball',verein:'FC Aarau — Stufe 26/27 wird geprüft (30.05.26 noch U17 Elite)'},
  {n:'Freda Sandro',k:'K25E',sport:'kickboxing',verein:'KBC Lotos'},
  {n:'Grossmann Anja',k:'K24E',sport:'radsport'},
- {n:'Grüninger Cornelius',k:'K24E',sport:'handball',team:'HSC2'},
+ {n:'Grüninger Cornelius',k:'K24E',sport:'handball',teams:['HSC2']},
  {n:'Imhof Diego',k:'K26E',sport:'radsport'},
- {n:'Isler Liam',k:'K25E',sport:'fussball',verein:'(Verein offen)'},
- {n:'Krasniqi Leon',k:'K24B',sport:'fussball',team:'AARU19'},
- {n:'Lazarevic Pavle',k:'K25E',sport:'fussball',team:'AARU19'},
+ {n:'Isler Liam',k:'K25E',sport:'fussball',verein:'FC Aarau U17 (wird für 26/27 bestätigt)'},
+ {n:'Krasniqi Leon',k:'K24B',sport:'fussball',verein:'FC Aarau — Stufe 26/27 wird geprüft'},
+ {n:'Lazarevic Pavle',k:'K25E',sport:'fussball',verein:'FC Aarau — Stufe 26/27 wird geprüft'},
  {n:'Merz Rayla',k:'K26E',sport:'basketball',verein:'BC Alte Kanti Aarau (Team offen)'},
  {n:'Munk Louis',k:'K24E',sport:'radsport'},
  {n:'Nešic Teodora',k:'K26E',sport:'kunstturnen',verein:'Stützpunkt Aargau Lenzburg (STV)'},
- {n:'Nietlispach Ben',k:'K25E',sport:'handball',team:'HSC2'},
- {n:'Prenqi Melissa',k:'K26E',sport:'fussball',verein:'FC Zürich Frauen (Team offen)'},
- {n:'Regli Timo',k:'DF25D',sport:'handball',team:'HSC2'},
+ {n:'Nietlispach Ben',k:'K25E',sport:'handball',teams:['HSC2']},
+ {n:'Prenqi Melissa',k:'K26E',sport:'fussball',verein:'FC Zürich Nachwuchs (zuletzt U16; Team 26/27 noch bestätigen)'},
+ {n:'Regli Timo',k:'DF25D',sport:'handball',teams:['HSC2']},
  {n:'Salm Jann',k:'K24E',sport:'radsport'},
- {n:'Scheuber Flavia',k:'K26E',sport:'fussball',team:'RB?'},
- {n:'Shkodra Anik',k:'K26E',sport:'fussball',verein:'FC Aarau (Team offen, Jg. 2011)'},
- {n:'Simic Ivan',k:'K25E',sport:'fussball',verein:'(Verein offen)'},
- {n:'Suter Sam',k:'K24E',sport:'handball',team:'HSC2'},
- {n:'Tupella Aurela',k:'K24E',sport:'fussball',team:'RB?'},
- {n:'Vogt Gian',k:'K24E',sport:'fussball',verein:'(Verein offen)'},
+ {n:'Scheuber Flavia',k:'K26E',sport:'fussball',teams:['RBU18']},
+ {n:'Shkodra Anik',k:'K26E',sport:'fussball',teams:['AARU16']},
+ {n:'Simic Ivan',k:'K25E',sport:'fussball',verein:'FC Aarau — Stufe 26/27 wird geprüft'},
+ {n:'Suter Sam',k:'K24E',sport:'handball',teams:['HSC2']},
+ {n:'Tupella Aurela',k:'K24E',sport:'fussball',teams:['RBU18']},
+ {n:'Vogt Gian',k:'K24E',sport:'fussball',teams:['AARFC1']},
  {n:'Vögtlin Théo',k:'K25E',sport:'kanu'},
- {n:'Völkle Robin',k:'K24E',sport:'handball',team:'HSC2'},
+ {n:'Völkle Robin',k:'K24E',sport:'handball',teams:['HSC2']},
  {n:'Wipf Nicolas',k:'K24E',sport:'handball',verein:'SC Siggenthal (Team offen)'},
  {n:'Zumsteg Saybien',k:'K25E',sport:'radsport'}
  // Hoffmann Elin (DF24C), Huber Jamie (BM25), Lovrenovic Damjan (K25E): Sportart noch unbekannt
 ];
 // Abgeleitet — nichts davon wird von Hand gepflegt:
-const KADER=STUDENTS.filter(s=>s.team&&s.team!=='RB?');
-const RB_PLAYERS=STUDENTS.filter(s=>s.team==='RB?');
+const KADER=STUDENTS.filter(s=>s.teams&&s.teams.length);
+
 const SPORTS=[['fussball','⚽','Fussball'],['handball','🤾','Handball'],['unihockey','🏑','Unihockey'],
   ['volleyball','🏐','Volleyball'],['basketball','🏀','Basketball'],['radsport','🚴','Radsport'],
   ['kickboxing','🥋','Kickboxing'],['kunstturnen','🤸','Kunstturnen'],['kanu','🛶','Kanu'],
@@ -425,10 +443,15 @@ const CLUBS={
   BRU:{t:'HSG Handball Brugg',bg:'#C8102E',fg:'#FFFFFF'},
   OLT:{t:'HV Olten 1',bg:'#2E7D32',fg:'#FFFFFF'},
   TIC:{t:'Team Ticino Femminile U18',bg:'#C8102E',fg:'#FFFFFF'},
-  AARF:{t:'FC Aarau Frauen U18',bg:'#111111',fg:'#FFFFFF'}
+  AARF:{t:'FC Aarau Frauen U18',bg:'#111111',fg:'#FFFFFF'},
+  FCW:{t:'FC Wil 1900',bg:'#111111',fg:'#F5C400'},
+  KRN:{t:'SC Kriens',bg:'#0F52A0',fg:'#FFFFFF'},
+  NYO:{t:'FC Stade Nyonnais',bg:'#5B21B6',fg:'#FFFFFF'},
+  CAR:{t:'Etoile Carouge FC',bg:'#B0121B',fg:'#FFFFFF'},
+  SLO:{t:'FC Stade-Lausanne-Ouchy',bg:'#0A3C7D',fg:'#FFFFFF'}
 };
 const M=[
- {d:'2026-08-22',z:'13:30',h:'LUZ',g:'AAR',o:'Sportanlagen Allmend, Luzern',t:'AARU19'},
+ {d:'2026-08-22',z:'13:30',h:'LUZ',g:'AAR',o:'Sportanlagen Allmend, Luzern',t:'AARU19',res:'8:1'},
  {d:'2026-08-29',z:'14:00',h:'AAR',g:'SIO',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'AARU19'},
  {d:'2026-09-05',z:'14:00',h:'AAR',g:'LS',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'AARU19'},
  {d:'2026-09-12',z:'14:00',h:'SER',g:'AAR',o:'Stade de Balexert, Châtelaine',t:'AARU19'},
@@ -453,7 +476,7 @@ const M=[
  {d:'2027-04-17',z:'',h:'AAR',g:'YB',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'AARU19'},
  {d:'2027-04-24',z:'',h:'GC',g:'AAR',o:'Zürich (Platzzuteilung vor Ort)',t:'AARU19'},
  {d:'2027-05-01',z:'',h:'AAR',g:'WIN',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'AARU19'},
- {d:'2026-08-23',z:'11:00',h:'AAR',g:'YB',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'RBU18'},
+ {d:'2026-08-23',z:'11:00',h:'AAR',g:'YB',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'RBU18',res:'0:6'},
  {d:'2026-08-30',z:'11:00',h:'AAR',g:'FCZ',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'RBU18'},
  {d:'2026-09-06',z:'14:00',h:'SOL',g:'AAR',o:'Stadion FC Solothurn (Nebenplatz 1)',t:'RBU18'},
  {d:'2026-09-13',z:'12:00',h:'SG',g:'AAR',o:'Stadion Espenmoos, St. Gallen',t:'RBU18'},
@@ -475,7 +498,7 @@ const M=[
  {d:'2027-05-01',z:'',h:'AFF',g:'AAR',o:'Stade Universitaire St-Léonard, Fribourg',t:'RBU18'},
  {d:'2027-05-22',z:'',h:'AAR',g:'LUZ',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'RBU18'},
  {d:'2027-06-05',z:'',h:'SER',g:'AAR',o:'Stade des Trois-Chêne, Chêne-Bourg',t:'RBU18'},
- {d:'2026-08-22',z:'18:00',h:'FCZ',g:'AAR',o:'Heerenschürli, Zürich',t:'RBU20'},
+ {d:'2026-08-22',z:'18:00',h:'FCZ',g:'AAR',o:'Heerenschürli, Zürich',t:'RBU20',res:'5:0'},
  {d:'2026-08-30',z:'14:00',h:'AAR',g:'SER',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'RBU20'},
  {d:'2026-09-05',z:'16:00',h:'YB',g:'AAR',o:'Kunstrasenfeld Wyler, Bern',t:'RBU20'},
  {d:'2026-09-13',z:'13:30',h:'AAR',g:'GC',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'RBU20'},
@@ -545,7 +568,74 @@ const M=[
  {d:'2027-04-11',z:'',h:'GC',g:'LUZ',o:'GC/Campus, Niederhasli',t:'FCLU18'},
  {d:'2027-05-01',z:'',h:'LUZ',g:'BAS',o:'Sportanlagen Allmend, Luzern',t:'FCLU18'},
  {d:'2027-05-22',z:'',h:'AARF',g:'LUZ',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'FCLU18'},
- {d:'2027-06-05',z:'',h:'LUZ',g:'AFF',o:'Sportanlagen Allmend, Luzern',t:'FCLU18'}
+ {d:'2027-06-05',z:'',h:'LUZ',g:'AFF',o:'Sportanlagen Allmend, Luzern',t:'FCLU18'},
+ // FC Aarau 1. Mannschaft - Challenge League Hinrunde (AFV-Feed 24.08.26; Rueckrunde folgt im Feed)
+ {d:'2026-08-28',z:'20:15',h:'AAR',g:'XAM',o:'Bruegglifeld, Aarau',t:'AARFC1'},
+ {d:'2026-08-31',z:'20:15',h:'FCW',g:'AAR',o:'Lidl Sportpark Bergholz, Wil',t:'AARFC1'},
+ {d:'2026-09-04',z:'19:30',h:'AAR',g:'RJ',o:'Bruegglifeld, Aarau',t:'AARFC1'},
+ {d:'2026-09-12',z:'18:00',h:'AAR',g:'KRN',o:'Bruegglifeld, Aarau',t:'AARFC1'},
+ {d:'2026-09-18',z:'20:15',h:'WIN',g:'AAR',o:'Schuetzenwiese, Winterthur',t:'AARFC1'},
+ {d:'2026-10-09',z:'',h:'NYO',g:'AAR',o:'Centre sportif de Colovray, Nyon',t:'AARFC1'},
+ {d:'2026-10-23',z:'',h:'AAR',g:'CAR',o:'Bruegglifeld, Aarau',t:'AARFC1'},
+ {d:'2026-10-30',z:'',h:'XAM',g:'AAR',o:'Stade de la Maladiere, Neuchatel',t:'AARFC1'},
+ {d:'2026-11-06',z:'',h:'AAR',g:'FCW',o:'Bruegglifeld, Aarau',t:'AARFC1'},
+ {d:'2026-11-20',z:'',h:'RJ',g:'AAR',o:'Gruenfeld, Jona',t:'AARFC1'},
+ {d:'2026-11-27',z:'',h:'KRN',g:'AAR',o:'Sportanlage Kleinfeld, Kriens',t:'AARFC1'},
+ {d:'2026-12-04',z:'',h:'AAR',g:'YV',o:'Bruegglifeld, Aarau',t:'AARFC1'},
+ {d:'2026-12-11',z:'',h:'SLO',g:'AAR',o:'Stade de la Pontaise, Lausanne',t:'AARFC1'},
+ {d:'2026-12-18',z:'',h:'AAR',g:'WIN',o:'Bruegglifeld, Aarau',t:'AARFC1'},
+ // FC Aarau U-17 Elite (AFV-Feed 24.08.26)
+ {d:'2026-08-22',z:'11:45',h:'LUZ',g:'AAR',o:'Luzern',t:'AARU17',res:'3:3'},
+ {d:'2026-08-29',z:'14:00',h:'AAR',g:'SIO',o:'Sportplatz Winkel, Rohr (Kunstrasen)',t:'AARU17'},
+ {d:'2026-09-05',z:'13:45',h:'AAR',g:'LS',o:'Sportplatz Winkel, Rohr (Kunstrasen)',t:'AARU17'},
+ {d:'2026-09-12',z:'14:00',h:'SER',g:'AAR',o:'Stade de Balexert, Chatelaine',t:'AARU17'},
+ {d:'2026-09-19',z:'13:00',h:'WIN',g:'AAR',o:'Schuetzenwiese, Winterthur (Platz 3)',t:'AARU17'},
+ {d:'2026-09-26',z:'13:45',h:'AAR',g:'FCZ',o:'Sportplatz Winkel, Rohr (Kunstrasen)',t:'AARU17'},
+ {d:'2026-10-03',z:'15:45',h:'LUG',g:'AAR',o:'Campo Maglio, Canobbio',t:'AARU17'},
+ {d:'2026-10-10',z:'13:45',h:'AAR',g:'SG',o:'Sportplatz Winkel, Rohr (Kunstrasen)',t:'AARU17'},
+ {d:'2026-10-17',z:'12:00',h:'THU',g:'AAR',o:'Thun Sued, Thun',t:'AARU17'},
+ {d:'2026-10-24',z:'13:45',h:'AAR',g:'BAS',o:'Sportplatz Winkel, Rohr (Kunstrasen)',t:'AARU17'},
+ {d:'2026-10-31',z:'14:00',h:'YB',g:'AAR',o:'Allmend Bern (Kunstrasen 2)',t:'AARU17'},
+ {d:'2026-11-07',z:'13:45',h:'AAR',g:'GC',o:'Sportplatz Winkel, Rohr (Kunstrasen)',t:'AARU17'},
+ {d:'2026-11-14',z:'',h:'WIN',g:'AAR',o:'Schuetzenwiese, Winterthur (Platz 3)',t:'AARU17'},
+ {d:'2026-11-21',z:'15:00',h:'XAM',g:'AAR',o:'Pierre-a-Bot, Neuchatel',t:'AARU17'},
+ {d:'2026-11-28',z:'13:45',h:'AAR',g:'LUZ',o:'Sportplatz Winkel, Rohr (Kunstrasen)',t:'AARU17'},
+ {d:'2026-12-05',z:'14:00',h:'SIO',g:'AAR',o:'Ancien Stand, Sion',t:'AARU17'},
+ {d:'2027-02-13',z:'',h:'LS',g:'AAR',o:'Stade de la Tuiliere, Lausanne',t:'AARU17'},
+ {d:'2027-02-20',z:'',h:'AAR',g:'SER',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'AARU17'},
+ {d:'2027-03-06',z:'',h:'AAR',g:'LUG',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'AARU17'},
+ {d:'2027-03-13',z:'',h:'SG',g:'AAR',o:'Gruendenmoos, St. Gallen',t:'AARU17'},
+ {d:'2027-03-20',z:'',h:'AAR',g:'THU',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'AARU17'},
+ {d:'2027-04-03',z:'',h:'BAS',g:'AAR',o:'Nachwuchs-Campus Basel, Muenchenstein',t:'AARU17'},
+ {d:'2027-04-10',z:'',h:'FCZ',g:'AAR',o:'Heerenschuerli, Zuerich',t:'AARU17'},
+ {d:'2027-04-17',z:'',h:'AAR',g:'YB',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'AARU17'},
+ {d:'2027-04-24',z:'',h:'GC',g:'AAR',o:'GC/Campus, Niederhasli',t:'AARU17'},
+ {d:'2027-05-01',z:'',h:'AAR',g:'WIN',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'AARU17'},
+ // FC Aarau U-16 Elite (AFV-Feed 24.08.26)
+ {d:'2026-08-29',z:'14:00',h:'SIO',g:'AAR',o:'Ancien Stand, Sion',t:'AARU16'},
+ {d:'2026-09-05',z:'14:00',h:'LS',g:'AAR',o:'Stade de la Tuiliere (Terrain 3), Lausanne',t:'AARU16'},
+ {d:'2026-09-12',z:'14:00',h:'AAR',g:'SER',o:'Sportplatz Winkel, Rohr (Kunstrasen)',t:'AARU16'},
+ {d:'2026-09-26',z:'12:30',h:'FCZ',g:'AAR',o:'Heerenschuerli, Zuerich',t:'AARU16'},
+ {d:'2026-10-03',z:'13:45',h:'AAR',g:'LUG',o:'Sportplatz Winkel, Rohr (Kunstrasen)',t:'AARU16'},
+ {d:'2026-10-10',z:'14:30',h:'SG',g:'AAR',o:'Gruendenmoos, St. Gallen',t:'AARU16'},
+ {d:'2026-10-17',z:'13:45',h:'AAR',g:'THU',o:'Sportplatz Winkel, Rohr (Kunstrasen)',t:'AARU16'},
+ {d:'2026-10-24',z:'14:00',h:'BAS',g:'AAR',o:'Nachwuchs-Campus Basel, Muenchenstein',t:'AARU16'},
+ {d:'2026-10-31',z:'14:00',h:'AAR',g:'YB',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'AARU16'},
+ {d:'2026-11-07',z:'14:00',h:'GC',g:'AAR',o:'GC/Campus, Niederhasli',t:'AARU16'},
+ {d:'2026-11-14',z:'15:00',h:'AAR',g:'WIN',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'AARU16'},
+ {d:'2026-11-21',z:'13:45',h:'AAR',g:'XAM',o:'Sportplatz Winkel, Rohr (Kunstrasen)',t:'AARU16'},
+ {d:'2026-11-28',z:'16:00',h:'LUZ',g:'AAR',o:'Sportanlagen Allmend, Luzern',t:'AARU16'},
+ {d:'2026-12-05',z:'13:45',h:'AAR',g:'SIO',o:'Sportplatz Winkel, Rohr (Kunstrasen)',t:'AARU16'},
+ {d:'2027-02-13',z:'',h:'AAR',g:'LS',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'AARU16'},
+ {d:'2027-02-20',z:'',h:'SER',g:'AAR',o:'Stade de Balexert, Chatelaine',t:'AARU16'},
+ {d:'2027-02-27',z:'',h:'AAR',g:'FCZ',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'AARU16'},
+ {d:'2027-03-06',z:'16:30',h:'LUG',g:'AAR',o:'Centro Sportivo Nazionale, Tenero',t:'AARU16'},
+ {d:'2027-03-13',z:'',h:'AAR',g:'SG',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'AARU16'},
+ {d:'2027-03-20',z:'',h:'THU',g:'AAR',o:'Thun Sued, Thun',t:'AARU16'},
+ {d:'2027-04-03',z:'',h:'AAR',g:'BAS',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'AARU16'},
+ {d:'2027-04-17',z:'',h:'YB',g:'AAR',o:'Allmend Bern (Kunstrasen 2)',t:'AARU16'},
+ {d:'2027-04-24',z:'',h:'AAR',g:'GC',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'AARU16'},
+ {d:'2027-05-01',z:'',h:'WIN',g:'AAR',o:'Schuetzenwiese, Winterthur (Platz 2)',t:'AARU16'}
 ];
 // NATIONALAUSWAHLEN & SONDER-EINSÄTZE (Aufgebote) — von Hand nachführen.
 // {d:'JJJJ-MM-TT', bis:'JJJJ-MM-TT' (optional), z:'HH:MM' (optional), titel, ort, wer:[Namen wie in STUDENTS], sport}
@@ -572,12 +662,12 @@ function mapsLink(o){return `<a class="maplink" href="https://www.google.com/map
 function inSelection(m){
   if(selSport&&TEAMS[m.t].sport!==selSport)return false;
   if(selTeam&&m.t!==selTeam)return false;
-  if(selBL!==null&&m.t!==KADER[selBL].team)return false;
+  if(selBL!==null&&!KADER[selBL].teams.includes(m.t))return false;
   return true;
 }
 function evInSel(e){
   if(selSport&&e.sport!==selSport)return false;
-  if(selTeam){const names=KADER.filter(p=>p.team===selTeam).map(p=>p.n);
+  if(selTeam){const names=KADER.filter(p=>p.teams.includes(selTeam)).map(p=>p.n);
     if(!e.wer.some(w=>names.includes(w)))return false;}
   if(selBL!==null&&!e.wer.includes(KADER[selBL].n))return false;
   return true;
@@ -665,7 +755,7 @@ function render(){
   const w7=new Date(t0); w7.setDate(w7.getDate()+7);
   const in7=pool.filter(m=>{const d=new Date(m.d);return d>=t0&&d<w7;});
   const ev7=evPool.filter(e=>new Date(e.d)<w7&&new Date(e.bis||e.d)>=t0);
-  const betroffen=new Set(); in7.forEach(m=>KADER.forEach(p=>{if(p.team===m.t)betroffen.add(p.n);}));
+  const betroffen=new Set(); in7.forEach(m=>KADER.forEach(p=>{if(p.teams.includes(m.t))betroffen.add(p.n);}));
   ev7.forEach(e=>e.wer.forEach(w=>betroffen.add(w)));
   const heimN=pool.filter(m=>m.h===OWN(m.t)).length;
   document.getElementById('stats').innerHTML=
@@ -676,24 +766,22 @@ function render(){
   // Kader-Sektion
   const kt=document.getElementById('kadertitle'), bl=document.getElementById('blchips'),
         kn=document.getElementById('kadernote');
-  const kader=KADER.map((p,i)=>({...p,i})).filter(p=>selTeam?p.team===selTeam:(selSport?TEAMS[p.team].sport===selSport:true));
-  const showRB=(selTeam===null||selTeam==='RBU18'||selTeam==='RBU20')&&(selSport===null||selSport==='fussball');
+  const kader=KADER.map((p,i)=>({...p,i})).filter(p=>p.teams.some(t=>selTeam?t===selTeam:(selSport?TEAMS[t].sport===selSport:true)));
   kt.textContent=(selTeam?TEAMS[selTeam].name:(selSport?SPORTS.find(x=>x.key===selSport).label:'Alle Teams'))+' — Sportlernende';
   bl.innerHTML=kader.map(p=>`<button class="chip" data-i="${p.i}" aria-pressed="${selBL===p.i}">${p.n}<small>${p.k}</small></button>`).join('')
-    +(showRB?RB_PLAYERS.map(p=>`<span class="chip rboffen" title="Red Boots Aarau — Zuteilung U18/U20 noch offen">${p.n}<small>${p.k}</small><em>U18/U20 offen</em></span>`).join(''):'')
     ||'<span class="provisorisch">Noch keine bestätigte Zuordnung für dieses Team.</span>';
   bl.querySelectorAll('button.chip').forEach(ch=>ch.onclick=()=>{selBL=(selBL===+ch.dataset.i)?null:+ch.dataset.i;render();});
   kn.textContent=(selTeam===null||selTeam==='AARU19'
-      ?'FC Aarau U-19: Kaderliste provisorisch. Chip antippen: zeigt die Spiele seines Teams (Aufgebote sind nicht erfasst). '
+      ?'FC Aarau U-19: Agho bestätigt (SFV); Costante, Dovoda, Krasniqi, Lazarevic, Simic — Stufe 26/27 wird noch einzeln verifiziert. Chip antippen: zeigt die Spiele seiner Teams. '
       :'')+((selTeam===null||selTeam==='HSC2')
-      ?'HSC II: Kader gemäss handball.ch (Anderes läuft in der Stammliste unter SC Siggenthal).'
+      ?'HSC II: Kader gemäss handball.ch-Teamkader 26/27. Völkle zusätzlich im QHL-Kader der 1. Mannschaft.'
       :'');
   // Aktiver Lernenden-Filter: Banner
   const fb=document.getElementById('filterbanner');
   if(selBL!==null){
     const p=KADER[selBL];
     fb.style.display='';
-    fb.innerHTML=`Gefiltert: <b>${p.n}</b> · ${TEAMS[p.team].name} · ${pool.length} Spiele
+    fb.innerHTML=`Gefiltert: <b>${p.n}</b> · ${p.teams.map(t=>TEAMS[t].name).join(' + ')} · ${pool.length} Spiele
       <button id="fbClear" aria-label="Filter entfernen">✕ Filter entfernen</button>`;
     document.getElementById('fbClear').onclick=()=>{selBL=null;render();};
   } else {fb.style.display='none';fb.innerHTML='';}
@@ -731,18 +819,18 @@ function render(){
     const isPast=d<t0;
     const heim=m.h===OWN(m.t);
     const gegner=CLUBS[heim?m.g:m.h].t;
-    const teamKader=KADER.filter(p=>p.team===m.t);
+    const teamKader=KADER.filter(p=>p.teams.includes(m.t));
     const blHtml=teamKader.length
       ?teamKader.map(p=>`<span class="${selBL!==null&&KADER[selBL].n!==p.n?'dim':''}">${p.n} · ${p.k}</span>`).join('')
       :'<span class="dim">Zuordnung Sportlernende folgt</span>';
-    const mitte=m.res&&isPast?`<b class="res">${m.res}</b>`:`<span class="vs">–</span>`;
+    const mitte=m.res?`<b class="res">${m.res}</b>`:`<span class="vs">–</span>`;
     html+=`<article id="m-${m.idx}" class="match${isToday?' today':isPast?' past':(m.idx===nextIdx?' next':'')}">
       <div class="date"><span class="wd">${WD[d.getDay()]}</span><span class="d">${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.</span>
       <span class="t${m.z?'':' tbd'}">${m.z||'Zeit folgt'}</span></div>
       <div>
         <div class="teams"><span class="side">${crest(m.h,m.t)} ${cname(m.h,m.t)}</span> ${mitte} <span class="side">${crest(m.g,m.t)} ${cname(m.g,m.t)}</span>
           <span class="pillrow"><span class="pill team">${TEAMS[m.t].tag}</span>
-          <span class="pill ${heim?'heim':'ausw'}">${heim?'Heim':'Auswärts'}</span>${isToday?'<span class="pill today">Heute</span>':''}${isPast&&m.res?'<span class="pill gespielt">Gespielt</span>':''}</span></div>
+          <span class="pill ${heim?'heim':'ausw'}">${heim?'Heim':'Auswärts'}</span>${isToday?'<span class="pill today">Heute</span>':''}${m.res?'<span class="pill gespielt">Gespielt</span>':''}</span></div>
         <div class="meta">${m.wb||TEAMS[m.t].liga} · ${mapsLink(m.o)} · ${heim?'Heimspiel':'Auswärts bei '+gegner}</div>
         <div class="bl">${blHtml}</div>
       </div></article>`;
@@ -790,6 +878,7 @@ document.querySelectorAll('.schip').forEach(b=>b.onclick=()=>{
   selSport=(sp===null)?null:(selSport===sp?null:sp);
   if(selTeam&&selSport&&TEAMS[selTeam].sport!==selSport)selTeam=null;
   if(selSport&&!SPORT_TEAM[selSport]){selTeam=null;selBL=null;}
+  if(selBL!==null&&selSport&&!KADER[selBL].teams.some(t=>TEAMS[t].sport===selSport))selBL=null;
   render();
 });
 document.querySelectorAll('.teambtn[data-team]').forEach(b=>b.onclick=()=>{
@@ -798,7 +887,7 @@ document.querySelectorAll('.teambtn[data-team]').forEach(b=>b.onclick=()=>{
 Object.keys(TEAMS).forEach(t=>{
   const el=document.querySelector(`[data-ts="${t}"]`); if(!el)return;
   const base=el.textContent.split(' · ')[0];
-  const k=KADER.filter(p=>p.team===t).length;
+  const k=KADER.filter(p=>p.teams.includes(t)).length;
   el.textContent=`${base} · ${k?k+' Lernende':'Zuteilung offen'} · ${M.filter(m=>m.t===t).length} Spiele`;
 });
 // Hell/Dunkel
