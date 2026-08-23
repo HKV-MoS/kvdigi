@@ -60,6 +60,33 @@
   .teambtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   .teambtn.soon{border-style:dashed;cursor:default;opacity:.65}
   .teambtn.soon .crest{width:34px;height:34px;font-size:11px}
+  .kopf{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .theme{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;
+    padding:6px 10px;font-size:17px;cursor:pointer;line-height:1}
+  .theme:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .c-aar{background-image:url("wappen_fcaarau.png?v=1")}
+  .c-hsc{background-image:url("wappen_hsc.png?v=1")}
+  .crestbig{width:36px;height:43px;flex:none;display:block;background-repeat:no-repeat;
+    background-position:center;background-size:contain;background-origin:content-box;
+    background-color:#FFFFFF;border-radius:8px;padding:2px}
+  .crestimg{width:26px;height:31px;flex:none;display:inline-block;vertical-align:middle;
+    background-repeat:no-repeat;background-position:center;background-size:contain;
+    background-origin:content-box;background-color:#FFFFFF;border-radius:6px;padding:2px}
+  .next7{margin:22px 0 0}
+  .next7 h2{font-family:'Archivo',sans-serif;font-size:13px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--accent);margin:0 0 8px}
+  .n7grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+  .n7card{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);
+    border-radius:10px;padding:10px 14px;font-size:13.5px}
+  .n7card .n7when{font-family:'Archivo',sans-serif;font-weight:800;font-variant-numeric:tabular-nums}
+  .n7card .n7teams{font-weight:600;margin:2px 0}
+  .n7card .n7meta{color:var(--muted);font-size:12.5px}
+  .n7card.heute{border-left-color:var(--today)}
+  .n7none{color:var(--muted);font-size:13.5px;background:var(--surface);border:1px dashed var(--line);
+    border-radius:10px;padding:10px 14px}
+  .match.past .teams,.match.past .meta,.match.past .bl,.match.past .date{opacity:.5}
+  .maplink{color:inherit;text-decoration:underline dotted;text-underline-offset:2px}
+  .maplink:hover{color:var(--accent)}
   .filters{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 8px;align-items:center}
   .filters .label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-right:2px}
   .month{margin-top:30px}
@@ -100,27 +127,35 @@
 
 
 <div class="wrap">
-<header>
-  <div class="eyebrow">Sportlehre · HKV Aarau · Saison 2026/27</div>
-  <h1>Wettkampfkalender</h1>
+<header class="kopf">
+  <div>
+    <div class="eyebrow">Sportlehre · HKV Aarau · Saison 2026/27</div>
+    <h1>Wettkampfkalender</h1>
+  </div>
+  <button class="theme" id="themeToggle" title="Hell/Dunkel umschalten" aria-label="Hell/Dunkel umschalten">🌓</button>
 </header>
+
+<section class="next7">
+  <h2>Nächste 7 Tage</h2>
+  <div class="n7grid" id="n7grid"></div>
+</section>
 
 <div class="teambar" id="teambar">
   <button class="teambtn" data-team="AARU19" aria-pressed="false">
-    <img class="tbcrest" alt="Wappen FC Aarau">
-    <span><span class="tn">FC Aarau U-19 Elite</span><span class="ts">Fussball · Junioren</span></span>
+    <span class="crestbig c-aar" role="img" aria-label="Wappen FC Aarau"></span>
+    <span><span class="tn">FC Aarau U-19 Elite</span><span class="ts" data-ts="AARU19">Fussball</span></span>
   </button>
   <button class="teambtn" data-team="RBU18" aria-pressed="false">
-    <img class="tbcrest" alt="Wappen FC Aarau Frauen">
-    <span><span class="tn">Redboots U18</span><span class="ts">Frauenfussball</span></span>
+    <span class="crestbig c-aar" role="img" aria-label="Wappen FC Aarau Frauen"></span>
+    <span><span class="tn">Redboots U18</span><span class="ts" data-ts="RBU18">Frauenfussball</span></span>
   </button>
   <button class="teambtn" data-team="RBU20" aria-pressed="false">
-    <img class="tbcrest" alt="Wappen FC Aarau Frauen">
-    <span><span class="tn">Redboots U20</span><span class="ts">Frauenfussball</span></span>
+    <span class="crestbig c-aar" role="img" aria-label="Wappen FC Aarau Frauen"></span>
+    <span><span class="tn">Redboots U20</span><span class="ts" data-ts="RBU20">Frauenfussball</span></span>
   </button>
   <button class="teambtn" data-team="HSC2" aria-pressed="false">
-    <img id="crestHSC" alt="Wappen HSC Suhr Aarau">
-    <span><span class="tn">HSC Suhr Aarau II</span><span class="ts">Handball · 1. Liga</span></span>
+    <span class="crestbig c-hsc" role="img" aria-label="Wappen HSC Suhr Aarau"></span>
+    <span><span class="tn">HSC Suhr Aarau II</span><span class="ts" data-ts="HSC2">Handball · 1. Liga</span></span>
   </button>
 </div>
 
@@ -134,20 +169,20 @@
 
 <div class="filters">
   <span class="label">Anzeigen:</span>
-  <button class="chip" id="fAll" aria-pressed="true">Alle Spiele</button>
+  <button class="chip" id="fKom" aria-pressed="true">Kommende</button>
+  <button class="chip" id="fSais" aria-pressed="false">Ganze Saison</button>
+  <span class="label" style="margin-left:10px">Ort:</span>
   <button class="chip" id="fHeim" aria-pressed="false">Nur Heim</button>
   <button class="chip" id="fAusw" aria-pressed="false">Nur Auswärts</button>
-  <button class="chip" id="fZuk" aria-pressed="false">Nur kommende</button>
 </div>
 
 <main id="list"></main>
 
 <footer>
-  Quellen: AFV-Matchcenter, Live-Kalenderfeeds «FC Aarau AG – U-19 Elite», «FC Aarau Frauen – U-18»
-  und «FC Aarau Frauen – U-20» · handball.ch-Matchcenter «SG HSC Suhr Aarau II» (Männer 1. Liga, M1-02),
-  Stand 22.08.2026.
-  Spiele ohne Uhrzeit sind vom Verband noch nicht angesetzt («Zeit folgt»).
-  Aufstellungen erscheinen im Matchcenter jeweils ca. 1 Stunde vor Spielbeginn.<br>
+  Datenquellen: AFV-Matchcenter (FC Aarau U-19 Elite, FC Aarau Frauen U-18 und U-20) ·
+  handball.ch-Matchcenter (SG HSC Suhr Aarau II, Männer 1. Liga M1-02).
+  <b>Datenstand: 22.08.2026</b> — die Seite aktualisiert sich nicht selbst; Nachführung durch den Sportkoordinator.
+  Spiele ohne Uhrzeit sind vom Verband noch nicht angesetzt («Zeit folgt»).<br>
   Pflege: S. Mollet, Sportkoordinator · samuel.mollet@hkv.ch
 </footer>
 </div>
@@ -310,18 +345,14 @@ const M=[
 ];
 const WD=['So','Mo','Di','Mi','Do','Fr','Sa'];
 const MON=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
-let selBL=null, selTeam=null, mode='all', onlyFuture=false;
+let selBL=null, selTeam=null, mode='all', onlyFuture=true;
 function today(){const t=new Date();return new Date(t.getFullYear(),t.getMonth(),t.getDate());}
-const CREST_AAR="data:image/png;base64,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";
-const CREST_HSC="data:image/png;base64,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";
 const OWN=t=>t==='HSC2'?'HSC':'AAR';
-document.querySelectorAll('.tbcrest').forEach(im=>im.src=CREST_AAR);
-document.getElementById('crestHSC').src=CREST_HSC;
 document.querySelectorAll('.teambtn[data-team]').forEach(b=>b.onclick=()=>{
   selTeam=(selTeam===b.dataset.team)?null:b.dataset.team; selBL=null; render();});
 function crest(id,team){
-  if(id==='AAR')return `<img class="crestimg" src="${CREST_AAR}" alt="FC Aarau" title="${TEAMS[team].own}">`;
-  if(id==='HSC')return `<img class="crestimg" src="${CREST_HSC}" alt="HSC Suhr Aarau" title="${TEAMS[team].own}">`;
+  if(id==='AAR')return `<span class="crestimg c-aar" role="img" aria-label="${TEAMS[team].own}" title="${TEAMS[team].own}"></span>`;
+  if(id==='HSC')return `<span class="crestimg c-hsc" role="img" aria-label="${TEAMS[team].own}" title="${TEAMS[team].own}"></span>`;
   const c=CLUBS[id];return `<span class="crest" title="${c.t}" style="background:${c.bg};color:${c.fg};border-color:${c.bg==='#F5C400'?'#111':'transparent'}">${id}</span>`;}
 function cname(id,team){return id===OWN(team)?TEAMS[team].own:CLUBS[id].t;}
 function render(){
@@ -331,12 +362,16 @@ function render(){
   const inTeam=m=>selTeam===null||m[5]===selTeam;
   const pool=M.filter(inTeam);
   const heim=pool.filter(m=>m[2]===OWN(m[5])).length;
-  const next=[...pool].sort((a,b)=>a[0]<b[0]?-1:1).find(m=>new Date(m[0])>=t0);
+  const next=[...pool].sort((a,b)=>a[0]<b[0]?-1:a[0]>b[0]?1:(a[1]||'99')<(b[1]||'99')?-1:1).find(m=>new Date(m[0])>=t0);
+  const nextInfo=next
+    ?`${TEAMS[next[5]].tag} – ${next[2]===OWN(next[5])?next[3]:next[2]}${next[1]?' · '+next[1]:''}`
+    :'Nächstes Spiel';
   document.getElementById('stats').innerHTML=
     `<div class="stat"><b>${pool.length}</b><span>Spiele</span></div>`+
     `<div class="stat"><b>${heim} / ${pool.length-heim}</b><span>Heim / Ausw.</span></div>`+
     `<div class="stat"><b>${selTeam?1:Object.keys(TEAMS).length}</b><span>Teams</span></div>`+
-    `<div class="stat"><b>${next?next[0].slice(8,10)+'.'+next[0].slice(5,7)+'.':'—'}</b><span>Nächstes Spiel</span></div>`;
+    `<div class="stat"><b>${next?next[0].slice(8,10)+'.'+next[0].slice(5,7)+'.':'—'}</b><span>${nextInfo}</span></div>`;
+  renderNext7(t0);
   // Kader-Sektion
   const kt=document.getElementById('kadertitle'), bl=document.getElementById('blchips'),
         kn=document.getElementById('kadernote');
@@ -345,13 +380,14 @@ function render(){
   bl.innerHTML=kader.map(p=>`<button class="chip" data-i="${p.i}" aria-pressed="${selBL===p.i}">${p.n}<small>${p.k}</small></button>`).join('')||'<span class="provisorisch">Noch keine bestätigte Zuordnung für dieses Team.</span>';
   bl.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{selBL=(selBL===+ch.dataset.i)?null:+ch.dataset.i;render();});
   kn.textContent=(selTeam===null||selTeam==='AARU19'
-      ?'FC Aarau U-19: Kaderliste provisorisch — Chip antippen, um nur «seine» Spiele zu sehen. '
+      ?'FC Aarau U-19: Kaderliste provisorisch — Chip antippen: zeigt die Spiele seines Teams (Aufgebote sind nicht erfasst). '
       :'')+((selTeam===null||selTeam==='HSC2')
       ?'HSC II: Kader gemäss handball.ch (Anderes läuft in der Stammliste unter SC Siggenthal). '
       :'')+((selTeam===null||selTeam.startsWith('RB'))?RB_OFFEN:'');
-  ['fAll','fHeim','fAusw'].forEach(id=>document.getElementById(id).setAttribute('aria-pressed',
-    (id==='fAll'&&mode==='all')||(id==='fHeim'&&mode==='heim')||(id==='fAusw'&&mode==='ausw')));
-  document.getElementById('fZuk').setAttribute('aria-pressed',onlyFuture);
+  document.getElementById('fKom').setAttribute('aria-pressed',onlyFuture);
+  document.getElementById('fSais').setAttribute('aria-pressed',!onlyFuture);
+  document.getElementById('fHeim').setAttribute('aria-pressed',mode==='heim');
+  document.getElementById('fAusw').setAttribute('aria-pressed',mode==='ausw');
   let rows=M.filter(m=>{
     if(!inTeam(m))return false;
     if(selBL!==null&&m[5]!==KADER[selBL].team)return false;
@@ -368,31 +404,69 @@ function render(){
     const monKey=MON[d.getMonth()]+' '+d.getFullYear();
     if(monKey!==curMon){ if(curMon)html+='</div></section>'; html+=`<section class="month"><h3>${monKey}</h3><div>`; curMon=monKey; }
     const isToday=d.getTime()===t0.getTime();
+    const isPast=d<t0;
     const team=m[5];
     const heim=m[2]===OWN(team);
     const gegner=CLUBS[heim?m[3]:m[2]].t;
+    const ort=`<a class="maplink" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(m[4])}" target="_blank" rel="noopener">${m[4]}&nbsp;↗</a>`;
     const teamKader=KADER.filter(p=>p.team===team);
     const blHtml=teamKader.length
       ?teamKader.map(p=>`<span class="${selBL!==null&&KADER[selBL].n!==p.n?'dim':''}">${p.n} · ${p.k}</span>`).join('')
       :'<span class="dim">Zuordnung Sportlernende folgt</span>';
-    html+=`<article class="match${isToday?' today':''}">
+    html+=`<article class="match${isToday?' today':isPast?' past':''}">
       <div class="date"><span class="wd">${WD[d.getDay()]}</span><span class="d">${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.</span>
       <span class="t">${m[1]||'Zeit folgt'}</span></div>
       <div>
         <div class="teams">${crest(m[2],team)} ${cname(m[2],team)} <span class="vs">–</span> ${crest(m[3],team)} ${cname(m[3],team)}
           <span class="pill team">${TEAMS[team].tag}</span>
           <span class="pill ${heim?'heim':'ausw'}">${heim?'Heim':'Auswärts'}</span>${isToday?'<span class="pill today">Heute</span>':''}</div>
-        <div class="meta">${m[6]||TEAMS[team].liga} · ${m[4]} · ${heim?'Heimspiel':'Auswärts bei '+gegner}</div>
+        <div class="meta">${m[6]||TEAMS[team].liga} · ${ort} · ${heim?'Heimspiel':'Auswärts bei '+gegner}</div>
         <div class="bl">${blHtml}</div>
       </div></article>`;
   }
   html+='</div></section>';
   list.innerHTML=html;
 }
-document.getElementById('fAll').onclick=()=>{mode='all';render();};
-document.getElementById('fHeim').onclick=()=>{mode='heim';render();};
-document.getElementById('fAusw').onclick=()=>{mode='ausw';render();};
-document.getElementById('fZuk').onclick=()=>{onlyFuture=!onlyFuture;render();};
+function renderNext7(t0){
+  const end=new Date(t0); end.setDate(end.getDate()+7);
+  const rows=M.filter(m=>{const d=new Date(m[0]);return d>=t0&&d<end;})
+    .sort((a,b)=>a[0]<b[0]?-1:a[0]>b[0]?1:(a[1]||'99')<(b[1]||'99')?-1:1);
+  const g=document.getElementById('n7grid'), h=document.querySelector('.next7 h2');
+  if(!rows.length){h.textContent='Nächste 7 Tage';g.innerHTML='<div class="n7none">Keine Wettkämpfe in den nächsten 7 Tagen.</div>';return;}
+  const betroffen=new Set(); rows.forEach(m=>KADER.forEach(p=>{if(p.team===m[5])betroffen.add(p.n);}));
+  h.textContent=`Nächste 7 Tage — ${rows.length} ${rows.length===1?'Wettkampf':'Wettkämpfe'}${betroffen.size?' · '+betroffen.size+' Sportlernende':''}`;
+  g.innerHTML=rows.map(m=>{
+    const d=new Date(m[0]);const heim=m[2]===OWN(m[5]);const geg=CLUBS[heim?m[3]:m[2]].t;
+    const isT=d.getTime()===t0.getTime();
+    return `<div class="n7card${isT?' heute':''}">
+      <div class="n7when">${WD[d.getDay()]} ${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}. · ${m[1]||'Zeit folgt'}${isT?' · HEUTE':''}</div>
+      <div class="n7teams">${TEAMS[m[5]].tag}: ${heim?'vs':'bei'} ${geg}</div>
+      <div class="n7meta">${m[4]}</div></div>`;}).join('');
+}
+// Team-Buttons: Untertitel mit Lernenden- und Spielzahl
+Object.keys(TEAMS).forEach(t=>{
+  const el=document.querySelector(`[data-ts="${t}"]`); if(!el)return;
+  const base=el.textContent.split(' · ')[0];
+  const k=KADER.filter(p=>p.team===t).length;
+  el.textContent=`${base} · ${k?k+' Lernende':'Zuteilung offen'} · ${M.filter(m=>m[5]===t).length} Spiele`;
+});
+// Hell/Dunkel-Schalter
+(function(){
+  const r=document.documentElement; let saved=null;
+  try{saved=localStorage.getItem('wk-theme');}catch(e){}
+  if(saved==='dark'||saved==='light')r.setAttribute('data-theme',saved);
+  document.getElementById('themeToggle').onclick=()=>{
+    const cur=r.getAttribute('data-theme');
+    const isDark=cur?cur==='dark':(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches);
+    const next=isDark?'light':'dark';
+    r.setAttribute('data-theme',next);
+    try{localStorage.setItem('wk-theme',next);}catch(e){}
+  };
+})();
+document.getElementById('fKom').onclick=()=>{onlyFuture=true;render();};
+document.getElementById('fSais').onclick=()=>{onlyFuture=false;render();};
+document.getElementById('fHeim').onclick=()=>{mode=(mode==='heim')?'all':'heim';render();};
+document.getElementById('fAusw').onclick=()=>{mode=(mode==='ausw')?'all':'ausw';render();};
 render();
 </script>
 
