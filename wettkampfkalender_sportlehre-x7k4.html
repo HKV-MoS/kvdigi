@@ -407,7 +407,7 @@ const STUDENTS=[
  {n:'Suter Sam',k:'K24E',sport:'handball',teams:['HSC2']},
  {n:'Tupella Aurela',k:'K24E',sport:'fussball',teams:['RBU20']},
  {n:'Vogt Gian',k:'K24E',sport:'fussball',teams:['AARFC1']},
- {n:'Vögtlin Théo',k:'K25E',sport:'kanu'},
+ {n:'Vögtlin Théo',k:'K25E',sport:'kanu',verein:'Kanuclub Brugg · Kanuslalom K1/C1 · Schweizer Nachwuchskader (Junioren-WM Krakau & Junioren-EM Épinal 2026)'},
  {n:'Völkle Robin',k:'K24E',sport:'handball',teams:['HSCQHL','HSC2']},
  {n:'Wipf Nicolas',k:'K24E',sport:'handball',teams:['AGO19'],verein:'HSG Siggenthal/Baden-Endingen Herren 1 (Flügel links)'},
  {n:'Zumsteg Saybien',k:'K25E',sport:'radsport',verein:'VMC Gansingen (Saison 2026, Kategorie Anfänger)'}
@@ -854,7 +854,7 @@ function render(){
   kn.textContent=(selTeam===null||selTeam==='AARU19'
       ?'FC Aarau: Agho U-19; Costante, Dovoda, Isler, Krasniqi, Lazarevic, Simic U-17 Elite (SFV-Aufstellungen); Simic bereits mit Einsatz in der 1. Mannschaft; Vogt 1. Mannschaft/Nachwuchs — SFV-Aufstellung mit Simic, def. Mittelfeld (Stufe und Leihe FC Baden werden geprüft). '
       :'')+((selTeam===null||selTeam==='HSC2')
-      ?'HSC: Völkle fix im QHL-Kader (rechter Rückraum) und im Schweizer U18-Nationalteam (U18-EM 2026); Regli und Anderes Perspektivspieler QHL (pendeln mit HSC II). HSC-II-Kader gemäss handball.ch; Grüninger: U19-Zuordnung 26/27 in Abklärung.'
+      ?'HSC: Völkle fix im QHL-Kader (rechter Rückraum) und im Schweizer U18-Nationalteam (U18-EM 2026); Regli (Torhüter, Nachwuchs-Nationalteam, QHL-Einsatz 29.07.) und Anderes Perspektivspieler QHL (pendeln mit HSC II). HSC-II-Kader gemäss handball.ch (inkl. Suter); Grüninger: U19-Zuordnung 26/27 in Abklärung.'
       :'');
   // Aktiver Lernenden-Filter: Banner
   const fb=document.getElementById('filterbanner');
