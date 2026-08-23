@@ -276,6 +276,10 @@
     <span class="crestbig c-hsc" role="img" aria-label="Wappen HSC Suhr Aarau"></span>
     <span><span class="tn">HSC Suhr Aarau II</span><span class="ts" data-ts="HSC2">Handball · 1. Liga</span></span>
   </button>
+  <button class="teambtn" data-team="HSCQHL" aria-pressed="false">
+    <span class="crestbig c-hsc" role="img" aria-label="Wappen HSC Suhr Aarau"></span>
+    <span><span class="tn">HSC Suhr Aarau</span><span class="ts" data-ts="HSCQHL">Handball · QHL</span></span>
+  </button>
   <button class="teambtn" data-team="FCLU18" aria-pressed="false">
     <span class="crestbig c-luz" role="img" aria-label="Wappen FC Luzern"></span>
     <span><span class="tn">FC Luzern U18</span><span class="ts" data-ts="FCLU18">Frauenfussball</span></span>
@@ -329,7 +333,7 @@
 
 <footer>
   Datenquellen: AFV-Matchcenter (FC Aarau: 1. Mannschaft, U-19/U-17/U-16 Elite, Frauen U-18 und U-20; FC Luzern Frauen U-18) ·
-  handball.ch-Matchcenter (SG HSC Suhr Aarau II, Männer 1. Liga M1-02).
+  handball.ch-Matchcenter (HSC Suhr Aarau QHL; SG HSC Suhr Aarau II, Männer 1. Liga M1-02).
   <b>Datenstand: <span class="stand"></span></b> — die Seite aktualisiert sich nicht selbst; Nachführung durch den Sportkoordinator.
   Spiele ohne Uhrzeit sind vom Verband noch nicht angesetzt («Zeit folgt»).<br>
   © <a class="maplink" href="mailto:samuel.mollet@hkv.ch">S.&nbsp;Mollet</a>, Sportkoordinator
@@ -355,14 +359,16 @@ const TEAMS={
   AARU17:{name:'FC Aarau U-17 Elite',tag:'U-17',own:'FC Aarau',oc:'AAR',sport:'fussball',
     liga:'U-17 Elite, Meisterschaft'},
   AARU16:{name:'FC Aarau U-16 Elite',tag:'U-16',own:'FC Aarau',oc:'AAR',sport:'fussball',
-    liga:'U-16 Elite, Meisterschaft'}
+    liga:'U-16 Elite, Meisterschaft'},
+  HSCQHL:{name:'HSC Suhr Aarau (QHL)',tag:'QHL',own:'HSC Suhr Aarau',oc:'HSC',sport:'handball',
+    liga:'Quickline Handball League'}
 };
 // ZENTRALE LERNENDEN-LISTE — einzige Quelle für Kader, Zählungen und Einzelsport-Panels.
 // team: Teamschlüssel · 'RB?' = Red Boots, U18/U20 offen · ohne team = Zuordnung offen/Einzelsport
 const STUDENTS=[
  {n:'Agho Elijah',k:'K25E',sport:'fussball',teams:['AARU19']},
  {n:'Aliji Lorik',k:'K25E',sport:'fussball',teams:['AARU17']},
- {n:'Anderes Finn',k:'K25E',sport:'handball',teams:['HSC2']},
+ {n:'Anderes Finn',k:'K25E',sport:'handball',teams:['HSC2','HSCQHL']},
  {n:'Belz Lukas Josia',k:'K26E',sport:'unihockey',verein:'SV Wiler-Ersigen (U18A/U18C offen)'},
  {n:'Binder Alessandro',k:'K24E',sport:'motorrad'},
  {n:'Binzegger Sharon',k:'K25E',sport:'fussball',teams:['RBU20','RBU18']},
@@ -385,7 +391,7 @@ const STUDENTS=[
  {n:'Nešic Teodora',k:'K26E',sport:'kunstturnen',verein:'Stützpunkt Aargau Lenzburg (STV)'},
  {n:'Nietlispach Ben',k:'K25E',sport:'handball',teams:['HSC2']},
  {n:'Prenqi Melissa',k:'K26E',sport:'fussball',verein:'FC Zürich Nachwuchs (zuletzt U16; Team 26/27 noch bestätigen)'},
- {n:'Regli Timo',k:'DF25D',sport:'handball',teams:['HSC2']},
+ {n:'Regli Timo',k:'DF25D',sport:'handball',teams:['HSC2','HSCQHL']},
  {n:'Salm Jann',k:'K24E',sport:'radsport'},
  {n:'Scheuber Flavia',k:'K26E',sport:'fussball',teams:['RBU18']},
  {n:'Shkodra Anik',k:'K26E',sport:'fussball',teams:['AARU16']},
@@ -394,8 +400,8 @@ const STUDENTS=[
  {n:'Tupella Aurela',k:'K24E',sport:'fussball',teams:['RBU18']},
  {n:'Vogt Gian',k:'K24E',sport:'fussball',teams:['AARFC1']},
  {n:'Vögtlin Théo',k:'K25E',sport:'kanu'},
- {n:'Völkle Robin',k:'K24E',sport:'handball',teams:['HSC2']},
- {n:'Wipf Nicolas',k:'K24E',sport:'handball',verein:'SC Siggenthal (Team offen)'},
+ {n:'Völkle Robin',k:'K24E',sport:'handball',teams:['HSCQHL','HSC2']},
+ {n:'Wipf Nicolas',k:'K24E',sport:'handball',verein:'HSG Aargau Ost, U19 Elite (nachgewiesen; Saison 26/27 zu bestätigen)'},
  {n:'Zumsteg Saybien',k:'K25E',sport:'radsport'}
  // Hoffmann Elin (DF24C), Huber Jamie (BM25), Lovrenovic Damjan (K25E): Sportart noch unbekannt
 ];
@@ -448,7 +454,16 @@ const CLUBS={
   KRN:{t:'SC Kriens',bg:'#0F52A0',fg:'#FFFFFF'},
   NYO:{t:'FC Stade Nyonnais',bg:'#5B21B6',fg:'#FFFFFF'},
   CAR:{t:'Etoile Carouge FC',bg:'#B0121B',fg:'#FFFFFF'},
-  SLO:{t:'FC Stade-Lausanne-Ouchy',bg:'#0A3C7D',fg:'#FFFFFF'}
+  SLO:{t:'FC Stade-Lausanne-Ouchy',bg:'#0A3C7D',fg:'#FFFFFF'},
+  KAD:{t:'Kadetten Schaffhausen',bg:'#F18A00',fg:'#111111'},
+  PFA:{t:'Pfadi Winterthur',bg:'#C8102E',fg:'#FFFFFF'},
+  OTM:{t:'TSV St. Otmar St. Gallen',bg:'#F5C400',fg:'#111111'},
+  RTV:{t:'RTV 1879 Basel',bg:'#1B1B1B',fg:'#FFFFFF'},
+  WAC:{t:'Wacker Thun',bg:'#1B1B1B',fg:'#F5C400'},
+  STA:{t:'Handball Stäfa',bg:'#0F52A0',fg:'#FFFFFF'},
+  BSV:{t:'BSV Bern',bg:'#C8102E',fg:'#111111'},
+  KRL:{t:'HC Kriens-Luzern',bg:'#0F52A0',fg:'#FFFFFF'},
+  STU:{t:'TVB Stuttgart',bg:'#0057B8',fg:'#FFFFFF'}
 };
 const M=[
  {d:'2026-08-22',z:'13:30',h:'LUZ',g:'AAR',o:'Sportanlagen Allmend, Luzern',t:'AARU19',res:'8:1'},
@@ -635,7 +650,27 @@ const M=[
  {d:'2027-04-03',z:'',h:'AAR',g:'BAS',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'AARU16'},
  {d:'2027-04-17',z:'',h:'YB',g:'AAR',o:'Allmend Bern (Kunstrasen 2)',t:'AARU16'},
  {d:'2027-04-24',z:'',h:'AAR',g:'GC',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'AARU16'},
- {d:'2027-05-01',z:'',h:'WIN',g:'AAR',o:'Schuetzenwiese, Winterthur (Platz 2)',t:'AARU16'}
+ {d:'2027-05-01',z:'',h:'WIN',g:'AAR',o:'Schuetzenwiese, Winterthur (Platz 2)',t:'AARU16'},
+ // HSC Suhr Aarau QHL - Hauptrunde (handball.ch 24.08.26; Fortsetzung ab Januar folgt im Matchcenter)
+ {d:'2026-08-16',z:'16:00',h:'HSC',g:'STU',o:'Schachenhalle, Aarau',t:'HSCQHL',wb:'Testspiel',res:'26:32'},
+ {d:'2026-08-26',z:'19:15',h:'HSC',g:'KAD',o:'Schachenhalle, Aarau',t:'HSCQHL'},
+ {d:'2026-08-30',z:'17:00',h:'PFA',g:'HSC',o:'AXA Arena, Winterthur',t:'HSCQHL'},
+ {d:'2026-09-02',z:'19:15',h:'HSC',g:'OTM',o:'Schachenhalle, Aarau',t:'HSCQHL'},
+ {d:'2026-09-05',z:'18:00',h:'RTV',g:'HSC',o:'Rankhof, Basel',t:'HSCQHL'},
+ {d:'2026-09-12',z:'18:00',h:'HSC',g:'WAC',o:'Schachenhalle, Aarau',t:'HSCQHL'},
+ {d:'2026-09-23',z:'19:15',h:'STA',g:'HSC',o:'Frohberg, Stäfa',t:'HSCQHL'},
+ {d:'2026-09-27',z:'17:00',h:'HSC',g:'GCA',o:'Schachenhalle, Aarau',t:'HSCQHL'},
+ {d:'2026-10-03',z:'18:00',h:'BSV',g:'HSC',o:'Mobiliar Arena, Gümligen',t:'HSCQHL'},
+ {d:'2026-10-17',z:'18:00',h:'KRL',g:'HSC',o:'Pilatus Arena, Kriens',t:'HSCQHL'},
+ {d:'2026-10-21',z:'19:15',h:'HSC',g:'PFA',o:'Schachenhalle, Aarau',t:'HSCQHL'},
+ {d:'2026-10-24',z:'18:00',h:'OTM',g:'HSC',o:'Kreuzbleiche, St. Gallen',t:'HSCQHL'},
+ {d:'2026-11-11',z:'19:15',h:'KAD',g:'HSC',o:'BBC Arena, Schaffhausen',t:'HSCQHL'},
+ {d:'2026-11-22',z:'17:00',h:'HSC',g:'STA',o:'Schachenhalle, Aarau',t:'HSCQHL'},
+ {d:'2026-12-05',z:'18:00',h:'GCA',g:'HSC',o:'Saalsporthalle, Zürich',t:'HSCQHL'},
+ {d:'2026-12-09',z:'19:15',h:'HSC',g:'BSV',o:'Schachenhalle, Aarau',t:'HSCQHL'},
+ {d:'2026-12-13',z:'17:00',h:'HSC',g:'KRL',o:'Schachenhalle, Aarau',t:'HSCQHL'},
+ {d:'2026-12-16',z:'19:15',h:'WAC',g:'HSC',o:'Lachen, Thun',t:'HSCQHL'},
+ {d:'2026-12-19',z:'18:00',h:'HSC',g:'RTV',o:'Schachenhalle, Aarau',t:'HSCQHL'}
 ];
 // NATIONALAUSWAHLEN & SONDER-EINSÄTZE (Aufgebote) — von Hand nachführen.
 // {d:'JJJJ-MM-TT', bis:'JJJJ-MM-TT' (optional), z:'HH:MM' (optional), titel, ort, wer:[Namen wie in STUDENTS], sport}
@@ -774,7 +809,7 @@ function render(){
   kn.textContent=(selTeam===null||selTeam==='AARU19'
       ?'FC Aarau U-19: Agho bestätigt (SFV); Costante, Dovoda, Krasniqi, Lazarevic, Simic — Stufe 26/27 wird noch einzeln verifiziert. Chip antippen: zeigt die Spiele seiner Teams. '
       :'')+((selTeam===null||selTeam==='HSC2')
-      ?'HSC II: Kader gemäss handball.ch-Teamkader 26/27. Völkle zusätzlich im QHL-Kader der 1. Mannschaft.'
+      ?'HSC: Völkle fix im QHL-Kader; Regli und Anderes Perspektivspieler QHL (pendeln mit HSC II). HSC-II-Kader gemäss handball.ch.'
       :'');
   // Aktiver Lernenden-Filter: Banner
   const fb=document.getElementById('filterbanner');
