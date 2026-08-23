@@ -212,7 +212,12 @@ body{
 .k-deko-turm{right:18px; bottom:14px; height:min(72%,230px); filter:drop-shadow(0 4px 10px rgba(0,0,0,.32))}
 .k-deko-em{height:66px; right:10px; bottom:12px}
 .k-deko-emlogo{height:56px; right:12px; bottom:88px}
-.k-deko-hkv{height:92px; right:16px; bottom:64px}
+.k-deko-hkv{height:92px; right:16px; bottom:64px;
+  pointer-events:auto; cursor:pointer;
+  transition:transform .18s ease, filter .18s ease}
+.k-deko-hkv:hover, .k-deko-hkv:focus-visible{transform:translateY(-2px) scale(1.04);
+  filter:drop-shadow(0 5px 9px rgba(0,0,0,.42))}
+.k-deko-hkv:focus-visible{outline:2px solid #c9a227; outline-offset:3px; border-radius:2px}
 .karte:has(.k-deko-em) .k-einsatz{padding-right:140px}
 .karte:has(.k-deko-emlogo) .k-einsatz{padding-right:148px}
 .karte:has(.k-deko-hkv) .k-einsatz{padding-right:72px}
@@ -524,7 +529,9 @@ body{
         <div class="k-einsatz">Einzelarbeit · drei Wege · Wiederspielwert</div>
         <span class="k-start">Start Verkauf <b>1.8.2026</b></span>
         <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span><span class="k-kauf" id="kaufKnopf" role="button" tabindex="0" aria-haspopup="dialog">Vollversion kaufen</span>
-        <img class="k-deko k-deko-hkv" src="kachel_hkv_banner.png?v=1" alt="" onerror="this.style.display=&#39;none&#39;">
+        <img class="k-deko k-deko-hkv" src="kachel_hkv_banner.png?v=2"
+             alt="HKV Aarau – zur Berufsfachschule" title="HKV Aarau – Berufsfachschule"
+             role="link" tabindex="0" onerror="this.style.display=&#39;none&#39;">
       </a>
 
       <a class="karte" href="co2_alltag.html" data-kat="oekologie">
@@ -899,6 +906,25 @@ body{
   box.addEventListener('mouseleave', function(){ lauf(0); });
   box.addEventListener('focus', function(){ lauf(2); });
   box.addEventListener('blur', function(){ lauf(0); });
+})();
+</script>
+<script>
+/* HKV-Banner auf der Kaufvertrag-Kachel: eigener Link zur Berufsfachschule.
+   Die Kachel selbst ist ein <a>, darum kein verschachteltes <a>, sondern
+   ein Klick-Handler, der das Weiterreichen an die Kachel unterbindet. */
+(function(){
+  var ZIEL='https://www.hkvaarau.ch/berufsfachschule';
+  document.querySelectorAll('.k-deko-hkv').forEach(function(el){
+    function los(e){
+      e.preventDefault();
+      e.stopPropagation();
+      window.open(ZIEL,'_blank','noopener');
+    }
+    el.addEventListener('click', los);
+    el.addEventListener('keydown', function(e){
+      if(e.key==='Enter' || e.key===' ' || e.key==='Spacebar') los(e);
+    });
+  });
 })();
 </script>
 </body>
