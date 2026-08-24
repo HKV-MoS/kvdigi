@@ -70,9 +70,47 @@
         font-size:.72rem; color:#8a8478; line-height:1.5;}
   .fuss a{color:#6a6659;}
 
+  /* ---------- Themenfarben, im Sinne der Spezialitäten-App ---------- */
+  .chipf{--f:var(--petrol); border-left-width:4px;}
+  .chipf.an{background:var(--f); color:#fff; border-color:var(--f);}
+  .thema .tname{display:flex; align-items:center; gap:8px; letter-spacing:1.6px;
+    text-transform:uppercase; color:#6f6a5f; font-weight:600;}
+  .tpunkt{width:10px; height:10px; border-radius:3px; display:inline-block; flex:0 0 auto;}
+  .thema .tzahl{letter-spacing:0; text-transform:none; font-size:.75rem; font-weight:700;}
+  .karte{border-left-width:4px;}
+  .fkarte{border-left-width:4px;}
+  .tmark{display:inline-block; font-size:.68rem; letter-spacing:.8px; text-transform:uppercase;
+    color:#fff; padding:3px 10px; border-radius:99px; margin-bottom:9px;}
+
+  /* ---------- Fehler melden ---------- */
+  .melden{font:inherit; font-size:.76rem; padding:5px 12px; border:1.5px solid var(--linie);
+    border-radius:99px; background:#fff; cursor:pointer; color:#8a5a30; white-space:nowrap;}
+  .melden:hover{border-color:#8a5a30;}
+  #meldebox{position:fixed; inset:0; background:rgba(24,62,69,.42); z-index:60;
+    display:flex; align-items:center; justify-content:center; padding:18px;}
+  #meldebox .box{background:#fff; border-radius:14px; width:100%; max-width:530px; padding:20px 22px;
+    box-shadow:0 18px 50px rgba(0,0,0,.24);}
+  #meldebox h3{color:var(--petrol); font-size:1.12rem; margin-bottom:5px;}
+  #meldebox p{font-size:.82rem; color:#6a6659; margin-bottom:11px;}
+  #meldebox .kontext{font-size:.76rem; color:#6a6659; background:#F5F2EA; border-radius:8px;
+    padding:8px 11px; margin-bottom:11px; border-left:3px solid var(--gold); white-space:pre-line;}
+  #meldebox textarea{width:100%; min-height:112px; font:inherit; font-size:.88rem; padding:9px 11px;
+    border:1.5px solid var(--linie); border-radius:9px; resize:vertical; background:#fff;}
+
+  /* ---------- Abschnitt der Klasse ---------- */
+  .abschnitt{display:flex; flex-wrap:wrap; align-items:center; gap:7px;
+    font-size:.82rem; color:#5c5852; margin-top:11px;
+    border-top:1px solid var(--linie); padding-top:10px;}
+  .abschnitt input{font:inherit; font-size:.86rem; width:62px; padding:5px 7px; text-align:center;
+    border:1.5px solid var(--linie); border-radius:7px; background:#fff;}
+  .abschnitt .knopf{padding:5px 12px; font-size:.8rem;}
+  .abschnittinfo{font-size:.77rem; color:#8a8478; flex:1 1 100%;}
+  .fortschritt{height:7px; border-radius:99px; background:#EDE8DC; overflow:hidden; margin-top:8px;}
+  .fortschritt i{display:block; height:100%; background:var(--gruen); border-radius:99px;}
+
   @media print{
     body{background:#fff; padding:0;}
-    .leiste,.themenleiste,.modi,.zaehler,.merkkopf .knopfreihe,.fuss{display:none !important;}
+    .leiste,.themenleiste,.modi,.zaehler,.melden,.abschnitt,.merkkopf .knopfreihe,.fuss{display:none !important;}
     .merkkopf{border:none; padding:0; margin-bottom:8px;}
     .gitter{grid-template-columns:repeat(3,1fr);}
     .karte{break-inside:avoid; border-color:#bbb;}
@@ -113,6 +151,7 @@
     </span>
     <button class="chipf" id="offenKnopf" hidden>Offen (0)</button>
     <span class="zaehler" id="zaehler"></span>
+    <button class="melden" id="meldenKnopf">Fehler melden</button>
   </div>
   <div class="themenleiste" id="themen"></div>
 
@@ -123,6 +162,8 @@
     Schweizerischer Apothekerverband pharmaSuisse – Ausgabe <strong>gültig ab Februar 2026</strong>, 413 Einträge.
     Die Liste wird jährlich am 1. Februar aktualisiert; vor der Prüfung bitte prüfen, ob eine neuere Ausgabe vorliegt.
     Keine offizielle Publikation von pharmaSuisse – massgebend ist immer das Original. Angaben ohne Gewähr.
+    <br>Fotos, Merkliste und Abschnitt bleiben auf diesem Gerät und werden nirgends hochgeladen.
+    Fehler und fehlende Einträge gerne über «Fehler melden» zurückmelden.
   </div>
 </div>
 
@@ -161,18 +202,35 @@ var DATEN = [{"t":"Erkrankungen der Haut","s":"Roaccutan, Tretinac","w":"Isotret
     return a;
   }
 
-  // ---------- Themen-Chips ----------
+  // ---------- Themen-Chips mit eigener Farbe ----------
   var THEMEN = [];
   DATEN.forEach(function(e){ if (THEMEN.indexOf(e.t) < 0) THEMEN.push(e.t); });
+
+  var PALETTE = ['#B4564E','#4E7A46','#8A5A30','#A34A5E','#2F6E7A','#6C5AA8','#7A8C3A','#1F4E78',
+                 '#3C7C8C','#9A4E7A','#5A6E9A','#A3402F','#4A5D7A','#6E7A2F','#8A6A1F','#5C5852'];
+  function farbe(t){
+    var i = THEMEN.indexOf(t);
+    return PALETTE[(i < 0 ? 0 : i) % PALETTE.length];
+  }
+
   var tl = document.getElementById('themen');
   THEMEN.forEach(function(t){
     var b = document.createElement('button');
     b.className = 'chipf'; b.textContent = t;
+    b.style.setProperty('--f', farbe(t));
+    b.style.borderLeftColor = farbe(t);
     b.addEventListener('click', function(){
       aktiv[t] = !aktiv[t]; b.classList.toggle('an', !!aktiv[t]); zeichnen();
     });
     tl.appendChild(b);
   });
+
+  function themenKopf(t, rechts){
+    var f = farbe(t);
+    return '<div class="thema" style="border-bottom-color:' + f + '55">' +
+      '<span class="tname"><i class="tpunkt" style="background:' + f + '"></i>' + sicher(t) + '</span>' +
+      '<span class="tzahl" style="color:' + f + '">' + rechts + '</span></div>';
+  }
 
   function gefiltert(){
     var an = Object.keys(aktiv).filter(function(t){ return aktiv[t]; });
@@ -190,10 +248,9 @@ var DATEN = [{"t":"Erkrankungen der Haut","s":"Roaccutan, Tretinac","w":"Isotret
     THEMEN.forEach(function(t){
       var im = liste.filter(function(e){ return e.t === t; });
       if (!im.length) return;
-      teile.push('<div class="thema"><span style="letter-spacing:1.6px;text-transform:uppercase">' +
-        sicher(t) + '</span><span>' + im.length + '</span></div><div class="gitter">');
+      teile.push(themenKopf(t, im.length) + '<div class="gitter">');
       im.forEach(function(e){
-        teile.push('<div class="karte">' +
+        teile.push('<div class="karte" style="border-left-color:' + farbe(t) + '">' +
           (FOTOS[e.s] ? '<img src="' + FOTOS[e.s] + '" alt="" style="width:100%;aspect-ratio:4/3;object-fit:contain;background:#f6f4ef;border-radius:8px;margin-bottom:6px">' : '') +
           '<b>' + markiert(e.s) + '</b>' +
           (e.w ? '<em>' + markiert(e.w) + '</em>' : '') + '</div>');
@@ -214,7 +271,8 @@ var DATEN = [{"t":"Erkrankungen der Haut","s":"Roaccutan, Tretinac","w":"Isotret
       '<div class="weg">Zu welchem Thema gehört das Präparat – und was ist der Wirkstoff?</div>' +
       '<h3>' + sicher(e.s) + '</h3>' +
       (kOffen
-        ? '<div class="loesung"><b>' + sicher(e.t) + '</b>' +
+        ? '<div class="loesung" style="border-left-color:' + farbe(e.t) + '">' +
+          '<span class="tmark" style="background:' + farbe(e.t) + '">' + sicher(e.t) + '</span>' +
           '<span>' + (e.w ? 'Wirkstoff: ' + sicher(e.w) : 'kein Wirkstoff in der Liste angegeben') + '</span></div>' +
           '<div class="knopfreihe"><button class="knopf" id="ja">Gewusst</button>' +
           '<button class="knopf hell" id="nein">Noch nicht</button></div>'
@@ -395,6 +453,64 @@ var DATEN = [{"t":"Erkrankungen der Haut","s":"Roaccutan, Tretinac","w":"Isotret
   }
   function fotoAnzahl(){ return Object.keys(FOTOS).length; }
 
+  // ---------- Abschnitt: die Klasse teilt die Liste auf ----------
+  var ABS = { n:0, von:0 };
+  try{ ABS = JSON.parse(localStorage.getItem('qv_abschnitt') || 'null') || { n:0, von:0 }; }
+  catch(e){ ABS = { n:0, von:0 }; }
+  function absAktiv(){ return ABS.von > 1 && ABS.n >= 1 && ABS.n <= ABS.von; }
+  function absGrenzen(){
+    return [ Math.floor(DATEN.length * (ABS.n - 1) / ABS.von),
+             Math.floor(DATEN.length * ABS.n / ABS.von) ];
+  }
+  function absListe(){
+    if (!absAktiv()) return DATEN.slice();
+    var g = absGrenzen();
+    return DATEN.slice(g[0], g[1]);
+  }
+  function absHat(e){
+    if (!absAktiv()) return true;
+    var g = absGrenzen();
+    return e.id >= g[0] && e.id < g[1];
+  }
+  function absSichern(){ try{ localStorage.setItem('qv_abschnitt', JSON.stringify(ABS)); }catch(e){} }
+  function absText(){
+    if (!absAktiv())
+      return 'Ohne Aufteilung stehen hier alle ' + DATEN.length + ' Präparate. ' +
+             'Bei 20 Lernenden sind es rund ' + Math.ceil(DATEN.length / 20) + ' pro Person – ' +
+             'tragen Sie Ihre Nummer ein, dann sehen Sie nur Ihren Teil.';
+    var g = absGrenzen();
+    return 'Ihr Abschnitt: Nummer ' + ABS.n + ' von ' + ABS.von + ' → ' + (g[1] - g[0]) +
+           ' Präparate (Nr. ' + (g[0] + 1) + ' bis ' + g[1] + ' der Liste). Auf diesem Gerät gemerkt.';
+  }
+
+  // ---------- Sammlungen zusammenführen ----------
+  function dateienLesen(dateien, fertig){
+    var sammlung = {}, i = 0, kaputt = 0;
+    (function weiter(){
+      if (i >= dateien.length) return fertig(sammlung, kaputt);
+      var leser = new FileReader();
+      leser.onload = function(){
+        var p = null;
+        try{ p = JSON.parse(leser.result); }catch(e){}
+        if (p && p.art === 'qv-fotos' && p.fotos){
+          Object.keys(p.fotos).forEach(function(k){ if (!sammlung[k]) sammlung[k] = p.fotos[k]; });
+        } else kaputt++;
+        i++; weiter();
+      };
+      leser.onerror = function(){ kaputt++; i++; weiter(); };
+      leser.readAsText(dateien[i]);
+    })();
+  }
+  function sammlungUebernehmen(sammlung, fertig){
+    var namen = Object.keys(sammlung), i = 0, neu = 0, schon = 0;
+    (function weiter(){
+      if (i >= namen.length) return fertig(neu, schon);
+      var k = namen[i];
+      if (FOTOS[k]){ schon++; i++; return weiter(); }
+      fotoSetzen(k, sammlung[k], function(){ neu++; i++; weiter(); });
+    })();
+  }
+
   function verkleinern(datei, fertig){
     var leser = new FileReader();
     leser.onload = function(){
@@ -440,15 +556,35 @@ var DATEN = [{"t":"Erkrankungen der Haut","s":"Roaccutan, Tretinac","w":"Isotret
   // ---------- Ansicht «Fotos» ----------
   var nurOhne = false;
   function zeichneFotos(liste){
-    var n = fotoAnzahl();
-    var kopf = '<div class="merkkopf"><div><b>Meine Fotos</b> · ' + n + ' von ' + DATEN.length + ' Präparaten' +
-      '<br><span style="font-size:.76rem;color:#8a8478">Fotografieren Sie die Packungen in Ihrer Apotheke. ' +
-      'Die Bilder bleiben auf diesem Gerät und werden nirgends hochgeladen. ' +
-      'Mit «Sichern» erstellen Sie eine Datei, die Sie aufbewahren oder abgeben können.</span></div>' +
-      '<div class="knopfreihe" style="margin:0">' +
-      '<button class="knopf hell' + (nurOhne ? ' an' : '') + '" id="fOhne">' + (nurOhne ? 'Alle zeigen' : 'Nur offene') + '</button>' +
-      '<button class="knopf hell" id="fSichern">Sichern</button>' +
-      '<button class="knopf hell" id="fLaden">Einlesen</button></div></div>';
+    var meine = absListe(),
+        habe  = meine.filter(function(e){ return FOTOS[e.s]; }).length,
+        anteil = meine.length ? Math.round(habe / meine.length * 100) : 0;
+
+    var kopf = '<div class="merkkopf" style="display:block">' +
+      '<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;justify-content:space-between">' +
+        '<div><b>Meine Fotos</b> · ' + habe + ' von ' + meine.length +
+          (absAktiv() ? ' Präparaten in meinem Abschnitt' : ' Präparaten') +
+        '<br><span style="font-size:.76rem;color:#8a8478">Fotografieren Sie die Packungen in Ihrer Apotheke. ' +
+        'Die Bilder bleiben auf diesem Gerät und werden nirgends hochgeladen. ' +
+        'Mit «Sichern» erstellen Sie eine Datei, die Sie aufbewahren oder abgeben können.</span></div>' +
+        '<div class="knopfreihe" style="margin:0">' +
+        '<button class="knopf hell" id="fOhne">' + (nurOhne ? 'Alle zeigen' : 'Nur offene') + '</button>' +
+        '<button class="knopf hell" id="fSichern">Sichern</button>' +
+        '<button class="knopf hell" id="fLaden">Einlesen</button>' +
+        '<button class="knopf hell" id="fKlasse">Klassensammlung</button></div>' +
+      '</div>' +
+      '<div class="fortschritt"><i style="width:' + anteil + '%"></i></div>' +
+      '<div class="abschnitt">' +
+        '<span>Die Klasse teilt die Liste auf – ich bin Nummer</span>' +
+        '<input type="number" min="1" step="1" id="aN" value="' + (ABS.n || '') + '">' +
+        '<span>von</span>' +
+        '<input type="number" min="2" step="1" id="aV" value="' + (ABS.von || '') + '">' +
+        '<button class="knopf hell" id="aOk">Übernehmen</button>' +
+        (absAktiv() ? '<button class="knopf hell" id="aWeg">Ganze Liste</button>' : '') +
+        '<span class="abschnittinfo">' + absText() + '</span>' +
+      '</div></div>';
+
+    if (absAktiv()) liste = liste.filter(absHat);
     if (nurOhne) liste = liste.filter(function(e){ return !FOTOS[e.s]; });
 
     if (!liste.length){ ausgabe.innerHTML = kopf + '<p style="margin:30px 0;color:#8a8478">Nichts gefunden.</p>'; bindeFotoKopf(); return; }
@@ -458,11 +594,10 @@ var DATEN = [{"t":"Erkrankungen der Haut","s":"Roaccutan, Tretinac","w":"Isotret
       var im = liste.filter(function(e){ return e.t === t; });
       if (!im.length) return;
       var mit = im.filter(function(e){ return FOTOS[e.s]; }).length;
-      teile.push('<div class="thema"><span style="letter-spacing:1.6px;text-transform:uppercase">' +
-        sicher(t) + '</span><span>' + mit + ' / ' + im.length + '</span></div><div class="fgitter">');
+      teile.push(themenKopf(t, mit + ' / ' + im.length) + '<div class="fgitter">');
       im.forEach(function(e){
         var b = FOTOS[e.s];
-        teile.push('<div class="fkarte" data-name="' + sicher(e.s) + '">' +
+        teile.push('<div class="fkarte" style="border-left-color:' + farbe(t) + '" data-name="' + sicher(e.s) + '">' +
           (b ? '<img src="' + b + '" alt="">' : '<div class="fleer">kein Foto</div>') +
           '<b>' + markiert(e.s) + '</b>' +
           (e.w ? '<em>' + sicher(e.w) + '</em>' : '') +
@@ -487,39 +622,85 @@ var DATEN = [{"t":"Erkrankungen der Haut","s":"Roaccutan, Tretinac","w":"Isotret
   function bindeFotoKopf(){
     var o = document.getElementById('fOhne');
     if (o) o.addEventListener('click', function(){ nurOhne = !nurOhne; zeichnen(); });
+
     var s = document.getElementById('fSichern');
     if (s) s.addEventListener('click', function(){
       if (!fotoAnzahl()){ alert('Es sind noch keine Fotos vorhanden.'); return; }
-      var paket = JSON.stringify({ art: 'qv-fotos', stand: new Date().toISOString().slice(0,10), fotos: FOTOS });
+      var tag = new Date().toISOString().slice(0,10);
+      var paket = JSON.stringify({ art: 'qv-fotos', stand: tag, anzahl: fotoAnzahl(), fotos: FOTOS });
       var a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob([paket], {type:'application/json'}));
-      a.download = 'qv-fotos_' + new Date().toISOString().slice(0,10) + '.json';
+      a.download = 'qv-fotos_' + tag + '.json';
       document.body.appendChild(a); a.click(); document.body.removeChild(a);
       zaehle('qv-fotos-sichern', 'QV-Trainer · Fotos gesichert', true);
     });
+
     var l = document.getElementById('fLaden');
     if (l) l.addEventListener('click', function(){
       var inp = document.createElement('input');
-      inp.type = 'file'; inp.accept = 'application/json,.json'; inp.style.display = 'none';
+      inp.type = 'file'; inp.accept = 'application/json,.json';
+      inp.multiple = true; inp.style.display = 'none';
       document.body.appendChild(inp);
       inp.addEventListener('change', function(){
-        var d = inp.files && inp.files[0];
+        var dateien = Array.prototype.slice.call(inp.files || []);
         document.body.removeChild(inp);
-        if (!d) return;
-        var leser = new FileReader();
-        leser.onload = function(){
-          var p;
-          try{ p = JSON.parse(leser.result); }catch(e){ alert('Diese Datei lässt sich nicht lesen.'); return; }
-          if (!p || p.art !== 'qv-fotos' || !p.fotos){ alert('Das ist keine Foto-Sicherung des QV-Trainers.'); return; }
-          var namen = Object.keys(p.fotos), i = 0;
-          (function weiter(){
-            if (i >= namen.length){ zeichnen(); alert(namen.length + ' Fotos eingelesen.'); return; }
-            fotoSetzen(namen[i], p.fotos[namen[i]], function(){ i++; weiter(); });
-          })();
-        };
-        leser.readAsText(d);
+        if (!dateien.length) return;
+        dateienLesen(dateien, function(sammlung, kaputt){
+          var gefunden = Object.keys(sammlung).length;
+          if (!gefunden){
+            alert('In ' + (dateien.length === 1 ? 'dieser Datei' : 'diesen Dateien') +
+                  ' war keine Foto-Sicherung des QV-Trainers.');
+            return;
+          }
+          sammlungUebernehmen(sammlung, function(neu, schon){
+            zeichnen();
+            alert(dateien.length + ' Datei' + (dateien.length === 1 ? '' : 'en') + ' gelesen.\n' +
+                  neu + ' Foto' + (neu === 1 ? '' : 's') + ' neu dazugekommen' +
+                  (schon ? ', ' + schon + (schon === 1 ? ' war' : ' waren') + ' schon vorhanden' : '') + '.' +
+                  (kaputt ? '\n' + kaputt + (kaputt === 1 ? ' Datei war' : ' Dateien waren') + ' unbrauchbar.' : '') +
+                  '\n\nJetzt sind ' + fotoAnzahl() + ' Fotos auf diesem Gerät. ' +
+                  'Mit «Sichern» wird daraus eine einzige Sammeldatei.');
+            zaehle('qv-fotos-zusammen', 'QV-Trainer · Sammlungen zusammengeführt', true);
+          });
+        });
       });
       inp.click();
+    });
+
+    var kl = document.getElementById('fKlasse');
+    if (kl) kl.addEventListener('click', function(){
+      kl.disabled = true; kl.textContent = 'Wird geholt …';
+      fetch('qv-fotos-sammlung.json', { cache: 'no-store' })
+        .then(function(r){ if (!r.ok) throw 0; return r.json(); })
+        .then(function(p){
+          if (!p || p.art !== 'qv-fotos' || !p.fotos) throw 0;
+          sammlungUebernehmen(p.fotos, function(neu, schon){
+            zeichnen();
+            alert(neu + ' Foto' + (neu === 1 ? '' : 's') + ' aus der Klassensammlung eingelesen' +
+                  (schon ? ', ' + schon + (schon === 1 ? ' war' : ' waren') + ' schon da' : '') + '.');
+            zaehle('qv-fotos-klasse', 'QV-Trainer · Klassensammlung geladen', true);
+          });
+        })
+        .catch(function(){
+          kl.disabled = false; kl.textContent = 'Klassensammlung';
+          alert('Es ist noch keine Klassensammlung hinterlegt.\n\n' +
+                'Sobald die Klasse ihre Fotos abgegeben hat, legt die Lehrperson die Sammeldatei ' +
+                'neben dieser Seite ab und alle können sie mit einem Klick einlesen.');
+        });
+    });
+
+    var ok = document.getElementById('aOk');
+    if (ok) ok.addEventListener('click', function(){
+      var n = parseInt(document.getElementById('aN').value, 10),
+          v = parseInt(document.getElementById('aV').value, 10);
+      if (!(v > 1)){ alert('Bitte eintragen, in wie viele Teile die Klasse die Liste aufteilt (mindestens 2).'); return; }
+      if (!(n >= 1 && n <= v)){ alert('Ihre Nummer muss zwischen 1 und ' + v + ' liegen.'); return; }
+      ABS = { n:n, von:v }; absSichern(); nurOhne = false; zeichnen();
+      zaehle('qv-abschnitt', 'QV-Trainer · Abschnitt gesetzt', true);
+    });
+    var weg = document.getElementById('aWeg');
+    if (weg) weg.addEventListener('click', function(){
+      ABS = { n:0, von:0 }; absSichern(); zeichnen();
     });
   }
 
@@ -564,6 +745,91 @@ var DATEN = [{"t":"Erkrankungen der Haut","s":"Roaccutan, Tretinac","w":"Isotret
     });
   }
 
+  // ---------- Fehler melden ----------
+  var EMPFAENGER = 'samuel.mollet@hkv.ch';
+  var MODUSNAME = { liste:'Liste', karten:'Abfragen', thema:'Thema zuordnen',
+                    wirkstoff:'Wirkstoff', fotos:'Fotos', bild:'Bild-Quiz', offen:'Merkliste' };
+
+  function meldeEintrag(){
+    if (modus === 'karten' && kPool[kIdx]) return kPool[kIdx];
+    if ((modus === 'thema' || modus === 'wirkstoff') && aPool[aIdx]) return aPool[aIdx];
+    if (modus === 'bild' && bPool[bIdx]) return bPool[bIdx];
+    return null;
+  }
+  function meldeKontext(){
+    var e = meldeEintrag(), z = [];
+    z.push('Ansicht: ' + (MODUSNAME[modus] || modus));
+    if (e) z.push('Betrifft: ' + e.s + (e.w ? ' / ' + e.w : '') + '  (' + e.t + ')');
+    else if (suchwort) z.push('Suchbegriff: ' + suchwort);
+    z.push('Liste: pharmaSuisse, gültig ab Februar 2026, ' + DATEN.length + ' Einträge');
+    return z.join('\n');
+  }
+  function meldeText(txt){
+    return 'Rückmeldung zum QV-Trainer Medikamente\n' +
+           '--------------------------------------\n' +
+           meldeKontext() + '\n\n' +
+           (txt || '') + '\n';
+  }
+  function meldeZu(){
+    var b = document.getElementById('meldebox');
+    if (b) b.parentNode.removeChild(b);
+  }
+  function meldeOeffnen(){
+    meldeZu();
+    var e = meldeEintrag();
+    var box = document.createElement('div');
+    box.id = 'meldebox';
+    box.innerHTML = '<div class="box">' +
+      '<h3>Fehler melden</h3>' +
+      '<p>Stimmt ein Wirkstoff nicht, fehlt ein Präparat oder ist etwas unklar? ' +
+      'Schreiben Sie es hier auf – der Text geht als Mail an Ihre Lehrperson.</p>' +
+      '<div class="kontext">' + sicher(meldeKontext()) + '</div>' +
+      '<textarea id="meldeFeld" placeholder="' +
+        (e ? 'Zum Beispiel: Der Wirkstoff von ' + sicher(e.s) + ' stimmt nicht, richtig wäre …'
+           : 'Zum Beispiel: In der Liste fehlt … / Bei … stimmt der Wirkstoff nicht.') +
+      '"></textarea>' +
+      '<div class="knopfreihe">' +
+        '<button class="knopf" id="mMail">Als Mail öffnen</button>' +
+        '<button class="knopf hell" id="mKopie">Text kopieren</button>' +
+        '<button class="knopf hell" id="mZu">Schliessen</button>' +
+      '</div></div>';
+    document.body.appendChild(box);
+    var feld = document.getElementById('meldeFeld');
+    feld.focus();
+
+    box.addEventListener('click', function(ev){ if (ev.target === box) meldeZu(); });
+    document.getElementById('mZu').addEventListener('click', meldeZu);
+
+    document.getElementById('mMail').addEventListener('click', function(){
+      var t = meldeText(feld.value.trim());
+      window.location.href = 'mailto:' + EMPFAENGER +
+        '?subject=' + encodeURIComponent('QV-Trainer Medikamente – Rückmeldung') +
+        '&body=' + encodeURIComponent(t);
+      zaehle('qv-melden-mail', 'QV-Trainer · Meldung als Mail', true);
+      meldeZu();
+    });
+
+    document.getElementById('mKopie').addEventListener('click', function(){
+      var t = meldeText(feld.value.trim()), k = document.getElementById('mKopie');
+      function gut(){ k.textContent = 'Kopiert ✓'; setTimeout(function(){ k.textContent = 'Text kopieren'; }, 1600); }
+      if (navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(t).then(gut, ersatz);
+      } else ersatz();
+      function ersatz(){
+        var h = document.createElement('textarea');
+        h.value = t; h.style.position = 'fixed'; h.style.opacity = '0';
+        document.body.appendChild(h); h.select();
+        try{ document.execCommand('copy'); gut(); }catch(e){ alert(t); }
+        document.body.removeChild(h);
+      }
+      zaehle('qv-melden-kopie', 'QV-Trainer · Meldung kopiert', true);
+    });
+  }
+  document.getElementById('meldenKnopf').addEventListener('click', meldeOeffnen);
+  document.addEventListener('keydown', function(ev){
+    if (ev.key === 'Escape') meldeZu();
+  });
+
   // ---------- Zählung ----------
   function zaehle(pfad, titel, ereignis){
     function tu(){
@@ -582,7 +848,9 @@ var DATEN = [{"t":"Erkrankungen der Haut","s":"Roaccutan, Tretinac","w":"Isotret
   }
   function zeichnen(){
     var liste = gefiltert();
-    zaehler.textContent = liste.length + ' von ' + DATEN.length + ' Einträgen';
+    zaehler.textContent = (modus === 'fotos' && absAktiv())
+      ? liste.filter(absHat).length + ' Einträge in meinem Abschnitt'
+      : liste.length + ' von ' + DATEN.length + ' Einträgen';
     var s = schluessel(), neu = (letzterSchluessel !== null && s !== letzterSchluessel);
     letzterSchluessel = s;
     if (modus === 'liste')  zeichneListe(liste);
