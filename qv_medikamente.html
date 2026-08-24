@@ -77,13 +77,29 @@
     .gitter{grid-template-columns:repeat(3,1fr);}
     .karte{break-inside:avoid; border-color:#bbb;}
   }
+
+  /* --- Fotos --- */
+  .fgitter{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin:6px 0 22px}
+  .fkarte{background:#fff;border:1px solid #e4e0d6;border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:5px}
+  .fkarte img{width:100%;aspect-ratio:4/3;object-fit:contain;background:#f6f4ef;border-radius:8px}
+  .fleer{width:100%;aspect-ratio:4/3;border:2px dashed #d9d4c6;border-radius:8px;display:flex;
+    align-items:center;justify-content:center;color:#a9a294;font-size:.78rem}
+  .fkarte b{font-size:.86rem;line-height:1.25}
+  .fkarte em{font-size:.76rem;color:#8a8478;font-style:normal}
+  .freihe{display:flex;gap:6px;margin-top:auto;padding-top:4px}
+  .fknopf{flex:1;border:1px solid #d9d4c6;background:#faf8f4;border-radius:7px;padding:6px 4px;
+    font:inherit;font-size:.74rem;cursor:pointer;color:#4a453c}
+  .fknopf:hover{background:#f1ede4}
+  .fknopf.weg{flex:0 0 auto;padding:6px 9px;color:#9a5b4c}
+  .qbild{display:block;max-width:100%;max-height:300px;margin:6px auto 16px;border-radius:12px;background:#f6f4ef}
+  @media print{ .fknopf,.freihe{display:none} }
 </style>
 </head>
 <body>
 <div class="huelle">
   <h1 class="titel">QV-Trainer Medikamente</h1>
   <div class="unter">413 Einträge aus der offiziellen Liste von pharmaSuisse für das Qualifikationsverfahren
-    Fachfrau/Fachmann Apotheke EFZ · Ausgabe 2026</div>
+    Fachfrau/Fachmann Apotheke EFZ · Ausgabe 2026 · mit eigenen Packungsfotos</div>
 
   <div class="leiste">
     <input type="search" id="suche" placeholder="Präparat, Wirkstoff oder Thema suchen …">
@@ -92,6 +108,8 @@
       <button data-modus="karten">Abfragen</button>
       <button data-modus="thema">Thema zuordnen</button>
       <button data-modus="wirkstoff">Wirkstoff</button>
+      <button data-modus="fotos">Fotos</button>
+      <button data-modus="bild">Bild-Quiz</button>
     </span>
     <button class="chipf" id="offenKnopf" hidden>Offen (0)</button>
     <span class="zaehler" id="zaehler"></span>
@@ -175,7 +193,9 @@ var DATEN = [{"t":"Erkrankungen der Haut","s":"Roaccutan, Tretinac","w":"Isotret
       teile.push('<div class="thema"><span style="letter-spacing:1.6px;text-transform:uppercase">' +
         sicher(t) + '</span><span>' + im.length + '</span></div><div class="gitter">');
       im.forEach(function(e){
-        teile.push('<div class="karte"><b>' + markiert(e.s) + '</b>' +
+        teile.push('<div class="karte">' +
+          (FOTOS[e.s] ? '<img src="' + FOTOS[e.s] + '" alt="" style="width:100%;aspect-ratio:4/3;object-fit:contain;background:#f6f4ef;border-radius:8px;margin-bottom:6px">' : '') +
+          '<b>' + markiert(e.s) + '</b>' +
           (e.w ? '<em>' + markiert(e.w) + '</em>' : '') + '</div>');
       });
       teile.push('</div>');
@@ -325,6 +345,225 @@ var DATEN = [{"t":"Erkrankungen der Haut","s":"Roaccutan, Tretinac","w":"Isotret
     });
   }
 
+  // ================= FOTOS DER BERUFSLERNENDEN =================
+  var FOTOS = {}, DB = null;
+
+  function dbOeffnen(fertig){
+    if (DB) return fertig(DB);
+    try{
+      var r = indexedDB.open('qv_fotos', 1);
+      r.onupgradeneeded = function(){ r.result.createObjectStore('fotos'); };
+      r.onsuccess = function(){ DB = r.result; fertig(DB); };
+      r.onerror = function(){ fertig(null); };
+    }catch(e){ fertig(null); }
+  }
+  function fotosLaden(fertig){
+    dbOeffnen(function(db){
+      if (!db) return fertig();
+      try{
+        var t = db.transaction('fotos', 'readonly').objectStore('fotos'), a = t.openCursor();
+        a.onsuccess = function(ev){
+          var c = ev.target.result;
+          if (c){ FOTOS[c.key] = c.value; c.continue(); } else fertig();
+        };
+        a.onerror = function(){ fertig(); };
+      }catch(e){ fertig(); }
+    });
+  }
+  function fotoSetzen(name, bild, fertig){
+    FOTOS[name] = bild;
+    dbOeffnen(function(db){
+      if (!db) return fertig && fertig(false);
+      try{
+        var t = db.transaction('fotos', 'readwrite');
+        t.objectStore('fotos').put(bild, name);
+        t.oncomplete = function(){ fertig && fertig(true); };
+        t.onerror = function(){ fertig && fertig(false); };
+      }catch(e){ fertig && fertig(false); }
+    });
+  }
+  function fotoWeg(name, fertig){
+    delete FOTOS[name];
+    dbOeffnen(function(db){
+      if (!db) return fertig && fertig();
+      try{
+        var t = db.transaction('fotos', 'readwrite');
+        t.objectStore('fotos').delete(name);
+        t.oncomplete = function(){ fertig && fertig(); };
+      }catch(e){ fertig && fertig(); }
+    });
+  }
+  function fotoAnzahl(){ return Object.keys(FOTOS).length; }
+
+  function verkleinern(datei, fertig){
+    var leser = new FileReader();
+    leser.onload = function(){
+      var bild = new Image();
+      bild.onload = function(){
+        var max = 900, w = bild.width, h = bild.height;
+        if (w > h && w > max){ h = Math.round(h * max / w); w = max; }
+        else if (h >= w && h > max){ w = Math.round(w * max / h); h = max; }
+        var c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        c.getContext('2d').drawImage(bild, 0, 0, w, h);
+        try{ fertig(c.toDataURL('image/jpeg', 0.72)); }
+        catch(e){ fertig(null); }
+      };
+      bild.onerror = function(){ fertig(null); };
+      bild.src = leser.result;
+    };
+    leser.onerror = function(){ fertig(null); };
+    leser.readAsDataURL(datei);
+  }
+
+  function aufnehmen(name, danach){
+    var inp = document.createElement('input');
+    inp.type = 'file'; inp.accept = 'image/*'; inp.setAttribute('capture', 'environment');
+    inp.style.display = 'none';
+    document.body.appendChild(inp);
+    inp.addEventListener('change', function(){
+      var d = inp.files && inp.files[0];
+      document.body.removeChild(inp);
+      if (!d) return;
+      verkleinern(d, function(bild){
+        if (!bild){ alert('Das Bild konnte nicht verarbeitet werden. Bitte nochmals versuchen.'); return; }
+        fotoSetzen(name, bild, function(ok){
+          if (!ok) alert('Das Foto liess sich nicht speichern. Ist der Speicher des Browsers voll?');
+          zaehle('qv-foto-neu', 'QV-Trainer · Foto aufgenommen', true);
+          danach && danach();
+        });
+      });
+    });
+    inp.click();
+  }
+
+  // ---------- Ansicht «Fotos» ----------
+  var nurOhne = false;
+  function zeichneFotos(liste){
+    var n = fotoAnzahl();
+    var kopf = '<div class="merkkopf"><div><b>Meine Fotos</b> · ' + n + ' von ' + DATEN.length + ' Präparaten' +
+      '<br><span style="font-size:.76rem;color:#8a8478">Fotografieren Sie die Packungen in Ihrer Apotheke. ' +
+      'Die Bilder bleiben auf diesem Gerät und werden nirgends hochgeladen. ' +
+      'Mit «Sichern» erstellen Sie eine Datei, die Sie aufbewahren oder abgeben können.</span></div>' +
+      '<div class="knopfreihe" style="margin:0">' +
+      '<button class="knopf hell' + (nurOhne ? ' an' : '') + '" id="fOhne">' + (nurOhne ? 'Alle zeigen' : 'Nur offene') + '</button>' +
+      '<button class="knopf hell" id="fSichern">Sichern</button>' +
+      '<button class="knopf hell" id="fLaden">Einlesen</button></div></div>';
+    if (nurOhne) liste = liste.filter(function(e){ return !FOTOS[e.s]; });
+
+    if (!liste.length){ ausgabe.innerHTML = kopf + '<p style="margin:30px 0;color:#8a8478">Nichts gefunden.</p>'; bindeFotoKopf(); return; }
+
+    var teile = [kopf];
+    THEMEN.forEach(function(t){
+      var im = liste.filter(function(e){ return e.t === t; });
+      if (!im.length) return;
+      var mit = im.filter(function(e){ return FOTOS[e.s]; }).length;
+      teile.push('<div class="thema"><span style="letter-spacing:1.6px;text-transform:uppercase">' +
+        sicher(t) + '</span><span>' + mit + ' / ' + im.length + '</span></div><div class="fgitter">');
+      im.forEach(function(e){
+        var b = FOTOS[e.s];
+        teile.push('<div class="fkarte" data-name="' + sicher(e.s) + '">' +
+          (b ? '<img src="' + b + '" alt="">' : '<div class="fleer">kein Foto</div>') +
+          '<b>' + markiert(e.s) + '</b>' +
+          (e.w ? '<em>' + sicher(e.w) + '</em>' : '') +
+          '<div class="freihe">' +
+            '<button class="fknopf" data-tu="foto">' + (b ? 'Ersetzen' : 'Foto aufnehmen') + '</button>' +
+            (b ? '<button class="fknopf weg" data-tu="weg">Löschen</button>' : '') +
+          '</div></div>');
+      });
+      teile.push('</div>');
+    });
+    ausgabe.innerHTML = teile.join('');
+    bindeFotoKopf();
+    Array.prototype.forEach.call(ausgabe.querySelectorAll('.fkarte button'), function(b){
+      b.addEventListener('click', function(){
+        var name = b.closest('.fkarte').getAttribute('data-name');
+        if (b.dataset.tu === 'foto') aufnehmen(name, function(){ zeichnen(); });
+        else fotoWeg(name, function(){ zeichnen(); });
+      });
+    });
+  }
+
+  function bindeFotoKopf(){
+    var o = document.getElementById('fOhne');
+    if (o) o.addEventListener('click', function(){ nurOhne = !nurOhne; zeichnen(); });
+    var s = document.getElementById('fSichern');
+    if (s) s.addEventListener('click', function(){
+      if (!fotoAnzahl()){ alert('Es sind noch keine Fotos vorhanden.'); return; }
+      var paket = JSON.stringify({ art: 'qv-fotos', stand: new Date().toISOString().slice(0,10), fotos: FOTOS });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([paket], {type:'application/json'}));
+      a.download = 'qv-fotos_' + new Date().toISOString().slice(0,10) + '.json';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      zaehle('qv-fotos-sichern', 'QV-Trainer · Fotos gesichert', true);
+    });
+    var l = document.getElementById('fLaden');
+    if (l) l.addEventListener('click', function(){
+      var inp = document.createElement('input');
+      inp.type = 'file'; inp.accept = 'application/json,.json'; inp.style.display = 'none';
+      document.body.appendChild(inp);
+      inp.addEventListener('change', function(){
+        var d = inp.files && inp.files[0];
+        document.body.removeChild(inp);
+        if (!d) return;
+        var leser = new FileReader();
+        leser.onload = function(){
+          var p;
+          try{ p = JSON.parse(leser.result); }catch(e){ alert('Diese Datei lässt sich nicht lesen.'); return; }
+          if (!p || p.art !== 'qv-fotos' || !p.fotos){ alert('Das ist keine Foto-Sicherung des QV-Trainers.'); return; }
+          var namen = Object.keys(p.fotos), i = 0;
+          (function weiter(){
+            if (i >= namen.length){ zeichnen(); alert(namen.length + ' Fotos eingelesen.'); return; }
+            fotoSetzen(namen[i], p.fotos[namen[i]], function(){ i++; weiter(); });
+          })();
+        };
+        leser.readAsText(d);
+      });
+      inp.click();
+    });
+  }
+
+  // ---------- Bild-Quiz ----------
+  var bPool = [], bIdx = 0, bGut = 0, bWahl = [], bFuer = -1;
+  function bStart(liste){
+    bPool = mische(liste.filter(function(e){ return FOTOS[e.s]; }));
+    bIdx = 0; bGut = 0; bFuer = -1; bZeichnen();
+  }
+  function bZeichnen(){
+    if (!bPool.length){
+      ausgabe.innerHTML = '<div class="buehne"><h3>Noch keine Fotos.</h3>' +
+        '<div class="weg">Nehmen Sie zuerst im Modus «Fotos» ein paar Packungen auf. ' +
+        'Sobald Fotos da sind, fragt dieser Modus ab, welches Präparat auf dem Bild zu sehen ist.</div></div>';
+      return;
+    }
+    if (bIdx >= bPool.length){ ausgabe.innerHTML = ende(bGut, bPool.length); binde(bStart); return; }
+    var e = bPool[bIdx];
+    if (bFuer !== bIdx){
+      var andere = mische(DATEN.filter(function(x){ return x.s !== e.s; }).slice()).slice(0, 3);
+      bWahl = mische(andere.concat([e])).map(function(x){ return x.s; });
+      bFuer = bIdx;
+    }
+    ausgabe.innerHTML = '<div class="buehne">' +
+      '<div class="weg">Welches Präparat ist auf dem Foto?</div>' +
+      '<img class="qbild" src="' + FOTOS[e.s] + '" alt="">' +
+      '<div class="wahl">' + bWahl.map(function(o){
+        return '<button>' + sicher(o) + '</button>'; }).join('') + '</div>' +
+      '<div class="fort">Bild ' + (bIdx + 1) + ' von ' + bPool.length + ' · richtig: ' + bGut + '</div></div>';
+    Array.prototype.forEach.call(ausgabe.querySelectorAll('.wahl button'), function(b, i){
+      b.addEventListener('click', function(){
+        var alle = ausgabe.querySelectorAll('.wahl button');
+        Array.prototype.forEach.call(alle, function(x, j){
+          x.disabled = true;
+          if (bWahl[j] === e.s) x.classList.add('richtig');
+        });
+        if (bWahl[i] === e.s){ bGut++; delete offen[e.id]; }
+        else { b.classList.add('falsch'); offen[e.id] = true; }
+        offenSichern();
+        setTimeout(function(){ bIdx++; bZeichnen(); }, 1100);
+      });
+    });
+  }
+
   // ---------- Zählung ----------
   function zaehle(pfad, titel, ereignis){
     function tu(){
@@ -351,6 +590,8 @@ var DATEN = [{"t":"Erkrankungen der Haut","s":"Roaccutan, Tretinac","w":"Isotret
     if (modus === 'thema'){ if (neu || !aPool.length || aArt !== 'thema') aStart(liste, 'thema'); else aZeichnen(); }
     if (modus === 'wirkstoff'){ if (neu || !aPool.length || aArt !== 'wirkstoff') aStart(liste, 'wirkstoff'); else aZeichnen(); }
     if (modus === 'offen')  zeichneOffen();
+    if (modus === 'fotos')  zeichneFotos(liste);
+    if (modus === 'bild'){ if (neu || !bPool.length) bStart(liste); else bZeichnen(); }
   }
 
   document.getElementById('suche').addEventListener('input', function(e){
@@ -372,6 +613,7 @@ var DATEN = [{"t":"Erkrankungen der Haut","s":"Roaccutan, Tretinac","w":"Isotret
 
   offenSichern();
   zeichnen();
+  fotosLaden(function(){ if (fotoAnzahl()) zeichnen(); });
 })();
 </script>
 </body>
