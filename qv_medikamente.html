@@ -584,6 +584,47 @@ var DATEN = [{"t":"Erkrankungen der Haut","s":"Roaccutan, Tretinac","w":"Isotret
     inp.click();
   }
 
+  // ---------- Sammeldatei für die Website: kleiner gerechnet ----------
+  function neuKodieren(bildUrl, kante, guete, fertig){
+    var bild = new Image();
+    bild.onload = function(){
+      var w = bild.width, h = bild.height;
+      if (w > h && w > kante){ h = Math.round(h * kante / w); w = kante; }
+      else if (h >= w && h > kante){ w = Math.round(w * kante / h); h = kante; }
+      var c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      c.getContext('2d').drawImage(bild, 0, 0, w, h);
+      try{ fertig(c.toDataURL('image/jpeg', guete)); }catch(e){ fertig(bildUrl); }
+    };
+    bild.onerror = function(){ fertig(bildUrl); };
+    bild.src = bildUrl;
+  }
+
+  function webSammlung(){
+    var namen = Object.keys(FOTOS), i = 0, klein = {};
+    var k = document.getElementById('fWeb');
+    (function weiter(){
+      if (i >= namen.length){
+        var paket = JSON.stringify({ art: 'qv-fotos', stand: new Date().toISOString().slice(0,10),
+                                     anzahl: namen.length, fotos: klein });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([paket], {type:'application/json'}));
+        a.download = 'qv-fotos-sammlung.json';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        k.disabled = false; k.textContent = 'Sammlung für die Website';
+        alert('Sammeldatei mit ' + namen.length + ' Fotos erstellt: qv-fotos-sammlung.json\n\n' +
+              'Diese Datei neben qv_medikamente.html ins Repository legen. ' +
+              'Danach holt der Knopf «Klassensammlung» sie bei allen mit einem Tippen.');
+        return;
+      }
+      k.textContent = 'Rechnet … ' + i + '/' + namen.length;
+      neuKodieren(FOTOS[namen[i]], 600, 0.6, function(b){
+        klein[namen[i]] = b; i++;
+        (i % 20 === 0) ? setTimeout(weiter, 0) : weiter();
+      });
+    })();
+  }
+
   // ---------- Ansicht «Fotos» ----------
   var nurOhne = false;
   function zeichneFotos(liste){
@@ -602,7 +643,9 @@ var DATEN = [{"t":"Erkrankungen der Haut","s":"Roaccutan, Tretinac","w":"Isotret
         '<button class="knopf hell" id="fOhne">' + (nurOhne ? 'Alle zeigen' : 'Nur offene') + '</button>' +
         '<button class="knopf hell" id="fSichern">Sichern</button>' +
         '<button class="knopf hell" id="fLaden">Einlesen</button>' +
-        '<button class="knopf hell" id="fKlasse">Klassensammlung</button></div>' +
+        '<button class="knopf hell" id="fKlasse">Klassensammlung</button>' +
+        (fotoAnzahl() > 100 ? '<button class="knopf hell" id="fWeb">Sammlung für die Website</button>' : '') +
+        '</div>' +
       '</div>' +
       '<div class="fortschritt"><i style="width:' + anteil + '%"></i></div>' +
       '<div class="abschnitt">' +
@@ -718,6 +761,12 @@ var DATEN = [{"t":"Erkrankungen der Haut","s":"Roaccutan, Tretinac","w":"Isotret
                 'Sobald die Klasse ihre Fotos abgegeben hat, legt die Lehrperson die Sammeldatei ' +
                 'neben dieser Seite ab und alle können sie mit einem Klick einlesen.');
         });
+    });
+
+    var w = document.getElementById('fWeb');
+    if (w) w.addEventListener('click', function(){
+      w.disabled = true; w.textContent = 'Rechnet …';
+      setTimeout(webSammlung, 30);
     });
 
     var ok = document.getElementById('aOk');
