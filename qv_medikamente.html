@@ -14,6 +14,7 @@
 
   h1.titel{color:var(--petrol); font-size:1.5rem;}
   .unter{color:#6a6659; font-size:.85rem; margin-bottom:14px;}
+  .unter .warn{color:#9a5b4c; display:inline-block; margin-top:3px;}
 
   .leiste{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:12px;}
   .leiste input[type=search]{font:inherit; font-size:.9rem; padding:7px 12px; border:1.5px solid var(--linie);
@@ -148,7 +149,9 @@
 <div class="huelle">
   <h1 class="titel">QV-Trainer Medikamente</h1>
   <div class="unter">413 Einträge aus der offiziellen Liste von pharmaSuisse für das Qualifikationsverfahren
-    Fachfrau/Fachmann Apotheke EFZ · Ausgabe 2026 · mit eigenen Packungsfotos</div>
+    Fachfrau/Fachmann Apotheke EFZ · Ausgabe 2026 · mit eigenen Packungsfotos
+    <br><span class="warn">Die Liste ist <strong>nicht abschliessend</strong>: An der Prüfung können auch
+    Präparate vorkommen, die hier nicht aufgeführt sind.</span></div>
 
   <div class="leiste">
     <input type="search" id="suche" placeholder="Präparat, Wirkstoff oder Thema suchen …">
@@ -172,7 +175,9 @@
     Quelle: <a href="https://pharmasuisse.org/de/beruf-und-bildung/fachfraufachmann-apotheke-efz-ausbilden/qualifikationsverfahren" target="_blank" rel="noopener">«Liste Medikamente und Produkte, Qualifikationsverfahren»</a>,
     Schweizerischer Apothekerverband pharmaSuisse – Ausgabe <strong>gültig ab Februar 2026</strong>, 413 Einträge.
     Die Liste wird jährlich am 1. Februar aktualisiert; vor der Prüfung bitte prüfen, ob eine neuere Ausgabe vorliegt.
-    Keine offizielle Publikation von pharmaSuisse – massgebend ist immer das Original. Angaben ohne Gewähr.
+    Die Liste ist nicht abschliessend. Keine offizielle Publikation von pharmaSuisse – massgebend ist
+    immer das Original. Angaben ohne Gewähr. Verwendung zu Lernzwecken mit freundlicher Zustimmung
+    von pharmaSuisse (28.08.2026); das Logo von pharmaSuisse wird nicht verwendet.
     <br>Fotos, Merkliste und Abschnitt bleiben auf diesem Gerät und werden nirgends hochgeladen.
     Fehler und fehlende Einträge gerne über «Fehler melden» zurückmelden.
   </div>
@@ -842,6 +847,7 @@ var DATEN = [{"t":"Erkrankungen der Haut","s":"Roaccutan, Tretinac","w":"Isotret
     z.push('Ansicht: ' + (MODUSNAME[modus] || modus));
     if (!e && suchwort) z.push('Suchbegriff: ' + suchwort);
     z.push('Liste: pharmaSuisse, gültig ab Februar 2026, ' + DATEN.length + ' Einträge');
+    z.push('Die Liste ist nicht abschliessend.');
     return z.join('\n');
   }
   function meldeText(txt, fest){
