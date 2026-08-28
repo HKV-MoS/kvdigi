@@ -254,9 +254,9 @@
   .footer{ max-width:980px; margin:6px auto 26px; padding:0 18px; }
   .footer .cr{ color:#94A3B0; font-size:11px; }
   @media (prefers-reduced-motion:reduce){
-    *{ transition-duration:.5s !important; }
-    .pokal.frisch svg{ animation-duration:2.1s; }
-    .konf{ animation-duration:7s; }
+    *{ transition-duration:.01ms !important; animation-duration:.01ms !important;
+       animation-iteration-count:1 !important; scroll-behavior:auto !important; }
+    .konf{ display:none !important; }
   }
   @media (max-width:560px){ .srow{ font-size:15px; } .qtext{ font-size:16px; } }
 </style>
@@ -457,7 +457,7 @@ html.eingebettet body{ zoom:.82; }
           <div class="chips" id="ktChips">
             <button class="chip on" data-kt="lohn">💰 Lohn / Arbeit</button>
             <button class="chip on" data-kt="einkauf">🛒 Einkauf / Mengen</button>
-            <button class="chip on" data-kt="prozent">📊 Prozent</button>
+            <button class="chip on" data-kt="prozent">📊 Prozent mit Dreisatz</button>
             <button class="chip on" data-kt="tempo">🚗 Tempo / Verbrauch</button>
             <button class="chip on" data-kt="alltag">🎉 Alltag / Budget</button>
           </div>
@@ -544,6 +544,8 @@ html.eingebettet body{ zoom:.82; }
         <div class="scard"><div class="n" id="sc-total">0</div><div class="l">gelöst</div></div>
         <div class="scard"><div class="n" id="sc-streak">0</div><div class="l">Serie</div></div>
         <div class="scard"><div class="n" id="sc-rate">–</div><div class="l">Quote</div></div>
+        <div class="scard"><div class="n" id="sc-art">–</div><div class="l">Art erkannt</div></div>
+        <div class="scard"><div class="n" id="sc-num">–</div><div class="l">richtig gerechnet</div></div>
       </div>
     </div>
 
@@ -1046,7 +1048,7 @@ const GENS={
 let selTyp='beide';
 let selKt={lohn:true,einkauf:true,prozent:true,tempo:true,alltag:true};
 let cur=null, artChosen=null, answered=false;
-let score={correct:0,total:0,streak:0,best:0};
+let score={correct:0,total:0,streak:0,best:0,artOk:0,numOk:0};
 let fehler={art:0,gegenart:0,schritt1:0,komma:0,rund:0,rechnen:0};
 
 function buildPool(){
@@ -1105,6 +1107,8 @@ function pruefen(){
   const val=parseFloat(raw);
   const artOk = artChosen===cur.typ;
   const numOk = !isNaN(val) && Math.abs(val-cur.answer)<0.005;
+  if(artOk) score.artOk++;
+  if(numOk) score.numOk++;
   answered=true;
   $('check').disabled=true; $('answer').disabled=true;
 
@@ -1155,6 +1159,8 @@ function updateScore(){
   $('sc-total').textContent=score.total;
   $('sc-streak').textContent=score.streak;
   $('sc-rate').textContent = score.total? Math.round(score.correct/score.total*100)+'%' : '–';
+  $('sc-art').textContent = score.total? score.artOk+'/'+score.total : '–';
+  $('sc-num').textContent = score.total? score.numOk+'/'+score.total : '–';
   renderPokale();
 }
 
