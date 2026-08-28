@@ -7,7 +7,12 @@
 <style>
   *{ box-sizing:border-box; }
   body{ margin:0; font-family:'Aptos','Segoe UI',system-ui,-apple-system,sans-serif; background:#F4F8FB; color:#1A2B3A; font-size:15px; line-height:1.55; }
-  header{ background:linear-gradient(135deg,#213B42 0%,#3C6E73 100%); color:#fff; padding:18px 22px 22px; box-shadow:0 2px 8px rgba(0,0,0,.12); text-align:center; }
+  header{ background:linear-gradient(135deg,#213B42 0%,#3C6E73 100%); color:#fff; padding:0 22px 22px; box-shadow:0 2px 8px rgba(0,0,0,.12); text-align:center; }
+  .kopfwappen{ display:inline-block; line-height:0; margin:0 0 6px; }
+  .kopfwappen img{ height:92px; width:auto; transition:transform .15s ease;
+    filter:drop-shadow(0 0 1.5px rgba(243,206,142,.45)) drop-shadow(0 4px 10px rgba(0,0,0,.45)); }
+  .kopfwappen:hover img{ transform:translateY(2px) scale(1.03); }
+  @media (max-width:560px){ .kopfwappen img{ height:68px; } }
   .brand-eyebrow{ font-size:11px; font-weight:800; letter-spacing:2.5px; color:#D8AE66; margin-bottom:3px; text-transform:uppercase; }
   header h1{ margin:0 0 2px; font-size:22px; font-weight:800; letter-spacing:-.3px; }
   header .sub{ font-size:13px; opacity:.93; max-width:760px; margin:0 auto; }
@@ -19,11 +24,12 @@
   .bw-lead{ font-size:13px; opacity:.95; margin:0 0 10px; }
   .bw-lead b{ color:#F3CE8E; }
   .bw-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
-  .bw-mehr-ico{ font-size:44px; line-height:1; margin:26px 0 10px; }
+  .bw-mehr-ico{ font-size:44px; line-height:1; margin:14px 0 8px; }
   .bw-karte-liste{ cursor:default; }
   .bw-karte-liste:hover{ transform:none; box-shadow:0 3px 12px rgba(0,0,0,.18); }
-  .bw-liste{ display:flex; flex-direction:column; gap:6px; margin-top:8px; }
-  .bw-liste button{ font:inherit; font-size:12.5px; font-weight:700; cursor:pointer;
+  .bw-liste{ display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:8px; }
+  @media (max-width:820px){ .bw-liste{ grid-template-columns:1fr; } }
+  .bw-liste button{ font:inherit; font-size:11.5px; font-weight:700; cursor:pointer;
     border:1.5px solid #3C6E73; border-radius:999px; background:#fff; color:#213B42;
     padding:6px 10px; display:flex; align-items:center; justify-content:center; gap:.45em; }
   .bw-liste button:hover{ background:#3C6E73; color:#fff; }
@@ -269,6 +275,8 @@ html.eingebettet body{ zoom:.82; }
 <script>if(window.self!==window.top){document.documentElement.classList.add('eingebettet');}</script>
 
 <header>
+  <a class="kopfwappen" href="https://www.hkvaarau.ch/berufsfachschule" target="_blank"
+     rel="noopener" title="Handelsschule KV Aarau"><img src="hkv_wappen.png" alt="HKV Aarau"></a>
   <div class="brand-eyebrow">HKV Aarau · ABU</div>
   <h1 id="kopfTitel" title="Zurück zum Start" style="cursor:pointer">Dreisatz</h1>
   <div class="sub">Verstehen und üben: gerader (proportionaler) und ungerader (umgekehrt proportionaler) Dreisatz – mit endlosem Aufgaben-Trainer.</div>
@@ -310,6 +318,9 @@ html.eingebettet body{ zoom:.82; }
             <button type="button" data-niv="fabe">🧸 FaBe EFZ</button>
             <button type="button" data-niv="ags">🩹 AGS EBA</button>
             <button type="button" data-niv="inf">💻 Informatik EFZ</button>
+            <button type="button" data-niv="gastro">🍳 Gastro &amp; Bäckerei</button>
+            <button type="button" data-niv="logistik">📦 Logistik EFZ</button>
+            <button type="button" data-niv="praxis">💇 Coiffure &amp; Praxis</button>
           </span>
         </span>
       </div>
@@ -441,6 +452,9 @@ html.eingebettet body{ zoom:.82; }
           <button class="chip" data-niv="ags">🩹 AGS EBA</button>
           <button class="chip" data-niv="fabe">🧸 FaBe</button>
           <button class="chip" data-niv="inf">💻 Informatik</button>
+          <button class="chip" data-niv="gastro">🍳 Gastro &amp; Bäckerei</button>
+          <button class="chip" data-niv="logistik">📦 Logistik</button>
+          <button class="chip" data-niv="praxis">💇 Coiffure &amp; Praxis</button>
         </div>
       </div>
       <div class="filters">
@@ -630,6 +644,24 @@ const ITEM_SETS={
     {s:'Spielwürfel',p:'Spielwürfel',e:'🎲'},{s:'Trinkbecher',p:'Trinkbecher',e:'🥤'},
     {s:'Farbtopf',p:'Farbtöpfe',e:'🎨'},{s:'Wolldecke',p:'Wolldecken',e:'🧶'}
   ],
+  gastro:[
+    {s:'Brötchen',p:'Brötchen',e:'🥐'},{s:'Guetzli',p:'Guetzli',e:'🍪'},
+    {s:'Ei',p:'Eier',e:'🥚'},{s:'Butterpäckli',p:'Butterpäckli',e:'🧈'},
+    {s:'Rüebli',p:'Rüebli',e:'🥕'},{s:'Zopf',p:'Zöpfe',e:'🥖'},
+    {s:'Rahmbecher',p:'Rahmbecher',e:'🥛'},{s:'Torte',p:'Torten',e:'🎂'}
+  ],
+  logistik:[
+    {s:'Paket',p:'Pakete',e:'📦'},{s:'Palette',p:'Paletten',e:'🟫'},
+    {s:'Rollbehälter',p:'Rollbehälter',e:'🛒'},{s:'Etikette',p:'Etiketten',e:'🏷️'},
+    {s:'Rolle Klebeband',p:'Rollen Klebeband',e:'🧻'},{s:'Kartonschachtel',p:'Kartonschachteln',e:'🗃️'},
+    {s:'Gitterbox',p:'Gitterboxen',e:'🧰'},{s:'Container',p:'Container',e:'🚢'}
+  ],
+  praxis:[
+    {s:'Tube Farbe',p:'Tuben Farbe',e:'🎨'},{s:'Handtuch',p:'Handtücher',e:'🧻'},
+    {s:'Paar Handschuhe',p:'Paar Handschuhe',e:'🧤'},{s:'Mundschutz',p:'Mundschutz',e:'😷'},
+    {s:'Flasche Shampoo',p:'Flaschen Shampoo',e:'🧴'},{s:'Watterolle',p:'Watterollen',e:'🩹'},
+    {s:'Spritze',p:'Spritzen',e:'💉'},{s:'Terminkarte',p:'Terminkarten',e:'🗓️'}
+  ],
   informatik:[
     {s:'USB-Stick',p:'USB-Sticks',e:'💾'},{s:'Netzwerkkabel',p:'Netzwerkkabel',e:'🔌'},
     {s:'Tastatur',p:'Tastaturen',e:'⌨️'},{s:'Maus',p:'Mäuse',e:'🖱️'},
@@ -723,6 +755,30 @@ const LEVELS={
     cons:[5,6,7,8], distV:[50,100,150,200],
     antiK:[24,36,48,60], antiKein:[60,72,120,144],
     antiDist:[{d:240,sp:[40,60,80,120]},{d:180,sp:[45,60,90]},{d:300,sp:[50,60,75,100]}] },
+  gastro:{ label:'Gastro', items:'gastro', typ:'beide', contexts:['lohn','einkauf','prozent','tempo','alltag'],
+    lohn:[20,22,24,25,26,28], hoursA:[3,4,5,6,7,8,9],
+    preise:[0.80,1.20,1.50,2.40,2.50,3.50,4.20], stk:[4,6,8,10,12,16,20,24],
+    prozPer1:[1.5,2,2.5,3,4,5,6], prozX:[5,8,10,12,15,20,25], prozC:[100,50,75,60,80,120],
+    speed:[50,60,70,80,90], hoursB:[2,3,4,5,6],
+    cons:[5,6,7,8], distV:[50,100,150,200,250],
+    antiK:[24,36,48,60,72], antiKein:[60,72,120,144,180],
+    antiDist:[{d:240,sp:[40,60,80,120]},{d:300,sp:[50,60,75,100]},{d:180,sp:[45,60,90]}] },
+  logistik:{ label:'Logistik', items:'logistik', typ:'beide', contexts:['lohn','einkauf','prozent','tempo','alltag'],
+    lohn:[20,22,24,25,26,28,30], hoursA:[4,5,6,7,8,9,10,12],
+    preise:[0.80,1.20,1.50,2.40,3.50,4.20,4.80], stk:[6,8,10,12,15,20,24,30],
+    prozPer1:[1.5,2,2.5,3,4,5,6], prozX:[5,8,10,12,15,20,25,40], prozC:[100,75,60,80,120,150],
+    speed:[60,70,80,90,100,120], hoursB:[3,4,5,6,8],
+    cons:[6,7,8,9], distV:[100,150,200,250,300],
+    antiK:[36,48,60,72,120], antiKein:[120,144,180,240,360],
+    antiDist:[{d:300,sp:[50,60,75,100]},{d:360,sp:[60,72,90,120]},{d:480,sp:[60,80,120]}] },
+  praxis:{ label:'Coiffure & Praxis', items:'praxis', typ:'beide', contexts:['lohn','einkauf','prozent','tempo','alltag'],
+    lohn:[20,22,24,25,26,28], hoursA:[3,4,5,6,7,8,9],
+    preise:[0.80,1.20,1.80,2.40,3.50,4.20,4.80], stk:[3,4,5,6,8,10,12],
+    prozPer1:[1.5,2,2.5,3,4,5,6], prozX:[5,8,10,12,15,20,25,50], prozC:[100,75,60,80,120],
+    speed:[60,70,80,90,100], hoursB:[2,3,4,5,6],
+    cons:[5,6,7,8], distV:[50,100,150,200,250],
+    antiK:[24,36,48,60,72], antiKein:[60,72,120,144,180],
+    antiDist:[{d:240,sp:[40,60,80,120]},{d:300,sp:[50,60,75,100]},{d:360,sp:[60,72,90,120]}] },
   inf:{ label:'Informatik', items:'informatik', typ:'beide', contexts:['lohn','einkauf','prozent','tempo','alltag'],
     lohn:[24,26,28,30,32,35], hoursA:[4,5,6,7,8,9,10,12],
     preise:[1.50,2.40,3.50,4.20,4.80,6.50], stk:[4,5,6,8,10,12,16],
@@ -810,6 +866,9 @@ const ANTI_ARBEIT={
   apotheke:[['Fachfrauen','kontrollieren das Lager','\ud83d\udc8a'],['Mitarbeitende','kontrollieren die Lieferung','\ud83d\udce6'],['Personen','richten die Wochendosetten','\ud83d\uddd3\ufe0f']],
   gesundheit:[['Pflegefachfrauen','reinigen die Zimmer','\ud83d\udecf\ufe0f'],['Mitarbeitende','desinfizieren die Station','\ud83e\uddf4'],['Personen','bestücken die Pflegewagen','\ud83d\ude91']],
   betreuung:[['Betreuerinnen','gestalten den Gruppenraum','\ud83e\uddf8'],['Personen','organisieren das Sommerfest','\ud83c\udfaa'],['Mitarbeitende','reinigen den Spielplatz','\ud83e\uddf9']],
+  gastro:[['Köchinnen','rüsten das Gemüse','\ud83d\udd2a'],['Mitarbeitende','richten das Buffet an','\ud83c\udf7d\ufe0f'],['Bäckerinnen','formen die Zöpfe','\ud83e\udd56']],
+  logistik:[['Mitarbeitende','beladen den Lastwagen','\ud83d\ude9a'],['Logistikerinnen','kommissionieren die Bestellung','\ud83d\udce6'],['Personen','räumen das Hochregal ein','\ud83c\udfd7\ufe0f']],
+  praxis:[['Assistentinnen','sterilisieren die Instrumente','\ud83e\uddb7'],['Mitarbeitende','richten die Behandlungsplätze','\ud83e\ude91'],['Personen','räumen den Salon auf','\ud83d\udc87']],
   informatik:[['Entwicklerinnen','migrieren die Datenbank','\ud83d\uddc3\ufe0f'],['Technikerinnen','verkabeln ein Stockwerk','\ud83d\udd0c'],['Supporterinnen','bearbeiten den Ticketberg','\ud83c\udfab']]
 };
 const ANTI_VORRAT={
@@ -848,6 +907,27 @@ const ANTI_VORRAT={
     {e:'\u23f1\ufe0f', ein:'1 Kind', wer:'Kinder', einh:'Minuten',
      text:(a,b,c)=>`Die Vorlesezeit bleibt gleich. Bei ${a} Kindern sind das ${b} Minuten pro Kind. Wie viele Minuten sind es bei ${c} Kindern?`,
      kStr:K=>`ganze Vorlesezeit = ${K} Minuten`}],
+  gastro:[
+    {e:'\ud83c\udf3e', ein:'1 Filiale', wer:'Filialen', einh:'Tage',
+     text:(a,b,c)=>`Der Mehlvorrat reicht bei ${a} Filialen ${b} Tage. Wie lange reicht er bei ${c} Filialen?`,
+     kStr:K=>`1 Filiale = ${K} Tage`},
+    {e:'\u23f1\ufe0f', ein:'1 Blech', wer:'Bleche', einh:'Minuten',
+     text:(a,b,c)=>`Der Ofen ist gleich lang belegt. Bei ${a} Blechen bleiben ${b} Minuten pro Blech. Wie viele Minuten bleiben bei ${c} Blechen?`,
+     kStr:K=>`ganze Ofenzeit = ${K} Minuten`}],
+  logistik:[
+    {e:'\ud83d\udce6', ein:'1 Versandplatz', wer:'Versandplätze', einh:'Tage',
+     text:(a,b,c)=>`Der Vorrat an Verpackungsmaterial reicht bei ${a} Versandplätzen ${b} Tage. Wie lange reicht er bei ${c} Versandplätzen?`,
+     kStr:K=>`1 Versandplatz = ${K} Tage`},
+    {e:'\u23f1\ufe0f', ein:'1 Auftrag', wer:'Aufträge', einh:'Minuten',
+     text:(a,b,c)=>`Die Schicht dauert gleich lang. Bei ${a} Aufträgen bleiben ${b} Minuten pro Auftrag. Wie viele Minuten bleiben bei ${c} Aufträgen?`,
+     kStr:K=>`ganze Schicht = ${K} Minuten`}],
+  praxis:[
+    {e:'\ud83e\udde4', ein:'1 Behandlungsplatz', wer:'Behandlungsplätze', einh:'Tage',
+     text:(a,b,c)=>`Der Vorrat an Handschuhen reicht bei ${a} Behandlungsplätzen ${b} Tage. Wie lange reicht er bei ${c} Behandlungsplätzen?`,
+     kStr:K=>`1 Behandlungsplatz = ${K} Tage`},
+    {e:'\u23f1\ufe0f', ein:'1 Kundin', wer:'Kundinnen', einh:'Minuten',
+     text:(a,b,c)=>`Der Nachmittag ist gleich lang. Bei ${a} Kundinnen bleiben ${b} Minuten pro Person. Wie viele Minuten bleiben bei ${c} Kundinnen?`,
+     kStr:K=>`ganzer Nachmittag = ${K} Minuten`}],
   informatik:[
     {e:'\ud83d\udc04', ein:'1 Kuh', wer:'Kühe', einh:'Minuten',
      text:(a,b,c)=>`Der Melkroboter hat pro Durchgang ein festes Zeitfenster. Bei ${a} Kühen bleiben ${b} Minuten pro Kuh. Für wie viele Minuten pro Kuh müssen Sie ihn programmieren, wenn ${c} Kühe durchlaufen?`,
@@ -1248,6 +1328,9 @@ const FIGUREN={
   ags:   { bild:'kachel_figur_fabe.png', text:'Assistentin Gesundheit und Soziales EBA' },
   fabe:  { bild:'kachel_figur_fabe.png', text:'Fachfrau Betreuung EFZ' },
   inf:   { bild:'kachel_figur_informatik.png?v=3', text:'Informatikerin EFZ' },
+  gastro:  { bild:'', text:'Köchin EFZ · Bäckerin-Konditorin-Confiseurin EFZ' },
+  logistik:{ bild:'', text:'Logistikerin EFZ' },
+  praxis:  { bild:'', text:'Coiffeuse EFZ · Dental- und Praxisassistentin EFZ' },
 };
 function setzeFigur(key){
   const f=FIGUREN[key]||FIGUREN.dhefz, img=$('figurImg'), lab=$('figurLabel');
