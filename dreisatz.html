@@ -848,7 +848,7 @@ const ANTI_VORRAT={
      kStr:K=>`ganze Vorlesezeit = ${K} Minuten`}],
   informatik:[
     {e:'\ud83d\udc04', ein:'1 Kuh', wer:'Kühe', einh:'Minuten',
-     text:(a,b,c)=>`Der Melkroboter hat pro Durchgang ein festes Zeitfenster. Bei ${a} Kühen bleiben ${b} Minuten pro Kuh. Für wie viele Minuten pro Kuh musst du ihn programmieren, wenn ${c} Kühe durchlaufen?`,
+     text:(a,b,c)=>`Der Melkroboter hat pro Durchgang ein festes Zeitfenster. Bei ${a} Kühen bleiben ${b} Minuten pro Kuh. Für wie viele Minuten pro Kuh müssen Sie ihn programmieren, wenn ${c} Kühe durchlaufen?`,
      kStr:K=>`ganzes Zeitfenster = ${K} Minuten`},
     {e:'\ud83d\udce1', ein:'1 Gerät', wer:'Geräte', einh:'Mbit/s',
      text:(a,b,c)=>`Die Leitung wird gleichmässig aufgeteilt. Bei ${a} Geräten bekommt jedes ${b} Mbit/s. Wie viel bekommt jedes bei ${c} Geräten?`,
@@ -914,7 +914,7 @@ function g_tempo_anti(){
    Bewusst auch mit gesuchter *Menge* statt gesuchtem Preis — das ist die
    Frageform, die im Alltag am häufigsten vorkommt und bisher fehlte. */
 const ALLTAG_KAUF=[
-  {s:'Rose',           p:'Rosen',           e:'🌹', anlass:'Deine Freundin hat Geburtstag'},
+  {s:'Rose',           p:'Rosen',           e:'🌹', anlass:'Ihre Freundin hat Geburtstag'},
   {s:'Cupcake',        p:'Cupcakes',        e:'🧁', anlass:'Für die Geburtstagsparty'},
   {s:'Kinoticket',     p:'Kinotickets',     e:'🎬', anlass:'Ihr wollt ins Kino'},
   {s:'Badi-Eintritt',  p:'Badi-Eintritte',  e:'🏊', anlass:'Ein Nachmittag in der Badi'},
@@ -946,7 +946,7 @@ const beutelRezept   = neuerBeutel();
 function g_alltag_pro(){
   const w=Math.random();
 
-  /* --- 1. Budget → Menge: «Wie viele passen in dein Budget?» --- */
+  /* --- 1. Budget → Menge: «Wie viele passen ins Budget?» --- */
   if(w<0.4){
     const it=ausBeutel(beutelKauf, ALLTAG_KAUF);
     const einfach = LV.typ==='pro';
@@ -958,14 +958,14 @@ function g_alltag_pro(){
     const c=stueckpreis*k;
     const per1=Math.round((a/b)*1000)/1000;   /* Stück pro Franken */
     return { typ:'pro', kt:'alltag', emoji:it.e,
-      text:`${it.anlass}. ${a} ${it.p} kosten ${money(b)}. Wie viele ${it.p} bekommst du für ${money(c)}?`,
+      text:`${it.anlass}. ${a} ${it.p} kosten ${money(b)}. Wie viele ${it.p} bekommen Sie für ${money(c)}?`,
       aStr:money(b), bStr:`${a} ${it.p}`, cStr:money(c),
       calc1:`${a} : ${num(b)} = ${num(per1)}`, per1Str:`CHF 1 → ${num(per1)} ${it.p}`,
       calc2:`${num(per1)} · ${num(c)} = ${num(k)}`,
       warum1:`Auf CHF 1 herunter: durch ${num(b)} teilen.`,
       warum2:`Auf ${money(c)} hoch: mal ${num(c)}.`,
       A:b, B:a, C:c, ansUnit:it.p, answer:k,
-      hint:'Mehr Geld → mehr Stück: gerader Dreisatz. Achtung, gesucht ist hier die Menge, nicht der Preis. Zuerst: Wie viel bekommst du für CHF 1?' };
+      hint:'Mehr Geld → mehr Stück: gerader Dreisatz. Achtung, gesucht ist hier die Menge, nicht der Preis. Zuerst: Wie viel bekommen Sie für CHF 1?' };
   }
 
   /* --- 2. Party: mehr Gäste als geplant --- */
@@ -980,19 +980,19 @@ function g_alltag_pro(){
     const nachkaufen = Math.random()<0.6;
     if(nachkaufen){
       return { typ:'pro', kt:'alltag', emoji:it.e,
-        text:`Du organisierst eine Party. Für ${a} angemeldete Gäste hast du ${num(b)} ${it.p} gekauft. Jetzt kommen ${c} Leute – wie viel musst du noch besorgen?`,
+        text:`Sie organisieren eine Party. Für ${a} angemeldete Gäste haben Sie ${num(b)} ${it.p} gekauft. Jetzt kommen ${c} Leute – wie viel müssen Sie noch besorgen?`,
         aStr:`${a} Gäste`, bStr:`${num(b)} ${it.einh}`, cStr:`${c} Gäste → nachkaufen`,
         calc1:`${num(b)} : ${a} = ${num(it.pp)}`, per1Str:`1 Gast = ${num(it.pp)} ${it.einh}`,
         calc2:`${num(it.pp)} · ${c} = ${num(total)}`,
         calc3:`${num(total)} − ${num(b)} = ${num(nach)}`,
         warum1:`Auf 1 Gast herunter: durch ${a} teilen.`,
-        warum2:`Auf ${c} Gäste hoch: mal ${c} – so viel brauchst du insgesamt.`,
-        warum3:`Du hast schon ${num(b)} ${it.einh}. Nachkaufen musst du nur die Differenz.`,
+        warum2:`Auf ${c} Gäste hoch: mal ${c} – so viel brauchen Sie insgesamt.`,
+        warum3:`Sie haben schon ${num(b)} ${it.einh}. Nachkaufen müssen Sie nur die Differenz.`,
         A:a, B:b, C:c, ansUnit:it.einh, answer:nach,
-        hint:'Mehr Gäste → mehr Vorrat: gerader Dreisatz. Rechne zuerst den Bedarf pro Gast, dann den Gesamtbedarf – und ziehe am Schluss ab, was du schon hast.' };
+        hint:'Mehr Gäste → mehr Vorrat: gerader Dreisatz. Zuerst den Bedarf pro Gast rechnen, dann den Gesamtbedarf – und am Schluss abziehen, was schon da ist.' };
     }
     return { typ:'pro', kt:'alltag', emoji:it.e,
-      text:`Du organisierst eine Party. Für ${a} Gäste rechnest du mit ${num(b)} ${it.p}. Wie viel brauchst du für ${c} Gäste?`,
+      text:`Sie organisieren eine Party. Für ${a} Gäste rechnen Sie mit ${num(b)} ${it.p}. Wie viel brauchen Sie für ${c} Gäste?`,
       aStr:`${a} Gäste`, bStr:`${num(b)} ${it.einh}`, cStr:`${c} Gäste`,
       calc1:`${num(b)} : ${a} = ${num(it.pp)}`, per1Str:`1 Gast = ${num(it.pp)} ${it.einh}`,
       calc2:`${num(it.pp)} · ${c} = ${num(total)}`,
@@ -1010,7 +1010,7 @@ function g_alltag_pro(){
   if(c===a) c=a+2;
   const b=proPers*a, ans=proPers*c;
   return { typ:'pro', kt:'alltag', emoji:it.e,
-    text:`Das Rezept ist für ${a} Personen und braucht ${b} ${it.einh} ${it.z}. Ihr seid zu ${c} – wie viel ${it.z} brauchst du?`,
+    text:`Das Rezept ist für ${a} Personen und braucht ${b} ${it.einh} ${it.z}. Sie sind zu ${c} – wie viel ${it.z} brauchen Sie?`,
     aStr:`${a} Pers.`, bStr:`${b} ${it.einh}`, cStr:`${c} Pers.`,
     calc1:`${b} : ${a} = ${num(proPers)}`, per1Str:`1 Person = ${proPers} ${it.einh}`,
     calc2:`${num(proPers)} · ${c} = ${num(ans)}`,
@@ -1027,7 +1027,7 @@ function g_alltag_anti(){
   const b=K/a, ans=K/c;
   const ge=ausBeutel(beutelGeschenk, ALLTAG_GESCHENK);
   return { typ:'anti', kt:'alltag', emoji:ge.e,
-    text:`Ihr kauft zusammen ein Geschenk: ${ge.n}. Zu ${a} zahlt jede ${money(b)}. Wie viel zahlt jede, wenn ${c} mitmachen?`,
+    text:`Sie kaufen zusammen ein Geschenk: ${ge.n}. Zu ${a} zahlt jede Person ${money(b)}. Wie viel zahlt jede, wenn ${c} mitmachen?`,
     aStr:`${a} Pers.`, bStr:money(b), cStr:`${c} Pers.`,
     calc1:`${a} · ${num(b)} = ${num(K)}`, kStr:`${ge.n} kostet ${money(K)}`,
     calc2:`${num(K)} : ${c} = ${num(ans)}`,
