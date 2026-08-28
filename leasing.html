@@ -309,6 +309,7 @@ html.eingebettet body{ zoom:.82; }
     <div style="margin-top:14px;padding-top:12px;border-top:1px solid #EAF0F5;display:flex;gap:6px;flex-wrap:wrap;">
       <button class="btn geist" id="b-quiz">Quiz</button>
       <button class="btn geist" id="b-recht">Deine Rechte</button>
+      <button class="btn geist" id="b-falle">Die Unterschrift-Falle</button>
       <button class="btn geist" id="b-quellen">Zahlen &amp; Quellen</button>
     </div>
   </aside>
@@ -336,6 +337,29 @@ html.eingebettet body{ zoom:.82; }
     <h3>Zahlen &amp; Quellen</h3>
     <p class="unter">Stand August 2026. Wo eine Zahl eine Annahme ist, steht es dabei.</p>
     <ul class="qliste" id="quellenliste"></ul>
+  </div>
+</div>
+
+<!-- Overlay: Unterschrift-Falle -->
+<div class="overlay" id="ov-falle" role="dialog" aria-modal="true" aria-label="Wenn dich jemand fragt, ob du unterschreibst">
+  <div class="modal">
+    <button class="modal-x" data-zu="ov-falle" aria-label="Schliessen">&times;</button>
+    <h3>Wenn dich jemand fragt, ob du unterschreibst</h3>
+    <p class="unter">Eine Betrugsmasche, vor der die Polizei seit 2026 warnt – betroffen sind vor allem
+      junge Erwachsene. Sie zeigt, was «Vertragspartnerin sein» wirklich heisst.</p>
+
+    <div class="fakt warnung" style="margin-bottom:14px">
+      <b>So läuft es ab.</b> Jemand bietet dir mehrere hundert Franken im Monat, wenn du einen
+      Leasingvertrag auf deinen Namen unterschreibst. Das Auto fährt eine andere Person.
+      Zu Beginn heisst es, alles sei legal, es brauche ja nur deinen Namen.
+    </div>
+
+    <table class="tab" id="fallentabelle"></table>
+
+    <div class="fakt" style="margin-top:14px">
+      <b>Der Rat der Polizei ist kurz.</b> Nie einen Leasingvertrag für ein Fahrzeug unterschreiben,
+      das jemand anderes nutzt. Wer unterschreibt, ist Vertragspartei – unabhängig davon, wer fährt.
+    </div>
   </div>
 </div>
 
@@ -484,6 +508,15 @@ var WARNKARTEN = [
 
 /* --- Quiz --- */
 var QUIZ = [
+  { grp:'Die Unterschrift-Falle', q:'Jemand bietet dir CHF 400.– pro Monat, wenn du einen Leasingvertrag auf deinen Namen unterschreibst. Das Auto fährt er. Wer schuldet der Leasinggesellschaft die Raten?',
+    opts:['Die Person, die das Auto fährt','Du – du hast unterschrieben','Beide je zur Hälfte'], r:1,
+    fb:'Vertragspartei ist, wer unterschreibt. Wer fährt, spielt für die Leasinggesellschaft keine Rolle.' },
+  { grp:'Die Unterschrift-Falle', q:'Mit dem Auto wird zu schnell gefahren und geblitzt. Wer bekommt die Busse?',
+    opts:['Die Person am Steuer, die Polizei ermittelt sie','Du als Halter oder Halterin','Niemand, das Auto gehört ja der Leasinggesellschaft'], r:1,
+    fb:'Die Busse geht an die Halterin oder den Halter – also an die Person im Fahrzeugausweis. Das bist du.' },
+  { grp:'Die Unterschrift-Falle', q:'«Ich habe ja nur meinen Namen gegeben.» Schützt dich das vor Strafverfolgung?',
+    opts:['Ja, du bist eindeutig Opfer','Nein, es können Ermittlungen wegen Veruntreuung laufen','Ja, sofern du das Geld zurückgibst'], r:1,
+    fb:'Betroffene sind Opfer und können zugleich beschuldigt werden. Der Name allein ist keine Entlastung.' },
   { grp:'Die Kosten', q:'Die Werbung nennt CHF 299.– pro Monat. Was kostet das Auto tatsächlich pro Monat, wenn Sie die vereinbarten 10’000 km einhalten?',
     opts:['Etwa CHF 400.–','Etwa CHF 870.–','Etwa CHF 1’500.–'], r:1,
     fb:'Rate, Sonderzahlung, Vollkasko, Steuer, Service und Treibstoff ergeben zusammen rund CHF 867.– – fast das Dreifache.' },
@@ -516,6 +549,24 @@ var QUIZ = [
     fb:'Genau das macht es teuer. Im Kassensturz-Fall ergab das eine Schlussrechnung von CHF 9’766.30.' }
 ];
 
+var FALLE = [
+  ['Die Raten bleibst du schuldig',
+   'Die versprochene monatliche Zahlung hört irgendwann auf. Dann meldet sich die Leasinggesellschaft – bei dir, nicht bei der Person, die fährt. Du hast unterschrieben, du zahlst.',
+   'Vertragsrecht / KKG'],
+  ['Das Auto ist weg',
+   'Das Fahrzeug verschwindet in der Regel in kriminellen Netzwerken. Zurückgeben kannst du also nichts, die Verpflichtung bleibt trotzdem bestehen.',
+   'Polizeiliche Fallbeschreibung'],
+  ['Bussen kommen dazu',
+   'Verkehrsdelikte, die mit dem Auto begangen werden, landen bei der Halterin oder dem Halter – also bei dir.',
+   'SVG / Halterhaftung'],
+  ['Du bist nicht nur Opfer',
+   'Gegen Betroffene können Ermittlungen wegen Veruntreuung laufen. Wer wissentlich einen Vertrag für Dritte unterschreibt, macht sich unter Umständen selbst strafbar.',
+   'StGB Art. 138'],
+  ['Wer ist betroffen',
+   'Im Kanton Jura vier junge Frauen und Männer, weitere Fälle in Genf und Neuenburg. Die Masche zielt gezielt auf junge Erwachsene mit wenig Vertragserfahrung.',
+   'Kantonspolizei Jura, 2026']
+];
+
 var RECHTE = [
   ['Autoleasing ist ein Konsumkredit','Das Konsumkreditgesetz gilt, wenn es um eine bewegliche Sache für den privaten Gebrauch geht und der Vertrag bei vorzeitiger Auflösung höhere Raten vorsieht. Praktisch alle Privatleasingverträge erfüllen das.','KKG Art. 1 Abs. 2 lit. a'],
   ['14 Tage Widerruf','Schriftlich, ohne Begründung. Der Vertrag muss dich auf dieses Recht und die Frist hinweisen.','KKG Art. 16'],
@@ -528,6 +579,7 @@ var RECHTE = [
 ];
 
 var QUELLEN = [
+  ['Betrugsmasche «Leasing für Dritte»: Polizei warnt, vor allem junge Erwachsene betroffen; Fälle im Jura, in Genf und Neuenburg','SRF News, 2026','https://www.srf.ch/news/dialog/neue-betrugsmasche-polizei-warnt-vor-leasingfalle-vor-allem-junge-betroffen'],
   ['Höchstzinssatz Leasing 10 % seit 1.1.2026 (vorher 11 %); 12 % nur für Überziehungs- und Kartenkredite','Verordnung des EJPD über den Höchstzinssatz für Konsumkredite, Art. 1','https://www.admin.ch/de/newnsb/DDMAgqQLfpn8NHgjWIIrt'],
   ['Konsumkreditgesetz: Geltung für Leasing, Widerrufsrecht 14 Tage, Kreditfähigkeitsprüfung, vorzeitige Rückgabe','KKG, SR 221.214.1','https://www.schuldeninfo.ch/files/_documents/stichwoerter/2022-02%20stichwort%20leasing.pdf'],
   ['Vorzeitige Rückgabe: realer Fall mit Schlussrechnung CHF 9’766.30 (CHF 3’500 Auflösung, über CHF 5’000 für 12’000 Mehrkilometer)','SRF Kassensturz','https://www.srf.ch/sendungen/kassensturz-espresso/konsum-leasing-bei-vorzeitiger-rueckgabe-schnappt-die-schuldenfalle-zu'],
@@ -856,6 +908,7 @@ mVergessen.addEventListener('click', function(){ setzeBereich('vergessen'); });
 
 function auf(id){ document.getElementById(id).classList.add('offen'); }
 document.getElementById('b-recht').addEventListener('click', function(){ auf('ov-recht'); });
+document.getElementById('b-falle').addEventListener('click', function(){ auf('ov-falle'); });
 document.getElementById('b-quellen').addEventListener('click', function(){ auf('ov-quellen'); });
 document.getElementById('b-quiz').addEventListener('click', function(){ quizBauen(); auf('ov-quiz'); });
 document.querySelectorAll('[data-zu]').forEach(function(b){
@@ -871,6 +924,10 @@ document.addEventListener('keydown', function(e){
 var rechteTab = document.getElementById('rechtetabelle');
 rechteTab.innerHTML = '<tr><th>Thema</th><th>Was gilt</th><th>Grundlage</th></tr>' +
   RECHTE.map(function(r){ return '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td><td>' + r[2] + '</td></tr>'; }).join('');
+
+var falleTab = document.getElementById('fallentabelle');
+falleTab.innerHTML = '<tr><th>Was passiert</th><th>Warum es dich trifft</th><th>Grundlage</th></tr>' +
+  FALLE.map(function(r){ return '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td><td>' + r[2] + '</td></tr>'; }).join('');
 
 var quellenListe = document.getElementById('quellenliste');
 QUELLEN.forEach(function(q){
