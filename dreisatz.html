@@ -1047,7 +1047,7 @@ const GENS={
 /* ---------- Zustand & Auswahl ---------- */
 let selTyp='beide';
 let selKt={lohn:true,einkauf:true,prozent:true,tempo:true,alltag:true};
-let cur=null, artChosen=null, answered=false;
+let cur=null, artChosen=null, answered=false, versuch=0, ersteDiagnose=[];
 let score={correct:0,total:0,streak:0,best:0,artOk:0,numOk:0};
 let fehler={art:0,gegenart:0,schritt1:0,komma:0,rund:0,rechnen:0};
 
@@ -1066,7 +1066,7 @@ function buildPool(){
 function neueAufgabe(){
   const pool=buildPool();
   cur=ausBeutel(beutelGen, pool)();
-  artChosen=null; answered=false;
+  artChosen=null; answered=false; versuch=0; ersteDiagnose=[];
   $('qtext').textContent=(cur.emoji?cur.emoji+' ':'')+cur.text;
   $('qmeta').textContent='';
   $('art-pro').className='artbtn'; $('art-anti').className='artbtn';
@@ -1075,7 +1075,7 @@ function neueAufgabe(){
   $('feedback').className='feedback'; $('feedback').innerHTML='';
   $('solution').className='solution'; $('solution').innerHTML='';
   $('hintbox').className='hintbox'; $('hintbox').textContent=cur.hint;
-  $('check').disabled=false;
+  $('check').disabled=false; $('check').textContent='Prüfen';
   $('answer').focus();
 }
 
@@ -1099,52 +1099,7 @@ function schemaHTML(g){
   <div class="result-line">Ergebnis: ${num(g.answer)} ${g.ansUnit==='CHF'?'CHF':g.ansUnit}</div>`;
 }
 
-function pruefen(){
-  if(!cur || answered) return;
-  let neuerPokal=-1, serieEnde=0;
-  const raw=$('answer').value.trim().replace(',','.').replace(/[^0-9.\-]/g,'');
-  if(raw==='' && artChosen===null){ return; }
-  const val=parseFloat(raw);
-  const artOk = artChosen===cur.typ;
-  const numOk = !isNaN(val) && Math.abs(val-cur.answer)<0.005;
-  if(artOk) score.artOk++;
-  if(numOk) score.numOk++;
-  answered=true;
-  $('check').disabled=true; $('answer').disabled=true;
-
-  $('art-pro').className='artbtn'+(cur.typ==='pro'?' correct':(artChosen==='pro'?' wrong':''));
-  $('art-anti').className='artbtn'+(cur.typ==='anti'?' correct':(artChosen==='anti'?' wrong':''));
-
-  const fb=$('feedback');
-  if(artOk && numOk){
-    fb.className='feedback show ok';
-    fb.innerHTML='✓ Richtig! Art und Ergebnis stimmen.';
-    score.correct++; score.streak++;
-    const stufe = POKALE.findIndex(p=>p.n===score.streak);
-    if(stufe>=0 && score.streak>score.best){ neuerPokal=stufe; }
-    if(score.streak>score.best) score.best=score.streak;
-  } else {
-    fb.className='feedback show no';
-    let msg=[];
-    if(!artOk) msg.push(`Art: es ist ein <b>${cur.typ==='pro'?'gerader':'ungerader'}</b> Dreisatz`);
-    if(!numOk) msg.push(`richtiges Ergebnis: <b>${num(cur.answer)} ${cur.ansUnit==='CHF'?'CHF':cur.ansUnit}</b>`);
-    fb.innerHTML='✗ Noch nicht ganz. '+msg.join(' · ')+'.';
-    const kats = diagnose(val, artOk, numOk);
-    if(kats.length){
-      fb.innerHTML += '<div class="an-diag">🔍 '+kats.map(k=>FSATZ[k]).join(' ')+'</div>';
-    }
-    serieEnde = score.streak;
-    score.streak=0;
-  }
-  score.total++;
-  updateScore();
-
-  if(neuerPokal>=0){ frischerPokal=neuerPokal; renderPokale(); feiern(neuerPokal); }
-  if(serieEnde>=3){
-    renderAnalyse('Serie beendet nach '+serieEnde+' richtigen in Folge');
-    $('analyse').scrollIntoView({block:'nearest',behavior:'smooth'});
-  }
-
+function loesungZeigen(){
   const sol=$('solution');
   sol.className='solution show';
   sol.innerHTML=`<h3 style="margin:4px 0 6px;color:#3C6E73;font-size:13px;text-transform:uppercase;letter-spacing:.5px;">Lösungsweg <span class="tag ${cur.typ}">${cur.typ==='pro'?'gerader':'ungerader'} Dreisatz</span></h3>
@@ -1152,6 +1107,81 @@ function pruefen(){
       <div class="srow"><span class="lhs">${cur.aStr}</span><span class="eq">=</span><span class="rhs">${cur.bStr}</span></div>
       <div class="srow"><span class="lhs">${cur.cStr}</span><span class="eq">=</span><span class="rhs">${num(cur.answer)} ${cur.ansUnit==='CHF'?'CHF':cur.ansUnit}</span></div>
     </div>`+schemaHTML(cur);
+}
+
+/* Aufgabe abschliessen: Art aufdecken, Rueckmeldung setzen, Loesungsweg zeigen. */
+function abschliessen(ok, text){
+  answered=true;
+  $('check').disabled=true; $('answer').disabled=true;
+  $('check').textContent='Prüfen';
+  $('art-pro').className='artbtn'+(cur.typ==='pro'?' correct':(artChosen==='pro'?' wrong':''));
+  $('art-anti').className='artbtn'+(cur.typ==='anti'?' correct':(artChosen==='anti'?' wrong':''));
+  const fb=$('feedback');
+  fb.className='feedback show '+(ok?'ok':'no');
+  fb.innerHTML=(ok?'✓ ':'✗ ')+text;
+  if(ersteDiagnose.length){
+    fb.innerHTML += '<div class="an-diag">🔍 Im ersten Versuch: '+ersteDiagnose.map(k=>FSATZ[k]).join(' ')+'</div>';
+  }
+  loesungZeigen();
+}
+
+function pruefen(){
+  if(!cur || answered) return;
+  const raw=$('answer').value.trim().replace(',','.').replace(/[^0-9.\-]/g,'');
+  if(raw==='' && artChosen===null){ return; }
+  const val=parseFloat(raw);
+  const artOk = artChosen===cur.typ;
+  const numOk = !isNaN(val) && Math.abs(val-cur.answer)<0.005;
+
+  /* ---------- erster Versuch ---------- */
+  if(versuch===0){
+    score.total++;
+    if(artOk) score.artOk++;
+    if(numOk) score.numOk++;
+
+    if(artOk && numOk){
+      score.correct++; score.streak++;
+      let neuerPokal=-1;
+      const stufe = POKALE.findIndex(p=>p.n===score.streak);
+      if(stufe>=0 && score.streak>score.best) neuerPokal=stufe;
+      if(score.streak>score.best) score.best=score.streak;
+      abschliessen(true,'Richtig! Art und Ergebnis stimmen.');
+      updateScore();
+      if(neuerPokal>=0){ frischerPokal=neuerPokal; renderPokale(); feiern(neuerPokal); }
+      return;
+    }
+
+    /* Fehler: Diagnose merken, aber noch nicht verraten, welcher Teil falsch war. */
+    ersteDiagnose = diagnose(val, artOk, numOk);
+    versuch=1;
+    const fb=$('feedback');
+    fb.className='feedback show no';
+    fb.innerHTML='✗ Da stimmt noch etwas nicht. Schauen Sie <b>beide Teile</b> nochmals an – '
+               + 'die Art und die Rechnung. Sie haben einen zweiten Versuch.';
+    $('check').textContent='Nochmals prüfen';
+    $('answer').focus();
+    updateScore();
+    return;
+  }
+
+  /* ---------- zweiter Versuch ---------- */
+  let serieEnde=0;
+  if(artOk && numOk){
+    score.streak = Math.max(0, score.streak-1);
+    abschliessen(true,'Im zweiten Anlauf richtig. Die Serie fällt eine Stufe zurück.');
+  } else {
+    serieEnde = score.streak;
+    score.streak = 0;
+    let msg=[];
+    if(!artOk) msg.push(`Art: es ist ein <b>${cur.typ==='pro'?'gerader':'ungerader'}</b> Dreisatz`);
+    if(!numOk) msg.push(`richtiges Ergebnis: <b>${num(cur.answer)} ${cur.ansUnit==='CHF'?'CHF':cur.ansUnit}</b>`);
+    abschliessen(false,'Auch im zweiten Versuch nicht ganz. '+msg.join(' · ')+'.');
+  }
+  updateScore();
+  if(serieEnde>=3){
+    renderAnalyse('Serie beendet nach '+serieEnde+' richtigen in Folge');
+    $('analyse').scrollIntoView({block:'nearest',behavior:'smooth'});
+  }
 }
 
 function updateScore(){
