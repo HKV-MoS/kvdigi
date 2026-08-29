@@ -1,0 +1,308 @@
+<title>Rückmeldung P26A</title>
+<style>
+  :root{
+    color-scheme: light;
+    --plane:#eeefec; --surface:#fcfcfb;
+    --ink-1:#0b0b0b; --ink-2:#52514e; --ink-3:#8d8b85;
+    --hair:#e4e3dc; --rule:#c3c2b7;
+    --p1:#86b8b0; --p2:#589c91; --p2h:#448e82; --p3:#307f74; --p4:#155f55; --p5:#003936;
+    --leer:#d9d8d1;
+    --schatten:0 1px 2px rgba(11,30,27,.06), 0 8px 28px -10px rgba(11,30,27,.18);
+    --ring:#fcfcfb;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:where(:not([data-theme="light"])){
+      color-scheme: dark;
+      --plane:#0d0d0d; --surface:#1a1a19;
+      --ink-1:#ffffff; --ink-2:#c3c2b7; --ink-3:#898781;
+      --hair:#2c2c2a; --rule:#383835;
+      --p1:#cfe6e2; --p2:#a9d0ca; --p2h:#96c5be; --p3:#84bab1; --p4:#5fa499; --p5:#3a8e81;
+      --leer:#3a3a37;
+      --schatten:0 1px 2px rgba(0,0,0,.5), 0 10px 30px -12px rgba(0,0,0,.7);
+      --ring:#1a1a19;
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --plane:#0d0d0d; --surface:#1a1a19;
+    --ink-1:#ffffff; --ink-2:#c3c2b7; --ink-3:#898781;
+    --hair:#2c2c2a; --rule:#383835;
+    --p1:#cfe6e2; --p2:#a9d0ca; --p2h:#96c5be; --p3:#84bab1; --p4:#5fa499; --p5:#3a8e81;
+    --leer:#3a3a37;
+    --schatten:0 1px 2px rgba(0,0,0,.5), 0 10px 30px -12px rgba(0,0,0,.7);
+    --ring:#1a1a19;
+  }
+
+  html,body{margin:0; background:var(--plane);}
+  .wrap{
+    padding:38px 34px; box-sizing:border-box;
+    font:400 16px/1.45 "Segoe UI",system-ui,-apple-system,"Helvetica Neue",sans-serif;
+    color:var(--ink-1);
+  }
+  .karte{
+    max-width:1000px; margin:0 auto; background:var(--surface);
+    border-radius:18px; padding:40px 46px 34px; box-shadow:var(--schatten);
+  }
+
+  h1{font-size:34px; line-height:1.1; margin:0 0 8px; letter-spacing:-.015em;}
+  .unter{margin:0 0 4px; color:var(--ink-2); font-size:15.5px;}
+  .kopfregel{height:1px; background:var(--hair); margin:24px 0 4px;}
+
+  .zeile{display:grid; grid-template-columns:196px 1fr 84px; align-items:center;
+         column-gap:22px; padding:9px 0; border-bottom:1px solid var(--hair);}
+  .zeile.ende{border-bottom:0;}
+
+  .stufe{text-align:right;}
+  .sterne{display:block; font-size:13px; letter-spacing:2px; line-height:1; margin-bottom:5px;}
+  .name{font-size:16.5px; font-weight:600; color:var(--ink-1); letter-spacing:-.005em;}
+  .zwischen .name{font-size:14.5px; font-weight:500; color:var(--ink-2);}
+  .zwischen .zusatz{display:block; font-size:12.5px; color:var(--ink-3); margin-top:1px;}
+  .leer-zeile .name{font-weight:500; color:var(--ink-2);}
+
+  .punkte{display:flex; flex-wrap:wrap; gap:7px; align-content:center; min-height:26px;}
+  .pkt{width:19px; height:19px; border-radius:50%;
+       box-shadow:0 0 0 2px var(--ring), inset 0 -1px 2px rgba(0,0,0,.14);}
+  .zwischen .pkt{width:16px; height:16px;}
+
+  .keine{display:flex; align-items:center; gap:10px; color:var(--ink-3); font-size:13.5px;}
+  .keine .spur{flex:0 0 96px; height:2px; border-radius:1px;
+               background:repeating-linear-gradient(90deg,var(--leer) 0 6px,transparent 6px 12px);}
+
+  .zahl{text-align:right; white-space:nowrap;}
+  .zahl b{font-size:27px; font-weight:700; letter-spacing:-.02em;}
+  .zahl span{display:block; font-size:12.5px; color:var(--ink-2); margin-top:1px;}
+  .leer-zeile .zahl b{color:var(--ink-3); font-weight:600;}
+  .leer-zeile .zahl span{color:var(--ink-3);}
+
+  .skala{margin:22px 0 0; padding:22px 0 0; border-top:1px solid var(--rule);}
+  .skala-titel{font-size:12.5px; letter-spacing:.09em; text-transform:uppercase;
+               color:var(--ink-3); margin:0 0 18px;}
+  .band{position:relative; height:12px; border-radius:6px; background:var(--leer);}
+  .band-voll{position:absolute; left:0; top:0; bottom:0; width:40%; border-radius:6px 0 0 6px;
+             background:linear-gradient(90deg,var(--p1),var(--p2) 45%,var(--p3));}
+  .marker{position:absolute; top:-9px; width:3px; height:30px; border-radius:2px; background:var(--ink-1);
+          box-shadow:0 0 0 3px var(--surface);}
+  .marker-t{position:absolute; top:28px; transform:translateX(-50%); white-space:nowrap;
+            font-size:13.5px; color:var(--ink-1); font-weight:650; text-align:center;}
+  .marker-t em{display:block; font-style:normal; font-weight:400; font-size:11.5px; color:var(--ink-3);}
+  .achsbeschriftung{display:flex; justify-content:space-between; margin-top:62px;
+                    font-size:12px; color:var(--ink-3);}
+
+  .fuss{margin:24px 0 0; padding-top:18px; border-top:1px solid var(--hair);
+        display:flex; justify-content:space-between; align-items:flex-end; gap:26px;}
+  .aussage{font-size:16px; line-height:1.45; color:var(--ink-2); margin:0; max-width:640px;}
+  .aussage strong{color:var(--ink-1); font-weight:650;}
+  .quelle{margin:9px 0 0; font-size:12px; color:var(--ink-3);}
+  .marke{text-align:right; white-space:nowrap;}
+  .marke img{display:block; width:132px; height:auto; margin-left:auto;}
+  @media (prefers-color-scheme: dark){
+    :root:where(:not([data-theme="light"])) .marke img{filter:brightness(0) invert(1); opacity:.92;}
+  }
+  :root[data-theme="dark"] .marke img{filter:brightness(0) invert(1); opacity:.92;}
+  .marke span{display:block; margin-top:6px; font-size:11.5px; color:var(--ink-3);}
+
+  details.tab{margin-top:16px; font-size:13px; color:var(--ink-3);}
+  details.tab summary{cursor:pointer;}
+  details.tab table{border-collapse:collapse; margin-top:10px; font-size:13px; color:var(--ink-2);}
+  details.tab th,details.tab td{border:1px solid var(--hair); padding:5px 13px; text-align:left; font-weight:400;}
+  details.tab th{color:var(--ink-1); font-weight:600;}
+
+
+  /* ---- Aufbau-Animation: erst zählen, dann einordnen ---- */
+  .pkt{opacity:0; transform:scale(.4);}
+  .laeuft .pkt{animation:auf .34s cubic-bezier(.34,1.4,.5,1) forwards;}
+  @keyframes auf{to{opacity:1; transform:scale(1);}}
+
+  .keine{opacity:0;}
+  .laeuft .keine{animation:ein .5s ease forwards;}
+  @keyframes ein{to{opacity:1;}}
+
+  .band-voll{width:0;}
+  .laeuft .band-voll{transition:width 1.1s cubic-bezier(.4,0,.2,1);}
+  .marker,.marker-t{opacity:0;}
+  .laeuft .marker,.laeuft .marker-t{transition:opacity .45s ease .9s, left 1.1s cubic-bezier(.4,0,.2,1);}
+  .laeuft .marker.da,.laeuft .marker-t.da{opacity:1;}
+
+  @media (prefers-reduced-motion: reduce){
+    .pkt,.keine,.marker,.marker-t{opacity:1 !important; transform:none !important; animation:none !important;}
+    .band-voll{transition:none !important;}
+  }
+  @media print{
+    .pkt,.keine,.marker,.marker-t{opacity:1 !important; transform:none !important; animation:none !important;}
+  }
+
+  /* eingebettet (iframe): kein Aussenrand, Karte füllt den Rahmen */
+  body.eingebettet .wrap{padding:0;}
+  body.eingebettet .karte{max-width:none; border-radius:0; box-shadow:none; padding:26px 30px 22px;}
+  body.eingebettet{background:var(--surface);}
+
+  @media print{
+    html,body{background:#fff;}
+    .wrap{padding:0;} .karte{box-shadow:none; max-width:none; padding:0; border-radius:0;}
+    details.tab{display:none;}
+    h1{font-size:26px; margin-bottom:5px;}
+    .unter{font-size:12.5px; margin-bottom:2px;}
+    .kopfregel{margin:14px 0 2px;}
+    .zeile{padding:5px 0; grid-template-columns:172px 1fr 76px;}
+    .sterne{font-size:11px; margin-bottom:3px;}
+    .name{font-size:14px;} .zwischen .name{font-size:12.5px;}
+    .zwischen .zusatz{font-size:11px;}
+    .pkt{width:15px; height:15px; box-shadow:none;}
+    .zwischen .pkt{width:13px; height:13px;}
+    .punkte{gap:6px; min-height:20px;}
+    .keine{font-size:11.5px;}
+    .zahl b{font-size:21px;} .zahl span{font-size:11px;}
+    .skala{margin-top:14px; padding-top:14px;}
+    .skala-titel{font-size:11px; margin-bottom:12px;}
+    .band{height:10px;}
+    .marker{top:-7px; height:24px; box-shadow:none;}
+    .marker-t{top:22px; font-size:12px;}
+    .marker-t em{font-size:10.5px;}
+    .achsbeschriftung{margin-top:48px; font-size:10.5px;}
+    .fuss{margin-top:14px; padding-top:12px;}
+    .aussage{font-size:13px; max-width:520px;}
+    .quelle{font-size:10.5px; margin-top:6px;}
+    .marke img{width:112px;} .marke span{font-size:10.5px;}
+  }
+  @media (max-width:760px){
+    .zeile{grid-template-columns:120px 1fr 66px; column-gap:14px;}
+    h1{font-size:25px;} .zahl b{font-size:22px;}
+  }
+</style>
+
+<div class="wrap"><div class="karte">
+
+  <h1>Diese Prüfung war …</h1>
+  <p class="unter">Rückmeldung der Klasse P26A · ABU Thema 1 «Ich beginne einen neuen Lebensabschnitt»</p>
+  <p class="unter" style="color:var(--ink-3);font-size:14px">Jeder Punkt ist eine Stimme · 23 Stimmen</p>
+
+  <div class="kopfregel"></div>
+
+  <div class="zeile">
+    <div class="stufe"><span class="sterne" style="color:var(--p1)">★</span><span class="name">bubi</span></div>
+    <div class="punkte" id="r1"></div>
+    <div class="zahl"><b>1</b><span>4 %</span></div>
+  </div>
+
+  <div class="zeile">
+    <div class="stufe"><span class="sterne" style="color:var(--p2)">★★</span><span class="name">einfach</span></div>
+    <div class="punkte" id="r2"></div>
+    <div class="zahl"><b>10</b><span>43 %</span></div>
+  </div>
+
+  <div class="zeile zwischen">
+    <div class="stufe">
+      <span class="sterne" style="color:var(--p2h)">★★<span style="opacity:.4">★</span></span>
+      <span class="name">dazwischen</span><span class="zusatz">einfach / mittel</span>
+    </div>
+    <div class="punkte" id="r3"></div>
+    <div class="zahl"><b>3</b><span>13 %</span></div>
+  </div>
+
+  <div class="zeile">
+    <div class="stufe"><span class="sterne" style="color:var(--p3)">★★★</span><span class="name">mittel</span></div>
+    <div class="punkte" id="r4"></div>
+    <div class="zahl"><b>9</b><span>39 %</span></div>
+  </div>
+
+  <div class="zeile leer-zeile">
+    <div class="stufe"><span class="sterne" style="color:var(--leer)">★★★★</span><span class="name">schwer</span></div>
+    <div class="keine"><span class="spur"></span>keine Stimme</div>
+    <div class="zahl"><b>0</b><span>0 %</span></div>
+  </div>
+
+  <div class="zeile leer-zeile ende">
+    <div class="stufe"><span class="sterne" style="color:var(--leer)">★★★★★</span><span class="name">chuck norris</span></div>
+    <div class="keine"><span class="spur"></span>keine Stimme</div>
+    <div class="zahl"><b>0</b><span>0 %</span></div>
+  </div>
+
+  <div class="skala">
+    <p class="skala-titel">Wo die Klasse steht</p>
+    <div class="band">
+      <div class="band-voll"></div>
+      <div class="marker" id="mM"></div>
+      <div class="marker-t" id="tM"><span>Ø</span><em>Durchschnitt</em></div>
+    </div>
+    <div class="achsbeschriftung">
+      <span>★ bubi</span><span>★★ einfach</span><span>★★★ mittel</span>
+      <span>★★★★ schwer</span><span>★★★★★ chuck norris</span>
+    </div>
+  </div>
+
+  <div class="fuss">
+    <div>
+      <p class="aussage"><strong>13 von 23 stufen die Prüfung als «einfach» oder leichter ein.</strong>
+      Oberhalb von «mittel» hat niemand angekreuzt – die obere Hälfte der Skala bleibt leer.</p>
+      <p class="quelle">Erhebung im Anschluss an die Prüfung, August 2026 · Strichliste an der Wandtafel</p>
+    </div>
+    <div class="marke"><img src="hkv_logo.png" alt="HKV Aarau"><span>Handelsschule KV Aarau</span></div>
+  </div>
+
+  <details class="tab">
+    <summary>Zahlen als Tabelle</summary>
+    <table>
+      <tr><th>Stufe</th><th>Stimmen</th><th>Anteil</th></tr>
+      <tr><td>★ bubi</td><td>1</td><td>4 %</td></tr>
+      <tr><td>★★ einfach</td><td>10</td><td>43 %</td></tr>
+      <tr><td>dazwischen (einfach / mittel)</td><td>3</td><td>13 %</td></tr>
+      <tr><td>★★★ mittel</td><td>9</td><td>39 %</td></tr>
+      <tr><td>★★★★ schwer</td><td>0</td><td>0 %</td></tr>
+      <tr><td>★★★★★ chuck norris</td><td>0</td><td>0 %</td></tr>
+      <tr><th>Total</th><th>23</th><th>100 %</th></tr>
+    </table>
+  </details>
+
+</div></div>
+
+<script>
+  if (window.self !== window.top) document.body.classList.add("eingebettet");
+  const daten = [["r1",1,"--p1"],["r2",10,"--p2"],["r3",3,"--p2h"],["r4",9,"--p3"]];
+  const alle = [];
+  for (const [id,n,farbe] of daten){
+    const ziel = document.getElementById(id);
+    for (let i=0;i<n;i++){
+      const d = document.createElement("span");
+      d.className = "pkt";
+      d.style.background = "var(" + farbe + ")";
+      ziel.appendChild(d); alle.push(d);
+    }
+  }
+
+  const werte = [[1,1],[2,10],[2.5,3],[3,9],[4,0],[5,0]];
+  const anz = werte.reduce(function(a,x){return a+x[1];},0);
+  const schnitt = werte.reduce(function(a,x){return a+x[0]*x[1];},0)/anz;
+  const pos = (schnitt-1)/4*100;
+  const marker = document.getElementById("mM");
+  const tafel  = document.getElementById("tM");
+  tafel.querySelector("span").textContent = "\u00d8 " + schnitt.toFixed(1);
+
+  function auffuehren(){
+    const karte = document.querySelector(".karte");
+    karte.classList.remove("laeuft");
+    alle.forEach(function(d){ d.style.animationDelay = ""; });
+    marker.classList.remove("da"); tafel.classList.remove("da");
+    document.querySelector(".band-voll").style.width = "0";
+    marker.style.left = "-1.5px"; tafel.style.left = "0%";
+    void karte.offsetWidth;                       // Neustart erzwingen
+    karte.classList.add("laeuft");
+    alle.forEach(function(d,i){ d.style.animationDelay = (120 + i*45) + "ms"; });
+    const nachDenPunkten = 120 + alle.length*45 + 200;
+    setTimeout(function(){
+      document.querySelector(".band-voll").style.width = pos + "%";
+      marker.style.left = "calc(" + pos + "% - 1.5px)";
+      tafel.style.left = pos + "%";
+      marker.classList.add("da"); tafel.classList.add("da");
+    }, nachDenPunkten);
+  }
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+    document.querySelector(".band-voll").style.width = pos + "%";
+    marker.style.left = "calc(" + pos + "% - 1.5px)";
+    tafel.style.left = pos + "%";
+  } else {
+    auffuehren();
+    document.querySelector(".karte").addEventListener("click", auffuehren);
+    document.title = "Rückmeldung P26A";
+  }
+</script>
