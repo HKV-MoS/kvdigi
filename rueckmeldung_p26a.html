@@ -1,3 +1,5 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Rückmeldung P26A</title>
 <style>
   :root{
@@ -132,9 +134,11 @@
   }
 
   /* eingebettet (iframe): kein Aussenrand, Karte füllt den Rahmen */
-  body.eingebettet .wrap{padding:0;}
-  body.eingebettet .karte{max-width:none; border-radius:0; box-shadow:none; padding:26px 30px 22px;}
-  body.eingebettet{background:var(--surface);}
+  body.eingebettet{background:var(--surface); overflow:hidden;}
+  body.eingebettet .wrap{padding:0; display:flex; justify-content:center;}
+  body.eingebettet .karte{max-width:1040px; width:100%; border-radius:0; box-shadow:none;
+                          padding:22px 30px 18px; transform-origin:top center;}
+  body.eingebettet .karte details.tab{display:none;}
 
   @media print{
     html,body{background:#fff;}
@@ -256,7 +260,8 @@
 </div></div>
 
 <script>
-  if (window.self !== window.top) document.body.classList.add("eingebettet");
+  const imRahmen = window.self !== window.top;
+  if (imRahmen) document.body.classList.add("eingebettet");
   const daten = [["r1",1,"--p1"],["r2",10,"--p2"],["r3",3,"--p2h"],["r4",9,"--p3"]];
   const alle = [];
   for (const [id,n,farbe] of daten){
@@ -304,5 +309,23 @@
     auffuehren();
     document.querySelector(".karte").addEventListener("click", auffuehren);
     document.title = "Rückmeldung P26A";
+  }
+
+  // Im Rahmen so verkleinern, dass alles ohne Scrollen sichtbar ist
+  function einpassen(){
+    if (!imRahmen) return;
+    const karte = document.querySelector(".karte");
+    karte.style.zoom = ""; karte.style.transform = "";
+    const noetig = karte.scrollHeight, breit = karte.scrollWidth;
+    const f = Math.min(1, (window.innerHeight - 4) / noetig, (window.innerWidth - 4) / breit);
+    if (f >= 0.999) return;
+    if (CSS.supports("zoom", "0.8")) karte.style.zoom = f;
+    else karte.style.transform = "scale(" + f + ")";
+  }
+  if (imRahmen){
+    einpassen();
+    window.addEventListener("resize", einpassen);
+    window.addEventListener("load", einpassen);
+    setTimeout(einpassen, 400);
   }
 </script>
