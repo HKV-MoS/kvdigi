@@ -14,12 +14,13 @@
   .kopfwappen:hover{ opacity:1; transform:scale(1.03); }
   @media (max-width:560px){ .kopfwappen img{ height:36px; } }
   .brand-eyebrow{ font-size:11px; font-weight:800; letter-spacing:2.5px; color:#D8AE66; margin-bottom:3px; text-transform:uppercase; }
-  .brand-eyebrow .be-cr{ font-weight:700; letter-spacing:1.4px; opacity:.78; }
+  .brand-eyebrow .be-cr{ font-weight:600; letter-spacing:.2px; opacity:.72;
+    text-transform:none; font-size:11.5px; }
   .brand-eyebrow .be-cr a{ color:inherit; text-decoration:underline; text-underline-offset:2px; }
   .brand-eyebrow .be-cr a:hover{ opacity:1; color:#F3CE8E; }
   @media (max-width:640px){
     .brand-eyebrow{ letter-spacing:1.6px; line-height:1.7; }
-    .brand-eyebrow .be-cr{ display:block; letter-spacing:1px; }
+    .brand-eyebrow .be-cr{ display:block; letter-spacing:.2px; }
     .brand-eyebrow .be-pkt{ display:none; }
   }
   header h1{ margin:0 0 2px; font-size:22px; font-weight:800; letter-spacing:-.3px; }
@@ -52,8 +53,8 @@
     display:block; margin:8px 0 2px;
     -webkit-mask-image:linear-gradient(#000 74%,rgba(0,0,0,0) 99%);
             mask-image:linear-gradient(#000 74%,rgba(0,0,0,0) 99%); }
-  .bw-txt{ display:flex; flex-direction:column; padding:0 12px; flex:1; }
-  .bw-tit{ font-size:15px; font-weight:800; color:#213B42; }
+  .bw-txt{ display:flex; flex-direction:column; padding:0 12px; flex:1; min-width:0; }
+  .bw-tit{ font-size:15px; font-weight:800; color:#213B42; overflow-wrap:break-word; }
   .bw-satz{ font-size:12.5px; line-height:1.35; color:#41585f; margin-top:4px; }
   .bw-cta{ font-size:11px; font-weight:800; letter-spacing:.6px; text-transform:uppercase;
     color:#3C6E73; margin-top:auto; padding-top:8px; }
@@ -63,6 +64,18 @@
     .bw-karte img{ width:78px; height:88px; margin:6px 0 0; flex:0 0 78px; }
     .bw-satz{ margin-top:2px; }
     .bw-cta{ margin-top:5px; }
+  }
+  @media (max-width:560px){
+    .berufswahl{ margin-top:14px; }
+    .bw-grid{ grid-template-columns:1fr; gap:8px; }
+    .bw-karte{ padding:0 14px 0 0; }
+    .bw-karte img{ width:86px; height:96px; flex:0 0 86px; }
+    .bw-tit{ font-size:16px; }
+    .bw-satz{ font-size:13px; }
+    .bw-karte-liste{ flex-direction:column; padding:0 12px 12px; text-align:center; }
+    .bw-mehr-ico{ font-size:30px; margin:12px 0 4px; }
+    .bw-liste{ grid-template-columns:1fr 1fr; }
+    .bw-liste button{ font-size:12px; padding:8px 10px; }
   }
 
   /* Tabs */
@@ -272,7 +285,13 @@
        animation-iteration-count:1 !important; scroll-behavior:auto !important; }
     .konf{ display:none !important; }
   }
-  @media (max-width:560px){ .srow{ font-size:15px; } .qtext{ font-size:16px; } }
+  @media (max-width:560px){
+    .srow{ font-size:15px; } .qtext{ font-size:16px; }
+    .scoreboard{ gap:7px; }
+    .scard{ flex:1 1 88px; padding:9px 8px; }
+    .scard .n{ font-size:21px; }
+    .scard .l{ font-size:9.5px; letter-spacing:.3px; }
+  }
 </style>
 <style>
 /* Kompaktmodus im iframe (KV Digital): alles etwas kleiner */
@@ -286,7 +305,7 @@ html.eingebettet body{ zoom:.82; }
   <a class="kopfwappen" href="https://www.hkvaarau.ch/berufsfachschule" target="_blank"
      rel="noopener" title="Handelsschule KV Aarau"><img src="hkv_logo_weiss.png" alt="HKV Aarau"></a>
   <div class="brand-eyebrow">Allgemeinbildender Unterricht <span class="be-cr"><span class="be-pkt">· </span>© 2026 <a
-    href="mailto:samuel.mollet@hkv.ch" title="E-Mail an Samuel Mollet">Samuel Mollet</a></span></div>
+    href="mailto:samuel.mollet@hkv.ch" title="E-Mail an Samuel Mollet">S. Mollet</a></span></div>
   <h1 id="kopfTitel" title="Zurück zum Start" style="cursor:pointer">Dreisatz</h1>
   <div class="sub">Verstehen und üben: gerader (proportionaler) und ungerader (umgekehrt proportionaler) Dreisatz – mit endlosem Aufgaben-Trainer.</div>
 
