@@ -14,6 +14,14 @@
   .kopfwappen:hover{ opacity:1; transform:scale(1.03); }
   @media (max-width:560px){ .kopfwappen img{ height:36px; } }
   .brand-eyebrow{ font-size:11px; font-weight:800; letter-spacing:2.5px; color:#D8AE66; margin-bottom:3px; text-transform:uppercase; }
+  .brand-eyebrow .be-cr{ font-weight:700; letter-spacing:1.4px; opacity:.78; }
+  .brand-eyebrow .be-cr a{ color:inherit; text-decoration:underline; text-underline-offset:2px; }
+  .brand-eyebrow .be-cr a:hover{ opacity:1; color:#F3CE8E; }
+  @media (max-width:640px){
+    .brand-eyebrow{ letter-spacing:1.6px; line-height:1.7; }
+    .brand-eyebrow .be-cr{ display:block; letter-spacing:1px; }
+    .brand-eyebrow .be-pkt{ display:none; }
+  }
   header h1{ margin:0 0 2px; font-size:22px; font-weight:800; letter-spacing:-.3px; }
   header .sub{ font-size:13px; opacity:.93; max-width:760px; margin:0 auto; }
   .wrap{ max-width:980px; margin:0 auto; padding:16px; }
@@ -277,7 +285,8 @@ html.eingebettet body{ zoom:.82; }
 <header>
   <a class="kopfwappen" href="https://www.hkvaarau.ch/berufsfachschule" target="_blank"
      rel="noopener" title="Handelsschule KV Aarau"><img src="hkv_logo_weiss.png" alt="HKV Aarau"></a>
-  <div class="brand-eyebrow">Allgemeinbildender Unterricht</div>
+  <div class="brand-eyebrow">Allgemeinbildender Unterricht <span class="be-cr"><span class="be-pkt">· </span>© 2026 <a
+    href="mailto:samuel.mollet@hkv.ch" title="E-Mail an Samuel Mollet">Samuel Mollet</a></span></div>
   <h1 id="kopfTitel" title="Zurück zum Start" style="cursor:pointer">Dreisatz</h1>
   <div class="sub">Verstehen und üben: gerader (proportionaler) und ungerader (umgekehrt proportionaler) Dreisatz – mit endlosem Aufgaben-Trainer.</div>
 
