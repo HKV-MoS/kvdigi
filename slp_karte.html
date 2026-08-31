@@ -170,7 +170,7 @@ html.eingebettet body{ zoom:.82; }
 
 <div class="karte-wrap"><table id="karte"></table></div>
 
-<p class="fuss">Quelle: Aargauer Schullehrplan Allgemeinbildung, Anhang 2 zur V ABU vom 27. Mai 2026 (SAR 422.214) ·
+<p class="fuss">Quelle: Aargauer Schullehrplan Allgemeinbildung, Anhang 2 zur V ABU vom 27. Mai 2026 (SAR 422.214) – dreijährige berufliche Grundbildung EFZ, in Kraft seit 1. August 2026. Für Lernende, die vor dem Schuljahr 2026/27 begonnen haben, gilt der bisherige Lehrplan weiter. ·
   © 2026 <a class="fuss-link" href="mailto:samuel.mollet@hkv.ch" title="E-Mail an S. Mollet">S. Mollet</a>, erstellt mit Claude ·
   <a class="fuss-link fahne-link" href="https://www.hkvaarau.ch/berufsfachschule" target="_blank" rel="noopener" title="hkvaarau.ch/berufsfachschule">HKV Aarau
     <svg class="fuss-fahne" viewBox="0 0 60 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -291,7 +291,7 @@ tabelle.addEventListener('click', ev=>{
   if(k.schluessel.length){
     h += '<h3>Schlüsselkompetenzen</h3><ul>'+k.schluessel.map(x=>'<li>'+x+'</li>').join('')+'</ul>';
   }
-  h += '<p class="quelle">Quelle: Aargauer Schullehrplan Allgemeinbildung, Anhang 2 zur V ABU vom 27. Mai 2026 (SAR 422.214)</p>';
+  h += '<p class="quelle">Quelle: Aargauer Schullehrplan Allgemeinbildung, Anhang 2 zur V ABU vom 27. Mai 2026 (SAR 422.214) – dreijährige berufliche Grundbildung EFZ, in Kraft seit 1. August 2026. Für Lernende, die vor dem Schuljahr 2026/27 begonnen haben, gilt der bisherige Lehrplan weiter.</p>';
   document.getElementById('panel-inhalt').innerHTML = h;
   document.getElementById('panel').classList.add('offen');
 });
@@ -309,7 +309,7 @@ function exportThema(t){
     if(k.sprache.length)   b += '<h3>Sprache &amp; Kommunikation — Förderfokus</h3><ul>'+k.sprache.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>';
     if(k.schluessel.length)b += '<h3>Schlüsselkompetenzen</h3><ul>'+k.schluessel.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>';
   });
-  b += '<hr><p class="meta">Quelle: Aargauer Schullehrplan Allgemeinbildung, Anhang 2 zur V ABU vom 27. Mai 2026 (SAR 422.214) · Export aus abu-tools.ch/slp_karte.html</p>';
+  b += '<hr><p class="meta">Quelle: Aargauer Schullehrplan Allgemeinbildung, Anhang 2 zur V ABU vom 27. Mai 2026 (SAR 422.214) – dreijährige berufliche Grundbildung EFZ, in Kraft seit 1. August 2026. Für Lernende, die vor dem Schuljahr 2026/27 begonnen haben, gilt der bisherige Lehrplan weiter. · Export aus abu-tools.ch/slp_karte.html</p>';
   const doc = '<html><head><meta charset="utf-8"><title>SLP T'+t+'</title><style>'
     + 'body{font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#152332;line-height:1.4}'
     + 'h1{font-size:16pt;margin-bottom:2pt} h2{font-size:13pt;margin:14pt 0 4pt} h3{font-size:10.5pt;margin:8pt 0 2pt;color:#5b6b7d;text-transform:uppercase;letter-spacing:.4pt}'
