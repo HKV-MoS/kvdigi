@@ -9,12 +9,14 @@
   *{ box-sizing:border-box; }
   html,body{ margin:0; padding:0; background:#fff;
              font-family:"Aptos","Segoe UI",Helvetica,Arial,sans-serif; color:var(--dunkel); }
-  #blatt{ width:940px; margin:0 auto; padding:14px 18px 12px; }
+  #blatt{ width:940px; max-width:100%; margin:0 auto; padding:14px 18px 12px; }
   body.eingebettet #blatt{ padding:6px 10px 8px; }
   h1{ font-size:23px; margin:0 0 2px; color:var(--gruen); }
   .lead{ font-size:14px; color:var(--grau); margin:0 0 10px; }
 
-  #buehne{ position:relative; width:100%; aspect-ratio:1536/1024;
+  #mitte{ display:flex; flex-direction:column; }
+
+  #buehne{ position:relative; width:100%; aspect-ratio:1536/1024; margin:0 auto;
            border-radius:8px; overflow:hidden; background:#000; cursor:pointer; }
   #buehne video, #buehne img{ width:100%; height:100%; display:block; object-fit:cover; }
   .schleier{ position:absolute; left:0; width:100%; background:rgba(12,10,8,.72);
@@ -28,32 +30,46 @@
   #leiste{ display:flex; align-items:center; gap:8px; margin-top:11px; flex-wrap:wrap; }
   .stufe{ border:1.5px solid #cfd8c8; background:#fff; color:var(--dunkel);
           font:inherit; font-size:13.5px; padding:5px 12px; border-radius:999px;
-          cursor:pointer; transition:.18s; }
+          cursor:pointer; transition:.18s; text-align:left; }
   .stufe:hover{ border-color:var(--gruen); }
   .stufe.aktiv{ background:var(--gruen); border-color:var(--gruen); color:#fff; }
   .nr{ font-weight:700; margin-right:5px; opacity:.65; }
   .stufe.aktiv .nr{ opacity:.85; }
   #alle{ margin-left:auto; }
   #hinweis{ font-size:12.5px; color:var(--grau); margin:8px 0 0; }
+
+  /* Querformat: Stufenleiste als Spalte rechts neben dem Bild */
+  body.breit #blatt{ width:100%; max-width:1400px; }
+  body.breit #mitte{ flex-direction:row; align-items:center; gap:14px; }
+  body.breit #buehne{ width:auto; margin:0; }
+  body.breit #leiste{ flex-direction:column; align-items:stretch; flex-wrap:nowrap;
+                      width:206px; flex:0 0 206px; margin-top:0; gap:7px; }
+  body.breit #alle{ margin-left:0; margin-top:5px; }
+  body.breit #hinweis{ margin-top:7px; }
 </style>
 </head>
 <body>
 <div id="blatt">
-  <h1>Die fünf Stufen in der Steinzeit</h1>
-  <p class="lead">Von unten nach oben: erst das Überleben, dann alles Weitere. Klicken Sie ins Bild oder wählen Sie eine Stufe.</p>
-
-  <div id="buehne">
-    <video id="film" autoplay loop muted playsinline
-           poster="Maslow_Hoehlenbewohner_Lascaux.png"
-           aria-label="Bedürfnispyramide als Steinzeitsiedlung mit fünf Stufen">
-      <source src="maslow-hoehle.webm" type="video/webm">
-      <source src="maslow-hoehle.mp4" type="video/mp4">
-      <img src="Maslow_Hoehlenbewohner_Lascaux.png" alt="Bedürfnispyramide als Steinzeitsiedlung mit fünf Stufen">
-    </video>
-    <div class="rahmen" id="rahmen"></div>
+  <div id="kopf">
+    <h1>Die fünf Stufen in der Steinzeit</h1>
+    <p class="lead">Von unten nach oben: erst das Überleben, dann alles Weitere. Klicken Sie ins Bild oder wählen Sie eine Stufe.</p>
   </div>
 
-  <div id="leiste"></div>
+  <div id="mitte">
+    <div id="buehne">
+      <video id="film" autoplay loop muted playsinline
+             poster="Maslow_Hoehlenbewohner_Lascaux.png"
+             aria-label="Bedürfnispyramide als Steinzeitsiedlung mit fünf Stufen">
+        <source src="maslow-hoehle.webm" type="video/webm">
+        <source src="maslow-hoehle.mp4" type="video/mp4">
+        <img src="Maslow_Hoehlenbewohner_Lascaux.png" alt="Bedürfnispyramide als Steinzeitsiedlung mit fünf Stufen">
+      </video>
+      <div class="rahmen" id="rahmen"></div>
+    </div>
+
+    <div id="leiste"></div>
+  </div>
+
   <p id="hinweis">Alle fünf Stufen sind gleichzeitig bewohnt — genau so ist es auch bei uns.</p>
 </div>
 
@@ -137,17 +153,38 @@ leiste.addEventListener('click', function(){ clearInterval(lauf); }, { once:true
 // --- eingebettet erkennen und einpassen ---
 if (window.self !== window.top) document.body.classList.add('eingebettet');
 
+var VERH = 1536 / 1024;   // Seitenverhaeltnis des Bildes
+
 function einpassen(){
   document.body.style.zoom = '';
+  buehne.style.width = '';
+
   var blatt = document.getElementById('blatt');
+  var kopf  = document.getElementById('kopf');
+  var hinw  = document.getElementById('hinweis');
+
+  // Querformat, sobald der Rahmen deutlich breiter als hoch ist
+  var breit = (window.innerWidth / window.innerHeight) > 1.42;
+  document.body.classList.toggle('breit', breit);
+
+  if (breit){
+    var cs = getComputedStyle(blatt);
+    var padY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+    var frei = window.innerHeight - padY - kopf.offsetHeight - hinw.offsetHeight - 14;
+    var platz = blatt.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    var w = Math.min(frei * VERH, platz - 206 - 14);
+    buehne.style.width = Math.max(260, Math.floor(w)) + 'px';
+  }
+
+  // Rueckfallebene: wenn es trotzdem nicht passt, ganze Seite verkleinern
   var noetig = blatt.scrollHeight + 4;
-  var da = window.innerHeight;
-  var f = Math.min(1, da / noetig, window.innerWidth / 960);
+  var f = Math.min(1, window.innerHeight / noetig, window.innerWidth / (breit ? 700 : 960));
   if (f < 0.999) document.body.style.zoom = f;
 }
 window.addEventListener('load', einpassen);
 window.addEventListener('resize', einpassen);
 setTimeout(einpassen, 400);
+einpassen();
 </script>
 </body>
 </html>
