@@ -16,7 +16,7 @@
 
   #buehne{ position:relative; width:100%; aspect-ratio:1536/1024;
            border-radius:8px; overflow:hidden; background:#000; cursor:pointer; }
-  #buehne img{ width:100%; height:100%; display:block; }
+  #buehne video, #buehne img{ width:100%; height:100%; display:block; object-fit:cover; }
   .schleier{ position:absolute; left:0; width:100%; background:rgba(12,10,8,.72);
              transition:opacity .55s ease; pointer-events:none; }
   .schleier.klar{ opacity:0; }
@@ -43,7 +43,13 @@
   <p class="lead">Von unten nach oben: erst das Überleben, dann alles Weitere. Klicken Sie ins Bild oder wählen Sie eine Stufe.</p>
 
   <div id="buehne">
-    <img src="Maslow_Hoehlenbewohner_Lascaux.png" alt="Bedürfnispyramide als Steinzeitsiedlung mit fünf Stufen">
+    <video id="film" autoplay loop muted playsinline
+           poster="Maslow_Hoehlenbewohner_Lascaux.png"
+           aria-label="Bedürfnispyramide als Steinzeitsiedlung mit fünf Stufen">
+      <source src="maslow-hoehle.webm" type="video/webm">
+      <source src="maslow-hoehle.mp4" type="video/mp4">
+      <img src="Maslow_Hoehlenbewohner_Lascaux.png" alt="Bedürfnispyramide als Steinzeitsiedlung mit fünf Stufen">
+    </video>
     <div class="rahmen" id="rahmen"></div>
   </div>
 
