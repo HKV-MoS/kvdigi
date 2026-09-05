@@ -45,10 +45,6 @@
              background:rgba(255,255,255,.88); color:var(--gruen); font-size:12.5px; font-weight:700;
              display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .4s; }
   .bild.da .nr{ opacity:1; }
-  .bild .text{ font-size:13px; line-height:1.35; margin:6px 0 0; min-height:36px; color:var(--dunkel);
-               opacity:0; transition:opacity .5s .2s; }
-  .bild.da .text{ opacity:1; }
-  .bild.kommt .rahmen{ outline:2px dashed #cfd8c8; outline-offset:-2px; }
   .stufe-nr{ display:inline-block; font-size:11.5px; letter-spacing:.06em; text-transform:uppercase;
              color:var(--gruen); border:1px solid #c3d2b8; background:#fff;
              border-radius:999px; padding:2px 9px; margin-bottom:6px; }
@@ -56,8 +52,7 @@
   #erzaehlung{ font-size:14.5px; line-height:1.5; margin:0; }
   #heute{ border-left:4px solid var(--gruen); background:var(--sand);
           border-radius:0 8px 8px 0; padding:11px 13px; font-size:14px; line-height:1.45;
-          opacity:.35; transition:opacity .5s; }
-  #heute.da{ opacity:1; }
+        }
   #heute b{ color:var(--gruen); }
 
   /* Fusszeile */
@@ -81,7 +76,7 @@
 <div id="blatt">
   <div id="kopf">
     <h1>Fünf Stufen, eine Siedlung</h1>
-    <p class="lead">Eine Bildergeschichte durch die Bedürfnispyramide — die Pyramide zeigt, wo wir sind, darunter erzählen drei Bilder die Stufe. «Weiter», Pfeiltasten oder Klick ins Bild.</p>
+    <p class="lead">Eine Bildergeschichte durch die Bedürfnispyramide — die Pyramide zeigt, wo wir sind, darunter erzählen drei Bilder die Stufe. «Weiter», Pfeiltasten, Klick ins Bild oder auf eine Stufe der Pyramide.</p>
   </div>
 
   <div id="oben">
@@ -110,11 +105,11 @@
     <button class="knopf" id="weiter">Weiter →</button>
   </div>
 
-  <p id="quelle">Bedürfnispyramide nach Abraham H. Maslow (1943). Bilder erstellt mit ChatGPT, Darstellung als Steinzeitsiedlung: eigene Umsetzung für den ABU an der HKV Aarau.</p>
+  <p id="quelle">Bedürfnispyramide nach Abraham H. Maslow (1943). Bilder erstellt mit ChatGPT.</p>
 </div>
 
 <script>
-// Jede Stufe: drei Bilder mit je einem Satz, dazu Erzaehlung und Heute-Kasten.
+// Jede Stufe: drei Bilder gleichzeitig, dazu Erzaehlung und Heute-Kasten.
 // Fehlt eine Datei noch, zeigt der Rahmen «Bild folgt».
 var STATIONEN = [
   { nr:'Übersicht', titel:'Eine Siedlung, fünf Ebenen', gross:true,
@@ -163,9 +158,6 @@ var STATIONEN = [
     heute:'In der Apotheke lässt sich auch das Sortiment so lesen: Das Schmerzmittel deckt eine untere Stufe, die Hautpflege eine mittlere, das Nahrungsergänzungsmittel «für mehr Energie im Alltag» eine obere.' }
 ];
 
-// Schritte: jedes Bild ist ein Schritt. Uebersicht und Schluss haben je einen.
-var SCHRITTE = [];
-STATIONEN.forEach(function(st, si){ st.bilder.forEach(function(b, bi){ SCHRITTE.push({ st:si, b:bi }); }); });
 
 var i = 0;
 var streifen = document.getElementById('streifen');
@@ -180,7 +172,7 @@ STATIONEN.forEach(function(st, k){
   var p = document.createElement('button');
   p.className = 'punkt'; p.type = 'button'; p.title = st.titel;
   p.setAttribute('aria-label', 'Station ' + (k+1) + ': ' + st.titel);
-  p.onclick = function(){ zeige(SCHRITTE.findIndex(function(s){ return s.st === k; })); };
+  p.onclick = function(){ zeige(k); };
   punkte.appendChild(p);
 });
 
@@ -215,7 +207,7 @@ pyr.onclick = function(e){
   for (var k = 0; k < STATIONEN.length; k++){
     var st = STATIONEN[k];
     if (!st.gross && v >= st.oben && v < st.unten){
-      zeige(SCHRITTE.findIndex(function(sc){ return sc.st === k; }));
+      zeige(k);
       return;
     }
   }
@@ -228,11 +220,11 @@ function streifenBauen(si){
   if (st.gross){ gebaut = si; return; }
   st.bilder.forEach(function(b, bi){
     var w = document.createElement('div'); w.className = 'bild';
-    w.innerHTML = '<div class="rahmen"><img alt=""><span class="nr">' + (bi+1) + '</span></div><p class="text"></p>';
+    w.className = 'bild da';
+    w.innerHTML = '<div class="rahmen"><img alt=""><span class="nr">' + (bi+1) + '</span></div>';
     var img = w.querySelector('img');
     img.onerror = function(){ w.classList.add('leer'); img.style.display = 'none'; };
     img.src = b.datei;
-    w.querySelector('.text').textContent = b.text;
     w.onclick = function(){ zeige(i + 1); };
     streifen.appendChild(w);
   });
@@ -240,32 +232,25 @@ function streifenBauen(si){
 }
 
 function zeige(k){
-  i = Math.max(0, Math.min(SCHRITTE.length - 1, k));
-  var s = SCHRITTE[i], st = STATIONEN[s.st];
-  if (gebaut !== s.st) streifenBauen(s.st);
+  i = Math.max(0, Math.min(STATIONEN.length - 1, k));
+  var st = STATIONEN[i];
+  if (gebaut !== i) streifenBauen(i);
   pyramideMarkieren(st);
 
-  var kinder = streifen.children;
-  for (var n = 0; n < kinder.length; n++){
-    kinder[n].classList.toggle('da', n <= s.b);
-    kinder[n].classList.toggle('kommt', n === s.b + 1);
-  }
-  var fertig = (s.b === st.bilder.length - 1);
   nr.textContent = st.nr;
   titel.textContent = st.titel;
   erzaehlung.textContent = st.erzaehlung;
   heutetext.textContent = st.heute;
-  heute.classList.toggle('da', fertig);
-  zaehler.textContent = st.gross ? '' : ('Bild ' + (s.b + 1) + ' von ' + st.bilder.length);
+  zaehler.textContent = '';
 
   var ds = punkte.querySelectorAll('.punkt');
   for (var m = 0; m < ds.length; m++){
-    ds[m].className = 'punkt' + (m < s.st ? ' erledigt' : (m === s.st ? ' jetzt' : ''));
+    ds[m].className = 'punkt' + (m < i ? ' erledigt' : (m === i ? ' jetzt' : ''));
   }
   zurueck.disabled = (i === 0);
-  weiter.disabled = (i === SCHRITTE.length - 1);
-  var naechst = SCHRITTE[i + 1];
-  weiter.textContent = !naechst ? 'Ende' : (naechst.st !== s.st ? (STATIONEN[naechst.st].nr + ' →') : 'Weiter →');
+  weiter.disabled = (i === STATIONEN.length - 1);
+  var naechst = STATIONEN[i + 1];
+  weiter.textContent = naechst ? (naechst.nr + ' →') : 'Ende';
   einpassen();
 }
 
@@ -275,7 +260,7 @@ document.addEventListener('keydown', function(e){
   if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); zeige(i + 1); }
   if (e.key === 'ArrowLeft')  { e.preventDefault(); zeige(i - 1); }
   if (e.key === 'Home')       { zeige(0); }
-  if (e.key === 'End')        { zeige(SCHRITTE.length - 1); }
+  if (e.key === 'End')        { zeige(STATIONEN.length - 1); }
 });
 
 // --- eingebettet erkennen und einpassen ---
