@@ -19,7 +19,8 @@
   #oben{ display:flex; gap:16px; align-items:stretch; }
   #pyr{ flex:0 0 46%; position:relative; aspect-ratio:1536/1024; overflow:hidden;
         border-radius:9px; background:#e8e6e1; cursor:pointer; }
-  #pyr img{ position:absolute; inset:0; width:100%; height:100%; display:block; object-fit:cover; }
+  #pyr video, #pyr img{ position:absolute; inset:0; width:100%; height:100%; display:block; object-fit:cover; }
+  @media (prefers-reduced-motion: reduce){ #pyr video{ display:none; } }
   .schleier{ position:absolute; left:0; width:100%; background:rgba(12,10,8,.62);
              transition:opacity .55s ease, top .55s ease, height .55s ease; pointer-events:none; }
   .schleier.klar{ opacity:0; }
@@ -87,7 +88,12 @@
 
   <div id="oben">
     <div id="pyr" title="Auf eine Stufe klicken">
-      <img src="maslow-siedlung.jpg" alt="Bedürfnispyramide als Steinzeitsiedlung mit fünf Ebenen">
+      <video id="pyrfilm" autoplay loop muted playsinline poster="maslow-siedlung.jpg"
+             aria-label="Bedürfnispyramide als Steinzeitsiedlung mit fünf Ebenen">
+        <source src="maslow-hoehle.webm" type="video/webm">
+        <source src="maslow-hoehle.mp4" type="video/mp4">
+        <img src="maslow-siedlung.jpg" alt="Bedürfnispyramide als Steinzeitsiedlung mit fünf Ebenen">
+      </video>
       <div class="schleier" id="schleierOben"></div>
       <div class="schleier" id="schleierUnten"></div>
       <div id="band"></div>
