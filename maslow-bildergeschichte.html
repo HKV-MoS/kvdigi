@@ -9,38 +9,56 @@
   *{ box-sizing:border-box; }
   html,body{ margin:0; padding:0; background:#fff;
              font-family:"Aptos","Segoe UI",Helvetica,Arial,sans-serif; color:var(--dunkel); }
-  #blatt{ width:1040px; max-width:100%; margin:0 auto; padding:14px 18px 12px; }
+  #blatt{ width:1300px; max-width:100%; margin:0 auto; padding:14px 18px 12px; }
   body.eingebettet #blatt{ padding:8px 12px 8px; }
 
   h1{ font-size:23px; margin:0 0 2px; color:var(--gruen); }
-  .lead{ font-size:13.5px; color:var(--grau); margin:0 0 11px; }
+  .lead{ font-size:13.5px; color:var(--grau); margin:0 0 10px; }
 
-  #mitte{ display:flex; flex-direction:column; gap:14px; }
-  body.breit #mitte{ flex-direction:row; align-items:flex-start; }
-  body.breit #bildseite{ flex:1.35 1 0; min-width:0; }
-  body.breit #textseite{ flex:1 1 0; min-width:0; }
+  /* Oben: Pyramide links (bleibt immer stehen), Text rechts */
+  #oben{ display:flex; gap:16px; align-items:stretch; }
+  #pyr{ flex:0 0 46%; position:relative; aspect-ratio:1536/1024; overflow:hidden;
+        border-radius:9px; background:#e8e6e1; cursor:pointer; }
+  #pyr img{ position:absolute; inset:0; width:100%; height:100%; display:block; object-fit:cover; }
+  .schleier{ position:absolute; left:0; width:100%; background:rgba(12,10,8,.62);
+             transition:opacity .55s ease, top .55s ease, height .55s ease; pointer-events:none; }
+  .schleier.klar{ opacity:0; }
+  #band{ position:absolute; left:0; width:100%; pointer-events:none;
+         box-shadow:inset 0 0 0 3px rgba(255,255,255,.9); opacity:0;
+         transition:opacity .45s ease, top .55s ease, height .55s ease; }
+  #band.an{ opacity:1; }
+  #textspalte{ flex:1 1 0; min-width:0; display:flex; flex-direction:column; gap:10px; }
+  #geschichte{ flex:0 0 auto; }
 
-  /* Bildfenster: das Bild faehrt darin herum */
-  #fenster{ position:relative; width:100%; aspect-ratio:1536/1024; overflow:hidden;
-            border-radius:10px; background:#e8e6e1; }
-  #fenster img{ position:absolute; inset:0; width:100%; height:100%; display:block;
-                transform-origin:50% 50%;
-                transform:scale(var(--z,1)) translate(var(--tx,0%), var(--ty,0%));
-                transition:transform 1.15s cubic-bezier(.4,0,.2,1); }
-  @media (prefers-reduced-motion: reduce){ #fenster img{ transition:none; } }
-  #legende{ font-size:12px; color:var(--grau); margin:6px 0 0; }
-
-
-  /* Textspalte */
+  /* Unten: drei Bilder der aktuellen Stufe */
+  #streifen{ display:flex; gap:12px; align-items:flex-start; margin-top:12px; }
+  body.gross #streifen{ display:none; }
+  .bild{ flex:1 1 0; min-width:0; position:relative; }
+  .bild .rahmen{ position:relative; width:100%; aspect-ratio:3/2; overflow:hidden;
+                 border-radius:9px; background:var(--sand); }
+  .bild img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;
+             opacity:0; transform:scale(1.03); transition:opacity .55s ease, transform .9s ease; }
+  .bild.da img{ opacity:1; transform:scale(1); }
+  .bild.leer .rahmen::after{ content:'Bild folgt'; position:absolute; inset:0; display:flex;
+                             align-items:center; justify-content:center; color:#b5b0a5; font-size:14px; }
+  .bild .nr{ position:absolute; left:9px; top:9px; width:24px; height:24px; border-radius:50%;
+             background:rgba(255,255,255,.88); color:var(--gruen); font-size:12.5px; font-weight:700;
+             display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .4s; }
+  .bild.da .nr{ opacity:1; }
+  .bild .text{ font-size:13px; line-height:1.35; margin:6px 0 0; min-height:36px; color:var(--dunkel);
+               opacity:0; transition:opacity .5s .2s; }
+  .bild.da .text{ opacity:1; }
+  .bild.kommt .rahmen{ outline:2px dashed #cfd8c8; outline-offset:-2px; }
   .stufe-nr{ display:inline-block; font-size:11.5px; letter-spacing:.06em; text-transform:uppercase;
              color:var(--gruen); border:1px solid #c3d2b8; background:#fff;
-             border-radius:999px; padding:2px 9px; margin-bottom:8px; }
-  h2{ font-size:21px; line-height:1.2; margin:0 0 8px; color:var(--dunkel); }
-  #geschichte{ font-size:15px; line-height:1.5; margin:0 0 12px; }
+             border-radius:999px; padding:2px 9px; margin-bottom:6px; }
+  h2{ font-size:20px; line-height:1.2; margin:0 0 6px; }
+  #erzaehlung{ font-size:14.5px; line-height:1.5; margin:0; }
   #heute{ border-left:4px solid var(--gruen); background:var(--sand);
-          border-radius:0 8px 8px 0; padding:11px 13px; font-size:14px; line-height:1.45; }
+          border-radius:0 8px 8px 0; padding:11px 13px; font-size:14px; line-height:1.45;
+          opacity:.35; transition:opacity .5s; }
+  #heute.da{ opacity:1; }
   #heute b{ color:var(--gruen); }
-
 
   /* Fusszeile */
   #fuss{ display:flex; align-items:center; gap:12px; margin-top:12px; }
@@ -50,10 +68,9 @@
   .knopf:hover:not(:disabled){ border-color:var(--gruen); background:#f6f9f4; }
   .knopf:disabled{ opacity:.4; cursor:default; }
   #weiter{ margin-left:auto; background:var(--gruen); border-color:var(--gruen); color:#fff; }
-  #weiter:hover{ background:#3d6629; }
+  #weiter:hover:not(:disabled){ background:#3d6629; }
   #punkte{ display:flex; gap:6px; }
-  .punkt{ width:9px; height:9px; border-radius:50%; background:#e2e6de; border:none;
-          padding:0; cursor:pointer; }
+  .punkt{ width:9px; height:9px; border-radius:50%; background:#e2e6de; border:none; padding:0; cursor:pointer; }
   .punkt.erledigt{ background:#a8c692; }
   .punkt.jetzt{ background:var(--gruen); box-shadow:0 0 0 3px rgba(49,82,32,.18); }
   #zaehler{ font-size:12.5px; color:var(--grau); }
@@ -64,135 +81,201 @@
 <div id="blatt">
   <div id="kopf">
     <h1>Fünf Stufen, eine Siedlung</h1>
-    <p class="lead">Eine Bildergeschichte durch die Bedürfnispyramide — von unten nach oben. Mit den Pfeiltasten oder den Knöpfen weiterklicken.</p>
+    <p class="lead">Eine Bildergeschichte durch die Bedürfnispyramide — die Pyramide zeigt, wo wir sind, darunter erzählen drei Bilder die Stufe. «Weiter», Pfeiltasten oder Klick ins Bild.</p>
   </div>
 
-  <div id="mitte">
-    <div id="bildseite">
-      <div id="fenster">
-        <img id="bild" src="maslow-siedlung.jpg"
-             alt="Bedürfnispyramide als Steinzeitsiedlung mit fünf übereinanderliegenden Ebenen">
+  <div id="oben">
+    <div id="pyr" title="Auf eine Stufe klicken">
+      <img src="maslow-siedlung.jpg" alt="Bedürfnispyramide als Steinzeitsiedlung mit fünf Ebenen">
+      <div class="schleier" id="schleierOben"></div>
+      <div class="schleier" id="schleierUnten"></div>
+      <div id="band"></div>
+    </div>
+    <div id="textspalte">
+      <div id="geschichte">
+        <span class="stufe-nr" id="nr">Übersicht</span>
+        <h2 id="titel">&nbsp;</h2>
+        <p id="erzaehlung">&nbsp;</p>
       </div>
-      <p id="legende">Abb.: Die fünf Stufen an einer Steinzeitsiedlung. Bild erstellt mit ChatGPT.</p>
-
-    </div>
-
-    <div id="textseite">
-      <span class="stufe-nr" id="nr">Übersicht</span>
-      <h2 id="titel">&nbsp;</h2>
-      <p id="geschichte">&nbsp;</p>
       <div id="heute"><b>Heute:</b> <span id="heutetext">&nbsp;</span></div>
-
     </div>
   </div>
+
+  <div id="streifen"></div>
 
   <div id="fuss">
     <button class="knopf" id="zurueck">← Zurück</button>
     <span id="punkte"></span>
-    <span id="zaehler">1 von 7</span>
+    <span id="zaehler"></span>
     <button class="knopf" id="weiter">Weiter →</button>
   </div>
 
-  <p id="quelle">Bedürfnispyramide nach Abraham H. Maslow (1943). Darstellung als Steinzeitsiedlung: eigene Umsetzung für den ABU an der HKV Aarau.</p>
+  <p id="quelle">Bedürfnispyramide nach Abraham H. Maslow (1943). Bilder erstellt mit ChatGPT, Darstellung als Steinzeitsiedlung: eigene Umsetzung für den ABU an der HKV Aarau.</p>
 </div>
 
 <script>
-// c = Mitte des Bandes als Anteil der Bildhoehe (von oben), x = waagrechte Mitte
+// Jede Stufe: drei Bilder mit je einem Satz, dazu Erzaehlung und Heute-Kasten.
+// Fehlt eine Datei noch, zeigt der Rahmen «Bild folgt».
 var STATIONEN = [
-  { nr:'Übersicht', titel:'Eine Siedlung, fünf Ebenen',
-    z:1, x:0.50, c:0.50,
-    text:'Eine Siedlung in der Steinzeit, von unten nach oben gebaut. Ganz unten das, was zum Überleben nötig ist — ganz oben das, was niemand verlangt und trotzdem jemand tut. Fünf Ebenen, fünf Arten von Bedürfnissen. Klicken Sie sich hinauf.',
+  { nr:'Übersicht', titel:'Eine Siedlung, fünf Ebenen', gross:true,
+    bilder:[ { datei:'', text:'' } ],
+    erzaehlung:'Eine Siedlung in der Steinzeit, von unten nach oben gebaut. Ganz unten das, was zum Überleben nötig ist — ganz oben das, was niemand verlangt und trotzdem jemand tut. Fünf Ebenen, fünf Arten von Bedürfnissen. Wir steigen sie hinauf, jede in drei Bildern.',
     heute:'Dieselben fünf Stufen bestimmen, wofür Sie heute Geld ausgeben.' },
 
-  { nr:'Stufe 1', titel:'Grundbedürfnisse',
-    z:2.4, x:0.40, c:0.8775,
-    text:'Zuunterst wird gegessen. Fleisch, Beeren, Knollen, daneben eine Wasserstelle. Wer hier nichts findet, denkt an nichts anderes mehr — kein Mensch sorgt sich um seinen Ruf, solange er Hunger hat.',
+  { nr:'Stufe 1', oben:0.755, unten:1.000, titel:'Grundbedürfnisse',
+    bilder:[ { datei:'stufe1_1.jpg', text:'Der Vorrat ist leer. Das Kind hält sich den Bauch, der Hund schnuppert an der leeren Schale.' },
+             { datei:'stufe1_2.jpg', text:'Beeren pflücken, Knollen graben, ein Fisch vom Fluss. Alle helfen.' },
+             { datei:'stufe1_3.jpg', text:'Satt. Erst jetzt ist Platz für alles andere.' } ],
+    erzaehlung:'Wer Hunger hat, denkt an nichts anderes. Kein Mensch sorgt sich um seinen Ruf, solange der Magen leer ist. Essen, Trinken, Wärme, Schlaf: Das ist die unterste Stufe, und sie muss zuerst gedeckt sein.',
     heute:'Ihr Znüni, die Miete für ein warmes Zimmer, das Wasser aus dem Hahn.' },
 
-  { nr:'Stufe 2', titel:'Sicherheit',
-    z:2.4, x:0.40, c:0.670,
-    text:'Eine Stufe höher schläft jemand am Feuer, geschützt vom Fels. Draussen hält ein Mann mit dem Speer Wache, während ein Bär vorbeizieht. Sicherheit ist also nicht nur ein Dach über dem Kopf — es ist auch jemand, der aufpasst, während man schläft.',
+  { nr:'Stufe 2', oben:0.585, unten:0.755, titel:'Sicherheit',
+    bilder:[ { datei:'stufe2_1.jpg', text:'Ein Bär am Waldrand. Die Frau zieht das Kind nach hinten.' },
+             { datei:'stufe2_2.jpg', text:'Der Mann mit dem Speer, das Feuer im Rücken. Der Bär zieht ab.' },
+             { datei:'stufe2_3.jpg', text:'Schlafen, während einer wacht.' } ],
+    erzaehlung:'Satt zu sein reicht nicht, wenn man nachts nicht ruhig schlafen kann. Sicherheit heisst: ein Dach, ein Feuer — und jemand, der aufpasst.',
     heute:'Die abschliessbare Tür, die Krankenkasse, das Sparkonto für den Notfall.' },
 
-  { nr:'Stufe 3', titel:'Soziale Bedürfnisse',
-    z:2.4, x:0.40, c:0.500,
-    text:'In der Mitte sitzt die Gruppe ums Feuer. Kinder, Erwachsene, der Hund. Niemand isst hier allein. Wer dazugehört, überlebt den Winter — allein schafft es keiner.',
+  { nr:'Stufe 3', oben:0.415, unten:0.585, titel:'Soziale Bedürfnisse',
+    bilder:[ { datei:'stufe3_1.jpg', text:'Abseits. Der junge Mann sitzt allein, die anderen lachen am Feuer.' },
+             { datei:'stufe3_2.jpg', text:'Das Kind holt ihn. Am Feuer wird Platz gemacht.' },
+             { datei:'stufe3_3.jpg', text:'Dazugehören. Alle am selben Feuer.' } ],
+    erzaehlung:'Niemand isst gern allein. Wer dazugehört, übersteht den Winter — allein schafft es keiner. Die Gruppe ist ein Bedürfnis, kein Luxus.',
     heute:'Der Gruppenchat, das Mittagessen mit den anderen Lernenden, der Verein am Mittwoch.' },
 
-  { nr:'Stufe 4', titel:'Anerkennung',
-    z:2.4, x:0.40, c:0.340,
-    text:'Darüber geben sich zwei die Hand. Einer hat etwas geleistet, der andere sieht es und sagt es. Gesehen werden ist ein eigenes Bedürfnis — es füllt keinen Magen, aber es fehlt, wenn es fehlt.',
+  { nr:'Stufe 4', oben:0.265, unten:0.415, titel:'Anerkennung',
+    bilder:[ { datei:'stufe4_1.jpg', text:'Die Beute. Der junge Mann bringt ein Wildschwein.' },
+             { datei:'stufe4_2.jpg', text:'Gesehen werden. Eine Hand auf der Schulter, ein Nicken.' },
+             { datei:'stufe4_3.jpg', text:'Die Kette. Ein Zeichen, das alle sehen.' } ],
+    erzaehlung:'Etwas leisten und dafür gesehen werden. Anerkennung füllt keinen Magen, aber sie fehlt, wenn sie fehlt.',
     heute:'Das Lob der Berufsbildnerin, die bestandene Prüfung, das Kompliment für die neuen Schuhe.' },
 
-  { nr:'Stufe 5', titel:'Selbstverwirklichung',
-    z:2.4, x:0.42, c:0.1325,
-    text:'Zuoberst malt einer ein Pferd an die Wand. Niemand verlangt das von ihm, es wärmt nicht und es sättigt nicht. Er tut es trotzdem — weil er es kann und weil es ihn ausmacht.',
+  { nr:'Stufe 5', oben:0.000, unten:0.265, titel:'Selbstverwirklichung',
+    bilder:[ { datei:'stufe5_1.jpg', text:'Die leere Wand. Ocker in der Schale, alle anderen schlafen.' },
+             { datei:'stufe5_2.jpg', text:'Das Pferd entsteht. Niemand verlangt das von ihm.' },
+             { datei:'stufe5_3.jpg', text:'Das Werk. Er schaut nicht auf die anderen, sondern auf sein Bild.' } ],
+    erzaehlung:'Zuoberst tut einer etwas, das nicht wärmt und nicht sättigt. Er tut es, weil er es kann und weil es ihn ausmacht.',
     heute:'Das Instrument, das Sie lernen. Der Beruf, den Sie gewählt haben, weil er zu Ihnen passt.' },
 
-  { nr:'Schluss', titel:'Alle fünf sind bewohnt',
-    z:1, x:0.50, c:0.50,
-    text:'Man steigt die Stufen nicht einmal hinauf und ist dann fertig. Alle fünf sind gleichzeitig bewohnt — damals wie heute. Gewechselt haben nur die Mittel: Die Höhle ist die Wohnung, das Feuer die Heizung, der Wächter die Versicherung, der Vorrat das Sparkonto.',
-    heute:'In der Apotheke lässt sich auch das Sortiment so lesen. Das Schmerzmittel deckt eine untere Stufe, die Hautpflege eine mittlere, das Nahrungsergänzungsmittel «für mehr Energie im Alltag» eine obere.' }
+  { nr:'Schluss', titel:'Alle fünf sind bewohnt', gross:true,
+    bilder:[ { datei:'', text:'' } ],
+    erzaehlung:'Man steigt die Stufen nicht einmal hinauf und ist dann fertig. Alle fünf sind gleichzeitig bewohnt — damals wie heute. Gewechselt haben nur die Mittel: Die Höhle ist die Wohnung, das Feuer die Heizung, der Wächter die Versicherung, der Vorrat das Sparkonto.',
+    heute:'In der Apotheke lässt sich auch das Sortiment so lesen: Das Schmerzmittel deckt eine untere Stufe, die Hautpflege eine mittlere, das Nahrungsergänzungsmittel «für mehr Energie im Alltag» eine obere.' }
 ];
 
+// Schritte: jedes Bild ist ein Schritt. Uebersicht und Schluss haben je einen.
+var SCHRITTE = [];
+STATIONEN.forEach(function(st, si){ st.bilder.forEach(function(b, bi){ SCHRITTE.push({ st:si, b:bi }); }); });
+
 var i = 0;
-var bild = document.getElementById('bild');
-var nr = document.getElementById('nr');
-var titel = document.getElementById('titel');
-var geschichte = document.getElementById('geschichte');
-var heutetext = document.getElementById('heutetext');
-var zaehler = document.getElementById('zaehler');
+var streifen = document.getElementById('streifen');
+var nr = document.getElementById('nr'), titel = document.getElementById('titel');
+var erzaehlung = document.getElementById('erzaehlung'), heute = document.getElementById('heute');
+var heutetext = document.getElementById('heutetext'), zaehler = document.getElementById('zaehler');
 var punkte = document.getElementById('punkte');
-var zurueck = document.getElementById('zurueck');
-var weiter = document.getElementById('weiter');
+var zurueck = document.getElementById('zurueck'), weiter = document.getElementById('weiter');
+var gebaut = -1;
 
 STATIONEN.forEach(function(st, k){
   var p = document.createElement('button');
-  p.className = 'punkt';
-  p.type = 'button';
-  p.title = st.titel;
+  p.className = 'punkt'; p.type = 'button'; p.title = st.titel;
   p.setAttribute('aria-label', 'Station ' + (k+1) + ': ' + st.titel);
-  p.onclick = function(){ zeige(k); };
+  p.onclick = function(){ zeige(SCHRITTE.findIndex(function(s){ return s.st === k; })); };
   punkte.appendChild(p);
 });
 
+// Bilder vorladen, sonst ruckelt das Aufdecken
+STATIONEN.forEach(function(st){ st.bilder.forEach(function(b){ if (b.datei){ var v = new Image(); v.src = b.datei; } }); });
+
+var schleierOben = document.getElementById('schleierOben');
+var schleierUnten = document.getElementById('schleierUnten');
+var band = document.getElementById('band');
+var pyr = document.getElementById('pyr');
+
+function pyramideMarkieren(st){
+  if (st.gross){                                   // alles hell
+    schleierOben.classList.add('klar'); schleierUnten.classList.add('klar');
+    band.classList.remove('an');
+    return;
+  }
+  schleierOben.classList.remove('klar'); schleierUnten.classList.remove('klar');
+  schleierOben.style.top = '0';
+  schleierOben.style.height = (st.oben * 100) + '%';
+  schleierUnten.style.top = (st.unten * 100) + '%';
+  schleierUnten.style.height = ((1 - st.unten) * 100) + '%';
+  band.style.top = (st.oben * 100) + '%';
+  band.style.height = ((st.unten - st.oben) * 100) + '%';
+  band.classList.add('an');
+}
+
+// Klick auf ein Band der Pyramide springt zu dieser Stufe
+pyr.onclick = function(e){
+  var r = pyr.getBoundingClientRect();
+  var v = (e.clientY - r.top) / r.height;
+  for (var k = 0; k < STATIONEN.length; k++){
+    var st = STATIONEN[k];
+    if (!st.gross && v >= st.oben && v < st.unten){
+      zeige(SCHRITTE.findIndex(function(sc){ return sc.st === k; }));
+      return;
+    }
+  }
+};
+
+function streifenBauen(si){
+  var st = STATIONEN[si];
+  streifen.innerHTML = '';
+  document.body.classList.toggle('gross', !!st.gross);
+  if (st.gross){ gebaut = si; return; }
+  st.bilder.forEach(function(b, bi){
+    var w = document.createElement('div'); w.className = 'bild';
+    w.innerHTML = '<div class="rahmen"><img alt=""><span class="nr">' + (bi+1) + '</span></div><p class="text"></p>';
+    var img = w.querySelector('img');
+    img.onerror = function(){ w.classList.add('leer'); img.style.display = 'none'; };
+    img.src = b.datei;
+    w.querySelector('.text').textContent = b.text;
+    w.onclick = function(){ zeige(i + 1); };
+    streifen.appendChild(w);
+  });
+  gebaut = si;
+}
+
 function zeige(k){
-  i = Math.max(0, Math.min(STATIONEN.length - 1, k));
-  var st = STATIONEN[i];
+  i = Math.max(0, Math.min(SCHRITTE.length - 1, k));
+  var s = SCHRITTE[i], st = STATIONEN[s.st];
+  if (gebaut !== s.st) streifenBauen(s.st);
+  pyramideMarkieren(st);
 
-  var rand = (1 / st.z) / 2;                  // Ausschnitt am Bildrand festhalten
-  var x = Math.max(rand, Math.min(1 - rand, st.x));
-  var c = Math.max(rand, Math.min(1 - rand, st.c));
-  bild.style.setProperty('--z', st.z);
-  bild.style.setProperty('--tx', ((0.5 - x) * 100).toFixed(2) + '%');
-  bild.style.setProperty('--ty', ((0.5 - c) * 100).toFixed(2) + '%');
-
+  var kinder = streifen.children;
+  for (var n = 0; n < kinder.length; n++){
+    kinder[n].classList.toggle('da', n <= s.b);
+    kinder[n].classList.toggle('kommt', n === s.b + 1);
+  }
+  var fertig = (s.b === st.bilder.length - 1);
   nr.textContent = st.nr;
   titel.textContent = st.titel;
-  geschichte.textContent = st.text;
+  erzaehlung.textContent = st.erzaehlung;
   heutetext.textContent = st.heute;
-  zaehler.textContent = (i + 1) + ' von ' + STATIONEN.length;
+  heute.classList.toggle('da', fertig);
+  zaehler.textContent = st.gross ? '' : ('Bild ' + (s.b + 1) + ' von ' + st.bilder.length);
 
   var ds = punkte.querySelectorAll('.punkt');
-  for (var n = 0; n < ds.length; n++){
-    ds[n].className = 'punkt' + (n < i ? ' erledigt' : (n === i ? ' jetzt' : ''));
+  for (var m = 0; m < ds.length; m++){
+    ds[m].className = 'punkt' + (m < s.st ? ' erledigt' : (m === s.st ? ' jetzt' : ''));
   }
   zurueck.disabled = (i === 0);
-  weiter.disabled = (i === STATIONEN.length - 1);
-  weiter.textContent = (i === STATIONEN.length - 2) ? 'Schluss →' : 'Weiter →';
+  weiter.disabled = (i === SCHRITTE.length - 1);
+  var naechst = SCHRITTE[i + 1];
+  weiter.textContent = !naechst ? 'Ende' : (naechst.st !== s.st ? (STATIONEN[naechst.st].nr + ' →') : 'Weiter →');
   einpassen();
 }
 
 zurueck.onclick = function(){ zeige(i - 1); };
 weiter.onclick  = function(){ zeige(i + 1); };
-document.getElementById('fenster').onclick = function(){
-  zeige(i >= STATIONEN.length - 1 ? 0 : i + 1);
-};
 document.addEventListener('keydown', function(e){
   if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); zeige(i + 1); }
   if (e.key === 'ArrowLeft')  { e.preventDefault(); zeige(i - 1); }
   if (e.key === 'Home')       { zeige(0); }
-  if (e.key === 'End')        { zeige(STATIONEN.length - 1); }
+  if (e.key === 'End')        { zeige(SCHRITTE.length - 1); }
 });
 
 // --- eingebettet erkennen und einpassen ---
@@ -202,16 +285,12 @@ var nutzerZoom = 1;   // Zoomleiste oben rechts, wie bei allen Tools auf abu-too
 
 function einpassen(){
   document.body.style.zoom = '';
-  var breit = (window.innerWidth / window.innerHeight) > 1.42;
-  document.body.classList.toggle('breit', breit);
-
   var blatt = document.getElementById('blatt');
   var noetig = blatt.scrollHeight + 4;
-  var f = Math.min(1, window.innerHeight / noetig, window.innerWidth / (breit ? 820 : 620));
+  var f = Math.min(1, window.innerHeight / noetig, window.innerWidth / 760);
   document.body.style.zoom = f * nutzerZoom;
-
   if (nutzerZoom <= 1){
-    for (var n = 0; n < 6; n++){
+    for (var n = 0; n < 14; n++){
       if (document.documentElement.scrollHeight <= window.innerHeight) break;
       f = f * 0.975;
       document.body.style.zoom = f * nutzerZoom;
@@ -226,6 +305,7 @@ setTimeout(einpassen, 300);
 
 zeige(0);
 </script>
+
 <style>
 /* Zoomleiste: +/- und Vollbild, oben rechts — wie bei allen Tools auf abu-tools */
 .zoomleiste{position:fixed; right:12px; top:12px; z-index:99999; display:flex; gap:2px;
@@ -254,9 +334,9 @@ zeige(0);
     b.addEventListener('click', fn);
     leiste.appendChild(b);
   }
-  mk('\u2212', 'Kleiner', function(){ setZ(nutzerZoom - 0.1); });
-  mk('+', 'Gr\u00f6sser', function(){ setZ(nutzerZoom + 0.1); });
-  mk('\u26f6', 'Vollbild (Esc beendet)', function(){
+  mk('−', 'Kleiner', function(){ setZ(nutzerZoom - 0.1); });
+  mk('+', 'Grösser', function(){ setZ(nutzerZoom + 0.1); });
+  mk('⛶', 'Vollbild (Esc beendet)', function(){
     var drin = document.fullscreenElement || document.webkitFullscreenElement;
     if(drin){
       (document.exitFullscreen || document.webkitExitFullscreen).call(document);
