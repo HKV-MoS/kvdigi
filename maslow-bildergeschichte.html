@@ -76,6 +76,9 @@
   .punkt.erledigt{ background:#a8c692; }
   .punkt.jetzt{ background:var(--gruen); box-shadow:0 0 0 3px rgba(49,82,32,.18); }
   #zaehler{ font-size:12.5px; color:var(--grau); }
+  #tonknopf{ margin-left:auto; }
+  #tonknopf.an{ background:#eef4ea; border-color:var(--gruen); color:var(--gruen); }
+  #weiter{ margin-left:0 !important; }
   #quelle{ font-size:11.5px; color:var(--grau); margin:10px 0 0; }
 </style>
 </head>
@@ -115,6 +118,7 @@
     <button class="knopf" id="zurueck">← Zurück</button>
     <span id="punkte"></span>
     <span id="zaehler"></span>
+    <button class="knopf" id="tonknopf" type="button" title="Klangteppich zur Stufe ein- oder ausschalten">♪ Ton</button>
     <button class="knopf" id="weiter">Weiter →</button>
   </div>
 
@@ -125,47 +129,47 @@
 // Jede Stufe: drei Bilder gleichzeitig, dazu Erzaehlung und Heute-Kasten.
 // Fehlt eine Datei noch, zeigt der Rahmen «Bild folgt».
 var STATIONEN = [
-  { nr:'Übersicht', titel:'Eine Siedlung, fünf Ebenen', gross:true,
+  { nr:'Übersicht', ton:'ton_uebersicht.mp3', titel:'Eine Siedlung, fünf Ebenen', gross:true,
     bilder:[ { datei:'', text:'' } ],
     erzaehlung:'Eine Siedlung in der Steinzeit, von unten nach oben gebaut. Ganz unten das, was zum Überleben nötig ist — ganz oben das, was niemand verlangt und trotzdem jemand tut. Fünf Ebenen, fünf Arten von Bedürfnissen. Wir steigen sie hinauf, jede in drei Bildern.',
     heute:'Dieselben fünf Stufen bestimmen, wofür Sie heute Geld ausgeben.' },
 
-  { nr:'Stufe 1', oben:0.755, unten:1.000, titel:'Grundbedürfnisse',
+  { nr:'Stufe 1', ton:'ton_grund.mp3', oben:0.755, unten:1.000, titel:'Grundbedürfnisse',
     bilder:[ { datei:'stufe1_1.jpg', text:'Der Vorrat ist leer. Das Kind hält sich den Bauch, der Hund schnuppert an der leeren Schale.' },
              { datei:'stufe1_2.jpg', text:'Beeren pflücken, Knollen graben, ein Fisch vom Fluss. Alle helfen.' },
              { datei:'stufe1_3.jpg', text:'Satt. Erst jetzt ist Platz für alles andere.' } ],
     erzaehlung:'Wer Hunger hat, denkt an nichts anderes. Kein Mensch sorgt sich um seinen Ruf, solange der Magen leer ist. Essen, Trinken, Wärme, Schlaf: Das ist die unterste Stufe, und sie muss zuerst gedeckt sein.',
     heute:'Ihr Znüni, die Miete für ein warmes Zimmer, das Wasser aus dem Hahn.' },
 
-  { nr:'Stufe 2', oben:0.585, unten:0.755, titel:'Sicherheit',
+  { nr:'Stufe 2', ton:'ton_sicherheit.mp3', oben:0.585, unten:0.755, titel:'Sicherheit',
     bilder:[ { datei:'stufe2_1.jpg', text:'Ein Bär am Waldrand. Die Frau zieht das Kind nach hinten.' },
              { datei:'stufe2_2.jpg', text:'Der Mann mit dem Speer, das Feuer im Rücken. Der Bär zieht ab.' },
              { datei:'stufe2_3.jpg', text:'Schlafen, während einer wacht.' } ],
     erzaehlung:'Satt zu sein reicht nicht, wenn man nachts nicht ruhig schlafen kann. Sicherheit heisst: ein Dach, ein Feuer — und jemand, der aufpasst.',
     heute:'Die abschliessbare Tür, die Krankenkasse, das Sparkonto für den Notfall.' },
 
-  { nr:'Stufe 3', oben:0.415, unten:0.585, titel:'Soziale Bedürfnisse',
+  { nr:'Stufe 3', ton:'ton_sozial.mp3', oben:0.415, unten:0.585, titel:'Soziale Bedürfnisse',
     bilder:[ { datei:'stufe3_1.jpg', text:'Abseits. Der junge Mann sitzt allein, die anderen lachen am Feuer.' },
              { datei:'stufe3_2.jpg', text:'Das Kind holt ihn. Am Feuer wird Platz gemacht.' },
              { datei:'stufe3_3.jpg', text:'Dazugehören. Alle am selben Feuer.' } ],
     erzaehlung:'Niemand isst gern allein. Wer dazugehört, übersteht den Winter — allein schafft es keiner. Die Gruppe ist ein Bedürfnis, kein Luxus.',
     heute:'Der Gruppenchat, das Mittagessen mit den anderen Lernenden, der Verein am Mittwoch.' },
 
-  { nr:'Stufe 4', oben:0.265, unten:0.415, titel:'Anerkennung',
+  { nr:'Stufe 4', ton:'', oben:0.265, unten:0.415, titel:'Anerkennung',
     bilder:[ { datei:'stufe4_1.jpg', text:'Die Beute. Der junge Mann bringt ein Wildschwein.' },
              { datei:'stufe4_2.jpg', text:'Gesehen werden. Eine Hand auf der Schulter, ein Nicken.' },
              { datei:'stufe4_3.jpg', text:'Die Kette. Ein Zeichen, das alle sehen.' } ],
     erzaehlung:'Etwas leisten und dafür gesehen werden. Anerkennung füllt keinen Magen, aber sie fehlt, wenn sie fehlt.',
     heute:'Das Lob der Berufsbildnerin, die bestandene Prüfung, das Kompliment für die neuen Schuhe.' },
 
-  { nr:'Stufe 5', oben:0.000, unten:0.265, titel:'Selbstverwirklichung',
+  { nr:'Stufe 5', ton:'ton_selbst.mp3', oben:0.000, unten:0.265, titel:'Selbstverwirklichung',
     bilder:[ { datei:'stufe5_1.jpg', text:'Die leere Wand. Ocker in der Schale, alle anderen schlafen.' },
              { datei:'stufe5_2.jpg', text:'Das Pferd entsteht. Niemand verlangt das von ihm.' },
              { datei:'stufe5_3.jpg', text:'Das Werk. Er schaut nicht auf die anderen, sondern auf sein Bild.' } ],
     erzaehlung:'Zuoberst tut einer etwas, das nicht wärmt und nicht sättigt. Er tut es, weil er es kann und weil es ihn ausmacht.',
     heute:'Das Instrument, das Sie lernen. Der Beruf, den Sie gewählt haben, weil er zu Ihnen passt.' },
 
-  { nr:'Schluss', titel:'Alle fünf sind bewohnt', gross:true,
+  { nr:'Schluss', ton:'ton_uebersicht.mp3', titel:'Alle fünf sind bewohnt', gross:true,
     bilder:[ { datei:'', text:'' } ],
     erzaehlung:'Man steigt die Stufen nicht einmal hinauf und ist dann fertig. Alle fünf sind gleichzeitig bewohnt — damals wie heute. Gewechselt haben nur die Mittel: Die Höhle ist die Wohnung, das Feuer die Heizung, der Wächter die Versicherung, der Vorrat das Sparkonto.',
     heute:'In der Apotheke lässt sich auch das Sortiment so lesen: Das Schmerzmittel deckt eine untere Stufe, die Hautpflege eine mittlere, das Nahrungsergänzungsmittel «für mehr Energie im Alltag» eine obere.' }
@@ -273,8 +277,49 @@ function zeige(k){
   weiter.disabled = (i === STATIONEN.length - 1);
   var naechst = STATIONEN[i + 1];
   weiter.textContent = naechst ? (naechst.nr + ' →') : 'Ende';
+  tonWechseln();
   einpassen();
 }
+
+// --- Klangteppich: ein Audio-Element, weiches Ueberblenden beim Stationswechsel ---
+var tonknopf = document.getElementById('tonknopf');
+var ton = new Audio(); ton.loop = true; ton.preload = 'none';
+var tonAn = false, blende = null;
+
+var blendeDanach = null;
+function tonPegel(ziel, dauer, danach){
+  if (blende){ clearInterval(blende); blende = null; if (blendeDanach){ var d = blendeDanach; blendeDanach = null; d(); } }
+  blendeDanach = danach || null;
+  var start = ton.volume, t0 = Date.now();
+  blende = setInterval(function(){
+    var f = Math.min(1, (Date.now() - t0) / dauer);
+    ton.volume = start + (ziel - start) * f;
+    if (f >= 1){ clearInterval(blende); blende = null; blendeDanach = null; if (danach) danach(); }
+  }, 40);
+}
+var tonZaehler = 0;
+function tonWechseln(){
+  var st = STATIONEN[i];
+  tonknopf.disabled = !st.ton;
+  if (!tonAn) return;
+  var meine = ++tonZaehler;                         // jeder Wechsel bekommt eine Nummer
+  var starten = function(){
+    if (meine !== tonZaehler) return;               // inzwischen schon weitergeklickt
+    ton.src = st.ton; ton.volume = 0;
+    var p = ton.play(); if (p && p.catch) p.catch(function(){});
+    tonPegel(1, 900);
+  };
+  if (!st.ton){ tonPegel(0, 500, function(){ ton.pause(); }); return; }
+  if (ton.getAttribute('src') === st.ton && !ton.paused){ tonPegel(1, 300); return; }
+  if (!ton.paused) tonPegel(0, 450, function(){ ton.pause(); starten(); });
+  else starten();
+}
+tonknopf.onclick = function(){
+  tonAn = !tonAn;
+  tonknopf.classList.toggle('an', tonAn);
+  tonknopf.textContent = tonAn ? '♪ Ton aus' : '♪ Ton';
+  if (tonAn) tonWechseln(); else tonPegel(0, 500, function(){ ton.pause(); });
+};
 
 zurueck.onclick = function(){ zeige(i - 1); };
 weiter.onclick  = function(){ zeige(i + 1); };
