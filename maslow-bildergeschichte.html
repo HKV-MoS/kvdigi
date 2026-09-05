@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fünf Stufen, eine Siedlung — Bildergeschichte</title>
+<style>
+  :root{ --gruen:#315220; --dunkel:#1A1A1A; --grau:#666; --linie:#dfe4da; --sand:#f6f4ef; }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:#fff;
+             font-family:"Aptos","Segoe UI",Helvetica,Arial,sans-serif; color:var(--dunkel); }
+  #blatt{ width:1040px; max-width:100%; margin:0 auto; padding:14px 18px 12px; }
+  body.eingebettet #blatt{ padding:8px 12px 8px; }
+
+  h1{ font-size:23px; margin:0 0 2px; color:var(--gruen); }
+  .lead{ font-size:13.5px; color:var(--grau); margin:0 0 11px; }
+
+  #mitte{ display:flex; flex-direction:column; gap:14px; }
+  body.breit #mitte{ flex-direction:row; align-items:flex-start; }
+  body.breit #bildseite{ flex:1.35 1 0; min-width:0; }
+  body.breit #textseite{ flex:1 1 0; min-width:0; }
+
+  /* Bildfenster: das Bild faehrt darin herum */
+  #fenster{ position:relative; width:100%; aspect-ratio:1536/1024; overflow:hidden;
+            border-radius:10px; background:#e8e6e1; }
+  #fenster img{ position:absolute; inset:0; width:100%; height:100%; display:block;
+                transform-origin:50% 50%;
+                transform:scale(var(--z,1)) translate(var(--tx,0%), var(--ty,0%));
+                transition:transform 1.15s cubic-bezier(.4,0,.2,1); }
+  @media (prefers-reduced-motion: reduce){ #fenster img{ transition:none; } }
+  #legende{ font-size:12px; color:var(--grau); margin:6px 0 0; }
+
+  /* Textspalte */
+  .stufe-nr{ display:inline-block; font-size:11.5px; letter-spacing:.06em; text-transform:uppercase;
+             color:var(--gruen); border:1px solid #c3d2b8; background:#fff;
+             border-radius:999px; padding:2px 9px; margin-bottom:8px; }
+  h2{ font-size:21px; line-height:1.2; margin:0 0 8px; color:var(--dunkel); }
+  #geschichte{ font-size:15px; line-height:1.5; margin:0 0 12px; }
+  #heute{ border-left:4px solid var(--gruen); background:var(--sand);
+          border-radius:0 8px 8px 0; padding:11px 13px; font-size:14px; line-height:1.45; }
+  #heute b{ color:var(--gruen); }
+
+  /* Fusszeile */
+  #fuss{ display:flex; align-items:center; gap:12px; margin-top:12px; }
+  .knopf{ border:1.5px solid #cfd8c8; background:#fff; color:var(--dunkel);
+          font:inherit; font-size:14px; font-weight:600; padding:7px 15px;
+          border-radius:999px; cursor:pointer; transition:.15s; }
+  .knopf:hover:not(:disabled){ border-color:var(--gruen); background:#f6f9f4; }
+  .knopf:disabled{ opacity:.4; cursor:default; }
+  #weiter{ margin-left:auto; background:var(--gruen); border-color:var(--gruen); color:#fff; }
+  #weiter:hover{ background:#3d6629; }
+  #punkte{ display:flex; gap:6px; }
+  .punkt{ width:9px; height:9px; border-radius:50%; background:#e2e6de; border:none;
+          padding:0; cursor:pointer; }
+  .punkt.erledigt{ background:#a8c692; }
+  .punkt.jetzt{ background:var(--gruen); box-shadow:0 0 0 3px rgba(49,82,32,.18); }
+  #zaehler{ font-size:12.5px; color:var(--grau); }
+  #quelle{ font-size:11.5px; color:var(--grau); margin:10px 0 0; }
+</style>
+</head>
+<body>
+<div id="blatt">
+  <div id="kopf">
+    <h1>Fünf Stufen, eine Siedlung</h1>
+    <p class="lead">Eine Bildergeschichte durch die Bedürfnispyramide — von unten nach oben. Mit den Pfeiltasten oder den Knöpfen weiterklicken.</p>
+  </div>
+
+  <div id="mitte">
+    <div id="bildseite">
+      <div id="fenster">
+        <img id="bild" src="maslow-siedlung.jpg"
+             alt="Bedürfnispyramide als Steinzeitsiedlung mit fünf übereinanderliegenden Ebenen">
+      </div>
+      <p id="legende">Abb.: Die fünf Stufen an einer Steinzeitsiedlung. Bild erstellt mit ChatGPT.</p>
+    </div>
+
+    <div id="textseite">
+      <span class="stufe-nr" id="nr">Übersicht</span>
+      <h2 id="titel">&nbsp;</h2>
+      <p id="geschichte">&nbsp;</p>
+      <div id="heute"><b>Heute:</b> <span id="heutetext">&nbsp;</span></div>
+    </div>
+  </div>
+
+  <div id="fuss">
+    <button class="knopf" id="zurueck">← Zurück</button>
+    <span id="punkte"></span>
+    <span id="zaehler">1 von 7</span>
+    <button class="knopf" id="weiter">Weiter →</button>
+  </div>
+
+  <p id="quelle">Bedürfnispyramide nach Abraham H. Maslow (1943). Darstellung als Steinzeitsiedlung: eigene Umsetzung für den ABU an der HKV Aarau.</p>
+</div>
+
+<script>
+// c = Mitte des Bandes als Anteil der Bildhoehe (von oben), x = waagrechte Mitte
+var STATIONEN = [
+  { nr:'Übersicht', titel:'Eine Siedlung, fünf Ebenen',
+    z:1, x:0.50, c:0.50,
+    text:'Eine Siedlung in der Steinzeit, von unten nach oben gebaut. Ganz unten das, was zum Überleben nötig ist — ganz oben das, was niemand verlangt und trotzdem jemand tut. Fünf Ebenen, fünf Arten von Bedürfnissen. Klicken Sie sich hinauf.',
+    heute:'Dieselben fünf Stufen bestimmen, wofür Sie heute Geld ausgeben.' },
+
+  { nr:'Stufe 1', titel:'Grundbedürfnisse',
+    z:2.4, x:0.40, c:0.8775,
+    text:'Zuunterst wird gegessen. Fleisch, Beeren, Knollen, daneben eine Wasserstelle. Wer hier nichts findet, denkt an nichts anderes mehr — kein Mensch sorgt sich um seinen Ruf, solange er Hunger hat.',
+    heute:'Ihr Znüni, die Miete für ein warmes Zimmer, das Wasser aus dem Hahn.' },
+
+  { nr:'Stufe 2', titel:'Sicherheit',
+    z:2.4, x:0.40, c:0.670,
+    text:'Eine Stufe höher schläft jemand am Feuer, geschützt vom Fels. Draussen hält ein Mann mit dem Speer Wache, während ein Bär vorbeizieht. Sicherheit ist also nicht nur ein Dach über dem Kopf — es ist auch jemand, der aufpasst, während man schläft.',
+    heute:'Die abschliessbare Tür, die Krankenkasse, das Sparkonto für den Notfall.' },
+
+  { nr:'Stufe 3', titel:'Soziale Bedürfnisse',
+    z:2.4, x:0.40, c:0.500,
+    text:'In der Mitte sitzt die Gruppe ums Feuer. Kinder, Erwachsene, der Hund. Niemand isst hier allein. Wer dazugehört, überlebt den Winter — allein schafft es keiner.',
+    heute:'Der Gruppenchat, das Mittagessen mit den anderen Lernenden, der Verein am Mittwoch.' },
+
+  { nr:'Stufe 4', titel:'Anerkennung',
+    z:2.4, x:0.40, c:0.340,
+    text:'Darüber geben sich zwei die Hand. Einer hat etwas geleistet, der andere sieht es und sagt es. Gesehen werden ist ein eigenes Bedürfnis — es füllt keinen Magen, aber es fehlt, wenn es fehlt.',
+    heute:'Das Lob der Berufsbildnerin, die bestandene Prüfung, das Kompliment für die neuen Schuhe.' },
+
+  { nr:'Stufe 5', titel:'Selbstverwirklichung',
+    z:2.4, x:0.42, c:0.1325,
+    text:'Zuoberst malt einer ein Pferd an die Wand. Niemand verlangt das von ihm, es wärmt nicht und es sättigt nicht. Er tut es trotzdem — weil er es kann und weil es ihn ausmacht.',
+    heute:'Das Instrument, das Sie lernen. Der Beruf, den Sie gewählt haben, weil er zu Ihnen passt.' },
+
+  { nr:'Schluss', titel:'Alle fünf sind bewohnt',
+    z:1, x:0.50, c:0.50,
+    text:'Man steigt die Stufen nicht einmal hinauf und ist dann fertig. Alle fünf sind gleichzeitig bewohnt — damals wie heute. Gewechselt haben nur die Mittel: Die Höhle ist die Wohnung, das Feuer die Heizung, der Wächter die Versicherung, der Vorrat das Sparkonto.',
+    heute:'In der Apotheke lässt sich auch das Sortiment so lesen. Das Schmerzmittel deckt eine untere Stufe, die Hautpflege eine mittlere, das Nahrungsergänzungsmittel «für mehr Energie im Alltag» eine obere.' }
+];
+
+var i = 0;
+var bild = document.getElementById('bild');
+var nr = document.getElementById('nr');
+var titel = document.getElementById('titel');
+var geschichte = document.getElementById('geschichte');
+var heutetext = document.getElementById('heutetext');
+var zaehler = document.getElementById('zaehler');
+var punkte = document.getElementById('punkte');
+var zurueck = document.getElementById('zurueck');
+var weiter = document.getElementById('weiter');
+
+STATIONEN.forEach(function(st, k){
+  var p = document.createElement('button');
+  p.className = 'punkt';
+  p.type = 'button';
+  p.title = st.titel;
+  p.setAttribute('aria-label', 'Station ' + (k+1) + ': ' + st.titel);
+  p.onclick = function(){ zeige(k); };
+  punkte.appendChild(p);
+});
+
+function zeige(k){
+  i = Math.max(0, Math.min(STATIONEN.length - 1, k));
+  var st = STATIONEN[i];
+
+  // Ausschnitt am Bildrand festhalten, sonst entsteht eine leere Flaeche
+  var sicht = 1 / st.z;                       // sichtbarer Anteil in beiden Richtungen
+  var rand  = sicht / 2;
+  var x = Math.max(rand, Math.min(1 - rand, st.x));
+  var c = Math.max(rand, Math.min(1 - rand, st.c));
+
+  bild.style.setProperty('--z', st.z);
+  bild.style.setProperty('--tx', ((0.5 - x) * 100).toFixed(2) + '%');
+  bild.style.setProperty('--ty', ((0.5 - c) * 100).toFixed(2) + '%');
+
+  nr.textContent = st.nr;
+  titel.textContent = st.titel;
+  geschichte.textContent = st.text;
+  heutetext.textContent = st.heute;
+  zaehler.textContent = (i + 1) + ' von ' + STATIONEN.length;
+
+  var ds = punkte.querySelectorAll('.punkt');
+  for (var n = 0; n < ds.length; n++){
+    ds[n].className = 'punkt' + (n < i ? ' erledigt' : (n === i ? ' jetzt' : ''));
+  }
+  zurueck.disabled = (i === 0);
+  weiter.disabled = (i === STATIONEN.length - 1);
+  weiter.textContent = (i === STATIONEN.length - 2) ? 'Schluss →' : 'Weiter →';
+  einpassen();
+}
+
+zurueck.onclick = function(){ zeige(i - 1); };
+weiter.onclick  = function(){ zeige(i + 1); };
+document.addEventListener('keydown', function(e){
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); zeige(i + 1); }
+  if (e.key === 'ArrowLeft')  { e.preventDefault(); zeige(i - 1); }
+  if (e.key === 'Home')       { zeige(0); }
+  if (e.key === 'End')        { zeige(STATIONEN.length - 1); }
+});
+document.getElementById('fenster').onclick = function(){
+  zeige(i >= STATIONEN.length - 1 ? 0 : i + 1);
+};
+
+// --- eingebettet erkennen und einpassen ---
+if (window.self !== window.top) document.body.classList.add('eingebettet');
+
+function einpassen(){
+  document.body.style.zoom = '';
+  var breit = (window.innerWidth / window.innerHeight) > 1.42;
+  document.body.classList.toggle('breit', breit);
+
+  var blatt = document.getElementById('blatt');
+  var noetig = blatt.scrollHeight + 4;
+  var f = Math.min(1, window.innerHeight / noetig, window.innerWidth / (breit ? 820 : 620));
+  if (f < 0.999) document.body.style.zoom = f;
+
+  for (var n = 0; n < 6; n++){
+    if (document.documentElement.scrollHeight <= window.innerHeight) break;
+    f = f * 0.975;
+    document.body.style.zoom = f;
+  }
+}
+window.addEventListener('load', einpassen);
+window.addEventListener('resize', einpassen);
+setTimeout(einpassen, 300);
+
+zeige(0);
+</script>
+</body>
+</html>

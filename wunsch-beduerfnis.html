@@ -295,6 +295,13 @@ function einpassen(){
   var noetig = blatt.scrollHeight + 4;
   var f = Math.min(1, window.innerHeight / noetig, window.innerWidth / (breit ? 760 : 620));
   if (f < 0.999) document.body.style.zoom = f;
+
+  // Umbruch aendert die noetige Hoehe: nachmessen und notfalls weiter verkleinern
+  for (var n = 0; n < 6; n++){
+    if (document.documentElement.scrollHeight <= window.innerHeight) break;
+    f = f * 0.975;
+    document.body.style.zoom = f;
+  }
 }
 window.addEventListener('load', einpassen);
 window.addEventListener('resize', einpassen);
