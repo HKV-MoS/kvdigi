@@ -28,17 +28,33 @@
                 transform:scale(var(--z,1)) translate(var(--tx,0%), var(--ty,0%));
                 transition:transform 1.15s cubic-bezier(.4,0,.2,1); }
   @media (prefers-reduced-motion: reduce){ #fenster img{ transition:none; } }
+  #fenster{ cursor:zoom-in; }
+  #fenster.ganz{ cursor:default; }
   #legende{ font-size:12px; color:var(--grau); margin:6px 0 0; }
+
+  /* Zoom-Werkzeug */
+  #lupe{ display:flex; align-items:center; gap:7px; margin-top:7px; flex-wrap:wrap; }
+  .lupenknopf{ border:1.5px solid #cfd8c8; background:#fff; color:var(--dunkel);
+               font:inherit; font-size:12.5px; font-weight:600; padding:4px 11px;
+               border-radius:999px; cursor:pointer; transition:.15s; }
+  .lupenknopf:hover:not(:disabled){ border-color:var(--gruen); background:#f6f9f4; }
+  #lupe .lupenknopf.aktiv{ background-color:#315220; border-color:#315220; color:#fff; }
+  .lupenknopf:disabled{ opacity:.4; cursor:default; }
+  #lupenhinweis{ font-size:11.5px; color:var(--grau); }
 
   /* Textspalte */
   .stufe-nr{ display:inline-block; font-size:11.5px; letter-spacing:.06em; text-transform:uppercase;
              color:var(--gruen); border:1px solid #c3d2b8; background:#fff;
-             border-radius:999px; padding:2px 9px; margin-bottom:8px; }
+             border-radius:999px; padding:2px 9px; margin-bottom:8px; align-self:flex-start; }
   h2{ font-size:21px; line-height:1.2; margin:0 0 8px; color:var(--dunkel); }
   #geschichte{ font-size:15px; line-height:1.5; margin:0 0 12px; }
   #heute{ border-left:4px solid var(--gruen); background:var(--sand);
           border-radius:0 8px 8px 0; padding:11px 13px; font-size:14px; line-height:1.45; }
   #heute b{ color:var(--gruen); }
+
+  /* Speer und Feuer, unten rechts in der Textspalte */
+  #deko{ display:block; margin:14px 0 0 auto; width:104px; height:auto; opacity:.5; }
+  body.breit #textseite{ display:flex; flex-direction:column; }
 
   /* Fusszeile */
   #fuss{ display:flex; align-items:center; gap:12px; margin-top:12px; }
@@ -72,6 +88,13 @@
              alt="Bedürfnispyramide als Steinzeitsiedlung mit fünf übereinanderliegenden Ebenen">
       </div>
       <p id="legende">Abb.: Die fünf Stufen an einer Steinzeitsiedlung. Bild erstellt mit ChatGPT.</p>
+
+      <div id="lupe">
+        <button class="lupenknopf" id="lupeGanz" type="button">Ganzes Bild</button>
+        <button class="lupenknopf" id="lupeStufe" type="button">Stufe</button>
+        <button class="lupenknopf" id="lupeRaus" type="button" aria-label="Weiter weg">−</button>
+        <span id="lupenhinweis">Ins Bild klicken zoomt auf die Stelle.</span>
+      </div>
     </div>
 
     <div id="textseite">
@@ -79,6 +102,22 @@
       <h2 id="titel">&nbsp;</h2>
       <p id="geschichte">&nbsp;</p>
       <div id="heute"><b>Heute:</b> <span id="heutetext">&nbsp;</span></div>
+
+      <svg id="deko" viewBox="0 0 130 90" fill="none" aria-hidden="true"
+           stroke="#315220" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+        <!-- Speer, an den Fels gelehnt -->
+        <path d="M96 84 L118 14"/>
+        <path d="M118 14 c-4.5 3.6 -6.4 8.6 -5.6 13.4 4.4 -1.9 7.6 -5.9 8.6 -10.8 z" fill="#315220" fill-opacity=".18"/>
+        <path d="M113.4 27.4 l7.6 -10.8"/>
+        <path d="M110 36 l7 -3"/>
+        <!-- Scheite -->
+        <path d="M18 79 L54 71"/>
+        <path d="M20 71 L56 79"/>
+        <!-- Flammen -->
+        <path d="M37 66 c-7 -6 -9 -12 -5.5 -18 -0.6 4.2 1.4 6.6 4 7.6 -2.4 -8.6 0.8 -15.4 8 -19.6 -2 6 -0.4 9.8 3 13 1 -2.4 1.2 -4.6 0.6 -7 5.4 5.2 7.4 11.6 5 17.4 -1.4 3.4 -4 5.8 -7.6 6.6" fill="#315220" fill-opacity=".14"/>
+        <!-- Funken -->
+        <path d="M52 30 l0 3" /><path d="M28 34 l0 2.6"/><path d="M60 44 l0 2.6"/>
+      </svg>
     </div>
   </div>
 
@@ -152,19 +191,60 @@ STATIONEN.forEach(function(st, k){
   punkte.appendChild(p);
 });
 
+// --- Zoom-Werkzeug -------------------------------------------------------
+var blick = { z:1, x:0.5, c:0.5 };
+var modus = 'ganz';   // 'ganz' | 'stufe' | 'frei'
+var fenster = document.getElementById('fenster');
+var lupeGanz = document.getElementById('lupeGanz');
+var lupeStufe = document.getElementById('lupeStufe');
+var lupeRaus = document.getElementById('lupeRaus');
+
+function blickSetzen(z, x, c){
+  z = Math.max(1, Math.min(6, z));
+  var rand = (1 / z) / 2;                     // Ausschnitt am Bildrand festhalten
+  x = Math.max(rand, Math.min(1 - rand, x));
+  c = Math.max(rand, Math.min(1 - rand, c));
+  blick = { z:z, x:x, c:c };
+
+  bild.style.setProperty('--z', z);
+  bild.style.setProperty('--tx', ((0.5 - x) * 100).toFixed(2) + '%');
+  bild.style.setProperty('--ty', ((0.5 - c) * 100).toFixed(2) + '%');
+
+  var st = STATIONEN[i];
+  var ganz = z <= 1.001;
+  fenster.classList.toggle('ganz', z >= 5.99);
+  lupeGanz.classList.toggle('aktiv', ganz);
+  lupeStufe.classList.toggle('aktiv', modus === 'stufe' && !ganz);
+  lupeStufe.disabled = (st.z <= 1.001);
+  lupeRaus.disabled = ganz;
+}
+
+function aufStufe(){
+  var st = STATIONEN[i];
+  modus = (st.z > 1.001) ? 'stufe' : 'ganz';
+  blickSetzen(st.z, st.x, st.c);
+}
+
+// Klick ins Bild: naeher heran, zentriert auf die angeklickte Stelle
+fenster.onclick = function(e){
+  modus = 'frei';
+  var r = fenster.getBoundingClientRect();
+  var u = (e.clientX - r.left) / r.width;
+  var v = (e.clientY - r.top) / r.height;
+  var zielX = blick.x + (u - 0.5) / blick.z;
+  var zielY = blick.c + (v - 0.5) / blick.z;
+  blickSetzen(blick.z * 1.7, zielX, zielY);
+};
+
+lupeGanz.onclick  = function(){ modus = 'ganz'; blickSetzen(1, 0.5, 0.5); };
+lupeStufe.onclick = aufStufe;
+lupeRaus.onclick  = function(){ modus = 'frei'; blickSetzen(blick.z / 1.7, blick.x, blick.c); };
+
 function zeige(k){
   i = Math.max(0, Math.min(STATIONEN.length - 1, k));
   var st = STATIONEN[i];
 
-  // Ausschnitt am Bildrand festhalten, sonst entsteht eine leere Flaeche
-  var sicht = 1 / st.z;                       // sichtbarer Anteil in beiden Richtungen
-  var rand  = sicht / 2;
-  var x = Math.max(rand, Math.min(1 - rand, st.x));
-  var c = Math.max(rand, Math.min(1 - rand, st.c));
-
-  bild.style.setProperty('--z', st.z);
-  bild.style.setProperty('--tx', ((0.5 - x) * 100).toFixed(2) + '%');
-  bild.style.setProperty('--ty', ((0.5 - c) * 100).toFixed(2) + '%');
+  aufStufe();
 
   nr.textContent = st.nr;
   titel.textContent = st.titel;
@@ -190,9 +270,6 @@ document.addEventListener('keydown', function(e){
   if (e.key === 'Home')       { zeige(0); }
   if (e.key === 'End')        { zeige(STATIONEN.length - 1); }
 });
-document.getElementById('fenster').onclick = function(){
-  zeige(i >= STATIONEN.length - 1 ? 0 : i + 1);
-};
 
 // --- eingebettet erkennen und einpassen ---
 if (window.self !== window.top) document.body.classList.add('eingebettet');
