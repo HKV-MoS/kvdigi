@@ -855,16 +855,62 @@ function g_prozent_pro(){
     warum1:`Auf 1 %: durch ${x} teilen.`, warum2:`Auf ${c} %: mal ${c}.`,
     A:x, B:b, C:c, ansUnit:'CHF', answer:ans, hint:'Prozent ist ein gerader Dreisatz. Zuerst der Wert von 1 % (÷), dann mal die gesuchten Prozent.' };
 }
+/* ---------- Tempo, Verbrauch und Fahrzeit passend zum Beruf ----------
+   Bisher zogen alle Berufe aus demselben Topf: Zug, Bus, Velofahrer, Auto —
+   und verbraucht wurde immer Benzin. Zuordnung neu wie bei den Artikeln
+   ueber LV.items, Rueckfall auf 'handel'.
+   fahrt = Fahrzeuge fuers Tempo (sp wird zusaetzlich gegen LV.speed gefiltert)
+   verbrauch = wer was schluckt · anti = die Strecke, die gleich lang bleibt */
+const TEMPO_SETS={
+  handel:{
+    fahrt:[{n:'Lieferwagen',e:'\ud83d\ude9a',sp:[50,60,70,80,90,100]},{n:'Zug',e:'\ud83d\ude82',sp:[60,80,90,100,120,140]},{n:'Velokurier',e:'\ud83d\udeb4',sp:[15,18,20,24,25,30]}],
+    verbrauch:{n:'Lieferwagen',mittel:'Diesel'},
+    weg:'Die Tour zur Filiale' },
+  buero:{
+    fahrt:[{n:'Zug',e:'\ud83d\ude82',sp:[60,80,90,100,120,140]},{n:'Geschäftsauto',pr:'es',e:'\ud83d\ude97',sp:[60,70,80,90,100,120]},{n:'Bus',e:'\ud83d\ude8c',sp:[40,50,60,70,80]}],
+    verbrauch:{n:'Geschäftsauto',pr:'es',mittel:'Benzin'},
+    weg:'Die Fahrt zur Zweigstelle' },
+  apotheke:{
+    fahrt:[{n:'Kurierauto',pr:'es',e:'\ud83d\ude99',sp:[50,60,70,80,90,100]},{n:'Velokurier',e:'\ud83d\udeb4',sp:[15,18,20,24,25,30]},{n:'Zug',e:'\ud83d\ude82',sp:[60,80,90,100,120]}],
+    verbrauch:{n:'Kurierauto',pr:'es',mittel:'Benzin'},
+    weg:'Die Fahrt zum Verteilzentrum' },
+  gesundheit:{
+    fahrt:[{n:'Spitex-Auto',pr:'es',e:'\ud83d\ude97',sp:[40,50,60,70,80]},{n:'Rettungswagen',e:'\ud83d\ude91',sp:[60,70,80,90,100,120]},{n:'Velo',pr:'es',e:'\ud83d\udeb4',sp:[15,18,20,24,25]}],
+    verbrauch:{n:'Spitex-Auto',pr:'es',mittel:'Benzin'},
+    weg:'Die Fahrt zur Patientin' },
+  betreuung:{
+    fahrt:[{n:'Kleinbus',e:'\ud83d\ude90',sp:[40,50,60,70,80]},{n:'Zug',e:'\ud83d\ude82',sp:[60,80,90,100,120]},{n:'Velo',pr:'es',e:'\ud83d\udeb4',sp:[15,18,20,24,25]}],
+    verbrauch:{n:'Kleinbus',mittel:'Diesel'},
+    weg:'Die Fahrt zum Ausflugsziel' },
+  gastro:{
+    fahrt:[{n:'Lieferroller',e:'\ud83d\udef5',sp:[40,50,60,70]},{n:'Lieferwagen',e:'\ud83d\ude9a',sp:[50,60,70,80,90]},{n:'Zug',e:'\ud83d\ude82',sp:[60,80,90,100,120]}],
+    verbrauch:{n:'Lieferroller',mittel:'Benzin'},
+    weg:'Die Liefertour ins Quartier' },
+  logistik:{
+    fahrt:[{n:'Lastwagen',e:'\ud83d\ude9b',sp:[60,70,80,90]},{n:'Lieferwagen',e:'\ud83d\ude9a',sp:[50,60,70,80,90,100]},{n:'Güterzug',e:'\ud83d\ude82',sp:[60,80,90,100,120]}],
+    verbrauch:{n:'Lastwagen',mittel:'Diesel'},
+    weg:'Die Strecke zum Verteilzentrum' },
+  praxis:{
+    fahrt:[{n:'Praxisauto',pr:'es',e:'\ud83d\ude97',sp:[50,60,70,80,90,100]},{n:'Velo',pr:'es',e:'\ud83d\udeb4',sp:[15,18,20,24,25]},{n:'Bus',e:'\ud83d\ude8c',sp:[40,50,60,70,80]}],
+    verbrauch:{n:'Praxisauto',pr:'es',mittel:'Benzin'},
+    weg:'Die Fahrt zum Hausbesuch' },
+  informatik:{
+    fahrt:[{n:'Servicewagen',e:'\ud83d\ude90',sp:[50,60,70,80,90,100]},{n:'Zug',e:'\ud83d\ude82',sp:[60,80,90,100,120,140]},{n:'Velo',pr:'es',e:'\ud83d\udeb4',sp:[15,18,20,24,25]}],
+    verbrauch:{n:'Servicewagen',mittel:'Benzin'},
+    weg:'Die Fahrt zum Kundenstandort' }
+};
+function tempoSet(){ return TEMPO_SETS[antiGruppe()] || TEMPO_SETS.handel; }
+
 function g_tempo_pro(){
   if(Math.random()<0.55){ // Geschwindigkeit (Zeit → Strecke)
     const [a,c]=twoDistinct(LV.hoursB);
     // Tempo passend zum Fahrzeug: sonst faehrt der Velofahrer 120 km/h
-    const veh=pick([{n:'Zug',e:'🚂',sp:[60,80,90,100,120,140]},{n:'Bus',e:'🚌',sp:[40,50,60,70,80]},{n:'Velofahrer',e:'🚴',sp:[15,18,20,24,25,30]},{n:'Auto',e:'🚗',sp:[60,70,80,90,100,120]}]), nm=veh.n;
+    const veh=pick(tempoSet().fahrt), nm=veh.n;
     const passend=veh.sp.filter(x=>LV.speed.indexOf(x)>=0);
     const v=pick(passend.length?passend:veh.sp);
     const b=v*a, ans=v*c;
     return { typ:'pro', kt:'tempo', emoji:veh.e,
-      text:`Ein ${nm} fährt in ${a} Stunden ${b} km. Wie weit kommt er in ${c} Stunden bei gleichem Tempo?`,
+      text:`Ein ${nm} fährt in ${a} Stunden ${b} km. Wie weit kommt ${veh.pr||'er'} in ${c} Stunden bei gleichem Tempo?`,
       aStr:`${a} Std`, bStr:`${b} km`, cStr:`${c} Std`,
       calc1:`${b} : ${a} = ${v}`, per1Str:`1 Std = ${v} km`,
       calc2:`${v} · ${c} = ${num(ans)}`,
@@ -873,14 +919,15 @@ function g_tempo_pro(){
   } else { // Verbrauch
     const cons=pick(LV.cons); // L pro 100 km
     const [a,c]=twoDistinct(LV.distV);
+    const vb=tempoSet().verbrauch;
     const b=Math.round(cons*a/100*100)/100, ans=Math.round(cons*c/100*100)/100, per1=cons/100;
     return { typ:'pro', kt:'tempo', emoji:'⛽',
-      text:`Ein Auto braucht auf ${a} km ${num(b)} Liter Benzin. Wie viel braucht es auf ${c} km?`,
+      text:`Ein ${vb.n} braucht auf ${a} km ${num(b)} Liter ${vb.mittel}. Wie viel braucht ${vb.pr||'er'} auf ${c} km?`,
       aStr:`${a} km`, bStr:`${num(b)} L`, cStr:`${c} km`,
       calc1:`${num(b)} : ${a} = ${num(per1)}`, per1Str:`1 km = ${num(per1)} L`,
       calc2:`${num(per1)} · ${c} = ${num(ans)}`,
       warum1:`Auf 1 km: durch ${a} teilen (Verbrauch pro km).`, warum2:`Auf ${c} km: mal ${c}.`,
-      A:a, B:b, C:c, ansUnit:'L', answer:ans, hint:'Weitere Strecke → mehr Benzin: gerader Dreisatz. Verbrauch pro km (÷), dann mal die km.' };
+      A:a, B:b, C:c, ansUnit:'L', answer:ans, hint:`Weitere Strecke → mehr ${vb.mittel}: gerader Dreisatz. Verbrauch pro km (÷), dann mal die km.` };
   }
 }
 
@@ -1010,8 +1057,9 @@ function g_tempo_anti(){
   const opt=pick(LV.antiDist);
   const [a,c]=twoDistinct(opt.sp); if(a===c) return g_tempo_anti();
   const K=opt.d, b=K/a, ans=K/c;
-  return { typ:'anti', kt:'tempo', emoji:'🏎️',
-    text:`Bei ${a} km/h dauert eine Fahrt ${num(b)} Stunden. Wie lange dauert dieselbe Strecke bei ${c} km/h?`,
+  const ts=tempoSet(), tveh=ts.fahrt[0];
+  return { typ:'anti', kt:'tempo', emoji:tveh.e,
+    text:`${ts.weg} ist immer gleich lang. Bei ${a} km/h dauert sie ${num(b)} Stunden. Wie lange dauert sie bei ${c} km/h?`,
     aStr:`${a} km/h`, bStr:`${num(b)} Std`, cStr:`${c} km/h`,
     calc1:`${a} · ${num(b)} = ${K}`, kStr:`Strecke = ${K} km`,
     calc2:`${K} : ${c} = ${num(ans)}`,
