@@ -135,6 +135,7 @@
   .sub2{font-family:'Archivo',sans-serif;font-weight:600;font-size:15px;color:var(--muted);
     margin:4px 0 0;letter-spacing:.02em}
   .sub2icons{font-size:14px;letter-spacing:.12em;margin-left:6px;opacity:.9}
+  .sig{font-family:'Archivo',sans-serif;font-size:12.5px;color:var(--muted);margin:6px 0 0;opacity:.85}
   .kopfrechts{display:flex;align-items:flex-start;gap:14px;flex:none}
   .theme{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;
     padding:6px 10px;font-size:17px;cursor:pointer;line-height:1;margin-top:2px}
@@ -240,10 +241,11 @@
     <div class="eyebrow">Sportlehre · Saison 2026/27</div>
     <h1 id="apptitle" title="Alle Filter zurücksetzen">Wettkampfkalender</h1>
     <p class="sub2">Sportlernende HKV <span class="sub2icons">⚽ 🤾 🏑 🏐 🏀 🚴 🥋 🤸 🛶 🏍 💃</span></p>
+    <p class="sig">© <a class="maplink" href="mailto:samuel.mollet@hkv.ch">S.&nbsp;Mollet</a>, Sportkoordinator</p>
   </div>
   <div class="kopfrechts">
     <button class="theme" id="themeToggle" title="Hell/Dunkel umschalten" aria-label="Hell/Dunkel umschalten">🌓</button>
-    <a class="fahne" href="https://www.hkvaarau.ch" target="_blank" rel="noopener"
+    <a class="fahne" href="https://www.hkvaarau.ch/berufsfachschule" target="_blank" rel="noopener"
        title="Handelsschule KV Aarau — hkvaarau.ch">
       <img src="assets/hkv_fahne.png?v=2" alt="Fahne HKV Aarau 1875">
     </a>
@@ -341,15 +343,13 @@
 <footer>
   Datenquellen: AFV-Matchcenter (FC Aarau: 1. Mannschaft, U-19/U-17/U-16 Elite, Frauen U-20/U-18/U-16) ·
   handball.ch-Matchcenter (HSC Suhr Aarau QHL; SG HSC Suhr Aarau II, 1. Liga; HSG Aargau Ost U19 Elite).
-  <b>Datenstand: <span class="stand"></span></b> — die Seite aktualisiert sich nicht selbst; Nachführung durch den Sportkoordinator.
-  Spiele ohne Uhrzeit sind vom Verband noch nicht angesetzt («Zeit folgt»).<br>
-  © <a class="maplink" href="mailto:samuel.mollet@hkv.ch">S.&nbsp;Mollet</a>, Sportkoordinator
-  <a class="maplink" href="https://www.hkvaarau.ch" target="_blank" rel="noopener">HKV Aarau</a>
+  <b>Datenstand: <span class="stand"></span></b>
+  Spiele ohne Uhrzeit sind vom Verband noch nicht angesetzt («Zeit folgt»).
 </footer>
 </div>
 
 <script>
-const STAND='24.08.2026';
+const STAND='06.09.2026';
 const TEAMS={
   AARU19:{name:'FC Aarau U-19 Elite',tag:'U-19',own:'FC Aarau',oc:'AAR',sport:'fussball',
     liga:'U-19 Elite, Meisterschaft'},
@@ -488,8 +488,8 @@ const CLUBS={
 };
 const M=[
  {d:'2026-08-22',z:'13:30',h:'LUZ',g:'AAR',o:'Sportanlagen Allmend, Luzern',t:'AARU19',res:'8:1'},
- {d:'2026-08-29',z:'14:00',h:'AAR',g:'SIO',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'AARU19'},
- {d:'2026-09-05',z:'14:00',h:'AAR',g:'LS',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'AARU19'},
+ {d:'2026-08-29',z:'14:00',h:'AAR',g:'SIO',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'AARU19',res:'2:1'},
+ {d:'2026-09-05',z:'14:00',h:'AAR',g:'LS',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'AARU19',res:'0:3'},
  {d:'2026-09-12',z:'14:00',h:'SER',g:'AAR',o:'Stade de Balexert, Châtelaine',t:'AARU19'},
  {d:'2026-09-26',z:'13:30',h:'AAR',g:'FCZ',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'AARU19'},
  {d:'2026-10-03',z:'15:45',h:'LUG',g:'AAR',o:'Campo Maglio, Canobbio',t:'AARU19'},
@@ -514,7 +514,7 @@ const M=[
  {d:'2027-05-01',z:'',h:'AAR',g:'WIN',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'AARU19'},
  {d:'2026-08-23',z:'11:00',h:'AAR',g:'YB',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'RBU18',res:'0:6'},
  {d:'2026-08-30',z:'11:00',h:'AAR',g:'FCZ',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'RBU18'},
- {d:'2026-09-06',z:'14:00',h:'SOL',g:'AAR',o:'Stadion FC Solothurn (Nebenplatz 1)',t:'RBU18'},
+ {d:'2026-09-06',z:'14:00',h:'SOL',g:'AAR',o:'Stadion FC Solothurn (Nebenplatz 1)',t:'RBU18',res:'0:4'},
  {d:'2026-09-13',z:'12:00',h:'SG',g:'AAR',o:'Stadion Espenmoos, St. Gallen',t:'RBU18'},
  {d:'2026-09-27',z:'11:00',h:'AAR',g:'GC',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'RBU18'},
  {d:'2026-10-04',z:'13:00',h:'AAR',g:'AFF',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'RBU18'},
@@ -537,7 +537,7 @@ const M=[
  {d:'2026-08-16',z:'14:00',h:'AAR',g:'BAS',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'RBU20',res:'1:1'},
  {d:'2026-08-22',z:'18:00',h:'FCZ',g:'AAR',o:'Heerenschürli, Zürich',t:'RBU20',res:'5:0'},
  {d:'2026-08-30',z:'14:00',h:'AAR',g:'SER',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'RBU20'},
- {d:'2026-09-05',z:'16:00',h:'YB',g:'AAR',o:'Kunstrasenfeld Wyler, Bern',t:'RBU20'},
+ {d:'2026-09-05',z:'16:00',h:'YB',g:'AAR',o:'Kunstrasenfeld Wyler, Bern',t:'RBU20',res:'4:0'},
  {d:'2026-09-13',z:'13:30',h:'AAR',g:'GC',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'RBU20'},
  {d:'2026-09-19',z:'16:00',h:'LUZ',g:'AAR',o:'Sportanlagen Allmend, Luzern',t:'RBU20'},
  {d:'2026-09-27',z:'13:30',h:'AAR',g:'RJ',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'RBU20'},
@@ -562,7 +562,7 @@ const M=[
  {d:'2027-05-08',z:'',h:'AAR',g:'YV',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'RBU20'},
  {d:'2027-05-22',z:'',h:'SG',g:'AAR',o:'Stadion Espenmoos, St. Gallen',t:'RBU20'},
  {d:'2026-08-16',z:'19:00',h:'HSC',g:'APP',o:'Schachenhalle, Aarau',t:'HSC2',wb:'Mobiliar-Cup, Vorrunde',res:'23:27'},
- {d:'2026-09-05',z:'17:30',h:'HSC',g:'MUO',o:'Schachenhalle, Aarau',t:'HSC2'},
+ {d:'2026-09-05',z:'17:30',h:'HSC',g:'MUO',o:'Schachenhalle, Aarau',t:'HSC2',res:'27:31'},
  {d:'2026-09-12',z:'16:00',h:'MUR',g:'HSC',o:'Bachmatten, Muri',t:'HSC2'},
  {d:'2026-09-26',z:'19:00',h:'HSC',g:'KRI',o:'Schachenhalle, Aarau',t:'HSC2'},
  {d:'2026-10-17',z:'18:00',h:'HSC',g:'WOH',o:'Schachenhalle, Aarau',t:'HSC2'},
@@ -589,9 +589,9 @@ const M=[
  {d:'2026-08-01',z:'18:00',h:'AAR',g:'SLO',o:'Bruegglifeld, Aarau',t:'AARFC1',res:'1:1'},
  {d:'2026-08-07',z:'20:15',h:'AAR',g:'NYO',o:'Bruegglifeld, Aarau',t:'AARFC1',res:'2:1'},
  {d:'2026-08-23',z:'14:00',h:'YV',g:'AAR',o:'Stade Municipal, Yverdon',t:'AARFC1',res:'2:1'},
- {d:'2026-08-28',z:'20:15',h:'AAR',g:'XAM',o:'Bruegglifeld, Aarau',t:'AARFC1'},
- {d:'2026-08-31',z:'20:15',h:'FCW',g:'AAR',o:'Lidl Sportpark Bergholz, Wil',t:'AARFC1'},
- {d:'2026-09-04',z:'19:30',h:'AAR',g:'RJ',o:'Bruegglifeld, Aarau',t:'AARFC1'},
+ {d:'2026-08-28',z:'20:15',h:'AAR',g:'XAM',o:'Bruegglifeld, Aarau',t:'AARFC1',res:'2:1'},
+ {d:'2026-08-31',z:'20:15',h:'FCW',g:'AAR',o:'Lidl Sportpark Bergholz, Wil',t:'AARFC1',res:'2:2'},
+ {d:'2026-09-04',z:'19:30',h:'AAR',g:'RJ',o:'Bruegglifeld, Aarau',t:'AARFC1',res:'3:2'},
  {d:'2026-09-12',z:'18:00',h:'AAR',g:'KRN',o:'Bruegglifeld, Aarau',t:'AARFC1'},
  {d:'2026-09-18',z:'20:15',h:'WIN',g:'AAR',o:'Schuetzenwiese, Winterthur',t:'AARFC1'},
  {d:'2026-10-09',z:'',h:'NYO',g:'AAR',o:'Centre sportif de Colovray, Nyon',t:'AARFC1'},
@@ -606,8 +606,8 @@ const M=[
  // FC Aarau U-17 Elite (AFV-Feed 24.08.26)
  {d:'2026-08-15',z:'13:00',h:'AAR',g:'XAM',o:'Sportplatz Winkel, Rohr (Kunstrasen)',t:'AARU17',res:'3:2'},
  {d:'2026-08-22',z:'11:45',h:'LUZ',g:'AAR',o:'Luzern',t:'AARU17',res:'3:3'},
- {d:'2026-08-29',z:'14:00',h:'AAR',g:'SIO',o:'Sportplatz Winkel, Rohr (Kunstrasen)',t:'AARU17'},
- {d:'2026-09-05',z:'13:45',h:'AAR',g:'LS',o:'Sportplatz Winkel, Rohr (Kunstrasen)',t:'AARU17'},
+ {d:'2026-08-29',z:'14:00',h:'AAR',g:'SIO',o:'Sportplatz Winkel, Rohr (Kunstrasen)',t:'AARU17',res:'2:1'},
+ {d:'2026-09-05',z:'13:45',h:'AAR',g:'LS',o:'Sportplatz Winkel, Rohr (Kunstrasen)',t:'AARU17',res:'0:1'},
  {d:'2026-09-12',z:'14:00',h:'SER',g:'AAR',o:'Stade de Balexert, Chatelaine',t:'AARU17'},
  {d:'2026-09-19',z:'13:00',h:'WIN',g:'AAR',o:'Schuetzenwiese, Winterthur (Platz 3)',t:'AARU17'},
  {d:'2026-09-26',z:'13:45',h:'AAR',g:'FCZ',o:'Sportplatz Winkel, Rohr (Kunstrasen)',t:'AARU17'},
@@ -632,8 +632,8 @@ const M=[
  {d:'2027-04-24',z:'',h:'GC',g:'AAR',o:'GC/Campus, Niederhasli',t:'AARU17'},
  {d:'2027-05-01',z:'',h:'AAR',g:'WIN',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'AARU17'},
  // FC Aarau U-16 Elite (AFV-Feed 24.08.26)
- {d:'2026-08-29',z:'14:00',h:'SIO',g:'AAR',o:'Ancien Stand, Sion',t:'AARU16'},
- {d:'2026-09-05',z:'14:00',h:'LS',g:'AAR',o:'Stade de la Tuiliere (Terrain 3), Lausanne',t:'AARU16'},
+ {d:'2026-08-29',z:'14:00',h:'SIO',g:'AAR',o:'Ancien Stand, Sion',t:'AARU16',res:'3:3'},
+ {d:'2026-09-05',z:'14:00',h:'LS',g:'AAR',o:'Stade de la Tuiliere (Terrain 3), Lausanne',t:'AARU16',res:'1:4'},
  {d:'2026-08-15',z:'14:30',h:'XAM',g:'AAR',o:'Neuchâtel',t:'AARU16',res:'2:2'},
  {d:'2026-08-22',z:'13:30',h:'AAR',g:'LUZ',o:'Sportplatz Winkel, Rohr (Kunstrasen)',t:'AARU16',res:'4:1'},
  {d:'2026-09-12',z:'14:00',h:'AAR',g:'SER',o:'Sportplatz Winkel, Rohr (Kunstrasen)',t:'AARU16'},
@@ -660,10 +660,10 @@ const M=[
  {d:'2027-05-01',z:'',h:'WIN',g:'AAR',o:'Schuetzenwiese, Winterthur (Platz 2)',t:'AARU16'},
  // HSC Suhr Aarau QHL - Hauptrunde (handball.ch 24.08.26; Fortsetzung ab Januar folgt im Matchcenter)
  {d:'2026-08-16',z:'16:00',h:'HSC',g:'STU',o:'Schachenhalle, Aarau',t:'HSCQHL',wb:'Testspiel',res:'26:32'},
- {d:'2026-08-26',z:'19:15',h:'HSC',g:'KAD',o:'Schachenhalle, Aarau',t:'HSCQHL'},
- {d:'2026-08-30',z:'17:00',h:'PFA',g:'HSC',o:'AXA Arena, Winterthur',t:'HSCQHL'},
- {d:'2026-09-02',z:'19:15',h:'HSC',g:'OTM',o:'Schachenhalle, Aarau',t:'HSCQHL'},
- {d:'2026-09-05',z:'18:00',h:'RTV',g:'HSC',o:'Rankhof, Basel',t:'HSCQHL'},
+ {d:'2026-08-26',z:'19:15',h:'HSC',g:'KAD',o:'Schachenhalle, Aarau',t:'HSCQHL',res:'20:28'},
+ {d:'2026-08-30',z:'17:00',h:'PFA',g:'HSC',o:'AXA Arena, Winterthur',t:'HSCQHL',res:'33:24'},
+ {d:'2026-09-02',z:'19:15',h:'HSC',g:'OTM',o:'Schachenhalle, Aarau',t:'HSCQHL',res:'32:31'},
+ {d:'2026-09-05',z:'18:00',h:'RTV',g:'HSC',o:'Rankhof, Basel',t:'HSCQHL',res:'23:22'},
  {d:'2026-09-12',z:'18:00',h:'HSC',g:'WAC',o:'Schachenhalle, Aarau',t:'HSCQHL'},
  {d:'2026-09-23',z:'19:15',h:'STA',g:'HSC',o:'Frohberg, Stäfa',t:'HSCQHL'},
  {d:'2026-09-27',z:'17:00',h:'HSC',g:'GCA',o:'Schachenhalle, Aarau',t:'HSCQHL'},
@@ -679,8 +679,8 @@ const M=[
  {d:'2026-12-16',z:'19:15',h:'WAC',g:'HSC',o:'Lachen, Thun',t:'HSCQHL'},
  {d:'2026-12-19',z:'18:00',h:'HSC',g:'RTV',o:'Schachenhalle, Aarau',t:'HSCQHL'},
  // HSG Aargau Ost U19 Elite (handball.ch 24.08.26)
- {d:'2026-08-29',z:'16:45',h:'FRE',g:'AGO',o:'Hofmatten 2, Wohlen',t:'AGO19',wb:'CH-Cup MU19, Vorrunde'},
- {d:'2026-09-05',z:'20:15',h:'AGO',g:'PFA',o:'Aue, Baden',t:'AGO19'},
+ {d:'2026-08-29',z:'16:45',h:'FRE',g:'AGO',o:'Hofmatten 2, Wohlen',t:'AGO19',wb:'CH-Cup MU19, Vorrunde',res:'30:36'},
+ {d:'2026-09-05',z:'20:15',h:'AGO',g:'PFA',o:'Aue, Baden',t:'AGO19',res:'30:31'},
  {d:'2026-09-13',z:'11:30',h:'HSCU',g:'AGO',o:'Schachenhalle, Aarau',t:'AGO19'},
  {d:'2026-09-19',z:'15:45',h:'AGO',g:'LSW',o:'GoEasy 1, Siggenthal Station',t:'AGO19'},
  {d:'2026-10-10',z:'',h:'PIL',g:'AGO',o:'Halle folgt',t:'AGO19'},
@@ -704,7 +704,7 @@ const M=[
  {d:'2027-03-20',z:'15:45',h:'AGO',g:'NW',o:'Sporthalle, Obersiggenthal',t:'AGO19'},
  // FC Aarau Frauen U16 / Redboots U16 (AFV-Feed 24.08.26)
  {d:'2026-08-30',z:'12:00',h:'AAR',g:'YB',o:'Sportanlage Schachen, Aarau (Feld 1)',t:'RBU16'},
- {d:'2026-09-05',z:'13:00',h:'BAS',g:'AAR',o:'Nachwuchs-Campus Basel, Muenchenstein',t:'RBU16'},
+ {d:'2026-09-05',z:'13:00',h:'BAS',g:'AAR',o:'Nachwuchs-Campus Basel, Muenchenstein',t:'RBU16',res:'2:1'},
  {d:'2026-09-13',z:'13:00',h:'AAR',g:'BIE',o:'Sportanlage Schachen, Aarau (Feld 1)',t:'RBU16'},
  {d:'2026-09-20',z:'11:00',h:'AAR',g:'WW',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'RBU16'},
  {d:'2026-09-27',z:'14:00',h:'CAR',g:'AAR',o:'Stade de la Fontenette, Carouge',t:'RBU16'},
@@ -728,7 +728,7 @@ const M=[
  // FC Zürich Frauen U18 (FVRZ-Feed 23.08.26) — Prenqi. Spiele gegen FCA Frauen U18 erscheinen auch bei RB U18.
  {d:'2026-08-22',z:'13:00',h:'BAS',g:'FCZ',o:'Basel',t:'FCZ18',res:'7:3'},
  {d:'2026-08-30',z:'11:00',h:'AAR',g:'FCZ',o:'Sportanlage Schachen, Aarau (Kunstrasen)',t:'FCZ18'},
- {d:'2026-09-05',z:'18:00',h:'FCZ',g:'WW',o:'Sportanlage Heerenschürli, Zürich',t:'FCZ18'},
+ {d:'2026-09-05',z:'18:00',h:'FCZ',g:'WW',o:'Sportanlage Heerenschürli, Zürich',t:'FCZ18',res:'2:1'},
  {d:'2026-09-12',z:'17:00',h:'FCZ',g:'AFF',o:'Sportanlage Heerenschürli, Zürich',t:'FCZ18'},
  {d:'2026-09-26',z:'16:00',h:'LUZ',g:'FCZ',o:'Sportanlagen Allmend, Luzern',t:'FCZ18'},
  {d:'2026-10-03',z:'16:00',h:'YB',g:'FCZ',o:'Wyler (Kunstrasen), Bern',t:'FCZ18'},
