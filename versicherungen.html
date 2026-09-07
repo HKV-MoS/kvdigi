@@ -1484,7 +1484,7 @@ var JAHR = [
   { kl:'ok',    zahl:92, betrag:0,     txt:'brauchen keine Leistung',   punkte:[] },
   { kl:'klein', zahl:5,  betrag:600,   txt:'kleinere Behandlungen',     punkte:[7,19,41,63,88] },
   { kl:'gross', zahl:2,  betrag:5000,  txt:'grössere Eingriffe',        punkte:[26,72] },
-  { kl:'hoch',  zahl:1,  betrag:18000, txt:'sehr hohe Kosten (Unfall)', punkte:[54] }
+  { kl:'hoch',  zahl:1,  betrag:R_UNFALL, txt:'sehr hohe Kosten (Unfall)', punkte:[54] }
 ];
 var POOL_AUS = JAHR.reduce(function(a,z){ return a + z.zahl*z.betrag; }, 0);   /* 31'000 */
 var topfLauf = null;
@@ -1556,7 +1556,7 @@ function bilanzZeigen(){
     + '<p class="merk" style="margin-top:12px">💡 <b>Der Pool reicht dieses Jahr nicht.</b> '
     + fr(POOL_EIN)+' kamen herein, '+fr(POOL_AUS)+' mussten hinaus – es fehlen <b>'+fr(Math.abs(diff))+'</b>. '
     + 'Genau darum steigen Prämien: Sie müssen decken, was die Gemeinschaft tatsächlich braucht. '
-    + 'Und trotzdem: <b>'+fr(BEITRAG)+' tun niemandem weh. '+fr(18000)+' schon.</b></p>';
+    + 'Und trotzdem: <b>'+fr(BEITRAG)+' tun niemandem weh. '+fr(R_UNFALL)+' schon.</b></p>';
 }
 document.getElementById('soliMeinung').querySelectorAll('button').forEach(function(b){
   b.addEventListener('click', function(){
