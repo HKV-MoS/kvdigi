@@ -17,7 +17,7 @@
 
   /* Oben: Pyramide links (bleibt immer stehen), Text rechts */
   #oben{ display:flex; gap:16px; align-items:stretch; }
-  #pyr{ flex:0 0 46%; position:relative; aspect-ratio:1536/1024; overflow:hidden;
+  #pyr{ flex:0 0 var(--pyr, 46%); position:relative; aspect-ratio:1536/1024; overflow:hidden;
         border-radius:9px; background:#e8e6e1; cursor:pointer; }
   #pyr video, #pyr img{ position:absolute; inset:0; width:100%; height:100%; display:block; object-fit:cover; }
   @media (prefers-reduced-motion: reduce){ #pyr video{ display:none; } }
@@ -32,8 +32,20 @@
                background:rgba(255,255,255,.88); color:var(--gruen); font:inherit; font-size:12.5px;
                font-weight:600; padding:5px 11px; border-radius:999px; box-shadow:0 1px 4px rgba(0,0,0,.18); }
   #grossknopf:hover{ background:#fff; }
-  body.pyrgross #pyr{ flex:0 0 68%; }
   body.pyrgross #streifen{ display:none; }
+
+  /* Griff unten rechts: Pyramide mit der Maus groesser und kleiner ziehen.
+     Die Hoehe folgt von selbst, das Seitenverhaeltnis steckt in aspect-ratio. */
+  #pyrgriff{ position:absolute; right:0; bottom:0; z-index:3; width:28px; height:28px;
+             cursor:nwse-resize; touch-action:none; background:rgba(255,255,255,.82);
+             border-radius:10px 0 9px 0; box-shadow:0 1px 4px rgba(0,0,0,.16);
+             opacity:.7; transition:opacity .15s; }
+  #pyrgriff:hover, body.pyrziehen #pyrgriff{ opacity:1; background:#fff; }
+  #pyrgriff::after{ content:''; position:absolute; right:6px; bottom:6px; width:13px; height:13px;
+                    border-right:2.5px solid var(--gruen); border-bottom:2.5px solid var(--gruen);
+                    border-radius:0 0 4px 0; opacity:.8; }
+  body.pyrziehen{ cursor:nwse-resize; user-select:none; }
+  @media print{ #pyrgriff{ display:none; } }
   #textspalte{ flex:1 1 0; min-width:0; display:flex; flex-direction:column; gap:10px; }
   #geschichte{ flex:0 0 auto; }
 
@@ -101,6 +113,8 @@
       <div class="schleier" id="schleierUnten"></div>
       <div id="band"></div>
       <button id="grossknopf" type="button" title="Ganze Pyramide gross zeigen, Bilder ausblenden">Pyramide gross</button>
+      <div id="pyrgriff" role="separator" aria-label="Pyramide grösser oder kleiner ziehen"
+           title="Ziehen: Pyramide grösser oder kleiner · Doppelklick: Standardgrösse"></div>
     </div>
     <div id="textspalte">
       <div id="geschichte">
@@ -217,13 +231,71 @@ function pyramideMarkieren(st){
   band.classList.add('an');
 }
 
+// --- Pyramidenbreite: Umschalter und Ziehgriff teilen sich denselben Wert ---
+// Zwei Groessen werden getrennt gemerkt: eine mit Bildern, eine ohne. So bleibt
+// in beiden Ansichten das stehen, was Sam dort zuletzt eingestellt hat.
+var BREITE = { normal:46, gross:68 };
+try{ var g = localStorage.getItem('maslow-pyrbreite');
+     if (g){ var o = JSON.parse(g);
+             if (o && o.normal) BREITE.normal = o.normal;
+             if (o && o.gross)  BREITE.gross  = o.gross; } }catch(e){}
+
+function modus(){ return document.body.classList.contains('pyrgross') ? 'gross' : 'normal'; }
+function setBreite(p, merken){
+  p = Math.max(25, Math.min(85, Math.round(p * 10) / 10));
+  BREITE[modus()] = p;
+  document.documentElement.style.setProperty('--pyr', p + '%');
+  if (merken){ try{ localStorage.setItem('maslow-pyrbreite', JSON.stringify(BREITE)); }catch(e){} }
+  einpassen();
+}
+
 // Umschalter: Pyramide gross, Bilder weg — und zurueck
 var grossknopf = document.getElementById('grossknopf');
 function pyrGross(an){
   document.body.classList.toggle('pyrgross', an);
   grossknopf.textContent = an ? 'Bilder zeigen' : 'Pyramide gross';
-  einpassen();
+  setBreite(BREITE[modus()], false);
 }
+
+// --- Ziehgriff unten rechts ---
+// Gerechnet wird aus der Zeigerposition, nicht aus der Verschiebung: das bleibt
+// auch dann richtig, wenn einpassen() zwischendurch den body-Zoom nachfuehrt.
+(function(){
+  var griff = document.getElementById('pyrgriff');
+  var oben = document.getElementById('oben');
+  var VERH = 1536 / 1024;                 // Seitenverhaeltnis der Pyramide
+  var zieht = false;
+
+  griff.addEventListener('pointerdown', function(e){
+    e.preventDefault(); e.stopPropagation();
+    zieht = true;
+    try{ griff.setPointerCapture(e.pointerId); }catch(err){}
+    document.body.classList.add('pyrziehen');
+  });
+  griff.addEventListener('pointermove', function(e){
+    if (!zieht) return;
+    var ro = oben.getBoundingClientRect(), rp = pyr.getBoundingClientRect();
+    if (!ro.width) return;
+    var ausX = (e.clientX - ro.left) / ro.width * 100;
+    var ausY = (e.clientY - rp.top) * VERH / ro.width * 100;
+    setBreite((ausX + ausY) / 2, false);
+  });
+  function fertig(){
+    if (!zieht) return;
+    zieht = false;
+    document.body.classList.remove('pyrziehen');
+    setBreite(BREITE[modus()], true);
+  }
+  griff.addEventListener('pointerup', fertig);
+  griff.addEventListener('pointercancel', fertig);
+  griff.addEventListener('lostpointercapture', fertig);
+  // Klick auf den Griff darf nicht als Klick in die Pyramide gelten
+  griff.addEventListener('click', function(e){ e.stopPropagation(); });
+  griff.addEventListener('dblclick', function(e){
+    e.stopPropagation();
+    setBreite(modus() === 'gross' ? 68 : 46, true);
+  });
+})();
 grossknopf.onclick = function(e){ e.stopPropagation(); pyrGross(!document.body.classList.contains('pyrgross')); };
 
 // Klick auf ein Band der Pyramide springt zu dieser Stufe
@@ -356,6 +428,7 @@ window.addEventListener('load', einpassen);
 window.addEventListener('resize', einpassen);
 setTimeout(einpassen, 300);
 
+setBreite(BREITE.normal, false);
 zeige(0);
 </script>
 
