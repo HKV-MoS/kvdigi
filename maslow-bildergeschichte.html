@@ -269,6 +269,25 @@ var schleierUnten = document.getElementById('schleierUnten');
 var band = document.getElementById('band');
 var pyr = document.getElementById('pyr');
 
+// Die Werte oben/unten in STATIONEN sind Anteile der Bildhoehe, von Hand am
+// Hintergrund abgemessen (maslow-siedlung.jpg / maslow-hoehle.*, 1536 x 1024).
+// Wird das Bild ersetzt oder anders beschnitten, stimmen alle fuenf Zahlen still
+// nicht mehr. Darum hier eine Warnung in der Konsole, sobald das Seitenverhaeltnis
+// des tatsaechlich geladenen Bildes abweicht.
+var PYR_VERHAELTNIS = 1536 / 1024;
+(function(){
+  var probe = new Image();
+  probe.onload = function(){
+    var v = probe.naturalWidth / probe.naturalHeight;
+    if (Math.abs(v - PYR_VERHAELTNIS) > 0.02 && window.console){
+      console.warn('Pyramidenbild hat das Verhaeltnis ' + v.toFixed(3) +
+                   ' statt ' + PYR_VERHAELTNIS.toFixed(3) +
+                   ' — die Werte oben/unten in STATIONEN muessen neu abgemessen werden.');
+    }
+  };
+  probe.src = 'maslow-siedlung.jpg';
+})();
+
 function pyramideMarkieren(st){
   if (st.gross){                                   // alles hell
     schleierOben.classList.add('klar'); schleierUnten.classList.add('klar');
@@ -300,7 +319,7 @@ function setBreite(p, merken){
   BREITE[modus()] = p;
   document.documentElement.style.setProperty('--pyr', p + '%');
   if (merken){ try{ localStorage.setItem('maslow-pyrbreite', JSON.stringify(BREITE)); }catch(e){} }
-  einpassen();
+  einpassenBald();
 }
 
 // Umschalter: Pyramide gross, Bilder weg — und zurueck
@@ -372,7 +391,10 @@ function streifenBauen(si){
   if (st.gross){ gebaut = si; return; }
   st.bilder.forEach(function(b, bi){
     var w = document.createElement('div'); w.className = 'bild';
-    w.className = 'bild da';
+    // Bewusst leeres alt: die Bilder tragen die Geschichte, erzaehlt wird sie im
+    // Text daneben (#erzaehlung). Weder Bildunterschrift noch Bildbeschreibung —
+    // Cartoon-Gedanke, Sams Ansage 11.09.2026, schon einmal so entschieden.
+    // Die Saetze in bilder[].text bleiben als Regiehinweis im Datenmodell stehen.
     w.innerHTML = '<div class="rahmen"><img alt=""><span class="nr">' + (bi+1) + '</span></div>';
     var rahmen = w.querySelector('.rahmen');
     var img = w.querySelector('img');
@@ -396,6 +418,16 @@ function streifenBauen(si){
     }
     w.onclick = function(){ zeige(i + 1); };
     streifen.appendChild(w);
+    // Erst einhaengen, dann im naechsten Bildaufbau aufdecken — sonst fasst der
+    // Browser beides zusammen und die Transition laeuft gar nie. Ein einzelnes
+    // requestAnimationFrame genuegt dafuer nicht, es braucht den Bildwechsel.
+    (function(el, verzug){
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          setTimeout(function(){ el.classList.add('da'); }, verzug);
+        });
+      });
+    })(w, bi * 90);
   });
   gebaut = si;
 }
@@ -410,7 +442,7 @@ function zeige(k){
   titel.textContent = st.titel;
   erzaehlung.textContent = st.erzaehlung;
   heutetext.textContent = st.heute;
-  zaehler.textContent = '';
+  zaehler.textContent = 'Station ' + (i + 1) + ' von ' + STATIONEN.length;
 
   var ds = punkte.querySelectorAll('.punkt');
   for (var m = 0; m < ds.length; m++){
@@ -479,6 +511,10 @@ if (window.self !== window.top) document.body.classList.add('eingebettet');
 
 var nutzerZoom = 1;   // Zoomleiste oben rechts, wie bei allen Tools auf abu-tools
 
+// Vorher wurde body.style.zoom in kleinen Schritten bis zu 14 Mal gesetzt, und
+// jedes Setzen erzwingt ein vollstaendiges Layout. Neu wird aus dem gemessenen
+// Ueberstand direkt der noetige Faktor gerechnet; zwei Nachmessungen genuegen,
+// weil sich beim Zoomen der Textumbruch noch leicht verschiebt.
 function einpassen(){
   document.body.style.zoom = '';
   var blatt = document.getElementById('blatt');
@@ -486,17 +522,26 @@ function einpassen(){
   var f = Math.min(1, window.innerHeight / noetig, window.innerWidth / 760);
   document.body.style.zoom = f * nutzerZoom;
   if (nutzerZoom <= 1){
-    for (var n = 0; n < 14; n++){
-      if (document.documentElement.scrollHeight <= window.innerHeight) break;
-      f = f * 0.975;
+    for (var n = 0; n < 3; n++){
+      var hoehe = document.documentElement.scrollHeight;
+      if (hoehe <= window.innerHeight + 1) break;
+      f = f * Math.max(0.6, (window.innerHeight / hoehe)) * 0.997;
       document.body.style.zoom = f * nutzerZoom;
     }
   }
   var leiste = document.querySelector('.zoomleiste');
   if (leiste) leiste.style.zoom = 1 / (f * nutzerZoom);
 }
+// Beim Ziehen am Griff und beim Fensterwechsel nicht bei jedem Ereignis rechnen,
+// sondern hoechstens einmal pro Bildaufbau.
+var einpassenOffen = false;
+function einpassenBald(){
+  if (einpassenOffen) return;
+  einpassenOffen = true;
+  requestAnimationFrame(function(){ einpassenOffen = false; einpassen(); });
+}
 window.addEventListener('load', einpassen);
-window.addEventListener('resize', einpassen);
+window.addEventListener('resize', einpassenBald);
 setTimeout(einpassen, 300);
 
 setBreite(BREITE.normal, false);
