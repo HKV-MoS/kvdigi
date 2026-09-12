@@ -1425,5 +1425,29 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(fahnenMess
   griff.addEventListener('dblclick', function(e){ e.stopPropagation(); setBreite(VORGABE, true); });
 })();
 </script>
+<script>
+/* ---- abu-tools.ch: eine Oeffnung dieses Werkzeugs melden ----
+   Gezaehlt wird nur, was wirklich auf abu-tools.ch laeuft; lokal per
+   Doppelklick geoeffnete Dateien bleiben draussen. Faellt der Aufruf aus,
+   passiert nichts. Der Schluessel ist oeffentlich und darf nur diese eine
+   Funktion aufrufen. Dieser Block ist in allen Werkzeugen zeichengleich —
+   bitte nur per Suchen-und-Ersetzen ueber alle Dateien aendern.        */
+(function(){
+  try{
+    if(location.protocol === 'file:') return;
+    if(!/(^|\.)abu-tools\.ch$/i.test(location.hostname)) return;
+    var n = (location.pathname.split('/').pop() || '');
+    if(!/^[a-z0-9][a-z0-9_.-]{2,59}\.html$/.test(n) || n === 'index.html') return;
+    var k = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlYm1ueXhxbHViaXJ3eXlrb2ZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxODA2MDYsImV4cCI6MjEwMzc1NjYwNn0.GhjZy-ZSQcRfdpUx1Jm3Yayk0iYhuiswpRuQILL1F7Q';
+    fetch('https://eebmnyxqlubirwyykofo.supabase.co/rest/v1/rpc/kachel_klick', {
+      method: 'POST',
+      headers: { 'apikey': k, 'Authorization': 'Bearer ' + k,
+                 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: '{"p_kachel":"' + n + '"}',
+      keepalive: true
+    }).catch(function(){});
+  }catch(e){}
+})();
+</script>
 </body>
 </html>
