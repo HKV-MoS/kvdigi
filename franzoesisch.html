@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Französisch üben – Diktat, Verben, Satzbau, Geschäftsmail</title>
+<style>
+  :root{
+    --tief:#213B42; --petrol:#3C6E73; --gold:#D8AE66; --papier:#F4F8FB;
+    --ink:#1d2f36; --muted:#5b6b7d; --card:#ffffff; --line:#e2e8f1;
+    --gruen:#2E7D4F; --rot:#B3423A; --blau:#2C6BAA; --bleu:#0055A4;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--papier); color:var(--ink);
+    font-family:'Aptos','Segoe UI',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;
+    font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:860px; margin:0 auto; padding:0 18px 70px}
+
+  header{
+    background:linear-gradient(135deg,#213B42 0%,#3C6E73 100%);
+    color:#fff; padding:20px 22px 20px; box-shadow:0 2px 8px rgba(0,0,0,.12); text-align:center;
+  }
+  .hkvlogo{ display:inline-block; line-height:0; margin:0 0 8px; opacity:.96;
+            transition:opacity .15s ease, transform .15s ease; }
+  .hkvlogo img{ height:38px; width:auto; display:block; }
+  .hkvlogo:hover{ opacity:1; transform:scale(1.03); }
+  @media (max-width:560px){ .hkvlogo img{ height:29px; } }
+  .augenbraue{font-size:11px;font-weight:700;letter-spacing:2.4px;color:var(--gold);
+              margin-bottom:5px;text-transform:uppercase}
+  .augenbraue .cr{font-weight:500;letter-spacing:.2px;opacity:.75;text-transform:none;font-size:11.5px}
+  .augenbraue .cr a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+  header h1{font-size:clamp(19px,3vw,25px); font-weight:700; letter-spacing:-.01em}
+  header .sub{margin-top:5px; font-size:13.5px; color:rgba(255,255,255,.84)}
+
+  nav.tabs{
+    position:sticky; top:0; z-index:20; background:rgba(244,248,251,.97);
+    backdrop-filter:saturate(140%) blur(6px); border-bottom:1px solid var(--line);
+  }
+  .tabs-inner{max-width:860px; margin:0 auto; padding:0 12px; display:flex; gap:2px; overflow-x:auto}
+  nav.tabs button{
+    flex:0 0 auto; appearance:none; background:none; border:0; border-bottom:3px solid transparent;
+    padding:12px 14px 10px; font:inherit; font-size:14px; font-weight:600; color:var(--muted);
+    cursor:pointer; white-space:nowrap; transition:color .15s, border-color .15s;
+  }
+  nav.tabs button:hover{color:var(--ink)}
+  nav.tabs button[aria-selected="true"]{color:var(--petrol); border-bottom-color:var(--petrol)}
+  nav.tabs .nr{
+    display:inline-block; font-size:11.5px; font-weight:700; color:var(--gold); margin-right:6px;
+  }
+
+  section.kap{display:none; padding-top:22px}
+  section.kap.aktiv{display:block}
+
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:18px 20px; margin-bottom:16px; box-shadow:0 1px 3px rgba(20,50,80,.05);
+  }
+  .card h2{font-size:17.5px; font-weight:700; margin-bottom:3px}
+  .card .lead{color:var(--muted); font-size:14px; margin-bottom:14px}
+
+  .knopf{
+    appearance:none; border:0; border-radius:9px; background:var(--petrol); color:#fff;
+    font:inherit; font-weight:700; font-size:14.5px; padding:10px 18px; cursor:pointer;
+    transition:background .15s;
+  }
+  .knopf:hover{background:var(--tief)}
+  .knopf:disabled{opacity:.45; cursor:default}
+  .knopf.zweit{background:#fff; color:var(--petrol); border:1.5px solid var(--petrol)}
+  .knopf.zweit:hover{background:var(--papier)}
+  .knopf.klein{font-size:13px; padding:7px 13px}
+  .reihe{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+
+  .stand{
+    font-size:13px; color:var(--muted); font-weight:600;
+  }
+  .stand b{color:var(--petrol)}
+
+  .stufen{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px}
+  .stufen button{
+    appearance:none; background:#fff; border:1.5px solid var(--line); border-radius:999px;
+    padding:6px 14px; font:inherit; font-size:13px; font-weight:600; color:var(--muted); cursor:pointer;
+    transition:all .15s;
+  }
+  .stufen button:hover{border-color:var(--petrol); color:var(--petrol)}
+  .stufen button[aria-pressed="true"]{background:var(--petrol); border-color:var(--petrol); color:#fff}
+
+  /* ---------- Diktat ---------- */
+  .dhinweis{
+    background:#FFF6E2; border:1px solid #E3CE86; border-left:4px solid var(--gold);
+    border-radius:9px; padding:11px 14px; font-size:13.6px; margin-bottom:14px;
+  }
+  .dhinweis b{display:block; margin-bottom:2px}
+  .dfeld{
+    width:100%; font:inherit; font-size:16px; padding:12px 14px; border-radius:10px;
+    border:1.5px solid var(--line); background:#fff; color:var(--ink); resize:vertical;
+    min-height:76px; line-height:1.5;
+  }
+  .dfeld:focus{outline:none; border-color:var(--petrol); box-shadow:0 0 0 3px rgba(60,110,115,.14)}
+  .dloesung{
+    margin-top:14px; padding:14px 16px; border-radius:10px; background:var(--papier);
+    border:1px solid var(--line); display:none;
+  }
+  .dloesung.zeig{display:block}
+  .dzeile{font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+          color:var(--muted); margin-bottom:5px}
+  .dsatz{font-size:17px; line-height:1.6; margin-bottom:12px; word-wrap:break-word}
+  .dsatz .ok{color:var(--gruen)}
+  .dsatz .fehlt{color:var(--rot); text-decoration:underline; text-decoration-style:wavy}
+  .dsatz .falsch{color:var(--rot)}
+  .dsatz .falsch u{text-decoration:none; background:rgba(179,66,58,.16); border-radius:3px; padding:0 1px}
+  .dsatz .zuviel{color:var(--muted); text-decoration:line-through}
+  .durteil{font-size:14px; font-weight:600}
+  .durteil.gut{color:var(--gruen)}
+  .durteil.fast{color:#8A6D0B}
+  .durteil.schlecht{color:var(--rot)}
+  .dakzent{font-size:13.2px; color:#8A6D0B; margin-top:5px}
+
+  /* ---------- Verben ---------- */
+  .vaufgabe{
+    background:var(--papier); border:1px solid var(--line); border-radius:11px;
+    padding:16px 18px; margin-bottom:14px; text-align:center;
+  }
+  .vinfinitiv{font-size:13px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+              color:var(--petrol)}
+  .vzeit{font-size:12.5px; color:var(--muted); margin-bottom:9px}
+  .vsatz{font-size:24px; font-weight:700; letter-spacing:-.01em}
+  .vsatz .luecke{
+    display:inline-block; min-width:120px; border-bottom:2.5px dashed var(--petrol);
+    margin:0 4px;
+  }
+  .vfeld{
+    width:100%; max-width:320px; font:inherit; font-size:19px; text-align:center;
+    padding:10px 12px; border-radius:10px; border:1.5px solid var(--line); background:#fff;
+  }
+  .vfeld:focus{outline:none; border-color:var(--petrol); box-shadow:0 0 0 3px rgba(60,110,115,.14)}
+  .vrueck{margin-top:12px; font-size:15px; font-weight:600; min-height:24px}
+  .vrueck.gut{color:var(--gruen)}
+  .vrueck.schlecht{color:var(--rot)}
+  .vrueck small{display:block; font-weight:400; font-size:13.2px; color:var(--muted); margin-top:3px}
+  .vtabelle{
+    margin-top:12px; display:none; font-size:13.5px; background:#fff; border:1px solid var(--line);
+    border-radius:9px; overflow:hidden;
+  }
+  .vtabelle.zeig{display:block}
+  .vtabelle div{display:flex; justify-content:space-between; padding:5px 12px; border-top:1px solid var(--line)}
+  .vtabelle div:first-child{border-top:0; background:var(--papier); font-weight:700}
+  .vtabelle span:first-child{color:var(--muted)}
+
+  /* ---------- Wortstellung ---------- */
+  .pziel{
+    min-height:56px; border:1.5px dashed var(--petrol); border-radius:11px; padding:9px;
+    display:flex; flex-wrap:wrap; gap:6px; align-content:flex-start; background:#fff;
+    margin-bottom:11px;
+  }
+  .pvorrat{display:flex; flex-wrap:wrap; gap:6px; min-height:44px; margin-bottom:12px}
+  .chip{
+    appearance:none; font:inherit; font-size:15px; padding:8px 13px; border-radius:9px;
+    border:1.5px solid var(--line); background:#fff; color:var(--ink); cursor:pointer;
+    transition:all .12s;
+  }
+  .chip:hover{border-color:var(--petrol); transform:translateY(-1px)}
+  .pziel .chip{background:var(--papier); border-color:var(--petrol)}
+  .pziel.gut .chip{background:rgba(46,125,79,.12); border-color:var(--gruen)}
+  .pziel.schlecht .chip{background:rgba(179,66,58,.09); border-color:var(--rot)}
+  .pdeutsch{font-size:14.5px; color:var(--muted); margin-bottom:10px}
+  .pdeutsch b{color:var(--ink)}
+  .prueck{font-size:14.5px; font-weight:600; min-height:22px}
+  .prueck.gut{color:var(--gruen)} .prueck.schlecht{color:var(--rot)}
+  .prueck small{display:block; font-weight:400; font-size:13.2px; color:var(--muted); margin-top:3px}
+
+  /* ---------- Courriel ---------- */
+  .fall{
+    background:var(--papier); border:1px solid var(--line); border-left:4px solid var(--bleu);
+    border-radius:10px; padding:13px 16px; margin-bottom:16px; font-size:14.2px;
+  }
+  .fall b{display:block; font-size:12px; letter-spacing:.07em; text-transform:uppercase;
+          color:var(--bleu); margin-bottom:3px}
+  .baustein{margin-bottom:14px}
+  .bname{
+    font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--muted); margin-bottom:6px;
+  }
+  .bwahl{display:grid; gap:6px}
+  .bopt{
+    text-align:left; font:inherit; font-size:14.4px; padding:10px 13px; border-radius:9px;
+    border:1.5px solid var(--line); background:#fff; color:var(--ink); cursor:pointer;
+    transition:all .13s; line-height:1.45;
+  }
+  .bopt:hover{border-color:var(--petrol)}
+  .bopt[aria-pressed="true"]{border-color:var(--bleu); background:rgba(0,85,164,.07); font-weight:600}
+  .mail{
+    background:#fff; border:1px solid var(--line); border-radius:11px; padding:16px 18px;
+    font-family:'Aptos','Segoe UI',system-ui,sans-serif; font-size:14.6px; line-height:1.65;
+    white-space:pre-wrap; margin-bottom:14px;
+  }
+  .mail .objet{font-weight:700; padding-bottom:8px; margin-bottom:8px; border-bottom:1px solid var(--line)}
+  .balken{display:grid; gap:8px; margin-bottom:12px}
+  .bz{display:grid; grid-template-columns:132px 1fr 42px; gap:9px; align-items:center; font-size:13.5px}
+  .bbar{height:14px; border-radius:7px; background:var(--papier); border:1px solid var(--line); overflow:hidden}
+  .bbar i{display:block; height:100%; border-radius:7px; transition:width .45s ease}
+  .bz b{text-align:right; font-size:13px}
+  @media(max-width:520px){ .bz{grid-template-columns:110px 1fr 38px} }
+
+  .zoomleiste{
+    position:fixed; right:12px; top:12px; z-index:99999; display:flex; gap:2px;
+    background:rgba(255,255,255,.78); border:1px solid rgba(21,35,50,.14); border-radius:999px;
+    padding:3px; box-shadow:0 3px 12px rgba(21,35,50,.18);
+    opacity:.55; transition:opacity .18s; backdrop-filter:blur(4px);
+  }
+  .zoomleiste:hover,.zoomleiste:focus-within{opacity:1}
+  .zoomleiste button{
+    width:27px; height:27px; border-radius:999px; padding:0; border:none; background:transparent;
+    color:#152332; font-size:14px; line-height:1; cursor:pointer;
+  }
+  .zoomleiste button:hover{background:rgba(21,35,50,.09)}
+
+  footer.fuss{
+    max-width:860px; margin:30px auto 0; padding:16px 18px 0; border-top:1px solid var(--line);
+    font-size:12.4px; color:var(--muted);
+  }
+  footer.fuss p{margin-bottom:5px}
+  footer.fuss a{color:var(--petrol)}
+  @media print{ nav.tabs,.zoomleiste{display:none} section.kap{display:block!important} }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="hkvlogo" href="https://www.hkvaarau.ch/berufsfachschule" target="_blank" rel="noopener"
+     title="Handelsschule KV Aarau"><img src="hkv_logo_weiss.png?v=1" alt="HKV Aarau"
+     onerror="this.parentNode.style.display='none'"></a>
+  <div class="augenbraue">Französisch üben <span class="cr">· © 2026 <a
+    href="mailto:samuel.mollet@hkv.ch" title="E-Mail an Samuel Mollet">S. Mollet</a></span></div>
+  <h1>Français – s'entraîner tout seul</h1>
+  <div class="sub">Vier Übungen zum selbständigen Trainieren · kein Vokabelpauken, sondern Hören, Formen, Satzbau und Schreiben</div>
+</header>
+
+<nav class="tabs" role="tablist" aria-label="Übungen">
+  <div class="tabs-inner">
+    <button role="tab" aria-selected="true"  data-k="diktat"><span class="nr">1</span>Dictée</button>
+    <button role="tab" aria-selected="false" data-k="verben"><span class="nr">2</span>Verbes</button>
+    <button role="tab" aria-selected="false" data-k="satzbau"><span class="nr">3</span>Ordre des mots</button>
+    <button role="tab" aria-selected="false" data-k="mail"><span class="nr">4</span>Le courriel</button>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<!-- ============================ 1 DICTÉE ============================ -->
+<section class="kap aktiv" id="k-diktat" role="tabpanel">
+  <div class="card">
+    <h2>1. Dictée – hören und schreiben</h2>
+    <p class="lead">Der Satz wird vorgelesen. Hören Sie so oft, wie Sie wollen, und tippen Sie ihn.
+    Die Auswertung zeigt Wort für Wort, was stimmt – und ob nur ein Akzent fehlt.</p>
+
+    <div class="dhinweis" id="dStimmenhinweis" style="display:none"></div>
+
+    <div class="stufen" id="dStufen">
+      <button type="button" data-s="A" aria-pressed="true">Stufe A · Alltag</button>
+      <button type="button" data-s="B" aria-pressed="false">Stufe B · Betrieb</button>
+      <button type="button" data-s="C" aria-pressed="false">Stufe C · anspruchsvoll</button>
+    </div>
+
+    <div class="reihe" style="margin-bottom:14px">
+      <button class="knopf" type="button" id="dHoeren">▶ Vorlesen</button>
+      <button class="knopf zweit klein" type="button" id="dLangsam">🐢 Langsam</button>
+      <button class="knopf zweit klein" type="button" id="dZeigen">👁 Satz zeigen</button>
+      <span class="stand" id="dStand"></span>
+    </div>
+
+    <div id="dSichtbar" style="display:none; margin-bottom:12px">
+      <div class="dzeile">Der Satz</div>
+      <div class="dsatz" id="dSichtbarSatz"></div>
+    </div>
+
+    <label for="dEingabe" class="dzeile" style="display:block">Ihre Eingabe</label>
+    <textarea class="dfeld" id="dEingabe" rows="2" spellcheck="false" autocapitalize="off"
+              lang="fr" placeholder="Écrivez la phrase ici…"></textarea>
+
+    <div class="reihe" style="margin-top:12px">
+      <button class="knopf" type="button" id="dPruefen">Prüfen</button>
+      <button class="knopf zweit" type="button" id="dNaechster">Nächster Satz →</button>
+    </div>
+
+    <div class="dloesung" id="dLoesung">
+      <div class="dzeile">Auswertung</div>
+      <div class="dsatz" id="dDiff"></div>
+      <div class="durteil" id="dUrteil"></div>
+      <div class="dakzent" id="dAkzent"></div>
+      <div class="dzeile" style="margin-top:12px">Richtig wäre</div>
+      <div class="dsatz" id="dRichtig"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ 2 VERBES ============================ -->
+<section class="kap" id="k-verben" role="tabpanel">
+  <div class="card">
+    <h2>2. Verbes irréguliers – die Form treffen</h2>
+    <p class="lead">Endloser Aufgabenstrom aus 30 unregelmässigen Verben und fünf Zeiten.
+    Akzente zählen. Nach der Antwort sehen Sie die ganze Reihe.</p>
+
+    <div class="stufen" id="vZeiten"></div>
+
+    <div class="vaufgabe">
+      <div class="vinfinitiv" id="vInf"></div>
+      <div class="vzeit" id="vZeit"></div>
+      <div class="vsatz" id="vSatz"></div>
+    </div>
+
+    <div style="text-align:center">
+      <input class="vfeld" id="vEingabe" spellcheck="false" autocapitalize="off" lang="fr"
+             placeholder="la forme…">
+      <div class="vrueck" id="vRueck"></div>
+      <div class="vtabelle" id="vTabelle"></div>
+      <div class="reihe" style="justify-content:center; margin-top:14px">
+        <button class="knopf" type="button" id="vPruefen">Prüfen</button>
+        <button class="knopf zweit" type="button" id="vNaechste">Weiter →</button>
+      </div>
+      <p class="stand" id="vStand" style="margin-top:12px"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= 3 ORDRE DES MOTS ========================= -->
+<section class="kap" id="k-satzbau" role="tabpanel">
+  <div class="card">
+    <h2>3. Ordre des mots – den Satz legen</h2>
+    <p class="lead">Tippen Sie die Wörter in der richtigen Reihenfolge an. Nochmals antippen nimmt
+    sie zurück. Hier entscheidet die Stellung, nicht die Vokabel.</p>
+
+    <div class="pdeutsch" id="pDeutsch"></div>
+    <div class="pziel" id="pZiel"></div>
+    <div class="pvorrat" id="pVorrat"></div>
+
+    <div class="reihe">
+      <button class="knopf" type="button" id="pPruefen">Prüfen</button>
+      <button class="knopf zweit" type="button" id="pLeeren">↺ Leeren</button>
+      <button class="knopf zweit" type="button" id="pNaechste">Weiter →</button>
+    </div>
+    <div class="prueck" id="pRueck" style="margin-top:12px"></div>
+    <p class="stand" id="pStand" style="margin-top:8px"></p>
+  </div>
+</section>
+
+<!-- =========================== 4 LE COURRIEL =========================== -->
+<section class="kap" id="k-mail" role="tabpanel">
+  <div class="card">
+    <h2>4. Le courriel – die Mail bauen</h2>
+    <p class="lead">Wählen Sie für jeden Teil eine Variante. Unten entsteht die fertige Mail,
+    dazu vier Bewertungen. Es gibt nicht eine richtige Lösung, sondern passende und unpassende
+    Register.</p>
+
+    <div class="stufen" id="mFaelle"></div>
+    <div class="fall" id="mFall"></div>
+    <div id="mBausteine"></div>
+  </div>
+
+  <div class="card">
+    <h2>Ihre Mail</h2>
+    <p class="lead">So liest sie die Kundin.</p>
+    <div class="mail" id="mVorschau"></div>
+    <div class="balken" id="mBalken"></div>
+    <div class="prueck" id="mUrteil"></div>
+  </div>
+</section>
+
+<footer class="fuss">
+  <p>Die Sätze und Fälle sind für Lernende an der Handelsschule geschrieben: Alltag, Betrieb,
+  Kundenkontakt. Die Verbformen folgen dem Bescherelle; <i>connaît</i> und <i>connait</i> werden
+  beide akzeptiert.</p>
+  <p>Das Vorlesen nutzt die <b>Stimmen Ihres Geräts</b> – es geht nichts ins Internet. Ohne
+  installierte französische Stimme bleibt die Übung als Lesediktat nutzbar.</p>
+  <p><b>abu-tools.ch</b> · Allgemeinbildender Unterricht HKV Aarau · © 2026
+  <a href="mailto:samuel.mollet@hkv.ch">S. Mollet</a></p>
+</footer>
+
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ==================== Hilfsmittel ==================== */
+function el(t, c, x){ var e = document.createElement(t); if(c) e.className = c;
+  if(x !== undefined && x !== null) e.textContent = x; return e; }
+function mischen(a){
+  for(var i = a.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1)), h = a[i]; a[i] = a[j]; a[j] = h;
+  }
+  return a;
+}
+function hol(k, v){ try{ var g = localStorage.getItem(k); return g === null ? v : g; }catch(e){ return v; } }
+function leg(k, v){ try{ localStorage.setItem(k, String(v)); }catch(e){} }
+
+/* Vergleich: Apostrophe und Abstände vereinheitlichen, im Französischen steht vor
+   ?!;: ein Abstand – ob er getippt wird, soll nicht über richtig entscheiden. */
+function norm(s){
+  return String(s)
+    .replace(/[’‘‛`´]/g, "'")
+    .replace(/[«»“”]/g, '"')
+    .replace(/ | /g, ' ')
+    .replace(/\s+([?!;:])/g, '$1')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+function ohneAkzent(s){
+  return norm(s).toLowerCase()
+    .replace(/[àâä]/g,'a').replace(/[éèêë]/g,'e').replace(/[îï]/g,'i')
+    .replace(/[ôö]/g,'o').replace(/[ùûü]/g,'u').replace(/ç/g,'c').replace(/œ/g,'oe');
+}
+
+/* ==================== 1 · DICTÉE ==================== */
+var SAETZE = {
+  A: [
+    "Je m'appelle Laura et j'habite à Aarau.",
+    "Il est huit heures et demie.",
+    "Nous avons une réunion demain matin.",
+    "Le magasin est fermé le dimanche.",
+    "Elle travaille dans une banque à Zurich.",
+    "J'ai besoin d'une nouvelle imprimante.",
+    "Le train part dans vingt minutes.",
+    "Mon apprentissage dure trois ans.",
+    "Vous pouvez payer à la caisse.",
+    "Il fait beau aujourd'hui."
+  ],
+  B: [
+    "Nous vous remercions de votre commande.",
+    "Le client souhaite un rendez-vous lundi prochain.",
+    "La facture n'est pas encore payée.",
+    "Je vous envoie le document en pièce jointe.",
+    "Notre livraison aura un jour de retard.",
+    "Pouvez-vous me rappeler avant midi ?",
+    "Le stock est épuisé jusqu'à la fin du mois.",
+    "Nous avons reçu votre réclamation hier.",
+    "Le prix comprend la taxe sur la valeur ajoutée.",
+    "Veuillez signer le contrat et nous le retourner."
+  ],
+  C: [
+    "Les documents que vous avez demandés sont prêts.",
+    "Il aurait fallu nous prévenir plus tôt.",
+    "Je vous prie d'agréer mes salutations distinguées.",
+    "Nous n'avons malheureusement pas pu joindre le fournisseur.",
+    "Après avoir vérifié le dossier, nous vous répondrons.",
+    "C'est la première fois qu'une telle erreur se produit.",
+    "Les marchandises ont été livrées la semaine dernière.",
+    "Si vous étiez d'accord, nous pourrions avancer la date.",
+    "L'entreprise emploie quatre-vingt-dix personnes.",
+    "Nous restons à votre entière disposition."
+  ]
+};
+
+/* Wortweiser Vergleich über die längste gemeinsame Teilfolge. Danach innerhalb
+   eines ersetzten Wortpaars die abweichenden Zeichen markieren. */
+function vergleiche(ziel, eingabe){
+  var z = norm(ziel).split(' '), e = norm(eingabe).split(' ').filter(function(w){ return w.length; });
+  var n = z.length, m = e.length, i, j;
+  var t = [];
+  for(i = 0; i <= n; i++){ t.push(new Array(m + 1).fill(0)); }
+  for(i = 1; i <= n; i++){
+    for(j = 1; j <= m; j++){
+      t[i][j] = (z[i-1].toLowerCase() === e[j-1].toLowerCase())
+        ? t[i-1][j-1] + 1 : Math.max(t[i-1][j], t[i][j-1]);
+    }
+  }
+  var schritte = [];
+  i = n; j = m;
+  while(i > 0 && j > 0){
+    if(z[i-1].toLowerCase() === e[j-1].toLowerCase()){ schritte.push({a:'ok', z:z[i-1], e:e[j-1]}); i--; j--; }
+    else if(t[i-1][j] >= t[i][j-1]){ schritte.push({a:'fehlt', z:z[i-1]}); i--; }
+    else { schritte.push({a:'zuviel', e:e[j-1]}); j--; }
+  }
+  while(i > 0){ schritte.push({a:'fehlt', z:z[i-1]}); i--; }
+  while(j > 0){ schritte.push({a:'zuviel', e:e[j-1]}); j--; }
+  schritte.reverse();
+
+  /* «fehlt» direkt neben «zuviel» ist in Wahrheit ein falsch geschriebenes Wort */
+  var aus = [];
+  for(var k = 0; k < schritte.length; k++){
+    var s = schritte[k], nx = schritte[k+1];
+    if(s.a === 'fehlt' && nx && nx.a === 'zuviel'){
+      aus.push({a:'falsch', z:s.z, e:nx.e}); k++;
+    } else if(s.a === 'zuviel' && nx && nx.a === 'fehlt'){
+      aus.push({a:'falsch', z:nx.z, e:s.e}); k++;
+    } else {
+      aus.push(s);
+    }
+  }
+  return aus;
+}
+
+(function(){
+  var stufe = hol('fr-diktat-stufe', 'A');
+  if(['A','B','C'].indexOf(stufe) < 0) stufe = 'A';
+  var reihe = [], pos = 0, richtig = 0, gemacht = 0, stimme = null, tempo = 1;
+
+  var fStufen = document.getElementById('dStufen');
+  var fHinweis = document.getElementById('dStimmenhinweis');
+  var fEin = document.getElementById('dEingabe');
+  var fLoes = document.getElementById('dLoesung');
+
+  function stimmeSuchen(){
+    if(!('speechSynthesis' in window)) return null;
+    var alle = window.speechSynthesis.getVoices() || [];
+    var fr = alle.filter(function(v){ return /^fr/i.test(v.lang || ''); });
+    if(!fr.length) return null;
+    var lokal = fr.filter(function(v){ return v.localService; });
+    return (lokal.length ? lokal : fr)[0];
+  }
+  function hinweisSetzen(){
+    if(!('speechSynthesis' in window)){
+      fHinweis.innerHTML = '<b>Dieser Browser kann nicht vorlesen.</b>Nutzen Sie «Satz zeigen»: '
+        + 'Satz einmal lesen, wegklicken, aus dem Kopf tippen. Das übt die Schreibweise weiter.';
+      fHinweis.style.display = 'block';
+      document.getElementById('dHoeren').disabled = true;
+      document.getElementById('dLangsam').disabled = true;
+      return;
+    }
+    stimme = stimmeSuchen();
+    if(!stimme){
+      fHinweis.innerHTML = '<b>Keine französische Stimme auf diesem Gerät.</b>Die Übung läuft als '
+        + 'Lesediktat weiter – «Satz zeigen» antippen, lesen, wegklicken, tippen. Auf einem Mac '
+        + 'lassen sich französische Stimmen in den Systemeinstellungen unter Bedienungshilfen '
+        + 'nachinstallieren.';
+      fHinweis.style.display = 'block';
+      document.getElementById('dHoeren').disabled = true;
+      document.getElementById('dLangsam').disabled = true;
+    } else {
+      fHinweis.style.display = 'none';
+      document.getElementById('dHoeren').disabled = false;
+      document.getElementById('dLangsam').disabled = false;
+    }
+  }
+  if('speechSynthesis' in window){
+    window.speechSynthesis.onvoiceschanged = hinweisSetzen;
+  }
+  hinweisSetzen();
+
+  function satz(){ return reihe[pos]; }
+  function neuMischen(){ reihe = mischen(SAETZE[stufe].slice()); pos = 0; }
+  function stand(){
+    document.getElementById('dStand').innerHTML = gemacht
+      ? 'Bisher <b>' + richtig + '</b> von <b>' + gemacht + '</b> richtig'
+      : '';
+  }
+  function zeigen(){
+    fLoes.classList.remove('zeig');
+    fEin.value = '';
+    document.getElementById('dSichtbar').style.display = 'none';
+    document.getElementById('dSichtbarSatz').textContent = satz();
+    fEin.focus();
+  }
+  function sprechen(rate){
+    if(!stimme) return;
+    try{
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(satz());
+      u.voice = stimme; u.lang = stimme.lang || 'fr-FR'; u.rate = rate;
+      window.speechSynthesis.speak(u);
+    }catch(e){}
+  }
+
+  document.getElementById('dHoeren').addEventListener('click', function(){ sprechen(1); });
+  document.getElementById('dLangsam').addEventListener('click', function(){ sprechen(0.65); });
+  document.getElementById('dZeigen').addEventListener('click', function(){
+    var d = document.getElementById('dSichtbar');
+    d.style.display = (d.style.display === 'none') ? 'block' : 'none';
+  });
+  document.getElementById('dNaechster').addEventListener('click', function(){
+    pos++; if(pos >= reihe.length) neuMischen();
+    zeigen();
+  });
+  Array.prototype.forEach.call(fStufen.querySelectorAll('button'), function(b){
+    b.addEventListener('click', function(){
+      stufe = b.dataset.s; leg('fr-diktat-stufe', stufe);
+      Array.prototype.forEach.call(fStufen.querySelectorAll('button'), function(x){
+        x.setAttribute('aria-pressed', String(x === b));
+      });
+      neuMischen(); zeigen();
+    });
+    b.setAttribute('aria-pressed', String(b.dataset.s === stufe));
+  });
+
+  document.getElementById('dPruefen').addEventListener('click', function(){
+    var eingabe = fEin.value;
+    if(!norm(eingabe)) return;
+    var teile = vergleiche(satz(), eingabe);
+    var diff = document.getElementById('dDiff');
+    diff.innerHTML = '';
+    var falschZahl = 0, nurAkzent = 0, zielWorte = 0;
+    teile.forEach(function(s){
+      if(s.a === 'ok'){
+        zielWorte++;
+        diff.appendChild(el('span', 'ok', s.z + ' '));
+      } else if(s.a === 'falsch'){
+        zielWorte++; falschZahl++;
+        if(ohneAkzent(s.z) === ohneAkzent(s.e)) nurAkzent++;
+        var w = el('span', 'falsch');
+        w.appendChild(el('u', null, s.e));
+        w.appendChild(document.createTextNode(' '));
+        diff.appendChild(w);
+      } else if(s.a === 'fehlt'){
+        zielWorte++; falschZahl++;
+        diff.appendChild(el('span', 'fehlt', s.z + ' '));
+      } else {
+        falschZahl++;
+        diff.appendChild(el('span', 'zuviel', s.e + ' '));
+      }
+    });
+    var u = document.getElementById('dUrteil');
+    var a = document.getElementById('dAkzent');
+    gemacht++;
+    if(falschZahl === 0){
+      richtig++;
+      u.className = 'durteil gut'; u.textContent = '✔ Fehlerfrei. Bravo !';
+    } else if(falschZahl === nurAkzent){
+      u.className = 'durteil fast';
+      u.textContent = '◑ Fast – alle Wörter stimmen, nur die Akzente nicht.';
+    } else {
+      u.className = 'durteil schlecht';
+      u.textContent = (falschZahl === 1)
+        ? '✘ Eine Stelle stimmt nicht.'
+        : '✘ ' + falschZahl + ' Stellen stimmen nicht.';
+    }
+    a.textContent = (nurAkzent && falschZahl !== nurAkzent)
+      ? 'Davon ' + nurAkzent + (nurAkzent === 1 ? ' Wort nur' : ' Wörter nur') + ' beim Akzent falsch.'
+      : '';
+    document.getElementById('dRichtig').textContent = satz();
+    fLoes.classList.add('zeig');
+    stand();
+  });
+
+  fEin.addEventListener('keydown', function(e){
+    if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); document.getElementById('dPruefen').click(); }
+  });
+
+  neuMischen(); zeigen(); stand();
+})();
+
+/* ==================== 2 · VERBES ==================== */
+/* Gespeichert werden nur die Formen, die man nicht ableiten kann: die sechs
+   Präsensformen, der Stamm des Futurs, der Stamm des Imparfait, das Partizip
+   und das Hilfsverb. Imparfait und Conditionnel entstehen daraus mit den
+   immer gleichen Endungen — so kann in der Tabelle kein Tippfehler schlafen. */
+var VERBEN = [
+  {i:'être',      p:['suis','es','est','sommes','êtes','sont'],            fu:'ser',      im:'ét',       pp:'été',     aux:'a'},
+  {i:'avoir',     p:['ai','as','a','avons','avez','ont'],                  fu:'aur',      im:'av',       pp:'eu',      aux:'a'},
+  {i:'aller',     p:['vais','vas','va','allons','allez','vont'],           fu:'ir',       im:'all',      pp:'allé',    aux:'e'},
+  {i:'faire',     p:['fais','fais','fait','faisons','faites','font'],      fu:'fer',      im:'fais',     pp:'fait',    aux:'a'},
+  {i:'pouvoir',   p:['peux','peux','peut','pouvons','pouvez','peuvent'],   fu:'pourr',    im:'pouv',     pp:'pu',      aux:'a'},
+  {i:'vouloir',   p:['veux','veux','veut','voulons','voulez','veulent'],   fu:'voudr',    im:'voul',     pp:'voulu',   aux:'a'},
+  {i:'devoir',    p:['dois','dois','doit','devons','devez','doivent'],     fu:'devr',     im:'dev',      pp:'dû',      aux:'a'},
+  {i:'savoir',    p:['sais','sais','sait','savons','savez','savent'],      fu:'saur',     im:'sav',      pp:'su',      aux:'a'},
+  {i:'voir',      p:['vois','vois','voit','voyons','voyez','voient'],      fu:'verr',     im:'voy',      pp:'vu',      aux:'a'},
+  {i:'venir',     p:['viens','viens','vient','venons','venez','viennent'], fu:'viendr',   im:'ven',      pp:'venu',    aux:'e'},
+  {i:'devenir',   p:['deviens','deviens','devient','devenons','devenez','deviennent'], fu:'deviendr', im:'deven', pp:'devenu', aux:'e'},
+  {i:'tenir',     p:['tiens','tiens','tient','tenons','tenez','tiennent'], fu:'tiendr',   im:'ten',      pp:'tenu',    aux:'a'},
+  {i:'prendre',   p:['prends','prends','prend','prenons','prenez','prennent'], fu:'prendr', im:'pren',   pp:'pris',    aux:'a'},
+  {i:'comprendre',p:['comprends','comprends','comprend','comprenons','comprenez','comprennent'], fu:'comprendr', im:'compren', pp:'compris', aux:'a'},
+  {i:'mettre',    p:['mets','mets','met','mettons','mettez','mettent'],    fu:'mettr',    im:'mett',     pp:'mis',     aux:'a'},
+  {i:'dire',      p:['dis','dis','dit','disons','dites','disent'],         fu:'dir',      im:'dis',      pp:'dit',     aux:'a'},
+  {i:'écrire',    p:['écris','écris','écrit','écrivons','écrivez','écrivent'], fu:'écrir', im:'écriv',    pp:'écrit',   aux:'a'},
+  {i:'lire',      p:['lis','lis','lit','lisons','lisez','lisent'],         fu:'lir',      im:'lis',      pp:'lu',      aux:'a'},
+  {i:'boire',     p:['bois','bois','boit','buvons','buvez','boivent'],     fu:'boir',     im:'buv',      pp:'bu',      aux:'a'},
+  {i:'croire',    p:['crois','crois','croit','croyons','croyez','croient'],fu:'croir',    im:'croy',     pp:'cru',     aux:'a'},
+  {i:'connaître', p:['connais','connais','connaît','connaissons','connaissez','connaissent'], fu:'connaîtr', im:'connaiss', pp:'connu', aux:'a'},
+  {i:'partir',    p:['pars','pars','part','partons','partez','partent'],   fu:'partir',   im:'part',     pp:'parti',   aux:'e'},
+  {i:'sortir',    p:['sors','sors','sort','sortons','sortez','sortent'],   fu:'sortir',   im:'sort',     pp:'sorti',   aux:'e'},
+  {i:'dormir',    p:['dors','dors','dort','dormons','dormez','dorment'],   fu:'dormir',   im:'dorm',     pp:'dormi',   aux:'a'},
+  {i:'courir',    p:['cours','cours','court','courons','courez','courent'],fu:'courr',    im:'cour',     pp:'couru',   aux:'a'},
+  {i:'vivre',     p:['vis','vis','vit','vivons','vivez','vivent'],         fu:'vivr',     im:'viv',      pp:'vécu',    aux:'a'},
+  {i:'suivre',    p:['suis','suis','suit','suivons','suivez','suivent'],   fu:'suivr',    im:'suiv',     pp:'suivi',   aux:'a'},
+  {i:'recevoir',  p:['reçois','reçois','reçoit','recevons','recevez','reçoivent'], fu:'recevr', im:'recev', pp:'reçu', aux:'a'},
+  {i:'ouvrir',    p:['ouvre','ouvres','ouvre','ouvrons','ouvrez','ouvrent'], fu:'ouvrir', im:'ouvr',     pp:'ouvert',  aux:'a'},
+  {i:'attendre',  p:['attends','attends','attend','attendons','attendez','attendent'], fu:'attendr', im:'attend', pp:'attendu', aux:'a'},
+  {i:'répondre',  p:['réponds','réponds','répond','répondons','répondez','répondent'], fu:'répondr', im:'répond', pp:'répondu', aux:'a'}
+];
+var PRON = ['je','tu','il','nous','vous','ils'];
+var END_IM = ['ais','ais','ait','ions','iez','aient'];
+var END_FU = ['ai','as','a','ons','ez','ont'];
+var ZEITEN = [
+  {k:'pres', t:'Présent'},
+  {k:'imp',  t:'Imparfait'},
+  {k:'fut',  t:'Futur simple'},
+  {k:'cond', t:'Conditionnel'},
+  {k:'pc',   t:'Passé composé'}
+];
+
+function form(v, zeit, i){
+  if(zeit === 'pres') return v.p[i];
+  if(zeit === 'imp')  return v.im + END_IM[i];
+  if(zeit === 'fut')  return v.fu + END_FU[i];
+  if(zeit === 'cond') return v.fu + END_IM[i];
+  /* Passé composé: Hilfsverb im Präsens plus Partizip. Bei être-Verben richtet
+     sich das Partizip nach dem Subjekt — deshalb werden dort nur männliche
+     Subjekte gestellt, sonst wäre die Antwort nicht eindeutig. */
+  var hilf = (v.aux === 'a') ? VERBEN[1].p[i] : VERBEN[0].p[i];
+  var part = v.pp;
+  if(v.aux === 'e' && i >= 3) part = part + 's';
+  return hilf + ' ' + part;
+}
+function pronomen(v, zeit, i){
+  var f = form(v, zeit, i);
+  if(i === 0 && /^[aeiouéèêh]/i.test(f)) return "j'";
+  return PRON[i] + ' ';
+}
+
+(function(){
+  var an = {}, gespeichert = hol('fr-verben-zeiten', 'pres,imp,fut,cond,pc').split(',');
+  ZEITEN.forEach(function(z){ an[z.k] = gespeichert.indexOf(z.k) >= 0; });
+  if(!ZEITEN.some(function(z){ return an[z.k]; })) an.pres = true;
+
+  var aufg = null, richtig = 0, gemacht = 0;
+  var box = document.getElementById('vZeiten');
+  var fEin = document.getElementById('vEingabe');
+
+  ZEITEN.forEach(function(z){
+    var b = el('button', null, z.t);
+    b.type = 'button';
+    b.setAttribute('aria-pressed', String(!!an[z.k]));
+    b.addEventListener('click', function(){
+      an[z.k] = !an[z.k];
+      if(!ZEITEN.some(function(x){ return an[x.k]; })) an[z.k] = true;
+      b.setAttribute('aria-pressed', String(!!an[z.k]));
+      leg('fr-verben-zeiten', ZEITEN.filter(function(x){ return an[x.k]; })
+        .map(function(x){ return x.k; }).join(','));
+      neu();
+    });
+    box.appendChild(b);
+  });
+
+  function neu(){
+    var offen = ZEITEN.filter(function(z){ return an[z.k]; });
+    var z = offen[Math.floor(Math.random() * offen.length)];
+    var v = VERBEN[Math.floor(Math.random() * VERBEN.length)];
+    /* Beim passé composé mit être richtet sich das Partizip nach dem Subjekt.
+       «vous» kann Höflichkeitsform (Singular) oder echter Plural sein — dann
+       wären «vous êtes allé» und «vous êtes allés» beide richtig. Solche
+       Aufgaben werden gar nicht gestellt. */
+    var moeglich = (z.k === 'pc' && v.aux === 'e') ? [0,1,2,3,5] : [0,1,2,3,4,5];
+    var i = moeglich[Math.floor(Math.random() * moeglich.length)];
+    aufg = {v:v, z:z, i:i, soll:form(v, z.k, i)};
+    document.getElementById('vInf').textContent = v.i;
+    document.getElementById('vZeit').textContent =
+      z.t + ((z.k === 'pc' && v.aux === 'e') ? ' · männliche Form' : '');
+    var s = document.getElementById('vSatz');
+    s.innerHTML = '';
+    s.appendChild(document.createTextNode(pronomen(v, z.k, i)));
+    s.appendChild(el('span', 'luecke', ' '));
+    document.getElementById('vRueck').textContent = '';
+    document.getElementById('vRueck').className = 'vrueck';
+    document.getElementById('vTabelle').classList.remove('zeig');
+    fEin.value = ''; fEin.disabled = false; fEin.focus();
+  }
+  function tabelle(){
+    var t = document.getElementById('vTabelle');
+    t.innerHTML = '';
+    var kopf = el('div');
+    kopf.appendChild(el('span', null, aufg.v.i));
+    kopf.appendChild(el('span', null, aufg.z.t));
+    t.appendChild(kopf);
+    for(var i = 0; i < 6; i++){
+      var r = el('div');
+      r.appendChild(el('span', null, pronomen(aufg.v, aufg.z.k, i).trim()));
+      r.appendChild(el('span', null, form(aufg.v, aufg.z.k, i)));
+      t.appendChild(r);
+    }
+    t.classList.add('zeig');
+  }
+  function stand(){
+    document.getElementById('vStand').innerHTML = gemacht
+      ? 'Bisher <b>' + richtig + '</b> von <b>' + gemacht + '</b> richtig' : '';
+  }
+  function pruefen(){
+    if(fEin.disabled) return;
+    var ein = norm(fEin.value);
+    if(!ein) return;
+    /* connaît / connait: die Schreibweise nach der Reform gilt auch */
+    var sollAlt = [norm(aufg.soll)];
+    if(/î/.test(aufg.soll)) sollAlt.push(norm(aufg.soll).replace(/î/g, 'i'));
+    var ok = sollAlt.some(function(s){ return s.toLowerCase() === ein.toLowerCase(); });
+    var r = document.getElementById('vRueck');
+    gemacht++;
+    if(ok){
+      richtig++;
+      r.className = 'vrueck gut';
+      r.textContent = '✔ Richtig.';
+    } else {
+      r.className = 'vrueck schlecht';
+      r.innerHTML = '✘ Richtig wäre <b>' + pronomen(aufg.v, aufg.z.k, aufg.i) + aufg.soll + '</b>.';
+      if(ohneAkzent(ein) === ohneAkzent(aufg.soll)){
+        r.appendChild(el('small', null, 'Nur der Akzent fehlte – im Französischen ist er Teil der Form.'));
+      }
+    }
+    fEin.disabled = true;
+    tabelle();
+    stand();
+  }
+  document.getElementById('vPruefen').addEventListener('click', pruefen);
+  document.getElementById('vNaechste').addEventListener('click', neu);
+  fEin.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ e.preventDefault(); if(fEin.disabled) neu(); else pruefen(); }
+  });
+  neu(); stand();
+})();
+
+/* ==================== 3 · ORDRE DES MOTS ==================== */
+var PUZZLE = [
+  {f:'Je le lui donne.',            d:'Ich gebe es ihm.', h:'Erst das Ding, dann die Person: <b>le</b> vor <b>lui</b>.'},
+  {f:'Elle nous en parle souvent.', d:'Sie spricht oft davon mit uns.', h:'<b>en</b> steht immer zuhinterst, direkt vor dem Verb.'},
+  {f:"Il me l'a dit hier.",         d:'Er hat es mir gestern gesagt.', h:'Beide Pronomen stehen vor dem Hilfsverb, nicht vor dem Partizip.'},
+  {f:'Je ne le sais pas.',          d:'Ich weiss es nicht.', h:'<b>ne … pas</b> umklammert das Verb, das Pronomen bleibt innen.'},
+  {f:"Nous n'y allons jamais.",     d:'Wir gehen nie dorthin.', h:'<b>jamais</b> nimmt den Platz von <b>pas</b> ein.'},
+  {f:"Il n'a rien compris.",        d:'Er hat nichts verstanden.', h:'Im Passé composé klammern <b>ne … rien</b> das Hilfsverb ein.'},
+  {f:'Où allez-vous ?',             d:'Wohin gehen Sie?', h:'Frage mit Inversion: Verb vor Pronomen, mit Bindestrich.'},
+  {f:'Quand est-ce que vous partez ?', d:'Wann fahren Sie ab?', h:'Mit <b>est-ce que</b> bleibt die normale Wortstellung.'},
+  {f:'Pourquoi ne répond-il pas ?', d:'Warum antwortet er nicht?', h:'Bei der Inversion steht <b>pas</b> hinter dem ganzen Verbblock.'},
+  {f:"C'est une très belle maison.", d:'Das ist ein sehr schönes Haus.', h:'<b>beau</b> gehört zu den Adjektiven, die <i>vor</i> dem Nomen stehen.'},
+  {f:'Il parle très bien français.', d:'Er spricht sehr gut Französisch.', h:'Das Adverb steht nach dem Verb, nicht davor wie im Deutschen.'},
+  {f:"J'ai souvent travaillé le samedi.", d:'Ich habe oft am Samstag gearbeitet.', h:'Kurze Adverbien stehen zwischen Hilfsverb und Partizip.'},
+  {f:'Nous vous enverrons la facture demain.', d:'Wir senden Ihnen die Rechnung morgen.', h:'Pronomen vor dem Verb, Zeitangabe am Schluss.'},
+  {f:'Je voudrais vous poser une question.', d:'Ich möchte Ihnen eine Frage stellen.', h:'Beim Infinitiv hängt das Pronomen am Infinitiv, nicht am ersten Verb.'},
+  {f:'Le client a déjà payé la facture.', d:'Der Kunde hat die Rechnung schon bezahlt.', h:'<b>déjà</b> steht zwischen Hilfsverb und Partizip.'},
+  {f:"Pouvez-vous me l'envoyer aujourd'hui ?", d:'Können Sie es mir heute senden?', h:'Beide Pronomen hängen am Infinitiv: <b>me</b> vor <b>le</b>.'},
+  {f:"Nous ne l'avons pas encore reçu.", d:'Wir haben es noch nicht erhalten.', h:'<b>pas encore</b> bleibt zusammen, nach dem Hilfsverb.'},
+  {f:'Elle y travaille depuis trois ans.', d:'Sie arbeitet dort seit drei Jahren.', h:'<b>y</b> steht direkt vor dem Verb.'}
+];
+
+(function(){
+  var reihe = mischen(PUZZLE.slice()), pos = 0, richtig = 0, gemacht = 0, gelegt = [], vorrat = [];
+  var fZiel = document.getElementById('pZiel'), fVor = document.getElementById('pVorrat');
+
+  function teile(f){ return f.split(' '); }
+  function neu(){
+    if(pos >= reihe.length){ reihe = mischen(PUZZLE.slice()); pos = 0; }
+    var a = reihe[pos];
+    document.getElementById('pDeutsch').innerHTML = 'Deutsch: <b>' + a.d + '</b>';
+    gelegt = [];
+    vorrat = mischen(teile(a.f).slice());
+    /* Eine zufällig richtige Startreihenfolge wäre langweilig */
+    if(vorrat.join(' ') === a.f && vorrat.length > 2) vorrat = mischen(vorrat);
+    zeichne();
+    fZiel.className = 'pziel';
+    document.getElementById('pRueck').textContent = '';
+    document.getElementById('pRueck').className = 'prueck';
+  }
+  function zeichne(){
+    fZiel.innerHTML = ''; fVor.innerHTML = '';
+    gelegt.forEach(function(w, i){
+      var b = el('button', 'chip', w); b.type = 'button';
+      b.addEventListener('click', function(){
+        vorrat.push(gelegt.splice(i, 1)[0]); zeichne();
+      });
+      fZiel.appendChild(b);
+    });
+    vorrat.forEach(function(w, i){
+      var b = el('button', 'chip', w); b.type = 'button';
+      b.addEventListener('click', function(){
+        gelegt.push(vorrat.splice(i, 1)[0]); zeichne();
+      });
+      fVor.appendChild(b);
+    });
+  }
+  function stand(){
+    document.getElementById('pStand').innerHTML = gemacht
+      ? 'Bisher <b>' + richtig + '</b> von <b>' + gemacht + '</b> richtig' : '';
+  }
+  document.getElementById('pPruefen').addEventListener('click', function(){
+    var a = reihe[pos];
+    if(gelegt.length !== teile(a.f).length) return;
+    var r = document.getElementById('pRueck');
+    gemacht++;
+    if(gelegt.join(' ') === a.f){
+      richtig++;
+      fZiel.className = 'pziel gut';
+      r.className = 'prueck gut'; r.textContent = '✔ Genau so. ' ;
+      r.appendChild(el('small', null, a.h.replace(/<[^>]*>/g, '')));
+    } else {
+      fZiel.className = 'pziel schlecht';
+      r.className = 'prueck schlecht';
+      r.innerHTML = '✘ Richtig ist: <b>' + a.f + '</b>';
+      r.appendChild(el('small', null, a.h.replace(/<[^>]*>/g, '')));
+    }
+    stand();
+  });
+  document.getElementById('pLeeren').addEventListener('click', function(){
+    vorrat = vorrat.concat(gelegt); gelegt = []; zeichne();
+    fZiel.className = 'pziel';
+  });
+  document.getElementById('pNaechste').addEventListener('click', function(){ pos++; neu(); });
+  neu(); stand();
+})();
+
+/* ==================== 4 · LE COURRIEL ==================== */
+/* Jede Variante ist auf vier Achsen von 0 bis 3 bewertet:
+   Höflichkeit, Klarheit, Kürze, Kundenorientierung. */
+var ACHSEN = [
+  {k:'pol', t:'Politesse',   f:'#2C6BAA'},
+  {k:'cla', t:'Clarté',      f:'#2E7D4F'},
+  {k:'con', t:'Concision',   f:'#D8AE66'},
+  {k:'ori', t:'Client',      f:'#8A5AA8'}
+];
+var FAELLE = [
+  {
+    id:'recl', name:'Réclamation',
+    lage:'Eine Kundin hat zehn Ordner bestellt. Drei sind beschädigt angekommen. Sie schreibt '
+        + 'verärgert und will Ersatz. Sie antworten für Ihren Betrieb.',
+    slots:[
+      {n:'Objet', o:[
+        {t:'Votre réclamation du 12 mars – commande 4821', s:{pol:3,cla:3,con:3,ori:3}},
+        {t:'Problème', s:{pol:1,cla:0,con:3,ori:0}},
+        {t:'Réponse à votre message concernant les trois classeurs endommagés de votre commande', s:{pol:2,cla:3,con:0,ori:2}},
+        {t:'Pas de sujet', s:{pol:0,cla:0,con:1,ori:0}}
+      ]},
+      {n:'Salutation', o:[
+        {t:'Madame,', s:{pol:3,cla:3,con:3,ori:2}},
+        {t:'Bonjour,', s:{pol:2,cla:2,con:3,ori:2}},
+        {t:'Salut,', s:{pol:0,cla:2,con:3,ori:0}},
+        {t:'Madame, Monsieur,', s:{pol:2,cla:1,con:3,ori:1}}
+      ]},
+      {n:'Entrée', o:[
+        {t:'Nous vous remercions de nous avoir signalé ce problème.', s:{pol:3,cla:3,con:3,ori:3}},
+        {t:'Nous avons bien reçu votre message.', s:{pol:2,cla:2,con:3,ori:1}},
+        {t:"Ce n'est pas de notre faute.", s:{pol:0,cla:2,con:3,ori:0}},
+        {t:"Suite à la réception de votre courriel en date du 12 mars, nous nous permettons de revenir vers vous.", s:{pol:2,cla:1,con:0,ori:1}}
+      ]},
+      {n:'Message principal', o:[
+        {t:'Nous vous envoyons trois nouveaux classeurs aujourd’hui même.', s:{pol:3,cla:3,con:3,ori:3}},
+        {t:'Nous allons examiner votre demande.', s:{pol:2,cla:1,con:3,ori:1}},
+        {t:'Vous devez nous retourner les classeurs avant toute chose.', s:{pol:1,cla:3,con:3,ori:0}},
+        {t:"Il est possible qu'un remplacement puisse éventuellement être envisagé.", s:{pol:2,cla:0,con:1,ori:0}}
+      ]},
+      {n:'Explication', o:[
+        {t:'Les classeurs ont été abîmés pendant le transport.', s:{pol:2,cla:3,con:3,ori:2}},
+        {t:'Notre transporteur a mal fait son travail.', s:{pol:1,cla:2,con:3,ori:1}},
+        {t:'Nous ne savons pas ce qui est arrivé.', s:{pol:2,cla:1,con:3,ori:1}},
+        {t:'(keine Erklärung)', s:{pol:2,cla:1,con:3,ori:1}}
+      ]},
+      {n:'Proposition', o:[
+        {t:'Vous pouvez garder les classeurs abîmés, nous en faisons notre affaire.', s:{pol:3,cla:3,con:2,ori:3}},
+        {t:'Merci de nous renvoyer les classeurs à vos frais.', s:{pol:1,cla:3,con:3,ori:0}},
+        {t:'Nous vous recontacterons dès que possible.', s:{pol:2,cla:1,con:3,ori:1}},
+        {t:'(kein Angebot)', s:{pol:1,cla:1,con:3,ori:0}}
+      ]},
+      {n:'Formule finale', o:[
+        {t:'Nous vous prions de nous excuser pour ce désagrément et vous souhaitons une bonne journée.', s:{pol:3,cla:3,con:2,ori:3}},
+        {t:'Cordialement,', s:{pol:2,cla:3,con:3,ori:2}},
+        {t:'Je vous prie d’agréer, Madame, l’expression de mes salutations distinguées.', s:{pol:3,cla:2,con:1,ori:2}},
+        {t:'À plus,', s:{pol:0,cla:2,con:3,ori:0}}
+      ]}
+    ]
+  },
+  {
+    id:'ret', name:'Retard de livraison',
+    lage:'Ein Kunde wartet auf eine Lieferung, die morgen hätte kommen sollen. Sie kommt vier Tage '
+        + 'später. Sie schreiben, bevor er nachfragt.',
+    slots:[
+      {n:'Objet', o:[
+        {t:'Votre commande 5107 – nouvelle date de livraison', s:{pol:3,cla:3,con:3,ori:3}},
+        {t:'Retard', s:{pol:1,cla:1,con:3,ori:0}},
+        {t:'Information importante', s:{pol:2,cla:0,con:3,ori:1}},
+        {t:'Nous devons malheureusement vous informer que votre livraison sera retardée de quatre jours', s:{pol:2,cla:3,con:0,ori:2}}
+      ]},
+      {n:'Salutation', o:[
+        {t:'Monsieur,', s:{pol:3,cla:3,con:3,ori:2}},
+        {t:'Bonjour Monsieur Dubois,', s:{pol:3,cla:3,con:3,ori:3}},
+        {t:'Cher client,', s:{pol:1,cla:2,con:3,ori:0}},
+        {t:'Coucou,', s:{pol:0,cla:2,con:3,ori:0}}
+      ]},
+      {n:'Entrée', o:[
+        {t:'Je vous écris au sujet de votre commande du 3 avril.', s:{pol:3,cla:3,con:3,ori:2}},
+        {t:'Nous avons un problème avec votre commande.', s:{pol:1,cla:2,con:3,ori:1}},
+        {t:'Comme vous le savez sans doute déjà,', s:{pol:1,cla:0,con:2,ori:0}},
+        {t:'Nous espérons que vous allez bien.', s:{pol:2,cla:0,con:2,ori:1}}
+      ]},
+      {n:'Message principal', o:[
+        {t:'Votre livraison arrivera le 12 avril au lieu du 8 avril.', s:{pol:3,cla:3,con:3,ori:3}},
+        {t:'La livraison sera un peu en retard.', s:{pol:2,cla:0,con:3,ori:1}},
+        {t:'Le délai ne peut malheureusement pas être respecté.', s:{pol:2,cla:1,con:2,ori:1}},
+        {t:'Nous ne pouvons pas encore vous dire quand la marchandise arrivera.', s:{pol:2,cla:2,con:3,ori:0}}
+      ]},
+      {n:'Explication', o:[
+        {t:'Notre fournisseur a livré la marchandise avec du retard.', s:{pol:2,cla:3,con:3,ori:2}},
+        {t:"C'est la faute de notre fournisseur, pas la nôtre.", s:{pol:0,cla:2,con:3,ori:0}},
+        {t:'Des circonstances indépendantes de notre volonté sont à l’origine de ce contretemps.', s:{pol:2,cla:0,con:1,ori:0}},
+        {t:'(keine Erklärung)', s:{pol:2,cla:1,con:3,ori:1}}
+      ]},
+      {n:'Proposition', o:[
+        {t:'Si cette date ne vous convient pas, appelez-moi au 062 837 00 00.', s:{pol:3,cla:3,con:3,ori:3}},
+        {t:'Nous pouvons vous livrer une partie de la commande dès demain.', s:{pol:3,cla:3,con:3,ori:3}},
+        {t:'Nous comptons sur votre compréhension.', s:{pol:2,cla:2,con:3,ori:1}},
+        {t:'(kein Angebot)', s:{pol:1,cla:1,con:3,ori:0}}
+      ]},
+      {n:'Formule finale', o:[
+        {t:'Merci de votre patience et bonne journée.', s:{pol:3,cla:3,con:3,ori:3}},
+        {t:'Cordialement,', s:{pol:2,cla:3,con:3,ori:2}},
+        {t:'Veuillez agréer, Monsieur, mes salutations les meilleures.', s:{pol:3,cla:2,con:1,ori:2}},
+        {t:'Bisous,', s:{pol:0,cla:1,con:3,ori:0}}
+      ]}
+    ]
+  }
+];
+
+(function(){
+  var fall = FAELLE[0], wahl = {};
+  var fFaelle = document.getElementById('mFaelle');
+
+  FAELLE.forEach(function(f){
+    var b = el('button', null, f.name);
+    b.type = 'button';
+    b.addEventListener('click', function(){
+      fall = f; wahl = {};
+      Array.prototype.forEach.call(fFaelle.querySelectorAll('button'), function(x){
+        x.setAttribute('aria-pressed', String(x === b));
+      });
+      bauen();
+    });
+    fFaelle.appendChild(b);
+  });
+  fFaelle.querySelector('button').setAttribute('aria-pressed', 'true');
+
+  function bauen(){
+    document.getElementById('mFall').innerHTML = '<b>Die Lage</b>' + fall.lage;
+    var box = document.getElementById('mBausteine');
+    box.innerHTML = '';
+    fall.slots.forEach(function(sl, si){
+      var d = el('div', 'baustein');
+      d.appendChild(el('div', 'bname', sl.n));
+      var w = el('div', 'bwahl');
+      sl.o.forEach(function(op, oi){
+        var b = el('button', 'bopt', op.t);
+        b.type = 'button';
+        b.setAttribute('aria-pressed', 'false');
+        b.addEventListener('click', function(){
+          wahl[si] = oi;
+          Array.prototype.forEach.call(w.querySelectorAll('.bopt'), function(x){
+            x.setAttribute('aria-pressed', String(x === b));
+          });
+          zeichne();
+        });
+        w.appendChild(b);
+      });
+      d.appendChild(w);
+      box.appendChild(d);
+    });
+    zeichne();
+  }
+
+  function zeichne(){
+    var v = document.getElementById('mVorschau');
+    v.innerHTML = '';
+    var summe = {pol:0, cla:0, con:0, ori:0}, anzahl = 0;
+    var zeilen = [];
+    fall.slots.forEach(function(sl, si){
+      if(wahl[si] === undefined) return;
+      var op = sl.o[wahl[si]];
+      anzahl++;
+      ACHSEN.forEach(function(a){ summe[a.k] += op.s[a.k]; });
+      if(/^\(/.test(op.t)) return;                 /* «keine Erklärung» erscheint nicht im Text */
+      if(sl.n === 'Objet'){ zeilen.push({objet:true, t:'Objet : ' + op.t}); }
+      else { zeilen.push({t:op.t}); }
+    });
+    if(!zeilen.length){
+      v.appendChild(el('div', null, 'Wählen Sie oben Bausteine – hier entsteht die Mail.'));
+    } else {
+      zeilen.forEach(function(z){
+        var d = el('div', z.objet ? 'objet' : null, z.t);
+        v.appendChild(d);
+      });
+    }
+
+    var bal = document.getElementById('mBalken');
+    bal.innerHTML = '';
+    ACHSEN.forEach(function(a){
+      var max = anzahl * 3;
+      var p = max ? Math.round(summe[a.k] / max * 100) : 0;
+      var z = el('div', 'bz');
+      z.appendChild(el('span', null, a.t));
+      var bar = el('div', 'bbar');
+      var i = el('i');
+      i.style.width = p + '%'; i.style.background = a.f;
+      bar.appendChild(i);
+      z.appendChild(bar);
+      z.appendChild(el('b', null, p + '%'));
+      bal.appendChild(z);
+    });
+
+    var u = document.getElementById('mUrteil');
+    u.innerHTML = '';
+    if(anzahl < fall.slots.length){
+      u.className = 'prueck';
+      u.textContent = 'Noch ' + (fall.slots.length - anzahl) + ' Baustein'
+        + ((fall.slots.length - anzahl) === 1 ? '' : 'e') + ' offen.';
+      return;
+    }
+    var mittel = ACHSEN.reduce(function(s, a){ return s + summe[a.k]; }, 0) / (anzahl * 3 * 4) * 100;
+    var schwach = ACHSEN.filter(function(a){ return summe[a.k] / (anzahl * 3) < 0.6; });
+    if(mittel >= 85){
+      u.className = 'prueck gut';
+      u.textContent = '✔ Diese Mail würde ich abschicken. Höflich, klar und kurz – und die Kundin weiss, was passiert.';
+    } else if(schwach.length){
+      u.className = 'prueck schlecht';
+      u.innerHTML = 'Schwach bei: <b>' + schwach.map(function(a){ return a.t; }).join(', ') + '</b>.';
+      u.appendChild(el('small', null, hinweis(schwach[0].k)));
+    } else {
+      u.className = 'prueck';
+      u.textContent = 'Brauchbar, aber noch nicht rund. Probieren Sie bei einem Baustein eine andere Variante.';
+    }
+  }
+  function hinweis(k){
+    if(k === 'pol') return 'Höflichkeit heisst nicht Floskeln, sondern die Kundin ernst nehmen: danken, entschuldigen, nicht belehren.';
+    if(k === 'cla') return 'Klar heisst: ein Datum, eine Zahl, eine Zusage. «Möglichst bald» ist keine Information.';
+    if(k === 'con') return 'Kurz heisst: kein Satz, der nur höflich klingen will. Wer «Suite à la réception de votre courriel en date du» schreibt, hat noch nichts gesagt.';
+    return 'Kundenorientiert heisst: Was hat die Kundin davon? Schuldfragen und interne Abläufe interessieren sie nicht.';
+  }
+  bauen();
+})();
+
+/* ==================== Reiter ==================== */
+(function(){
+  var kn = document.querySelectorAll('nav.tabs button');
+  function zeige(k){
+    Array.prototype.forEach.call(kn, function(b){
+      b.setAttribute('aria-selected', String(b.dataset.k === k));
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.kap'), function(s){
+      s.classList.toggle('aktiv', s.id === 'k-' + k);
+    });
+    leg('fr-kapitel', k);
+    window.scrollTo(0, 0);
+  }
+  Array.prototype.forEach.call(kn, function(b){
+    b.addEventListener('click', function(){ zeige(b.dataset.k); });
+  });
+  var g = hol('fr-kapitel', 'diktat');
+  if(document.getElementById('k-' + g)) zeige(g);
+})();
+
+/* ==================== Zoomleiste ==================== */
+(function(){
+  var z = (window.self !== window.top) ? 0.9 : 1;
+  var leiste = document.createElement('div');
+  leiste.className = 'zoomleiste';
+  function setZ(nz){
+    z = Math.max(0.5, Math.min(1.4, Math.round(nz * 100) / 100));
+    document.body.style.zoom = z;
+    leiste.style.zoom = 1 / z;
+  }
+  function mk(txt, titel, fn){
+    var b = document.createElement('button');
+    b.type = 'button'; b.textContent = txt; b.title = titel;
+    b.setAttribute('aria-label', titel);
+    b.addEventListener('click', fn);
+    leiste.appendChild(b);
+  }
+  mk('−', 'Kleiner', function(){ setZ(z - 0.1); });
+  mk('+', 'Grösser', function(){ setZ(z + 0.1); });
+  mk('⛶', 'Vollbild (Esc beendet)', function(){
+    var drin = document.fullscreenElement || document.webkitFullscreenElement;
+    if(drin){ (document.exitFullscreen || document.webkitExitFullscreen).call(document); }
+    else {
+      var e = document.documentElement;
+      var p = e.requestFullscreen ? e.requestFullscreen()
+            : e.webkitRequestFullscreen ? e.webkitRequestFullscreen() : null;
+      if(p && p.catch) p.catch(function(){});
+    }
+  });
+  document.body.appendChild(leiste);
+  setZ(z);
+})();
+
+})();
+</script>
+<script>
+/* ---- abu-tools.ch: eine Oeffnung dieses Werkzeugs melden ----
+   Gezaehlt wird nur, was wirklich auf abu-tools.ch laeuft; lokal per
+   Doppelklick geoeffnete Dateien bleiben draussen. Faellt der Aufruf aus,
+   passiert nichts. Der Schluessel ist oeffentlich und darf nur diese eine
+   Funktion aufrufen. Dieser Block ist in allen Werkzeugen zeichengleich —
+   bitte nur per Suchen-und-Ersetzen ueber alle Dateien aendern.        */
+(function(){
+  try{
+    if(location.protocol === 'file:') return;
+    if(!/(^|\.)abu-tools\.ch$/i.test(location.hostname)) return;
+    var n = (location.pathname.split('/').pop() || '');
+    if(!/^[a-z0-9][a-z0-9_.-]{2,59}\.html$/.test(n) || n === 'index.html') return;
+    var k = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlYm1ueXhxbHViaXJ3eXlrb2ZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxODA2MDYsImV4cCI6MjEwMzc1NjYwNn0.GhjZy-ZSQcRfdpUx1Jm3Yayk0iYhuiswpRuQILL1F7Q';
+    fetch('https://eebmnyxqlubirwyykofo.supabase.co/rest/v1/rpc/kachel_klick', {
+      method: 'POST',
+      headers: { 'apikey': k, 'Authorization': 'Bearer ' + k,
+                 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: '{"p_kachel":"' + n + '"}',
+      keepalive: true
+    }).catch(function(){});
+  }catch(e){}
+})();
+</script>
+</body>
+</html>
