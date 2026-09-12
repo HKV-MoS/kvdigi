@@ -553,7 +553,6 @@ h3{ font-size:14px; margin:16px 0 6px; color:var(--petrol); text-transform:upper
 .ofz .ofk button.falsch{ border-color:var(--rot); background:rgba(179,66,58,.1); color:var(--rot); }
 .ofz .ofa{ flex:1 1 100%; font-size:12.5px; color:var(--muted); display:none; }
 .ofz.fertig .ofa{ display:block; }
-.of-info{ display:block; margin-top:4px; font-size:12.8px; color:var(--muted); }
 .of-fuss{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
 .of-fuss .ch-stand{ margin:0; }
 .of-neu{ font-size:13px; padding:7px 15px; flex:0 0 auto; }
@@ -660,6 +659,15 @@ h3{ font-size:14px; margin:16px 0 6px; color:var(--petrol); text-transform:upper
 .ch-opt.falsch{ border-color:var(--rot); background:rgba(179,66,58,.07); }
 .ch-auf{ display:none; font-size:13.5px; padding:9px 12px; border-radius:9px; background:var(--papier); border:1px solid var(--line); margin-bottom:6px; }
 .ch-auf.zeig{ display:block; }
+.ch-bar{ display:flex; height:24px; border-radius:7px; overflow:hidden; margin:9px 0 5px; border:1px solid var(--line); }
+.ch-bar i{ font-style:normal; height:100%; display:flex; align-items:center; justify-content:center;
+           font-size:11px; font-weight:700; color:#fff; white-space:nowrap; min-width:0; }
+.ch-bar .b-fr{ background:var(--rot); }
+.ch-bar .b-sb{ background:var(--gold); color:#3a2c00; }
+.ch-bar .b-kk{ background:var(--gruen); }
+.ch-barleg{ display:flex; flex-wrap:wrap; gap:7px 14px; font-size:11.8px; color:var(--muted); }
+.ch-barleg span{ display:flex; align-items:center; gap:5px; }
+.ch-barleg i{ width:11px; height:11px; border-radius:3px; display:block; flex:0 0 auto; }
 .ch-stand{ font-weight:800; color:var(--petrol); text-align:center; margin-top:10px; }
 
 footer{ text-align:center; padding:18px 12px 26px; }
@@ -1131,15 +1139,13 @@ footer{ text-align:center; padding:18px 12px 26px; }
         <span class="sig">🏆</span>
         <div>
           <h2>9. Mini-Challenge</h2>
-          <p>Entscheiden Sie, ob die folgenden Versicherungen obligatorisch (O) oder freiwillig (F) sind.
-          <span class="of-info">Sechs Behauptungen aus einem Vorrat von <b id="ofVorrat">25</b> – bei jedem Aufruf
-          andere, in anderer Reihenfolge.</span></p>
+          <p>Entscheiden Sie, ob die folgenden Versicherungen obligatorisch (O) oder freiwillig (F) sind.</p>
         </div>
       </div>
       <div class="oftab" id="ofTab"></div>
       <div class="of-fuss">
         <p class="ch-stand" id="ofStand"></p>
-        <button class="knopf zweit of-neu" type="button" id="ofNeu">↻ Neue sechs</button>
+        <button class="knopf zweit of-neu" type="button" id="ofNeu">↻ Neue Runde</button>
       </div>
     </div>
 
@@ -2085,14 +2091,62 @@ var OFLISTE = [
   { ico:'🩺', n:'Krankentaggeldversicherung des Arbeitgebers', r:'F',
     a:'Vom Gesetz nicht verlangt – ein Gesamtarbeitsvertrag kann sie aber vorschreiben. Ohne sie gilt die Lohnfortzahlung nach OR, und die dauert je nach Dienstjahr nur wenige Wochen.' },
   { ico:'🚲', n:'Velo-Diebstahlversicherung', r:'F',
-    a:'Freiwillig, meist ein Zusatz zum Hausrat. Die alte Velovignette ist 2012 abgeschafft worden – seither deckt die Privathaftpflicht den Schaden, den Sie mit dem Velo anrichten.' }
+    a:'Freiwillig, meist ein Zusatz zum Hausrat. Die alte Velovignette ist 2012 abgeschafft worden – seither deckt die Privathaftpflicht den Schaden, den Sie mit dem Velo anrichten.' },
+  { ico:'🧾', n:'AHV-Beiträge für Selbständigerwerbende', r:'O',
+    a:'Auch wer selbständig ist, zahlt obligatorisch AHV, IV und EO – nur eben allein, ohne die Hälfte des Arbeitgebers.' },
+  { ico:'⚖️', n:'Berufshaftpflicht für Anwältinnen und Anwälte', r:'O',
+    a:'Wer im Anwaltsregister eingetragen sein will, muss eine Berufshaftpflicht haben – Anwaltsgesetz Art. 12 Buchstabe f.' },
+  { ico:'👼', n:'Krankenversicherung für ein neugeborenes Kind', r:'O',
+    a:'Auch ein Baby muss versichert werden. Wird es innert drei Monaten angemeldet, gilt die Versicherung rückwirkend ab Geburt.' },
+  { ico:'🎖', n:'Militärversicherung während des Dienstes', r:'O',
+    a:'Wer Militär-, Zivil- oder Zivilschutzdienst leistet, ist obligatorisch bei der Militärversicherung gedeckt – für Unfall und für Krankheit.' },
+  { ico:'⏱', n:'Berufsunfall-Deckung bei einem Job von 4 Stunden pro Woche', r:'O',
+    a:'Berufsunfälle sind ab der ersten Arbeitsstunde gedeckt. Erst für die Nichtberufsunfälle braucht es die 8 Stunden pro Woche.' },
+  { ico:'🚐', n:'Haftpflicht für ein Wohnmobil', r:'O',
+    a:'Jedes Motorfahrzeug auf öffentlichen Strassen braucht eine Haftpflicht – ohne sie kein Kontrollschild.' },
+  { ico:'🚜', n:'Haftpflicht für einen Traktor', r:'O',
+    a:'Auch landwirtschaftliche Fahrzeuge brauchen auf öffentlichen Strassen eine Haftpflichtversicherung.' },
+  { ico:'🧑‍🔧', n:'Unfallversicherung für Selbständigerwerbende', r:'F',
+    a:'Selbständige fallen nicht unter das Unfallversicherungsgesetz. Sie können sich freiwillig anschliessen – viele tun es nicht und stehen nach einem Unfall ohne Taggeld da.' },
+  { ico:'🏢', n:'Haftpflicht als Hauseigentümer', r:'F',
+    a:'Freiwillig. Haften müssen Sie als Werkeigentümer trotzdem: Wenn eine Dachlawine ein Auto trifft, zahlen Sie. Haftung und Versicherung sind zwei verschiedene Dinge.' },
+  { ico:'🛏', n:'Halbprivat- oder Privatabteilung im Spital', r:'F',
+    a:'Freiwillig. Die Grundversicherung zahlt die allgemeine Abteilung im Wohnkanton – alles darüber ist Zusatzversicherung.' },
+  { ico:'🚑', n:'Zusatz für den Rücktransport aus dem Ausland', r:'F',
+    a:'Freiwillig. Die Grundversicherung zahlt Notfälle im Ausland nur bis zum doppelten Schweizer Tarif – den Rücktransport gar nicht.' },
+  { ico:'🔧', n:'Pannenhilfe und Assistance', r:'F',
+    a:'Freiwillig. Oft schon im Auto-Abo, in der Kaskoversicherung oder über einen Verkehrsclub enthalten.' },
+  { ico:'🏗', n:'Bauherrenhaftpflicht bei einem Umbau', r:'F',
+    a:'Vom Gesetz nicht verlangt. Der Bauvertrag oder die Bank kann sie aber zur Bedingung machen.' },
+  { ico:'📉', n:'Private Erwerbsunfähigkeitsversicherung', r:'F',
+    a:'Freiwillig. Sie füllt die Lücke, die IV und Pensionskasse offen lassen – und die ist grösser, als die meisten denken.' },
+  { ico:'💨', n:'Hausrat-Zusatz für grobe Fahrlässigkeit', r:'F',
+    a:'Freiwillig. Ohne ihn darf die Versicherung die Leistung kürzen, wenn Sie den Schaden grob unvorsichtig verursacht haben.' },
+  { ico:'🪟', n:'Glasbruchversicherung', r:'F',
+    a:'Freiwillig. Meist ein Zusatz zu Hausrat oder Gebäudeversicherung.' },
+  { ico:'🎒', n:'Diebstahl auswärts', r:'F',
+    a:'Freiwillig, ein Zusatz zum Hausrat. Der Hausrat allein deckt nur, was zu Hause gestohlen wird – nicht das Portemonnaie im Zug.' },
+  { ico:'💻', n:'Cyberversicherung', r:'F',
+    a:'Freiwillig. Sie hilft bei Betrug im Netz, gehackten Konten und Datenverlust.' },
+  { ico:'🎸', n:'Versicherung für ein Musikinstrument', r:'F',
+    a:'Freiwillig. Für teure Instrumente sinnvoll, weil der Hausrat sie unterwegs nicht deckt.' },
+  { ico:'⚡', n:'Kaskoversicherung für ein E-Bike', r:'F',
+    a:'Freiwillig – bei den heutigen Preisen aber oft überlegenswert. Nicht zu verwechseln mit der Haftpflicht, die beim schnellen E-Bike Pflicht ist.' },
+  { ico:'🎟', n:'Reiserücktrittsversicherung', r:'F',
+    a:'Freiwillig. Sie zahlt, wenn Sie eine gebuchte Reise aus einem versicherten Grund nicht antreten können.' },
+  { ico:'👓', n:'Zusatz für Brillen und Kontaktlinsen', r:'F',
+    a:'Freiwillig. Die Grundversicherung beteiligt sich bei Erwachsenen nicht an Brillengläsern.' },
+  { ico:'🌿', n:'Zusatz für Komplementärmedizin', r:'F',
+    a:'Freiwillig. Ein Teil der Komplementärmedizin ist in der Grundversicherung, der Rest nur über den Zusatz.' },
+  { ico:'🏬', n:'Betriebshaftpflicht eines Unternehmens', r:'F',
+    a:'Für die meisten Branchen freiwillig. Für einzelne Berufe – etwa Anwältinnen und Anwälte – gilt dagegen eine eigene Pflicht.' },
+  { ico:'📦', n:'Transportversicherung für Waren', r:'F',
+    a:'Freiwillig. Wer die Ware auf dem Transportweg verliert, trägt den Schaden sonst selbst.' }
 ];
 
 var OF_ANZAHL = 6;
 (function(){
   var t = document.getElementById('ofTab');
-  var vorrat = document.getElementById('ofVorrat');
-  if (vorrat) vorrat.textContent = String(OFLISTE.length);
   var richtig = 0, offen = 0, runde = [];
 
   function mischen(a){
@@ -2161,23 +2215,56 @@ var OF_ANZAHL = 6;
 })();
 
 /* ================= 9b RECHNEN-CHALLENGE ================= */
+/* Gefragt wird die ganze Kostenaufteilung, nicht eine Seite davon – sonst
+   liest man die Frage leicht falsch. Alle vier Antwortpaare ergeben in der
+   Summe den richtigen Rechnungsbetrag; man kann sich also nicht über die
+   Summe herausrechnen, sondern muss die Regel kennen. Jeder Ablenker ist
+   ein benannter Denkfehler. `bar` zeichnet die Aufteilung nach.        */
 var CHALLENGE = [
-  { f:'Ihre Franchise beträgt CHF 500. Sie haben im Jahr Arztkosten von CHF 400. Wie viel zahlt die Krankenkasse?',
-    o:['CHF 400','CHF 360','CHF 0','CHF 40'], r:2,
-    a:'Solange die Kosten <b>unter der Franchise</b> liegen, zahlen Sie alles selbst. Die Kasse zahlt erst ab CHF 500.' },
-  { f:'Franchise CHF 300, Jahreskosten CHF 1\'300. Wie viel zahlen Sie selbst?',
-    o:['CHF 300','CHF 400','CHF 430','CHF 130'], r:1,
-    a:'CHF 300 Franchise + 10 % von CHF 1\'000 = CHF 100 Selbstbehalt → <b>CHF 400</b>. Die Kasse übernimmt CHF 900.' },
+  { f:'Ihre Franchise beträgt CHF 500. Sie haben im Jahr Arztkosten von CHF 400. Wie sieht die Kostenaufteilung aus?',
+    o:['Kasse CHF 0 · Sie CHF 400','Kasse CHF 400 · Sie CHF 0','Kasse CHF 360 · Sie CHF 40','Kasse CHF 40 · Sie CHF 360'], r:0,
+    a:'Solange die Kosten <b>unter der Franchise</b> liegen, zahlen Sie alles selbst. Die Kasse steigt erst ab CHF 500 ein. Die 10 % Selbstbehalt kommen hier gar nicht ins Spiel.',
+    bar:{ total:400, fr:400, sb:0, kk:0 } },
+  { f:'Franchise CHF 300, Jahreskosten CHF 1\'300. Wie sieht die Kostenaufteilung aus?',
+    o:['Kasse CHF 900 · Sie CHF 400','Kasse CHF 870 · Sie CHF 430','Kasse CHF 1\'000 · Sie CHF 300','Kasse CHF 1\'170 · Sie CHF 130'], r:0,
+    a:'CHF 300 Franchise, dazu 10 % der <b>darüber liegenden</b> CHF 1\'000 = CHF 100 Selbstbehalt. Sie zahlen CHF 400, die Kasse CHF 900. Die häufigste Falle: 10 % vom ganzen Betrag zu rechnen – das gäbe CHF 430.',
+    bar:{ total:1300, fr:300, sb:100, kk:900 } },
+  { f:'Franchise CHF 300, Jahreskosten CHF 12\'000. Wie sieht die Kostenaufteilung aus?',
+    o:['Kasse CHF 11\'000 · Sie CHF 1\'000','Kasse CHF 10\'830 · Sie CHF 1\'170','Kasse CHF 11\'700 · Sie CHF 300','Kasse CHF 11\'300 · Sie CHF 700'], r:0,
+    a:'10 % von CHF 11\'700 wären CHF 1\'170 – aber der Selbstbehalt ist bei <b>CHF 700 pro Jahr</b> gedeckelt. Sie zahlen also CHF 300 + CHF 700 = CHF 1\'000, und mehr wird es in diesem Jahr nicht, egal wie hoch die Rechnungen noch steigen.',
+    bar:{ total:12000, fr:300, sb:700, kk:11000 } },
   { f:'Was passiert mit der Prämie, wenn Sie eine höhere Franchise wählen?',
     o:['Sie steigt','Sie sinkt','Sie bleibt gleich','Sie hängt vom Alter ab'], r:1,
     a:'Höhere Franchise = tiefere Prämie. Der Rabatt ist gesetzlich begrenzt auf <b>70 %</b> der Franchise-Differenz (KVV Art. 95) – Sie sparen also nie so viel, wie Sie im Ernstfall zusätzlich zahlen.' },
   { f:'Wie hoch ist der Selbstbehalt für Erwachsene maximal pro Jahr?',
     o:['CHF 350','CHF 700','CHF 1\'000','unbegrenzt'], r:1,
-    a:'Der Selbstbehalt beträgt 10 %, aber höchstens <b>CHF 700</b> pro Jahr (Kinder CHF 350). Mit Grundfranchise zahlen Sie also nie mehr als CHF 1\'000 Kostenbeteiligung.' },
+    a:'Der Selbstbehalt beträgt 10 %, aber höchstens <b>CHF 700</b> pro Jahr (Kinder CHF 350). Mit der Grundfranchise von CHF 300 zahlen Sie also nie mehr als CHF 1\'000 Kostenbeteiligung.' },
   { f:'Sie beschädigen beim Znüni-Holen das E-Bike einer Kollegin. Welche Versicherung springt ein?',
     o:['Ihre Hausratversicherung','Ihre Privathaftpflicht','Ihre Krankenkasse','Die Unfallversicherung'], r:1,
     a:'Schäden an <i>fremdem</i> Eigentum deckt die <b>Privathaftpflicht</b>. Ohne sie zahlen Sie aus dem eigenen Sack.' }
 ];
+
+/* Zeichnet die Kostenaufteilung als gestapelten Balken. Eine Beschriftung
+   steht nur im Segment, wenn sie auch hineinpasst; die Zahlen stehen
+   ohnehin in der Legende darunter. */
+function balken(b){
+  var teile = [
+    { k:'b-fr', t:'Franchise',   v:b.fr },
+    { k:'b-sb', t:'Selbstbehalt', v:b.sb },
+    { k:'b-kk', t:'Krankenkasse', v:b.kk }
+  ].filter(function(x){ return x.v > 0; });
+  var bar = '<div class="ch-bar" role="img" aria-label="Kostenaufteilung">';
+  var leg = '<div class="ch-barleg">';
+  teile.forEach(function(x){
+    var p = x.v / b.total * 100;
+    bar += '<i class="' + x.k + '" style="width:' + p.toFixed(2) + '%">'
+         + (p >= 14 ? fr(x.v) : '') + '</i>';
+    leg += '<span><i class="' + x.k.replace('b-', 'b-') + '" style="background:'
+         + (x.k === 'b-fr' ? 'var(--rot)' : x.k === 'b-sb' ? 'var(--gold)' : 'var(--gruen)')
+         + '"></i>' + x.t + ' ' + fr(x.v) + '</span>';
+  });
+  return bar + '</div>' + leg + '<span>Rechnung ' + fr(b.total) + '</span></div>';
+}
 (function(){
   var chl = document.getElementById('challengeListe');
   var chPunkte = 0, chOffen = 0;
@@ -2196,6 +2283,7 @@ var CHALLENGE = [
         if (j === q.r){ b.classList.add('richtig'); chPunkte++; }
         else { b.classList.add('falsch'); d.querySelectorAll('.ch-opt')[q.r].classList.add('richtig'); }
         auf.innerHTML = (j === q.r ? '<b style="color:var(--gruen)">✔ Richtig.</b> ' : '<b style="color:var(--rot)">✘ Leider nein.</b> ') + q.a;
+        if (q.bar) auf.insertAdjacentHTML('beforeend', balken(q.bar));
         auf.classList.add('zeig');
         document.getElementById('chStand').textContent =
           (chOffen === CHALLENGE.length)
