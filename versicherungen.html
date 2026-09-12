@@ -553,6 +553,11 @@ h3{ font-size:14px; margin:16px 0 6px; color:var(--petrol); text-transform:upper
 .ofz .ofk button.falsch{ border-color:var(--rot); background:rgba(179,66,58,.1); color:var(--rot); }
 .ofz .ofa{ flex:1 1 100%; font-size:12.5px; color:var(--muted); display:none; }
 .ofz.fertig .ofa{ display:block; }
+.of-info{ display:block; margin-top:4px; font-size:12.8px; color:var(--muted); }
+.of-fuss{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+.of-fuss .ch-stand{ margin:0; }
+.of-neu{ font-size:13px; padding:7px 15px; flex:0 0 auto; }
+@media print{ .of-neu{ display:none; } }
 
 /* ---- 10 Finale Challenge ---- */
 .fin-kopf{ display:flex; gap:12px; align-items:flex-start; flex-wrap:wrap; justify-content:space-between; }
@@ -1126,11 +1131,16 @@ footer{ text-align:center; padding:18px 12px 26px; }
         <span class="sig">🏆</span>
         <div>
           <h2>9. Mini-Challenge</h2>
-          <p>Entscheiden Sie, ob die folgenden Versicherungen obligatorisch (O) oder freiwillig (F) sind.</p>
+          <p>Entscheiden Sie, ob die folgenden Versicherungen obligatorisch (O) oder freiwillig (F) sind.
+          <span class="of-info">Sechs Behauptungen aus einem Vorrat von <b id="ofVorrat">25</b> – bei jedem Aufruf
+          andere, in anderer Reihenfolge.</span></p>
         </div>
       </div>
       <div class="oftab" id="ofTab"></div>
-      <p class="ch-stand" id="ofStand"></p>
+      <div class="of-fuss">
+        <p class="ch-stand" id="ofStand"></p>
+        <button class="knopf zweit of-neu" type="button" id="ofNeu">↻ Neue sechs</button>
+      </div>
     </div>
 
     <div class="card">
@@ -2022,24 +2032,102 @@ var GARTEN = [
 })();
 
 /* ================= 9 MINI-QUIZ: obligatorisch oder freiwillig ================= */
+/* 25 Behauptungen; pro Runde werden sechs gezogen und gemischt. Bei den
+   kantonal geregelten Fällen steht der Kanton Aargau im Text, sonst wäre
+   die Antwort nicht eindeutig. */
 var OFLISTE = [
   { ico:'🏥', n:'Krankenversicherung (Grundversicherung)', r:'O',
     a:'Für alle mit Wohnsitz in der Schweiz obligatorisch – KVG Art. 3.' },
-  { ico:'🏠', n:'Hausratversicherung', r:'F',
-    a:'Freiwillig – viele Vermieter verlangen sie aber im Mietvertrag.' },
   { ico:'🚗', n:'Motorfahrzeug-Haftpflicht', r:'O',
     a:'Ohne sie gibt es keine Nummernschilder – SVG Art. 63.' },
+  { ico:'👷', n:'Unfallversicherung über den Betrieb (Berufsunfälle)', r:'O',
+    a:'Berufsunfälle sind für alle Arbeitnehmenden obligatorisch gedeckt – unabhängig vom Pensum.' },
+  { ico:'🩹', n:'Nichtberufsunfälle über den Betrieb', r:'O',
+    a:'Obligatorisch, sobald Sie beim gleichen Arbeitgeber mindestens 8 Stunden pro Woche arbeiten. Dann können Sie die Unfalldeckung bei der Krankenkasse sistieren lassen und sparen Prämie.' },
+  { ico:'🧓', n:'AHV und IV', r:'O',
+    a:'Obligatorisch für alle. Die Beiträge gehen direkt vom Lohn weg, der Arbeitgeber zahlt die gleiche Hälfte dazu.' },
+  { ico:'💼', n:'Arbeitslosenversicherung (ALV)', r:'O',
+    a:'Obligatorisch für Arbeitnehmende – ebenfalls über den Lohnabzug.' },
+  { ico:'🏦', n:'Pensionskasse (BVG)', r:'O',
+    a:'Die zweite Säule ist für Angestellte ab einem gesetzlichen Mindestjahreslohn obligatorisch. Darunter bleibt man aussen vor.' },
+  { ico:'👶', n:'Mutterschaftsentschädigung', r:'O',
+    a:'Gehört zur obligatorischen Erwerbsersatzordnung und wird über den Lohnabzug finanziert – 14 Wochen zu 80 Prozent des Lohns.' },
+  { ico:'🏚', n:'Gebäudeversicherung im Kanton Aargau', r:'O',
+    a:'Sämtliche Gebäude im Kanton Aargau müssen bei der Aargauischen Gebäudeversicherung gegen Feuer- und Elementarschäden versichert sein – Obligatorium mit Monopol. In sieben anderen Kantonen ist das anders geregelt.' },
+  { ico:'🛴', n:'Haftpflicht für ein schnelles E-Bike (45 km/h)', r:'O',
+    a:'Ein schnelles E-Bike gilt als Motorfahrrad: Kontrollschild und Haftpflicht sind Pflicht. Beim langsamen E-Bike bis 25 km/h nicht.' },
+  { ico:'🛵', n:'Haftpflicht für Töffli und Roller', r:'O',
+    a:'Wie beim Auto: ohne Haftpflicht kein Kontrollschild.' },
+  { ico:'🏠', n:'Hausratversicherung', r:'F',
+    a:'Freiwillig – viele Vermieter verlangen sie aber im Mietvertrag.' },
+  { ico:'👤', n:'Privathaftpflicht', r:'F',
+    a:'Freiwillig – aber praktisch unverzichtbar. Ohne sie zahlen Sie fremde Schäden lebenslang selbst.' },
   { ico:'✈️', n:'Reiseversicherung', r:'F',
     a:'Freiwillig. Sinnvoll bei teuren Buchungen, sonst oft schon über die Kreditkarte gedeckt.' },
-  { ico:'👷', n:'Unfallversicherung über den Betrieb (Berufsunfälle)', r:'O',
-    a:'Berufsunfälle sind für alle Arbeitnehmenden obligatorisch gedeckt – unabhängig vom Pensum. Ab 8 Stunden pro Woche beim gleichen Arbeitgeber kommen die Nichtberufsunfälle dazu; dann kann die Unfalldeckung bei der Krankenkasse sistiert werden.' },
-  { ico:'👤', n:'Privathaftpflicht', r:'F',
-    a:'Freiwillig – aber praktisch unverzichtbar. Ohne sie zahlen Sie fremde Schäden lebenslang selbst.' }
+  { ico:'➕', n:'Zusatzversicherung der Krankenkasse', r:'F',
+    a:'Freiwillig, und sie läuft nach dem Versicherungsvertragsgesetz: Die Kasse darf Sie ablehnen oder Vorbehalte machen. Bei der Grundversicherung muss sie jeden nehmen.' },
+  { ico:'🚙', n:'Teilkasko und Vollkasko', r:'F',
+    a:'Freiwillig. Bei einem Leasing verlangt die Leasinggeberin aber in der Regel eine Vollkasko – und das steht im Vertrag, nicht im Gesetz.' },
+  { ico:'⚖️', n:'Rechtsschutzversicherung', r:'F',
+    a:'Freiwillig. Sie zahlt Anwalt und Gerichtskosten, wenn Sie in einen Streit geraten.' },
+  { ico:'📜', n:'Lebensversicherung', r:'F',
+    a:'Freiwillig. Sie sichert Angehörige ab, wenn ein Einkommen wegfällt.' },
+  { ico:'🪙', n:'Säule 3a', r:'F',
+    a:'Freiwillig – dafür dürfen Sie die Einzahlung von den Steuern abziehen. Die dritte Säule ist Eigenvorsorge.' },
+  { ico:'📱', n:'Handyversicherung', r:'F',
+    a:'Freiwillig, und oft teuer für das, was sie bringt. Zuerst prüfen, ob Hausrat oder Kreditkarte schon deckt.' },
+  { ico:'🧳', n:'Reisegepäckversicherung', r:'F',
+    a:'Freiwillig. Oft ein Zusatz zum Hausrat, manchmal schon in der Reiseversicherung enthalten.' },
+  { ico:'🦷', n:'Zahnzusatzversicherung', r:'F',
+    a:'Freiwillig. Die Grundversicherung zahlt Zahnbehandlungen nur in engen Ausnahmen – deshalb kommt die Rechnung sonst direkt zu Ihnen.' },
+  { ico:'🐱', n:'Tierkrankenversicherung', r:'F',
+    a:'Freiwillig. Eine Operation beim Haustier kann trotzdem schnell vierstellig werden.' },
+  { ico:'🩺', n:'Krankentaggeldversicherung des Arbeitgebers', r:'F',
+    a:'Vom Gesetz nicht verlangt – ein Gesamtarbeitsvertrag kann sie aber vorschreiben. Ohne sie gilt die Lohnfortzahlung nach OR, und die dauert je nach Dienstjahr nur wenige Wochen.' },
+  { ico:'🚲', n:'Velo-Diebstahlversicherung', r:'F',
+    a:'Freiwillig, meist ein Zusatz zum Hausrat. Die alte Velovignette ist 2012 abgeschafft worden – seither deckt die Privathaftpflicht den Schaden, den Sie mit dem Velo anrichten.' }
 ];
+
+var OF_ANZAHL = 6;
 (function(){
   var t = document.getElementById('ofTab');
-  var richtig = 0, offen = 0;
-  OFLISTE.forEach(function(q){
+  var vorrat = document.getElementById('ofVorrat');
+  if (vorrat) vorrat.textContent = String(OFLISTE.length);
+  var richtig = 0, offen = 0, runde = [];
+
+  function mischen(a){
+    for (var i = a.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i + 1));
+      var h = a[i]; a[i] = a[j]; a[j] = h;
+    }
+    return a;
+  }
+
+  /* Sechs ziehen und mischen. Zwei Muster werden verworfen, weil sie sich
+     erraten lassen: Runden mit weniger als zwei O oder zwei F, und Runden,
+     in denen sich O und F lückenlos abwechseln — sonst kommt man mit
+     Slalom durch. */
+  function ziehen(){
+    var kand = null;
+    for (var v = 0; v < 60; v++){
+      kand = mischen(OFLISTE.slice()).slice(0, OF_ANZAHL);
+      var o = 0, i;
+      for (i = 0; i < kand.length; i++) if (kand[i].r === 'O') o++;
+      if (o < 2 || o > OF_ANZAHL - 2) continue;
+      var wechsel = 0;
+      for (i = 1; i < kand.length; i++) if (kand[i].r !== kand[i-1].r) wechsel++;
+      if (wechsel === OF_ANZAHL - 1) continue;
+      return kand;
+    }
+    return kand;
+  }
+
+  function aufbauen(){
+    richtig = 0; offen = 0;
+    t.innerHTML = '';
+    document.getElementById('ofStand').textContent = '';
+    runde = ziehen();
+    runde.forEach(function(q){
     var d = document.createElement('div');
     d.className = 'ofz';
     d.innerHTML = '<span class="ofi">'+q.ico+'</span><span class="ofn">'+esc(q.n)+'</span>'
@@ -2058,13 +2146,18 @@ var OFLISTE = [
         d.querySelector('.ofa').innerHTML =
           (ok ? '<b style="color:var(--gruen)">✔ Richtig.</b> ' : '<b style="color:var(--rot)">✘ Leider nein.</b> ') + q.a;
         document.getElementById('ofStand').textContent =
-          (offen === OFLISTE.length)
-            ? 'Ergebnis: ' + richtig + ' von ' + OFLISTE.length + ' richtig' + (richtig===OFLISTE.length ? ' – perfekt!' : '')
+          (offen === runde.length)
+            ? 'Ergebnis: ' + richtig + ' von ' + runde.length + ' richtig' + (richtig === runde.length ? ' – perfekt!' : '')
             : richtig + ' von ' + offen + ' richtig';
       });
     });
     t.appendChild(d);
-  });
+    });
+  }
+
+  aufbauen();
+  var neu = document.getElementById('ofNeu');
+  if (neu) neu.addEventListener('click', aufbauen);
 })();
 
 /* ================= 9b RECHNEN-CHALLENGE ================= */
