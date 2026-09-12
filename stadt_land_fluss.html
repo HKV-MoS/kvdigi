@@ -247,11 +247,21 @@ footer{ text-align:center; padding:18px 12px 26px; }
   table.blatt .sp-b, table.blatt .sp-p{ background:#f7fafc !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
 }
 </style>
+<style>
+/* Weisses HKV-Logo im Kopfband */
+.hkvlogo{ display:inline-block; line-height:0; margin:0 0 8px; opacity:.96;
+          transition:opacity .15s ease, transform .15s ease; }
+.hkvlogo img{ height:38px; width:auto; display:block; }
+.hkvlogo:hover{ opacity:1; transform:scale(1.03); }
+@media (max-width:560px){ .hkvlogo img{ height:29px; } }
+@media print{ .hkvlogo{ display:none; } }
+</style>
 </head>
 <body>
 <script>if(window.self!==window.top){document.documentElement.classList.add('eingebettet');}</script>
 
 <header>
+  <a class="hkvlogo" href="https://www.hkvaarau.ch/berufsfachschule" target="_blank" rel="noopener" title="Handelsschule KV Aarau"><img src="hkv_logo_weiss.png?v=1" alt="HKV Aarau" onerror="this.parentNode.style.display=&#39;none&#39;"></a>
   <h1 id="kopfTitel" title="Zurück zum Start" style="cursor:pointer">Stadt · Land · <b>Fluss</b></h1>
   <div class="sub">Der Klassiker als Lernspiel: Kategorien selbst zusammenstellen, Buchstaben ziehen – und das Spielblatt druckfertig ausgeben.</div>
 </header>

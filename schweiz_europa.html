@@ -221,8 +221,12 @@
   .p-ewr{background:var(--tuerkis)} .p-efta{background:#0F5257} .p-kandidat{background:#8A5A1B}
 
   .steckbrief{
-    margin-top:16px;background:var(--karte);border:1px solid var(--linie);border-radius:12px;padding:16px 18px;
+    margin-top:14px;background:var(--karte);border:1px solid var(--linie);border-radius:12px;
+    padding:16px 18px;border-left:4px solid var(--blau);
+    animation:auftauchen .22s ease-out;
   }
+  @keyframes auftauchen{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+  p.lead.naeher{margin:14px 0 10px}
   .steckbrief h3{font-size:18px;display:flex;align-items:center;gap:10px;margin-bottom:2px}
   .steckbrief .rolle{font-size:13px;color:var(--grau);margin-bottom:12px}
   .sb-liste{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:6px}
@@ -464,7 +468,7 @@
 <section class="ansicht aktiv" id="v-mengen" role="tabpanel" aria-labelledby="t-mengen">
 
   <h2 class="abschnitt"><span class="nr">1</span>Europa ist nicht die EU</h2>
-  <p class="lead">Sechs Begriffe werden im Alltag ständig verwechselt. Tippen Sie auf eine Menge – auf der Karte, im Schema und in der Länderliste wird sichtbar, wer dazugehört und wer nicht.</p>
+  <p class="lead">Sechs Begriffe werden im Alltag ständig verwechselt. Tippen Sie auf eine Menge – im Schema, auf der Karte und in der Länderliste wird gleichzeitig sichtbar, wer dazugehört und wer nicht.</p>
 
   <div class="chips" id="mengenchips">
     <button class="chip" type="button" data-menge="alle" aria-pressed="true">Alle Staaten</button>
@@ -481,6 +485,36 @@
     <button class="chip" type="button" data-jahr="2002" aria-pressed="false">Bilaterale I · 2002</button>
     <button class="chip" type="button" data-jahr="2005" aria-pressed="false">Bilaterale II · 2005</button>
     <button class="chip" type="button" data-jahr="2026" aria-pressed="false">Paket Schweiz–EU · 2026</button>
+  </div>
+
+  <div class="schema">
+    <div class="s-europa">
+      <span class="s-lab">Europa · rund 45 Staaten</span>
+      <div class="s-reihe">
+        <div class="s-ewr" data-menge="ewr">
+          <span class="s-lab">EWR · Europäischer Wirtschaftsraum · 30</span>
+          <div class="s-eu" data-menge="eu">
+            <span class="s-lab">EU · 27</span>
+            <div class="s-euro" data-menge="euro">
+              <span class="s-lab">Eurozone · 21</span>
+              <small>Ohne Dänemark, Schweden, Tschechien, Polen, Ungarn und Rumänien · Bulgarien seit 1.&nbsp;1.&nbsp;2026</small>
+            </div>
+          </div>
+          <div class="s-efta3">Drei EFTA-Staaten im EWR: Norwegen · Island · Liechtenstein <small>– im Binnenmarkt, aber nicht in der EU</small></div>
+        </div>
+        <div class="s-ch">
+          <span class="s-lab">Schweiz</span>
+          <small>EFTA&nbsp;ja · Schengen&nbsp;ja<br>EWR&nbsp;nein · EU&nbsp;nein · Euro&nbsp;nein</small>
+          <em>Statt EWR: rund 140 bilaterale Abkommen</em>
+        </div>
+      </div>
+      <div class="s-band s-schengen" data-menge="schengen">
+        <b>Schengen / Dublin · 29 Staaten</b> – 25 EU-Staaten (ohne Irland und Zypern) plus Schweiz, Norwegen, Island und Liechtenstein. Schengen regelt die Grenzkontrollen, nicht den Handel.
+      </div>
+      <div class="s-band s-efta" data-menge="efta">
+        <b>EFTA · 4 Staaten</b> – Schweiz, Norwegen, Island, Liechtenstein. 1960 als Gegenstück zur EWG gegründet; heute vor allem ein Netz von Freihandelsabkommen mit Drittstaaten.
+      </div>
+    </div>
   </div>
 
   <div class="kartenbox">
@@ -584,44 +618,15 @@
     <p class="kjahr" id="kjahr" hidden></p>
   </div>
 
-  <div class="schema">
-    <div class="s-europa">
-      <span class="s-lab">Europa · rund 45 Staaten</span>
-      <div class="s-reihe">
-        <div class="s-ewr" data-menge="ewr">
-          <span class="s-lab">EWR · Europäischer Wirtschaftsraum · 30</span>
-          <div class="s-eu" data-menge="eu">
-            <span class="s-lab">EU · 27</span>
-            <div class="s-euro" data-menge="euro">
-              <span class="s-lab">Eurozone · 21</span>
-              <small>Ohne Dänemark, Schweden, Tschechien, Polen, Ungarn und Rumänien. Bulgarien ist am 1.&nbsp;Januar 2026 dazugekommen.</small>
-            </div>
-          </div>
-          <div class="s-efta3">Drei EFTA-Staaten im EWR: Norwegen · Island · Liechtenstein <small>– im Binnenmarkt, aber nicht in der EU</small></div>
-        </div>
-        <div class="s-ch">
-          <span class="s-lab">Schweiz</span>
-          <small>EFTA&nbsp;ja · Schengen&nbsp;ja<br>EWR&nbsp;nein · EU&nbsp;nein · Euro&nbsp;nein</small>
-          <em>Statt EWR: rund 140 bilaterale Abkommen</em>
-        </div>
-      </div>
-      <div class="s-band s-schengen" data-menge="schengen">
-        <b>Schengen / Dublin · 29 Staaten</b> – 25 EU-Staaten (ohne Irland und Zypern) plus Schweiz, Norwegen, Island und Liechtenstein. Schengen regelt die Grenzkontrollen, nicht den Handel.
-      </div>
-      <div class="s-band s-efta" data-menge="efta">
-        <b>EFTA · 4 Staaten</b> – Schweiz, Norwegen, Island, Liechtenstein. 1960 als Gegenstück zur EWG gegründet; heute vor allem ein Netz von Freihandelsabkommen mit Drittstaaten.
-      </div>
-    </div>
-  </div>
-
-  <div class="auftrag"><b>Auftrag 1</b>Suchen Sie im Schema drei Staaten, die im Binnenmarkt mitmachen, ohne EU-Mitglied zu sein. Erklären Sie danach in einem Satz, was die Schweiz anders macht als diese drei.</div>
-
-  <h2 class="abschnitt"><span class="nr">2</span>Die Staaten im Einzelnen</h2>
-  <p class="lead">Tippen Sie auf ein Land für den Steckbrief. Die farbigen Punkte zeigen die Mitgliedschaften.</p>
-  <div class="laender" id="laender"></div>
   <div class="steckbrief" id="steckbrief" hidden></div>
 
-  <h2 class="abschnitt"><span class="nr">3</span>Vier verbreitete Irrtümer</h2>
+  <p class="lead naeher">Tippen Sie ein Land an – auf der Karte oder in der Liste. Der Steckbrief erscheint
+  gleich über der Liste, die farbigen Punkte zeigen die Mitgliedschaften.</p>
+  <div class="laender" id="laender"></div>
+
+  <div class="auftrag"><b>Auftrag 1</b>Suchen Sie im Schema drei Staaten, die im Binnenmarkt mitmachen, ohne EU-Mitglied zu sein, und zeigen Sie sie auf der Karte. Erklären Sie danach in einem Satz, was die Schweiz anders macht als diese drei.</div>
+
+  <h2 class="abschnitt"><span class="nr">2</span>Vier verbreitete Irrtümer</h2>
   <p class="lead">Tippen Sie auf eine Karte, um die Auflösung zu sehen.</p>
   <div class="irrtuemer" id="irrtuemer"></div>
 
@@ -1062,6 +1067,16 @@ function waehle(i){
   });
   sb.appendChild(liste);
   sb.hidden = false;
+
+  // Der Steckbrief steht zwischen Karte und Liste. Wer von unten aus der Liste
+  // auswaehlt, soll ihn trotzdem sehen — aber nur scrollen, wenn noetig.
+  var rs = sb.getBoundingClientRect();
+  var oben = 70;                       // etwas unter der klebenden Reiterleiste
+  if(rs.top < oben || rs.bottom > window.innerHeight){
+    var ziel = window.pageYOffset + rs.top - oben;
+    try{ window.scrollTo({top: ziel, behavior: 'smooth'}); }
+    catch(e){ window.scrollTo(0, ziel); }
+  }
 }
 
 /* --- Mengenfilter --- */

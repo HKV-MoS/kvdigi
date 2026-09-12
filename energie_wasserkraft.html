@@ -290,11 +290,43 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
 /* Kompaktmodus im iframe (KV Digital): alles etwas kleiner */
 html.eingebettet body{ zoom:.82; }
 </style>
+<style>
+/* Weisses HKV-Logo im Kopfband */
+.hkvlogo{ display:inline-block; line-height:0; margin:0 0 8px; opacity:.96;
+          transition:opacity .15s ease, transform .15s ease; }
+.hkvlogo img{ height:38px; width:auto; display:block; }
+.hkvlogo:hover{ opacity:1; transform:scale(1.03); }
+@media (max-width:560px){ .hkvlogo img{ height:29px; } }
+@media print{ .hkvlogo{ display:none; } }
+</style>
+<style>
+/* ---- Ziehecke: Hauptgrafik stufenlos schmaler und breiter ziehen ---- */
+[data-ziehbar]{
+  width:var(--folienbreite, 100%); max-width:100%;
+  margin-left:0; margin-right:auto; position:relative;
+}
+#ziehecke{
+  position:absolute; right:-12px; bottom:-12px; z-index:40; width:26px; height:26px;
+  cursor:nwse-resize; touch-action:none; background:rgba(255,255,255,.9);
+  border-radius:10px 0 9px 0; box-shadow:0 1px 4px rgba(20,50,80,.22);
+  opacity:.6; transition:opacity .15s;
+}
+#ziehecke:hover, body.folieziehen #ziehecke{ opacity:1; background:#fff; }
+#ziehecke::after{
+  content:''; position:absolute; right:5px; bottom:5px; width:12px; height:12px;
+  border-right:2.5px solid #3C6E73; border-bottom:2.5px solid #3C6E73;
+  border-radius:0 0 4px 0; opacity:.85;
+}
+body.folieziehen{ cursor:nwse-resize; user-select:none; }
+@media (max-width:820px){ #ziehecke{ display:none; } [data-ziehbar]{ width:100%; } }
+@media print{ #ziehecke{ display:none; } }
+</style>
 </head>
 <body>
 <script>if(window.self!==window.top){document.documentElement.classList.add('eingebettet');}</script>
 
 <header>
+  <a class="hkvlogo" href="https://www.hkvaarau.ch/berufsfachschule" target="_blank" rel="noopener" title="Handelsschule KV Aarau"><img src="hkv_logo_weiss.png?v=1" alt="HKV Aarau" onerror="this.parentNode.style.display=&#39;none&#39;"></a>
   <div class="kopf-var" data-fuer="wasser">
     <h1>Strom aus den Alpen – <span class="accent">das Wasserkraftwerk im Schnittbild</span></h1>
     <p class="subtitle">Energiebereitstellung in der Schweiz · Interaktive Folie</p>
@@ -2170,6 +2202,78 @@ baueTab('tab-gezeiten', GEZEITEN);
   if(document.getElementById('vollbild')){ leiste.style.right = '78px'; }
   document.body.appendChild(leiste);
   setZ(z);
+})();
+</script>
+<script>
+/* ---- Ziehecke unten rechts an der Hauptgrafik ----
+   Gerechnet wird aus der Zeigerposition, nicht aus der Verschiebung; die
+   senkrechte Bewegung wird ueber das beim Aufsetzen gemessene Seitenverhaeltnis
+   in eine Breite umgerechnet, damit der Griff diagonal am Zeiger klebt.
+   Bei Folien mit Reitern wandert er auf die gerade sichtbare Grafik.       */
+(function(){
+  var WAHL = '.buehne', SCHL = 'wasserkraft-foliengroesse';
+  function ziele(){ return Array.prototype.slice.call(document.querySelectorAll(WAHL)); }
+  if(!ziele().length) return;
+
+  var griff = document.createElement('div');
+  griff.id = 'ziehecke';
+  griff.setAttribute('role', 'separator');
+  griff.setAttribute('aria-label', 'Grafik grösser oder kleiner ziehen');
+  griff.title = 'Ziehen: grösser oder kleiner · Doppelklick: volle Breite';
+
+  var VORGABE = 100, breite = VORGABE, zieht = false;
+  var verh = 1.4, bezug = 0, ankerL = 0, ankerT = 0;
+  try{ var g = parseFloat(localStorage.getItem(SCHL)); if(g >= 45 && g <= 100) breite = g; }catch(e){}
+
+  function setBreite(p, merken){
+    breite = Math.max(45, Math.min(100, Math.round(p * 10) / 10));
+    document.documentElement.style.setProperty('--folienbreite', breite + '%');
+    if(merken){ try{ localStorage.setItem(SCHL, String(breite)); }catch(e){} }
+  }
+  function anhaengen(){
+    var sichtbar = ziele().filter(function(e){ return e.offsetParent !== null; });
+    if(!sichtbar.length) return;
+    if(griff.parentNode !== sichtbar[0]) sichtbar[0].appendChild(griff);
+  }
+  ziele().forEach(function(e){ e.setAttribute('data-ziehbar', ''); });
+  setBreite(breite, false);
+  anhaengen();
+  document.addEventListener('click', function(){ setTimeout(anhaengen, 40); }, true);
+  window.addEventListener('resize', anhaengen);
+
+  griff.addEventListener('pointerdown', function(e){
+    e.preventDefault(); e.stopPropagation();
+    var rr = griff.parentNode.getBoundingClientRect();
+    if(!rr.width) return;
+    // Beim Aufsetzen einmal messen: Seitenverhaeltnis, die Breite bei 100 %
+    // und die linke obere Ecke. Waehrend des Zugs wird nichts davon neu
+    // gemessen — sonst wandert der Bezugspunkt mit und der Griff schaukelt
+    // sich in die Untergrenze.
+    verh   = rr.height > 8 ? rr.width / rr.height : 1.4;
+    bezug  = rr.width / (breite / 100);
+    ankerL = rr.left;
+    ankerT = rr.top;
+    zieht = true;
+    try{ griff.setPointerCapture(e.pointerId); }catch(err){}
+    document.body.classList.add('folieziehen');
+  });
+  griff.addEventListener('pointermove', function(e){
+    if(!zieht || !bezug) return;
+    var ausX = e.clientX - ankerL;
+    var ausY = (e.clientY - ankerT) * verh;
+    setBreite((ausX + ausY) / 2 / bezug * 100, false);
+  });
+  function fertig(){
+    if(!zieht) return;
+    zieht = false;
+    document.body.classList.remove('folieziehen');
+    setBreite(breite, true);
+  }
+  griff.addEventListener('pointerup', fertig);
+  griff.addEventListener('pointercancel', fertig);
+  griff.addEventListener('lostpointercapture', fertig);
+  griff.addEventListener('click', function(e){ e.stopPropagation(); });
+  griff.addEventListener('dblclick', function(e){ e.stopPropagation(); setBreite(VORGABE, true); });
 })();
 </script>
 </body>
