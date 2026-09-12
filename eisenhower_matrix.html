@@ -106,14 +106,30 @@
 
   /* ---- Zwei-Spalten-Layout: Matrix links, Aufgaben rechts ---- */
   .layout{ display:flex; gap:20px; align-items:flex-start; }
-  .layout .matrix-stage{ flex:1 1 auto; max-width:640px; min-width:0; }
-  .layout .tray{ flex:0 0 320px; margin-top:0; }
+  .layout .matrix-stage{ flex:0 0 var(--mat, 65%); max-width:none; min-width:0; }
+  .layout .tray{ flex:1 1 0; min-width:190px; margin-top:0; }
+
+  /* Griff unten rechts: Matrix stufenlos groesser und kleiner ziehen.
+     Gleiche Bedienung wie in der Maslow-Bildergeschichte. */
+  /* In die Luecke zwischen Matrix und Aufgabenspalte gesetzt, sonst deckt der
+     Griff den animierten Dringlichkeitspfeil der x-Achse zu. */
+  #matgriff{ position:absolute; right:-13px; bottom:-10px; z-index:5; width:26px; height:26px;
+             cursor:nwse-resize; touch-action:none; background:rgba(255,255,255,.85);
+             border-radius:10px 0 9px 0; box-shadow:0 1px 4px rgba(20,50,80,.18);
+             opacity:.65; transition:opacity .15s; }
+  #matgriff:hover, body.matziehen #matgriff{ opacity:1; background:#fff; }
+  #matgriff::after{ content:''; position:absolute; right:5px; bottom:5px; width:12px; height:12px;
+                    border-right:2.5px solid #3C6E73; border-bottom:2.5px solid #3C6E73;
+                    border-radius:0 0 4px 0; opacity:.85; }
+  body.matziehen{ cursor:nwse-resize; user-select:none; }
+  @media print{ #matgriff{ display:none; } }
   .layout .cards{ flex-direction:column; flex-wrap:nowrap; }
   .layout .tray .card{ max-width:none; }
   @media (max-width:820px){
     .layout{ flex-direction:column; }
-    .layout .matrix-stage{ max-width:none; }
+    .layout .matrix-stage{ flex:1 1 auto; max-width:none; }
     .layout .tray{ flex:1 1 auto; width:100%; }
+    #matgriff{ display:none; }
     .layout .cards{ flex-direction:row; flex-wrap:wrap; }
     .layout .tray .card{ max-width:300px; }
   }
@@ -216,6 +232,8 @@ html.eingebettet body{ zoom:.82; }
 
   <div class="layout">
   <div class="matrix-stage">
+  <div id="matgriff" role="separator" aria-label="Matrix grösser oder kleiner ziehen"
+       title="Ziehen: Matrix grösser oder kleiner · Doppelklick: Standardgrösse"></div>
   <div class="matrix" id="matrix">
     <div class="corner"></div>
     <div class="col-h urgent"><span class="ax">&nbsp;</span>Nicht dringend</div>
@@ -471,6 +489,58 @@ html.eingebettet body{ zoom:.82; }
 .zoomleiste button:hover{background:rgba(21,35,50,.09);}
 @media print{.zoomleiste{display:none}}
 </style>
+
+<script>
+/* ---- Ziehgriff: Matrixbreite stufenlos, gemerkt ueber die Sitzung hinaus ----
+   Gerechnet wird aus der Zeigerposition, nicht aus der Verschiebung — das bleibt
+   auch dann richtig, wenn die Zoomleiste den body-Zoom veraendert.            */
+(function(){
+  var griff = document.getElementById('matgriff');
+  var stage = document.querySelector('.matrix-stage');
+  var layout = document.querySelector('.layout');
+  if (!griff || !stage || !layout) return;
+
+  var VORGABE = 65, breite = VORGABE, zieht = false;
+  try{ var g = parseFloat(localStorage.getItem('eisenhower-matbreite'));
+       if (g >= 35 && g <= 85) breite = g; }catch(e){}
+
+  function setBreite(p, merken){
+    breite = Math.max(35, Math.min(85, Math.round(p * 10) / 10));
+    document.documentElement.style.setProperty('--mat', breite + '%');
+    if (merken){ try{ localStorage.setItem('eisenhower-matbreite', String(breite)); }catch(e){} }
+  }
+  setBreite(breite, false);
+
+  griff.addEventListener('pointerdown', function(e){
+    e.preventDefault(); e.stopPropagation();
+    zieht = true;
+    try{ griff.setPointerCapture(e.pointerId); }catch(err){}
+    document.body.classList.add('matziehen');
+  });
+  griff.addEventListener('pointermove', function(e){
+    if (!zieht) return;
+    var rl = layout.getBoundingClientRect(), rs = stage.getBoundingClientRect();
+    if (!rl.width || !rs.height) return;
+    var ausX = (e.clientX - rl.left) / rl.width * 100;
+    // Senkrechte Bewegung ueber das aktuelle Seitenverhaeltnis der Matrix mitrechnen,
+    // damit auch ein Zug nach unten die Matrix vergroessert.
+    var verh = rs.width / rs.height;
+    var ausY = (e.clientY - rs.top) * verh / rl.width * 100;
+    setBreite((ausX + ausY) / 2, false);
+  });
+  function fertig(){
+    if (!zieht) return;
+    zieht = false;
+    document.body.classList.remove('matziehen');
+    setBreite(breite, true);
+  }
+  griff.addEventListener('pointerup', fertig);
+  griff.addEventListener('pointercancel', fertig);
+  griff.addEventListener('lostpointercapture', fertig);
+  griff.addEventListener('click', function(e){ e.stopPropagation(); });
+  griff.addEventListener('dblclick', function(e){ e.stopPropagation(); setBreite(VORGABE, true); });
+})();
+</script>
 <script>
 (function(){
   var z = (window.self !== window.top) ? 0.82 : 1;
