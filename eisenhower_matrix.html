@@ -81,7 +81,7 @@
   .row-h.notimportant{ grid-row:3; grid-column:1; }
 
   .quad{
-    border-radius:14px; padding:12px; min-height:125px; display:flex; flex-direction:column; gap:8px;
+    border-radius:14px; padding:12px; min-height:var(--quadh, 125px); display:flex; flex-direction:column; gap:8px;
     border:2px solid transparent; transition:box-shadow .15s ease, border-color .15s ease, transform .15s ease;
   }
   /* Koordinaten-Anordnung: rechts = dringend, oben = wichtig */
@@ -196,7 +196,7 @@
   .col-h{ font-size:12.5px; padding:2px 0; }
   .col-h .ax{ font-size:9px; }
   .row-h{ font-size:12px; }
-  .quad{ min-height:92px; padding:9px; gap:5px; border-radius:12px; }
+  .quad{ min-height:var(--quadh, 92px); padding:9px; gap:5px; border-radius:12px; }
   .badge{ font-size:12px; padding:4px 9px; gap:6px; }
   .qnum{ width:18px; height:18px; font-size:11px; }
   .hint{ font-size:9px; }
@@ -233,7 +233,7 @@ html.eingebettet body{ zoom:.82; }
   <div class="layout">
   <div class="matrix-stage">
   <div id="matgriff" role="separator" aria-label="Matrix grösser oder kleiner ziehen"
-       title="Ziehen: Matrix grösser oder kleiner · Doppelklick: Standardgrösse"></div>
+       title="Ziehen: nach rechts breiter, nach unten höher · Doppelklick: Standardgrösse"></div>
   <div class="matrix" id="matrix">
     <div class="corner"></div>
     <div class="col-h urgent"><span class="ax">&nbsp;</span>Nicht dringend</div>
@@ -501,44 +501,56 @@ html.eingebettet body{ zoom:.82; }
   if (!griff || !stage || !layout) return;
 
   var VORGABE = 65, breite = VORGABE, zieht = false;
+  var H_VORGABE = 92, hoehe = H_VORGABE, startY = 0, startH = 0;
   try{ var g = parseFloat(localStorage.getItem('eisenhower-matbreite'));
        if (g >= 35 && g <= 85) breite = g; }catch(e){}
+  try{ var h = parseFloat(localStorage.getItem('eisenhower-mathoehe'));
+       if (h >= 70 && h <= 420) hoehe = h; }catch(e){}
 
   function setBreite(p, merken){
     breite = Math.max(35, Math.min(85, Math.round(p * 10) / 10));
     document.documentElement.style.setProperty('--mat', breite + '%');
     if (merken){ try{ localStorage.setItem('eisenhower-matbreite', String(breite)); }catch(e){} }
   }
+  function setHoehe(px, merken){
+    hoehe = Math.max(70, Math.min(420, Math.round(px)));
+    document.documentElement.style.setProperty('--quadh', hoehe + 'px');
+    if (merken){ try{ localStorage.setItem('eisenhower-mathoehe', String(hoehe)); }catch(e){} }
+  }
+  function zoomfaktor(){ return parseFloat(document.body.style.zoom) || 1; }
   setBreite(breite, false);
+  setHoehe(hoehe, false);
 
   griff.addEventListener('pointerdown', function(e){
     e.preventDefault(); e.stopPropagation();
-    zieht = true;
+    zieht = true; startY = e.clientY; startH = hoehe;
     try{ griff.setPointerCapture(e.pointerId); }catch(err){}
     document.body.classList.add('matziehen');
   });
   griff.addEventListener('pointermove', function(e){
     if (!zieht) return;
-    var rl = layout.getBoundingClientRect(), rs = stage.getBoundingClientRect();
-    if (!rl.width || !rs.height) return;
-    var ausX = (e.clientX - rl.left) / rl.width * 100;
-    // Senkrechte Bewegung ueber das aktuelle Seitenverhaeltnis der Matrix mitrechnen,
-    // damit auch ein Zug nach unten die Matrix vergroessert.
-    var verh = rs.width / rs.height;
-    var ausY = (e.clientY - rs.top) * verh / rl.width * 100;
-    setBreite((ausX + ausY) / 2, false);
+    var rl = layout.getBoundingClientRect();
+    if (!rl.width) return;
+    // Waagrecht: Breite aus der Zeigerposition — bleibt richtig, auch wenn die
+    // Zoomleiste den body-Zoom veraendert (beide Werte liegen im selben Raum).
+    setBreite((e.clientX - rl.left) / rl.width * 100, false);
+    // Senkrecht: Hoehe der beiden Quadrantenzeilen aus dem Zugweg seit dem
+    // Aufsetzen. Durch zwei, weil der Zug zwei Zeilen auseinanderschiebt;
+    // durch den Zoom, weil min-height im ungezoomten Layout gilt.
+    setHoehe(startH + (e.clientY - startY) / (2 * zoomfaktor()), false);
   });
   function fertig(){
     if (!zieht) return;
     zieht = false;
     document.body.classList.remove('matziehen');
     setBreite(breite, true);
+    setHoehe(hoehe, true);
   }
   griff.addEventListener('pointerup', fertig);
   griff.addEventListener('pointercancel', fertig);
   griff.addEventListener('lostpointercapture', fertig);
   griff.addEventListener('click', function(e){ e.stopPropagation(); });
-  griff.addEventListener('dblclick', function(e){ e.stopPropagation(); setBreite(VORGABE, true); });
+  griff.addEventListener('dblclick', function(e){ e.stopPropagation(); setBreite(VORGABE, true); setHoehe(H_VORGABE, true); });
 })();
 </script>
 <script>
