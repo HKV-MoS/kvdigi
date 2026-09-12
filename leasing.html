@@ -228,11 +228,21 @@
 <style>
 html.eingebettet body{ zoom:.82; }
 </style>
+<style>
+/* Weisses HKV-Logo im Kopfband */
+.hkvlogo{ display:inline-block; line-height:0; margin:0 0 8px; opacity:.96;
+          transition:opacity .15s ease, transform .15s ease; }
+.hkvlogo img{ height:38px; width:auto; display:block; }
+.hkvlogo:hover{ opacity:1; transform:scale(1.03); }
+@media (max-width:560px){ .hkvlogo img{ height:29px; } }
+@media print{ .hkvlogo{ display:none; } }
+</style>
 </head>
 <body>
 <script>if(window.self!==window.top){document.documentElement.classList.add('eingebettet');}</script>
 
 <header>
+  <a class="hkvlogo" href="https://www.hkvaarau.ch/berufsfachschule" target="_blank" rel="noopener" title="Handelsschule KV Aarau"><img src="hkv_logo_weiss.png?v=1" alt="HKV Aarau" onerror="this.parentNode.style.display=&#39;none&#39;"></a>
   <h1>CHF 299.– pro Monat – wirklich nur CHF 299?</h1>
   <div class="sub">Was ein Autoleasing tatsächlich kostet · ABU-Unterricht HKV Aarau</div>
 </header>
