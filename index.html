@@ -145,6 +145,43 @@ body{
 }
 .chip:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(31,78,120,.35)}
 
+/* ── Klickzaehler ── */
+.klickleiste{
+  display:none; align-items:center; flex-wrap:wrap; gap:.4rem;
+  margin:0 0 1.15rem;
+}
+.klickleiste.an{display:flex}
+.kl-titel{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.62rem; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--grau); margin-right:.25rem;
+}
+.kl-knopf{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.62rem; letter-spacing:.1em; text-transform:uppercase;
+  padding:.36rem .68rem; min-height:30px;
+  background:var(--karte); color:var(--grau);
+  border:1px solid var(--linie); border-radius:999px;
+  cursor:pointer; transition:all .18s;
+}
+.kl-knopf:hover{border-color:var(--hkv); color:var(--hkv)}
+.kl-knopf[aria-pressed="true"]{background:var(--hkv); border-color:var(--hkv); color:#fff}
+.kl-knopf:focus-visible{outline:none; box-shadow:0 0 0 3px rgba(31,78,120,.35)}
+.kl-hinweis{
+  font-size:.72rem; color:var(--grau); opacity:.85; margin-left:.2rem;
+}
+.k-klicks{
+  position:absolute; top:.6rem; right:.7rem; z-index:3;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.6rem; letter-spacing:.06em;
+  padding:.2rem .46rem; border-radius:999px; white-space:nowrap;
+  background:rgba(31,78,120,.09); color:var(--hkv);
+  border:1px solid rgba(31,78,120,.18);
+  pointer-events:none;
+}
+.karte:has(.k-klicks) .k-kopf{padding-right:52px}
+#klickChip[hidden], .k-klicks[hidden]{display:none}
+
 /* ── Kacheln ── */
 .grid{
   display:grid;
@@ -451,8 +488,18 @@ body{
       <button class="chip" type="button" data-filter="lernen" aria-pressed="false">Lernen &amp; Selbstmanagement</button>
       <button class="chip" type="button" data-filter="rechner" aria-pressed="false">Rechner &amp; Organisation</button>
       <button class="chip" type="button" id="sortChip" aria-pressed="false" title="Kacheln per Ziehen anordnen">↕ Sortieren</button>
+      <button class="chip" type="button" id="klickChip" aria-pressed="false" hidden title="Die meistgeklickten Kacheln nach oben">★ Beliebteste</button>
     </div>
     <p class="sort-hinweis" id="sortHinweis">Kacheln mit der Maus verschieben – die Anordnung bleibt in diesem Browser-Tab erhalten. Zum Öffnen der Tools den Sortiermodus wieder ausschalten.</p>
+
+    <div class="klickleiste" id="klickleiste" role="group" aria-label="Zeitraum der Klickzahlen">
+      <span class="kl-titel">Geklickt</span>
+      <button class="kl-knopf" type="button" data-fenster="heute" aria-pressed="false">Heute</button>
+      <button class="kl-knopf" type="button" data-fenster="woche" aria-pressed="false">Diese Woche</button>
+      <button class="kl-knopf" type="button" data-fenster="monat" aria-pressed="false">Diesen Monat</button>
+      <button class="kl-knopf" type="button" data-fenster="total" aria-pressed="true">Total</button>
+      <span class="kl-hinweis" id="klHinweis"></span>
+    </div>
 
     <div class="grid" id="grid">
 
@@ -952,6 +999,172 @@ body{
       if(e.key==='Enter' || e.key===' ' || e.key==='Spacebar') los(e);
     });
   });
+})();
+</script>
+
+<script>
+/* ===================== Klickzaehler der Kacheln =====================
+   Gezaehlt wird serverseitig, damit alle dieselben Zahlen sehen: eine
+   Zeile pro Kachel und Tag in Supabase, zwei Funktionen davor. Der
+   anon-Schluessel steht bewusst offen im Code — er darf nur die zwei
+   Funktionen aufrufen, die Tabelle selbst ist durch RLS ohne Policy
+   dicht. Ohne Netz passiert nichts: keine Plaketten, keine Leiste,
+   keine Sortierung, die Seite bleibt genau wie bisher.               */
+(function(){
+  'use strict';
+  var BASIS = 'https://eebmnyxqlubirwyykofo.supabase.co/rest/v1/rpc/';
+  var KEY   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlYm1ueXhxbHViaXJ3eXlrb2ZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxODA2MDYsImV4cCI6MjEwMzc1NjYwNn0.GhjZy-ZSQcRfdpUx1Jm3Yayk0iYhuiswpRuQILL1F7Q';
+
+  var grid    = document.getElementById('grid');
+  var leiste  = document.getElementById('klickleiste');
+  var chip    = document.getElementById('klickChip');
+  var hinweis = document.getElementById('klHinweis');
+  var sortChip = document.getElementById('sortChip');
+  if(!grid || !leiste || !chip) return;
+
+  var FENSTER = ['heute','woche','monat','total'];
+  var WORT = {heute:'heute', woche:'diese Woche', monat:'diesen Monat', total:'insgesamt'};
+  var fenster = 'total', beliebt = false, zahlen = null;
+
+  try{
+    var gf = localStorage.getItem('kachel_fenster');
+    if(FENSTER.indexOf(gf) >= 0) fenster = gf;
+    beliebt = localStorage.getItem('kachel_beliebt') === 'ja';
+  }catch(e){}
+
+  var alle = Array.prototype.slice.call(grid.querySelectorAll('.karte'));
+  var URSPRUNG = alle.slice();                      /* Reihenfolge beim Laden */
+
+  function ruf(name, koerper, dauerhaft){
+    return fetch(BASIS + name, {
+      method: 'POST',
+      headers: {
+        'apikey': KEY,
+        'Authorization': 'Bearer ' + KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(koerper || {}),
+      keepalive: !!dauerhaft
+    });
+  }
+
+  /* ---------- Klick melden ---------- */
+  grid.addEventListener('click', function(e){
+    if(grid.classList.contains('sortieren')) return;    /* im Sortiermodus nicht */
+    var k = e.target.closest('a.karte');
+    if(!k) return;
+    var name = k.getAttribute('href') || '';
+    if(!/^[a-z0-9][a-z0-9_.-]{2,59}\.html$/.test(name)) return;
+    try{ ruf('kachel_klick', {p_kachel:name}, true).catch(function(){}); }catch(err){}
+    /* Die Plakette sofort hochzaehlen, damit der Klick sichtbar quittiert
+       wird — die Seite wird ja gleich verlassen und neu geladen. */
+    if(zahlen && zahlen[name]){
+      FENSTER.forEach(function(f){ zahlen[name][f] += 1; });
+      zeichne();
+    }
+  }, true);
+
+  /* ---------- Plaketten setzen ---------- */
+  function plakette(k){
+    var p = k.querySelector('.k-klicks');
+    if(!p){
+      p = document.createElement('span');
+      p.className = 'k-klicks';
+      k.appendChild(p);
+    }
+    return p;
+  }
+  function zeichne(){
+    alle.forEach(function(k){
+      var name = k.getAttribute('href');
+      var z = (name && zahlen) ? zahlen[name] : null;
+      if(!z){ var alt = k.querySelector('.k-klicks'); if(alt) alt.hidden = true; return; }
+      var n = z[fenster];
+      var p = plakette(k);
+      if(!n){ p.hidden = true; return; }
+      p.hidden = false;
+      p.textContent = n.toLocaleString('de-CH') + ' \u00d7';
+      p.title = n.toLocaleString('de-CH') + ' Mal geklickt, ' + WORT[fenster];
+    });
+  }
+
+  /* ---------- Reihenfolge ---------- */
+  function ordne(){
+    if(!beliebt){
+      URSPRUNG.forEach(function(k){ grid.appendChild(k); });
+      return;
+    }
+    var rang = {};
+    URSPRUNG.forEach(function(k, i){ rang[i] = i; });
+    var sortiert = URSPRUNG.slice().sort(function(a, b){
+      var na = a.getAttribute('href'), nb = b.getAttribute('href');
+      var za = (na && zahlen && zahlen[na]) ? zahlen[na][fenster] : -1;
+      var zb = (nb && zahlen && zahlen[nb]) ? zahlen[nb][fenster] : -1;
+      /* Zeilenanker (Spielplaene) und die Kachel ohne Link bleiben hinten */
+      var aa = a.classList.contains('zeilen-anker') || !na ? 1 : 0;
+      var ab = b.classList.contains('zeilen-anker') || !nb ? 1 : 0;
+      if(aa !== ab) return aa - ab;
+      if(zb !== za) return zb - za;
+      return URSPRUNG.indexOf(a) - URSPRUNG.indexOf(b);
+    });
+    sortiert.forEach(function(k){ grid.appendChild(k); });
+  }
+
+  function bandUndText(){
+    Array.prototype.forEach.call(leiste.querySelectorAll('.kl-knopf'), function(b){
+      b.setAttribute('aria-pressed', String(b.dataset.fenster === fenster));
+    });
+    chip.setAttribute('aria-pressed', String(beliebt));
+    if(hinweis){
+      var summe = 0;
+      if(zahlen) Object.keys(zahlen).forEach(function(n){ summe += zahlen[n][fenster]; });
+      hinweis.textContent = summe
+        ? summe.toLocaleString('de-CH') + ' Klicks ' + WORT[fenster]
+        : 'noch keine Klicks ' + WORT[fenster];
+    }
+  }
+
+  function frisch(){ zeichne(); ordne(); bandUndText(); }
+
+  /* ---------- Bedienung ---------- */
+  Array.prototype.forEach.call(leiste.querySelectorAll('.kl-knopf'), function(b){
+    b.addEventListener('click', function(){
+      fenster = b.dataset.fenster;
+      try{ localStorage.setItem('kachel_fenster', fenster); }catch(e){}
+      frisch();
+    });
+  });
+  chip.addEventListener('click', function(){
+    beliebt = !beliebt;
+    try{ localStorage.setItem('kachel_beliebt', beliebt ? 'ja' : 'nein'); }catch(e){}
+    /* Sortiermodus und Beliebtheitsreihenfolge schliessen sich aus */
+    if(beliebt && sortChip && sortChip.getAttribute('aria-pressed') === 'true') sortChip.click();
+    frisch();
+  });
+
+  /* ---------- Zahlen holen ---------- */
+  ruf('kachel_zaehler', {})
+    .then(function(a){ return a.ok ? a.json() : Promise.reject(a.status); })
+    .then(function(reihen){
+      zahlen = {};
+      alle.forEach(function(k){
+        var n = k.getAttribute('href');
+        if(n) zahlen[n] = {heute:0, woche:0, monat:0, total:0};
+      });
+      (reihen || []).forEach(function(z){
+        if(zahlen[z.kachel]){
+          zahlen[z.kachel] = {
+            heute:+z.heute || 0, woche:+z.woche || 0,
+            monat:+z.monat || 0, total:+z.total || 0
+          };
+        }
+      });
+      leiste.classList.add('an');
+      chip.hidden = false;
+      frisch();
+    })
+    .catch(function(){ /* offline oder Zaehler aus: Seite bleibt wie sie ist */ });
 })();
 </script>
 </body>
