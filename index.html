@@ -488,12 +488,12 @@ body{
       <button class="chip" type="button" data-filter="lernen" aria-pressed="false">Lernen &amp; Selbstmanagement</button>
       <button class="chip" type="button" data-filter="rechner" aria-pressed="false">Rechner &amp; Organisation</button>
       <button class="chip" type="button" id="sortChip" aria-pressed="false" title="Kacheln per Ziehen anordnen">↕ Sortieren</button>
-      <button class="chip" type="button" id="klickChip" aria-pressed="false" hidden title="Die meistgeklickten Kacheln nach oben">★ Beliebteste</button>
+      <button class="chip" type="button" id="klickChip" aria-pressed="false" hidden title="Die meistgeöffneten Werkzeuge nach oben">★ Beliebteste</button>
     </div>
     <p class="sort-hinweis" id="sortHinweis">Kacheln mit der Maus verschieben – die Anordnung bleibt in diesem Browser-Tab erhalten. Zum Öffnen der Tools den Sortiermodus wieder ausschalten.</p>
 
-    <div class="klickleiste" id="klickleiste" role="group" aria-label="Zeitraum der Klickzahlen">
-      <span class="kl-titel">Geklickt</span>
+    <div class="klickleiste" id="klickleiste" role="group" aria-label="Zeitraum der Öffnungszahlen">
+      <span class="kl-titel">Geöffnet</span>
       <button class="kl-knopf" type="button" data-fenster="heute" aria-pressed="false">Heute</button>
       <button class="kl-knopf" type="button" data-fenster="woche" aria-pressed="false">Diese Woche</button>
       <button class="kl-knopf" type="button" data-fenster="monat" aria-pressed="false">Diesen Monat</button>
@@ -1035,7 +1035,7 @@ body{
   var alle = Array.prototype.slice.call(grid.querySelectorAll('.karte'));
   var URSPRUNG = alle.slice();                      /* Reihenfolge beim Laden */
 
-  function ruf(name, koerper, dauerhaft){
+  function ruf(name, koerper){
     return fetch(BASIS + name, {
       method: 'POST',
       headers: {
@@ -1044,26 +1044,14 @@ body{
         'Content-Type': 'application/json',
         'Prefer': 'return=minimal'
       },
-      body: JSON.stringify(koerper || {}),
-      keepalive: !!dauerhaft
+      body: JSON.stringify(koerper || {})
     });
   }
 
-  /* ---------- Klick melden ---------- */
-  grid.addEventListener('click', function(e){
-    if(grid.classList.contains('sortieren')) return;    /* im Sortiermodus nicht */
-    var k = e.target.closest('a.karte');
-    if(!k) return;
-    var name = k.getAttribute('href') || '';
-    if(!/^[a-z0-9][a-z0-9_.-]{2,59}\.html$/.test(name)) return;
-    try{ ruf('kachel_klick', {p_kachel:name}, true).catch(function(){}); }catch(err){}
-    /* Die Plakette sofort hochzaehlen, damit der Klick sichtbar quittiert
-       wird — die Seite wird ja gleich verlassen und neu geladen. */
-    if(zahlen && zahlen[name]){
-      FENSTER.forEach(function(f){ zahlen[name][f] += 1; });
-      zeichne();
-    }
-  }, true);
+  /* Gezaehlt wird nicht hier, sondern im Werkzeug selbst: jede Datei meldet
+     beim Laden ihre eigene Oeffnung. So zaehlen auch Lesezeichen, direkte
+     Links, QR-Codes und die iframe-Einbettungen in KV Digital mit. Der
+     Index liest die Zahlen nur und zeigt sie an. */
 
   /* ---------- Plaketten setzen ---------- */
   function plakette(k){
@@ -1085,7 +1073,7 @@ body{
       if(!n){ p.hidden = true; return; }
       p.hidden = false;
       p.textContent = n.toLocaleString('de-CH') + ' \u00d7';
-      p.title = n.toLocaleString('de-CH') + ' Mal geklickt, ' + WORT[fenster];
+      p.title = n.toLocaleString('de-CH') + ' Mal geöffnet, ' + WORT[fenster];
     });
   }
 
@@ -1120,8 +1108,8 @@ body{
       var summe = 0;
       if(zahlen) Object.keys(zahlen).forEach(function(n){ summe += zahlen[n][fenster]; });
       hinweis.textContent = summe
-        ? summe.toLocaleString('de-CH') + ' Klicks ' + WORT[fenster]
-        : 'noch keine Klicks ' + WORT[fenster];
+        ? summe.toLocaleString('de-CH') + ' Öffnungen ' + WORT[fenster]
+        : 'noch nichts geöffnet ' + WORT[fenster];
     }
   }
 
