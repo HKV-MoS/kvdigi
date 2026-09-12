@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die Schweiz und Europa – Mengen, bilateraler Weg, aktueller Stand</title>
+<style>
+  :root{
+    --papier:#F3F1EA;
+    --karte:#FCFBF7;
+    --tinte:#1B1A16;
+    --grau:#6B6A60;
+    --linie:rgba(27,26,22,.14);
+    --rot:#D52B1E;       /* Schweiz */
+    --blau:#003399;      /* EU */
+    --gold:#C9A227;      /* Eurozone / EU-Sterne */
+    --gruen:#2E7D4E;     /* Zustimmung */
+    --violett:#6C4A8F;   /* Schengen */
+    --tuerkis:#1F6E72;   /* EFTA / EWR */
+    --sand:#EDE7D8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--papier);color:var(--tinte);
+    font-family:'Aptos','Segoe UI',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;
+    font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1060px;margin:0 auto;padding:0 20px 64px}
+
+  /* ---------- Kopf ---------- */
+  header.kopf{
+    background:linear-gradient(135deg,#12213F 0%,#1F3E6E 55%,#2A5A8C 100%);
+    color:#fff;padding:26px 20px 22px;position:relative;overflow:hidden;
+  }
+  header.kopf::after{
+    content:"";position:absolute;right:-40px;top:-40px;width:210px;height:210px;border-radius:50%;
+    background:radial-gradient(circle,rgba(201,162,39,.30) 0%,rgba(201,162,39,0) 70%);
+  }
+  .kopf-inner{max-width:1060px;margin:0 auto;position:relative;z-index:2}
+  .kopf h1{font-size:clamp(21px,3.2vw,30px);font-weight:700;letter-spacing:-.015em;line-height:1.2}
+  .kopf p.unter{margin-top:6px;font-size:14.5px;color:rgba(255,255,255,.82);max-width:70ch}
+  .stand{
+    display:inline-flex;align-items:center;gap:7px;margin-top:12px;
+    background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);
+    border-radius:999px;padding:4px 13px;font-size:12.5px;letter-spacing:.02em;
+  }
+  .stand i{width:7px;height:7px;border-radius:50%;background:#7FD9A4;display:inline-block;flex:0 0 auto}
+
+  /* ---------- Reiter ---------- */
+  nav.reiter{
+    position:sticky;top:0;z-index:20;background:rgba(243,241,234,.96);
+    backdrop-filter:saturate(140%) blur(6px);border-bottom:1px solid var(--linie);
+  }
+  .reiter-inner{max-width:1060px;margin:0 auto;padding:0 14px;display:flex;gap:2px;overflow-x:auto}
+  .reiter button{
+    flex:0 0 auto;appearance:none;background:none;border:0;border-bottom:3px solid transparent;
+    padding:13px 15px 11px;font:inherit;font-size:14.5px;font-weight:600;color:var(--grau);
+    cursor:pointer;white-space:nowrap;transition:color .15s,border-color .15s;
+  }
+  .reiter button:hover{color:var(--tinte)}
+  .reiter button[aria-selected="true"]{color:var(--blau);border-bottom-color:var(--blau)}
+  .reiter button small{display:block;font-weight:400;font-size:11.5px;color:var(--grau);margin-top:1px}
+  .reiter button[aria-selected="true"] small{color:#4B6EA8}
+
+  section.ansicht{display:none;padding-top:26px}
+  section.ansicht.aktiv{display:block}
+
+  h2.abschnitt{
+    font-size:17px;font-weight:700;letter-spacing:-.01em;margin:30px 0 10px;
+    display:flex;align-items:baseline;gap:10px;
+  }
+  h2.abschnitt:first-child{margin-top:4px}
+  h2.abschnitt span.nr{
+    font-size:11.5px;font-weight:700;color:#fff;background:var(--blau);
+    border-radius:4px;padding:2px 6px;letter-spacing:.04em;flex:0 0 auto;
+  }
+  p.lead{color:var(--grau);max-width:78ch;margin-bottom:14px;font-size:14.5px}
+
+  .karte{background:var(--karte);border:1px solid var(--linie);border-radius:12px;padding:16px 18px}
+
+  /* ---------- Auftrag ---------- */
+  .auftrag{
+    background:#FFF8E3;border:1px solid #E3CE86;border-left:4px solid var(--gold);
+    border-radius:8px;padding:11px 14px;margin:16px 0 4px;font-size:14px;
+  }
+  .auftrag b{display:block;font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:#8A6D0B;margin-bottom:3px}
+  body.ohne-auftrag .auftrag{display:none}
+
+  /* ---------- Ansicht 1: Mengen ---------- */
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px}
+  .chip{
+    appearance:none;border:1px solid var(--linie);background:var(--karte);
+    border-radius:999px;padding:6px 14px;font:inherit;font-size:13.5px;font-weight:600;
+    color:var(--grau);cursor:pointer;transition:all .15s;
+  }
+  .chip:hover{border-color:#9A988C;color:var(--tinte)}
+  .chip[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+  .chip[data-menge="eu"][aria-pressed="true"]{background:var(--blau);border-color:var(--blau)}
+  .chip[data-menge="euro"][aria-pressed="true"]{background:#9A7B12;border-color:#9A7B12}
+  .chip[data-menge="schengen"][aria-pressed="true"]{background:var(--violett);border-color:var(--violett)}
+  .chip[data-menge="ewr"][aria-pressed="true"]{background:var(--tuerkis);border-color:var(--tuerkis)}
+  .chip[data-menge="efta"][aria-pressed="true"]{background:#0F5257;border-color:#0F5257}
+  .chip[data-menge="kandidat"][aria-pressed="true"]{background:#8A5A1B;border-color:#8A5A1B}
+
+  .schema{background:var(--karte);border:1px solid var(--linie);border-radius:14px;padding:16px;margin-bottom:18px}
+  .s-europa{border:2px dashed #B9B6A8;border-radius:12px;padding:30px 12px 12px;position:relative;background:#F7F5EE}
+  .s-lab{
+    position:absolute;top:-1px;left:12px;transform:translateY(-50%);
+    background:var(--karte);padding:1px 9px;border-radius:999px;
+    font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  }
+  .s-europa>.s-lab{color:#6B6A60;border:1px solid #B9B6A8}
+  .s-reihe{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}
+  .s-ewr{
+    flex:1 1 480px;border:2px solid var(--tuerkis);border-radius:11px;
+    padding:26px 11px 11px;position:relative;background:#EAF4F3;transition:box-shadow .2s,transform .2s;
+  }
+  .s-ewr>.s-lab{color:var(--tuerkis);border:1px solid var(--tuerkis);background:#EAF4F3}
+  .s-eu{
+    border:2px solid var(--blau);border-radius:9px;padding:26px 10px 10px;position:relative;background:#E7EDFA;
+    transition:box-shadow .2s;
+  }
+  .s-eu>.s-lab{color:var(--blau);border:1px solid var(--blau);background:#E7EDFA}
+  .s-euro{
+    border:2px solid var(--gold);border-radius:8px;padding:24px 10px 10px;position:relative;background:#FBF4DC;
+  }
+  .s-euro>.s-lab{color:#8A6D0B;border:1px solid var(--gold);background:#FBF4DC}
+  .s-euro small,.s-efta3 small{color:var(--grau);font-size:12.5px}
+  .s-efta3{
+    margin-top:9px;border:1px dashed var(--tuerkis);border-radius:8px;padding:8px 10px;
+    background:#F2FAF9;font-size:13px;font-weight:600;color:#0F5257;
+  }
+  .s-ch{
+    flex:0 0 210px;border:2px solid var(--rot);border-radius:11px;padding:26px 11px 12px;
+    position:relative;background:#FDEEEC;display:flex;flex-direction:column;gap:5px;
+  }
+  .s-ch>.s-lab{color:var(--rot);border:1px solid var(--rot);background:#FDEEEC}
+  .s-ch small{font-size:12.5px;color:#7A3B34;line-height:1.45}
+  .s-ch em{font-style:normal;font-size:12.5px;font-weight:700;color:var(--rot);margin-top:auto;padding-top:6px}
+  .s-band{
+    margin-top:11px;border-radius:9px;padding:9px 12px;font-size:12.8px;line-height:1.4;
+    border:2px dashed;transition:box-shadow .2s;
+  }
+  .s-band b{font-weight:700;letter-spacing:.02em}
+  .s-schengen{border-color:var(--violett);background:#F2ECF8;color:#4A2F6B}
+  .s-efta{border-color:#0F5257;background:#E8F4F3;color:#0F5257}
+  [data-menge].an{box-shadow:0 0 0 4px rgba(27,26,22,.10),0 4px 16px rgba(27,26,22,.12)}
+  [data-menge].aus{opacity:.32}
+
+  .laender{display:grid;grid-template-columns:repeat(auto-fill,minmax(146px,1fr));gap:7px}
+  .land{
+    display:flex;align-items:center;gap:8px;background:var(--karte);border:1px solid var(--linie);
+    border-radius:9px;padding:7px 9px;cursor:pointer;text-align:left;font:inherit;
+    transition:opacity .18s,border-color .15s,transform .12s;
+  }
+  .land:hover{border-color:#8F8D80;transform:translateY(-1px)}
+  .land.gedimmt{opacity:.26}
+  .land.gewaehlt{border-color:var(--tinte);box-shadow:0 0 0 2px rgba(27,26,22,.12)}
+  .land .fahne{font-size:18px;line-height:1;flex:0 0 auto}
+  .land .lname{font-size:13.2px;font-weight:600;line-height:1.25}
+  .land .lpunkte{display:flex;gap:3px;margin-top:3px}
+  .land .lpunkte i{width:6px;height:6px;border-radius:50%;display:block}
+  .p-eu{background:var(--blau)} .p-euro{background:var(--gold)} .p-schengen{background:var(--violett)}
+  .p-ewr{background:var(--tuerkis)} .p-efta{background:#0F5257} .p-kandidat{background:#8A5A1B}
+
+  .steckbrief{
+    margin-top:16px;background:var(--karte);border:1px solid var(--linie);border-radius:12px;padding:16px 18px;
+  }
+  .steckbrief h3{font-size:18px;display:flex;align-items:center;gap:10px;margin-bottom:2px}
+  .steckbrief .rolle{font-size:13px;color:var(--grau);margin-bottom:12px}
+  .sb-liste{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:6px}
+  .sb-z{display:flex;align-items:center;gap:8px;font-size:13.5px;padding:5px 9px;border-radius:7px;background:#F4F2EA}
+  .sb-z .ja{color:var(--gruen);font-weight:700}
+  .sb-z .nein{color:#A8433A;font-weight:700}
+  .sb-z span.wo{flex:1}
+
+  .irrtuemer{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:10px}
+  .irrtum{
+    background:var(--karte);border:1px solid var(--linie);border-left:4px solid var(--rot);
+    border-radius:10px;padding:13px 15px;cursor:pointer;font:inherit;text-align:left;
+  }
+  .irrtum b{display:block;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--rot);margin-bottom:4px}
+  .irrtum .beh{font-size:14.5px;font-weight:600;line-height:1.4}
+  .irrtum .loes{
+    display:none;margin-top:9px;padding-top:9px;border-top:1px dashed var(--linie);
+    font-size:13.5px;color:#245B3D;
+  }
+  .irrtum.offen{border-left-color:var(--gruen)}
+  .irrtum.offen b{color:var(--gruen)}
+  .irrtum.offen .loes{display:block}
+
+  /* ---------- Ansicht 2: Weg ---------- */
+  .zeit{position:relative;padding-left:26px;margin-top:8px}
+  .zeit::before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:var(--linie)}
+  .ereignis{position:relative;margin-bottom:14px}
+  .ereignis::before{
+    content:"";position:absolute;left:-23px;top:7px;width:11px;height:11px;border-radius:50%;
+    background:var(--papier);border:2.5px solid var(--grau);
+  }
+  .ereignis[data-ton="ja"]::before{border-color:var(--gruen)}
+  .ereignis[data-ton="nein"]::before{border-color:var(--rot)}
+  .ereignis[data-ton="paket"]::before{border-color:var(--blau);background:var(--blau)}
+  .e-datum{font-size:12px;font-weight:700;letter-spacing:.05em;color:var(--grau);text-transform:uppercase}
+  .e-titel{font-size:15.5px;font-weight:600;line-height:1.35}
+  .e-text{font-size:13.8px;color:var(--grau);max-width:74ch}
+
+  .paket{
+    background:var(--karte);border:1px solid var(--linie);border-radius:11px;margin:9px 0 4px;overflow:hidden;
+  }
+  .paket>button{
+    width:100%;display:flex;align-items:center;gap:11px;padding:12px 15px;background:none;border:0;
+    font:inherit;text-align:left;cursor:pointer;
+  }
+  .paket>button:hover{background:#F4F2EA}
+  .paket .pnr{
+    flex:0 0 auto;font-size:12px;font-weight:700;color:#fff;background:var(--blau);
+    border-radius:5px;padding:3px 8px;letter-spacing:.03em;
+  }
+  .paket[data-p="3"] .pnr{background:#8A5A1B}
+  .paket .ptit{flex:1;font-size:15px;font-weight:600}
+  .paket .ptit small{display:block;font-weight:400;font-size:12.8px;color:var(--grau)}
+  .paket .pfeil{flex:0 0 auto;color:var(--grau);font-size:13px;transition:transform .2s}
+  .paket.offen .pfeil{transform:rotate(90deg)}
+  .paket .pinhalt{display:none;padding:0 15px 14px;border-top:1px solid var(--linie)}
+  .paket.offen .pinhalt{display:block}
+  .abk{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:6px;margin-top:12px}
+  .a{
+    background:#F4F2EA;border:1px solid var(--linie);border-radius:8px;padding:8px 11px;font-size:13.4px;
+    transition:background .3s,border-color .3s,color .3s;
+  }
+  .a b{display:block;font-weight:600}
+  .a small{color:var(--grau);font-size:12.3px}
+  .a.faellt{background:#FBE6E3;border-color:#E0A79F;color:#8E2F25}
+  .a.faellt small{color:#A8433A}
+  .gui{
+    margin-top:13px;background:#FDF4F2;border:1px solid #E6BDB6;border-radius:10px;padding:13px 15px;
+  }
+  .gui h4{font-size:14.5px;margin-bottom:4px;color:#8E2F25}
+  .gui p{font-size:13.6px;color:#7A3B34;max-width:74ch}
+  .gui button{
+    margin-top:9px;appearance:none;border:1px solid var(--rot);background:var(--rot);color:#fff;
+    border-radius:7px;padding:7px 15px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;
+  }
+  .gui button:hover{background:#B62317}
+  .gui .folge{display:none;margin-top:10px;font-size:13.6px;font-weight:600;color:#8E2F25}
+  .gui.ausgeloest .folge{display:block}
+
+  /* ---------- Ansicht 3: Heute ---------- */
+  .track{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0 6px}
+  @media(max-width:640px){.track{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:400px){.track{grid-template-columns:1fr}}
+  .ts{
+    border-radius:9px;padding:10px 12px;border:1px solid var(--linie);
+    background:var(--karte);position:relative;min-width:0;
+  }
+  .ts .tsn{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--grau)}
+  .ts .tst{font-size:13.6px;font-weight:600;line-height:1.3;margin-top:2px;overflow-wrap:anywhere}
+  .ts .tsd{font-size:12.2px;color:var(--grau);margin-top:2px}
+  .ts[data-s="fertig"]{background:#EAF5EE;border-color:#A9CFB8}
+  .ts[data-s="fertig"] .tsn{color:var(--gruen)}
+  .ts[data-s="laeuft"]{background:#FFF5DC;border-color:#E3CE86;box-shadow:0 0 0 3px rgba(201,162,39,.18)}
+  .ts[data-s="laeuft"] .tsn{color:#8A6D0B}
+  .ts[data-s="offen"]{opacity:.72;border-style:dashed}
+
+  .zwei{display:grid;grid-template-columns:repeat(auto-fit,minmax(268px,1fr));gap:12px}
+  .ref{background:var(--karte);border:1px solid var(--linie);border-radius:11px;padding:14px 16px}
+  .ref h4{font-size:15px;margin-bottom:3px}
+  .ref .wer{font-size:12.3px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;margin-bottom:8px}
+  .ref-fak{border-top:4px solid var(--blau)} .ref-fak .wer{color:var(--blau)}
+  .ref-obl{border-top:4px solid #8A5A1B} .ref-obl .wer{color:#8A5A1B}
+  .ref ul{list-style:none;font-size:13.6px}
+  .ref li{padding-left:16px;position:relative;margin-bottom:4px}
+  .ref li::before{content:"–";position:absolute;left:0;color:var(--grau)}
+
+  .streit{background:var(--karte);border:1px solid var(--linie);border-radius:11px;overflow:hidden}
+  .sz{display:grid;grid-template-columns:172px 1fr 1fr;border-top:1px solid var(--linie)}
+  .sz:first-child{border-top:0}
+  .sz>div{padding:11px 14px;font-size:13.6px}
+  .sz .thema{font-weight:600;background:#F4F2EA;border-right:1px solid var(--linie)}
+  .sz .pro{border-right:1px solid var(--linie);background:#F6FAF7}
+  .sz .contra{background:#FCF5F4}
+  .sz-kopf{display:grid;grid-template-columns:172px 1fr 1fr;background:var(--tinte);color:#fff}
+  .sz-kopf>div{padding:9px 14px;font-size:11.8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+  @media(max-width:720px){
+    .sz,.sz-kopf{grid-template-columns:1fr}
+    .sz .thema{border-right:0;border-bottom:1px solid var(--linie)}
+    .sz .pro{border-right:0;border-bottom:1px solid var(--linie)}
+    .sz-kopf{display:none}
+    .sz .pro::before{content:"Befürworter sagen · ";font-weight:700;color:var(--gruen)}
+    .sz .contra::before{content:"Gegner sagen · ";font-weight:700;color:#A8433A}
+  }
+  .zahlen{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:9px;margin-top:6px}
+  .zahl{background:var(--karte);border:1px solid var(--linie);border-radius:10px;padding:12px 14px}
+  .zahl b{display:block;font-size:25px;font-weight:700;letter-spacing:-.02em;color:var(--blau);line-height:1.1}
+  .zahl span{font-size:12.8px;color:var(--grau)}
+
+  /* ---------- Ansicht 4: Urne ---------- */
+  .urne{display:flex;flex-direction:column;gap:5px}
+  .ab{
+    display:grid;grid-template-columns:82px 1fr 96px;gap:11px;align-items:center;
+    background:var(--karte);border:1px solid var(--linie);border-radius:9px;padding:9px 13px;
+    transition:opacity .18s;
+  }
+  .ab.gedimmt{opacity:.28}
+  .ab .adat{font-size:12.2px;font-weight:700;color:var(--grau);letter-spacing:.02em;line-height:1.25}
+  .ab .atit{font-size:14px;font-weight:600;line-height:1.3}
+  .ab .atit small{display:block;font-weight:400;font-size:12.3px;color:var(--grau)}
+  .ab .abalken{margin-top:5px;height:9px;border-radius:5px;background:#E4E1D6;overflow:hidden;display:flex}
+  .ab .abalken i{display:block;height:100%}
+  .ab .abalken .bja{background:var(--gruen)}
+  .ab .abalken .bnein{background:#C0574C}
+  .ab .ares{text-align:right;font-size:12.6px;line-height:1.3}
+  .ab .ares b{display:block;font-size:16px;font-weight:700;letter-spacing:-.01em}
+  .ab[data-erg="an"] .ares b{color:var(--gruen)}
+  .ab[data-erg="ab"] .ares b{color:#A8433A}
+  .ab .ares small{color:var(--grau);font-size:11.6px}
+  @media(max-width:620px){
+    .ab{grid-template-columns:1fr;gap:5px}
+    .ab .ares{text-align:left}
+  }
+  .legende{display:flex;flex-wrap:wrap;gap:14px;font-size:12.6px;color:var(--grau);margin-top:12px}
+  .legende span{display:flex;align-items:center;gap:6px}
+  .legende i{width:11px;height:11px;border-radius:3px;display:block}
+
+  .merk{
+    background:#EAF0F9;border:1px solid #B8C7E0;border-left:4px solid var(--blau);
+    border-radius:9px;padding:12px 15px;margin-top:16px;font-size:14px;
+  }
+  .merk b{color:var(--blau)}
+
+  /* ---------- Fuss ---------- */
+  footer.fuss{
+    max-width:1060px;margin:34px auto 0;padding:18px 20px 0;border-top:1px solid var(--linie);
+    font-size:12.4px;color:var(--grau);
+  }
+  footer.fuss a{color:var(--blau);text-decoration:none;border-bottom:1px solid rgba(0,51,153,.3)}
+  footer.fuss a:hover{border-bottom-color:var(--blau)}
+  footer.fuss p{margin-bottom:6px;max-width:88ch}
+  .schalter{
+    appearance:none;border:1px solid var(--linie);background:var(--karte);border-radius:7px;
+    padding:5px 12px;font:inherit;font-size:12.6px;color:var(--grau);cursor:pointer;margin-top:10px;
+  }
+  .schalter:hover{border-color:#8F8D80;color:var(--tinte)}
+  @media print{
+    nav.reiter,.schalter{display:none}
+    section.ansicht{display:block!important;page-break-before:always}
+    body{background:#fff}
+  }
+</style>
+</head>
+<body>
+
+<header class="kopf">
+  <div class="kopf-inner">
+    <h1>Die Schweiz und Europa</h1>
+    <p class="unter">Wer gehört wozu, wie der bilaterale Weg entstanden ist, worüber das Parlament gerade streitet – und was das Volk bisher entschieden hat.</p>
+    <div class="stand"><i></i><span id="standtext">Stand: –</span></div>
+  </div>
+</header>
+
+<nav class="reiter" role="tablist" aria-label="Ansichten">
+  <div class="reiter-inner">
+    <button role="tab" id="t-mengen" aria-controls="v-mengen" aria-selected="true" data-v="mengen">Mengenbild<small>Wer gehört wozu?</small></button>
+    <button role="tab" id="t-weg" aria-controls="v-weg" aria-selected="false" data-v="weg">Der bilaterale Weg<small>1972 bis heute</small></button>
+    <button role="tab" id="t-heute" aria-controls="v-heute" aria-selected="false" data-v="heute">Wo stehen wir gerade<small>Bilaterale III</small></button>
+    <button role="tab" id="t-urne" aria-controls="v-urne" aria-selected="false" data-v="urne">An der Urne<small>Abstimmungen seit 1972</small></button>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<!-- ============ ANSICHT 1 ============ -->
+<section class="ansicht aktiv" id="v-mengen" role="tabpanel" aria-labelledby="t-mengen">
+
+  <h2 class="abschnitt"><span class="nr">1</span>Europa ist nicht die EU</h2>
+  <p class="lead">Sechs Begriffe werden im Alltag ständig verwechselt. Tippen Sie auf eine Menge – im Schema und in der Länderliste wird sichtbar, wer dazugehört und wer nicht.</p>
+
+  <div class="chips" id="mengenchips">
+    <button class="chip" type="button" data-menge="alle" aria-pressed="true">Alle Staaten</button>
+    <button class="chip" type="button" data-menge="eu" aria-pressed="false">EU · 27</button>
+    <button class="chip" type="button" data-menge="euro" aria-pressed="false">Eurozone · 21</button>
+    <button class="chip" type="button" data-menge="schengen" aria-pressed="false">Schengen · 29</button>
+    <button class="chip" type="button" data-menge="ewr" aria-pressed="false">EWR · 30</button>
+    <button class="chip" type="button" data-menge="efta" aria-pressed="false">EFTA · 4</button>
+    <button class="chip" type="button" data-menge="kandidat" aria-pressed="false">Beitrittskandidaten</button>
+  </div>
+
+  <div class="schema">
+    <div class="s-europa">
+      <span class="s-lab">Europa · rund 45 Staaten</span>
+      <div class="s-reihe">
+        <div class="s-ewr" data-menge="ewr">
+          <span class="s-lab">EWR · Europäischer Wirtschaftsraum · 30</span>
+          <div class="s-eu" data-menge="eu">
+            <span class="s-lab">EU · 27</span>
+            <div class="s-euro" data-menge="euro">
+              <span class="s-lab">Eurozone · 21</span>
+              <small>Ohne Dänemark, Schweden, Tschechien, Polen, Ungarn und Rumänien. Bulgarien ist am 1.&nbsp;Januar 2026 dazugekommen.</small>
+            </div>
+          </div>
+          <div class="s-efta3">Drei EFTA-Staaten im EWR: Norwegen · Island · Liechtenstein <small>– im Binnenmarkt, aber nicht in der EU</small></div>
+        </div>
+        <div class="s-ch">
+          <span class="s-lab">Schweiz</span>
+          <small>EFTA&nbsp;ja · Schengen&nbsp;ja<br>EWR&nbsp;nein · EU&nbsp;nein · Euro&nbsp;nein</small>
+          <em>Statt EWR: rund 140 bilaterale Abkommen</em>
+        </div>
+      </div>
+      <div class="s-band s-schengen" data-menge="schengen">
+        <b>Schengen / Dublin · 29 Staaten</b> – 25 EU-Staaten (ohne Irland und Zypern) plus Schweiz, Norwegen, Island und Liechtenstein. Schengen regelt die Grenzkontrollen, nicht den Handel.
+      </div>
+      <div class="s-band s-efta" data-menge="efta">
+        <b>EFTA · 4 Staaten</b> – Schweiz, Norwegen, Island, Liechtenstein. 1960 als Gegenstück zur EWG gegründet; heute vor allem ein Netz von Freihandelsabkommen mit Drittstaaten.
+      </div>
+    </div>
+  </div>
+
+  <div class="auftrag"><b>Auftrag 1</b>Suchen Sie im Schema drei Staaten, die im Binnenmarkt mitmachen, ohne EU-Mitglied zu sein. Erklären Sie danach in einem Satz, was die Schweiz anders macht als diese drei.</div>
+
+  <h2 class="abschnitt"><span class="nr">2</span>Die Staaten im Einzelnen</h2>
+  <p class="lead">Tippen Sie auf ein Land für den Steckbrief. Die farbigen Punkte zeigen die Mitgliedschaften.</p>
+  <div class="laender" id="laender"></div>
+  <div class="steckbrief" id="steckbrief" hidden></div>
+
+  <h2 class="abschnitt"><span class="nr">3</span>Vier verbreitete Irrtümer</h2>
+  <p class="lead">Tippen Sie auf eine Karte, um die Auflösung zu sehen.</p>
+  <div class="irrtuemer" id="irrtuemer"></div>
+
+</section>
+
+<!-- ============ ANSICHT 2 ============ -->
+<section class="ansicht" id="v-weg" role="tabpanel" aria-labelledby="t-weg">
+
+  <h2 class="abschnitt"><span class="nr">1</span>Wie der bilaterale Weg entstanden ist</h2>
+  <p class="lead">Nach dem Nein zum EWR 1992 brauchte die Schweiz einen Ersatz für den Zugang zum europäischen Binnenmarkt. Die Antwort waren einzelne Verträge, in Paketen verhandelt.</p>
+
+  <div class="zeit" id="zeit"></div>
+
+  <h2 class="abschnitt"><span class="nr">2</span>Die drei Pakete</h2>
+  <p class="lead">Tippen Sie auf ein Paket, um die einzelnen Abkommen zu sehen.</p>
+  <div id="pakete"></div>
+
+  <div class="auftrag"><b>Auftrag 2</b>Wählen Sie aus den drei Paketen dasjenige Abkommen aus, das Ihren Berufsalltag oder Ihre Freizeit am stärksten betrifft. Begründen Sie Ihre Wahl mit zwei konkreten Beispielen.</div>
+
+</section>
+
+<!-- ============ ANSICHT 3 ============ -->
+<section class="ansicht" id="v-heute" role="tabpanel" aria-labelledby="t-heute">
+
+  <h2 class="abschnitt"><span class="nr">1</span>Der Weg der Vorlage</h2>
+  <p class="lead" id="lagelead"></p>
+  <div class="track" id="track"></div>
+
+  <div class="zahlen">
+    <div class="zahl"><b>94</b><span>EU-Rechtsakte, die das Paket betrifft</span></div>
+    <div class="zahl"><b>36</b><span>Bundesgesetze, die angepasst werden</span></div>
+    <div class="zahl"><b>3</b><span>neue Bundesgesetze</span></div>
+    <div class="zahl"><b>3</b><span>ganz neue Abkommen: Strom, Lebensmittel, Gesundheit</span></div>
+  </div>
+
+  <h2 class="abschnitt"><span class="nr">2</span>Die offene Frage: fakultativ oder obligatorisch?</h2>
+  <p class="lead">Das ist zurzeit der schärfste Streit im Parlament – und ein Lehrstück in Staatskunde. Die Antwort entscheidet mit, wie hoch die Hürde an der Urne liegt.</p>
+  <div class="zwei">
+    <div class="ref ref-fak">
+      <div class="wer">Das will der Bundesrat</div>
+      <h4>Fakultatives Referendum</h4>
+      <ul>
+        <li>Die Abstimmung findet nur statt, wenn sie jemand verlangt: 50&nbsp;000 Unterschriften innert 100 Tagen oder acht Kantone.</li>
+        <li>Es zählt allein das Volksmehr.</li>
+        <li>Begründung: Es geht um Staatsverträge, nicht um einen Beitritt zu einer supranationalen Gemeinschaft.</li>
+      </ul>
+    </div>
+    <div class="ref ref-obl">
+      <div class="wer">Das wollen die Staatspolitischen Kommissionen beider Räte</div>
+      <h4>Obligatorisches Referendum</h4>
+      <ul>
+        <li>Die Abstimmung findet automatisch statt, niemand muss Unterschriften sammeln.</li>
+        <li>Es braucht Volksmehr <b>und</b> Ständemehr.</li>
+        <li>Begründung: Die Tragweite entspricht faktisch einem Beitritt zu einer supranationalen Organisation.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="merk"><b>Warum das zählt:</b> Das Ständemehr gibt den kleinen, ländlichen Kantonen viel Gewicht. Eine Vorlage kann das Volksmehr schaffen und trotzdem scheitern – genau das ist am 14.&nbsp;Juni 2026 <em>nicht</em> passiert, dort fehlten beide Mehrheiten. Vergleichen Sie in der Ansicht «An der Urne», wie knapp einzelne Entscheide ausfielen.</div>
+
+  <h2 class="abschnitt"><span class="nr">3</span>Worüber gestritten wird</h2>
+  <p class="lead">Die Vorlage liegt im Parlament, es gibt noch kein Abstimmungsbüchlein. Die folgenden Positionen sind die öffentlich vertretenen Argumente beider Seiten – bewusst nebeneinander, ohne Gewichtung.</p>
+  <div class="streit" id="streit"></div>
+
+  <div class="auftrag"><b>Auftrag 3</b>Wählen Sie einen der Streitpunkte. Notieren Sie das stärkste Argument der Gegenseite Ihrer eigenen Meinung – so, dass ein Vertreter dieser Seite sagen würde: «Ja, genau so meinen wir es.»</div>
+
+</section>
+
+<!-- ============ ANSICHT 4 ============ -->
+<section class="ansicht" id="v-urne" role="tabpanel" aria-labelledby="t-urne">
+
+  <h2 class="abschnitt"><span class="nr">1</span>Europapolitik an der Urne</h2>
+  <p class="lead">Seit 1972 hat das Schweizer Stimmvolk mehr als ein Dutzend Mal über das Verhältnis zu Europa entschieden. Der grüne Balken zeigt den Ja-Anteil.</p>
+
+  <div class="chips" id="urnechips">
+    <button class="chip" type="button" data-filter="alle" aria-pressed="true">Alle</button>
+    <button class="chip" type="button" data-filter="oeffnung" aria-pressed="false">Ausbau der Zusammenarbeit</button>
+    <button class="chip" type="button" data-filter="begrenzung" aria-pressed="false">Bremsen oder begrenzen</button>
+    <button class="chip" type="button" data-filter="knapp" aria-pressed="false">Knappe Entscheide (45–55 %)</button>
+  </div>
+
+  <div class="urne" id="urne"></div>
+
+  <div class="legende">
+    <span><i style="background:var(--gruen)"></i>Ja-Anteil</span>
+    <span><i style="background:#C0574C"></i>Nein-Anteil</span>
+    <span><i style="background:#E4E1D6"></i>Angenommen / abgelehnt steht rechts</span>
+  </div>
+
+  <div class="merk"><b>Drei Muster:</b> Erstens wurde jede Vorlage, die den bilateralen Weg ausbaut, angenommen – meist deutlich. Zweitens wurde von den Begrenzungsvorlagen bisher nur eine einzige angenommen, die Masseneinwanderungsinitiative von 2014, und zwar mit 50,3 Prozent. Drittens war das EWR-Nein von 1992 der knappste und folgenreichste Entscheid: Er hat den bilateralen Weg überhaupt erst nötig gemacht.</div>
+
+  <div class="auftrag"><b>Auftrag 4</b>Suchen Sie die drei knappsten Entscheide heraus. Stellen Sie eine Vermutung auf, warum gerade diese drei so knapp ausfielen, und prüfen Sie sie an einem weiteren Beispiel.</div>
+
+</section>
+
+<footer class="fuss">
+  <p id="fussstand"></p>
+  <p><b>Quellen:</b> Eidgenössisches Departement für auswärtige Angelegenheiten, <a href="https://www.europa.eda.admin.ch/de/paket-schweiz-eu" target="_blank" rel="noopener">Paket Schweiz–EU (Bilaterale III)</a> · <a href="https://www.europa.eda.admin.ch/de/botschaft-paket-schweiz-eu" target="_blank" rel="noopener">Botschaft vom 13. März 2026</a> · <a href="https://www.europa.eda.admin.ch/de/abstimmungen-und-chronologie" target="_blank" rel="noopener">Abstimmungen und Chronologie</a> · Bundeskanzlei, Abstimmungsresultate.</p>
+  <p>Die Zahlen zu Mengen und Mitgliedschaften geben den Stand nach dem Euro-Beitritt Bulgariens (1.&nbsp;Januar 2026) und der Schengen-Vollmitgliedschaft Bulgariens und Rumäniens (1.&nbsp;Januar 2025) wieder.</p>
+  <button class="schalter" type="button" id="auftragschalter">Arbeitsaufträge ausblenden</button>
+</footer>
+
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ==================================================================
+   STAND UND LAGE – nur hier nachführen, wenn sich etwas bewegt.
+   ================================================================== */
+var STAND = '11.09.2026';
+
+var LAGE = {
+  satz: 'Das Paket wurde am 2. März 2026 in Brüssel unterzeichnet, die Botschaft ging am 13. März 2026 ans Parlament. Die Aussenpolitische Kommission des Ständerats empfiehlt Zustimmung mit 9 zu 3 Stimmen bei einer Enthaltung. Der Ständerat berät Ende September 2026 als Erstrat. Der definitive Entscheid des Parlaments fällt frühestens 2027, ein Abstimmungstermin steht nicht fest.',
+  schritte: [
+    {nr:'1', titel:'Verhandlungen', datum:'2024 – 20.12.2024', stand:'fertig'},
+    {nr:'2', titel:'Paraphierung', datum:'21.05.2025', stand:'fertig'},
+    {nr:'3', titel:'Unterzeichnung', datum:'02.03.2026, Brüssel', stand:'fertig'},
+    {nr:'4', titel:'Botschaft ans Parlament', datum:'13.03.2026', stand:'fertig'},
+    {nr:'5', titel:'Ständerat als Erstrat', datum:'ab Ende September 2026', stand:'laeuft'},
+    {nr:'6', titel:'Nationalrat', datum:'danach', stand:'offen'},
+    {nr:'7', titel:'Schlussabstimmung', datum:'frühestens 2027', stand:'offen'},
+    {nr:'8', titel:'Referendum', datum:'fakultativ oder obligatorisch – noch offen', stand:'offen'},
+    {nr:'9', titel:'Volksabstimmung', datum:'Termin offen', stand:'offen'}
+  ]
+};
+
+/* ==================================================================
+   LÄNDERDATEN
+   ================================================================== */
+var L = [
+  // EU-Staaten: [Name, Fahne, EU-Beitritt, Euro, Schengen]
+  ['Belgien','🇧🇪',1958,1,1],      ['Bulgarien','🇧🇬',2007,1,1],
+  ['Dänemark','🇩🇰',1973,0,1],     ['Deutschland','🇩🇪',1958,1,1],
+  ['Estland','🇪🇪',2004,1,1],      ['Finnland','🇫🇮',1995,1,1],
+  ['Frankreich','🇫🇷',1958,1,1],   ['Griechenland','🇬🇷',1981,1,1],
+  ['Irland','🇮🇪',1973,1,0],       ['Italien','🇮🇹',1958,1,1],
+  ['Kroatien','🇭🇷',2013,1,1],     ['Lettland','🇱🇻',2004,1,1],
+  ['Litauen','🇱🇹',2004,1,1],      ['Luxemburg','🇱🇺',1958,1,1],
+  ['Malta','🇲🇹',2004,1,1],        ['Niederlande','🇳🇱',1958,1,1],
+  ['Österreich','🇦🇹',1995,1,1],   ['Polen','🇵🇱',2004,0,1],
+  ['Portugal','🇵🇹',1986,1,1],     ['Rumänien','🇷🇴',2007,0,1],
+  ['Schweden','🇸🇪',1995,0,1],     ['Slowakei','🇸🇰',2004,1,1],
+  ['Slowenien','🇸🇮',2004,1,1],    ['Spanien','🇪🇸',1986,1,1],
+  ['Tschechien','🇨🇿',2004,0,1],   ['Ungarn','🇭🇺',2004,0,1],
+  ['Zypern','🇨🇾',2004,1,0]
+].map(function(r){
+  return {name:r[0], fahne:r[1], seit:r[2], eu:1, euro:r[3], schengen:r[4], ewr:1, efta:0, rolle:'EU-Mitglied seit '+r[2]};
+});
+
+L = L.concat([
+  {name:'Schweiz', fahne:'🇨🇭', eu:0, euro:0, schengen:1, ewr:0, efta:1, ch:1,
+   rolle:'EFTA-Gründungsmitglied 1960 · EWR 1992 abgelehnt · rund 140 bilaterale Abkommen mit der EU'},
+  {name:'Norwegen', fahne:'🇳🇴', eu:0, euro:0, schengen:1, ewr:1, efta:1,
+   rolle:'EFTA und EWR · EU-Beitritt 1972 und 1994 zweimal an der Urne abgelehnt'},
+  {name:'Island', fahne:'🇮🇸', eu:0, euro:0, schengen:1, ewr:1, efta:1,
+   rolle:'EFTA und EWR · Beitrittsgesuch 2009 gestellt, 2015 zurückgezogen'},
+  {name:'Liechtenstein', fahne:'🇱🇮', eu:0, euro:0, schengen:1, ewr:1, efta:1,
+   rolle:'EFTA und EWR · Zollunion mit der Schweiz, Währung ist der Franken'},
+  {name:'Ver. Königreich', fahne:'🇬🇧', eu:0, euro:0, schengen:0, ewr:0, efta:0, austritt:1,
+   rolle:'EU-Mitglied 1973–2020 · am 31. Januar 2020 ausgetreten («Brexit»)'},
+  {name:'Ukraine', fahne:'🇺🇦', eu:0, euro:0, schengen:0, ewr:0, efta:0, kandidat:1, rolle:'Beitrittskandidat seit 2022'},
+  {name:'Moldau', fahne:'🇲🇩', eu:0, euro:0, schengen:0, ewr:0, efta:0, kandidat:1, rolle:'Beitrittskandidat seit 2022'},
+  {name:'Georgien', fahne:'🇬🇪', eu:0, euro:0, schengen:0, ewr:0, efta:0, kandidat:1, rolle:'Beitrittskandidat seit 2023, Verfahren stockt'},
+  {name:'Serbien', fahne:'🇷🇸', eu:0, euro:0, schengen:0, ewr:0, efta:0, kandidat:1, rolle:'Beitrittskandidat seit 2012'},
+  {name:'Montenegro', fahne:'🇲🇪', eu:0, euro:0, schengen:0, ewr:0, efta:0, kandidat:1, rolle:'Beitrittskandidat seit 2010 · verwendet den Euro einseitig'},
+  {name:'Nordmazedonien', fahne:'🇲🇰', eu:0, euro:0, schengen:0, ewr:0, efta:0, kandidat:1, rolle:'Beitrittskandidat seit 2005'},
+  {name:'Albanien', fahne:'🇦🇱', eu:0, euro:0, schengen:0, ewr:0, efta:0, kandidat:1, rolle:'Beitrittskandidat seit 2014'},
+  {name:'Bosnien-Herz.', fahne:'🇧🇦', eu:0, euro:0, schengen:0, ewr:0, efta:0, kandidat:1, rolle:'Beitrittskandidat seit 2022'},
+  {name:'Türkei', fahne:'🇹🇷', eu:0, euro:0, schengen:0, ewr:0, efta:0, kandidat:1, rolle:'Beitrittskandidat seit 1999 · Verhandlungen seit 2018 faktisch eingefroren'},
+  {name:'Kosovo', fahne:'🇽🇰', eu:0, euro:0, schengen:0, ewr:0, efta:0, antrag:1, rolle:'Beitrittsgesuch 2022 eingereicht · verwendet den Euro einseitig'}
+]);
+
+var MENGEN = [
+  {k:'eu', t:'EU'}, {k:'euro', t:'Eurozone'}, {k:'schengen', t:'Schengen/Dublin'},
+  {k:'ewr', t:'EWR'}, {k:'efta', t:'EFTA'}
+];
+
+/* ==================================================================
+   IRRTÜMER
+   ================================================================== */
+var IRR = [
+  {b:'«Die Schweiz ist doch in Schengen, also halb in der EU.»',
+   l:'Schengen regelt Grenzkontrollen und Polizeizusammenarbeit – nicht den Handel, nicht den Binnenmarkt, nicht die Währung. Auch Norwegen, Island und Liechtenstein sind dabei, ohne EU-Mitglieder zu sein. Umgekehrt sind Irland und Zypern in der EU, aber nicht in Schengen.'},
+  {b:'«EWR und EU sind das Gleiche.»',
+   l:'Der EWR umfasst die 27 EU-Staaten plus Norwegen, Island und Liechtenstein – 30 Staaten. Diese drei sind im Binnenmarkt dabei, übernehmen dessen Recht, sitzen aber in keinem EU-Gremium mit Entscheidbefugnis. Die Schweiz hat 1992 Nein zu genau diesem Modell gesagt.'},
+  {b:'«Wer in der EU ist, zahlt mit dem Euro.»',
+   l:'Sechs EU-Staaten haben eine eigene Währung: Dänemark, Schweden, Tschechien, Polen, Ungarn und Rumänien. Umgekehrt verwenden Montenegro und Kosovo den Euro, ohne in der EU zu sein.'},
+  {b:'«Bilaterale Abkommen kann man einzeln kündigen.»',
+   l:'Bei den Bilateralen I nicht. Die sieben Abkommen sind über die Guillotine-Klausel verknüpft: Wird eines gekündigt oder nicht verlängert, fallen sechs Monate später alle sieben weg. Genau darum ging es bei der Begrenzungsinitiative 2020.'}
+];
+
+/* ==================================================================
+   ZEITSTRAHL
+   ================================================================== */
+var ZEIT = [
+  {d:'1960', t:'Gründung der EFTA', x:'Die Schweiz gehört zu den sieben Gründerstaaten der Europäischen Freihandelsassoziation – als Gegenstück zur damaligen EWG.', ton:''},
+  {d:'3. Dezember 1972', t:'Freihandelsabkommen mit der EWG', x:'Das Stimmvolk sagt mit rund 72 Prozent Ja. Industriegüter können zollfrei gehandelt werden. Das Abkommen gilt bis heute.', ton:'ja'},
+  {d:'18. Mai 1992', t:'Beitrittsgesuch an die EG', x:'Der Bundesrat reicht ein Beitrittsgesuch ein. Es wird nach dem EWR-Nein auf Eis gelegt und 2016 formell zurückgezogen.', ton:''},
+  {d:'6. Dezember 1992', t:'Nein zum EWR', x:'50,3 Prozent der Stimmenden und die Mehrheit der Stände lehnen den Beitritt zum Europäischen Wirtschaftsraum ab. Die Stimmbeteiligung von 78,7 Prozent ist bis heute Rekord. Der bilaterale Weg beginnt hier.', ton:'nein'},
+  {d:'21. Juni 1999', t:'Bilaterale I unterzeichnet', x:'Sieben Abkommen, miteinander verknüpft durch die Guillotine-Klausel.', ton:'paket'},
+  {d:'21. Mai 2000', t:'Ja zu den Bilateralen I', x:'67,2 Prozent Zustimmung. In Kraft treten die Abkommen am 1. Juni 2002.', ton:'ja'},
+  {d:'26. Oktober 2004', t:'Bilaterale II unterzeichnet', x:'Neun weitere Abkommen, unter anderem Schengen/Dublin. Diesmal ohne Guillotine-Klausel.', ton:'paket'},
+  {d:'5. Juni 2005', t:'Ja zu Schengen/Dublin', x:'54,6 Prozent Zustimmung. Formell in Kraft am 1. März 2008, die Grenzkontrollen fallen am 12. Dezember 2008.', ton:'ja'},
+  {d:'9. Februar 2014', t:'Masseneinwanderungsinitiative angenommen', x:'50,3 Prozent Ja. Der neue Verfassungsartikel verlangt Höchstzahlen – im Widerspruch zur Personenfreizügigkeit. Das Parlament setzt ihn 2016 mit einer Stellenmeldepflicht um, ohne Kontingente.', ton:'nein'},
+  {d:'26. Mai 2021', t:'Abbruch der Verhandlungen zum Rahmenabkommen', x:'Der Bundesrat entscheidet, das institutionelle Abkommen nicht zu unterzeichnen: zu grosse Differenzen bei Lohnschutz, Unionsbürgerrichtlinie und staatlichen Beihilfen.', ton:'nein'},
+  {d:'20. Dezember 2024', t:'Neue Verhandlungen materiell abgeschlossen', x:'Statt eines übergreifenden Rahmenabkommens wird nun sektoriell verhandelt: Die institutionellen Regeln kommen in jedes einzelne Binnenmarktabkommen.', ton:'paket'},
+  {d:'21. Mai 2025', t:'Paket paraphiert', x:'Die Chefunterhändler beider Seiten setzen ihre Kürzel unter den Text.', ton:'paket'},
+  {d:'2. März 2026', t:'Unterzeichnung in Brüssel', x:'Bundespräsident und EU-Kommissionspräsidentin unterzeichnen das Paket Schweiz–EU.', ton:'paket'},
+  {d:'13. März 2026', t:'Botschaft ans Parlament', x:'Die Vorlage betrifft 94 EU-Rechtsakte, 36 Bundesgesetze werden angepasst, drei neue kommen dazu.', ton:'paket'},
+  {d:'14. Juni 2026', t:'«Keine 10-Millionen-Schweiz» abgelehnt', x:'54,8 Prozent Nein bei 58,9 Prozent Stimmbeteiligung, 13 Kantone dagegen, 10 dafür.', ton:'ja'},
+  {d:'ab Ende September 2026', t:'Der Ständerat berät', x:'Als Erstrat, zuerst den Stabilisierungsteil, danach die Abkommen zu Lebensmittelsicherheit und Gesundheit.', ton:''}
+];
+
+/* ==================================================================
+   PAKETE
+   ================================================================== */
+var PAKETE = [
+  {p:'1', nr:'Bilaterale I', tit:'Sieben Abkommen, 1999 unterzeichnet, seit 2002 in Kraft',
+   sub:'Zugang zum Binnenmarkt – verknüpft durch die Guillotine-Klausel',
+   gui:true,
+   a:[
+     ['Personenfreizügigkeit','Leben und arbeiten im jeweils anderen Raum'],
+     ['Technische Handelshemmnisse','Ein Produkt, eine Prüfung – gilt in beiden Räumen'],
+     ['Öffentliches Beschaffungswesen','Aufträge von Gemeinden und Kantonen sind ausgeschrieben'],
+     ['Landwirtschaft','Erleichterter Handel mit Agrarprodukten'],
+     ['Landverkehr','Verlagerung auf die Schiene, LSVA, 40-Tonnen-Limite'],
+     ['Luftverkehr','Schweizer Airlines haben dieselben Rechte wie EU-Airlines'],
+     ['Forschung','Teilnahme an den EU-Forschungsprogrammen']
+   ]},
+  {p:'2', nr:'Bilaterale II', tit:'Neun Abkommen, 2004 unterzeichnet',
+   sub:'Über die Wirtschaft hinaus – ohne Guillotine-Klausel',
+   a:[
+     ['Schengen / Dublin','Keine systematischen Grenzkontrollen, gemeinsames Asylverfahren'],
+     ['Zinsbesteuerung','Später abgelöst durch den automatischen Informationsaustausch'],
+     ['Betrugsbekämpfung','Zusammenarbeit bei Schmuggel und Zollbetrug'],
+     ['Verarbeitete Agrarprodukte','Schokolade, Biscuits, Teigwaren'],
+     ['Umwelt','Mitarbeit in der Europäischen Umweltagentur'],
+     ['Statistik','Vergleichbare Zahlen zu Arbeitsmarkt, Preisen, Verkehr'],
+     ['MEDIA','Schweizer Filme in europäischen Förderprogrammen'],
+     ['Ruhegehälter','Doppelbesteuerung ehemaliger EU-Beamter beseitigt'],
+     ['Bildung, Berufsbildung, Jugend','Grundlage für die Programmteilnahme']
+   ]},
+  {p:'3', nr:'Paket Schweiz–EU', tit:'«Bilaterale III» – unterzeichnet 2026, im Parlament',
+   sub:'Drei neue Abkommen, fünf aktualisierte, dazu die institutionellen Regeln',
+   a:[
+     ['NEU: Strom','Gemeinsamer Strommarkt, Versorgungssicherheit im Winter'],
+     ['NEU: Lebensmittelsicherheit','Gemeinsame Standards und Schnellwarnsystem'],
+     ['NEU: Gesundheit','Zusammenarbeit bei Pandemien und Arzneimittelengpässen'],
+     ['EUPA – Programme','Horizon Europe, Euratom, Digital Europe; später Erasmus+, EU4Health, ITER'],
+     ['Aktualisiert: Personenfreizügigkeit','Neu mit einer Schutzklausel bei starker Zuwanderung'],
+     ['Aktualisiert: Landverkehr','Mit Ausnahmen für den alpenquerenden Verkehr'],
+     ['Aktualisiert: Luftverkehr','Anpassung an neues EU-Recht'],
+     ['Aktualisiert: Landwirtschaft','Anpassung an neues EU-Recht'],
+     ['Aktualisiert: Technische Handelshemmnisse','Laufende Aktualisierung statt Nachverhandeln'],
+     ['Institutionelle Regeln','Dynamische Rechtsübernahme, Streitbeilegung mit Schiedsgericht – sektoriell, nicht als Rahmenvertrag'],
+     ['Kohäsionsbeitrag','Ein regelmässiger Schweizer Beitrag an ausgewählte EU-Staaten']
+   ]}
+];
+
+/* ==================================================================
+   STREITPUNKTE – beide Seiten, ohne Gewichtung
+   ================================================================== */
+var STREIT = [
+  ['Dynamische Rechtsübernahme',
+   'Die Schweiz übernimmt neues Binnenmarktrecht nicht automatisch: Parlament und Referendum bleiben möglich, es gibt eine Übergangsfrist und die Möglichkeit von Ausgleichsmassnahmen statt eines Automatismus.',
+   'Wer Recht übernimmt, das andere machen, gibt Souveränität ab. Das Referendum werde faktisch entwertet, weil ein Nein Gegenmassnahmen der EU auslösen könne.'],
+  ['Streitbeilegung',
+   'Ein paritätisches Schiedsgericht entscheidet. Den Europäischen Gerichtshof zieht es nur bei Fragen des EU-Rechts bei – das sei technisch nötig und üblich.',
+   'Am Ende lege der Gerichtshof der Gegenpartei das Recht aus. Das laufe auf «fremde Richter» hinaus.'],
+  ['Lohnschutz',
+   'Der Lohnschutz bleibt Sache der Sozialpartner und wird mit flankierenden Massnahmen verstärkt; das Schweizer Lohnniveau werde abgesichert.',
+   'Die Gewerkschaften sehen die heutigen Kontrollen und Kautionen gefährdet und knüpfen ihr Ja an zusätzliche gesetzliche Garantien.'],
+  ['Zuwanderung',
+   'Neu gibt es eine Schutzklausel: Bei erheblichen Problemen kann die Personenfreizügigkeit eingeschränkt werden – das gab es bisher nicht.',
+   'Die Klausel sei zahnlos, weil ihre Anwendung mit der EU abgestimmt und von einem Schiedsgericht überprüft werden müsse.'],
+  ['Strom',
+   'Ein Stromabkommen sichert die Versorgung im Winter und bringt die Schweiz zurück an den Verhandlungstisch, wo heute über sie hinweg entschieden wird.',
+   'Die volle Marktöffnung gefährde Grundversorgung und Preisstabilität für Haushalte.'],
+  ['Kohäsionsbeitrag',
+   'Ein regelmässiger Beitrag ist der Preis für den Binnenmarktzugang und schafft Planbarkeit statt Einzelverhandlungen.',
+   'Es sei ein dauerndes «Eintrittsgeld» ohne Gegenleistung, das künftige Budgets binde.'],
+  ['Referendumsart',
+   'Es handelt sich um Staatsverträge; das fakultative Referendum genügt, Volksmehr entscheidet.',
+   'Die Tragweite verlange das obligatorische Referendum mit Volks- und Ständemehr.']
+];
+
+/* ==================================================================
+   ABSTIMMUNGEN
+   ================================================================== */
+var AB = [
+  ['03.12.1972','Freihandelsabkommen mit der EWG','Behördenvorlage',72.5,'an','oeffnung',''],
+  ['06.12.1992','Beitritt zum EWR','Behördenvorlage',49.7,'ab','oeffnung','Beteiligung 78,7 % · auch die Stände lehnten ab'],
+  ['08.06.1997','«EU-Beitrittsverhandlungen vors Volk!»','Volksinitiative',25.9,'ab','begrenzung',''],
+  ['21.05.2000','Bilaterale I','Behördenvorlage',67.2,'an','oeffnung',''],
+  ['04.03.2001','«Ja zu Europa!» – Beitrittsverhandlungen','Volksinitiative',23.2,'ab','oeffnung',''],
+  ['05.06.2005','Schengen / Dublin','Behördenvorlage',54.6,'an','oeffnung',''],
+  ['25.09.2005','Personenfreizügigkeit auf 10 neue EU-Staaten','Behördenvorlage',56.0,'an','oeffnung',''],
+  ['26.11.2006','Osthilfegesetz – Kohäsionsbeitrag','Behördenvorlage',53.4,'an','oeffnung',''],
+  ['08.02.2009','Weiterführung der Personenfreizügigkeit, Bulgarien und Rumänien','Behördenvorlage',59.6,'an','oeffnung',''],
+  ['17.05.2009','Biometrische Pässe (Schengen-Weiterentwicklung)','Behördenvorlage',50.1,'an','oeffnung','Hauchdünn: rund 5600 Stimmen Unterschied'],
+  ['09.02.2014','«Gegen Masseneinwanderung»','Volksinitiative',50.3,'an','begrenzung','Die einzige angenommene Begrenzungsvorlage'],
+  ['30.11.2014','Ecopop – «Stopp der Überbevölkerung»','Volksinitiative',25.9,'ab','begrenzung',''],
+  ['19.05.2019','EU-Waffenrichtlinie (Schengen-Weiterentwicklung)','Behördenvorlage',63.7,'an','oeffnung',''],
+  ['27.09.2020','Begrenzungsinitiative – Kündigung der Personenfreizügigkeit','Volksinitiative',38.3,'ab','begrenzung',''],
+  ['15.05.2022','Frontex – Ausbau der EU-Grenzschutzagentur','Behördenvorlage',71.5,'an','oeffnung',''],
+  ['14.06.2026','«Keine 10-Millionen-Schweiz!»','Volksinitiative',45.2,'ab','begrenzung','Beteiligung 58,9 % · 10 Kantone dafür, 13 dagegen']
+];
+
+/* ==================================================================
+   AUFBAU
+   ================================================================== */
+function el(tag, cls, txt){
+  var e = document.createElement(tag);
+  if(cls) e.className = cls;
+  if(txt !== undefined && txt !== null) e.textContent = txt;
+  return e;
+}
+
+/* --- Stand --- */
+document.getElementById('standtext').textContent = 'Stand des Dossiers: ' + STAND;
+document.getElementById('fussstand').textContent =
+  'Stand der Angaben: ' + STAND + '. Die Angaben zum laufenden Verfahren veralten schnell – vor dem Einsatz im Unterricht kurz prüfen.';
+document.getElementById('lagelead').textContent = LAGE.satz;
+
+/* --- Länderraster --- */
+var raster = document.getElementById('laender');
+var gewaehlt = null;
+
+L.forEach(function(land, i){
+  var b = el('button','land');
+  b.type = 'button';
+  b.setAttribute('data-i', i);
+  if(land.ch) b.style.borderColor = 'var(--rot)';
+  var f = el('span','fahne', land.fahne);
+  var box = el('span');
+  box.appendChild(el('span','lname', land.name));
+  var pk = el('span','lpunkte');
+  MENGEN.forEach(function(m){
+    if(land[m.k]){ var p = el('i','p-'+m.k); p.title = m.t; pk.appendChild(p); }
+  });
+  if(land.kandidat){ var pk2 = el('i','p-kandidat'); pk2.title='Beitrittskandidat'; pk.appendChild(pk2); }
+  box.appendChild(pk);
+  b.appendChild(f); b.appendChild(box);
+  b.addEventListener('click', function(){ zeigeSteckbrief(i, b); });
+  raster.appendChild(b);
+});
+
+function zeigeSteckbrief(i, knopf){
+  var land = L[i];
+  var sb = document.getElementById('steckbrief');
+  if(gewaehlt) gewaehlt.classList.remove('gewaehlt');
+  if(gewaehlt === knopf){ gewaehlt = null; sb.hidden = true; return; }
+  gewaehlt = knopf; knopf.classList.add('gewaehlt');
+  sb.innerHTML = '';
+  var h = el('h3');
+  h.appendChild(el('span', null, land.fahne));
+  h.appendChild(el('span', null, land.name));
+  sb.appendChild(h);
+  sb.appendChild(el('p','rolle', land.rolle));
+  var liste = el('div','sb-liste');
+  MENGEN.forEach(function(m){
+    var z = el('div','sb-z');
+    z.appendChild(el('span','wo', m.t));
+    var w = el('span', land[m.k] ? 'ja' : 'nein', land[m.k] ? 'ja' : 'nein');
+    z.appendChild(w);
+    liste.appendChild(z);
+  });
+  sb.appendChild(liste);
+  sb.hidden = false;
+}
+
+/* --- Mengenfilter --- */
+var chips = document.querySelectorAll('#mengenchips .chip');
+var schemaTeile = document.querySelectorAll('.schema [data-menge]');
+
+Array.prototype.forEach.call(chips, function(c){
+  c.addEventListener('click', function(){
+    Array.prototype.forEach.call(chips, function(x){ x.setAttribute('aria-pressed', x === c ? 'true' : 'false'); });
+    filtereMenge(c.getAttribute('data-menge'));
+  });
+});
+
+function filtereMenge(k){
+  var imSchema = false;
+  Array.prototype.forEach.call(schemaTeile, function(t){
+    if(t.getAttribute('data-menge') === k) imSchema = true;
+  });
+  Array.prototype.forEach.call(schemaTeile, function(t){
+    t.classList.remove('an','aus');
+    if(k === 'alle' || !imSchema) return;
+    if(t.getAttribute('data-menge') === k) t.classList.add('an');
+    else t.classList.add('aus');
+  });
+  Array.prototype.forEach.call(raster.children, function(b){
+    var land = L[+b.getAttribute('data-i')];
+    var drin = (k === 'alle') || !!land[k] || (k === 'kandidat' && (land.kandidat || land.antrag));
+    b.classList.toggle('gedimmt', !drin);
+  });
+}
+
+/* --- Irrtümer --- */
+var ib = document.getElementById('irrtuemer');
+IRR.forEach(function(o){
+  var k = el('button','irrtum'); k.type = 'button';
+  k.appendChild(el('b', null, 'Stimmt das?'));
+  k.appendChild(el('div','beh', o.b));
+  k.appendChild(el('div','loes', o.l));
+  k.addEventListener('click', function(){
+    k.classList.toggle('offen');
+    k.querySelector('b').textContent = k.classList.contains('offen') ? 'So ist es richtig' : 'Stimmt das?';
+  });
+  ib.appendChild(k);
+});
+
+/* --- Zeitstrahl --- */
+var zt = document.getElementById('zeit');
+ZEIT.forEach(function(e){
+  var d = el('div','ereignis');
+  if(e.ton) d.setAttribute('data-ton', e.ton);
+  d.appendChild(el('div','e-datum', e.d));
+  d.appendChild(el('div','e-titel', e.t));
+  d.appendChild(el('div','e-text', e.x));
+  zt.appendChild(d);
+});
+
+/* --- Pakete --- */
+var pb = document.getElementById('pakete');
+PAKETE.forEach(function(p){
+  var box = el('div','paket');
+  box.setAttribute('data-p', p.p);
+  var kn = el('button'); kn.type = 'button';
+  kn.appendChild(el('span','pnr', p.nr));
+  var t = el('span','ptit', p.tit);
+  t.appendChild(el('small', null, p.sub));
+  kn.appendChild(t);
+  kn.appendChild(el('span','pfeil','▶'));
+  box.appendChild(kn);
+
+  var inh = el('div','pinhalt');
+  var gitter = el('div','abk');
+  p.a.forEach(function(a){
+    var z = el('div','a');
+    z.appendChild(el('b', null, a[0]));
+    z.appendChild(el('small', null, a[1]));
+    gitter.appendChild(z);
+  });
+  inh.appendChild(gitter);
+
+  if(p.gui){
+    var g = el('div','gui');
+    var h4 = el('h4', null, 'Die Guillotine-Klausel');
+    g.appendChild(h4);
+    g.appendChild(el('p', null, 'Diese sieben Abkommen sind rechtlich aneinandergebunden. Wird eines gekündigt oder nicht verlängert, fallen sechs Monate später alle sieben weg. Deshalb hiess es bei der Begrenzungsinitiative 2020: Es geht nicht nur um die Personenfreizügigkeit.'));
+    var gk = el('button', null, 'Was passiert, wenn die Personenfreizügigkeit gekündigt wird?');
+    gk.type = 'button';
+    var folge = el('div','folge','Nach sechs Monaten sind alle sieben Abkommen ausser Kraft – auch Landverkehr, Luftverkehr und Forschung.');
+    g.appendChild(gk); g.appendChild(folge);
+    gk.addEventListener('click', function(){
+      var an = !g.classList.contains('ausgeloest');
+      g.classList.toggle('ausgeloest', an);
+      Array.prototype.forEach.call(gitter.children, function(z, i){
+        setTimeout(function(){ z.classList.toggle('faellt', an); }, an ? i * 110 : 0);
+      });
+      gk.textContent = an ? 'Zurücksetzen' : 'Was passiert, wenn die Personenfreizügigkeit gekündigt wird?';
+    });
+    inh.appendChild(g);
+  }
+
+  box.appendChild(inh);
+  kn.addEventListener('click', function(){ box.classList.toggle('offen'); });
+  pb.appendChild(box);
+});
+
+/* --- Verfahrens-Track --- */
+var tb = document.getElementById('track');
+LAGE.schritte.forEach(function(s){
+  var d = el('div','ts');
+  d.setAttribute('data-s', s.stand);
+  d.appendChild(el('div','tsn', 'Schritt ' + s.nr));
+  d.appendChild(el('div','tst', s.titel));
+  d.appendChild(el('div','tsd', s.datum));
+  tb.appendChild(d);
+});
+
+/* --- Streitpunkte --- */
+var stb = document.getElementById('streit');
+var kopf = el('div','sz-kopf');
+kopf.appendChild(el('div', null, 'Streitpunkt'));
+kopf.appendChild(el('div', null, 'Befürworter sagen'));
+kopf.appendChild(el('div', null, 'Gegner sagen'));
+stb.appendChild(kopf);
+STREIT.forEach(function(s){
+  var z = el('div','sz');
+  z.appendChild(el('div','thema', s[0]));
+  z.appendChild(el('div','pro', s[1]));
+  z.appendChild(el('div','contra', s[2]));
+  stb.appendChild(z);
+});
+
+/* --- Abstimmungen --- */
+var ub = document.getElementById('urne');
+AB.forEach(function(a){
+  var d = el('div','ab');
+  d.setAttribute('data-erg', a[4]);
+  d.setAttribute('data-richtung', a[5]);
+  d.setAttribute('data-ja', a[3]);
+
+  var dat = el('div','adat');
+  var teile = a[0].split('.');
+  dat.appendChild(el('div', null, teile[0] + '.' + teile[1] + '.'));
+  dat.appendChild(el('div', null, teile[2]));
+  d.appendChild(dat);
+
+  var mitte = el('div');
+  var tit = el('div','atit', a[1]);
+  tit.appendChild(el('small', null, a[2] + (a[6] ? ' · ' + a[6] : '')));
+  mitte.appendChild(tit);
+  var bal = el('div','abalken');
+  var bja = el('i','bja'); bja.style.width = a[3] + '%';
+  var bne = el('i','bnein'); bne.style.width = (100 - a[3]) + '%';
+  bal.appendChild(bja); bal.appendChild(bne);
+  mitte.appendChild(bal);
+  d.appendChild(mitte);
+
+  var res = el('div','ares');
+  res.appendChild(el('b', null, a[3].toFixed(1).replace('.', ',') + ' % Ja'));
+  res.appendChild(el('small', null, a[4] === 'an' ? 'angenommen' : 'abgelehnt'));
+  d.appendChild(res);
+
+  ub.appendChild(d);
+});
+
+var uchips = document.querySelectorAll('#urnechips .chip');
+Array.prototype.forEach.call(uchips, function(c){
+  c.addEventListener('click', function(){
+    Array.prototype.forEach.call(uchips, function(x){ x.setAttribute('aria-pressed', x === c ? 'true' : 'false'); });
+    var f = c.getAttribute('data-filter');
+    Array.prototype.forEach.call(ub.children, function(z){
+      var ja = parseFloat(z.getAttribute('data-ja'));
+      var drin = (f === 'alle') ||
+                 (f === 'knapp' ? (ja >= 45 && ja <= 55) : z.getAttribute('data-richtung') === f);
+      z.classList.toggle('gedimmt', !drin);
+    });
+  });
+});
+
+/* --- Reiter --- */
+var knoepfe = document.querySelectorAll('.reiter button');
+function zeige(v){
+  Array.prototype.forEach.call(knoepfe, function(k){
+    k.setAttribute('aria-selected', k.getAttribute('data-v') === v ? 'true' : 'false');
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.ansicht'), function(s){
+    s.classList.toggle('aktiv', s.id === 'v-' + v);
+  });
+  try{ localStorage.setItem('ch-europa-ansicht', v); }catch(e){}
+  window.scrollTo(0, 0);
+}
+Array.prototype.forEach.call(knoepfe, function(k){
+  k.addEventListener('click', function(){ zeige(k.getAttribute('data-v')); });
+});
+try{
+  var gespeichert = localStorage.getItem('ch-europa-ansicht');
+  if(gespeichert && document.getElementById('v-' + gespeichert)) zeige(gespeichert);
+}catch(e){}
+
+/* --- Aufträge ein/aus --- */
+var as = document.getElementById('auftragschalter');
+function auftragZustand(aus){
+  document.body.classList.toggle('ohne-auftrag', aus);
+  as.textContent = aus ? 'Arbeitsaufträge einblenden' : 'Arbeitsaufträge ausblenden';
+  try{ localStorage.setItem('ch-europa-auftrag', aus ? 'aus' : 'ein'); }catch(e){}
+}
+as.addEventListener('click', function(){
+  auftragZustand(!document.body.classList.contains('ohne-auftrag'));
+});
+try{ if(localStorage.getItem('ch-europa-auftrag') === 'aus') auftragZustand(true); }catch(e){}
+
+})();
+</script>
+</body>
+</html>
