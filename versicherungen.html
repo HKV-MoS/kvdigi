@@ -1153,7 +1153,10 @@ footer{ text-align:center; padding:18px 12px 26px; }
       <h2>Und jetzt gerechnet – fünf Fälle</h2>
       <p class="lead">Franchise, Selbstbehalt, Zuständigkeit. Direktes Feedback nach jeder Antwort.</p>
       <div id="challengeListe"></div>
-      <p class="ch-stand" id="chStand"></p>
+      <div class="of-fuss">
+        <p class="ch-stand" id="chStand"></p>
+        <button class="knopf zweit of-neu" type="button" id="chNeu">↻ Neue Runde</button>
+      </div>
 
     </div>
   </section>
@@ -2220,6 +2223,11 @@ var OF_ANZAHL = 6;
    Summe den richtigen Rechnungsbetrag; man kann sich also nicht über die
    Summe herausrechnen, sondern muss die Regel kennen. Jeder Ablenker ist
    ein benannter Denkfehler. `bar` zeichnet die Aufteilung nach.        */
+/* Zwoelf Aufgaben, fuenf werden pro Runde gezogen; die vier Optionen werden
+   jedes Mal neu gemischt, damit sich niemand «immer die erste» merkt.
+   Bei den Aufteilungsfragen ergeben alle vier Paare in der Summe den
+   richtigen Rechnungsbetrag — Rausrechnen ueber die Summe hilft also nicht.
+   `bar` zeichnet die Aufteilung nach, `r` ist der Index in `o`.        */
 var CHALLENGE = [
   { f:'Ihre Franchise beträgt CHF 500. Sie haben im Jahr Arztkosten von CHF 400. Wie sieht die Kostenaufteilung aus?',
     o:['Kasse CHF 0 · Sie CHF 400','Kasse CHF 400 · Sie CHF 0','Kasse CHF 360 · Sie CHF 40','Kasse CHF 40 · Sie CHF 360'], r:0,
@@ -2234,15 +2242,34 @@ var CHALLENGE = [
     a:'10 % von CHF 11\'700 wären CHF 1\'170 – aber der Selbstbehalt ist bei <b>CHF 700 pro Jahr</b> gedeckelt. Sie zahlen also CHF 300 + CHF 700 = CHF 1\'000, und mehr wird es in diesem Jahr nicht, egal wie hoch die Rechnungen noch steigen.',
     bar:{ total:12000, fr:300, sb:700, kk:11000 } },
   { f:'Was passiert mit der Prämie, wenn Sie eine höhere Franchise wählen?',
-    o:['Sie steigt','Sie sinkt','Sie bleibt gleich','Sie hängt vom Alter ab'], r:1,
+    o:['Sie steigt','Sie sinkt','Sie bleibt gleich','Sie hängt vom Wohnort ab'], r:1,
     a:'Höhere Franchise = tiefere Prämie. Der Rabatt ist gesetzlich begrenzt auf <b>70 %</b> der Franchise-Differenz (KVV Art. 95) – Sie sparen also nie so viel, wie Sie im Ernstfall zusätzlich zahlen.' },
-  { f:'Wie hoch ist der Selbstbehalt für Erwachsene maximal pro Jahr?',
-    o:['CHF 350','CHF 700','CHF 1\'000','unbegrenzt'], r:1,
-    a:'Der Selbstbehalt beträgt 10 %, aber höchstens <b>CHF 700</b> pro Jahr (Kinder CHF 350). Mit der Grundfranchise von CHF 300 zahlen Sie also nie mehr als CHF 1\'000 Kostenbeteiligung.' },
+  { f:'Wie viel Kostenbeteiligung zahlt ein Kind in der Grundversicherung höchstens pro Jahr?',
+    o:['CHF 350','CHF 700','CHF 1\'000','gleich viel wie Erwachsene'], r:0,
+    a:'Für Kinder gibt es <b>keine obligatorische Franchise</b>, und der Selbstbehalt ist auf <b>CHF 350</b> im Jahr begrenzt – die Hälfte des Erwachsenenbetrags. Bei mehreren Kindern in einer Familie gibt es zusätzlich eine Obergrenze.' },
   { f:'Sie beschädigen beim Znüni-Holen das E-Bike einer Kollegin. Welche Versicherung springt ein?',
-    o:['Ihre Hausratversicherung','Ihre Privathaftpflicht','Ihre Krankenkasse','Die Unfallversicherung'], r:1,
-    a:'Schäden an <i>fremdem</i> Eigentum deckt die <b>Privathaftpflicht</b>. Ohne sie zahlen Sie aus dem eigenen Sack.' }
+    o:['Ihre Privathaftpflicht','Ihre Hausratversicherung','Ihre Krankenkasse','Die Unfallversicherung'], r:0,
+    a:'Schäden an <i>fremdem</i> Eigentum deckt die <b>Privathaftpflicht</b>. Ohne sie zahlen Sie aus dem eigenen Sack.' },
+  { f:'Sie sind in der Lehre und arbeiten drei Tage pro Woche im Betrieb. Beim Fussballtraining brechen Sie sich den Arm. Wer zahlt die Behandlung?',
+    o:['Die Unfallversicherung über den Betrieb','Ihre Krankenkasse','Der Fussballverein','Ihre Privathaftpflicht'], r:0,
+    a:'Wer beim gleichen Arbeitgeber mindestens <b>8 Stunden pro Woche</b> arbeitet, ist auch für <b>Freizeitunfälle</b> über den Betrieb versichert – nicht über die Krankenkasse. Darum können Sie bei der Kasse die Unfalldeckung sistieren lassen und sparen Prämie. Der Verein haftet nur, wenn ihn ein Verschulden trifft.' },
+  { f:'Sie wollen auf den 1. Januar die Krankenkasse wechseln. Bis wann muss die Kündigung bei der alten Kasse sein?',
+    o:['Ende November','Ende Dezember','Ende September','31. Januar'], r:0,
+    a:'Die Kündigung muss <b>spätestens Ende November</b> bei der alten Kasse eintreffen. Und der Wechsel lohnt sich: Die Leistungen der Grundversicherung sind bei allen Kassen <b>gesetzlich identisch</b> – unterschiedlich ist nur die Prämie.' },
+  { f:'Ein Rohrbruch zerstört Ihr eigenes Sofa in der Mietwohnung. Welche Versicherung zahlt dafür?',
+    o:['Ihre Hausratversicherung','Ihre Privathaftpflicht','Die Gebäudeversicherung','Die Versicherung des Vermieters'], r:0,
+    a:'Die <b>Hausratversicherung</b> deckt Ihre eigenen Sachen. Die Gebäudeversicherung zahlt das Gebäude – also Wände, Boden, Rohre –, nicht Ihr Mobiliar. Die Merkregel: Hausrat für meine Sachen, Haftpflicht für fremde.' },
+  { f:'Ihr Velo wird beim Bahnhof gestohlen. Wer zahlt?',
+    o:['Die Hausratversicherung, aber nur mit dem Zusatz «Diebstahl auswärts»','Die Hausratversicherung in jedem Fall','Die Privathaftpflicht','Die SBB'], r:0,
+    a:'Die Hausratversicherung deckt Diebstahl grundsätzlich nur <b>zu Hause</b>. Für alles, was auswärts verschwindet – Velo, Portemonnaie, Laptop im Zug – braucht es den Zusatz <b>«Diebstahl auswärts»</b>. Deshalb lohnt sich ein Blick in die eigene Police, bevor etwas passiert.' },
+  { f:'Ihre Prämie ist im Verhältnis zu Ihrem Lehrlingslohn sehr hoch. Was können Sie tun?',
+    o:['Prämienverbilligung beim Kanton beantragen','Die Prämie einfach nicht bezahlen','Die Grundversicherung kündigen','Nichts – die Prämie ist für alle gleich'], r:0,
+    a:'Bei tiefem Einkommen zahlt der <b>Kanton</b> einen Teil der Prämie. Im Aargau läuft das über die SVA, und man muss es <b>beantragen</b> – von selbst kommt nichts. Viele Lernende hätten Anspruch und wissen es nicht. Kündigen ist keine Option: Die Grundversicherung ist obligatorisch.' },
+  { f:'Ab welchem Alter zahlen Sie die volle Erwachsenenprämie?',
+    o:['Ab 26','Ab 18','Ab 20','Ab 30'], r:0,
+    a:'Die Kassen rechnen mit drei Altersgruppen: <b>Kinder bis 18</b>, <b>junge Erwachsene von 19 bis 25</b> mit Rabatt, und <b>ab 26</b> die volle Prämie. Der Sprung nach dem 25. Geburtstag überrascht viele.' }
 ];
+
 
 /* Zeichnet die Kostenaufteilung als gestapelten Balken. Eine Beschriftung
    steht nur im Segment, wenn sie auch hineinpasst; die Zahlen stehen
@@ -2265,10 +2292,35 @@ function balken(b){
   });
   return bar + '</div>' + leg + '<span>Rechnung ' + fr(b.total) + '</span></div>';
 }
+var CH_ANZAHL = 5;
 (function(){
   var chl = document.getElementById('challengeListe');
-  var chPunkte = 0, chOffen = 0;
-  CHALLENGE.forEach(function(q, i){
+  var chPunkte = 0, chOffen = 0, runde = [];
+
+  function mischen(a){
+    for (var i = a.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i + 1));
+      var h = a[i]; a[i] = a[j]; a[j] = h;
+    }
+    return a;
+  }
+
+  /* Fuenf Aufgaben ziehen und in jeder die vier Optionen neu mischen. Die
+     richtige Antwort wandert mit: gemerkt wird der Text, nicht der Index. */
+  function ziehen(){
+    return mischen(CHALLENGE.slice()).slice(0, CH_ANZAHL).map(function(q){
+      var richtig = q.o[q.r];
+      var o = mischen(q.o.slice());
+      return { f:q.f, o:o, r:o.indexOf(richtig), a:q.a, bar:q.bar };
+    });
+  }
+
+  function aufbauen(){
+    chPunkte = 0; chOffen = 0;
+    chl.innerHTML = '';
+    document.getElementById('chStand').textContent = '';
+    runde = ziehen();
+    runde.forEach(function(q, i){
     var d = document.createElement('div');
     d.style.marginBottom = '18px';
     d.innerHTML = '<div class="ch-frage">'+(i+1)+'. '+esc(q.f)+'</div>';
@@ -2286,15 +2338,20 @@ function balken(b){
         if (q.bar) auf.insertAdjacentHTML('beforeend', balken(q.bar));
         auf.classList.add('zeig');
         document.getElementById('chStand').textContent =
-          (chOffen === CHALLENGE.length)
-            ? 'Ergebnis: ' + chPunkte + ' von ' + CHALLENGE.length + ' richtig' + (chPunkte === CHALLENGE.length ? ' – perfekt!' : '')
+          (chOffen === runde.length)
+            ? 'Ergebnis: ' + chPunkte + ' von ' + runde.length + ' richtig' + (chPunkte === runde.length ? ' – perfekt!' : '')
             : chPunkte + ' von ' + chOffen + ' richtig';
       });
       d.appendChild(b);
     });
     d.appendChild(auf);
     chl.appendChild(d);
-  });
+    });
+  }
+
+  aufbauen();
+  var neu = document.getElementById('chNeu');
+  if (neu) neu.addEventListener('click', aufbauen);
 })();
 
 /* ================= 10 FINALE CHALLENGE ================= */
