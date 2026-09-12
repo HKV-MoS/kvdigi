@@ -749,6 +749,11 @@ footer{ text-align:center; padding:18px 12px 26px; }
 
       <div class="karten5" id="karten5"></div>
       <div class="folge" id="risikoFolge"></div>
+      <p class="quelle">Die Beträge sind <b>realistische Beispielrechnungen</b>, keine Preisliste: Sie sind aus
+      einzelnen Positionen zusammengesetzt und beruhen auf zwei belegten Ankern – rund <b>2’600 Franken pro
+      Spitaltag</b> (Spitalstatistik, Akutsomatik) und rund <b>50 Franken pro Physiotherapie-Sitzung</b>
+      (48 Taxpunkte mal kantonaler Taxpunktwert). Eine echte Rechnung fällt je nach Spital, Kanton und Verlauf
+      höher oder tiefer aus.</p>
     </div>
   </section>
 
@@ -1381,10 +1386,13 @@ var EREIGNISSE = [
 ];
 
 var R_FUSS = {
-  transport: 'Rettungstransport: Bei einer <b>Krankheit</b> zahlt die Grundversicherung höchstens '
-           + '500 Franken pro Jahr an den Transport, den Rest trägt man selbst. Nach einem '
-           + '<b>Unfall</b> übernimmt ihn die Unfallversicherung.',
-  spital:    'Spitaltag: Ein Akutspital verrechnet im Schnitt rund 2’600 Franken pro Tag. '
+  transport: 'Rettungstransport: Bei einer <b>Krankheit</b> zahlt die Grundversicherung nur die '
+           + '<b>Hälfte</b> der Kosten – und das höchstens bis 500 Franken pro Jahr beim Transport '
+           + 'zu einer Behandlung, bis 5’000 Franken bei einer eigentlichen Rettung, und diese nur '
+           + 'in der Schweiz (KLV Art. 26). Den Rest trägt man selbst. Nach einem <b>Unfall</b> '
+           + 'übernimmt den Transport die Unfallversicherung.',
+  spital:    'Spitaltag: Ein Akutspital kostet im Schnitt rund 2’600 Franken pro Tag '
+           + '(Spitalstatistik, Akutsomatik). '
            + 'Ab 18 kommt ein Spitalkostenbeitrag von 15 Franken pro Tag dazu – BL in Ausbildung '
            + 'sind bis 25 davon befreit.',
   franchise: 'Bei Krankheit zahlt man Franchise und Selbstbehalt selbst, bei einem Unfall über die '
