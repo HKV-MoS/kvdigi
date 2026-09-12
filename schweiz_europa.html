@@ -133,6 +133,21 @@
   .klegende span{display:flex;align-items:center;gap:6px}
   .klegende i{width:13px;height:13px;border-radius:3px;display:block;border:1px solid rgba(0,0,0,.12)}
   .klegende em{font-style:normal;margin-left:auto;font-size:12px;opacity:.85}
+  .zeitreihe{
+    display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:-6px 0 16px;
+    padding:9px 12px;background:#EFECE2;border:1px solid var(--linie);border-radius:10px;
+  }
+  .zeitreihe .zlabel{
+    font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+    color:var(--grau);margin-right:3px;
+  }
+  .zeitreihe .chip{background:var(--karte)}
+  .zeitreihe .chip[aria-pressed="true"]{background:var(--blau);border-color:var(--blau);color:#fff}
+  .kjahr{
+    margin-top:9px;padding-top:9px;border-top:1px dashed var(--linie);
+    font-size:13.6px;color:var(--tinte);max-width:82ch;
+  }
+  .kjahr b{color:var(--blau)}
   @media(max-width:620px){.klegende em{margin-left:0;width:100%}}
 
   .schema{background:var(--karte);border:1px solid var(--linie);border-radius:14px;padding:16px;margin-bottom:18px}
@@ -418,6 +433,13 @@
     <button class="chip" type="button" data-menge="kandidat" aria-pressed="false">Beitrittskandidaten</button>
   </div>
 
+  <div class="zeitreihe" id="zeitreihe">
+    <span class="zlabel">Zeitreise</span>
+    <button class="chip" type="button" data-jahr="2002" aria-pressed="false">Bilaterale I · 2002</button>
+    <button class="chip" type="button" data-jahr="2005" aria-pressed="false">Bilaterale II · 2005</button>
+    <button class="chip" type="button" data-jahr="2026" aria-pressed="false">Paket Schweiz–EU · 2026</button>
+  </div>
+
   <div class="kartenbox">
     <svg id="karte" viewBox="0 0 1000 700" role="img"
          aria-label="Karte Europas; die Staaten sind nach der gewaehlten Menge eingefaerbt">
@@ -512,6 +534,7 @@
     </svg>
     <div class="ktipp" id="ktipp" hidden></div>
     <div class="klegende" id="klegende"></div>
+    <p class="kjahr" id="kjahr" hidden></p>
   </div>
 
   <div class="schema">
@@ -712,6 +735,7 @@ L = L.concat([
   {name:'Liechtenstein', fahne:'🇱🇮', eu:0, euro:0, schengen:1, ewr:1, efta:1,
    rolle:'EFTA und EWR · Zollunion mit der Schweiz, Währung ist der Franken'},
   {name:'Ver. Königreich', fahne:'🇬🇧', eu:0, euro:0, schengen:0, ewr:0, efta:0, austritt:1,
+   seit:1973, bis:2020,
    rolle:'EU-Mitglied 1973–2020 · am 31. Januar 2020 ausgetreten («Brexit»)'},
   {name:'Ukraine', fahne:'🇺🇦', eu:0, euro:0, schengen:0, ewr:0, efta:0, kandidat:1, rolle:'Beitrittskandidat seit 2022'},
   {name:'Moldau', fahne:'🇲🇩', eu:0, euro:0, schengen:0, ewr:0, efta:0, kandidat:1, rolle:'Beitrittskandidat seit 2022'},
@@ -776,6 +800,17 @@ L.forEach(function(o, i){ o.i = i; o.k = ISO[o.name]; if(o.k) KEY[o.k] = o; });
 var FARBE = {eu:'#5578BE', euro:'#C9A227', schengen:'#8264A8', ewr:'#2F8A8F',
              efta:'#17696E', kandidat:'#B4834A'};
 var NEUTRAL = '#DEDACD', CHROT = '#D52B1E', AUSTRITT = '#BFB9A9';
+
+/* Zeitreise: mit welcher EU hatte es die Schweiz bei jedem Paket zu tun?
+   `vor` ist das Jahr der vorherigen Stufe — daraus ergibt sich, wer neu dazukam. */
+var STUFEN = [
+  {j:2002, vor:2002, n:15, t:'Bilaterale I',
+   x:'Als die Bilateralen I am 1. Juni 2002 in Kraft traten, hatte die EU 15 Mitglieder – das Vereinigte Königreich war eines davon. Mit diesen 15 Staaten galt die Personenfreizügigkeit zuerst.'},
+  {j:2005, vor:2002, n:25, t:'Bilaterale II',
+   x:'Am 1. Mai 2004 kamen zehn Staaten dazu. Über die Ausdehnung der Personenfreizügigkeit auf diese zehn musste 2005 separat abgestimmt werden: 56 Prozent Ja. Bulgarien und Rumänien folgten 2007, darüber wurde 2009 abgestimmt: 59,6 Prozent Ja.'},
+  {j:2026, vor:2005, n:27, t:'Paket Schweiz–EU',
+   x:'Heute sind es 27: Kroatien kam 2013 dazu, das Vereinigte Königreich ist 2020 ausgetreten. Derselbe bilaterale Weg – aber ein anderer Vertragspartner als 2002.'}
+];
 
 var MENGEN = [
   {k:'eu', t:'EU'}, {k:'euro', t:'Eurozone'}, {k:'schengen', t:'Schengen/Dublin'},
@@ -994,6 +1029,7 @@ Array.prototype.forEach.call(chips, function(c){
 });
 
 function filtereMenge(k){
+  zeitAus();
   var imSchema = false;
   Array.prototype.forEach.call(schemaTeile, function(t){
     if(t.getAttribute('data-menge') === k) imSchema = true;
@@ -1095,6 +1131,80 @@ karte.addEventListener('pointermove', function(ev){
   ktipp.style.top  = Math.max(4, y) + 'px';
 });
 karte.addEventListener('pointerleave', function(){ ktipp.hidden = true; });
+
+/* ---------------- Zeitreise: die EU des jeweiligen Jahres ---------------- */
+var EU_NEU = '#9FB4DE';
+var zchips = document.querySelectorAll('#zeitreihe .chip');
+var kjahr  = document.getElementById('kjahr');
+
+function imJahr(o, j){
+  return !!(o && o.seit && o.seit <= j && (!o.bis || o.bis > j));
+}
+
+function zeitAus(){
+  Array.prototype.forEach.call(zchips, function(c){ c.setAttribute('aria-pressed','false'); });
+  kjahr.hidden = true;
+}
+
+function zeitKarte(st){
+  // Die Mengenknoepfe loslassen — es laeuft immer nur eine Auswahl.
+  Array.prototype.forEach.call(chips, function(c){ c.setAttribute('aria-pressed','false'); });
+  Array.prototype.forEach.call(zchips, function(c){
+    c.setAttribute('aria-pressed', +c.getAttribute('data-jahr') === st.j ? 'true' : 'false');
+  });
+  Array.prototype.forEach.call(schemaTeile, function(t){ t.classList.remove('an','aus'); });
+
+  Array.prototype.forEach.call(karte.querySelectorAll('[data-l]'), function(e){
+    if(e.classList.contains('k-treffer')) return;
+    var o = KEY[e.getAttribute('data-l')], f = NEUTRAL;
+    if(o){
+      if(o.ch) f = CHROT;
+      else if(imJahr(o, st.j)) f = (o.seit > st.vor) ? EU_NEU : FARBE.eu;
+      else if(o.bis && o.bis <= st.j) f = AUSTRITT;
+    }
+    e.style.fill = f;
+  });
+
+  Array.prototype.forEach.call(raster.children, function(b){
+    var o = L[+b.getAttribute('data-i')];
+    b.classList.toggle('gedimmt', !o.ch && !imJahr(o, st.j));
+  });
+
+  var lg = document.getElementById('klegende');
+  lg.innerHTML = '';
+  function e(farbe, text){
+    var sp = el('span'), i = el('i');
+    i.style.background = farbe;
+    sp.appendChild(i); sp.appendChild(document.createTextNode(text));
+    lg.appendChild(sp);
+  }
+  e(CHROT, 'Schweiz');
+  e(FARBE.eu, 'EU zu diesem Zeitpunkt');
+  var hatNeu = L.some(function(o){ return imJahr(o, st.j) && o.seit > st.vor; });
+  if(hatNeu) e(EU_NEU, 'seit ' + st.vor + ' dazugekommen');
+  if(st.j >= 2020) e(AUSTRITT, 'ausgetreten');
+  lg.appendChild(el('em', null, 'Die Abkommen selbst gelten mit der EU als Ganzem – was sich ändert, ist die EU.'));
+
+  kjahr.innerHTML = '';
+  kjahr.appendChild(el('b', null, st.t + ' · ' + st.n + ' EU-Mitglieder. '));
+  kjahr.appendChild(document.createTextNode(st.x));
+  kjahr.hidden = false;
+}
+
+Array.prototype.forEach.call(zchips, function(c){
+  c.addEventListener('click', function(){
+    var j = +c.getAttribute('data-jahr');
+    if(c.getAttribute('aria-pressed') === 'true'){
+      // Nochmals draufgetippt: zurueck zur Gesamtansicht
+      Array.prototype.forEach.call(chips, function(x){
+        x.setAttribute('aria-pressed', x.getAttribute('data-menge') === 'alle' ? 'true' : 'false');
+      });
+      filtereMenge('alle');
+      return;
+    }
+    for(var i = 0; i < STUFEN.length; i++) if(STUFEN[i].j === j) zeitKarte(STUFEN[i]);
+  });
+});
 
 faerbeKarte('alle');
 
