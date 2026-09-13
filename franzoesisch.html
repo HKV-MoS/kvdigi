@@ -117,6 +117,8 @@
     flex:1 1 220px; font-size:12.6px; font-weight:600; color:#9A6B00;
   }
   .stimmwarnung:empty{display:none}
+  .spricht{font-size:12.4px; color:var(--muted); font-weight:600; white-space:nowrap}
+  .spricht:empty{display:none}
   .stimmwarnung.online{color:#A33A22}
   .stimmhilfe{
     border:1px solid var(--line); border-left:4px solid var(--petrol);
@@ -327,6 +329,7 @@
       <button class="knopf zweit klein" type="button" id="dProbe">🔊 Probe</button>
       <button class="knopf zweit klein" type="button" id="dHilfeKnopf"
               aria-expanded="false" aria-controls="dStimmhilfe">⤓ Bessere Stimme</button>
+      <span class="spricht" id="dSpricht"></span>
       <span class="stimmwarnung" id="dStimmwarnung"></span>
     </div>
 
@@ -335,6 +338,10 @@
       <b>bessere französische Stimme nachladen</b> – gratis, einmalig, danach steht sie
       hier zur Auswahl. Suchen Sie dabei nach dem Zusatz <b>Premium</b>, <b>Erweitert</b>
       oder <b>Enhanced</b>: Das sind die guten.</p>
+      <p>Die Gruppe <b>Figurenstimmen</b> zuunterst im Menü – Eddy, Flo, Grandma und
+      Verwandtschaft – ist eine Falle: Apple führt sie in jeder Sprache auf, auch wenn
+      die Sprachdaten gar nicht geladen sind. Dann steht «Französisch» im Feld, und es
+      spricht trotzdem die deutsche Systemstimme.</p>
 
       <details data-os="mac">
         <summary>Mac <span class="dein" hidden>Ihr Gerät</span></summary>
@@ -655,6 +662,45 @@ function vergleiche(ziel, eingabe){
   /* Reihenfolge: gemerkte Stimme, sonst eine lokale französische, sonst
      irgendeine französische, sonst gar keine. */
   function istFrankreich(v){ return /^fr[-_]?(fr)?$/i.test(((v && v.lang) || '').replace('_','-')); }
+
+  /* Apple liefert Figurenstimmen wie «Eddy», «Flo» oder «Grandma» in jeder
+     Sprache aus — auf diesem Gerät stehen allein für Französisch über zehn
+     davon in der Liste. Sie klingen bestenfalls schräg, und wenn die
+     Sprachdaten fehlen, springt macOS auf die Systemstimme um: Dann steht
+     «Français» im Feld und es spricht die deutsche Standardstimme. Erkennbar
+     sind sie daran, dass derselbe Vorname mit mehreren Sprachen in Klammern
+     auftaucht. Solche Stimmen kommen nach hinten, nie in die Vorauswahl. */
+  function grundname(v){
+    var m = /^(.+?)\s*\(.+\)\s*$/.exec((v && v.name) || '');
+    return m ? m[1] : null;
+  }
+  var figuren = null;
+  function istFigur(v){
+    if(figuren === null){
+      figuren = {};
+      var zaehler = {};
+      alleStimmen().forEach(function(x){
+        var g = grundname(x);
+        if(g) zaehler[g] = (zaehler[g] || 0) + 1;
+      });
+      Object.keys(zaehler).forEach(function(g){ if(zaehler[g] >= 3) figuren[g] = true; });
+    }
+    var gn = grundname(v);
+    return !!(gn && figuren[gn]);
+  }
+
+  /* Die Stimmen, die Apple und Google wirklich fürs Französische bauen. Steht
+     eine davon bereit, wird sie genommen — Thomas zuerst. */
+  var BEWAEHRT = ['thomas', 'jacques', 'aurélie', 'aurelie', 'audrey', 'marie',
+                  'google français', 'amélie', 'amelie', 'chantal', 'nicolas'];
+  function rang(v){
+    var i = BEWAEHRT.indexOf(String(v.name || '').toLowerCase());
+    return i < 0 ? 99 : i;
+  }
+  function besteZuerst(liste){
+    return liste.slice().sort(function(a, b){ return rang(a) - rang(b); });
+  }
+
   function aktuelleStimme(){
     var alle = alleStimmen();
     if(!alle.length) return null;
@@ -662,16 +708,19 @@ function vergleiche(ziel, eingabe){
     if(stimmId){
       for(i = 0; i < alle.length; i++) if(kennung(alle[i]) === stimmId) return alle[i];
     }
-    /* Ohne eigene Wahl nimmt das Werkzeug eine Stimme aus Frankreich: Das ist
-       das Französisch, das die Lernenden in Prüfungen und Medien hören. */
+    /* Ohne eigene Wahl nimmt das Werkzeug eine echte Stimme aus Frankreich:
+       Das ist das Französisch, das die Lernenden in Prüfungen und Medien
+       hören. Figurenstimmen stehen ganz am Schluss. */
     var fr = alle.filter(istFr);
+    var echt = fr.filter(function(v){ return !istFigur(v); });
     var reihe = [
-      fr.filter(function(v){ return istFrankreich(v) && v.localService; }),
-      fr.filter(function(v){ return v.localService; }),
-      fr.filter(istFrankreich),
+      echt.filter(function(v){ return istFrankreich(v) && v.localService; }),
+      echt.filter(function(v){ return v.localService; }),
+      echt.filter(istFrankreich),
+      echt,
       fr
     ];
-    for(i = 0; i < reihe.length; i++) if(reihe[i].length) return reihe[i][0];
+    for(i = 0; i < reihe.length; i++) if(reihe[i].length) return besteZuerst(reihe[i])[0];
     return null;
   }
 
@@ -679,9 +728,10 @@ function vergleiche(ziel, eingabe){
     var alle = alleStimmen();
     if(!alle.length){ fZeile.style.display = 'none'; return; }
     var jetzt = aktuelleStimme();
-    var frFr = alle.filter(function(v){ return istFr(v) && istFrankreich(v); });
-    var frAnd = alle.filter(function(v){ return istFr(v) && !istFrankreich(v); });
-    var rest = alle.filter(function(v){ return !istFr(v); });
+    var frFr  = besteZuerst(alle.filter(function(v){ return istFr(v) && istFrankreich(v) && !istFigur(v); }));
+    var frAnd = besteZuerst(alle.filter(function(v){ return istFr(v) && !istFrankreich(v) && !istFigur(v); }));
+    var frFig = alle.filter(function(v){ return istFr(v) && istFigur(v); });
+    var rest  = alle.filter(function(v){ return !istFr(v) && !istFigur(v); });
     function opt(v){
       var o = document.createElement('option');
       o.value = kennung(v);
@@ -698,6 +748,7 @@ function vergleiche(ziel, eingabe){
     }
     gruppe('Français – Frankreich', frFr);
     gruppe('Français – Kanada und übrige', frAnd);
+    gruppe('Français – Figurenstimmen, oft unbrauchbar', frFig);
     gruppe('Andere Sprachen – nur im Notfall', rest);
     if(jetzt){
       fWahl.value = kennung(jetzt);
@@ -718,6 +769,12 @@ function vergleiche(ziel, eingabe){
     fWarn.className = 'stimmwarnung';
     if(!v){ fWarn.textContent = ''; return; }
     var t = [];
+    if(istFigur(v)){
+      fWarn.className = 'stimmwarnung online';
+      t.push('⚠ Figurenstimme: Fehlen die französischen Sprachdaten, spricht '
+           + 'stattdessen die Systemstimme Ihres Geräts – meist eine deutsche. '
+           + 'Nehmen Sie eine Stimme aus der obersten Gruppe.');
+    }
     if(!v.localService){
       fWarn.className = 'stimmwarnung online';
       t.push('⚠ Online-Stimme: Der Satz wird zum Vorlesen an einen Server geschickt, '
@@ -802,6 +859,7 @@ function vergleiche(ziel, eingabe){
       knopf.setAttribute('aria-expanded', String(!auf));
     });
     document.getElementById('dNeuLesen').addEventListener('click', function(){
+      figuren = null;
       var vorher = alleStimmen().filter(istFr).length;
       hinweisSetzen();
       var nachher = alleStimmen().filter(istFr).length;
@@ -848,6 +906,14 @@ function vergleiche(ziel, eingabe){
         u.voice = v;
         u.lang = v.lang || 'fr-FR';
         u.rate = rate;
+        /* Schwarz auf weiss, wer gerade spricht: Klingt es trotzdem falsch,
+           liegt es nicht an der Zuordnung, sondern an der Stimme selbst. */
+        var anzeige = document.getElementById('dSpricht');
+        if(anzeige){
+          u.onstart = function(){ anzeige.textContent = '🔈 ' + v.name + ' · ' + (v.lang || '?'); };
+          u.onend   = function(){ anzeige.textContent = ''; };
+          u.onerror = function(){ anzeige.textContent = ''; };
+        }
         sy.speak(u);
       }catch(e){}
     }
