@@ -33,6 +33,15 @@
   .augenbraue .cr{font-weight:500;letter-spacing:.2px;opacity:.75;text-transform:none;font-size:11.5px}
   .augenbraue .cr a{color:inherit;text-decoration:underline;text-underline-offset:2px}
   header h1{font-size:clamp(19px,3vw,25px); font-weight:700; letter-spacing:-.01em}
+  /* Tricolore als SVG im Titel – kein Emoji, das auf Windows nur «FR» zeigt.
+     `.zusammen` hält das letzte Wort und die Fahne auf derselben Zeile, sonst
+     rutscht die Fahne auf schmalen Geräten allein in die nächste. */
+  .zusammen{white-space:nowrap}
+  .flagge{display:inline-block; line-height:0; margin-left:.42em; vertical-align:-.06em}
+  .flagge svg{
+    height:.74em; width:auto; display:block; border-radius:2.5px;
+    box-shadow:0 0 0 1px rgba(255,255,255,.45), 0 1px 3px rgba(0,0,0,.28);
+  }
   header .sub{margin-top:5px; font-size:13.5px; color:rgba(255,255,255,.84)}
 
   nav.tabs{
@@ -252,7 +261,10 @@
      onerror="this.parentNode.style.display='none'"></a>
   <div class="augenbraue">Französisch üben <span class="cr">· © 2026 <a
     href="mailto:samuel.mollet@hkv.ch" title="E-Mail an Samuel Mollet">S. Mollet</a></span></div>
-  <h1>Français – s'entraîner tout seul</h1>
+  <h1>Français – s'entraîner tout <span class="zusammen">seul<span class="flagge" role="img" aria-label="Frankreich"
+    ><svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg" focusable="false"><rect
+      width="30" height="60" fill="#0055A4"/><rect x="30" width="30" height="60" fill="#fff"/><rect
+      x="60" width="30" height="60" fill="#EF4135"/></svg></span></span></h1>
   <div class="sub">Vier Übungen zum selbständigen Trainieren · kein Vokabelpauken, sondern Hören, Formen, Satzbau und Schreiben</div>
 </header>
 
