@@ -142,6 +142,13 @@
     background:var(--petrol); color:#fff; border-radius:999px; padding:2px 7px;
   }
   .stimmhilfe .schluss{margin:9px 0 0; font-size:12.6px; color:var(--muted)}
+  .notweg{
+    margin:11px 0 0; padding:10px 12px; border-radius:8px;
+    background:#FFF6E2; border:1px solid #E3CE86;
+  }
+  .notweg label{display:flex; gap:8px; align-items:flex-start; cursor:pointer; font-size:13px}
+  .notweg input{margin-top:3px; flex:0 0 auto}
+  .notweg b{display:block}
   .stimmhilfe kbd{
     font:inherit; font-size:12.6px; font-weight:600; background:#EEF3F5;
     border:1px solid var(--line); border-radius:4px; padding:1px 5px; white-space:nowrap;
@@ -389,6 +396,16 @@
           <li><b>Français</b> wählen und laden</li>
         </ol>
       </details>
+
+      <div class="notweg">
+        <label>
+          <input type="checkbox" id="dOhneZuweisung">
+          <span><b>Es klingt trotzdem deutsch – anders versuchen</b>
+          Dann wird keine bestimmte Stimme mehr verlangt, sondern nur noch die Sprache
+          Französisch. Der Browser sucht sich die Stimme selbst. Auf manchen Geräten ist
+          das der einzige Weg, der ankommt.</span>
+        </label>
+      </div>
 
       <p class="schluss">Danach unten <b>↻ Liste neu lesen</b> antippen. Taucht die neue
       Stimme nicht auf, hilft ein Neustart des Browsers.</p>
@@ -646,6 +663,7 @@ function vergleiche(ziel, eingabe){
   var fWahl  = document.getElementById('dStimme');
   var fWarn  = document.getElementById('dStimmwarnung');
   var stimmId = hol('fr-diktat-stimme', '');
+  var ohneZuweisung = hol('fr-diktat-ohnestimme', 'nein') === 'ja';
 
   /* Die Stimmen des Geräts. Chrome liefert die Liste erst verzögert und baut
      sie gelegentlich neu auf — deshalb wird sie nie zwischengespeichert,
@@ -926,6 +944,19 @@ function vergleiche(ziel, eingabe){
       })();
     });
 
+    var schalter = document.getElementById('dOhneZuweisung');
+    schalter.checked = ohneZuweisung;
+    fWahl.disabled = ohneZuweisung;
+    schalter.addEventListener('change', function(){
+      ohneZuweisung = schalter.checked;
+      leg('fr-diktat-ohnestimme', ohneZuweisung ? 'ja' : 'nein');
+      fWahl.disabled = ohneZuweisung;          /* die Auswahl wirkt dann nicht mehr */
+      warnSetzen(ohneZuweisung ? null : (stimmeAusFeld() || aktuelleStimme()));
+      document.getElementById('dHoeren').disabled = false;
+      document.getElementById('dLangsam').disabled = false;
+      vorlesen('Bonjour, hier j\u2019ai travaillé jusqu\u2019à six heures.', 1);
+    });
+
     document.getElementById('dNeuLesen').addEventListener('click', function(){
       figuren = null;
       var vorher = alleStimmen().filter(istFr).length;
@@ -966,19 +997,27 @@ function vergleiche(ziel, eingabe){
     var sy = synth();
     if(!sy) return;
     var v = stimmeAusFeld() || aktuelleStimme();
-    if(!v) return;
-    stimme = v;
+    if(!v && !ohneZuweisung) return;
+    if(v) stimme = v;
     function los(){
       try{
         var u = new SpeechSynthesisUtterance(text);
-        u.voice = v;
-        if(!v.lang) u.lang = 'fr-FR';   /* sonst nichts: die Stimme bringt ihre Sprache mit */
+        /* Notweg: keine Stimme verlangen, nur die Sprache. Ignoriert ein Browser
+           die Stimmenzuweisung, kommt so wenigstens die französische Vorgabe
+           des Systems zum Zug. */
+        if(ohneZuweisung){
+          u.lang = 'fr-FR';
+        } else {
+          u.voice = v;
+          if(!v.lang) u.lang = 'fr-FR';   /* sonst nichts: die Stimme bringt ihre Sprache mit */
+        }
         u.rate = rate;
         /* Schwarz auf weiss, wer gerade spricht: Klingt es trotzdem falsch,
            liegt es nicht an der Zuordnung, sondern an der Stimme selbst. */
         var anzeige = document.getElementById('dSpricht');
+        var wer = ohneZuweisung ? 'fr-FR – Browser wählt' : (v.name + ' · ' + (v.lang || '?'));
         if(anzeige){
-          u.onstart = function(){ anzeige.textContent = '🔈 ' + v.name + ' · ' + (v.lang || '?'); };
+          u.onstart = function(){ anzeige.textContent = '🔈 ' + wer; };
           u.onend   = function(){ anzeige.textContent = ''; };
           u.onerror = function(){ anzeige.textContent = ''; };
         }
