@@ -101,7 +101,7 @@
     background:#FFF6E2; border:1px solid #E3CE86; border-left:4px solid var(--gold);
     border-radius:9px; padding:11px 14px; font-size:13.6px; margin-bottom:14px;
   }
-  .dhinweis b{display:block; margin-bottom:2px}
+  .dhinweis > b:first-child{display:block; margin-bottom:2px}
   .stimmzeile{
     display:flex; align-items:center; gap:8px; flex-wrap:wrap;
     background:#F3F7F7; border:1px solid var(--line); border-radius:10px;
@@ -142,13 +142,12 @@
     background:var(--petrol); color:#fff; border-radius:999px; padding:2px 7px;
   }
   .stimmhilfe .schluss{margin:9px 0 0; font-size:12.6px; color:var(--muted)}
-  .notweg{
-    margin:11px 0 0; padding:10px 12px; border-radius:8px;
-    background:#FFF6E2; border:1px solid #E3CE86;
+  .dhinweis .doch{
+    display:block; width:fit-content; margin-top:10px; font:inherit; font-size:12.6px; font-weight:700;
+    background:#fff; border:1.5px solid #E3CE86; border-radius:999px;
+    padding:5px 13px; color:#8A6300; cursor:pointer;
   }
-  .notweg label{display:flex; gap:8px; align-items:flex-start; cursor:pointer; font-size:13px}
-  .notweg input{margin-top:3px; flex:0 0 auto}
-  .notweg b{display:block}
+  .dhinweis .doch:hover{border-color:var(--gold)}
   .stimmhilfe kbd{
     font:inherit; font-size:12.6px; font-weight:600; background:#EEF3F5;
     border:1px solid var(--line); border-radius:4px; padding:1px 5px; white-space:nowrap;
@@ -319,7 +318,7 @@
 <section class="kap aktiv" id="k-diktat" role="tabpanel">
   <div class="card">
     <h2>1. Dictée – hören und schreiben</h2>
-    <p class="lead">Der Satz wird vorgelesen. Hören Sie so oft, wie Sie wollen, und tippen Sie ihn.
+    <p class="lead" id="dLead">Der Satz wird vorgelesen. Hören Sie so oft, wie Sie wollen, und tippen Sie ihn.
     Die Auswertung zeigt Wort für Wort, was stimmt – und ob nur ein Akzent fehlt.</p>
 
     <div class="dhinweis" id="dStimmenhinweis" style="display:none"></div>
@@ -397,20 +396,9 @@
         </ol>
       </details>
 
-      <p class="schluss">Nicht jeder Browser kann jede Stimme des Geräts ansteuern. Klingt
-      eine Stimme deutsch, obwohl «Français» danebensteht, hilft meist eine andere aus der
-      Liste – oder dieselbe Seite in einem anderen Browser. In Chrome und Safari klappt es
-      am zuverlässigsten.</p>
-
-      <div class="notweg">
-        <label>
-          <input type="checkbox" id="dOhneZuweisung">
-          <span><b>Es klingt trotzdem deutsch – anders versuchen</b>
-          Dann wird keine bestimmte Stimme mehr verlangt, sondern nur noch die Sprache
-          Französisch. Der Browser sucht sich die Stimme selbst. Auf manchen Geräten ist
-          das der einzige Weg, der ankommt.</span>
-        </label>
-      </div>
+      <p class="schluss">Klingt eine Stimme deutsch, obwohl «Français» danebensteht, ist sie
+      auf diesem Gerät nicht wirklich installiert – nehmen Sie eine andere aus der Liste.
+      Fürs Vorlesen bewährt haben sich <b>Chrome, Edge und Safari</b>.</p>
 
       <p class="schluss">Danach unten <b>↻ Liste neu lesen</b> antippen. Taucht die neue
       Stimme nicht auf, hilft ein Neustart des Browsers.</p>
@@ -535,8 +523,11 @@
   <p>Das Vorlesen nutzt die <b>Stimmen Ihres Geräts</b>; welche spricht, wählen Sie in der
   Dictée selbst, und die Wahl bleibt für das nächste Mal gespeichert. Bei lokalen Stimmen
   bleibt der Satz auf dem Gerät. Stimmen mit dem Vermerk <b>(online)</b> werden auf einem
-  Server erzeugt – dorthin geht der Satz dann auch; das Werkzeug weist darauf hin. Ohne
-  installierte französische Stimme bleibt die Übung als Lesediktat nutzbar.</p>
+  Server erzeugt – dorthin geht der Satz dann auch; das Werkzeug weist darauf hin.</p>
+  <p>Geprüft ist das Vorlesen in <b>Chrome, Edge und Safari</b>. <b>Firefox</b> gibt die
+  Stimmenwahl nicht sauber ans System weiter und spricht Französisch mit deutscher
+  Stimme; dort läuft die Dictée darum als Lesediktat. Ohne installierte französische
+  Stimme ebenfalls.</p>
   <p><b>abu-tools.ch</b> · Allgemeinbildender Unterricht HKV Aarau · © 2026
   <a href="mailto:samuel.mollet@hkv.ch">S. Mollet</a></p>
 </footer>
@@ -668,8 +659,13 @@ function vergleiche(ziel, eingabe){
   var fWahl  = document.getElementById('dStimme');
   var fWarn  = document.getElementById('dStimmwarnung');
   var stimmId = hol('fr-diktat-stimme', '');
-  var ohneZuweisung = hol('fr-diktat-ohnestimme', 'nein') === 'ja';
   var istFuchs = /firefox/i.test(navigator.userAgent || '');
+  /* Firefox reicht die Stimmenwahl auf dem Mac nicht sauber an das System
+     weiter: Es spricht dann die Standardstimme, also meist eine deutsche.
+     Getestet und in Ordnung sind Chrome, Edge und Safari. Darum läuft die
+     Dictée in Firefox von Haus aus als Lesediktat — wer will, schaltet das
+     Vorlesen von Hand frei. */
+  var fuchsFrei = hol('fr-diktat-fuchsfrei', 'nein') === 'ja';
 
   /* Die Stimmen des Geräts. Chrome liefert die Liste erst verzögert und baut
      sie gelegentlich neu auf — deshalb wird sie nie zwischengespeichert,
@@ -838,7 +834,43 @@ function vergleiche(ziel, eingabe){
     fWarn.textContent = t.join(' ');
   }
 
+  function nurLesen(an){
+    var h = document.getElementById('dHoeren');
+    var l = document.getElementById('dLangsam');
+    var z = document.getElementById('dZeigen');
+    h.hidden = an; l.hidden = an;
+    var lead = document.getElementById('dLead');
+    if(lead) lead.textContent = an
+      ? 'Satz zeigen, einmal lesen, wegklicken und aus dem Kopf tippen. Die Auswertung zeigt '
+        + 'Wort für Wort, was stimmt – und ob nur ein Akzent fehlt.'
+      : 'Der Satz wird vorgelesen. Hören Sie so oft, wie Sie wollen, und tippen Sie ihn. '
+        + 'Die Auswertung zeigt Wort für Wort, was stimmt – und ob nur ein Akzent fehlt.';
+    /* Im Lesediktat trägt «Satz zeigen» die Übung, also bekommt es das Gewicht */
+    z.className = an ? 'knopf' : 'knopf zweit klein';
+    if(an) fZeile.style.display = 'none';
+  }
+
   function hinweisSetzen(){
+    if(istFuchs && !fuchsFrei){
+      fHinweis.innerHTML =
+        '<b>Firefox kann die Stimmen dieses Geräts nicht zuverlässig ansteuern.</b>'
+      + 'Es spricht dann die Standardstimme des Systems – auf Deutsch, auch wenn eine '
+      + 'französische Stimme eingestellt ist. Fürs Diktat nehmen Sie darum besser '
+      + '<b>Chrome, Edge oder Safari</b>. Hier läuft die Übung als <b>Lesediktat</b>: '
+      + 'Satz zeigen, lesen, wegklicken, aus dem Kopf tippen – das übt die Schreibweise '
+      + 'genauso.'
+      + '<button class="doch" type="button" id="dFuchsDoch">Vorlesen trotzdem einschalten</button>';
+      fHinweis.style.display = 'block';
+      nurLesen(true);
+      var dochKnopf = document.getElementById('dFuchsDoch');
+      if(dochKnopf) dochKnopf.addEventListener('click', function(){
+        fuchsFrei = true;
+        leg('fr-diktat-fuchsfrei', 'ja');
+        hinweisSetzen();
+      });
+      return;
+    }
+    nurLesen(false);
     if(!synth()){
       fHinweis.innerHTML = '<b>Dieser Browser kann nicht vorlesen.</b>Nutzen Sie «Satz zeigen»: '
         + 'Satz einmal lesen, wegklicken, aus dem Kopf tippen. Das übt die Schreibweise weiter.';
@@ -950,19 +982,6 @@ function vergleiche(ziel, eingabe){
       })();
     });
 
-    var schalter = document.getElementById('dOhneZuweisung');
-    schalter.checked = ohneZuweisung;
-    fWahl.disabled = ohneZuweisung;
-    schalter.addEventListener('change', function(){
-      ohneZuweisung = schalter.checked;
-      leg('fr-diktat-ohnestimme', ohneZuweisung ? 'ja' : 'nein');
-      fWahl.disabled = ohneZuweisung;          /* die Auswahl wirkt dann nicht mehr */
-      warnSetzen(ohneZuweisung ? null : (stimmeAusFeld() || aktuelleStimme()));
-      document.getElementById('dHoeren').disabled = false;
-      document.getElementById('dLangsam').disabled = false;
-      vorlesen('Bonjour, hier j\u2019ai travaillé jusqu\u2019à six heures.', 1);
-    });
-
     document.getElementById('dNeuLesen').addEventListener('click', function(){
       figuren = null;
       var vorher = alleStimmen().filter(istFr).length;
@@ -1003,28 +1022,20 @@ function vergleiche(ziel, eingabe){
     var sy = synth();
     if(!sy) return;
     var v = stimmeAusFeld() || aktuelleStimme();
-    if(!v && !ohneZuweisung) return;
-    if(v) stimme = v;
+    if(!v) return;
+    stimme = v;
     function los(){
       try{
         var u = new SpeechSynthesisUtterance(text);
-        /* Notweg: keine Stimme verlangen, nur die Sprache. Ignoriert ein Browser
-           die Stimmenzuweisung, kommt so wenigstens die französische Vorgabe
-           des Systems zum Zug. */
-        if(ohneZuweisung){
-          u.lang = 'fr-FR';
-        } else {
-          u.voice = v;
-          /* Chrome nimmt die Stimme so, wie sie ist. Firefox reicht die
-             Sprachangabe an die Systemschnittstelle weiter und greift ohne
-             sie öfter zur Standardstimme — dort also beides setzen. */
-          if(istFuchs || !v.lang) u.lang = (v.lang || 'fr-FR').replace('_', '-');
-        }
+        u.voice = v;
+        /* Chrome, Edge und Safari nehmen die Stimme so, wie sie ist. Firefox
+           reicht die Sprachangabe ans System weiter — dort also beides. */
+        if(istFuchs || !v.lang) u.lang = (v.lang || 'fr-FR').replace('_', '-');
         u.rate = rate;
         /* Schwarz auf weiss, wer gerade spricht: Klingt es trotzdem falsch,
            liegt es nicht an der Zuordnung, sondern an der Stimme selbst. */
         var anzeige = document.getElementById('dSpricht');
-        var wer = ohneZuweisung ? 'fr-FR – Browser wählt' : (v.name + ' · ' + (v.lang || '?'));
+        var wer = v.name + ' · ' + (v.lang || '?');
         if(anzeige){
           u.onstart = function(){ anzeige.textContent = '🔈 ' + wer; };
           u.onend   = function(){ anzeige.textContent = ''; };
