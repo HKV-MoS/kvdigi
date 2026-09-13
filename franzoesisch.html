@@ -117,6 +117,33 @@
     flex:1 1 220px; font-size:12.6px; font-weight:600; color:#9A6B00;
   }
   .stimmwarnung:empty{display:none}
+  .stimmwarnung.online{color:#A33A22}
+  .stimmhilfe{
+    border:1px solid var(--line); border-left:4px solid var(--petrol);
+    border-radius:9px; background:#fff; padding:13px 15px; margin:-4px 0 14px;
+    font-size:13.4px; line-height:1.55;
+  }
+  .stimmhilfe > p{margin:0 0 9px}
+  .stimmhilfe details{border-top:1px solid var(--line); padding:7px 0 2px}
+  .stimmhilfe details:first-of-type{border-top:none}
+  .stimmhilfe summary{
+    cursor:pointer; font-weight:700; color:var(--petrol); font-size:13.2px;
+    list-style:none; display:flex; align-items:center; gap:6px;
+  }
+  .stimmhilfe summary::-webkit-details-marker{display:none}
+  .stimmhilfe summary::before{content:'▸'; font-size:11px; transition:transform .15s}
+  .stimmhilfe details[open] summary::before{transform:rotate(90deg)}
+  .stimmhilfe ol{margin:8px 0 4px; padding-left:20px}
+  .stimmhilfe li{margin-bottom:5px}
+  .stimmhilfe .dein{
+    font-size:10.6px; font-weight:800; letter-spacing:1px; text-transform:uppercase;
+    background:var(--petrol); color:#fff; border-radius:999px; padding:2px 7px;
+  }
+  .stimmhilfe .schluss{margin:9px 0 0; font-size:12.6px; color:var(--muted)}
+  .stimmhilfe kbd{
+    font:inherit; font-size:12.6px; font-weight:600; background:#EEF3F5;
+    border:1px solid var(--line); border-radius:4px; padding:1px 5px; white-space:nowrap;
+  }
   @media (max-width:560px){
     .stimmzeile select{flex:1 1 100%}
   }
@@ -298,7 +325,70 @@
       <label for="dStimme">Stimme</label>
       <select id="dStimme" title="Stimme für das Vorlesen wählen"></select>
       <button class="knopf zweit klein" type="button" id="dProbe">🔊 Probe</button>
+      <button class="knopf zweit klein" type="button" id="dHilfeKnopf"
+              aria-expanded="false" aria-controls="dStimmhilfe">⤓ Bessere Stimme</button>
       <span class="stimmwarnung" id="dStimmwarnung"></span>
+    </div>
+
+    <div class="stimmhilfe" id="dStimmhilfe" style="display:none">
+      <p>Die mitgelieferten Stimmen klingen oft blechern. Fast jedes Gerät kann eine
+      <b>bessere französische Stimme nachladen</b> – gratis, einmalig, danach steht sie
+      hier zur Auswahl. Suchen Sie dabei nach dem Zusatz <b>Premium</b>, <b>Erweitert</b>
+      oder <b>Enhanced</b>: Das sind die guten.</p>
+
+      <details data-os="mac">
+        <summary>Mac <span class="dein" hidden>Ihr Gerät</span></summary>
+        <ol>
+          <li>Apfelmenü → <kbd>Systemeinstellungen</kbd> → <kbd>Bedienungshilfen</kbd></li>
+          <li><kbd>Gesprochene Inhalte</kbd> öffnen – in neueren Versionen heisst der
+          Eintrag <kbd>Lesen &amp; Sprechen</kbd></li>
+          <li>Das Menü <kbd>Systemstimme</kbd> aufklappen, zuunterst
+          <kbd>Stimme verwalten…</kbd></li>
+          <li>Bei <b>Französisch</b> die gewünschte Stimme laden. <i>Thomas</i> und
+          <i>Aurélie</i> sprechen Französisch aus Frankreich, <i>Amélie</i>,
+          <i>Chantal</i> und <i>Nicolas</i> aus Kanada. Für den Unterricht ist
+          <b>Thomas</b> die erste Wahl.</li>
+        </ol>
+      </details>
+
+      <details data-os="win">
+        <summary>Windows <span class="dein" hidden>Ihr Gerät</span></summary>
+        <ol>
+          <li><kbd>Einstellungen</kbd> → <kbd>Zeit und Sprache</kbd> → <kbd>Sprache und Region</kbd></li>
+          <li><kbd>Sprache hinzufügen</kbd> → <b>Französisch (Frankreich)</b> wählen</li>
+          <li>Im nächsten Fenster unbedingt das Häkchen bei <kbd>Sprachausgabe</kbd>
+          setzen – ohne dieses Zusatzpaket kommt keine Stimme mit</li>
+          <li>Installieren, danach den Browser einmal neu starten</li>
+        </ol>
+      </details>
+
+      <details data-os="ios">
+        <summary>iPhone und iPad <span class="dein" hidden>Ihr Gerät</span></summary>
+        <ol>
+          <li><kbd>Einstellungen</kbd> → <kbd>Bedienungshilfen</kbd> → <kbd>Gesprochene Inhalte</kbd></li>
+          <li><kbd>Stimmen</kbd> → <b>Französisch</b> → gewünschte Stimme antippen</li>
+          <li>Die Stimme lädt von selbst. Die guten Varianten sind gut 100 MB gross –
+          also besser im WLAN als im Zug.</li>
+        </ol>
+      </details>
+
+      <details data-os="android">
+        <summary>Android <span class="dein" hidden>Ihr Gerät</span></summary>
+        <ol>
+          <li><kbd>Einstellungen</kbd> → <kbd>Bedienungshilfen</kbd> →
+          <kbd>Text-in-Sprache-Ausgabe</kbd></li>
+          <li>Beim Modul (meist <i>Sprachausgabe von Google</i>) auf das Zahnrad →
+          <kbd>Sprachdaten installieren</kbd></li>
+          <li><b>Français</b> wählen und laden</li>
+        </ol>
+      </details>
+
+      <p class="schluss">Danach unten <b>↻ Liste neu lesen</b> antippen. Taucht die neue
+      Stimme nicht auf, hilft ein Neustart des Browsers.</p>
+      <div class="reihe" style="margin-top:8px">
+        <button class="knopf zweit klein" type="button" id="dNeuLesen">↻ Liste neu lesen</button>
+        <span class="stand" id="dNeuStand"></span>
+      </div>
     </div>
 
     <div class="reihe" style="margin-bottom:14px">
@@ -409,9 +499,11 @@
   <p>Die Sätze und Fälle sind für Lernende an der Handelsschule geschrieben: Alltag, Betrieb,
   Kundenkontakt. Die Verbformen folgen dem Bescherelle; <i>connaît</i> und <i>connait</i> werden
   beide akzeptiert.</p>
-  <p>Das Vorlesen nutzt die <b>Stimmen Ihres Geräts</b> – es geht nichts ins Internet. Welche
-  Stimme spricht, wählen Sie in der Dictée selbst; die Wahl bleibt für das nächste Mal
-  gespeichert. Ohne installierte französische Stimme bleibt die Übung als Lesediktat nutzbar.</p>
+  <p>Das Vorlesen nutzt die <b>Stimmen Ihres Geräts</b>; welche spricht, wählen Sie in der
+  Dictée selbst, und die Wahl bleibt für das nächste Mal gespeichert. Bei lokalen Stimmen
+  bleibt der Satz auf dem Gerät. Stimmen mit dem Vermerk <b>(online)</b> werden auf einem
+  Server erzeugt – dorthin geht der Satz dann auch; das Werkzeug weist darauf hin. Ohne
+  installierte französische Stimme bleibt die Übung als Lesediktat nutzbar.</p>
   <p><b>abu-tools.ch</b> · Allgemeinbildender Unterricht HKV Aarau · © 2026
   <a href="mailto:samuel.mollet@hkv.ch">S. Mollet</a></p>
 </footer>
@@ -562,6 +654,7 @@ function vergleiche(ziel, eingabe){
 
   /* Reihenfolge: gemerkte Stimme, sonst eine lokale französische, sonst
      irgendeine französische, sonst gar keine. */
+  function istFrankreich(v){ return /^fr[-_]?(fr)?$/i.test(((v && v.lang) || '').replace('_','-')); }
   function aktuelleStimme(){
     var alle = alleStimmen();
     if(!alle.length) return null;
@@ -569,10 +662,16 @@ function vergleiche(ziel, eingabe){
     if(stimmId){
       for(i = 0; i < alle.length; i++) if(kennung(alle[i]) === stimmId) return alle[i];
     }
+    /* Ohne eigene Wahl nimmt das Werkzeug eine Stimme aus Frankreich: Das ist
+       das Französisch, das die Lernenden in Prüfungen und Medien hören. */
     var fr = alle.filter(istFr);
-    var lokal = fr.filter(function(v){ return v.localService; });
-    if(lokal.length) return lokal[0];
-    if(fr.length) return fr[0];
+    var reihe = [
+      fr.filter(function(v){ return istFrankreich(v) && v.localService; }),
+      fr.filter(function(v){ return v.localService; }),
+      fr.filter(istFrankreich),
+      fr
+    ];
+    for(i = 0; i < reihe.length; i++) if(reihe[i].length) return reihe[i][0];
     return null;
   }
 
@@ -580,7 +679,8 @@ function vergleiche(ziel, eingabe){
     var alle = alleStimmen();
     if(!alle.length){ fZeile.style.display = 'none'; return; }
     var jetzt = aktuelleStimme();
-    var fr = alle.filter(istFr);
+    var frFr = alle.filter(function(v){ return istFr(v) && istFrankreich(v); });
+    var frAnd = alle.filter(function(v){ return istFr(v) && !istFrankreich(v); });
     var rest = alle.filter(function(v){ return !istFr(v); });
     function opt(v){
       var o = document.createElement('option');
@@ -589,18 +689,16 @@ function vergleiche(ziel, eingabe){
       return o;
     }
     fWahl.innerHTML = '';
-    if(fr.length){
-      var g1 = document.createElement('optgroup');
-      g1.label = 'Französisch (' + fr.length + ')';
-      fr.forEach(function(v){ g1.appendChild(opt(v)); });
-      fWahl.appendChild(g1);
+    function gruppe(titel, liste){
+      if(!liste.length) return;
+      var g = document.createElement('optgroup');
+      g.label = titel + ' (' + liste.length + ')';
+      liste.forEach(function(v){ g.appendChild(opt(v)); });
+      fWahl.appendChild(g);
     }
-    if(rest.length){
-      var g2 = document.createElement('optgroup');
-      g2.label = 'Andere Sprachen – nur im Notfall';
-      rest.forEach(function(v){ g2.appendChild(opt(v)); });
-      fWahl.appendChild(g2);
-    }
+    gruppe('Français – Frankreich', frFr);
+    gruppe('Français – Kanada und übrige', frAnd);
+    gruppe('Andere Sprachen – nur im Notfall', rest);
     if(jetzt){
       fWahl.value = kennung(jetzt);
     } else {
@@ -613,12 +711,23 @@ function vergleiche(ziel, eingabe){
     warnSetzen(jetzt);
   }
 
+  /* Zwei Dinge sind der Rede wert: eine Stimme, die gar nicht Französisch
+     spricht — und eine, die den Satz zum Vorlesen aus dem Haus gibt. Das
+     zweite wiegt schwerer, darum steht es zuerst und in kräftigerem Rot. */
   function warnSetzen(v){
+    fWarn.className = 'stimmwarnung';
     if(!v){ fWarn.textContent = ''; return; }
-    fWarn.textContent = istFr(v)
-      ? ''
-      : 'Diese Stimme spricht ' + (v.lang || 'eine andere Sprache')
-        + ' – «hier» klingt dann deutsch. Oben eine französische wählen.';
+    var t = [];
+    if(!v.localService){
+      fWarn.className = 'stimmwarnung online';
+      t.push('⚠ Online-Stimme: Der Satz wird zum Vorlesen an einen Server geschickt, '
+           + 'bei den Google-Stimmen an Google. Stimmen ohne «(online)» bleiben auf dem Gerät.');
+    }
+    if(!istFr(v)){
+      t.push('Diese Stimme spricht ' + (v.lang || 'eine andere Sprache')
+           + ' – «hier» klingt dann deutsch.');
+    }
+    fWarn.textContent = t.join(' ');
   }
 
   function hinweisSetzen(){
@@ -663,6 +772,48 @@ function vergleiche(ziel, eingabe){
     document.getElementById('dLangsam').disabled = !stimme;
     vorlesen('Bonjour, hier j\u2019ai travaillé jusqu\u2019à six heures.', 1);
   });
+  /* Das eigene System vorne anschlagen, damit niemand vier Anleitungen liest.
+     iPadOS meldet sich als Macintosh — der Fingerabdruck ist der Touchscreen. */
+  (function(){
+    var hilfe = document.getElementById('dStimmhilfe');
+    var knopf = document.getElementById('dHilfeKnopf');
+    var ua = navigator.userAgent || '';
+    var tipp = 'mac', sicher = true;
+    if(/Android/i.test(ua)) tipp = 'android';
+    else if(/iPhone|iPod|iPad/i.test(ua)) tipp = 'ios';
+    /* Ein iPad gibt sich seit iPadOS 13 als Macintosh aus. Auseinander hält die
+       beiden der Touchscreen: Macs melden null Berührungspunkte. */
+    else if(/Macintosh|Mac OS X/i.test(ua)) tipp = (navigator.maxTouchPoints > 0) ? 'ios' : 'mac';
+    else if(/Windows/i.test(ua)) tipp = 'win';
+    else { tipp = 'win'; sicher = false; }
+
+    var meins = hilfe.querySelector('details[data-os="' + tipp + '"]');
+    if(meins){
+      meins.open = true;
+      if(sicher){
+        var fahne = meins.querySelector('.dein');
+        if(fahne) fahne.hidden = false;
+      }
+      hilfe.insertBefore(meins, hilfe.querySelector('details'));
+    }
+    knopf.addEventListener('click', function(){
+      var auf = hilfe.style.display !== 'none';
+      hilfe.style.display = auf ? 'none' : 'block';
+      knopf.setAttribute('aria-expanded', String(!auf));
+    });
+    document.getElementById('dNeuLesen').addEventListener('click', function(){
+      var vorher = alleStimmen().filter(istFr).length;
+      hinweisSetzen();
+      var nachher = alleStimmen().filter(istFr).length;
+      var st = document.getElementById('dNeuStand');
+      st.textContent = (nachher > vorher)
+        ? (nachher - vorher) + ' neue französische Stimme(n) gefunden'
+        : (nachher
+            ? nachher + ' französische Stimme(n) – nichts Neues dabei'
+            : 'noch keine französische Stimme gefunden');
+    });
+  })();
+
   document.getElementById('dProbe').addEventListener('click', function(){
     vorlesen('Bonjour, hier j\u2019ai travaillé jusqu\u2019à six heures.', 1);
   });
