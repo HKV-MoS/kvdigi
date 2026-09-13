@@ -397,6 +397,11 @@
         </ol>
       </details>
 
+      <p class="schluss">Nicht jeder Browser kann jede Stimme des Geräts ansteuern. Klingt
+      eine Stimme deutsch, obwohl «Français» danebensteht, hilft meist eine andere aus der
+      Liste – oder dieselbe Seite in einem anderen Browser. In Chrome und Safari klappt es
+      am zuverlässigsten.</p>
+
       <div class="notweg">
         <label>
           <input type="checkbox" id="dOhneZuweisung">
@@ -664,6 +669,7 @@ function vergleiche(ziel, eingabe){
   var fWarn  = document.getElementById('dStimmwarnung');
   var stimmId = hol('fr-diktat-stimme', '');
   var ohneZuweisung = hol('fr-diktat-ohnestimme', 'nein') === 'ja';
+  var istFuchs = /firefox/i.test(navigator.userAgent || '');
 
   /* Die Stimmen des Geräts. Chrome liefert die Liste erst verzögert und baut
      sie gelegentlich neu auf — deshalb wird sie nie zwischengespeichert,
@@ -1009,7 +1015,10 @@ function vergleiche(ziel, eingabe){
           u.lang = 'fr-FR';
         } else {
           u.voice = v;
-          if(!v.lang) u.lang = 'fr-FR';   /* sonst nichts: die Stimme bringt ihre Sprache mit */
+          /* Chrome nimmt die Stimme so, wie sie ist. Firefox reicht die
+             Sprachangabe an die Systemschnittstelle weiter und greift ohne
+             sie öfter zur Standardstimme — dort also beides setzen. */
+          if(istFuchs || !v.lang) u.lang = (v.lang || 'fr-FR').replace('_', '-');
         }
         u.rate = rate;
         /* Schwarz auf weiss, wer gerade spricht: Klingt es trotzdem falsch,
