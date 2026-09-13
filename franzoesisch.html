@@ -705,8 +705,18 @@ function vergleiche(ziel, eingabe){
     var alle = alleStimmen();
     if(!alle.length) return null;
     var i;
+    /* Eine früher einmal gewählte Figurenstimme wird nicht wieder hervorgeholt:
+       Wer sie gewählt hat, hat sich fast sicher vertan, und der Vorrat war
+       damals falsch sortiert. Die Merkung wird gelöscht, nicht übergangen. */
     if(stimmId){
-      for(i = 0; i < alle.length; i++) if(kennung(alle[i]) === stimmId) return alle[i];
+      for(i = 0; i < alle.length; i++){
+        if(kennung(alle[i]) === stimmId){
+          if(!istFigur(alle[i])) return alle[i];
+          stimmId = '';
+          leg('fr-diktat-stimme', '');
+          break;
+        }
+      }
     }
     /* Ohne eigene Wahl nimmt das Werkzeug eine echte Stimme aus Frankreich:
        Das ist das Französisch, das die Lernenden in Prüfungen und Medien
