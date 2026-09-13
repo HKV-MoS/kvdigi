@@ -394,8 +394,12 @@
       Stimme nicht auf, hilft ein Neustart des Browsers.</p>
       <div class="reihe" style="margin-top:8px">
         <button class="knopf zweit klein" type="button" id="dNeuLesen">↻ Liste neu lesen</button>
+        <button class="knopf zweit klein" type="button" id="dDurchhoeren">🎧 Alle durchhören</button>
         <span class="stand" id="dNeuStand"></span>
       </div>
+      <p class="schluss">«Alle durchhören» spricht mit jeder französischen Stimme einen Satz
+      und zeigt dabei ihren Namen an. So hören Sie in einer halben Minute, welche wirklich
+      Französisch spricht – und welche in Wahrheit die Systemstimme Ihres Geräts ist.</p>
     </div>
 
     <div class="reihe" style="margin-bottom:14px">
@@ -701,6 +705,19 @@ function vergleiche(ziel, eingabe){
     return liste.slice().sort(function(a, b){ return rang(a) - rang(b); });
   }
 
+  /* Massgebend ist, was im Feld steht. Früher hat das Werkzeug die Stimme vor
+     jedem Satz neu ermittelt; liefert der Browser seine Liste zwischendurch in
+     anderer Reihenfolge — was Chrome tut, wenn er sie neu aufbaut —, konnte im
+     Feld Thomas stehen und trotzdem eine andere Stimme den Auftrag bekommen.
+     Bei einer nicht installierten Stimme springt macOS dann auf die
+     Systemstimme um: Französisch mit deutscher Aussprache. */
+  function stimmeAusFeld(){
+    if(!fWahl || !fWahl.value) return null;
+    var alle = alleStimmen();
+    for(var i = 0; i < alle.length; i++) if(kennung(alle[i]) === fWahl.value) return alle[i];
+    return null;
+  }
+
   function aktuelleStimme(){
     var alle = alleStimmen();
     if(!alle.length) return null;
@@ -868,6 +885,47 @@ function vergleiche(ziel, eingabe){
       hilfe.style.display = auf ? 'none' : 'block';
       knopf.setAttribute('aria-expanded', String(!auf));
     });
+    /* Reihum vorsprechen: echte Stimmen zuerst, Figurenstimmen zum Schluss.
+       Wer eine hört, die deutsch klingt, weiss sofort, welche es war. */
+    var laeuft = false;
+    var durch = document.getElementById('dDurchhoeren');
+    durch.addEventListener('click', function(){
+      var sy = synth();
+      if(!sy) return;
+      var anzeige = document.getElementById('dSpricht');
+      if(laeuft){
+        laeuft = false;
+        try{ sy.cancel(); }catch(e){}
+        durch.textContent = '🎧 Alle durchhören';
+        if(anzeige) anzeige.textContent = '';
+        return;
+      }
+      var fr = alleStimmen().filter(istFr);
+      var liste = besteZuerst(fr.filter(function(v){ return !istFigur(v); }))
+                    .concat(fr.filter(istFigur));
+      if(!liste.length) return;
+      laeuft = true;
+      durch.textContent = '■ Stopp';
+      var i = 0;
+      (function weiter(){
+        if(!laeuft || i >= liste.length){
+          laeuft = false;
+          durch.textContent = '🎧 Alle durchhören';
+          if(anzeige) anzeige.textContent = '';
+          return;
+        }
+        var v = liste[i++];
+        if(anzeige) anzeige.textContent = '🔈 ' + v.name + ' · ' + (v.lang || '?');
+        try{
+          var u = new SpeechSynthesisUtterance('Bonjour, je suis la voix ' + v.name + '.');
+          u.voice = v;
+          u.onend = function(){ setTimeout(weiter, 250); };
+          u.onerror = function(){ setTimeout(weiter, 250); };
+          sy.speak(u);
+        }catch(e){ setTimeout(weiter, 250); }
+      })();
+    });
+
     document.getElementById('dNeuLesen').addEventListener('click', function(){
       figuren = null;
       var vorher = alleStimmen().filter(istFr).length;
@@ -907,14 +965,14 @@ function vergleiche(ziel, eingabe){
   function vorlesen(text, rate){
     var sy = synth();
     if(!sy) return;
-    var v = aktuelleStimme();
+    var v = stimmeAusFeld() || aktuelleStimme();
     if(!v) return;
     stimme = v;
     function los(){
       try{
         var u = new SpeechSynthesisUtterance(text);
         u.voice = v;
-        u.lang = v.lang || 'fr-FR';
+        if(!v.lang) u.lang = 'fr-FR';   /* sonst nichts: die Stimme bringt ihre Sprache mit */
         u.rate = rate;
         /* Schwarz auf weiss, wer gerade spricht: Klingt es trotzdem falsch,
            liegt es nicht an der Zuordnung, sondern an der Stimme selbst. */
