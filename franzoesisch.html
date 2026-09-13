@@ -227,6 +227,36 @@
   .pziel .chip{background:var(--papier); border-color:var(--petrol)}
   .pziel.gut .chip{background:rgba(46,125,79,.12); border-color:var(--gruen)}
   .pziel.schlecht .chip{background:rgba(179,66,58,.09); border-color:var(--rot)}
+  /* ---------- Mise en relief ---------- */
+  .bsatz{display:flex; gap:6px; flex-wrap:wrap; justify-content:center; margin:16px 0 4px}
+  .bwort{
+    appearance:none; font:inherit; font-size:19px; font-weight:600; line-height:1.2;
+    padding:9px 12px; border-radius:10px; border:1.5px solid transparent;
+    background:transparent; color:var(--ink); cursor:default; transition:all .14s;
+  }
+  .bsatz.waehlbar .bwort{cursor:pointer; border-color:var(--line); background:#fff}
+  .bsatz.waehlbar .bwort:hover{border-color:var(--petrol); transform:translateY(-1px)}
+  .bwort.laut{
+    background:var(--gold); border-color:var(--gold); color:#2A2200;
+    transform:scale(1.06); box-shadow:0 3px 10px rgba(216,174,102,.5);
+  }
+  .bwort.falsch{background:rgba(179,66,58,.12); border-color:var(--rot)}
+  .bwort.stumm{opacity:.45}
+  .bwahl{display:grid; gap:8px; margin-top:16px}
+  .bwahl button{
+    appearance:none; text-align:left; font:inherit; font-size:14.4px; line-height:1.45;
+    padding:11px 14px; border-radius:10px; border:1.5px solid var(--line);
+    background:#fff; color:var(--ink); cursor:pointer; transition:all .14s;
+  }
+  .bwahl button:hover{border-color:var(--petrol)}
+  .bwahl button.gut{background:rgba(46,125,79,.12); border-color:var(--gruen)}
+  .bwahl button.schlecht{background:rgba(179,66,58,.09); border-color:var(--rot)}
+  .bwahl button[disabled]{cursor:default}
+  .bloesung{
+    margin-top:12px; padding:11px 14px; border-radius:10px; background:var(--papier);
+    border:1px solid var(--line); font-size:16px; text-align:center;
+  }
+  .bloesung:empty{display:none}
   .leiter{
     background:#F3F7F7; border:1px solid var(--line); border-left:3px solid var(--petrol);
     border-radius:9px; padding:10px 13px; margin:0 0 14px; font-size:13.2px; line-height:1.7;
@@ -356,7 +386,7 @@
     ><svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg" focusable="false"><rect
       width="30" height="60" fill="#0055A4"/><rect x="30" width="30" height="60" fill="#fff"/><rect
       x="60" width="30" height="60" fill="#EF4135"/></svg></span></span></h1>
-  <div class="sub">Vier Übungen zum selbständigen Trainieren · kein Vokabelpauken, sondern Hören, Formen, Satzbau und Schreiben · zwölf Pokale zu holen</div>
+  <div class="sub">Vier Übungen zum selbständigen Trainieren · kein Vokabelpauken, sondern Hören, Formen, Satzbau und Schreiben · fünfzehn Pokale zu holen</div>
 </header>
 
 <nav class="tabs" role="tablist" aria-label="Übungen">
@@ -365,7 +395,8 @@
     <button role="tab" aria-selected="false" data-k="verben"><span class="nr">2</span>Verbes</button>
     <button role="tab" aria-selected="false" data-k="satzbau"><span class="nr">3</span>Ordre des mots</button>
     <button role="tab" aria-selected="false" data-k="mail"><span class="nr">4</span>Le courriel</button>
-    <button role="tab" aria-selected="false" data-k="vitrine"><span class="nr">5</span>Vitrine</button>
+    <button role="tab" aria-selected="false" data-k="relief"><span class="nr">5</span>Mise en relief</button>
+    <button role="tab" aria-selected="false" data-k="vitrine"><span class="nr">6</span>Vitrine</button>
   </div>
 </nav>
 
@@ -579,11 +610,43 @@
   </div>
 </section>
 
-<!-- ============================ 5 VITRINE ============================ -->
+<!-- ======================== 5 MISE EN RELIEF ======================== -->
+<section class="kap" id="k-relief" role="tabpanel">
+  <div class="card">
+    <h2>5. Mise en relief – dasselbe sagen, anders meinen</h2>
+    <p class="lead">Ein Satz, sechs Bedeutungen – je nachdem, welcher Teil hervorgehoben wird.
+    Im Französischen macht das nicht die Lautstärke, sondern der Satzbau.</p>
+
+    <p class="leiter"><b>Der Unterschied zum Deutschen und zum Englischen:</b> Englisch betont
+    einfach lauter – <i>I didn't say that</i>. Deutsch stellt um – <i>Gesagt habe ich das nicht</i>.
+    Französisch baut den Satz neu, fast immer mit <span>c'est … qui</span> für das Subjekt und
+    <span>c'est … que</span> für alles andere, dazu die betonten Pronomen
+    <span>moi · toi · lui · elle</span>. Darum heisst es <b>Ce n'est pas moi qui l'ai dit</b> und
+    nicht <i>Je n'ai pas dit ça</i> mit lauter Stimme.</p>
+
+    <div class="bmodus stufen" id="bModus"></div>
+
+    <div class="bsatz" id="bSatz"></div>
+    <p class="stand" id="bFrage" style="text-align:center; margin-top:10px"></p>
+
+    <div class="reihe" style="justify-content:center; margin-top:12px">
+      <button class="knopf" type="button" id="bHoeren">▶ Hören</button>
+      <button class="knopf zweit klein" type="button" id="bLangsam">🐢 Langsam</button>
+      <button class="knopf zweit" type="button" id="bNaechste">Weiter →</button>
+    </div>
+
+    <div class="bwahl" id="bWahl"></div>
+    <div class="prueck" id="bRueck" style="margin-top:12px"></div>
+    <div class="bloesung" id="bLoesung"></div>
+    <p class="stand" id="bStand" style="margin-top:10px"></p>
+  </div>
+</section>
+
+<!-- ============================ 6 VITRINE ============================ -->
 <section class="kap" id="k-vitrine" role="tabpanel">
   <div class="card">
-    <h2>5. Vitrine – was Sie schon geholt haben</h2>
-    <p class="lead">Für jedes Kapitel gibt es drei Pokale: Bronze, Silber, Gold. Sie kommen nicht
+    <h2>6. Vitrine – was Sie schon geholt haben</h2>
+    <p class="lead">Für jedes der fünf Kapitel gibt es drei Pokale: Bronze, Silber, Gold. Sie kommen nicht
     vom Glück, sondern vom Dranbleiben – und sie bleiben auf diesem Gerät gespeichert.</p>
 
     <div class="vgrid" id="vGrid"></div>
@@ -675,7 +738,7 @@ var KLANG = (function(){
    Diktate, richtige Verbformen, verschiedene gelegte Sätze, Mails, die
    durchgehen. Der Stand liegt im Gerät — kein Konto, kein Server, und wer
    den Browser wechselt, fängt neu an. Die Motive sind selber gezeichnet:
-   Schriftrolle, Römerhelm, Wildschwein, Amphore, Lorbeerkranz.        */
+   Schriftrolle, Römerhelm, Wildschwein, Amphore, Hinkelstein, Kranz.  */
 var POKAL = (function(){
 
   var FARBE = { 0:'#B0763F', 1:'#9FAAB4', 2:'#D4A331' };
@@ -718,6 +781,12 @@ var POKAL = (function(){
     + '<path d="M20.6 7c-6.2 1-9.8 4.6-9.8 10h4.2c0-3.4 2.1-5.6 5.6-6.4zM27.4 7c6.2 1 9.8 4.6 9.8 10H33c0-3.4-2.1-5.6-5.6-6.4z"/>'
     + '<path d="M24 13.5c6.4 0 11.3 5.3 11.3 12.3 0 6-3.6 11-8.7 12.9l-1 3.8h-3.2l-1-3.8c-5.1-1.9-8.7-6.9-8.7-12.9 0-7 4.9-12.3 11.3-12.3z"/>'
     + '<rect x="17" y="23" width="14" height="3.2" fill="#fff" opacity=".5"/>',
+    /* Hinkelstein: einem Wort Gewicht geben */
+    menhir:
+      '<path d="M21.5 6.5c3.6-1.3 7.4.3 8.8 3.9l5.2 13.4c1.4 3.6-1.4 7.4-5.3 7.9l-9.4 1.2c-3.6.5-6.9-2-7.4-5.6L11 12.2c-.5-3.4 1.7-6.6 5-7.4z"/>'
+    + '<path d="M18.6 11.3l2.6 6.4-3.4 2.1 3.9 5.6-2.2 1.5-4.7-6.8 3.3-2z" fill="#fff" opacity=".28"/>'
+    + '<path d="M9.5 33.5h29c.8 0 1.5.7 1.5 1.5v3c0 .8-.7 1.5-1.5 1.5h-29c-.8 0-1.5-.7-1.5-1.5v-3c0-.8.7-1.5 1.5-1.5z"/>'
+    + '<path d="M13 36h22v1.4H13z" fill="#fff" opacity=".3"/>',
     /* Lorbeerkranz: zwei Zweige, oben offen, unten gebunden */
     kranz:
       '<path d="M23 40.4C14.8 39.7 8.4 32.8 8.4 24.4c0-4.8 2.1-9.1 5.4-12.1l2 2.2c-2.8 2.5-4.4 6-4.4 9.9 0 6.8 5.2 12.4 11.6 13zM25 40.4c8.2-.7 14.6-7.6 14.6-16 0-4.8-2.1-9.1-5.4-12.1l-2 2.2c2.8 2.5 4.4 6 4.4 9.9 0 6.8-5.2 12.4-11.6 13z" opacity=".2"/>'
@@ -729,14 +798,15 @@ var POKAL = (function(){
     {k:'diktat',  t:'Dictée',         b:'rolle',   was:'fehlerfreie Diktate',        stufen:[10, 25, 50]},
     {k:'verben',  t:'Verbes',         b:'helm',    was:'richtige Verbformen',        stufen:[20, 50, 100]},
     {k:'satzbau', t:'Ordre des mots', b:'eber',    was:'verschiedene Sätze gelegt',  stufen:[6, 12, 18]},
-    {k:'mail',    t:'Le courriel',    b:'amphore', was:'Mails, die durchgehen',      stufen:[1, 3, 6]}
+    {k:'mail',    t:'Le courriel',    b:'amphore', was:'Mails, die durchgehen',      stufen:[1, 3, 6]},
+    {k:'relief',  t:'Mise en relief', b:'menhir',  was:'Sätze richtig hervorgehoben', stufen:[5, 15, 30]}
   ];
 
-  var stand = { diktat:0, verben:0, mail:0, satzbau:[] };
+  var stand = { diktat:0, verben:0, mail:0, relief:0, satzbau:[] };
   try{
     var roh = JSON.parse(hol('fr-pokale', '') || '{}');
     if(roh && typeof roh === 'object'){
-      ['diktat','verben','mail'].forEach(function(k){
+      ['diktat','verben','mail','relief'].forEach(function(k){
         if(typeof roh[k] === 'number' && roh[k] >= 0) stand[k] = Math.floor(roh[k]);
       });
       if(Object.prototype.toString.call(roh.satzbau) === '[object Array]') stand.satzbau = roh.satzbau;
@@ -815,11 +885,11 @@ var POKAL = (function(){
       kranz.className = 'vkranz' + (da ? '' : ' offen');
       kranz.innerHTML = svg(BILD.kranz, FARBE[2])
         + '<div><b>Der Lorbeerkranz</b><span>' + (da
-            ? 'Alle vier Kapitel in Gold. Chapeau !'
-            : 'Gibt es, wenn alle vier Kapitel in Gold stehen.') + '</span></div>';
+            ? 'Alle fünf Kapitel in Gold. Chapeau !'
+            : 'Gibt es, wenn alle fünf Kapitel in Gold stehen.') + '</span></div>';
     }
     var g = document.getElementById('vGesamt');
-    if(g) g.innerHTML = '<b>' + geholt + '</b> von <b>12</b> Pokalen' + (alleGold() ? ' – dazu der Kranz.' : '');
+    if(g) g.innerHTML = '<b>' + geholt + '</b> von <b>15</b> Pokalen' + (alleGold() ? ' – dazu der Kranz.' : '');
   }
 
   /* ---------- Zählen ---------- */
@@ -832,7 +902,7 @@ var POKAL = (function(){
       if(jetzt === 3 && alleGold()){
         setTimeout(function(){
           jubel('kranz', FARBE[2], 'Der Lorbeerkranz',
-                'Alle vier Kapitel in Gold. Mehr geht nicht.');
+                'Alle fünf Kapitel in Gold. Mehr geht nicht.');
         }, 5200);
       }
     }
@@ -870,7 +940,7 @@ var POKAL = (function(){
       clearTimeout(zurueck);
       scharf = false;
       b.textContent = 'Alles zurücksetzen';
-      stand = { diktat:0, verben:0, mail:0, satzbau:[] };
+      stand = { diktat:0, verben:0, mail:0, relief:0, satzbau:[] };
       sichern();
       zeichne();
     });
@@ -1415,6 +1485,31 @@ function vergleiche(ziel, eingabe){
     }catch(e){ los(); }
   }
   function sprechen(rate){ vorlesen(satz(), rate); }
+
+  /* Die mise en relief braucht denselben Weg zur Stimme: eine Reihe von
+     Stücken, die ohne Pause hintereinander gesprochen werden. Damit gelten
+     Stimmenwahl und Firefox-Weiche auch dort. */
+  window.FR_SPRICH = function(teile){
+    var sy = synth();
+    if(!sy || !teile || !teile.length) return;
+    var v = stimmeAusFeld() || aktuelleStimme();
+    if(!v) return;
+    function los(){
+      try{
+        teile.forEach(function(t){
+          var u = new SpeechSynthesisUtterance(t.t);
+          u.voice = v;
+          if(istFuchs || !v.lang) u.lang = (v.lang || 'fr-FR').replace('_', '-');
+          u.rate = t.rate; u.pitch = t.pitch; u.volume = t.vol;
+          sy.speak(u);
+        });
+      }catch(e){}
+    }
+    try{
+      if(sy.speaking || sy.pending){ sy.cancel(); setTimeout(los, 140); }
+      else los();
+    }catch(e){ los(); }
+  };
 
   document.getElementById('dHoeren').addEventListener('click', function(){ sprechen(1); });
   document.getElementById('dLangsam').addEventListener('click', function(){ sprechen(0.65); });
@@ -1977,6 +2072,213 @@ var FAELLE = [
     return 'Kundenorientiert heisst: Was hat die Kundin davon? Schuldfragen und interne Abläufe interessieren sie nicht.';
   }
   bauen();
+})();
+
+
+/* ==================== 5 · MISE EN RELIEF ====================
+   Im Englischen genügt die Betonung, im Französischen braucht es den Umbau
+   mit «c'est … qui / que». Beides wird geübt: einmal hören, was betont ist,
+   einmal den Satz bauen, der dasselbe eindeutig sagt. Gesprochen wird über
+   dieselbe Stimme wie im Diktat — der Satz wird dafür in drei Stücke
+   zerlegt, das mittlere langsamer, höher und lauter.                    */
+var RELIEF = [
+  {
+    w:['Je', "n'ai", 'pas', 'dit', "qu'elle", 'a', 'volé', 'mon', 'argent.'],
+    f:[
+      {i:0, d:'Jemand anders hat es gesagt – ich nicht.',
+           r:"Ce n'est pas moi qui l'ai dit."},
+      {i:3, d:'Ich bestreite es: Gesagt habe ich das nie.',
+           r:"Je n'ai jamais dit ça."},
+      {i:4, d:'Gestohlen hat es jemand, aber nicht sie.',
+           r:"Ce n'est pas elle qui l'a volé."},
+      {i:6, d:'Gestohlen hat sie es nicht – nur ausgeliehen.',
+           r:"Elle ne l'a pas volé, elle l'a emprunté."},
+      {i:7, d:'Sie hat Geld genommen, aber nicht meines.',
+           r:"Ce n'est pas mon argent qu'elle a pris."},
+      {i:8, d:'Sie hat etwas genommen, aber kein Geld.',
+           r:"Ce n'est pas de l'argent qu'elle a pris."}
+    ]
+  },
+  {
+    w:['Nous', 'ne', 'pouvons', 'pas', 'envoyer', 'la', 'commande', "aujourd'hui."],
+    f:[
+      {i:0, d:'Jemand anders könnte sie senden, wir nicht.',
+           r:"Ce n'est pas nous qui pouvons l'envoyer."},
+      {i:4, d:'Senden geht nicht; abholen wäre möglich.',
+           r:"Nous ne pouvons pas l'envoyer, mais vous pouvez la chercher."},
+      {i:6, d:'Die Bestellung nicht – die Rechnung schon.',
+           r:"C'est la commande que nous ne pouvons pas envoyer, pas la facture."},
+      {i:7, d:'Heute nicht, aber morgen.',
+           r:"C'est aujourd'hui que nous ne pouvons pas l'envoyer ; demain, oui."}
+    ]
+  },
+  {
+    w:['Je', 'ne', "t'ai", 'jamais', 'dit', 'que', 'tu', 'pouvais', 'prendre', 'la', 'voiture.'],
+    f:[
+      {i:0, d:'Jemand anders hat das erlaubt, nicht ich.',
+           r:"Ce n'est pas moi qui te l'ai permis."},
+      {i:3, d:'Kein einziges Mal habe ich das gesagt.',
+           r:"Je ne te l'ai jamais dit, pas une seule fois."},
+      {i:6, d:'Jemand durfte es, aber nicht du.',
+           r:"Ce n'est pas à toi que je l'ai permis."},
+      {i:8, d:'Nehmen durftest du sie nicht – anschauen schon.',
+           r:"Je n'ai pas dit que tu pouvais la prendre, seulement la regarder."},
+      {i:10, d:'Etwas anderes durftest du nehmen, nicht das Auto.',
+           r:"Ce n'est pas la voiture que tu pouvais prendre."}
+    ]
+  }
+];
+
+(function(){
+  var fSatz = document.getElementById('bSatz');
+  var fWahl = document.getElementById('bWahl');
+  var fRueck = document.getElementById('bRueck');
+  var fFrage = document.getElementById('bFrage');
+  var fModus = document.getElementById('bModus');
+  var fLoes = document.getElementById('bLoesung');
+  var aufg = null, offen = true, richtig = 0, gemacht = 0;
+  var modus = hol('fr-relief-modus', 'bauen');      /* hoeren | bauen */
+
+  function stimmeDa(){
+    try{
+      var h = document.getElementById('dHoeren');
+      return !!(window.speechSynthesis && h && !h.hidden && !h.disabled);
+    }catch(e){ return false; }
+  }
+
+  [['hoeren','▶ Hören und deuten'], ['bauen','✎ Bauen mit c’est … qui/que']].forEach(function(m){
+    var b = el('button', null, m[1]);
+    b.type = 'button';
+    b.setAttribute('aria-pressed', String(modus === m[0]));
+    b.addEventListener('click', function(){
+      modus = m[0];
+      leg('fr-relief-modus', modus);
+      Array.prototype.forEach.call(fModus.children, function(x){
+        x.setAttribute('aria-pressed', String(x === b));
+      });
+      neu();
+    });
+    fModus.appendChild(b);
+  });
+
+  function neu(){
+    var s = RELIEF[Math.floor(Math.random() * RELIEF.length)];
+    var f = s.f[Math.floor(Math.random() * s.f.length)];
+    aufg = {s:s, f:f};
+    offen = true;
+    fRueck.textContent = ''; fRueck.className = 'prueck';
+    fLoes.textContent = '';
+    fWahl.innerHTML = '';
+    fSatz.innerHTML = '';
+    fSatz.className = 'bsatz';
+    s.w.forEach(function(wort){
+      fSatz.appendChild(el('button', 'bwort', wort));
+    });
+    Array.prototype.forEach.call(fSatz.children, function(b){ b.type = 'button'; b.disabled = true; });
+
+    var hoeren = document.getElementById('bHoeren');
+    var langsam = document.getElementById('bLangsam');
+
+    if(modus === 'bauen'){
+      fFrage.innerHTML = 'Wie sagt man das auf Französisch eindeutig: <b>' + f.d + '</b>';
+      hoeren.hidden = true; langsam.hidden = true;
+      var aus = mischen(s.f.slice()).slice(0, 4);
+      if(aus.indexOf(f) < 0){ aus[0] = f; aus = mischen(aus); }
+      aus.forEach(function(x){
+        var b = el('button', null, x.r);
+        b.type = 'button';
+        b.addEventListener('click', function(){ if(offen) antwortSatz(x, b); });
+        fWahl.appendChild(b);
+      });
+    } else {
+      fFrage.textContent = 'Hören Sie, welcher Teil hervorgehoben wird – und wählen Sie, was der Satz dann meint.';
+      hoeren.hidden = false; langsam.hidden = false;
+      var andere = s.f.filter(function(x){ return x !== f; });
+      var vier = mischen(andere.slice()).slice(0, 3).concat([f]);
+      mischen(vier).forEach(function(x){
+        var b = el('button', null, x.d);
+        b.type = 'button';
+        b.addEventListener('click', function(){ if(offen) antwortDeutung(x, b); });
+        fWahl.appendChild(b);
+      });
+      sprich(1);
+    }
+  }
+
+  function sprich(tempo){
+    if(modus !== 'hoeren' || !aufg || !window.FR_SPRICH) return;
+    var w = aufg.s.w, i = aufg.f.i, teile = [];
+    if(i > 0) teile.push({t:w.slice(0, i).join(' '), rate:1 * tempo, pitch:1, vol:0.82});
+    teile.push({t:w[i], rate:0.62 * tempo, pitch:1.35, vol:1});
+    if(i < w.length - 1) teile.push({t:w.slice(i + 1).join(' '), rate:1 * tempo, pitch:0.96, vol:0.82});
+    window.FR_SPRICH(teile);
+  }
+  function sprichGanz(text){
+    if(window.FR_SPRICH) window.FR_SPRICH([{t:text, rate:0.95, pitch:1, vol:1}]);
+  }
+
+  function markiere(){
+    Array.prototype.forEach.call(fSatz.children, function(b, i){
+      b.className = 'bwort' + (i === aufg.f.i ? ' laut' : ' stumm');
+    });
+  }
+  function stand(){
+    document.getElementById('bStand').innerHTML = gemacht
+      ? 'Bisher <b>' + richtig + '</b> von <b>' + gemacht + '</b> richtig' : '';
+  }
+  function buchen(ok){
+    gemacht++;
+    if(ok){ richtig++; KLANG.spiel('gut', 0.45); POKAL.plus('relief'); }
+    offen = false;
+    markiere();
+    stand();
+  }
+  function antwortDeutung(x, b){
+    Array.prototype.forEach.call(fWahl.children, function(k){ k.disabled = true; });
+    var ok = (x === aufg.f);
+    b.className = ok ? 'gut' : 'schlecht';
+    if(!ok) Array.prototype.forEach.call(fWahl.children, function(k){
+      if(k.textContent === aufg.f.d) k.className = 'gut';
+    });
+    fRueck.className = 'prueck ' + (ok ? 'gut' : 'schlecht');
+    fRueck.innerHTML = (ok ? '✔ Genau. ' : '✘ Hervorgehoben war <b>'
+                       + aufg.s.w[aufg.f.i].replace(/[.,]$/, '') + '</b>. ')
+                     + 'Eindeutig wird es erst so:';
+    fLoes.innerHTML = '<b>' + aufg.f.r + '</b>';
+    buchen(ok);
+    if(stimmeDa()) setTimeout(function(){ sprichGanz(aufg.f.r); }, 500);
+  }
+  function antwortSatz(x, b){
+    Array.prototype.forEach.call(fWahl.children, function(k){ k.disabled = true; });
+    var ok = (x === aufg.f);
+    b.className = ok ? 'gut' : 'schlecht';
+    if(!ok) Array.prototype.forEach.call(fWahl.children, function(k){
+      if(k.textContent === aufg.f.r) k.className = 'gut';
+    });
+    fRueck.className = 'prueck ' + (ok ? 'gut' : 'schlecht');
+    fRueck.innerHTML = ok
+      ? '✔ Genau – hervorgehoben wird <b>' + aufg.s.w[aufg.f.i].replace(/[.,]$/, '') + '</b>.'
+      : '✘ Richtig wäre: <b>' + aufg.f.r + '</b>';
+    buchen(ok);
+    if(ok && stimmeDa()) setTimeout(function(){ sprichGanz(aufg.f.r); }, 350);
+  }
+
+  document.getElementById('bHoeren').addEventListener('click', function(){ sprich(1); });
+  document.getElementById('bLangsam').addEventListener('click', function(){ sprich(0.72); });
+  document.getElementById('bNaechste').addEventListener('click', neu);
+
+  /* Ohne Stimme bleibt nur das Bauen — dort geht es auch ohne Ton */
+  setTimeout(function(){
+    if(!stimmeDa() && modus === 'hoeren'){
+      modus = 'bauen';
+      Array.prototype.forEach.call(fModus.children, function(x, i){
+        x.setAttribute('aria-pressed', String(i === 1));
+      });
+      neu();
+    }
+  }, 1600);
+
+  neu(); stand();
 })();
 
 /* ==================== Reiter ==================== */
