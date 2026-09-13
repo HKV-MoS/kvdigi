@@ -288,6 +288,53 @@
   }
   .zoomleiste button:hover{background:rgba(21,35,50,.09)}
 
+  /* ---------- Vitrine ---------- */
+  .tabs button .punkt{
+    display:inline-block; width:7px; height:7px; border-radius:50%;
+    background:var(--gold); margin-left:5px; vertical-align:2px;
+  }
+  .vgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:13px; margin-top:4px}
+  .vkarte{
+    border:1.5px solid var(--line); border-radius:12px; padding:13px 14px; background:#fff;
+  }
+  .vkarte h3{font-size:14.5px; margin:0 0 2px; color:var(--petrol)}
+  .vkarte .vwas{font-size:12.4px; color:var(--muted); margin-bottom:10px}
+  .vreihe{display:flex; gap:9px; align-items:flex-end}
+  .vstufe{text-align:center; flex:1 1 0; min-width:0}
+  .vstufe svg{width:100%; max-width:52px; height:auto; display:block; margin:0 auto 3px}
+  .vstufe .vzahl{font-size:11.4px; font-weight:700; color:var(--muted); white-space:nowrap}
+  .vstufe.offen svg{opacity:.22; filter:grayscale(1)}
+  .vstufe.offen .vzahl{font-weight:500}
+  .vbalken{height:6px; border-radius:999px; background:#E9EEF1; margin-top:11px; overflow:hidden}
+  .vbalken i{display:block; height:100%; background:var(--petrol); border-radius:999px; transition:width .4s}
+  .vrest{font-size:12.2px; color:var(--muted); margin-top:6px}
+  .vkranz{
+    display:flex; gap:15px; align-items:center; margin-top:16px; padding:14px 16px;
+    border:1.5px solid var(--line); border-radius:12px; background:#FFFDF6;
+  }
+  .vkranz.offen{background:#fff}
+  .vkranz svg{width:66px; height:66px; flex:0 0 auto}
+  .vkranz.offen svg{opacity:.22; filter:grayscale(1)}
+  .vkranz b{display:block; font-size:14.5px; color:var(--petrol); margin-bottom:2px}
+  .vkranz span{font-size:12.8px; color:var(--muted)}
+  .vfuss{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-top:16px}
+  .vfuss .stand{margin:0}
+  .vnull{font-size:12.4px; background:none; border:none; color:var(--muted);
+         text-decoration:underline; text-underline-offset:2px; cursor:pointer; padding:4px 2px; font-family:inherit}
+  .vnull:hover{color:var(--rot)}
+  .jubel{
+    position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(14px);
+    z-index:99998; display:flex; gap:11px; align-items:center; max-width:min(92vw,430px);
+    background:#fff; border:1.5px solid var(--gold); border-radius:13px;
+    padding:11px 16px 11px 13px; box-shadow:0 8px 26px rgba(21,35,50,.22);
+    opacity:0; pointer-events:none; transition:opacity .3s, transform .3s;
+  }
+  .jubel.da{opacity:1; transform:translateX(-50%) translateY(0)}
+  .jubel svg{width:40px; height:40px; flex:0 0 auto}
+  .jubel b{display:block; font-size:14px; color:var(--petrol)}
+  .jubel span{font-size:12.6px; color:var(--muted)}
+  @media print{ .jubel{display:none} }
+
   footer.fuss{
     max-width:860px; margin:30px auto 0; padding:16px 18px 0; border-top:1px solid var(--line);
     font-size:12.4px; color:var(--muted);
@@ -309,7 +356,7 @@
     ><svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg" focusable="false"><rect
       width="30" height="60" fill="#0055A4"/><rect x="30" width="30" height="60" fill="#fff"/><rect
       x="60" width="30" height="60" fill="#EF4135"/></svg></span></span></h1>
-  <div class="sub">Vier Übungen zum selbständigen Trainieren · kein Vokabelpauken, sondern Hören, Formen, Satzbau und Schreiben</div>
+  <div class="sub">Vier Übungen zum selbständigen Trainieren · kein Vokabelpauken, sondern Hören, Formen, Satzbau und Schreiben · zwölf Pokale zu holen</div>
 </header>
 
 <nav class="tabs" role="tablist" aria-label="Übungen">
@@ -318,6 +365,7 @@
     <button role="tab" aria-selected="false" data-k="verben"><span class="nr">2</span>Verbes</button>
     <button role="tab" aria-selected="false" data-k="satzbau"><span class="nr">3</span>Ordre des mots</button>
     <button role="tab" aria-selected="false" data-k="mail"><span class="nr">4</span>Le courriel</button>
+    <button role="tab" aria-selected="false" data-k="vitrine"><span class="nr">5</span>Vitrine</button>
   </div>
 </nav>
 
@@ -531,6 +579,23 @@
   </div>
 </section>
 
+<!-- ============================ 5 VITRINE ============================ -->
+<section class="kap" id="k-vitrine" role="tabpanel">
+  <div class="card">
+    <h2>5. Vitrine – was Sie schon geholt haben</h2>
+    <p class="lead">Für jedes Kapitel gibt es drei Pokale: Bronze, Silber, Gold. Sie kommen nicht
+    vom Glück, sondern vom Dranbleiben – und sie bleiben auf diesem Gerät gespeichert.</p>
+
+    <div class="vgrid" id="vGrid"></div>
+    <div class="vkranz" id="vKranz"></div>
+
+    <div class="vfuss">
+      <p class="stand" id="vGesamt"></p>
+      <button class="vnull" type="button" id="vNull">Alles zurücksetzen</button>
+    </div>
+  </div>
+</section>
+
 <footer class="fuss">
   <p>Die Sätze und Fälle sind für Lernende an der Handelsschule geschrieben: Alltag, Betrieb,
   Kundenkontakt. Die Verbformen folgen dem Bescherelle; <i>connaît</i> und <i>connait</i> werden
@@ -601,6 +666,218 @@ var KLANG = (function(){
     },
     spiel: spiel
   };
+})();
+
+
+/* ==================== Vitrine ====================
+   Vier Kapitel, je drei Stufen, dazu ein Kranz für alles in Gold. Gezählt
+   wird das, was Ausdauer verlangt, nicht das, was Glück bringt: fehlerfreie
+   Diktate, richtige Verbformen, verschiedene gelegte Sätze, Mails, die
+   durchgehen. Der Stand liegt im Gerät — kein Konto, kein Server, und wer
+   den Browser wechselt, fängt neu an. Die Motive sind selber gezeichnet:
+   Schriftrolle, Römerhelm, Wildschwein, Amphore, Lorbeerkranz.        */
+var POKAL = (function(){
+
+  var FARBE = { 0:'#B0763F', 1:'#9FAAB4', 2:'#D4A331' };
+  var NAME  = { 0:'Bronze', 1:'Silber', 2:'Gold' };
+
+  function svg(inhalt, farbe){
+    return '<svg viewBox="0 0 48 48" fill="' + farbe + '" aria-hidden="true" focusable="false">'
+         + inhalt + '</svg>';
+  }
+  var BILD = {
+    /* Schriftrolle: zwei gerollte Enden, dazwischen das beschriebene Blatt */
+    rolle:
+      '<rect x="14" y="14" width="20" height="20" opacity=".55"/>'
+    + '<rect x="8.5" y="10" width="7" height="28" rx="3.5"/>'
+    + '<rect x="32.5" y="10" width="7" height="28" rx="3.5"/>'
+    + '<circle cx="12" cy="14" r="1.5" fill="#fff" opacity=".8"/>'
+    + '<circle cx="36" cy="14" r="1.5" fill="#fff" opacity=".8"/>'
+    + '<rect x="17" y="19" width="14" height="2" fill="#fff" opacity=".85"/>'
+    + '<rect x="17" y="23.5" width="14" height="2" fill="#fff" opacity=".85"/>'
+    + '<rect x="17" y="28" width="9" height="2" fill="#fff" opacity=".85"/>',
+    /* Römerhelm: Kalotte, Nasensteg, Wangenklappen, Querbusch */
+    helm:
+      '<path d="M11.5 28.5c0-8.3 5.6-14.5 12.5-14.5s12.5 6.2 12.5 14.5z"/>'
+    + '<path d="M30.8 28.5h6.2c.7 0 1.2.6 1.1 1.3l-1.4 6.4c-.1.6-.8 1-1.4.8l-5.6-1.7z"/>'
+    + '<path d="M11.5 28.5h7.2v8.2c0 2-1.6 3.6-3.6 3.6s-3.6-1.6-3.6-3.6z"/>'
+    + '<path d="M12.9 24.8C14.6 13.4 18.6 6.6 24 6.6s9.4 6.8 11.1 18.2c1 .9 2 2 2.9 3.2C36.6 12.2 31 4 24 4S11.4 12.2 9.9 28c.9-1.2 1.9-2.3 3-3.2z"/>'
+    + '<path d="M18.3 11.2h1.5v10.4h-1.5zM23.3 8.6h1.5v12.6h-1.5zM28.2 11.2h1.5v10.4h-1.5z" fill="#fff" opacity=".45"/>',
+    /* Wildschwein: Körper, Kopf mit Rüssel und Hauer, Borsten, Beine */
+    eber:
+      '<path d="M23 16c7 0 12.5 4.2 12.5 10.3 0 5.5-4.7 9.4-11.4 9.4S12 31.8 12 26.3C12 20.2 16 16 23 16z"/>'
+    + '<path d="M12.8 21.5 6.9 18.2c-.8-.4-1.6.4-1.2 1.2l2.1 4.3-2.3 3.9c-.5.8.3 1.7 1.1 1.4l6.6-2.2z"/>'
+    + '<circle cx="9.2" cy="22.6" r="1.3" fill="#fff" opacity=".9"/>'
+    + '<path d="M11.6 26.4c-1.5.7-3 .1-3.8-1.2l4.2-1.5z" fill="#fff" opacity=".95"/>'
+    + '<path d="M17.5 12.5c.6 1.6.4 3.1-.6 4.4l-2.2-1.4c.6-1 1.1-2 1.3-3zM22.5 11.4c1 1.5 1.2 3 .6 4.5l-2.6-.9c.4-1.1.6-2.2.5-3.3zM28 12.2c1.3 1.2 1.9 2.6 1.7 4.2l-2.7-.4c.1-1.1 0-2.2-.4-3.2z" opacity=".75"/>'
+    + '<path d="M16 34.5h3.4V40H16zM21.8 35h3.4v5.3h-3.4zM27.6 34.5H31V40h-3.4zM32.6 32.6H36v5.5h-3.4z"/>',
+    /* Amphore: Hals, zwei Henkel, bauchiger Körper, Fuss */
+    amphore:
+      '<rect x="18" y="5.5" width="12" height="3.2" rx="1"/>'
+    + '<path d="M20.6 8.7h6.8v5.5h-6.8z"/>'
+    + '<path d="M20.6 7c-6.2 1-9.8 4.6-9.8 10h4.2c0-3.4 2.1-5.6 5.6-6.4zM27.4 7c6.2 1 9.8 4.6 9.8 10H33c0-3.4-2.1-5.6-5.6-6.4z"/>'
+    + '<path d="M24 13.5c6.4 0 11.3 5.3 11.3 12.3 0 6-3.6 11-8.7 12.9l-1 3.8h-3.2l-1-3.8c-5.1-1.9-8.7-6.9-8.7-12.9 0-7 4.9-12.3 11.3-12.3z"/>'
+    + '<rect x="17" y="23" width="14" height="3.2" fill="#fff" opacity=".5"/>',
+    /* Lorbeerkranz: zwei Zweige, oben offen, unten gebunden */
+    kranz:
+      '<path d="M23 40.4C14.8 39.7 8.4 32.8 8.4 24.4c0-4.8 2.1-9.1 5.4-12.1l2 2.2c-2.8 2.5-4.4 6-4.4 9.9 0 6.8 5.2 12.4 11.6 13zM25 40.4c8.2-.7 14.6-7.6 14.6-16 0-4.8-2.1-9.1-5.4-12.1l-2 2.2c2.8 2.5 4.4 6 4.4 9.9 0 6.8-5.2 12.4-11.6 13z" opacity=".2"/>'
+    + '<g><ellipse cx="14.6" cy="36.0" rx="4.4" ry="2.3" transform="rotate(218 14.6 36.0)"/><ellipse cx="10.6" cy="31.1" rx="4.4" ry="2.3" transform="rotate(242 10.6 31.1)"/><ellipse cx="8.8" cy="24.5" rx="4.4" ry="2.3" transform="rotate(268 8.8 24.5)"/><ellipse cx="10.1" cy="17.8" rx="4.4" ry="2.3" transform="rotate(-66 10.1 17.8)"/><ellipse cx="14.2" cy="12.4" rx="4.4" ry="2.3" transform="rotate(-40 14.2 12.4)"/><ellipse cx="33.4" cy="36.0" rx="4.4" ry="2.3" transform="rotate(142 33.4 36.0)"/><ellipse cx="37.4" cy="31.1" rx="4.4" ry="2.3" transform="rotate(118 37.4 31.1)"/><ellipse cx="39.2" cy="24.5" rx="4.4" ry="2.3" transform="rotate(92 39.2 24.5)"/><ellipse cx="37.9" cy="17.8" rx="4.4" ry="2.3" transform="rotate(66 37.9 17.8)"/><ellipse cx="33.8" cy="12.4" rx="4.4" ry="2.3" transform="rotate(40 33.8 12.4)"/></g>'
+    + '<path d="M20.6 38.3h6.8v3.6h-6.8z" opacity=".85"/>'
+  };
+
+  var LISTE = [
+    {k:'diktat',  t:'Dictée',         b:'rolle',   was:'fehlerfreie Diktate',        stufen:[10, 25, 50]},
+    {k:'verben',  t:'Verbes',         b:'helm',    was:'richtige Verbformen',        stufen:[20, 50, 100]},
+    {k:'satzbau', t:'Ordre des mots', b:'eber',    was:'verschiedene Sätze gelegt',  stufen:[6, 12, 18]},
+    {k:'mail',    t:'Le courriel',    b:'amphore', was:'Mails, die durchgehen',      stufen:[1, 3, 6]}
+  ];
+
+  var stand = { diktat:0, verben:0, mail:0, satzbau:[] };
+  try{
+    var roh = JSON.parse(hol('fr-pokale', '') || '{}');
+    if(roh && typeof roh === 'object'){
+      ['diktat','verben','mail'].forEach(function(k){
+        if(typeof roh[k] === 'number' && roh[k] >= 0) stand[k] = Math.floor(roh[k]);
+      });
+      if(Object.prototype.toString.call(roh.satzbau) === '[object Array]') stand.satzbau = roh.satzbau;
+    }
+  }catch(e){}
+
+  function sichern(){ try{ leg('fr-pokale', JSON.stringify(stand)); }catch(e){} }
+  function zahl(k){ return (k === 'satzbau') ? stand.satzbau.length : stand[k]; }
+  function stufe(e){
+    var n = zahl(e.k), s = 0;
+    for(var i = 0; i < e.stufen.length; i++) if(n >= e.stufen[i]) s = i + 1;
+    return s;                                   /* 0 = noch keiner */
+  }
+  function alleGold(){
+    return LISTE.every(function(e){ return stufe(e) === 3; });
+  }
+
+  /* ---------- Jubel ---------- */
+  var kasten = null, weg = null;
+  function jubel(bild, farbe, titel, text){
+    if(!kasten){
+      kasten = document.createElement('div');
+      kasten.className = 'jubel';
+      kasten.setAttribute('role', 'status');
+      document.body.appendChild(kasten);
+    }
+    kasten.innerHTML = svg(BILD[bild], farbe) + '<div><b>' + titel + '</b><span>' + text + '</span></div>';
+    void kasten.offsetWidth;
+    kasten.classList.add('da');
+    KLANG.spiel('toll', 0.5);
+    clearTimeout(weg);
+    weg = setTimeout(function(){ kasten.classList.remove('da'); }, 5000);
+  }
+  function merkePunkt(){
+    var b = document.querySelector('.tabs button[data-k="vitrine"]');
+    if(b && !b.querySelector('.punkt')){
+      var p = document.createElement('span');
+      p.className = 'punkt';
+      b.appendChild(p);
+    }
+  }
+
+  /* ---------- Zeichnen ---------- */
+  function zeichne(){
+    var gitter = document.getElementById('vGrid');
+    if(!gitter) return;
+    gitter.innerHTML = '';
+    var geholt = 0;
+    LISTE.forEach(function(e){
+      var n = zahl(e.k), st = stufe(e);
+      geholt += st;
+      var d = document.createElement('div');
+      d.className = 'vkarte';
+      var reihe = e.stufen.map(function(schwelle, i){
+        var offen = (n < schwelle);
+        return '<div class="vstufe' + (offen ? ' offen' : '') + '" title="' + NAME[i] + ' bei '
+             + schwelle + '">' + svg(BILD[e.b], FARBE[i])
+             + '<div class="vzahl">' + schwelle + '</div></div>';
+      }).join('');
+      var ziel = (st < 3) ? e.stufen[st] : e.stufen[2];
+      var anteil = Math.min(100, Math.round(n / ziel * 100));
+      var rest = (st === 3)
+        ? 'Alles geholt.'
+        : 'Noch <b>' + (ziel - n) + '</b> bis ' + NAME[st] + '.';
+      d.innerHTML = '<h3>' + e.t + '</h3>'
+        + '<div class="vwas">' + n + ' ' + e.was + '</div>'
+        + '<div class="vreihe">' + reihe + '</div>'
+        + '<div class="vbalken"><i style="width:' + anteil + '%"></i></div>'
+        + '<p class="vrest">' + rest + '</p>';
+      gitter.appendChild(d);
+    });
+
+    var kranz = document.getElementById('vKranz');
+    if(kranz){
+      var da = alleGold();
+      kranz.className = 'vkranz' + (da ? '' : ' offen');
+      kranz.innerHTML = svg(BILD.kranz, FARBE[2])
+        + '<div><b>Der Lorbeerkranz</b><span>' + (da
+            ? 'Alle vier Kapitel in Gold. Chapeau !'
+            : 'Gibt es, wenn alle vier Kapitel in Gold stehen.') + '</span></div>';
+    }
+    var g = document.getElementById('vGesamt');
+    if(g) g.innerHTML = '<b>' + geholt + '</b> von <b>12</b> Pokalen' + (alleGold() ? ' – dazu der Kranz.' : '');
+  }
+
+  /* ---------- Zählen ---------- */
+  function nachher(e, vorher){
+    var jetzt = stufe(e);
+    if(jetzt > vorher){
+      jubel(e.b, FARBE[jetzt - 1], NAME[jetzt - 1] + ' in ' + e.t,
+            zahl(e.k) + ' ' + e.was + '. Weiter so!');
+      merkePunkt();
+      if(jetzt === 3 && alleGold()){
+        setTimeout(function(){
+          jubel('kranz', FARBE[2], 'Der Lorbeerkranz',
+                'Alle vier Kapitel in Gold. Mehr geht nicht.');
+        }, 5200);
+      }
+    }
+    sichern();
+    zeichne();
+  }
+
+  function plus(k){
+    var e = LISTE.filter(function(x){ return x.k === k; })[0];
+    if(!e) return;
+    var vorher = stufe(e);
+    stand[k] = (stand[k] || 0) + 1;
+    nachher(e, vorher);
+  }
+  function satzGelegt(satz){
+    var e = LISTE[2];
+    if(stand.satzbau.indexOf(satz) >= 0){ return; }   /* jeder Satz zählt einmal */
+    var vorher = stufe(e);
+    stand.satzbau.push(satz);
+    nachher(e, vorher);
+  }
+
+  /* ---------- Zurücksetzen: zwei Klicks, kein Systemdialog ---------- */
+  (function(){
+    var b = document.getElementById('vNull');
+    if(!b) return;
+    var scharf = false, zurueck = null;
+    b.addEventListener('click', function(){
+      if(!scharf){
+        scharf = true;
+        b.textContent = 'Wirklich? Nochmals tippen.';
+        zurueck = setTimeout(function(){ scharf = false; b.textContent = 'Alles zurücksetzen'; }, 5000);
+        return;
+      }
+      clearTimeout(zurueck);
+      scharf = false;
+      b.textContent = 'Alles zurücksetzen';
+      stand = { diktat:0, verben:0, mail:0, satzbau:[] };
+      sichern();
+      zeichne();
+    });
+  })();
+
+  zeichne();
+  return { plus:plus, satzGelegt:satzGelegt, zeichne:zeichne };
 })();
 
 /* Der Auftakt soll beim Öffnen kommen. Die Browser verbieten Ton ohne
@@ -1193,6 +1470,7 @@ function vergleiche(ziel, eingabe){
       richtig++;
       u.className = 'durteil gut'; u.textContent = '✔ Fehlerfrei. Bravo !';
       KLANG.spiel('gut', 0.5);
+      POKAL.plus('diktat');
     } else if(falschZahl === nurAkzent){
       u.className = 'durteil fast';
       u.textContent = '◑ Fast – alle Wörter stimmen, nur die Akzente nicht.';
@@ -1365,6 +1643,7 @@ function pronomen(v, zeit, i){
       richtig++;
       r.className = 'vrueck gut';
       r.textContent = '✔ Richtig.';
+      POKAL.plus('verben');
     } else {
       r.className = 'vrueck schlecht';
       r.innerHTML = '✘ Richtig wäre <b>' + pronomen(aufg.v, aufg.z.k, aufg.i) + aufg.soll + '</b>.';
@@ -1455,6 +1734,7 @@ var PUZZLE = [
       fZiel.className = 'pziel gut';
       r.className = 'prueck gut'; r.textContent = '✔ Genau so. ' ;
       KLANG.spiel('toll', 0.45);
+      POKAL.satzGelegt(a.f);
       r.appendChild(el('small', null, a.h.replace(/<[^>]*>/g, '')));
     } else {
       fZiel.className = 'pziel schlecht';
@@ -1680,6 +1960,7 @@ var FAELLE = [
       u.className = 'prueck gut';
       u.textContent = '✔ Diese Mail würde ich abschicken. Höflich, klar und kurz – und die Kundin weiss, was passiert.';
       KLANG.spiel('toll', 0.45);
+      POKAL.plus('mail');
     } else if(schwach.length){
       u.className = 'prueck schlecht';
       u.innerHTML = 'Schwach bei: <b>' + schwach.map(function(a){ return a.t; }).join(', ') + '</b>.';
@@ -1709,6 +1990,11 @@ var FAELLE = [
       s.classList.toggle('aktiv', s.id === 'k-' + k);
     });
     leg('fr-kapitel', k);
+    if(k === 'vitrine'){
+      POKAL.zeichne();
+      var p = document.querySelector('.tabs button[data-k="vitrine"] .punkt');
+      if(p) p.parentNode.removeChild(p);
+    }
     window.scrollTo(0, 0);
   }
   Array.prototype.forEach.call(kn, function(b){
