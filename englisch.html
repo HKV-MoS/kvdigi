@@ -227,6 +227,35 @@
   .pziel .chip{background:var(--papier); border-color:var(--petrol)}
   .pziel.gut .chip{background:rgba(46,125,79,.12); border-color:var(--gruen)}
   .pziel.schlecht .chip{background:rgba(179,66,58,.09); border-color:var(--rot)}
+  /* ---------- Betonung ---------- */
+  .bsatz{
+    display:flex; gap:6px; flex-wrap:wrap; justify-content:center;
+    margin:16px 0 4px;
+  }
+  .bwort{
+    appearance:none; font:inherit; font-size:19px; font-weight:600; line-height:1.2;
+    padding:9px 12px; border-radius:10px; border:1.5px solid transparent;
+    background:transparent; color:var(--ink); cursor:default; transition:all .14s;
+  }
+  .bsatz.waehlbar .bwort{cursor:pointer; border-color:var(--line); background:#fff}
+  .bsatz.waehlbar .bwort:hover{border-color:var(--petrol); transform:translateY(-1px)}
+  .bwort.laut{
+    background:var(--gold); border-color:var(--gold); color:#2A2200;
+    transform:scale(1.06); box-shadow:0 3px 10px rgba(216,174,102,.5);
+  }
+  .bwort.falsch{background:rgba(179,66,58,.12); border-color:var(--rot)}
+  .bwort.stumm{opacity:.45}
+  .bwahl{display:grid; gap:8px; margin-top:16px}
+  .bwahl button{
+    appearance:none; text-align:left; font:inherit; font-size:14.4px; line-height:1.45;
+    padding:11px 14px; border-radius:10px; border:1.5px solid var(--line);
+    background:#fff; color:var(--ink); cursor:pointer; transition:all .14s;
+  }
+  .bwahl button:hover{border-color:var(--petrol)}
+  .bwahl button.gut{background:rgba(46,125,79,.12); border-color:var(--gruen)}
+  .bwahl button.schlecht{background:rgba(179,66,58,.09); border-color:var(--rot)}
+  .bwahl button[disabled]{cursor:default}
+  .bmodus{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px}
   .leiter{
     background:#F3F7F7; border:1px solid var(--line); border-left:3px solid var(--petrol);
     border-radius:9px; padding:10px 13px; margin:0 0 14px; font-size:13.2px; line-height:1.7;
@@ -360,7 +389,7 @@
       stroke="#C8102E" stroke-width="4"/><path d="M30 0v30M0 15h60" stroke="#fff"
       stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E"
       stroke-width="6"/></g></svg></span></span></h1>
-  <div class="sub">Vier Übungen zum selbständigen Trainieren · kein Vokabelpauken, sondern Hören, Formen, Satzbau und Schreiben · zwölf Pokale zu holen</div>
+  <div class="sub">Vier Übungen zum selbständigen Trainieren · kein Vokabelpauken, sondern Hören, Formen, Satzbau und Schreiben · fünfzehn Pokale zu holen</div>
 </header>
 
 <nav class="tabs" role="tablist" aria-label="Übungen">
@@ -369,7 +398,8 @@
     <button role="tab" aria-selected="false" data-k="verben"><span class="nr">2</span>Verbs</button>
     <button role="tab" aria-selected="false" data-k="satzbau"><span class="nr">3</span>Word order</button>
     <button role="tab" aria-selected="false" data-k="mail"><span class="nr">4</span>The e-mail</button>
-    <button role="tab" aria-selected="false" data-k="vitrine"><span class="nr">5</span>Vitrine</button>
+    <button role="tab" aria-selected="false" data-k="betonung"><span class="nr">5</span>Stress</button>
+    <button role="tab" aria-selected="false" data-k="vitrine"><span class="nr">6</span>Vitrine</button>
   </div>
 </nav>
 
@@ -581,11 +611,42 @@
   </div>
 </section>
 
-<!-- ============================ 5 VITRINE ============================ -->
+<!-- =========================== 5 STRESS =========================== -->
+<section class="kap" id="k-betonung" role="tabpanel">
+  <div class="card">
+    <h2>5. Sentence stress – dasselbe Wort, andere Bedeutung</h2>
+    <p class="lead">Im Englischen trägt die Betonung einen Teil der Bedeutung. Derselbe Satz
+    meint sieben verschiedene Dinge, je nachdem, welches Wort lauter kommt – ohne dass sich
+    ein Buchstabe ändert.</p>
+
+    <p class="leiter"><b>Warum das für Deutschsprachige heikel ist:</b> Im Deutschen ordnen wir
+    den Satz um, wenn wir etwas hervorheben wollen – <i>Ich habe das nicht gesagt</i> gegen
+    <i>Gesagt habe ich das nicht</i>. Im Englischen bleibt die Wortstellung, und allein die
+    <span>Lautstärke</span> <i>·</i> <span>Tonhöhe</span> <i>·</i> <span>Länge</span> des
+    betonten Wortes macht den Unterschied.</p>
+
+    <div class="bmodus" id="bModus"></div>
+
+    <div class="bsatz" id="bSatz"></div>
+    <p class="stand" id="bFrage" style="text-align:center; margin-top:10px"></p>
+
+    <div class="reihe" style="justify-content:center; margin-top:12px">
+      <button class="knopf" type="button" id="bHoeren">▶ Hören</button>
+      <button class="knopf zweit klein" type="button" id="bLangsam">🐢 Langsam</button>
+      <button class="knopf zweit" type="button" id="bNaechste">Weiter →</button>
+    </div>
+
+    <div class="bwahl" id="bWahl"></div>
+    <div class="prueck" id="bRueck" style="margin-top:12px"></div>
+    <p class="stand" id="bStand" style="margin-top:10px"></p>
+  </div>
+</section>
+
+<!-- ============================ 6 VITRINE ============================ -->
 <section class="kap" id="k-vitrine" role="tabpanel">
   <div class="card">
-    <h2>5. Vitrine – was Sie schon geholt haben</h2>
-    <p class="lead">Für jedes Kapitel gibt es drei Pokale: Bronze, Silber, Gold. Sie kommen nicht
+    <h2>6. Vitrine – was Sie schon geholt haben</h2>
+    <p class="lead">Für jedes der fünf Kapitel gibt es drei Pokale: Bronze, Silber, Gold. Sie kommen nicht
     vom Glück, sondern vom Dranbleiben – und sie bleiben auf diesem Gerät gespeichert.</p>
 
     <div class="vgrid" id="vGrid"></div>
@@ -676,7 +737,7 @@ var KLANG = (function(){
    Diktate, richtige Verbformen, verschiedene gelegte Sätze, Mails, die
    durchgehen. Der Stand liegt im Gerät — kein Konto, kein Server, und wer
    den Browser wechselt, fängt neu an. Die Motive sind selber gezeichnet:
-   Teekanne, Melone, Doppeldeckerbus, Briefkasten, Krone.              */
+   Teekanne, Melone, Doppeldeckerbus, Briefkasten, Uhrturm, Krone.     */
 var POKAL = (function(){
 
   var FARBE = { 0:'#B0763F', 1:'#9FAAB4', 2:'#D4A331' };
@@ -718,6 +779,16 @@ var POKAL = (function(){
     + '<rect x="17.5" y="19.5" width="13" height=\"3.2\" rx="1.2" fill="#fff" opacity=".75"/>'
     + '<rect x="18.5" y="27" width="11" height="5.5" rx="1" fill="#fff" opacity=".4"/>'
     + '<rect x="10" y="36" width="28" height="4.5" rx="1.5"/>',
+    /* Uhrturm: Sockel, Schaft, Uhr, Spitze */
+    turm:
+      '<path d="M17 17h14v22H17z"/>'
+    + '<path d="M15 39h18v4H15z"/>'
+    + '<path d="M24 2 30 12H18z"/>'
+    + '<path d="M18.5 12h11v4h-11z"/>'
+    + '<circle cx="24" cy="24" r="5.4" fill="#fff" opacity=".85"/>'
+    + '<path d="M23.3 20.2h1.4v4.4h-1.4z"/>'
+    + '<path d="M23.7 23.6h4v1.3h-4z"/>'
+    + '<path d="M18.6 32.5h10.8v1.6H18.6zM18.6 35.4h10.8V37H18.6z" fill="#fff" opacity=".35"/>',
     /* Krone: Zackenband mit Kugeln und Reif */
     kranz:
       '<path d="M9 16.5 15.5 25 24 11.5 32.5 25 39 16.5v17.5H9z"/>'
@@ -732,14 +803,15 @@ var POKAL = (function(){
     {k:'diktat',  t:'Dictation',  b:'rolle',   was:'fehlerfreie Diktate',        stufen:[10, 25, 50]},
     {k:'verben',  t:'Verbs',      b:'helm',    was:'richtige Verbformen',        stufen:[20, 50, 100]},
     {k:'satzbau', t:'Word order', b:'eber',    was:'verschiedene Sätze gelegt',  stufen:[6, 12, 18]},
-    {k:'mail',    t:'The e-mail', b:'amphore', was:'Mails, die durchgehen',      stufen:[1, 3, 6]}
+    {k:'mail',    t:'The e-mail', b:'amphore', was:'Mails, die durchgehen',      stufen:[1, 3, 6]},
+    {k:'betonung', t:'Stress',    b:'turm',    was:'Betonungen getroffen',       stufen:[5, 15, 30]}
   ];
 
-  var stand = { diktat:0, verben:0, mail:0, satzbau:[] };
+  var stand = { diktat:0, verben:0, mail:0, betonung:0, satzbau:[] };
   try{
     var roh = JSON.parse(hol('en-pokale', '') || '{}');
     if(roh && typeof roh === 'object'){
-      ['diktat','verben','mail'].forEach(function(k){
+      ['diktat','verben','mail','betonung'].forEach(function(k){
         if(typeof roh[k] === 'number' && roh[k] >= 0) stand[k] = Math.floor(roh[k]);
       });
       if(Object.prototype.toString.call(roh.satzbau) === '[object Array]') stand.satzbau = roh.satzbau;
@@ -818,11 +890,11 @@ var POKAL = (function(){
       kranz.className = 'vkranz' + (da ? '' : ' offen');
       kranz.innerHTML = svg(BILD.kranz, FARBE[2])
         + '<div><b>Die Krone</b><span>' + (da
-            ? 'Alle vier Kapitel in Gold. Well done!'
-            : 'Gibt es, wenn alle vier Kapitel in Gold stehen.') + '</span></div>';
+            ? 'Alle fünf Kapitel in Gold. Well done!'
+            : 'Gibt es, wenn alle fünf Kapitel in Gold stehen.') + '</span></div>';
     }
     var g = document.getElementById('vGesamt');
-    if(g) g.innerHTML = '<b>' + geholt + '</b> von <b>12</b> Pokalen' + (alleGold() ? ' – dazu der Kranz.' : '');
+    if(g) g.innerHTML = '<b>' + geholt + '</b> von <b>15</b> Pokalen' + (alleGold() ? ' – dazu der Kranz.' : '');
   }
 
   /* ---------- Zählen ---------- */
@@ -835,7 +907,7 @@ var POKAL = (function(){
       if(jetzt === 3 && alleGold()){
         setTimeout(function(){
           jubel('kranz', FARBE[2], 'Die Krone',
-                'Alle vier Kapitel in Gold. Mehr geht nicht.');
+                'Alle fünf Kapitel in Gold. Mehr geht nicht.');
         }, 5200);
       }
     }
@@ -873,7 +945,7 @@ var POKAL = (function(){
       clearTimeout(zurueck);
       scharf = false;
       b.textContent = 'Alles zurücksetzen';
-      stand = { diktat:0, verben:0, mail:0, satzbau:[] };
+      stand = { diktat:0, verben:0, mail:0, betonung:0, satzbau:[] };
       sichern();
       zeichne();
     });
@@ -1420,6 +1492,32 @@ function vergleiche(ziel, eingabe){
     }catch(e){ los(); }
   }
   function sprechen(rate){ vorlesen(satz(), rate); }
+
+  /* Das Betonungskapitel braucht denselben Weg zur Stimme — es reicht eine
+     Reihe von Stücken herein, die ohne Pause hintereinander gesprochen
+     werden. Die Stimmenwahl, die Firefox-Weiche und der Notweg gelten
+     damit auch dort. */
+  window.FR_SPRICH = function(teile){
+    var sy = synth();
+    if(!sy || !teile || !teile.length) return;
+    var v = stimmeAusFeld() || aktuelleStimme();
+    if(!v) return;
+    function los(){
+      try{
+        teile.forEach(function(t){
+          var u = new SpeechSynthesisUtterance(t.t);
+          u.voice = v;
+          if(istFuchs || !v.lang) u.lang = (v.lang || 'en-GB').replace('_', '-');
+          u.rate = t.rate; u.pitch = t.pitch; u.volume = t.vol;
+          sy.speak(u);
+        });
+      }catch(e){}
+    }
+    try{
+      if(sy.speaking || sy.pending){ sy.cancel(); setTimeout(los, 140); }
+      else los();
+    }catch(e){ los(); }
+  };
 
   document.getElementById('dHoeren').addEventListener('click', function(){ sprechen(1); });
   document.getElementById('dLangsam').addEventListener('click', function(){ sprechen(0.65); });
@@ -2002,6 +2100,205 @@ var FAELLE = [
     return 'Kundenorientiert heisst: Was hat die Kundin davon? Schuldfragen und interne Abläufe interessieren sie nicht.';
   }
   bauen();
+})();
+
+
+/* ==================== 5 · SENTENCE STRESS ====================
+   Betonung lässt sich mit der Sprachausgabe nicht ansagen — die Browser
+   verstehen kein SSML. Der Satz wird darum in drei Stücke zerlegt und
+   nacheinander gesprochen: davor, das betonte Wort langsamer, höher und
+   lauter, danach der Rest. Hintereinander gereiht klingt das wie ein
+   betonter Satz, und es funktioniert mit jeder Systemstimme.          */
+var BETONUNG = [
+  {
+    w:['I', "didn't", 'say', 'she', 'stole', 'my', 'money.'],
+    f:[
+      {i:0, d:'Jemand anders hat es gesagt – ich nicht.'},
+      {i:1, d:'Ich bestreite es: Ich habe das nie gesagt.'},
+      {i:2, d:'Gesagt habe ich es nicht – angedeutet vielleicht schon.'},
+      {i:3, d:'Gestohlen hat es jemand, aber nicht sie.'},
+      {i:4, d:'Gestohlen hat sie es nicht – nur ausgeliehen.'},
+      {i:5, d:'Sie hat Geld genommen, aber nicht meines.'},
+      {i:6, d:'Sie hat mir etwas genommen, aber kein Geld.'}
+    ]
+  },
+  {
+    w:['We', "can't", 'send', 'the', 'order', 'today.'],
+    f:[
+      {i:0, d:'Jemand anders könnte sie senden, wir nicht.'},
+      {i:1, d:'Es geht wirklich nicht – nicht bloss ungern.'},
+      {i:2, d:'Senden geht nicht; abholen wäre möglich.'},
+      {i:4, d:'Die Bestellung nicht – die Rechnung schon.'},
+      {i:5, d:'Heute nicht, aber morgen.'}
+    ]
+  },
+  {
+    w:['I', 'never', 'said', 'you', 'could', 'take', 'the', 'car.'],
+    f:[
+      {i:0, d:'Jemand anders hat das erlaubt, nicht ich.'},
+      {i:1, d:'Kein einziges Mal habe ich das gesagt.'},
+      {i:2, d:'Gesagt habe ich es nie – geschrieben vielleicht.'},
+      {i:3, d:'Jemand durfte es, aber nicht du.'},
+      {i:5, d:'Nehmen durftest du es nicht – anschauen schon.'},
+      {i:7, d:'Etwas anderes durftest du nehmen, nicht das Auto.'}
+    ]
+  }
+];
+
+(function(){
+  var fSatz = document.getElementById('bSatz');
+  var fWahl = document.getElementById('bWahl');
+  var fRueck = document.getElementById('bRueck');
+  var fFrage = document.getElementById('bFrage');
+  var fModus = document.getElementById('bModus');
+  var aufg = null, offen = true, richtig = 0, gemacht = 0;
+  var modus = hol('en-betonung-modus', 'hoeren');   /* hoeren | lesen */
+
+  function stimmeDa(){
+    try{ return !!(window.speechSynthesis && document.getElementById('dStimme')
+                   && !document.getElementById('dHoeren').hidden
+                   && !document.getElementById('dHoeren').disabled); }
+    catch(e){ return false; }
+  }
+
+  [['hoeren','▶ Hören und deuten'], ['lesen','👁 Lesen und betonen']].forEach(function(m){
+    var b = el('button', null, m[1]);
+    b.type = 'button';
+    b.setAttribute('aria-pressed', String(modus === m[0]));
+    b.addEventListener('click', function(){
+      modus = m[0];
+      leg('en-betonung-modus', modus);
+      Array.prototype.forEach.call(fModus.children, function(x){
+        x.setAttribute('aria-pressed', String(x === b));
+      });
+      neu();
+    });
+    fModus.appendChild(b);
+  });
+  fModus.className = 'stufen bmodus';
+
+  function neu(){
+    var s = BETONUNG[Math.floor(Math.random() * BETONUNG.length)];
+    var f = s.f[Math.floor(Math.random() * s.f.length)];
+    aufg = {s:s, f:f};
+    offen = true;
+    fRueck.textContent = ''; fRueck.className = 'prueck';
+    fWahl.innerHTML = '';
+    /* Satz aufbauen */
+    fSatz.innerHTML = '';
+    fSatz.className = 'bsatz' + (modus === 'lesen' ? ' waehlbar' : '');
+    s.w.forEach(function(wort, i){
+      var b = el('button', 'bwort', wort);
+      b.type = 'button';
+      if(modus === 'lesen'){
+        b.addEventListener('click', function(){ if(offen) antwortWort(i, b); });
+      }
+      fSatz.appendChild(b);
+    });
+
+    if(modus === 'lesen'){
+      fFrage.innerHTML = 'Welches Wort muss betont werden, damit der Satz heisst: <b>'
+                       + f.d + '</b>';
+      document.getElementById('bHoeren').hidden = true;
+      document.getElementById('bLangsam').hidden = true;
+    } else {
+      fFrage.textContent = 'Hören Sie – und wählen Sie, was der Satz dann meint.';
+      document.getElementById('bHoeren').hidden = false;
+      document.getElementById('bLangsam').hidden = false;
+      /* vier Deutungen: die richtige und drei aus demselben Satz */
+      var andere = s.f.filter(function(x){ return x !== f; });
+      var aus = mischen(andere.slice()).slice(0, 3).concat([f]);
+      mischen(aus).forEach(function(x){
+        var b = el('button', null, x.d);
+        b.type = 'button';
+        b.addEventListener('click', function(){ if(offen) antwortDeutung(x, b); });
+        fWahl.appendChild(b);
+      });
+      sprich(1);
+    }
+  }
+
+  /* Drei Stücke, das mittlere hervorgehoben */
+  function sprich(tempo){
+    if(modus !== 'hoeren' || !aufg) return;
+    var w = aufg.s.w, i = aufg.f.i;
+    var vor  = w.slice(0, i).join(' ');
+    var wort = w[i];
+    var nach = w.slice(i + 1).join(' ');
+    var teile = [];
+    if(vor)  teile.push({t:vor,  rate:1.0 * tempo, pitch:1,    vol:0.82});
+    teile.push({t:wort, rate:0.62 * tempo, pitch:1.35, vol:1});
+    if(nach) teile.push({t:nach, rate:1.0 * tempo, pitch:0.96, vol:0.82});
+    if(!window.FR_SPRICH) return;
+    window.FR_SPRICH(teile);
+  }
+
+  function markiere(){
+    Array.prototype.forEach.call(fSatz.children, function(b, i){
+      b.className = 'bwort' + (i === aufg.f.i ? ' laut' : ' stumm');
+    });
+  }
+  function stand(){
+    document.getElementById('bStand').innerHTML = gemacht
+      ? 'Bisher <b>' + richtig + '</b> von <b>' + gemacht + '</b> richtig' : '';
+  }
+  function buchen(ok){
+    gemacht++;
+    if(ok){ richtig++; KLANG.spiel('gut', 0.45); POKAL.plus('betonung'); }
+    offen = false;
+    markiere();
+    stand();
+  }
+  function antwortDeutung(x, b){
+    Array.prototype.forEach.call(fWahl.children, function(k){ k.disabled = true; });
+    var ok = (x === aufg.f);
+    b.className = ok ? 'gut' : 'schlecht';
+    if(!ok){
+      Array.prototype.forEach.call(fWahl.children, function(k){
+        if(k.textContent === aufg.f.d) k.className = 'gut';
+      });
+    }
+    fRueck.className = 'prueck ' + (ok ? 'gut' : 'schlecht');
+    fRueck.innerHTML = (ok ? '✔ Genau. ' : '✘ Betont war <b>' + aufg.s.w[aufg.f.i].replace(/[.,]$/, '') + '</b>. ')
+                     + 'Dieses Wort trägt hier die Bedeutung.';
+    buchen(ok);
+  }
+  function antwortWort(i, b){
+    var ok = (i === aufg.f.i);
+    fRueck.className = 'prueck ' + (ok ? 'gut' : 'schlecht');
+    fRueck.innerHTML = ok
+      ? '✔ Genau – <b>' + aufg.s.w[i].replace(/[.,]$/, '') + '</b> trägt die Bedeutung.'
+      : '✘ Richtig wäre <b>' + aufg.s.w[aufg.f.i].replace(/[.,]$/, '') + '</b> gewesen.';
+    buchen(ok);
+    if(!ok) b.classList.add('falsch');      /* nach dem Markieren, sonst überschrieben */
+    if(stimmeDa()) setTimeout(function(){ modusHoerprobe(); }, 350);
+  }
+  /* Nach der Leseaufgabe einmal vorsprechen, damit man es auch hört */
+  function modusHoerprobe(){
+    var w = aufg.s.w, i = aufg.f.i;
+    var teile = [];
+    if(i > 0) teile.push({t:w.slice(0, i).join(' '), rate:1, pitch:1, vol:0.82});
+    teile.push({t:w[i], rate:0.62, pitch:1.35, vol:1});
+    if(i < w.length - 1) teile.push({t:w.slice(i + 1).join(' '), rate:1, pitch:0.96, vol:0.82});
+    if(window.FR_SPRICH) window.FR_SPRICH(teile);
+  }
+
+  document.getElementById('bHoeren').addEventListener('click', function(){ sprich(1); });
+  document.getElementById('bLangsam').addEventListener('click', function(){ sprich(0.72); });
+  document.getElementById('bNaechste').addEventListener('click', neu);
+
+  /* Ohne brauchbare Stimme ist nur der Lesemodus sinnvoll */
+  setTimeout(function(){
+    if(!stimmeDa() && modus === 'hoeren'){
+      modus = 'lesen';
+      Array.prototype.forEach.call(fModus.children, function(x, i){
+        x.setAttribute('aria-pressed', String(i === 1));
+      });
+      neu();
+    }
+  }, 1600);
+
+  neu(); stand();
 })();
 
 /* ==================== Reiter ==================== */
