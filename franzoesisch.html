@@ -93,6 +93,24 @@
     border-radius:9px; padding:11px 14px; font-size:13.6px; margin-bottom:14px;
   }
   .dhinweis b{display:block; margin-bottom:2px}
+  .stimmzeile{
+    display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+    background:#F3F7F7; border:1px solid var(--line); border-radius:10px;
+    padding:9px 12px; margin-bottom:14px;
+  }
+  .stimmzeile > label{font-size:12.6px; font-weight:700; color:var(--muted)}
+  .stimmzeile select{
+    font:inherit; font-size:13.4px; padding:6px 9px; max-width:100%;
+    border:1.5px solid var(--line); border-radius:8px; background:#fff; color:var(--ink);
+  }
+  .stimmzeile select:focus-visible{outline:none; border-color:var(--petrol)}
+  .stimmwarnung{
+    flex:1 1 220px; font-size:12.6px; font-weight:600; color:#9A6B00;
+  }
+  .stimmwarnung:empty{display:none}
+  @media (max-width:560px){
+    .stimmzeile select{flex:1 1 100%}
+  }
   .dfeld{
     width:100%; font:inherit; font-size:16px; padding:12px 14px; border-radius:10px;
     border:1.5px solid var(--line); background:#fff; color:var(--ink); resize:vertical;
@@ -264,6 +282,13 @@
       <button type="button" data-s="C" aria-pressed="false">Stufe C · anspruchsvoll</button>
     </div>
 
+    <div class="stimmzeile" id="dStimmzeile" style="display:none">
+      <label for="dStimme">Stimme</label>
+      <select id="dStimme" title="Stimme für das Vorlesen wählen"></select>
+      <button class="knopf zweit klein" type="button" id="dProbe">🔊 Probe</button>
+      <span class="stimmwarnung" id="dStimmwarnung"></span>
+    </div>
+
     <div class="reihe" style="margin-bottom:14px">
       <button class="knopf" type="button" id="dHoeren">▶ Vorlesen</button>
       <button class="knopf zweit klein" type="button" id="dLangsam">🐢 Langsam</button>
@@ -372,8 +397,9 @@
   <p>Die Sätze und Fälle sind für Lernende an der Handelsschule geschrieben: Alltag, Betrieb,
   Kundenkontakt. Die Verbformen folgen dem Bescherelle; <i>connaît</i> und <i>connait</i> werden
   beide akzeptiert.</p>
-  <p>Das Vorlesen nutzt die <b>Stimmen Ihres Geräts</b> – es geht nichts ins Internet. Ohne
-  installierte französische Stimme bleibt die Übung als Lesediktat nutzbar.</p>
+  <p>Das Vorlesen nutzt die <b>Stimmen Ihres Geräts</b> – es geht nichts ins Internet. Welche
+  Stimme spricht, wählen Sie in der Dictée selbst; die Wahl bleibt für das nächste Mal
+  gespeichert. Ohne installierte französische Stimme bleibt die Übung als Lesediktat nutzbar.</p>
   <p><b>abu-tools.ch</b> · Allgemeinbildender Unterricht HKV Aarau · © 2026
   <a href="mailto:samuel.mollet@hkv.ch">S. Mollet</a></p>
 </footer>
@@ -501,17 +527,90 @@ function vergleiche(ziel, eingabe){
   var fHinweis = document.getElementById('dStimmenhinweis');
   var fEin = document.getElementById('dEingabe');
   var fLoes = document.getElementById('dLoesung');
+  var fZeile = document.getElementById('dStimmzeile');
+  var fWahl  = document.getElementById('dStimme');
+  var fWarn  = document.getElementById('dStimmwarnung');
+  var stimmId = hol('fr-diktat-stimme', '');
 
-  function stimmeSuchen(){
-    if(!('speechSynthesis' in window)) return null;
-    var alle = window.speechSynthesis.getVoices() || [];
-    var fr = alle.filter(function(v){ return /^fr/i.test(v.lang || ''); });
-    if(!fr.length) return null;
-    var lokal = fr.filter(function(v){ return v.localService; });
-    return (lokal.length ? lokal : fr)[0];
+  /* Die Stimmen des Geräts. Chrome liefert die Liste erst verzögert und baut
+     sie gelegentlich neu auf — deshalb wird sie nie zwischengespeichert,
+     sondern vor jedem Sprechen frisch geholt. Ein gemerktes Stimmobjekt aus
+     einer alten Liste ignoriert Chrome stillschweigend und nimmt dann die
+     Systemstimme, also meist eine deutsche. Genau das klang nach «hier». */
+  function synth(){
+    try{ return window.speechSynthesis || null; }catch(e){ return null; }
   }
+  function alleStimmen(){
+    var sy = synth();
+    if(!sy || typeof sy.getVoices !== 'function') return [];
+    return sy.getVoices() || [];
+  }
+  function istFr(v){ return /^fr/i.test((v && v.lang) || ''); }
+  function kennung(v){ return (v && (v.voiceURI || v.name)) || ''; }
+
+  /* Reihenfolge: gemerkte Stimme, sonst eine lokale französische, sonst
+     irgendeine französische, sonst gar keine. */
+  function aktuelleStimme(){
+    var alle = alleStimmen();
+    if(!alle.length) return null;
+    var i;
+    if(stimmId){
+      for(i = 0; i < alle.length; i++) if(kennung(alle[i]) === stimmId) return alle[i];
+    }
+    var fr = alle.filter(istFr);
+    var lokal = fr.filter(function(v){ return v.localService; });
+    if(lokal.length) return lokal[0];
+    if(fr.length) return fr[0];
+    return null;
+  }
+
+  function listeBauen(){
+    var alle = alleStimmen();
+    if(!alle.length){ fZeile.style.display = 'none'; return; }
+    var jetzt = aktuelleStimme();
+    var fr = alle.filter(istFr);
+    var rest = alle.filter(function(v){ return !istFr(v); });
+    function opt(v){
+      var o = document.createElement('option');
+      o.value = kennung(v);
+      o.textContent = v.name + ' · ' + (v.lang || '?') + (v.localService ? '' : ' (online)');
+      return o;
+    }
+    fWahl.innerHTML = '';
+    if(fr.length){
+      var g1 = document.createElement('optgroup');
+      g1.label = 'Französisch (' + fr.length + ')';
+      fr.forEach(function(v){ g1.appendChild(opt(v)); });
+      fWahl.appendChild(g1);
+    }
+    if(rest.length){
+      var g2 = document.createElement('optgroup');
+      g2.label = 'Andere Sprachen – nur im Notfall';
+      rest.forEach(function(v){ g2.appendChild(opt(v)); });
+      fWahl.appendChild(g2);
+    }
+    if(jetzt){
+      fWahl.value = kennung(jetzt);
+    } else {
+      var leer = document.createElement('option');
+      leer.value = ''; leer.textContent = '— bitte wählen —';
+      fWahl.insertBefore(leer, fWahl.firstChild);
+      fWahl.value = '';
+    }
+    fZeile.style.display = 'flex';
+    warnSetzen(jetzt);
+  }
+
+  function warnSetzen(v){
+    if(!v){ fWarn.textContent = ''; return; }
+    fWarn.textContent = istFr(v)
+      ? ''
+      : 'Diese Stimme spricht ' + (v.lang || 'eine andere Sprache')
+        + ' – «hier» klingt dann deutsch. Oben eine französische wählen.';
+  }
+
   function hinweisSetzen(){
-    if(!('speechSynthesis' in window)){
+    if(!synth()){
       fHinweis.innerHTML = '<b>Dieser Browser kann nicht vorlesen.</b>Nutzen Sie «Satz zeigen»: '
         + 'Satz einmal lesen, wegklicken, aus dem Kopf tippen. Das übt die Schreibweise weiter.';
       fHinweis.style.display = 'block';
@@ -519,25 +618,42 @@ function vergleiche(ziel, eingabe){
       document.getElementById('dLangsam').disabled = true;
       return;
     }
-    stimme = stimmeSuchen();
-    if(!stimme){
+    listeBauen();
+    stimme = aktuelleStimme();
+    var frDa = alleStimmen().some(istFr);
+    if(!frDa){
       fHinweis.innerHTML = '<b>Keine französische Stimme auf diesem Gerät.</b>Die Übung läuft als '
         + 'Lesediktat weiter – «Satz zeigen» antippen, lesen, wegklicken, tippen. Auf einem Mac '
-        + 'lassen sich französische Stimmen in den Systemeinstellungen unter Bedienungshilfen '
-        + 'nachinstallieren.';
+        + 'kommen französische Stimmen über Systemeinstellungen → Bedienungshilfen → Gesprochene '
+        + 'Inhalte → Systemstimme → «Stimme verwalten» dazu. Danach diese Seite neu laden.';
       fHinweis.style.display = 'block';
-      document.getElementById('dHoeren').disabled = true;
-      document.getElementById('dLangsam').disabled = true;
     } else {
       fHinweis.style.display = 'none';
-      document.getElementById('dHoeren').disabled = false;
-      document.getElementById('dLangsam').disabled = false;
     }
+    var stumm = !stimme;
+    document.getElementById('dHoeren').disabled = stumm;
+    document.getElementById('dLangsam').disabled = stumm;
   }
-  if('speechSynthesis' in window){
-    window.speechSynthesis.onvoiceschanged = hinweisSetzen;
+  if(synth()){
+    synth().onvoiceschanged = hinweisSetzen;
+    /* Safari füllt die Liste sofort, Chrome braucht einen Moment. */
+    setTimeout(hinweisSetzen, 400);
+    setTimeout(hinweisSetzen, 1500);
   }
   hinweisSetzen();
+
+  fWahl.addEventListener('change', function(){
+    stimmId = fWahl.value;
+    leg('fr-diktat-stimme', stimmId);
+    stimme = aktuelleStimme();
+    warnSetzen(stimme);
+    document.getElementById('dHoeren').disabled = !stimme;
+    document.getElementById('dLangsam').disabled = !stimme;
+    vorlesen('Bonjour, hier j\u2019ai travaillé jusqu\u2019à six heures.', 1);
+  });
+  document.getElementById('dProbe').addEventListener('click', function(){
+    vorlesen('Bonjour, hier j\u2019ai travaillé jusqu\u2019à six heures.', 1);
+  });
 
   function satz(){ return reihe[pos]; }
   function neuMischen(){ reihe = mischen(SAETZE[stufe].slice()); pos = 0; }
@@ -553,15 +669,35 @@ function vergleiche(ziel, eingabe){
     document.getElementById('dSichtbarSatz').textContent = satz();
     fEin.focus();
   }
-  function sprechen(rate){
-    if(!stimme) return;
+  /* Die Stimme wird hier frisch bestimmt, nicht beim Laden. Und abgebrochen
+     wird nur, wenn wirklich etwas läuft: ein cancel() unmittelbar vor dem
+     speak() lässt Chrome die gewählte Stimme fallen und auf die Systemstimme
+     zurückfallen — der deutsche Klang kam von dort. */
+  function vorlesen(text, rate){
+    var sy = synth();
+    if(!sy) return;
+    var v = aktuelleStimme();
+    if(!v) return;
+    stimme = v;
+    function los(){
+      try{
+        var u = new SpeechSynthesisUtterance(text);
+        u.voice = v;
+        u.lang = v.lang || 'fr-FR';
+        u.rate = rate;
+        sy.speak(u);
+      }catch(e){}
+    }
     try{
-      window.speechSynthesis.cancel();
-      var u = new SpeechSynthesisUtterance(satz());
-      u.voice = stimme; u.lang = stimme.lang || 'fr-FR'; u.rate = rate;
-      window.speechSynthesis.speak(u);
-    }catch(e){}
+      if(sy.speaking || sy.pending){
+        sy.cancel();
+        setTimeout(los, 140);
+      } else {
+        los();
+      }
+    }catch(e){ los(); }
   }
+  function sprechen(rate){ vorlesen(satz(), rate); }
 
   document.getElementById('dHoeren').addEventListener('click', function(){ sprechen(1); });
   document.getElementById('dLangsam').addEventListener('click', function(){ sprechen(0.65); });
