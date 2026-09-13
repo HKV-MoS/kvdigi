@@ -266,6 +266,11 @@ body{
 .karte:has(.k-deko-hammer) .k-einsatz{padding-right:104px}
 .k-deko-auto{height:58px; right:10px; bottom:11px; filter:drop-shadow(0 6px 12px rgba(0,0,0,.38))}
 .k-deko-eu{height:72px; right:13px; bottom:13px; filter:drop-shadow(0 3px 7px rgba(0,0,0,.30))}
+/* Die Tricolore ist gezeichnet, nicht fotografiert: ein SVG bleibt bei jeder
+   Bildschirmdichte scharf und braucht keine zweite Datei. */
+.k-deko-fr{height:52px; width:78px; right:15px; bottom:16px;
+           filter:drop-shadow(0 3px 6px rgba(0,0,0,.26))}
+.karte:has(.k-deko-fr) .k-einsatz{padding-right:94px}
 .karte:has(.k-deko-eu) .k-einsatz{padding-right:126px}
 .karte:has(.k-deko-auto) .k-einsatz{padding-right:142px}
 
@@ -551,7 +556,27 @@ body{
         <p class="k-text">Diktat mit der Stimme des Geräts, unregelmässige Verben in fünf Zeiten, Satzstellung als Puzzle und eine Geschäftsmail zum Zusammenbauen – kein Vokabelpauken.</p>
         <div class="k-einsatz">Selbständiges Üben · Handy · Hausaufgabe</div>
         <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
-      </a>
+                    <svg class="k-deko k-deko-fr" viewBox="0 0 120 80" aria-hidden="true" focusable="false">
+                <defs>
+                  <clipPath id="frWelle"><path d="M3 12c19-9 38 7 57 2s34-9 57-6v55c-23-3-38 1-57 6s-38-11-57-2Z"/></clipPath>
+                  <linearGradient id="frFalte" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0" stop-color="#000" stop-opacity=".16"/>
+                    <stop offset=".22" stop-color="#000" stop-opacity="0"/>
+                    <stop offset=".52" stop-color="#fff" stop-opacity=".22"/>
+                    <stop offset=".74" stop-color="#000" stop-opacity=".14"/>
+                    <stop offset="1" stop-color="#000" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <g clip-path="url(#frWelle)">
+                  <rect x="0" y="0" width="40" height="80" fill="#0055A4"/>
+                  <rect x="40" y="0" width="40" height="80" fill="#F7F7F7"/>
+                  <rect x="80" y="0" width="40" height="80" fill="#EF4135"/>
+                  <rect x="0" y="0" width="120" height="80" fill="url(#frFalte)"/>
+                </g>
+                <path d="M3 12c19-9 38 7 57 2s34-9 57-6v55c-23-3-38 1-57 6s-38-11-57-2Z"
+                      fill="none" stroke="rgba(20,30,45,.22)" stroke-width="2"/>
+              </svg>
+</a>
 
       <a class="karte" href="parlament_sitzplan.html" data-kat="politik">
         <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.6 19a9.4 9.4 0 0 1 18.8 0"/><path d="M7.2 19a4.8 4.8 0 0 1 9.6 0"/><path d="M2.6 19h18.8"/><circle cx="6" cy="13.6" r="1.05" fill="currentColor" stroke="none"/><circle cx="12" cy="11.4" r="1.05" fill="currentColor" stroke="none"/><circle cx="18" cy="13.6" r="1.05" fill="currentColor" stroke="none"/></svg></span>
