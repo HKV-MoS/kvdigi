@@ -227,6 +227,15 @@
   .pziel .chip{background:var(--papier); border-color:var(--petrol)}
   .pziel.gut .chip{background:rgba(46,125,79,.12); border-color:var(--gruen)}
   .pziel.schlecht .chip{background:rgba(179,66,58,.09); border-color:var(--rot)}
+  .leiter{
+    background:#F3F7F7; border:1px solid var(--line); border-left:3px solid var(--petrol);
+    border-radius:9px; padding:10px 13px; margin:0 0 14px; font-size:13.2px; line-height:1.7;
+  }
+  .leiter span{
+    display:inline-block; background:#fff; border:1px solid var(--line); border-radius:6px;
+    padding:1px 7px; font-weight:600; white-space:nowrap;
+  }
+  .leiter i{color:var(--muted); font-style:normal; padding:0 1px}
   .pdeutsch{font-size:14.5px; color:var(--muted); margin-bottom:10px}
   .pdeutsch b{color:var(--ink)}
   .prueck{font-size:14.5px; font-weight:600; min-height:22px}
@@ -479,6 +488,12 @@
     <h2>3. Ordre des mots – den Satz legen</h2>
     <p class="lead">Tippen Sie die Wörter in der richtigen Reihenfolge an. Nochmals antippen nimmt
     sie zurück. Hier entscheidet die Stellung, nicht die Vokabel.</p>
+
+    <p class="leiter"><b>Wenn zwei Pronomen zusammenkommen</b>, gilt immer diese Reihenfolge:
+    <span>me · te · nous · vous</span> <i>→</i> <span>le · la · les</span> <i>→</i>
+    <span>lui · leur</span> <i>→</i> <span>y</span> <i>→</i> <span>en</span>.
+    Darum <b>je le lui donne</b>, aber <b>il me le donne</b>: Vor <i>lui</i> steht die Sache
+    zuerst, vor <i>me</i> die Person.</p>
 
     <div class="pdeutsch" id="pDeutsch"></div>
     <div class="pziel" id="pZiel"></div>
@@ -1371,9 +1386,9 @@ function pronomen(v, zeit, i){
 
 /* ==================== 3 · ORDRE DES MOTS ==================== */
 var PUZZLE = [
-  {f:'Je le lui donne.',            d:'Ich gebe es ihm.', h:'Erst das Ding, dann die Person: <b>le</b> vor <b>lui</b>.'},
+  {f:'Je le lui donne.',            d:'Ich gebe es ihm.', h:'Vor <b>lui</b> und <b>leur</b> steht die Sache zuerst: <b>le lui</b>. Vor <b>me, te, nous, vous</b> wäre es umgekehrt.'},
   {f:'Elle nous en parle souvent.', d:'Sie spricht oft davon mit uns.', h:'<b>en</b> steht immer zuhinterst, direkt vor dem Verb.'},
-  {f:"Il me l'a dit hier.",         d:'Er hat es mir gestern gesagt.', h:'Beide Pronomen stehen vor dem Hilfsverb, nicht vor dem Partizip.'},
+  {f:"Il me l'a dit hier.",         d:'Er hat es mir gestern gesagt.', h:'Beide Pronomen stehen vor dem Hilfsverb, nicht vor dem Partizip – und <b>me</b> kommt vor <b>le</b>.'},
   {f:'Je ne le sais pas.',          d:'Ich weiss es nicht.', h:'<b>ne … pas</b> umklammert das Verb, das Pronomen bleibt innen.'},
   {f:"Nous n'y allons jamais.",     d:'Wir gehen nie dorthin.', h:'<b>jamais</b> nimmt den Platz von <b>pas</b> ein.'},
   {f:"Il n'a rien compris.",        d:'Er hat nichts verstanden.', h:'Im Passé composé klammern <b>ne … rien</b> das Hilfsverb ein.'},
@@ -1386,7 +1401,7 @@ var PUZZLE = [
   {f:'Nous vous enverrons la facture demain.', d:'Wir senden Ihnen die Rechnung morgen.', h:'Pronomen vor dem Verb, Zeitangabe am Schluss.'},
   {f:'Je voudrais vous poser une question.', d:'Ich möchte Ihnen eine Frage stellen.', h:'Beim Infinitiv hängt das Pronomen am Infinitiv, nicht am ersten Verb.'},
   {f:'Le client a déjà payé la facture.', d:'Der Kunde hat die Rechnung schon bezahlt.', h:'<b>déjà</b> steht zwischen Hilfsverb und Partizip.'},
-  {f:"Pouvez-vous me l'envoyer aujourd'hui ?", d:'Können Sie es mir heute senden?', h:'Beide Pronomen hängen am Infinitiv: <b>me</b> vor <b>le</b>.'},
+  {f:"Pouvez-vous me l'envoyer aujourd'hui ?", d:'Können Sie es mir heute senden?', h:'Beide Pronomen hängen am Infinitiv, und hier steht die Person zuerst: <b>me</b> vor <b>le</b> – anders als bei <b>le lui</b>.'},
   {f:"Nous ne l'avons pas encore reçu.", d:'Wir haben es noch nicht erhalten.', h:'<b>pas encore</b> bleibt zusammen, nach dem Hilfsverb.'},
   {f:'Elle y travaille depuis trois ans.', d:'Sie arbeitet dort seit drei Jahren.', h:'<b>y</b> steht direkt vor dem Verb.'}
 ];
