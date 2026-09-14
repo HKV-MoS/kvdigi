@@ -271,6 +271,8 @@ footer{max-width:1240px;margin:26px auto 0;padding-top:12px;border-top:1px solid
 .lade{position:absolute;left:12px;bottom:12px;z-index:2;background:rgba(21,35,50,.78);color:#fff;
   font-size:12.5px;padding:7px 12px;border-radius:999px;pointer-events:none;transition:opacity .5s;}
 .mini{max-width:1240px;margin:26px auto 0;}
+#mini-typ{font-weight:600; opacity:.7}
+#mini-typ::before{content:"· "}
 .mini-t{font-size:20px;font-weight:800;}
 .mini-s{color:var(--muted);font-size:13.5px;margin:2px 0 14px;}
 .q{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:12px;
@@ -1311,8 +1313,8 @@ body.folieziehen{ cursor:nwse-resize; user-select:none; }
 </section>
 
 <section class="mini" aria-label="Mini-Check">
-  <h2 class="mini-t">Mini-Check</h2>
-  <p class="mini-s">Vier Fragen zur Selbstkontrolle – klicken Sie die passende Antwort an.</p>
+  <h2 class="mini-t">Mini-Check <span id="mini-typ"></span></h2>
+  <p class="mini-s">Vier Fragen zur Selbstkontrolle – sie wechseln mit dem Reiter oben.</p>
   <div id="mini-fragen"></div>
 </section>
 
@@ -1923,8 +1925,13 @@ sSo.addEventListener('click', ()=>setzeSaison(false));
 sWi.addEventListener('click', ()=>setzeSaison(true));
 setzeSaison(false);
 
-/* ---------- Mini-Check ---------- */
-const FRAGEN=[
+/* ---------- Mini-Check ----------
+   Für jeden Reiter ein eigener Satz von vier Fragen. Gefragt wird nur, was
+   auf der jeweiligen Folie auch steht — der Check prüft das Gelesene, nicht
+   Allgemeinwissen. Gewechselt wird er von der Reiter-Umschaltung weiter
+   unten über window.MINI_ZEIGE.                                          */
+const FRAGEN = {
+wasser:[
   { f:"In welcher Reihenfolge nutzt das Wasser die Anlage?",
     o:["Stausee → Turbine → Druckleitung → Generator","Stausee → Druckleitung → Turbine → Generator",
        "Druckleitung → Stausee → Generator → Turbine","Generator → Turbine → Druckleitung → Stausee"], r:1,
@@ -1941,30 +1948,151 @@ const FRAGEN=[
     o:["Weil sie Strom in grossen Akkus lagern","Weil sie Energie als hochgelegenes Wasser speichern, abrufbar bei Bedarf",
        "Weil ihr Wasser elektrisch geladen ist","Weil dort die meisten Batterien hergestellt werden"], r:1,
     e:"Gespeichert wird Lageenergie: Wasser oben im See ist abrufbarer Strom von morgen – besonders wertvoll im Winter." }
-];
+],
+akw:[
+  { f:"Warum bleibt das Wasser im Reaktor bei über 300 °C flüssig?",
+    o:["Weil es mit Salz versetzt ist","Weil es unter rund 155 bar Druck steht",
+       "Weil es ständig umgewälzt wird","Weil Uran den Siedepunkt erhöht"], r:1,
+    e:"Unter hohem Druck siedet Wasser erst viel später. Genau dafür ist der Reaktordruckbehälter gebaut." },
+  { f:"Warum berühren sich Primär- und Sekundärkreislauf nie?",
+    o:["Damit die Radioaktivität im Primärkreis eingeschlossen bleibt","Weil sonst der Dampf zu heiss würde",
+       "Damit man die Turbine schneller warten kann","Weil zwei Kreisläufe billiger sind als einer"], r:0,
+    e:"Im Dampferzeuger geht nur die Wärme durch die Rohrwände. Was radioaktiv ist, bleibt hinter der Wand." },
+  { f:"Was steigt aus dem Kühlturm?",
+    o:["Rauch aus der Verbrennung","Radioaktives Gas","Wasserdampf","Kohlendioxid"], r:2,
+    e:"Es ist Wasserdampf. Dort verlässt rund zwei Drittel der Energie die Anlage ungenutzt als Abwärme – eine physikalische Grenze jeder Wärmekraftmaschine." },
+  { f:"Was hat das Kernkraftwerk mit dem Wasserkraftwerk gemeinsam?",
+    o:["Beide brauchen einen Stausee","Beide arbeiten mit Kernspaltung",
+       "Ab der Turbine ist alles gleich: Drehung erzeugt Spannung","Beide speisen mit 690 Volt ins Netz ein"], r:2,
+    e:"Ob die Drehung von Wasser oder von Dampf kommt, merkt der Generator nicht. Das ist der rote Faden durch alle Reiter." }
+],
+solar:[
+  { f:"Was passiert in der Solarzelle?",
+    o:["Wasser wird zu Dampf und treibt eine kleine Turbine","Licht löst Elektronen – es entsteht direkt Gleichstrom",
+       "Wärme dehnt Metall aus und erzeugt Bewegung","Ein Magnet dreht sich im Sonnenlicht"], r:1,
+    e:"Der photovoltaische Effekt: Es dreht sich nichts, es dampft nichts. Aus Licht wird unmittelbar Strom." },
+  { f:"Wozu braucht es den Wechselrichter?",
+    o:["Er speichert Strom für die Nacht","Er kühlt die Module",
+       "Er macht aus Gleichstrom Wechselstrom mit 230 Volt","Er misst die Sonneneinstrahlung"], r:2,
+    e:"Vom Dach kommt Gleichstrom, im Haus braucht es Wechselstrom. Bei einem Netzausfall schaltet er zudem aus Sicherheitsgründen ab." },
+  { f:"Warum lohnt sich der Eigenverbrauch mehr als das Einspeisen?",
+    o:["Weil selbst genutzter Strom den vollen Bezugspreis spart","Weil das Netz keinen Solarstrom annimmt",
+       "Weil eingespeister Strom versteuert werden muss","Weil die Module sonst zu heiss werden"], r:0,
+    e:"Für eingespeisten Strom gibt es nur die tiefere Vergütung – und die legt jedes Elektrizitätswerk selber fest." },
+  { f:"Was bringt die Batterie im Keller?",
+    o:["Sie verdoppelt die Leistung der Module","Sie hebt den Eigenverbrauch von etwa 30 auf 60 bis 70 Prozent",
+       "Sie ersetzt den Wechselrichter","Sie liefert Strom auch im Winter ohne Sonne"], r:1,
+    e:"Produziert wird am Mittag, gebraucht am Abend. Die Batterie überbrückt diese Lücke – die Miniaturausgabe des Pumpspeicherwerks." }
+],
+wind:[
+  { f:"Der Wind weht doppelt so stark. Wie viel Leistung bringt die Anlage?",
+    o:["Doppelt so viel","Viermal so viel","Achtmal so viel","Etwas mehr als vorher"], r:2,
+    e:"Die Leistung wächst mit der dritten Potenz der Windgeschwindigkeit: 2 × 2 × 2 = 8." },
+  { f:"Warum schaltet eine Windanlage ab etwa 25 Metern pro Sekunde ab?",
+    o:["Weil der Generator dann überhitzt","Weil der Wind zu stark wird und die Anlage sich schützt",
+       "Weil das Netz keinen Strom mehr annimmt","Weil die Blätter bei Sturm bessere Erträge bringen"], r:1,
+    e:"Die Blätter gehen in Fahnenstellung. Abgeschaltet wird nicht aus Mangel an Wind, sondern aus Überfluss." },
+  { f:"Wozu dient das Getriebe?",
+    o:["Es bremst den Rotor bei Sturm","Es dreht die Gondel in den Wind",
+       "Es übersetzt rund 15 Umdrehungen des Rotors auf rund 1500 des Generators","Es verstellt die Rotorblätter"], r:2,
+    e:"Etwa 1:100. Das Getriebe ist das am stärksten belastete Bauteil und der häufigste Schadensfall – manche Hersteller lassen es ganz weg." },
+  { f:"Warum baut man die Türme so hoch?",
+    o:["Damit die Anlage von weitem sichtbar ist","Weil der Wind oben stärker und gleichmässiger weht",
+       "Damit der Schatten kürzer ausfällt","Weil die Kabel sonst zu kurz wären"], r:1,
+    e:"100 bis 160 Meter Nabenhöhe sind ein Ertragsfaktor – und im Mittelland zugleich der häufigste Streitpunkt bei Einsprachen." }
+],
+gezeiten:[
+  { f:"Woher stammt die nutzbare Energie eines Gezeitenkraftwerks?",
+    o:["Aus der Strömungsgeschwindigkeit der Wellen","Aus dem Höhenunterschied zwischen Becken und Meer",
+       "Aus dem Salzgehalt des Meerwassers","Aus dem Temperaturunterschied von Ebbe und Flut"], r:1,
+    e:"Bei Flut füllt das Meer das Becken, bei Ebbe steht das Wasser drinnen höher als draussen. Im Grunde ein Stausee, den zweimal täglich der Mond füllt." },
+  { f:"Warum ist Gezeitenstrom zwar planbar, aber unpraktisch?",
+    o:["Weil er nach dem Mondkalender anfällt und nicht nach Bedarf","Weil die Turbinen nur bei Sturm laufen",
+       "Weil er sich nicht ins Netz einspeisen lässt","Weil er nur im Sommer erzeugt werden kann"], r:0,
+    e:"Die Steuerung rechnet den Tidenfahrplan Tage im Voraus – der Strom kommt exakt vorhersehbar, nur eben selten dann, wenn man ihn braucht." },
+  { f:"Was ist am Meer über die Lebensdauer der grösste Kostenfaktor?",
+    o:["Die Löhne der Bedienungsmannschaft","Die Korrosion durch Salzluft und Feuchtigkeit",
+       "Der Transport des Stroms ans Festland","Die Miete für den Meeresboden"], r:1,
+    e:"Salz frisst Stahl. Und Wartung mitten im Meerwasser ist ungleich teurer als im Binnenland." },
+  { f:"Wie viel leisten alle Gezeitenkraftwerke der Welt zusammen?",
+    o:["Etwa so viel wie die gesamte Schweizer Wasserkraft","Rund 0,5 Gigawatt – weniger als die Hälfte des Werks Bieudron",
+       "Rund einen Viertel des europäischen Stroms","Mehr als alle Windparks Europas"], r:1,
+    e:"Weltweit bleibt Gezeitenstrom eine Randnotiz – technisch reizvoll, in der Strombilanz kaum sichtbar." }
+],
+dauer:[
+  { f:"Was dauert bei Schweizer Energieprojekten in der Regel am längsten?",
+    o:["Die eigentliche Bauzeit","Planung, Einsprachen und Gerichtsverfahren",
+       "Die Lieferung der Bauteile","Die Suche nach Fachleuten"], r:1,
+    e:"Die Antwort lautet selten «zu wenig Technik» und fast immer «zu viel Verfahren» – der ockerfarbene Teil des Balkens." },
+  { f:"Windpark Sainte-Croix: Wie stehen Papier und Baustelle zueinander?",
+    o:["Etwa gleich lang","Rund 23 Jahre Verfahren auf 2 Jahre Bau","2 Jahre Verfahren auf 23 Jahre Bau",
+       "Die Bauzeit war dreimal so lang"], r:1,
+    e:"1998 erste Studie, 2021 Bundesgericht, 2023 Eröffnung – ein Verhältnis von rund zwölf zu eins." },
+  { f:"Warum ging es beim Windpark auf dem Gütsch ob Andermatt schneller?",
+    o:["Weil dort kaum jemand wohnt, der Einsprache erheben könnte","Weil der Bund das Projekt bezahlt hat",
+       "Weil in den Bergen keine Bewilligung nötig ist","Weil die Anlagen kleiner sind"], r:0,
+    e:"Der höchste Windpark Europas steht auf 2332 Metern – dort gibt es schlicht wenig Nachbarn." },
+  { f:"Was hat der Beschleunigungserlass seit dem 1. April 2026 geändert?",
+    o:["Einsprachen sind nicht mehr möglich","Der Bund bewilligt neu alles allein",
+       "Ein konzentriertes kantonales Verfahren, nur noch eine Beschwerde auf Kantonsebene","Die Bauzeiten wurden gesetzlich begrenzt"], r:2,
+    e:"Der Standortkanton erteilt die Bewilligungen in einem Zug statt nacheinander – und der Rechtsmittelweg wurde gekürzt." }
+],
+zukunft:[
+  { f:"Was übernimmt die Grossbatterie, was der Speichersee nicht kann?",
+    o:["Den Ausgleich zwischen Sommer und Winter","Den Ausgleich zwischen Mittag und Abend",
+       "Die Versorgung bei einem Blackout über Wochen","Die Erzeugung von zusätzlichem Strom"], r:1,
+    e:"Die Batterie verschiebt Strom über Stunden, der Speichersee über Monate. Sie konkurrieren nicht, sie ergänzen sich." },
+  { f:"Warum ist Wasserstoff im Auto energetisch schlechter als die Batterie?",
+    o:["Weil Wasserstoff im Tank verdunstet","Weil bei jedem Umwandlungsschritt Energie verloren geht",
+       "Weil Brennstoffzellen nur im Winter arbeiten","Weil Wasserstoff schwerer ist als Strom"], r:1,
+    e:"Strom → Wasserstoff → Strom: Vom Kraftwerk bis zum Rad kommt bei der Batterie rund dreimal mehr an." },
+  { f:"Wie viel Strom wird der Fusionsreaktor ITER ins Netz speisen?",
+    o:["Etwa so viel wie ein Kernkraftwerk","Genug für Südfrankreich","Ab 2034 rund die Hälfte eines Blocks",
+       "Keine einzige Kilowattstunde – er ist ein Versuchsreaktor"], r:3,
+    e:"ITER soll 2034 den Betrieb aufnehmen; ein Kraftwerk daraus soll erst der Nachfolger DEMO werden, nicht vor den 2050er-Jahren." },
+  { f:"Warum wird aus Antimaterie nie ein Kraftwerk?",
+    o:["Weil sie zu radioaktiv ist","Weil man rund 500 Millionen Mal mehr Energie hineinsteckt, als herauskommt",
+       "Weil sie sich nicht transportieren lässt","Weil die Reaktion zu langsam abläuft"], r:1,
+    e:"Ein Gramm läge bei 50 Millionen Kilowattstunden – für die Herstellung bräuchte es den Schweizer Stromverbrauch von rund 400'000 Jahren." }
+]
+};
+
 const mf=document.getElementById('mini-fragen');
-FRAGEN.forEach((q,qi)=>{
-  const box=document.createElement('div'); box.className='q';
-  box.innerHTML='<p class="q-t">'+(qi+1)+'. '+q.f+'</p>';
-  q.o.forEach((opt,oi)=>{
-    const b=document.createElement('button');
-    b.type='button'; b.className='qopt'; b.textContent=opt;
-    b.addEventListener('click',()=>{
-      box.querySelectorAll('.qopt').forEach((x,xi)=>{
-        x.disabled=true;
-        if(xi===q.r) x.classList.add('right');
+const mtyp=document.getElementById('mini-typ');
+const TYPNAME={wasser:'Wasserkraft', akw:'Kernkraft', solar:'Solar', wind:'Wind',
+               gezeiten:'Gezeiten', dauer:'Wie lange?', zukunft:'Zukunft'};
+
+function baueFragen(typ){
+  const liste = FRAGEN[typ] || FRAGEN.wasser;
+  if(mtyp) mtyp.textContent = TYPNAME[typ] || TYPNAME.wasser;
+  mf.innerHTML='';
+  liste.forEach((q,qi)=>{
+    const box=document.createElement('div'); box.className='q';
+    box.innerHTML='<p class="q-t">'+(qi+1)+'. '+q.f+'</p>';
+    const feed=document.createElement('p'); feed.className='qfeed';
+    q.o.forEach((opt,oi)=>{
+      const b=document.createElement('button');
+      b.type='button'; b.className='qopt'; b.textContent=opt;
+      b.addEventListener('click',()=>{
+        box.querySelectorAll('.qopt').forEach((x,xi)=>{
+          x.disabled=true;
+          if(xi===q.r) x.classList.add('right');
+        });
+        if(oi!==q.r) b.classList.add('wrong');
+        blip(oi===q.r);
+        feed.textContent=(oi===q.r?'Richtig! ':'Nicht ganz. ')+q.e;
+        feed.classList.add('show');
       });
-      if(oi!==q.r) b.classList.add('wrong');
-      blip(oi===q.r);
-      feed.textContent=(oi===q.r?'Richtig! ':'Nicht ganz. ')+q.e;
-      feed.classList.add('show');
+      box.appendChild(b);
     });
-    box.appendChild(b);
+    box.appendChild(feed);
+    mf.appendChild(box);
   });
-  const feed=document.createElement('p'); feed.className='qfeed';
-  box.appendChild(feed);
-  mf.appendChild(box);
-});
+}
+
+/* Die Reiter-Umschaltung weiter unten ruft das auf */
+window.MINI_ZEIGE = baueFragen;
+baueFragen('wasser');
 })();
 </script>
 
@@ -2133,6 +2261,7 @@ baueTab('tab-gezeiten', GEZEITEN);
     Object.keys(panels).forEach(k => { panels[k].hidden = (k !== name); });
     koepfe.forEach(k => { k.hidden = (k.dataset.fuer !== name); });
     document.title = titel[name];
+    if(window.MINI_ZEIGE) window.MINI_ZEIGE(name);   /* Mini-Check folgt dem Reiter */
     if(mitHash){
       const basis = location.pathname + location.search;
       history.replaceState(null, '', name === 'wasser' ? basis : basis + '#' + name);
