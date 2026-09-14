@@ -12,6 +12,33 @@
   #blatt{ width:1300px; max-width:100%; margin:0 auto; padding:14px 18px 12px; }
   body.eingebettet #blatt{ padding:8px 12px 8px; }
 
+  /* Kopfband der Schule — gleich wie in den übrigen Werkzeugen */
+  header.hkvkopf{
+    background:linear-gradient(135deg,#213B42 0%, #3C6E73 100%);
+    color:#fff; padding:16px 22px 15px; text-align:center;
+    box-shadow:0 2px 8px rgba(0,0,0,.12);
+  }
+  .hkvlogo{ display:inline-block; line-height:0; margin:0 0 7px; opacity:.96;
+            transition:opacity .15s ease, transform .15s ease; }
+  .hkvlogo img{ height:38px; width:auto; display:block; }
+  .hkvlogo:hover{ opacity:1; transform:scale(1.03); }
+  header.hkvkopf h1{ color:#fff; font-size:22px; margin:0; }
+  header.hkvkopf .lead{
+    color:rgba(255,255,255,.86); margin:5px auto 0; max-width:86ch; font-size:13px;
+  }
+  /* Im iframe von KV Digital zählt jede Zeile Höhe */
+  body.eingebettet header.hkvkopf{ padding:9px 14px 9px; }
+  body.eingebettet .hkvlogo{ margin-bottom:4px; }
+  body.eingebettet .hkvlogo img{ height:26px; }
+  body.eingebettet header.hkvkopf h1{ font-size:18px; }
+  body.eingebettet header.hkvkopf .lead{ display:none; }
+  @media (max-width:640px){
+    .hkvlogo img{ height:29px; }
+    header.hkvkopf h1{ font-size:19px; }
+    header.hkvkopf .lead{ font-size:12.4px; }
+  }
+  @media print{ header.hkvkopf{ box-shadow:none; } }
+
   h1{ font-size:23px; margin:0 0 2px; color:var(--gruen); }
   .lead{ font-size:13.5px; color:var(--grau); margin:0 0 10px; }
 
@@ -134,11 +161,15 @@
 </style>
 </head>
 <body>
+<header class="hkvkopf">
+  <a class="hkvlogo" href="https://www.hkvaarau.ch/berufsfachschule" target="_blank" rel="noopener"
+     title="Handelsschule KV Aarau"><img src="hkv_logo_weiss.png?v=1" alt="HKV Aarau"
+     onerror="this.parentNode.style.display='none'"></a>
+  <h1>Fünf Stufen, eine Siedlung</h1>
+  <p class="lead">Eine Bildergeschichte durch die Bedürfnispyramide — die Pyramide zeigt, wo wir sind, darunter erzählen drei Bilder die Stufe. «Weiter», Pfeiltasten, Klick ins Bild oder auf eine Stufe der Pyramide.</p>
+</header>
+
 <div id="blatt">
-  <div id="kopf">
-    <h1>Fünf Stufen, eine Siedlung</h1>
-    <p class="lead">Eine Bildergeschichte durch die Bedürfnispyramide — die Pyramide zeigt, wo wir sind, darunter erzählen drei Bilder die Stufe. «Weiter», Pfeiltasten, Klick ins Bild oder auf eine Stufe der Pyramide.</p>
-  </div>
 
   <div id="oben">
     <div id="pyr" title="Auf eine Stufe klicken">
