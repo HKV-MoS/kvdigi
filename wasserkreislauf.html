@@ -25,8 +25,16 @@
   header .sub{ font-size:13px; opacity:.92; }
   body.stoer header{ background:linear-gradient(135deg,#7E3315 0%,#C24B1E 100%); }
 
-  .wrap{ max-width:1400px; margin:0 auto; padding:18px; display:grid; grid-template-columns:1fr 350px; gap:18px; }
+  /* Die Bühne ist der Lerngegenstand, die Spalte daneben der Kommentar.
+     Darum breiterer Rahmen und eine schmalere Spalte als früher — auf einem
+     1920er-Beamer wächst das Foto damit von rund 1000 auf rund 1300 Pixel. */
+  .wrap{ max-width:1720px; margin:0 auto; padding:18px; display:grid; grid-template-columns:1fr 320px; gap:18px; }
+  @media (max-width:1150px){ .wrap{ grid-template-columns:1fr 300px; } }
   @media (max-width:980px){ .wrap{ grid-template-columns:1fr; } }
+
+  /* «Bild gross»: Die Textspalte weicht, die Bühne nimmt die ganze Breite. */
+  body.bildgross .wrap{ grid-template-columns:1fr; }
+  body.bildgross .panel{ display:none; }
 
   .stage-card{ background:#fff; border-radius:14px; box-shadow:0 2px 10px rgba(20,50,80,.08); overflow:hidden; align-self:start; }
   .scene-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:11px 13px; border-bottom:1px solid #EAF0F5; }
@@ -373,6 +381,8 @@ body.folieziehen{ cursor:nwse-resize; user-select:none; }
         <button class="btn ghost" id="fahnen-btn" aria-pressed="true">Beschriftungen</button>
         <button class="btn ghost" id="spot-btn" aria-pressed="true">Spotlight</button>
         <button class="btn ghost" id="effekt-btn" aria-pressed="true">Animation</button>
+        <button class="btn ghost" id="gross-btn" aria-pressed="false"
+                title="Textspalte ausblenden, Bild über die ganze Breite · ein Klick ins Bild holt den Text zurück">⤢ Bild gross</button>
       </div>
       <div class="tipp">Tipp: Zahlen und Symbole im Bild anklicken</div>
     </div>
@@ -1425,6 +1435,37 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(fahnenMess
   griff.addEventListener('dblclick', function(e){ e.stopPropagation(); setBreite(VORGABE, true); });
 })();
 </script>
+<script>
+/* ---------- «Bild gross»: Spalte weg, Bühne über die volle Breite ----------
+   Wer eine Station anklickt oder die Tour startet, braucht den Text wieder —
+   dann schaltet sich der Modus von selbst aus, sonst redet die Folie ins
+   Leere. Die Entscheidung wird gemerkt, wie die Breite der Ziehecke.      */
+(function(){
+  var knopf = document.getElementById('gross-btn');
+  if(!knopf) return;
+  var SCHL = 'wasserkreislauf-bildgross';
+  var an = false;
+  try{ an = localStorage.getItem(SCHL) === 'ja'; }catch(e){}
+
+  function setzen(neu, merken){
+    an = !!neu;
+    document.body.classList.toggle('bildgross', an);
+    knopf.setAttribute('aria-pressed', String(an));
+    knopf.textContent = an ? '⤡ Bild normal' : '⤢ Bild gross';
+    if(merken){ try{ localStorage.setItem(SCHL, an ? 'ja' : 'nein'); }catch(e){} }
+    window.dispatchEvent(new Event('resize'));   /* Ziehecke neu anhängen */
+  }
+  setzen(an, false);
+  knopf.addEventListener('click', function(){ setzen(!an, true); });
+
+  /* Zurück zum Text, sobald er gebraucht wird */
+  var szene = document.getElementById('szene');
+  if(szene) szene.addEventListener('click', function(){ if(an) setzen(false, true); }, true);
+  var tour = document.getElementById('tour-btn');
+  if(tour) tour.addEventListener('click', function(){ if(an) setzen(false, true); }, true);
+})();
+</script>
+
 <script>
 /* ---- abu-tools.ch: eine Oeffnung dieses Werkzeugs melden ----
    Gezaehlt wird nur, was wirklich auf abu-tools.ch laeuft; lokal per
