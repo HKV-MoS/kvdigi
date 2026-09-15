@@ -36,8 +36,22 @@
   .btn:hover{ background:#EEF4F6; }
   .btn:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
 
-  .mapwrap{ background:#E9F2F4; border:1px solid #DCE7EA; border-radius:14px; box-shadow:0 2px 10px rgba(20,50,80,.07); overflow:hidden; }
-  svg#map{ display:block; width:100%; height:clamp(340px, 56vh, 640px); touch-action:none; }
+  /* Die Karte darf ueber die Textspalte hinauswachsen: zentriert ueber
+     margin-left:50% und die Ruecknahme per transform. Ohne gezogene Groesse
+     bleibt alles wie bisher, --kw und --kh sind dann nicht gesetzt. */
+  .mapwrap{ background:#E9F2F4; border:1px solid #DCE7EA; border-radius:14px; box-shadow:0 2px 10px rgba(20,50,80,.07); overflow:hidden;
+            position:relative; width:var(--kw, 100%); max-width:calc(100vw - 30px);
+            margin-left:50%; transform:translateX(-50%); }
+  svg#map{ display:block; width:100%; height:var(--kh, clamp(340px, 56vh, 640px)); touch-action:none; }
+
+  /* Ziehecke unten rechts — wie in den uebrigen Folien */
+  .ziehecke{ position:absolute; right:0; bottom:0; width:26px; height:26px; z-index:5;
+             cursor:nwse-resize; touch-action:none; border-bottom-right-radius:14px;
+             background-image:linear-gradient(135deg, transparent 0 50%, rgba(33,59,66,.55) 50% 58%,
+                              transparent 58% 68%, rgba(33,59,66,.55) 68% 76%, transparent 76%); }
+  .ziehecke:hover{ background-color:rgba(60,110,115,.12); }
+  .ziehecke:focus-visible{ outline:3px solid #A7D2CE; outline-offset:-3px; }
+  @media print{ .ziehecke{ display:none; } }
   .c{ fill:#DCE5E7; stroke:#ffffff; stroke-width:1; vector-effect:non-scaling-stroke; transition:fill .18s ease; }
   .c.dim{ fill:#DBE4E6; }
   .c.target{ fill:var(--light); stroke:var(--col); stroke-width:1.4; stroke-dasharray:4 2.5; }
@@ -108,6 +122,9 @@
       <g id="countries"></g>
       <g id="labels"></g>
     </svg>
+    <div class="ziehecke" id="ziehecke" tabindex="0" role="separator"
+         aria-label="Karte groesser oder kleiner ziehen"
+         title="Ecke ziehen: Karte groesser oder kleiner · Doppelklick stellt die Ausgangsgroesse her"></div>
   </div>
 
   <div class="hint" id="hint">Ziehe alle 22 Länder auf ihre Form. Tipp: Oben eine Region wählen, dann ist es einfacher.</div>
@@ -349,6 +366,79 @@ $('btnReset').addEventListener('click', ()=>{
   state.placed.clear(); state.order = shuffle(state.order);
   renderMap(); renderTray(); updateProgress();
 });
+
+// ---------- Ziehecke: Kartengroesse ----------
+/* Gezogen wird die Breite der Karte und ihre Hoehe. Beides zaehlt: in der
+   Uebersicht ist die viewBox fast quadratisch, dort begrenzt die Hoehe das
+   Bild; in Nordamerika ist sie breit, dort die Breite. Der Bezugspunkt wird
+   nur beim Aufsetzen gemessen — wird waehrend des Zugs neu gemessen, wandert
+   er mit und der Griff schaukelt sich in die Untergrenze. */
+(function(){
+  const box = document.querySelector('.mapwrap');
+  const griff = $('ziehecke');
+  if(!box || !griff) return;
+  const SCHL = 'laender_amerika-kartengroesse';
+  let zug = null;
+
+  const breiteJetzt = () => box.getBoundingClientRect().width;
+  const hoeheJetzt  = () => svg.getBoundingClientRect().height;
+
+  function setzen(b, h, merken){
+    const bMax = Math.max(360, document.documentElement.clientWidth - 24);
+    const hMax = Math.max(280, Math.min(1600, Math.round(window.innerHeight * .92)));
+    b = Math.round(Math.min(bMax, Math.max(360, b)));
+    h = Math.round(Math.min(hMax, Math.max(280, h)));
+    const st = document.documentElement.style;
+    st.setProperty('--kw', b + 'px');
+    st.setProperty('--kh', h + 'px');
+    if(merken){ try{ localStorage.setItem(SCHL, b + ':' + h); }catch(e){} }
+  }
+  function zurueck(){
+    const st = document.documentElement.style;
+    st.removeProperty('--kw'); st.removeProperty('--kh');
+    try{ localStorage.removeItem(SCHL); }catch(e){}
+  }
+
+  try{
+    const m = (localStorage.getItem(SCHL) || '').split(':');
+    if(m.length === 2 && +m[0] && +m[1]) setzen(+m[0], +m[1], false);
+  }catch(e){}
+
+  griff.addEventListener('pointerdown', e=>{
+    if(e.button !== undefined && e.button !== 0) return;
+    e.preventDefault(); e.stopPropagation();
+    zug = { x:e.clientX, y:e.clientY, b:breiteJetzt(), h:hoeheJetzt() };
+    try{ griff.setPointerCapture(e.pointerId); }catch(err){}
+  });
+  griff.addEventListener('pointermove', e=>{
+    if(!zug) return;
+    /* Die Karte ist zentriert — eine Bewegung nach rechts verbreitert sie auf beiden Seiten. */
+    setzen(zug.b + (e.clientX - zug.x) * 2, zug.h + (e.clientY - zug.y), false);
+  });
+  function ende(){
+    if(!zug) return;
+    zug = null;
+    setzen(breiteJetzt(), hoeheJetzt(), true);
+  }
+  griff.addEventListener('pointerup', ende);
+  griff.addEventListener('pointercancel', ende);
+  griff.addEventListener('dblclick', e=>{ e.preventDefault(); zurueck(); });
+  griff.addEventListener('keydown', e=>{
+    const s = e.shiftKey ? 60 : 20;
+    let b = breiteJetzt(), h = hoeheJetzt(), tat = true;
+    if(e.key === 'ArrowRight') b += s;
+    else if(e.key === 'ArrowLeft') b -= s;
+    else if(e.key === 'ArrowDown') h += s;
+    else if(e.key === 'ArrowUp') h -= s;
+    else if(e.key === 'Home' || e.key === 'Escape'){ e.preventDefault(); zurueck(); return; }
+    else tat = false;
+    if(tat){ e.preventDefault(); setzen(b, h, true); }
+  });
+  window.addEventListener('resize', ()=>{
+    if(!document.documentElement.style.getPropertyValue('--kw')) return;
+    setzen(breiteJetzt(), hoeheJetzt(), false);
+  });
+})();
 
 // ---------- Start ----------
 renderMap();
