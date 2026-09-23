@@ -2336,6 +2336,11 @@ var BETONUNG = [
   var fFrage = document.getElementById('bFrage');
   var fModus = document.getElementById('bModus');
   var aufg = null, offen = true, richtig = 0, gemacht = 0;
+  /* Beim Laden wird nichts von selbst gesprochen. Firefox verweigert die
+     Wiedergabe vor dem ersten Klick ohnehin und schreibt eine Warnung in die
+     Konsole; und eine Kachel, die ungefragt zu reden anfängt, überrascht im
+     Schulzimmer mehr, als sie nützt (Sams Ansage 23.09.2026).            */
+  var schonGetippt = false;
   var modus = hol('en-betonung-modus', 'hoeren');   /* hoeren | lesen */
 
   function satzNr(s){ return BETONUNG.indexOf(s) + 1; }
@@ -2415,7 +2420,7 @@ var BETONUNG = [
         b.addEventListener('click', function(){ if(offen) antwortDeutung(x, b); });
         fWahl.appendChild(b);
       });
-      sprich(1);
+      if(schonGetippt) sprich(1);
     }
   }
 
@@ -2493,9 +2498,15 @@ var BETONUNG = [
     if(window.FR_SPRICH) window.FR_SPRICH(teile);
   }
 
-  document.getElementById('bHoeren').addEventListener('click', function(){ sprich(1); });
-  document.getElementById('bLangsam').addEventListener('click', function(){ sprich(0.72); });
-  document.getElementById('bNaechste').addEventListener('click', neu);
+  document.getElementById('bHoeren').addEventListener('click', function(){
+    schonGetippt = true; sprich(1);
+  });
+  document.getElementById('bLangsam').addEventListener('click', function(){
+    schonGetippt = true; sprich(0.72);
+  });
+  document.getElementById('bNaechste').addEventListener('click', function(){
+    schonGetippt = true; neu();
+  });
 
   /* Ohne Aufnahmen und ohne brauchbare Stimme bleibt nur der Lesemodus.
      Geprüft wird erst, wenn die Tonprobe Zeit hatte zu antworten. */
