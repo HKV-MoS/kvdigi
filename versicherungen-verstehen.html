@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Versicherungen verstehen</title>
+<style>
+  :root{
+    --gruen:#315220; --gruen-hell:#86EFAC; --gelb:#FEF9C3; --rot:#EF4444;
+    --grau:#CCCCCC; --blau:#E0F2FE; --text:#1A1A1A; --linie:#D8D8D8;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:"Aptos","Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+    color:var(--text); background:#fff; line-height:1.45;
+  }
+  .rahmen{max-width:960px;margin:0 auto;padding:18px 22px 14px;background:#fff;
+    border-radius:14px;box-shadow:0 2px 18px rgba(0,0,0,.10)}
+  body.eingebettet .rahmen{box-shadow:none;border-radius:0;max-width:none;padding:10px 16px 8px}
+  h1{font-size:27px;line-height:1.15;margin:0 0 4px;color:var(--gruen)}
+  .lead{font-size:15px;margin:0 0 12px;color:#3a3a3a}
+  .arten{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+  .art{border:1px solid var(--linie);border-radius:10px;padding:9px 11px;background:#FAFAF8}
+  .art b{display:block;font-size:14px;margin-bottom:2px}
+  .art span{font-size:12.5px;color:#4a4a4a}
+  .fall{border:1px solid var(--linie);border-radius:12px;padding:14px 16px;background:#fff}
+  .zaehler{font-size:12.5px;color:#6b6b6b;margin-bottom:6px;letter-spacing:.02em}
+  .frage{font-size:17px;margin:0 0 12px}
+  .knoepfe{display:flex;gap:9px;flex-wrap:wrap}
+  button{
+    font:inherit;font-size:14.5px;padding:9px 15px;border-radius:9px;cursor:pointer;
+    border:1.5px solid var(--gruen);background:#fff;color:var(--gruen);transition:.15s;
+  }
+  button:hover:not(:disabled){background:var(--gruen);color:#fff}
+  button:disabled{cursor:default;opacity:1}
+  button.richtig{background:var(--gruen-hell);border-color:var(--gruen);color:var(--text)}
+  button.falsch{background:#FFE2E2;border-color:var(--rot);color:#7a1212}
+  button.grau{opacity:.45}
+  .antwort{margin-top:12px;padding:11px 13px;border-radius:9px;background:var(--gelb);
+    font-size:14.5px;display:none}
+  .antwort.sichtbar{display:block}
+  .antwort b{color:var(--gruen)}
+  .marke{display:inline-block;font-size:12px;padding:2px 8px;border-radius:20px;
+    background:#fff;border:1px solid var(--linie);margin-left:6px;vertical-align:1px}
+  .weiter{margin-top:12px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .balken{flex:1;height:6px;border-radius:6px;background:#EDEDED;overflow:hidden}
+  .balken i{display:block;height:100%;width:0;background:var(--gruen);transition:width .3s}
+  .schluss{display:none;border:1px solid var(--linie);border-radius:12px;padding:16px;background:#FAFAF8}
+  .schluss.sichtbar{display:block}
+  .schluss h2{margin:0 0 6px;font-size:19px;color:var(--gruen)}
+  .merksatz{margin:10px 0 0;padding:10px 12px;background:var(--blau);border-radius:9px;font-size:14.5px}
+  footer{margin-top:10px;font-size:11.5px;color:#7a7a7a;border-top:1px solid var(--linie);padding-top:6px}
+  @media (max-width:640px){.arten{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="rahmen" id="rahmen">
+  <h1>Versicherungen verstehen</h1>
+  <p class="lead">Jede Versicherung schützt etwas anderes. Ordnen Sie jeden Fall der richtigen Art zu – und Sie sehen, welche Versicherung zahlt und ob sie obligatorisch ist.</p>
+
+  <div class="arten">
+    <div class="art"><b>Personenversicherung</b><span>Schützt den Menschen: Gesundheit, Erwerbsausfall, Alter.</span></div>
+    <div class="art"><b>Sachversicherung</b><span>Schützt Dinge, die Ihnen gehören: Möbel, Geräte, Fahrzeug.</span></div>
+    <div class="art"><b>Vermögensversicherung</b><span>Schützt Ihr Geld vor Forderungen anderer und vor Kosten.</span></div>
+  </div>
+
+  <div class="fall" id="fall">
+    <div class="zaehler" id="zaehler">Fall 1 von 8</div>
+    <p class="frage" id="frage">…</p>
+    <div class="knoepfe" id="knoepfe"></div>
+    <div class="antwort" id="antwort"></div>
+    <div class="weiter">
+      <div class="balken"><i id="balken"></i></div>
+      <button id="weiter" style="display:none">Weiter</button>
+    </div>
+  </div>
+
+  <div class="schluss" id="schluss">
+    <h2>Geschafft</h2>
+    <p id="ergebnis" style="margin:0;font-size:15px"></p>
+    <p class="merksatz"><b>Merke:</b> Personenversicherungen schützen den Menschen, Sachversicherungen das Eigentum, Vermögensversicherungen das Geld. Obligatorisch sind vor allem die Sozialversicherungen und die Haftpflicht für Motorfahrzeuge – alles Übrige entscheiden Sie selbst.</p>
+    <div class="weiter"><div class="balken"><i style="width:100%;display:block;height:100%;background:#315220"></i></div>
+      <button id="neu">Noch einmal</button></div>
+  </div>
+
+  <footer>Versicherungen verstehen · Allgemeinbildender Unterricht, HKV Aarau · © S. Mollet, HKV Aarau, 2026.</footer>
+</div>
+
+<script>
+const ARTEN = ["Personenversicherung","Sachversicherung","Vermögensversicherung"];
+const FAELLE = [
+  { t:"Selina stürzt in der Freizeit mit dem Snowboard und muss ins Spital.",
+    a:0, v:"Unfallversicherung", o:"obligatorisch",
+    e:"Wer mindestens acht Stunden pro Woche im selben Betrieb arbeitet, ist über den Arbeitgeber auch gegen Freizeitunfälle versichert. Bei weniger Stunden zahlt die Krankenkasse." },
+  { t:"Dario lässt im Laden das Handy einer Kundin fallen. Es ist kaputt.",
+    a:2, v:"Privathaftpflicht", o:"freiwillig",
+    e:"Wer jemandem einen Schaden zufügt, muss dafür aufkommen. Die Haftpflicht schützt Ihr Vermögen vor dieser Forderung." },
+  { t:"In der ersten eigenen Wohnung platzt ein Schlauch. Das Sofa ist ruiniert.",
+    a:1, v:"Hausratversicherung", o:"freiwillig",
+    e:"Beschädigt wird eine Sache, die Ihnen gehört. Dafür ist die Hausratversicherung da." },
+  { t:"Nach der Lehre findet Selina keine Stelle und hat keinen Lohn mehr.",
+    a:0, v:"Arbeitslosenversicherung", o:"obligatorisch",
+    e:"Die ALV ersetzt einen Teil des Lohnes. Versichert ist der Mensch und sein Erwerbsausfall." },
+  { t:"Einbrecher nehmen Daris Laptop und seine Kopfhörer mit.",
+    a:1, v:"Hausratversicherung", o:"freiwillig",
+    e:"Gestohlen wird Eigentum. Der Hausrat deckt Diebstahl aus der Wohnung." },
+  { t:"Streit mit dem Vermieter um die Kaution. Selina braucht eine Anwältin.",
+    a:2, v:"Rechtsschutzversicherung", o:"freiwillig",
+    e:"Nicht der Streit ist versichert, sondern die Kosten. Sie belasten das Vermögen." },
+  { t:"Dario fährt mit dem Auto in das Auto vor ihm. Der Schaden am fremden Auto ist gross.",
+    a:2, v:"Motorfahrzeug-Haftpflicht", o:"obligatorisch",
+    e:"Auch hier haften Sie für den Schaden anderer. Ohne diese Versicherung gibt es keine Nummernschilder." },
+  { t:"Selina ist krank und muss zum Arzt.",
+    a:0, v:"Krankenversicherung", o:"obligatorisch",
+    e:"Wer in der Schweiz wohnt, muss eine Grundversicherung haben. Sie schützt den Menschen." }
+];
+
+let i = 0, richtig = 0;
+const el = id => document.getElementById(id);
+
+function zeigeFall(){
+  const f = FAELLE[i];
+  el("zaehler").textContent = "Fall " + (i+1) + " von " + FAELLE.length;
+  el("frage").textContent = f.t;
+  el("antwort").className = "antwort";
+  el("weiter").style.display = "none";
+  const k = el("knoepfe"); k.innerHTML = "";
+  ARTEN.forEach((name, idx) => {
+    const b = document.createElement("button");
+    b.textContent = name;
+    b.onclick = () => pruefe(idx, b);
+    k.appendChild(b);
+  });
+  el("balken").style.width = (i / FAELLE.length * 100) + "%";
+  einpassen();
+}
+
+function pruefe(gewaehlt, knopf){
+  const f = FAELLE[i];
+  const knoepfe = el("knoepfe").querySelectorAll("button");
+  knoepfe.forEach((b, idx) => {
+    b.disabled = true;
+    if (idx === f.a) b.classList.add("richtig");
+    else if (idx === gewaehlt) b.classList.add("falsch");
+    else b.classList.add("grau");
+  });
+  if (gewaehlt === f.a) richtig++;
+  el("antwort").innerHTML = "<b>" + f.v + "</b><span class=\"marke\">" + f.o + "</span><br>" + f.e;
+  el("antwort").className = "antwort sichtbar";
+  el("weiter").style.display = "inline-block";
+  el("weiter").textContent = (i === FAELLE.length - 1) ? "Auswertung" : "Weiter";
+  el("balken").style.width = ((i+1) / FAELLE.length * 100) + "%";
+  einpassen();
+}
+
+el("weiter").onclick = () => {
+  i++;
+  if (i < FAELLE.length) { zeigeFall(); }
+  else {
+    el("fall").style.display = "none";
+    el("schluss").className = "schluss sichtbar";
+    el("ergebnis").textContent = richtig + " von " + FAELLE.length + " Fällen richtig zugeordnet.";
+    einpassen();
+  }
+};
+el("neu").onclick = () => {
+  i = 0; richtig = 0;
+  el("schluss").className = "schluss";
+  el("fall").style.display = "";
+  zeigeFall();
+};
+
+// Modus «eingebettet»
+if (window.self !== window.top) document.body.classList.add("eingebettet");
+
+// Automatisch einpassen: Inhalt auf die Rahmenhöhe zoomen
+function einpassen(){
+  const r = el("rahmen");
+  r.style.zoom = "1";
+  const noetig = r.scrollHeight + 8;
+  const da = window.innerHeight;
+  if (noetig > da) {
+    const f = Math.max(0.55, da / noetig);
+    if ("zoom" in r.style) r.style.zoom = f;
+    else { r.style.transform = "scale(" + f + ")"; r.style.transformOrigin = "top left"; }
+  }
+}
+window.addEventListener("resize", einpassen);
+window.addEventListener("load", einpassen);
+zeigeFall();
+</script>
+</body>
+</html>

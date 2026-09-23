@@ -731,6 +731,80 @@ var KLANG = (function(){
 })();
 
 
+/* ==================== Aufnahmen für die Betonung ====================
+   Die Systemstimme kann kein einzelnes Wort betonen — die Web-Speech-
+   Schnittstelle bietet dafür kein Mittel. Die bisherige Lösung zerlegte den
+   Satz in drei Stücke; zwischen den Stücken entsteht eine Pause, und genau
+   die hört man dann statt einer Betonung (Rückmeldung einer Englisch-
+   lehrerin, 23.09.2026). Darum liegen echte Aufnahmen in ton/, eine je Wort:
+   ton/en_stress_<satz>_<wort>.mp3, Satz ab 1, Wort ab 0 gezählt.
+   Fehlt eine Datei, spricht wie bisher die Systemstimme; fehlt der ganze
+   Ordner, ist die Kachel genau so brauchbar wie vorher.                   */
+var AUFNAHME = (function(){
+  var fehlt = {};        /* Pfad -> true, sobald er nachweislich fehlt */
+  var satzDa = {};       /* Satznummer -> true/false */
+  var laeuft = null;
+
+  function pfad(satz, i){ return 'ton/en_stress_' + satz + '_' + i + '.mp3'; }
+
+  function halt(){
+    if(laeuft){ try{ laeuft.pause(); }catch(e){} laeuft = null; }
+  }
+
+  /* Einmal nachsehen, für welche Sätze Aufnahmen da sind. Geprüft wird über
+     eine Tonspur und nicht über fetch: Wer die Datei doppelklickt, scheitert
+     bei fetch an der Herkunftsregel, die Tonspur lädt trotzdem. */
+  function pruefen(liste){
+    liste.forEach(function(paar){
+      var nr = paar[0];
+      if(nr in satzDa) return;
+      var a = new Audio(pfad(nr, paar[1]));
+      a.preload = 'metadata';
+      var fertig = false;
+      function fest(wert){ if(!fertig){ fertig = true; satzDa[nr] = wert; } }
+      a.addEventListener('loadedmetadata', function(){ fest(true); });
+      a.addEventListener('error', function(){ fest(false); });
+      setTimeout(function(){ fest(false); }, 2500);
+      try{ a.load(); }catch(e){ fest(false); }
+    });
+  }
+
+  function spiel(satz, i, tempo, sonst){
+    var p = pfad(satz, i);
+    if(fehlt[p]){ if(sonst) sonst(); return null; }
+    halt();
+    var a = new Audio(p);
+    try{ a.playbackRate = tempo || 1; }catch(e){}
+    laeuft = a;
+    a.addEventListener('error', function(){
+      fehlt[p] = true;
+      if(laeuft === a) laeuft = null;
+      if(sonst) sonst();
+    });
+    a.addEventListener('playing', function(){ satzDa[satz] = true; });
+    a.addEventListener('ended', function(){ if(laeuft === a) laeuft = null; });
+    var pr = a.play();
+    if(pr && pr.catch) pr.catch(function(e){
+      /* Eine ohne Klick verweigerte Wiedergabe sagt nichts über die Datei */
+      if(!(e && e.name === 'NotAllowedError')) fehlt[p] = true;
+      if(sonst) sonst();
+    });
+    return a;
+  }
+
+  return {
+    spiel: spiel,
+    halt: halt,
+    pruefen: pruefen,
+    hatSatz: function(nr){ return satzDa[nr] === true; },
+    vorhanden: function(){
+      for(var k in satzDa){ if(satzDa[k] === true) return true; }
+      return false;
+    }
+  };
+})();
+
+
 /* ==================== Vitrine ====================
    Vier Kapitel, je drei Stufen, dazu ein Kranz für alles in Gold. Gezählt
    wird das, was Ausdauer verlangt, nicht das, was Glück bringt: fehlerfreie
@@ -2154,11 +2228,26 @@ var BETONUNG = [
   var aufg = null, offen = true, richtig = 0, gemacht = 0;
   var modus = hol('en-betonung-modus', 'hoeren');   /* hoeren | lesen */
 
+  function satzNr(s){ return BETONUNG.indexOf(s) + 1; }
+
   function stimmeDa(){
     try{ return !!(window.speechSynthesis && document.getElementById('dStimme')
                    && !document.getElementById('dHoeren').hidden
                    && !document.getElementById('dHoeren').disabled); }
     catch(e){ return false; }
+  }
+
+  /* Gehört werden kann, sobald es eine brauchbare Systemstimme ODER
+     Aufnahmen gibt. In Firefox etwa trägt die Stimmenwahl nicht — dort
+     rettet der Ordner ton/ diesen Modus. */
+  function hoerenMoeglich(){ return stimmeDa() || AUFNAHME.vorhanden(); }
+
+  /* Ohne Systemstimme sind nur die Sätze brauchbar, zu denen Aufnahmen
+     liegen — sonst bliebe es bei ihnen einfach still. */
+  function saetze(){
+    if(stimmeDa()) return BETONUNG;
+    var nur = BETONUNG.filter(function(s){ return AUFNAHME.hatSatz(satzNr(s)); });
+    return nur.length ? nur : BETONUNG;
   }
 
   [['hoeren','▶ Hören und deuten'], ['lesen','👁 Lesen und betonen']].forEach(function(m){
@@ -2178,7 +2267,9 @@ var BETONUNG = [
   fModus.className = 'stufen bmodus';
 
   function neu(){
-    var s = BETONUNG[Math.floor(Math.random() * BETONUNG.length)];
+    AUFNAHME.halt();
+    var welche = (modus === 'hoeren') ? saetze() : BETONUNG;
+    var s = welche[Math.floor(Math.random() * welche.length)];
     var f = s.f[Math.floor(Math.random() * s.f.length)];
     aufg = {s:s, f:f};
     offen = true;
@@ -2218,8 +2309,14 @@ var BETONUNG = [
     }
   }
 
-  /* Drei Stücke, das mittlere hervorgehoben */
+  /* Erst die Aufnahme, und nur wenn sie fehlt die zerlegte Systemstimme */
   function sprich(tempo){
+    if(modus !== 'hoeren' || !aufg) return;
+    AUFNAHME.spiel(satzNr(aufg.s), aufg.f.i, tempo, function(){ sprichStimme(tempo); });
+  }
+
+  /* Drei Stücke, das mittlere hervorgehoben — der Notweg ohne Aufnahmen */
+  function sprichStimme(tempo){
     if(modus !== 'hoeren' || !aufg) return;
     var w = aufg.s.w, i = aufg.f.i;
     var vor  = w.slice(0, i).join(' ');
@@ -2271,10 +2368,13 @@ var BETONUNG = [
       : '✘ Richtig wäre <b>' + aufg.s.w[aufg.f.i].replace(/[.,]$/, '') + '</b> gewesen.';
     buchen(ok);
     if(!ok) b.classList.add('falsch');      /* nach dem Markieren, sonst überschrieben */
-    if(stimmeDa()) setTimeout(function(){ modusHoerprobe(); }, 350);
+    if(hoerenMoeglich()) setTimeout(function(){ modusHoerprobe(); }, 350);
   }
   /* Nach der Leseaufgabe einmal vorsprechen, damit man es auch hört */
   function modusHoerprobe(){
+    AUFNAHME.spiel(satzNr(aufg.s), aufg.f.i, 1, hoerprobeStimme);
+  }
+  function hoerprobeStimme(){
     var w = aufg.s.w, i = aufg.f.i;
     var teile = [];
     if(i > 0) teile.push({t:w.slice(0, i).join(' '), rate:1, pitch:1, vol:0.82});
@@ -2287,16 +2387,20 @@ var BETONUNG = [
   document.getElementById('bLangsam').addEventListener('click', function(){ sprich(0.72); });
   document.getElementById('bNaechste').addEventListener('click', neu);
 
-  /* Ohne brauchbare Stimme ist nur der Lesemodus sinnvoll */
+  /* Ohne Aufnahmen und ohne brauchbare Stimme bleibt nur der Lesemodus.
+     Geprüft wird erst, wenn die Tonprobe Zeit hatte zu antworten. */
+  AUFNAHME.pruefen(BETONUNG.map(function(s, k){ return [k + 1, s.f[0].i]; }));
   setTimeout(function(){
-    if(!stimmeDa() && modus === 'hoeren'){
+    if(!hoerenMoeglich() && modus === 'hoeren'){
       modus = 'lesen';
       Array.prototype.forEach.call(fModus.children, function(x, i){
         x.setAttribute('aria-pressed', String(i === 1));
       });
       neu();
+    } else if(modus === 'hoeren' && !stimmeDa()){
+      neu();                 /* jetzt nur noch Sätze mit Aufnahmen ziehen */
     }
-  }, 1600);
+  }, 2800);
 
   neu(); stand();
 })();
