@@ -1391,7 +1391,16 @@ function vergleiche(ziel, eingabe){
     if(aufnahmenDa){
       nurLesen(false);
       fHinweis.style.display = 'none';
-      if(synth()){ listeBauen(); stimme = aktuelleStimme(); }
+      /* Die Stimmenzeile bleibt weg: Sie beträfe nur noch den Notweg, und mit
+         ihr verschwinden auch die Anleitung zum Stimmen-Nachladen und die
+         Warnung vor den Figurenstimmen — alles gegenstandslos, sobald die
+         Aufnahmen sprechen. Eine Stimme wird trotzdem bestimmt, damit der
+         Notweg bei einer fehlenden Datei nicht stumm bleibt. */
+      var zeile = document.getElementById('dStimmzeile');
+      if(zeile) zeile.style.display = 'none';
+      var hilfe = document.getElementById('dStimmhilfe');
+      if(hilfe) hilfe.style.display = 'none';
+      if(synth()) stimme = aktuelleStimme();
       document.getElementById('dHoeren').disabled = false;
       document.getElementById('dLangsam').disabled = false;
       return;
