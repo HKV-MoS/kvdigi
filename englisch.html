@@ -772,19 +772,38 @@ var AUFNAHME = (function(){
   /* Einzelne Datei prüfen — für Kapitel, die ihre Pfade selber bilden */
   function pruefePfad(p, fertig){
     if(fehlt[p]){ if(fertig) fertig(false); return; }
-    var a = new Audio(p);
-    a.preload = 'metadata';
     var erledigt = false;
-    function fest(wert){
+    function fest(wert, sicher){
       if(erledigt) return;
       erledigt = true;
-      if(!wert) fehlt[p] = true;
+      /* Nur ein belegtes Fehlen wird gemerkt. Ein Zeitablauf sagt nichts über
+         die Datei aus — Firefox hat beim Laden schon einmal zu lange gebraucht
+         und die Aufnahmen damit dauerhaft ausgeschlossen (23.09.2026). */
+      if(!wert && sicher) fehlt[p] = true;
       if(fertig) fertig(wert);
     }
-    a.addEventListener('loadedmetadata', function(){ fest(true); });
-    a.addEventListener('error', function(){ fest(false); });
-    setTimeout(function(){ fest(false); }, 2500);
-    try{ a.load(); }catch(e){ fest(false); }
+    /* Über das Netz ist eine Kopfanfrage das Verlässlichste: eine Antwort,
+       kein Warten auf Tonkopfdaten. Bei einer per Doppelklick geöffneten
+       Datei scheitert sie an der Herkunftsregel — dann die Tonspur. */
+    function ueberTon(){
+      var a = new Audio(p);
+      a.preload = 'metadata';
+      a.addEventListener('loadedmetadata', function(){ fest(true, true); });
+      a.addEventListener('canplay', function(){ fest(true, true); });
+      a.addEventListener('error', function(){ fest(false, true); });
+      setTimeout(function(){ fest(false, false); }, 3000);
+      try{ a.load(); }catch(e){ fest(false, true); }
+    }
+    if(/^https?:$/i.test(location.protocol) && window.fetch){
+      try{
+        fetch(p, {method:'HEAD'}).then(function(antwort){
+          if(antwort && antwort.ok) fest(true, true); else fest(false, true);
+        })['catch'](function(){ ueberTon(); });
+        setTimeout(function(){ if(!erledigt) ueberTon(); }, 2500);
+        return;
+      }catch(e){}
+    }
+    ueberTon();
   }
 
   function spiel(satz, i, tempo, sonst){
@@ -802,7 +821,10 @@ var AUFNAHME = (function(){
       if(laeuft === a) laeuft = null;
       if(sonst) sonst();
     });
-    a.addEventListener('playing', function(){ if(satz) satzDa[satz] = true; });
+    a.addEventListener('playing', function(){
+      if(satz) satzDa[satz] = true;
+      if(typeof window.AUFNAHME_LAEUFT === 'function') window.AUFNAHME_LAEUFT();
+    });
     a.addEventListener('ended', function(){ if(laeuft === a) laeuft = null; });
     var pr = a.play();
     if(pr && pr.catch) pr.catch(function(e){
@@ -1405,6 +1427,10 @@ function vergleiche(ziel, eingabe){
       document.getElementById('dLangsam').disabled = false;
       return;
     }
+    /* Vor der Antwort der Tonprobe wird nichts aufgebaut. Sonst erschiene die
+       Stimmenzeile für eine Sekunde und verschwände gleich wieder — genau das
+       Flackern, das Sam am 23.09. gemeldet hat. */
+    if(!aufnahmeGeklaert) return;
     if(istFuchs && !fuchsFrei){
       fHinweis.innerHTML =
         '<b>Firefox kann die Stimmen dieses Geräts nicht zuverlässig ansteuern.</b>'
@@ -1451,8 +1477,8 @@ function vergleiche(ziel, eingabe){
   }
   /* Einmal nachsehen, ob der Ordner ton/ die Diktatsätze enthält */
   AUFNAHME.pruefePfad('ton/en_dikt_A1.mp3', function(da){
-    if(!da) return;
-    aufnahmenDa = true;
+    aufnahmenDa = !!da;
+    aufnahmeGeklaert = true;
     hinweisSetzen();
   });
 
@@ -1621,6 +1647,7 @@ function vergleiche(ziel, eingabe){
      Lesediktats. Die Nummer ist die Stellung im unvermischten Vorrat, nicht die
      in der gemischten Reihe.                                                  */
   var aufnahmenDa = false;
+  var aufnahmeGeklaert = false;   /* Hat die Tonprobe geantwortet? */
 
   function diktatPfad(){
     var vorrat = SAETZE[stufe] || [];
@@ -1631,13 +1658,24 @@ function vergleiche(ziel, eingabe){
   /* rate gilt für die Systemstimme, bandRate für die Aufnahme — eine Aufnahme
      verträgt weniger Dehnung als eine synthetische Stimme, bevor sie leiert. */
   function sprechen(rate, bandRate){
-    var p = aufnahmenDa ? diktatPfad() : null;
+    /* Immer zuerst die Aufnahme versuchen — auch wenn die Tonprobe beim Laden
+       keine Antwort gab. Schlägt sie fehl, übernimmt die Systemstimme. */
+    var p = diktatPfad();
     if(p){
       AUFNAHME.spielPfad(p, bandRate || rate, function(){ vorlesen(satz(), rate); });
       return;
     }
     vorlesen(satz(), rate);
   }
+
+  /* Meldet sich, sobald zum ersten Mal wirklich eine Aufnahme läuft: Dann
+     stimmt die Oberfläche nach, auch wenn die Probe nichts gefunden hat. */
+  window.AUFNAHME_LAEUFT = function(){
+    if(aufnahmenDa) return;
+    aufnahmenDa = true;
+    aufnahmeGeklaert = true;
+    hinweisSetzen();
+  };
 
   /* Das Betonungskapitel braucht denselben Weg zur Stimme — es reicht eine
      Reihe von Stücken herein, die ohne Pause hintereinander gesprochen
