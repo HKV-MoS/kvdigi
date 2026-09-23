@@ -769,8 +769,29 @@ var AUFNAHME = (function(){
     });
   }
 
+  /* Einzelne Datei prüfen — für Kapitel, die ihre Pfade selber bilden */
+  function pruefePfad(p, fertig){
+    if(fehlt[p]){ if(fertig) fertig(false); return; }
+    var a = new Audio(p);
+    a.preload = 'metadata';
+    var erledigt = false;
+    function fest(wert){
+      if(erledigt) return;
+      erledigt = true;
+      if(!wert) fehlt[p] = true;
+      if(fertig) fertig(wert);
+    }
+    a.addEventListener('loadedmetadata', function(){ fest(true); });
+    a.addEventListener('error', function(){ fest(false); });
+    setTimeout(function(){ fest(false); }, 2500);
+    try{ a.load(); }catch(e){ fest(false); }
+  }
+
   function spiel(satz, i, tempo, sonst){
-    var p = pfad(satz, i);
+    return spielPfad(pfad(satz, i), tempo, sonst, satz);
+  }
+
+  function spielPfad(p, tempo, sonst, satz){
     if(fehlt[p]){ if(sonst) sonst(); return null; }
     halt();
     var a = new Audio(p);
@@ -781,7 +802,7 @@ var AUFNAHME = (function(){
       if(laeuft === a) laeuft = null;
       if(sonst) sonst();
     });
-    a.addEventListener('playing', function(){ satzDa[satz] = true; });
+    a.addEventListener('playing', function(){ if(satz) satzDa[satz] = true; });
     a.addEventListener('ended', function(){ if(laeuft === a) laeuft = null; });
     var pr = a.play();
     if(pr && pr.catch) pr.catch(function(e){
@@ -794,8 +815,10 @@ var AUFNAHME = (function(){
 
   return {
     spiel: spiel,
+    spielPfad: spielPfad,
     halt: halt,
     pruefen: pruefen,
+    pruefePfad: pruefePfad,
     hatSatz: function(nr){ return satzDa[nr] === true; },
     vorhanden: function(){
       for(var k in satzDa){ if(satzDa[k] === true) return true; }
@@ -1363,6 +1386,16 @@ function vergleiche(ziel, eingabe){
   }
 
   function hinweisSetzen(){
+    /* Liegen Aufnahmen bereit, sind Browser und Systemstimme gleichgültig.
+       Die Stimmenzeile bleibt dann eingeklappt — sie beträfe nur den Notweg. */
+    if(aufnahmenDa){
+      nurLesen(false);
+      fHinweis.style.display = 'none';
+      if(synth()){ listeBauen(); stimme = aktuelleStimme(); }
+      document.getElementById('dHoeren').disabled = false;
+      document.getElementById('dLangsam').disabled = false;
+      return;
+    }
     if(istFuchs && !fuchsFrei){
       fHinweis.innerHTML =
         '<b>Firefox kann die Stimmen dieses Geräts nicht zuverlässig ansteuern.</b>'
@@ -1407,6 +1440,13 @@ function vergleiche(ziel, eingabe){
     document.getElementById('dHoeren').disabled = stumm;
     document.getElementById('dLangsam').disabled = stumm;
   }
+  /* Einmal nachsehen, ob der Ordner ton/ die Diktatsätze enthält */
+  AUFNAHME.pruefePfad('ton/en_dikt_A1.mp3', function(da){
+    if(!da) return;
+    aufnahmenDa = true;
+    hinweisSetzen();
+  });
+
   if(synth()){
     synth().onvoiceschanged = hinweisSetzen;
     /* Safari füllt die Liste sofort, Chrome braucht einen Moment. */
@@ -1565,7 +1605,30 @@ function vergleiche(ziel, eingabe){
       }
     }catch(e){ los(); }
   }
-  function sprechen(rate){ vorlesen(satz(), rate); }
+  /* ---------- Aufnahmen fürs Diktat ----------
+     Die 30 Sätze liegen als ton/en_dikt_<Stufe><Nummer>.mp3 im Repo, gesprochen
+     von einer einzigen Stimme. Das macht die Übung vom Gerät unabhängig: Firefox
+     und Geräte ohne englische Stimme bekommen damit das echte Diktat statt des
+     Lesediktats. Die Nummer ist die Stellung im unvermischten Vorrat, nicht die
+     in der gemischten Reihe.                                                  */
+  var aufnahmenDa = false;
+
+  function diktatPfad(){
+    var vorrat = SAETZE[stufe] || [];
+    var i = vorrat.indexOf(satz());
+    return (i < 0) ? null : 'ton/en_dikt_' + stufe + (i + 1) + '.mp3';
+  }
+
+  /* rate gilt für die Systemstimme, bandRate für die Aufnahme — eine Aufnahme
+     verträgt weniger Dehnung als eine synthetische Stimme, bevor sie leiert. */
+  function sprechen(rate, bandRate){
+    var p = aufnahmenDa ? diktatPfad() : null;
+    if(p){
+      AUFNAHME.spielPfad(p, bandRate || rate, function(){ vorlesen(satz(), rate); });
+      return;
+    }
+    vorlesen(satz(), rate);
+  }
 
   /* Das Betonungskapitel braucht denselben Weg zur Stimme — es reicht eine
      Reihe von Stücken herein, die ohne Pause hintereinander gesprochen
@@ -1593,8 +1656,8 @@ function vergleiche(ziel, eingabe){
     }catch(e){ los(); }
   };
 
-  document.getElementById('dHoeren').addEventListener('click', function(){ sprechen(1); });
-  document.getElementById('dLangsam').addEventListener('click', function(){ sprechen(0.65); });
+  document.getElementById('dHoeren').addEventListener('click', function(){ sprechen(1, 1); });
+  document.getElementById('dLangsam').addEventListener('click', function(){ sprechen(0.65, 0.72); });
   document.getElementById('dZeigen').addEventListener('click', function(){
     var d = document.getElementById('dSichtbar');
     d.style.display = (d.style.display === 'none') ? 'block' : 'none';
