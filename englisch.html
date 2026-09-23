@@ -187,7 +187,20 @@
   }
   .vinfinitiv{font-size:13px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
               color:var(--petrol)}
-  .vzeit{font-size:12.5px; color:var(--muted); margin-bottom:9px}
+  /* Die gefragte Zeit stand früher klein und grau da und ging neben den fünf
+     dunklen Knöpfen unter (Sams Beobachtung 23.09.2026). Jetzt ein Schild in
+     Gold — und derselbe Ton legt sich als Ring um den passenden Knopf, damit
+     Auge und Auswahl zusammenfinden. */
+  .vzeit{
+    display:inline-block; font-size:14.5px; font-weight:800; letter-spacing:.2px;
+    color:#5A4213; background:#F7E7C6; border:1px solid #E3C88D;
+    padding:5px 14px; border-radius:999px; margin-bottom:11px;
+  }
+  #vZeiten button.gefragt{
+    border-color:#D8AE66;
+    box-shadow:0 0 0 3px rgba(216,174,102,.55);
+  }
+  #vZeiten button.gefragt[aria-pressed="true"]{ background:#2B4E54; }
   .vsatz{font-size:24px; font-weight:700; letter-spacing:-.01em}
   .vsatz .luecke{
     display:inline-block; min-width:120px; border-bottom:2.5px dashed var(--petrol);
@@ -1857,8 +1870,10 @@ function pronomen(v, zeit, i){ return PRON[i] + ' '; }
   var box = document.getElementById('vZeiten');
   var fEin = document.getElementById('vEingabe');
 
+  var knopfVon = {};
   ZEITEN.forEach(function(z){
     var b = el('button', null, z.t);
+    knopfVon[z.k] = b;
     b.type = 'button';
     b.setAttribute('aria-pressed', String(!!an[z.k]));
     b.addEventListener('click', function(){
@@ -1891,6 +1906,10 @@ function pronomen(v, zeit, i){ return PRON[i] + ' '; }
     aufg = {v:v, z:z, i:i, soll:form(v, z.k, i)};
     document.getElementById('vInf').textContent = v.i;
     document.getElementById('vZeit').textContent = z.t;
+    /* Denselben Ton um den Knopf der gefragten Zeit legen */
+    ZEITEN.forEach(function(x){
+      if(knopfVon[x.k]) knopfVon[x.k].classList.toggle('gefragt', x.k === z.k);
+    });
     var s = document.getElementById('vSatz');
     s.innerHTML = '';
     s.appendChild(document.createTextNode(pronomen(v, z.k, i)));
