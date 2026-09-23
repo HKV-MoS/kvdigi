@@ -330,6 +330,49 @@
   }
   .zoomleiste button:hover{background:rgba(21,35,50,.09)}
 
+  /* ---------- Pictures ---------- */
+  .iszene{background:#fff; border:1px solid var(--line); border-radius:12px; overflow:hidden}
+  .iszene svg{display:block; width:100%; height:auto}
+  .iwisch{display:none; font-size:12.4px; color:var(--muted); margin:6px 2px 0}
+  /* Auf dem Handy wären die Punkte zu klein zum Treffen: das Bild bleibt
+     breiter und lässt sich seitlich wischen. */
+  @media (max-width:760px){
+    .iszene{overflow-x:auto; -webkit-overflow-scrolling:touch}
+    .iszene svg{width:860px; max-width:none}
+    .iwisch{display:block}
+  }
+  .ipunkt{cursor:pointer; outline:none}
+  .ipunkt circle.k{fill:#D8AE66; stroke:#fff; stroke-width:4; transition:fill .12s}
+  .ipunkt text{font:800 25px 'Aptos','Segoe UI',system-ui,sans-serif; fill:#3A2A09;
+               text-anchor:middle; pointer-events:none}
+  .ipunkt line{stroke:#fff; stroke-width:6; stroke-linecap:round}
+  .ipunkt line.innen{stroke:#213B42; stroke-width:2.5}
+  .ipunkt circle.fuss{fill:#213B42; stroke:#fff; stroke-width:3}
+  .ipunkt:hover circle.k, .ipunkt:focus-visible circle.k{fill:#EDCB8E}
+  .ipunkt.gefunden circle.k{fill:var(--petrol)}
+  .ipunkt.gefunden text{fill:#fff}
+  .ipunkt.daneben circle.k{fill:#C25B4E}
+  .ipunkt.ziel circle.k{stroke:#213B42; stroke-width:7}
+  .imarke{font:800 27px 'Aptos','Segoe UI',system-ui,sans-serif; fill:#16453A; text-anchor:middle;
+          pointer-events:none; paint-order:stroke; stroke:#fff; stroke-width:7px; stroke-linejoin:round}
+  .ivorrat{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 4px}
+  .ichip{font:inherit; font-size:14px; font-weight:700; color:var(--ink); background:#fff;
+         border:1.5px solid var(--line); border-radius:999px; padding:7px 14px; cursor:pointer;
+         box-shadow:0 1px 4px rgba(20,50,80,.08); transition:box-shadow .13s}
+  .ichip:hover{box-shadow:0 3px 10px rgba(20,50,80,.16)}
+  .ichip.gewaehlt{background:var(--petrol); border-color:var(--petrol); color:#fff}
+  .ichip.zittern{animation:izit .4s}
+  @keyframes izit{0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)}
+                  50%{transform:translateX(4px)} 75%{transform:translateX(-3px)}}
+  .ifertig{margin-top:12px; padding:11px 14px; border-radius:10px; background:#E7F5EC;
+           border:1px solid #BCE0C8; color:#1d7a4a; font-weight:700; font-size:14px; display:none}
+  .ifertig.da{display:block}
+  .iliste{margin-top:12px; display:none; border:1px solid var(--line); border-radius:12px;
+          padding:10px 14px; columns:2 220px; column-gap:24px; font-size:14px; background:#fff}
+  .iliste.da{display:block}
+  .iliste div{padding:3px 0; break-inside:avoid}
+  .iliste b{color:var(--petrol)}
+
   /* ---------- Vitrine ---------- */
   .tabs button .punkt{
     display:inline-block; width:7px; height:7px; border-radius:50%;
@@ -402,7 +445,7 @@
       stroke="#C8102E" stroke-width="4"/><path d="M30 0v30M0 15h60" stroke="#fff"
       stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E"
       stroke-width="6"/></g></svg></span></span></h1>
-  <div class="sub">Vier Übungen zum selbständigen Trainieren · kein Vokabelpauken, sondern Hören, Formen, Satzbau und Schreiben · fünfzehn Pokale zu holen</div>
+  <div class="sub">Sechs Übungen zum selbständigen Trainieren · Hören, Formen, Satzbau, Schreiben, Betonung und Wörter im Bild · achtzehn Pokale zu holen</div>
 </header>
 
 <nav class="tabs" role="tablist" aria-label="Übungen">
@@ -412,7 +455,8 @@
     <button role="tab" aria-selected="false" data-k="satzbau"><span class="nr">3</span>Word order</button>
     <button role="tab" aria-selected="false" data-k="mail"><span class="nr">4</span>The e-mail</button>
     <button role="tab" aria-selected="false" data-k="betonung"><span class="nr">5</span>Stress</button>
-    <button role="tab" aria-selected="false" data-k="vitrine"><span class="nr">6</span>Vitrine</button>
+    <button role="tab" aria-selected="false" data-k="bilder"><span class="nr">6</span>Pictures</button>
+    <button role="tab" aria-selected="false" data-k="vitrine"><span class="nr">7</span>Vitrine</button>
   </div>
 </nav>
 
@@ -588,6 +632,12 @@
     <i>·</i> <span>indirekte Frage ohne Inversion</span>.
     Darum <b>I often go</b>, <b>Where does he work?</b> – aber <b>I don't know where he works</b>.</p>
 
+    <div class="stufen" id="pStufen">
+      <button type="button" data-s="A" aria-pressed="true">Stufe A · Grundstellung</button>
+      <button type="button" data-s="B" aria-pressed="false">Stufe B · Frage und Verneinung</button>
+      <button type="button" data-s="C" aria-pressed="false">Stufe C · zwei Objekte, Nebensatz</button>
+    </div>
+
     <div class="pdeutsch" id="pDeutsch"></div>
     <div class="pziel" id="pZiel"></div>
     <div class="pvorrat" id="pVorrat"></div>
@@ -655,11 +705,46 @@
   </div>
 </section>
 
-<!-- ============================ 6 VITRINE ============================ -->
+<!-- =========================== 6 PICTURES =========================== -->
+<section class="kap" id="k-bilder" role="tabpanel">
+  <div class="card">
+    <h2>6. Pictures – die Dinge beim Namen nennen</h2>
+    <p class="lead">Drei Arbeitsorte, je fünfzehn Gegenstände. Tippen Sie ein Wort an und dann
+    den Punkt, an den es gehört – oder zuerst den Punkt und dann das Wort.</p>
+
+    <div class="stufen" id="iSzenen">
+      <button type="button" data-z="buero" aria-pressed="true">KV · At the office</button>
+      <button type="button" data-z="laden" aria-pressed="false">Detailhandel · In the shop</button>
+      <button type="button" data-z="apotheke" aria-pressed="false">Pharma · At the pharmacy</button>
+    </div>
+
+    <div class="iszene">
+      <svg id="iBild" viewBox="0 0 1536 1024" role="img" aria-label="Bild mit nummerierten Punkten">
+        <image id="iHinter" x="0" y="0" width="1536" height="1024" href=""/>
+        <g id="iPunkte"></g>
+        <g id="iMarken"></g>
+      </svg>
+    </div>
+    <p class="iwisch">↔ Das Bild lässt sich seitlich wischen.</p>
+
+    <div class="ivorrat" id="iVorrat"></div>
+    <p class="stand" id="iStand" style="margin-top:6px"></p>
+    <div class="ifertig" id="iFertig">Alle fünfzehn Wörter sitzen. Well done!</div>
+    <div class="iliste" id="iListe"></div>
+
+    <div class="reihe" style="margin-top:14px">
+      <button class="knopf" type="button" id="iNeu">↻ Neue Runde</button>
+      <button class="knopf zweit" type="button" id="iLoesung">Auflösen</button>
+      <button class="knopf zweit" type="button" id="iWoerter">Wortliste Englisch – Deutsch</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ 7 VITRINE ============================ -->
 <section class="kap" id="k-vitrine" role="tabpanel">
   <div class="card">
-    <h2>6. Vitrine – was Sie schon geholt haben</h2>
-    <p class="lead">Für jedes der fünf Kapitel gibt es drei Pokale: Bronze, Silber, Gold. Sie kommen nicht
+    <h2>7. Vitrine – was Sie schon geholt haben</h2>
+    <p class="lead">Für jedes der sechs Kapitel gibt es drei Pokale: Bronze, Silber, Gold. Sie kommen nicht
     vom Glück, sondern vom Dranbleiben – und sie bleiben auf diesem Gerät gespeichert.</p>
 
     <div class="vgrid" id="vGrid"></div>
@@ -680,6 +765,8 @@
   Dictation selbst, und die Wahl bleibt für das nächste Mal gespeichert. Bei lokalen Stimmen
   bleibt der Satz auf dem Gerät. Stimmen mit dem Vermerk <b>(online)</b> werden auf einem
   Server erzeugt – dorthin geht der Satz dann auch; das Werkzeug weist darauf hin.</p>
+  <p>Die drei Bilder im Kapitel <b>Pictures</b> sind mit einer Bild-KI erzeugt. Es sind keine
+  echten Räume, und auf Packungen und Schildern steht absichtlich nichts.</p>
   <p>Geprüft ist das Vorlesen in <b>Chrome, Edge und Safari</b>. <b>Firefox</b> gibt die
   Stimmenwahl nicht sauber ans System weiter und spricht Englisch mit deutscher
   Stimme; dort läuft die Dictation darum als Lesediktat. Ohne installierte englische
@@ -864,7 +951,7 @@ var AUFNAHME = (function(){
 
 
 /* ==================== Vitrine ====================
-   Vier Kapitel, je drei Stufen, dazu ein Kranz für alles in Gold. Gezählt
+   Sechs Kapitel, je drei Stufen, dazu ein Kranz für alles in Gold. Gezählt
    wird das, was Ausdauer verlangt, nicht das, was Glück bringt: fehlerfreie
    Diktate, richtige Verbformen, verschiedene gelegte Sätze, Mails, die
    durchgehen. Der Stand liegt im Gerät — kein Konto, kein Server, und wer
@@ -921,6 +1008,18 @@ var POKAL = (function(){
     + '<path d="M23.3 20.2h1.4v4.4h-1.4z"/>'
     + '<path d="M23.7 23.6h4v1.3h-4z"/>'
     + '<path d="M18.6 32.5h10.8v1.6H18.6zM18.6 35.4h10.8V37H18.6z" fill="#fff" opacity=".35"/>',
+    /* Telefonkabine: gewölbtes Dach, Schriftband, Scheiben, Sockel */
+    zelle:
+      '<path d="M13.5 10.5c0-3.3 4.7-6 10.5-6s10.5 2.7 10.5 6z"/>'
+    + '<rect x="13" y="10" width="22" height="30.5" rx="1"/>'
+    + '<rect x="16" y="12.3" width="16" height="3.4" rx=".7" fill="#fff" opacity=".7"/>'
+    + '<rect x="17" y="18.5" width="6" height="4.2" rx=".6" fill="#fff" opacity=".75"/>'
+    + '<rect x="25" y="18.5" width="6" height="4.2" rx=".6" fill="#fff" opacity=".75"/>'
+    + '<rect x="17" y="24.2" width="6" height="4.2" rx=".6" fill="#fff" opacity=".6"/>'
+    + '<rect x="25" y="24.2" width="6" height="4.2" rx=".6" fill="#fff" opacity=".6"/>'
+    + '<rect x="17" y="29.9" width="6" height="4.2" rx=".6" fill="#fff" opacity=".45"/>'
+    + '<rect x="25" y="29.9" width="6" height="4.2" rx=".6" fill="#fff" opacity=".45"/>'
+    + '<rect x="11" y="40.5" width="26" height="3.6" rx="1"/>',
     /* Krone: Zackenband mit Kugeln und Reif */
     kranz:
       '<path d="M9 16.5 15.5 25 24 11.5 32.5 25 39 16.5v17.5H9z"/>'
@@ -936,10 +1035,11 @@ var POKAL = (function(){
     {k:'verben',  t:'Verbs',      b:'helm',    was:'richtige Verbformen',        stufen:[20, 50, 100]},
     {k:'satzbau', t:'Word order', b:'eber',    was:'verschiedene Sätze gelegt',  stufen:[6, 12, 18]},
     {k:'mail',    t:'The e-mail', b:'amphore', was:'Mails, die durchgehen',      stufen:[1, 3, 6]},
-    {k:'betonung', t:'Stress',    b:'turm',    was:'Betonungen getroffen',       stufen:[5, 15, 30]}
+    {k:'betonung', t:'Stress',    b:'turm',    was:'Betonungen getroffen',       stufen:[5, 15, 30]},
+    {k:'bilder',   t:'Pictures',  b:'zelle',   was:'Wörter im Bild gefunden',    stufen:[15, 30, 45]}
   ];
 
-  var stand = { diktat:0, verben:0, mail:0, betonung:0, satzbau:[] };
+  var stand = { diktat:0, verben:0, mail:0, betonung:0, satzbau:[], bilder:[] };
   try{
     var roh = JSON.parse(hol('en-pokale', '') || '{}');
     if(roh && typeof roh === 'object'){
@@ -947,11 +1047,12 @@ var POKAL = (function(){
         if(typeof roh[k] === 'number' && roh[k] >= 0) stand[k] = Math.floor(roh[k]);
       });
       if(Object.prototype.toString.call(roh.satzbau) === '[object Array]') stand.satzbau = roh.satzbau;
+      if(Object.prototype.toString.call(roh.bilder) === '[object Array]') stand.bilder = roh.bilder;
     }
   }catch(e){}
 
   function sichern(){ try{ leg('en-pokale', JSON.stringify(stand)); }catch(e){} }
-  function zahl(k){ return (k === 'satzbau') ? stand.satzbau.length : stand[k]; }
+  function zahl(k){ return (k === 'satzbau' || k === 'bilder') ? stand[k].length : stand[k]; }
   function stufe(e){
     var n = zahl(e.k), s = 0;
     for(var i = 0; i < e.stufen.length; i++) if(n >= e.stufen[i]) s = i + 1;
@@ -1022,11 +1123,11 @@ var POKAL = (function(){
       kranz.className = 'vkranz' + (da ? '' : ' offen');
       kranz.innerHTML = svg(BILD.kranz, FARBE[2])
         + '<div><b>Die Krone</b><span>' + (da
-            ? 'Alle fünf Kapitel in Gold. Well done!'
-            : 'Gibt es, wenn alle fünf Kapitel in Gold stehen.') + '</span></div>';
+            ? 'Alle sechs Kapitel in Gold. Well done!'
+            : 'Gibt es, wenn alle sechs Kapitel in Gold stehen.') + '</span></div>';
     }
     var g = document.getElementById('vGesamt');
-    if(g) g.innerHTML = '<b>' + geholt + '</b> von <b>15</b> Pokalen' + (alleGold() ? ' – dazu der Kranz.' : '');
+    if(g) g.innerHTML = '<b>' + geholt + '</b> von <b>18</b> Pokalen' + (alleGold() ? ' – dazu der Kranz.' : '');
   }
 
   /* ---------- Zählen ---------- */
@@ -1039,7 +1140,7 @@ var POKAL = (function(){
       if(jetzt === 3 && alleGold()){
         setTimeout(function(){
           jubel('kranz', FARBE[2], 'Die Krone',
-                'Alle fünf Kapitel in Gold. Mehr geht nicht.');
+                'Alle sechs Kapitel in Gold. Mehr geht nicht.');
         }, 5200);
       }
     }
@@ -1061,6 +1162,13 @@ var POKAL = (function(){
     stand.satzbau.push(satz);
     nachher(e, vorher);
   }
+  function wortGefunden(schluessel){
+    var e = LISTE.filter(function(x){ return x.k === 'bilder'; })[0];
+    if(stand.bilder.indexOf(schluessel) >= 0){ return; }   /* jedes Wort zählt einmal */
+    var vorher = stufe(e);
+    stand.bilder.push(schluessel);
+    nachher(e, vorher);
+  }
 
   /* ---------- Zurücksetzen: zwei Klicks, kein Systemdialog ---------- */
   (function(){
@@ -1077,14 +1185,14 @@ var POKAL = (function(){
       clearTimeout(zurueck);
       scharf = false;
       b.textContent = 'Alles zurücksetzen';
-      stand = { diktat:0, verben:0, mail:0, betonung:0, satzbau:[] };
+      stand = { diktat:0, verben:0, mail:0, betonung:0, satzbau:[], bilder:[] };
       sichern();
       zeichne();
     });
   })();
 
   zeichne();
-  return { plus:plus, satzGelegt:satzGelegt, zeichne:zeichne };
+  return { plus:plus, satzGelegt:satzGelegt, wortGefunden:wortGefunden, zeichne:zeichne };
 })();
 
 /* Der Auftakt soll beim Öffnen kommen. Die Browser verbieten Ton ohne
@@ -1973,51 +2081,102 @@ function pronomen(v, zeit, i){ return PRON[i] + ' '; }
 
 /* ==================== 3 · ORDRE DES MOTS ==================== */
 var PUZZLE = [
-  {f:'I often go to London.', d:'Ich gehe oft nach London.',
+  {s:'A', f:'I often go to London.', d:'Ich gehe oft nach London.',
    h:'Häufigkeitsangaben stehen <b>vor</b> dem Vollverb – nicht dahinter wie im Deutschen.'},
-  {f:'She has never been to Paris.', d:'Sie war noch nie in Paris.',
+  {s:'A', f:'She has never been to Paris.', d:'Sie war noch nie in Paris.',
    h:'<b>never</b> steht zwischen Hilfsverb und Partizip.'},
-  {f:'Do you speak English?', d:'Sprechen Sie Englisch?',
+  {s:'B', f:'Do you speak English?', d:'Sprechen Sie Englisch?',
    h:'Ohne Hilfsverb keine Frage: <b>do</b> übernimmt den Job, das Vollverb bleibt in der Grundform.'},
-  {f:'Where does he work?', d:'Wo arbeitet er?',
+  {s:'B', f:'Where does he work?', d:'Wo arbeitet er?',
    h:'Das <b>s</b> der dritten Person sitzt in <b>does</b> – <i>works</i> wäre doppelt gemoppelt.'},
-  {f:"I don't know where he works.", d:'Ich weiss nicht, wo er arbeitet.',
+  {s:'C', f:"I don't know where he works.", d:'Ich weiss nicht, wo er arbeitet.',
    h:'In der indirekten Frage gilt wieder die normale Satzstellung: <b>where he works</b>, nicht <i>where does he work</i>.'},
-  {f:'Could you tell me when the train leaves?', d:'Können Sie mir sagen, wann der Zug abfährt?',
+  {s:'C', f:'Could you tell me when the train leaves?', d:'Können Sie mir sagen, wann der Zug abfährt?',
    h:'Auch hier: nach <b>when</b> kein Hilfsverb, sondern Subjekt und Verb wie im Aussagesatz.'},
-  {f:'He gave me the file yesterday.', d:'Er hat mir gestern die Akte gegeben.',
+  {s:'C', f:'He gave me the file yesterday.', d:'Er hat mir gestern die Akte gegeben.',
    h:'Ohne <i>to</i> steht die Person zuerst: <b>gave me the file</b>.'},
-  {f:'He gave it to me.', d:'Er hat es mir gegeben.',
+  {s:'C', f:'He gave it to me.', d:'Er hat es mir gegeben.',
    h:'Steht statt der Sache ein Pronomen, dreht es: <b>it to me</b>.'},
-  {f:'We have been waiting for two hours.', d:'Wir warten seit zwei Stunden.',
+  {s:'B', f:'We have been waiting for two hours.', d:'Wir warten seit zwei Stunden.',
    h:'Was jetzt noch läuft und in der Vergangenheit begann: <b>have been waiting</b>. Deutsch steht hier Präsens.'},
-  {f:'There is a meeting on Monday morning.', d:'Am Montagmorgen ist eine Sitzung.',
+  {s:'A', f:'There is a meeting on Monday morning.', d:'Am Montagmorgen ist eine Sitzung.',
    h:'<b>There is</b> steht am Anfang, die Zeitangabe am Schluss.'},
-  {f:'I will call you tomorrow morning.', d:'Ich rufe Sie morgen früh an.',
+  {s:'A', f:'I will call you tomorrow morning.', d:'Ich rufe Sie morgen früh an.',
    h:'Zeitangaben stehen hinten, nicht zwischen Verb und Objekt.'},
-  {f:'She speaks English very well.', d:'Sie spricht sehr gut Englisch.',
+  {s:'A', f:'She speaks English very well.', d:'Sie spricht sehr gut Englisch.',
    h:'Zwischen Verb und Objekt darf nichts stehen: erst <b>English</b>, dann <b>very well</b>.'},
-  {f:'Please send me the invoice by Friday.', d:'Bitte senden Sie mir die Rechnung bis Freitag.',
+  {s:'C', f:'Please send me the invoice by Friday.', d:'Bitte senden Sie mir die Rechnung bis Freitag.',
    h:'Reihenfolge: Person, Sache, Frist.'},
-  {f:'I have already sent the e-mail.', d:'Ich habe die Mail schon gesendet.',
+  {s:'A', f:'I have already sent the e-mail.', d:'Ich habe die Mail schon gesendet.',
    h:'<b>already</b> steht zwischen <i>have</i> und Partizip.'},
-  {f:'How long have you been working here?', d:'Wie lange arbeiten Sie schon hier?',
+  {s:'B', f:'How long have you been working here?', d:'Wie lange arbeiten Sie schon hier?',
    h:'Nach dem Fragewort kommt das Hilfsverb, dann das Subjekt: <b>have you been working</b>.'},
-  {f:'We are looking forward to hearing from you.', d:'Wir freuen uns, von Ihnen zu hören.',
+  {s:'C', f:'We are looking forward to hearing from you.', d:'Wir freuen uns, von Ihnen zu hören.',
    h:'Nach <b>to</b> in <i>look forward to</i> steht die ing-Form, nicht der Infinitiv.'},
-  {f:"I didn't receive your message.", d:'Ich habe Ihre Nachricht nicht erhalten.',
+  {s:'B', f:"I didn't receive your message.", d:'Ich habe Ihre Nachricht nicht erhalten.',
    h:'Die Vergangenheit steckt in <b>didn\'t</b>; danach folgt die Grundform.'},
-  {f:'The goods were delivered last week.', d:'Die Ware wurde letzte Woche geliefert.',
-   h:'Passiv: Form von <b>be</b> plus Partizip, hier <b>were delivered</b>.'}
+  {s:'B', f:'The goods were delivered last week.', d:'Die Ware wurde letzte Woche geliefert.',
+   h:'Passiv: Form von <b>be</b> plus Partizip, hier <b>were delivered</b>.'},
+  {s:'A', f:'He always answers the phone politely.', d:'Er nimmt das Telefon immer höflich ab.',
+   h:'<b>always</b> steht vor dem Vollverb; die Art und Weise kommt nach dem Objekt: erst <b>the phone</b>, dann <b>politely</b>.'},
+  {s:'A', f:'The shop opens at nine on Saturdays.', d:'Der Laden öffnet samstags um neun.',
+   h:'Bei zwei Zeitangaben kommt die kleinere zuerst: <b>at nine on Saturdays</b>.'},
+  {s:'A', f:'We never work on Sundays.', d:'Wir arbeiten sonntags nie.',
+   h:'<b>never</b> steht vor dem Vollverb – im Deutschen rutscht <i>nie</i> nach hinten.'},
+  {s:'A', f:'She reads her e-mails every morning.', d:'Sie liest jeden Morgen ihre Mails.',
+   h:'Zeitangaben wie <b>every morning</b> stehen am Satzende, nicht zwischen Verb und Objekt.'},
+  {s:'B', f:'Did you send the offer yesterday?', d:'Haben Sie das Angebot gestern geschickt?',
+   h:'Die Vergangenheit steckt in <b>did</b>; danach steht das Verb in der Grundform: <b>send</b>, nicht <i>sent</i>.'},
+  {s:'B', f:"We don't accept credit cards.", d:'Wir nehmen keine Kreditkarten.',
+   h:'Verneint wird mit <b>don\'t</b> vor dem Vollverb – nicht <i>we accept not</i>.'},
+  {s:'B', f:'Has the parcel arrived yet?', d:'Ist das Paket schon angekommen?',
+   h:'<b>Has</b> steht vorne, <b>yet</b> in der Frage ganz am Schluss.'},
+  {s:'B', f:"Why didn't you call the customer?", d:'Warum haben Sie den Kunden nicht angerufen?',
+   h:'Fragewort, dann <b>didn\'t</b>, dann das Subjekt – und das Verb in der Grundform.'},
+  {s:'C', f:'Can you show me how the till works?', d:'Können Sie mir zeigen, wie die Kasse funktioniert?',
+   h:'Nach <b>how</b> gilt die Stellung des Aussagesatzes: <b>the till works</b>, nicht <i>does the till work</i>.'},
+  {s:'C', f:'She sent the customer a new invoice.', d:'Sie hat dem Kunden eine neue Rechnung geschickt.',
+   h:'Ohne <i>to</i> kommt die Person zuerst, dann die Sache: <b>the customer a new invoice</b>.'},
+  {s:'C', f:'I would like to know if the goods are in stock.', d:'Ich möchte wissen, ob die Ware an Lager ist.',
+   h:'Indirekte Ja-Nein-Frage mit <b>if</b> – danach Subjekt vor Verb: <b>the goods are</b>.'},
+  {s:'C', f:'Please let me know when you have time.', d:'Bitte lassen Sie mich wissen, wann Sie Zeit haben.',
+   h:'Auch nach <b>when</b> keine Umstellung: <b>you have</b>, nicht <i>have you</i>.'}
 ];
 
 (function(){
-  var reihe = mischen(PUZZLE.slice()), pos = 0, richtig = 0, gemacht = 0, gelegt = [], vorrat = [];
+  /* Drei Stufen nach dem, was man können muss: A die Grundstellung mit
+     Häufigkeits- und Zeitangaben, B alles, was ein Hilfsverb umstellt, C zwei
+     Objekte und Nebensätze. Die Wahl wird gemerkt wie beim Diktat.       */
+  var stufe = hol('en-satzbau-stufe', 'A');
+  var fStufen = document.getElementById('pStufen');
+
+  function vorratDerStufe(){
+    var teilmenge = PUZZLE.filter(function(p){ return p.s === stufe; });
+    return teilmenge.length ? teilmenge : PUZZLE;
+  }
+
+  var reihe = mischen(vorratDerStufe()), pos = 0, richtig = 0, gemacht = 0, gelegt = [], vorrat = [];
   var fZiel = document.getElementById('pZiel'), fVor = document.getElementById('pVorrat');
+
+  if(fStufen){
+    Array.prototype.forEach.call(fStufen.querySelectorAll('button'), function(b){
+      b.setAttribute('aria-pressed', String(b.dataset.s === stufe));
+      b.addEventListener('click', function(){
+        stufe = b.dataset.s;
+        leg('en-satzbau-stufe', stufe);
+        Array.prototype.forEach.call(fStufen.querySelectorAll('button'), function(x){
+          x.setAttribute('aria-pressed', String(x === b));
+        });
+        reihe = mischen(vorratDerStufe());
+        pos = 0;
+        neu();
+      });
+    });
+  }
 
   function teile(f){ return f.split(' '); }
   function neu(){
-    if(pos >= reihe.length){ reihe = mischen(PUZZLE.slice()); pos = 0; }
+    if(pos >= reihe.length){ reihe = mischen(vorratDerStufe()); pos = 0; }
     var a = reihe[pos];
     document.getElementById('pDeutsch').innerHTML = 'Deutsch: <b>' + a.d + '</b>';
     gelegt = [];
@@ -2543,6 +2702,223 @@ var BETONUNG = [
   }, 2800);
 
   neu(); stand();
+})();
+
+/* ==================== 6 Pictures ====================
+   Drei Bilder aus einer Bild-KI, je 15 Punkte. x/y liegen im Bild
+   (1536 × 1024). Kleine Dinge bekommen einen Fähnchenpunkt: der Kreis steht
+   daneben (lx/ly), ein Strich führt zum Gegenstand, damit er sichtbar
+   bleibt. m:'o' setzt das gefundene Wort über den Punkt statt darunter.
+   Für die Vitrine zählt jedes Wort pro Bild einmal – «Auflösen» zählt nicht. */
+(function(){
+  var SZENEN = {
+    buero: { bild:'assets/en_bild_buero.webp?v=1', dinge:[
+      {w:'window',         x:120,  y:165, d:'das Fenster'},
+      {w:'notice board',   x:600,  y:215, d:'die Pinnwand'},
+      {w:'shelf',          x:1010, y:365, d:'das Regal'},
+      {w:'printer',        x:1380, y:300, d:'der Drucker'},
+      {w:'filing cabinet', x:1370, y:540, d:'der Aktenschrank'},
+      {w:'plant',          x:95,   y:480, d:'die Pflanze'},
+      {w:'telephone',      x:465,  y:455, d:'das Telefon'},
+      {w:'stapler',        x:340,  y:535, d:'der Bostitch (Hefter)'},
+      {w:'screen',         x:780,  y:390, d:'der Bildschirm'},
+      {w:'keyboard',       x:760,  y:540, d:'die Tastatur'},
+      {w:'mug',            x:1022, y:482, d:'die Tasse'},
+      {w:'invoice',        x:530,  y:555, d:'die Rechnung'},
+      {w:'desk',           x:1110, y:580, d:'der Schreibtisch'},
+      {w:'chair',          x:770,  y:700, d:'der Stuhl'},
+      {w:'waste bin',      x:1405, y:800, d:'der Papierkorb'}
+    ]},
+    laden: { bild:'assets/en_bild_laden.webp?v=1', dinge:[
+      {w:'shop window',      x:312,  y:400, d:'das Schaufenster'},
+      {w:'shelf',            x:690,  y:250, d:'das Regal'},
+      {w:'clothes rail',     x:960,  y:202, d:'die Kleiderstange'},
+      {w:'hanger',           x:1010, y:150, m:'o', d:'der Kleiderbügel'},
+      {w:'fitting room',     x:1245, y:300, d:'die Umkleidekabine'},
+      {w:'mirror',           x:1460, y:250, d:'der Spiegel'},
+      {w:'counter',          x:620,  y:620, d:'der Ladentisch'},
+      {w:'till',             x:565,  y:465, d:'die Kasse'},
+      {w:'card reader',      x:700,  y:462, d:'das Kartenterminal'},
+      {w:'barcode scanner',  x:905,  y:470, d:'der Strichcode-Scanner'},
+      {w:'receipt',          x:795,  y:490, lx:800,  ly:405, m:'o', d:'der Kassenzettel, die Quittung'},
+      {w:'carrier bag',      x:1025, y:440, d:'die Einkaufstasche'},
+      {w:'price tag',        x:1058, y:288, lx:1112, ly:330, d:'das Preisschild'},
+      {w:'shopping basket',  x:590,  y:780, d:'der Einkaufskorb'},
+      {w:'shopping trolley', x:1260, y:720, d:'der Einkaufswagen'}
+    ]},
+    apotheke: { bild:'assets/en_bild_apotheke.webp?v=1', dinge:[
+      {w:'counter',         x:300,  y:610, d:'die Theke'},
+      {w:'shelf',           x:650,  y:205, d:'das Regal'},
+      {w:'prescription',    x:140,  y:820, d:'das Rezept'},
+      {w:'blister pack',    x:325,  y:770, d:'der Blister'},
+      {w:'box of tablets',  x:470,  y:755, d:'die Tablettenschachtel'},
+      {w:'ointment tube',   x:570,  y:812, d:'die Salbentube'},
+      {w:'syrup bottle',    x:720,  y:760, d:'die Sirupflasche'},
+      {w:'measuring cup',   x:805,  y:772, lx:835, ly:695, m:'o', d:'der Messbecher'},
+      {w:'thermometer',     x:720,  y:872, d:'das Fieberthermometer'},
+      {w:'plasters',        x:1070, y:888, d:'die Pflaster'},
+      {w:'face masks',      x:1115, y:720, d:'die Hygienemasken'},
+      {w:'gloves',          x:1340, y:772, m:'o', d:'die Handschuhe'},
+      {w:'pill organiser',  x:1320, y:852, d:'der Tablettendosierer (Wochendose)'},
+      {w:'drawers',         x:1155, y:440, d:'die Schubladen'},
+      {w:'card reader',     x:790,  y:470, lx:870, ly:420, d:'das Kartenterminal'}
+    ]}
+  };
+
+  var NS = 'http://www.w3.org/2000/svg';
+  var gPunkte = document.getElementById('iPunkte');
+  var gMarken = document.getElementById('iMarken');
+  var fVorrat = document.getElementById('iVorrat');
+  if(!gPunkte || !fVorrat) return;
+  var szene = hol('en-bild-szene', 'buero');
+  if(!SZENEN[szene]) szene = 'buero';
+  var DINGE = [], offen = [], gewaehlt = null, gemerkt = null, richtig = 0, versuche = 0;
+
+  function knoten(name, attrs){
+    var k = document.createElementNS(NS, name);
+    for(var a in attrs) k.setAttribute(a, attrs[a]);
+    return k;
+  }
+  function kreisVon(d){ return {x: d.lx != null ? d.lx : d.x, y: d.ly != null ? d.ly : d.y}; }
+
+  function zeichnePunkte(){
+    gPunkte.innerHTML = ''; gMarken.innerHTML = '';
+    DINGE.forEach(function(d, i){
+      var g = knoten('g', {'class':'ipunkt', 'tabindex':'0', 'role':'button',
+                           'aria-label':'Punkt ' + (i + 1)});
+      var k = kreisVon(d);
+      if(d.lx != null){
+        g.appendChild(knoten('line', {x1:k.x, y1:k.y, x2:d.x, y2:d.y}));
+        g.appendChild(knoten('line', {x1:k.x, y1:k.y, x2:d.x, y2:d.y, 'class':'innen'}));
+        g.appendChild(knoten('circle', {cx:d.x, cy:d.y, r:7, 'class':'fuss'}));
+      }
+      g.appendChild(knoten('circle', {cx:k.x, cy:k.y, r:24, 'class':'k'}));
+      var t = knoten('text', {x:k.x, y:k.y + 9});
+      t.textContent = String(i + 1);
+      g.appendChild(t);
+      g.addEventListener('click', function(){ tippePunkt(d); });
+      g.addEventListener('keydown', function(e){
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); tippePunkt(d); }
+      });
+      d.g = g;
+      gPunkte.appendChild(g);
+    });
+  }
+
+  function zeichneVorrat(){
+    fVorrat.innerHTML = '';
+    offen.forEach(function(d){
+      var b = el('button', 'ichip', d.w);
+      b.type = 'button';
+      b.setAttribute('data-w', d.w);
+      b.addEventListener('click', function(){ tippeWort(d); });
+      fVorrat.appendChild(b);
+    });
+  }
+
+  function tippeWort(d){
+    if(gemerkt){ var p = gemerkt; gemerkt = null; pruefe(d, p); return; }
+    gewaehlt = (gewaehlt && gewaehlt.w === d.w) ? null : d;
+    markiere();
+  }
+  function tippePunkt(d){
+    if(d.g.classList.contains('gefunden')) return;
+    if(gewaehlt){ pruefe(gewaehlt, d); return; }
+    gemerkt = (gemerkt === d) ? null : d;
+    markiere();
+  }
+  function markiere(){
+    Array.prototype.forEach.call(fVorrat.children, function(b){
+      b.classList.toggle('gewaehlt', !!gewaehlt && b.getAttribute('data-w') === gewaehlt.w);
+    });
+    DINGE.forEach(function(d){ d.g.classList.toggle('ziel', gemerkt === d); });
+  }
+
+  function pruefe(wort, punkt){
+    versuche++;
+    var g = punkt.g;
+    if(wort.w === punkt.w){
+      richtig++;
+      g.classList.add('gefunden');
+      setzeMarke(punkt);
+      offen = offen.filter(function(x){ return x.w !== wort.w; });
+      gewaehlt = null; gemerkt = null;
+      zeichneVorrat();
+      if(richtig === DINGE.length) KLANG.spiel('toll', 0.45); else KLANG.spiel('gut', 0.45);
+      POKAL.wortGefunden(szene + ':' + wort.w);
+    } else {
+      g.classList.add('daneben');
+      setTimeout(function(){ g.classList.remove('daneben'); }, 500);
+      Array.prototype.forEach.call(fVorrat.children, function(b){
+        if(b.getAttribute('data-w') !== wort.w) return;
+        b.classList.add('zittern');
+        setTimeout(function(){ b.classList.remove('zittern'); }, 450);
+      });
+      gemerkt = null;
+    }
+    markiere();
+    stand();
+  }
+
+  function setzeMarke(d){
+    var k = kreisVon(d);
+    var y = k.y + 56;
+    if(d.m === 'o' || y > 1005) y = k.y - 36;
+    var x = Math.min(Math.max(k.x, 110), 1426);
+    var t = knoten('text', {x:x, y:y, 'class':'imarke'});
+    t.textContent = d.w;
+    gMarken.appendChild(t);
+  }
+
+  function stand(){
+    document.getElementById('iStand').innerHTML =
+      '<b>' + richtig + '</b> von <b>' + DINGE.length + '</b> gefunden' +
+      (versuche ? ' · ' + versuche + ' Versuche' : '');
+    document.getElementById('iFertig').classList.toggle('da', richtig === DINGE.length);
+  }
+
+  function zeichneListe(){
+    var l = document.getElementById('iListe');
+    l.innerHTML = '';
+    DINGE.slice().sort(function(a, b){ return a.w < b.w ? -1 : 1; }).forEach(function(d){
+      var z = el('div');
+      z.appendChild(el('b', null, d.w));
+      z.appendChild(document.createTextNode(' – ' + d.d));
+      l.appendChild(z);
+    });
+  }
+
+  function neueRunde(){
+    DINGE = SZENEN[szene].dinge;
+    document.getElementById('iHinter').setAttribute('href', SZENEN[szene].bild);
+    offen = mischen(DINGE.slice());
+    richtig = 0; versuche = 0; gewaehlt = null; gemerkt = null;
+    zeichnePunkte(); zeichneVorrat(); zeichneListe(); stand();
+  }
+
+  var knoepfe = document.querySelectorAll('#iSzenen button');
+  Array.prototype.forEach.call(knoepfe, function(b){
+    b.setAttribute('aria-pressed', String(b.getAttribute('data-z') === szene));
+    b.addEventListener('click', function(){
+      szene = b.getAttribute('data-z'); leg('en-bild-szene', szene);
+      Array.prototype.forEach.call(knoepfe, function(x){
+        x.setAttribute('aria-pressed', String(x === b));
+      });
+      neueRunde();
+    });
+  });
+  document.getElementById('iNeu').addEventListener('click', neueRunde);
+  document.getElementById('iLoesung').addEventListener('click', function(){
+    gMarken.innerHTML = '';
+    DINGE.forEach(function(d){ setzeMarke(d); d.g.classList.add('gefunden'); });
+    offen = []; gewaehlt = null; gemerkt = null;
+    zeichneVorrat();
+  });
+  document.getElementById('iWoerter').addEventListener('click', function(){
+    document.getElementById('iListe').classList.toggle('da');
+  });
+
+  neueRunde();
 })();
 
 /* ==================== Reiter ==================== */
