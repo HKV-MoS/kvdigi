@@ -761,7 +761,9 @@
   <p>Die Sätze und Fälle sind für Lernende an der Handelsschule geschrieben: Alltag, Betrieb,
   Kundenkontakt. Die Verbformen folgen dem Bescherelle; <i>connaît</i> und <i>connait</i> werden
   beide akzeptiert.</p>
-  <p>Das Vorlesen nutzt die <b>Stimmen Ihres Geräts</b>; welche spricht, wählen Sie in der
+  <p>Die <b>Mise en relief</b> spielt Aufnahmen einer KI-Stimme (ElevenLabs) ab, die mit der Seite
+  ausgeliefert werden – nur so lässt sich ein einzelnes Wort wirklich betonen.</p>
+  <p>Das Vorlesen in der Dictée nutzt die <b>Stimmen Ihres Geräts</b>; welche spricht, wählen Sie in der
   Dictée selbst, und die Wahl bleibt für das nächste Mal gespeichert. Bei lokalen Stimmen
   bleibt der Satz auf dem Gerät. Stimmen mit dem Vermerk <b>(online)</b> werden auf einem
   Server erzeugt – dorthin geht der Satz dann auch; das Werkzeug weist darauf hin.</p>
@@ -921,7 +923,7 @@ var AUFNAHME = (function(){
     });
     a.addEventListener('playing', function(){
       if(satz) satzDa[satz] = true;
-      if(typeof window.AUFNAHME_LAEUFT === 'function') window.AUFNAHME_LAEUFT();
+      if(typeof window.AUFNAHME_LAEUFT === 'function') window.AUFNAHME_LAEUFT(p);
     });
     a.addEventListener('ended', function(){ if(laeuft === a) laeuft = null; });
     var pr = a.play();
@@ -1775,7 +1777,10 @@ function vergleiche(ziel, eingabe){
 
   /* Meldet sich, sobald zum ersten Mal wirklich eine Aufnahme läuft: Dann
      stimmt die Oberfläche nach, auch wenn die Probe nichts gefunden hat. */
-  window.AUFNAHME_LAEUFT = function(){
+  window.AUFNAHME_LAEUFT = function(p){
+    /* Nur eine Diktataufnahme zählt – eine Aufnahme der Mise en relief sagt
+       nichts darüber, ob die Diktatsätze im Ordner liegen. */
+    if(!/fr_dikt_/.test(p || '')) return;
     if(aufnahmenDa) return;
     aufnahmenDa = true;
     aufnahmeGeklaert = true;
@@ -2497,10 +2502,29 @@ var RELIEF = [
   var schonGetippt = false;
   var modus = hol('fr-relief-modus', 'bauen');      /* hoeren | bauen */
 
+  /* Aufnahmen (ElevenLabs, 24.09.2026): ton/fr_relief_<satz>_<wort>.mp3 für die
+     Betonung, …_<wort>_r.mp3 für den Auflösungssatz, Satz ab 1, Wort ab 0.
+     Die Systemstimme kann kein einzelnes Wort betonen, sie macht nur eine
+     Pause davor. Nicht aufgenommen sind die Varianten mit betontem je, nous,
+     tu, elle: Diese Pronomen lassen sich im Französischen gar nicht betonen,
+     genau dafür braucht es c'est … qui. Dort spricht, falls vorhanden, weiter
+     die Stimme des Geräts; ohne sie werden sie im Hörmodus nicht gestellt. */
+  var AUFGENOMMEN = ['1_3','1_6','1_7','1_8','2_4','2_6','2_7','3_3','3_8','3_10'];
+  var aufnahmeDa = false;
+  function satzNr(s){ return RELIEF.indexOf(s) + 1; }
+  function hatAufnahme(s, f){ return AUFGENOMMEN.indexOf(satzNr(s) + '_' + f.i) >= 0; }
+  AUFNAHME.pruefePfad('ton/fr_relief_1_3.mp3', function(da){ aufnahmeDa = !!da; });
+
+  /* Spricht das Gerät selbst Französisch? Gefragt wird die Stimmenliste,
+     nicht der Diktatknopf: Der ist auch frei, wenn nur Aufnahmen sprechen.
+     Firefox reicht die Stimmenwahl nicht sauber weiter und spricht dann
+     deutsch – dort zählt die Gerätestimme nicht. */
   function stimmeDa(){
     try{
-      var h = document.getElementById('dHoeren');
-      return !!(window.speechSynthesis && h && !h.hidden && !h.disabled);
+      if(/firefox/i.test(navigator.userAgent || '')) return false;
+      return !!(window.speechSynthesis && speechSynthesis.getVoices().some(function(v){
+        return /^fr/i.test(v.lang || '');
+      }));
     }catch(e){ return false; }
   }
 
@@ -2520,8 +2544,14 @@ var RELIEF = [
   });
 
   function neu(){
+    AUFNAHME.halt();
     var s = RELIEF[Math.floor(Math.random() * RELIEF.length)];
-    var f = s.f[Math.floor(Math.random() * s.f.length)];
+    var moeglich = s.f;
+    /* Hörmodus ohne Gerätestimme: nur, was aufgenommen ist */
+    if(modus === 'hoeren' && !stimmeDa()){
+      moeglich = s.f.filter(function(x){ return hatAufnahme(s, x); });
+    }
+    var f = moeglich[Math.floor(Math.random() * moeglich.length)];
     aufg = {s:s, f:f};
     offen = true;
     fRueck.textContent = ''; fRueck.className = 'prueck';
@@ -2564,7 +2594,15 @@ var RELIEF = [
   }
 
   function sprich(tempo){
-    if(modus !== 'hoeren' || !aufg || !window.FR_SPRICH) return;
+    if(modus !== 'hoeren' || !aufg) return;
+    if(hatAufnahme(aufg.s, aufg.f)){
+      AUFNAHME.spiel(satzNr(aufg.s), aufg.f.i, tempo, function(){ sprichStimme(tempo); });
+      return;
+    }
+    sprichStimme(tempo);
+  }
+  function sprichStimme(tempo){
+    if(!window.FR_SPRICH) return;
     var w = aufg.s.w, i = aufg.f.i, teile = [];
     if(i > 0) teile.push({t:w.slice(0, i).join(' '), rate:1 * tempo, pitch:1, vol:0.82});
     teile.push({t:w[i], rate:0.62 * tempo, pitch:1.35, vol:1});
@@ -2572,8 +2610,12 @@ var RELIEF = [
     window.FR_SPRICH(teile);
   }
   function sprichGanz(text){
-    if(window.FR_SPRICH) window.FR_SPRICH([{t:text, rate:0.95, pitch:1, vol:1}]);
+    var p = 'ton/fr_relief_' + satzNr(aufg.s) + '_' + aufg.f.i + '_r.mp3';
+    AUFNAHME.spielPfad(p, 1, function(){
+      if(window.FR_SPRICH) window.FR_SPRICH([{t:text, rate:0.95, pitch:1, vol:1}]);
+    });
   }
+  function tonDa(){ return stimmeDa() || aufnahmeDa; }
 
   function markiere(){
     Array.prototype.forEach.call(fSatz.children, function(b, i){
@@ -2604,7 +2646,7 @@ var RELIEF = [
                      + 'Eindeutig wird es erst so:';
     fLoes.innerHTML = '<b>' + aufg.f.r + '</b>';
     buchen(ok);
-    if(stimmeDa()) setTimeout(function(){ sprichGanz(aufg.f.r); }, 500);
+    if(tonDa()) setTimeout(function(){ sprichGanz(aufg.f.r); }, 500);
   }
   function antwortSatz(x, b){
     Array.prototype.forEach.call(fWahl.children, function(k){ k.disabled = true; });
@@ -2618,7 +2660,7 @@ var RELIEF = [
       ? '✔ Genau – hervorgehoben wird <b>' + aufg.s.w[aufg.f.i].replace(/[.,]$/, '') + '</b>.'
       : '✘ Richtig wäre: <b>' + aufg.f.r + '</b>';
     buchen(ok);
-    if(ok && stimmeDa()) setTimeout(function(){ sprichGanz(aufg.f.r); }, 350);
+    if(ok && tonDa()) setTimeout(function(){ sprichGanz(aufg.f.r); }, 350);
   }
 
   document.getElementById('bHoeren').addEventListener('click', function(){
@@ -2631,16 +2673,19 @@ var RELIEF = [
     schonGetippt = true; neu();
   });
 
-  /* Ohne Stimme bleibt nur das Bauen — dort geht es auch ohne Ton */
+  /* Ohne Stimme und ohne Aufnahmen bleibt nur das Bauen — dort geht es auch
+     ohne Ton. Gewartet wird, bis die Tonprobe geantwortet hat. */
   setTimeout(function(){
-    if(!stimmeDa() && modus === 'hoeren'){
+    if(!tonDa() && modus === 'hoeren'){
       modus = 'bauen';
       Array.prototype.forEach.call(fModus.children, function(x, i){
         x.setAttribute('aria-pressed', String(i === 1));
       });
       neu();
+    } else if(modus === 'hoeren' && !stimmeDa()){
+      neu();                 /* jetzt nur noch Varianten mit Aufnahme ziehen */
     }
-  }, 1600);
+  }, 2800);
 
   neu(); stand();
 })();
