@@ -405,6 +405,26 @@
   .vkranz span{font-size:12.8px; color:var(--muted)}
   .vfuss{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-top:16px}
   .vfuss .stand{margin:0}
+  /* ---------- Vitrine fotografieren ---------- */
+  .vfelder{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px}
+  .vfelder label{display:flex; flex-direction:column; gap:4px; font-size:12.4px; font-weight:700;
+                 color:var(--muted); flex:1 1 200px}
+  .vfelder input{font:inherit; font-size:14.5px; font-weight:500; color:var(--ink); padding:8px 10px;
+                 border:1.5px solid var(--line); border-radius:9px; background:#fff}
+  .vfelder input:focus{outline:none; border-color:var(--petrol); box-shadow:0 0 0 3px rgba(60,110,115,.14)}
+  .vfhinweis{font-size:12.4px; color:var(--muted); margin-top:10px}
+  dialog.vdialog{border:0; border-radius:14px; padding:0; width:min(760px, 94vw);
+                 box-shadow:0 18px 50px rgba(20,50,80,.35)}
+  dialog.vdialog::backdrop{background:rgba(20,40,50,.55)}
+  .vdkopf{background:linear-gradient(135deg,#213B42 0%,#3C6E73 100%); color:#fff; padding:12px 16px;
+          display:flex; justify-content:space-between; align-items:center; gap:12px}
+  .vdkopf b{font-size:15px}
+  .vdkopf button{font:inherit; font-size:13px; font-weight:700; cursor:pointer; border-radius:8px;
+                 padding:6px 12px; background:rgba(255,255,255,.15); border:1.5px solid rgba(255,255,255,.4); color:#fff}
+  .vdinhalt{padding:14px 16px 16px; background:#fff}
+  .vdinhalt img{display:block; width:100%; height:auto; border:1px solid var(--line); border-radius:8px}
+  .vdinhalt a.knopf{display:inline-block; text-decoration:none; margin-top:12px}
+  .vdinhalt p{font-size:12.4px; color:var(--muted); margin-top:10px}
   .vnull{font-size:12.4px; background:none; border:none; color:var(--muted);
          text-decoration:underline; text-underline-offset:2px; cursor:pointer; padding:4px 2px; font-family:inherit}
   .vnull:hover{color:var(--rot)}
@@ -755,6 +775,30 @@
       <button class="vnull" type="button" id="vNull">Alles zurücksetzen</button>
     </div>
   </div>
+
+  <div class="card">
+    <h2>Vitrine fotografieren</h2>
+    <p class="lead">Die Pokale leben nur in diesem Browser. Werden die Browserdaten gelöscht oder
+    wechseln Sie das Gerät, sind sie weg. Ein Bild sichert den Stand – für Sie selbst oder als
+    Nachweis für Ihre Lehrperson.</p>
+    <div class="vfelder">
+      <label>Name <input id="vName" type="text" maxlength="40" autocomplete="name" placeholder="freiwillig"></label>
+      <label>Klasse <input id="vKlasse" type="text" maxlength="20" placeholder="freiwillig"></label>
+    </div>
+    <button class="knopf" type="button" id="vFoto">📸 Vitrine fotografieren</button>
+    <p class="vfhinweis">Das Bild entsteht auf diesem Gerät, es wird nichts verschickt. Name und Klasse
+    bleiben nur hier gespeichert. Leer gelassen, stehen auf dem Bild Linien zum Ausfüllen von Hand.
+    Für eine Abgabe laden Sie das Bild dort hoch, wo Ihre Lehrperson es wünscht.</p>
+  </div>
+
+  <dialog class="vdialog" id="vDialog" aria-label="Ihre Vitrine als Bild">
+    <div class="vdkopf"><b>Ihre Vitrine</b><button type="button" id="vZu">Schliessen</button></div>
+    <div class="vdinhalt">
+      <img id="vBild" alt="Ihre Vitrine als Bild">
+      <a class="knopf" id="vLaden" download="vitrine.png">⬇ Bild sichern</a>
+      <p>Auf dem Handy: lange auf das Bild drücken und «Bild sichern» oder «In Fotos speichern» wählen.</p>
+    </div>
+  </dialog>
 </section>
 
 <footer class="fuss">
@@ -1181,6 +1225,147 @@ var POKAL = (function(){
       stand = { diktat:0, verben:0, mail:0, relief:0, satzbau:[], bilder:[] };
       sichern();
       zeichne();
+    });
+  })();
+
+  /* ---------- Vitrine fotografieren ----------
+     Die Pokale liegen nur im Browser. Ein Bild sichert den Stand – für die BL
+     selbst oder als Nachweis für die Lehrperson (Sams Entscheid 24.09.2026:
+     beides). Gezeichnet wird auf eine Leinwand: Text mit fillText, die Motive
+     über SVG-Datenadressen. Keine Fremddatei, also kein «verschmutzter»
+     Canvas, und nichts verlässt das Gerät. Name und Klasse sind freiwillig;
+     leer gelassen, stehen Linien zum Ausfüllen von Hand da.               */
+  var fName = document.getElementById('vName'), fKlasse = document.getElementById('vKlasse');
+  if(fName){ fName.value = hol('fr-vitrine-name', ''); }
+  if(fKlasse){ fKlasse.value = hol('fr-vitrine-klasse', ''); }
+  if(fName) fName.addEventListener('input', function(){ leg('fr-vitrine-name', fName.value); });
+  if(fKlasse) fKlasse.addEventListener('input', function(){ leg('fr-vitrine-klasse', fKlasse.value); });
+
+  function motivBild(name, farbe){
+    return new Promise(function(fertig, schief){
+      var roh = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="192" height="192" fill="'
+              + farbe + '">' + BILD[name] + '</svg>';
+      var bild = new Image();
+      bild.onload = function(){ fertig(bild); };
+      bild.onerror = schief;
+      bild.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(roh);
+    });
+  }
+  function heute(){
+    var d = new Date();
+    function zwei(n){ return (n < 10 ? '0' : '') + n; }
+    return zwei(d.getDate()) + '.' + zwei(d.getMonth() + 1) + '.' + d.getFullYear();
+  }
+  function kuerze(x, text, breite){
+    if(x.measureText(text).width <= breite) return text;
+    while(text.length > 1 && x.measureText(text + '…').width > breite) text = text.slice(0, -1);
+    return text + '…';
+  }
+
+  function urkunde(){
+    var B = 900, H = 500, S = 2, SCHRIFT = '"Aptos","Segoe UI",system-ui,sans-serif';
+    var c = document.createElement('canvas');
+    c.width = B * S; c.height = H * S;
+    var x = c.getContext('2d');
+    x.scale(S, S);
+    x.fillStyle = '#F4F8FB'; x.fillRect(0, 0, B, H);
+
+    var v = x.createLinearGradient(0, 0, B, 104);
+    v.addColorStop(0, '#213B42'); v.addColorStop(1, '#3C6E73');
+    x.fillStyle = v; x.fillRect(0, 0, B, 104);
+    x.fillStyle = '#D8AE66'; x.font = '800 13px ' + SCHRIFT;
+    x.fillText('HKV AARAU · FRANÇAIS', 40, 40);
+    x.fillStyle = '#fff'; x.font = '800 30px ' + SCHRIFT;
+    x.fillText('Meine Vitrine', 40, 76);
+    x.font = '600 14px ' + SCHRIFT; x.fillStyle = 'rgba(255,255,255,.85)';
+    var stempel = 'Stand ' + heute();
+    x.fillText(stempel, B - 40 - x.measureText(stempel).width, 76);
+
+    var spalten = LISTE.length, sb = (B - 80) / spalten, geholt = 0;
+    var alles = LISTE.map(function(e, i){
+      var st = stufe(e), sx = 40 + i * sb;
+      geholt += st;
+      return motivBild(e.b, st ? FARBE[st - 1] : '#C9D5DD').then(function(bild){
+        x.save();
+        if(!st) x.globalAlpha = 0.45;
+        x.drawImage(bild, sx + sb / 2 - 34, 146, 68, 68);
+        x.restore();
+        x.textAlign = 'center';
+        /* Lange Kapitelnamen («Ordre des mots») lieber etwas kleiner als gekürzt */
+        var gr = 15;
+        x.fillStyle = '#213B42'; x.font = '800 ' + gr + 'px ' + SCHRIFT;
+        while(gr > 11 && x.measureText(e.t).width > sb - 8){ gr -= 0.5; x.font = '800 ' + gr + 'px ' + SCHRIFT; }
+        x.fillText(kuerze(x, e.t, sb - 6), sx + sb / 2, 244);
+        x.fillStyle = st ? '#1F5E46' : '#8195A3'; x.font = '700 13px ' + SCHRIFT;
+        x.fillText(st ? NAME[st - 1] : 'noch offen', sx + sb / 2, 264);
+        x.fillStyle = '#5B6B7A'; x.font = '400 11.5px ' + SCHRIFT;
+        var worte = (zahl(e.k) + ' ' + e.was).split(' '), zeilen = [], jetzt = '';
+        worte.forEach(function(w){
+          var probe = jetzt ? jetzt + ' ' + w : w;
+          if(x.measureText(probe).width > sb - 14 && jetzt){ zeilen.push(jetzt); jetzt = w; }
+          else jetzt = probe;
+        });
+        if(jetzt) zeilen.push(jetzt);
+        zeilen.slice(0, 2).forEach(function(z, k){ x.fillText(z, sx + sb / 2, 283 + k * 15); });
+        x.textAlign = 'left';
+      });
+    });
+
+    return Promise.all(alles).then(function(){
+      var gold = alleGold();
+      return (gold ? motivBild('kranz', FARBE[2]) : Promise.resolve(null)).then(function(krone){
+        x.fillStyle = '#213B42'; x.font = '800 22px ' + SCHRIFT;
+        var satz = geholt + ' von ' + (spalten * 3) + ' Pokalen';
+        x.fillText(satz, 40, 356);
+        if(krone){
+          x.drawImage(krone, 48 + x.measureText(satz).width, 332, 30, 30);
+          x.fillStyle = '#8A6420'; x.font = '700 14px ' + SCHRIFT;
+          x.fillText('Alle sechs Kapitel in Gold – dazu der Lorbeerkranz.', 40, 380);
+        }
+        /* Name und Klasse: gedruckt, wenn eingetragen, sonst Linie zum Ausfüllen */
+        var nm = (fName && fName.value || '').trim(), kl = (fKlasse && fKlasse.value || '').trim();
+        x.fillStyle = '#1A2B3A'; x.font = '700 17px ' + SCHRIFT;
+        if(nm) x.fillText(kuerze(x, nm, 380), 42, 418);
+        if(kl) x.fillText(kuerze(x, kl, 380), 472, 418);
+        x.strokeStyle = '#C9D5DD'; x.lineWidth = 1;
+        x.beginPath(); x.moveTo(40, 426); x.lineTo(430, 426); x.stroke();
+        x.beginPath(); x.moveTo(470, 426); x.lineTo(B - 40, 426); x.stroke();
+        x.fillStyle = '#8195A3'; x.font = '600 12px ' + SCHRIFT;
+        x.fillText('Name', 40, 444);
+        x.fillText('Klasse', 470, 444);
+        x.fillStyle = '#94A3B0'; x.font = '400 11.5px ' + SCHRIFT;
+        x.fillText('abu-tools.ch · Handelsschule KV Aarau', 40, 478);
+        return { url: c.toDataURL('image/png'), name: nm };
+      });
+    });
+  }
+
+  function dateiname(nm){
+    var d = new Date();
+    function zwei(n){ return (n < 10 ? '0' : '') + n; }
+    var teil = (nm || '').toLowerCase()
+      .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue')
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 30);
+    return 'vitrine_franzoesisch' + (teil ? '_' + teil : '') + '_' + d.getFullYear() + '-'
+         + zwei(d.getMonth() + 1) + '-' + zwei(d.getDate()) + '.png';
+  }
+
+  (function(){
+    var knopf = document.getElementById('vFoto'), dlg = document.getElementById('vDialog');
+    if(!knopf || !dlg) return;
+    knopf.addEventListener('click', function(){
+      knopf.disabled = true;
+      urkunde().then(function(erg){
+        document.getElementById('vBild').src = erg.url;
+        var a = document.getElementById('vLaden');
+        a.href = erg.url; a.setAttribute('download', dateiname(erg.name));
+        if(dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
+      })['catch'](function(){})
+        .then(function(){ knopf.disabled = false; });
+    });
+    document.getElementById('vZu').addEventListener('click', function(){
+      if(dlg.close) dlg.close(); else dlg.removeAttribute('open');
     });
   })();
 
