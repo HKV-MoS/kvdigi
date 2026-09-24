@@ -187,7 +187,20 @@
   }
   .vinfinitiv{font-size:13px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
               color:var(--petrol)}
-  .vzeit{font-size:12.5px; color:var(--muted); margin-bottom:9px}
+  /* Die gefragte Zeit stand früher klein und grau da und ging neben den fünf
+     dunklen Knöpfen unter (Sams Beobachtung im Englischen, 23.09.2026). Jetzt
+     ein Schild in Gold — und derselbe Ton legt sich als Ring um den passenden
+     Knopf, damit Auge und Auswahl zusammenfinden. */
+  .vzeit{
+    display:inline-block; font-size:14.5px; font-weight:800; letter-spacing:.2px;
+    color:#5A4213; background:#F7E7C6; border:1px solid #E3C88D;
+    padding:5px 14px; border-radius:999px; margin-bottom:11px;
+  }
+  #vZeiten button.gefragt{
+    border-color:#D8AE66;
+    box-shadow:0 0 0 3px rgba(216,174,102,.55);
+  }
+  #vZeiten button.gefragt[aria-pressed="true"]{ background:#2B4E54; }
   .vsatz{font-size:24px; font-weight:700; letter-spacing:-.01em}
   .vsatz .luecke{
     display:inline-block; min-width:120px; border-bottom:2.5px dashed var(--petrol);
@@ -318,6 +331,49 @@
   }
   .zoomleiste button:hover{background:rgba(21,35,50,.09)}
 
+  /* ---------- Images ---------- */
+  .iszene{background:#fff; border:1px solid var(--line); border-radius:12px; overflow:hidden}
+  .iszene svg{display:block; width:100%; height:auto}
+  .iwisch{display:none; font-size:12.4px; color:var(--muted); margin:6px 2px 0}
+  /* Auf dem Handy wären die Punkte zu klein zum Treffen: das Bild bleibt
+     breiter und lässt sich seitlich wischen. */
+  @media (max-width:760px){
+    .iszene{overflow-x:auto; -webkit-overflow-scrolling:touch}
+    .iszene svg{width:860px; max-width:none}
+    .iwisch{display:block}
+  }
+  .ipunkt{cursor:pointer; outline:none}
+  .ipunkt circle.k{fill:#D8AE66; stroke:#fff; stroke-width:4; transition:fill .12s}
+  .ipunkt text{font:800 25px 'Aptos','Segoe UI',system-ui,sans-serif; fill:#3A2A09;
+               text-anchor:middle; pointer-events:none}
+  .ipunkt line{stroke:#fff; stroke-width:6; stroke-linecap:round}
+  .ipunkt line.innen{stroke:#213B42; stroke-width:2.5}
+  .ipunkt circle.fuss{fill:#213B42; stroke:#fff; stroke-width:3}
+  .ipunkt:hover circle.k, .ipunkt:focus-visible circle.k{fill:#EDCB8E}
+  .ipunkt.gefunden circle.k{fill:var(--petrol)}
+  .ipunkt.gefunden text{fill:#fff}
+  .ipunkt.daneben circle.k{fill:#C25B4E}
+  .ipunkt.ziel circle.k{stroke:#213B42; stroke-width:7}
+  .imarke{font:800 27px 'Aptos','Segoe UI',system-ui,sans-serif; fill:#16453A; text-anchor:middle;
+          pointer-events:none; paint-order:stroke; stroke:#fff; stroke-width:7px; stroke-linejoin:round}
+  .ivorrat{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 4px}
+  .ichip{font:inherit; font-size:14px; font-weight:700; color:var(--ink); background:#fff;
+         border:1.5px solid var(--line); border-radius:999px; padding:7px 14px; cursor:pointer;
+         box-shadow:0 1px 4px rgba(20,50,80,.08); transition:box-shadow .13s}
+  .ichip:hover{box-shadow:0 3px 10px rgba(20,50,80,.16)}
+  .ichip.gewaehlt{background:var(--petrol); border-color:var(--petrol); color:#fff}
+  .ichip.zittern{animation:izit .4s}
+  @keyframes izit{0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)}
+                  50%{transform:translateX(4px)} 75%{transform:translateX(-3px)}}
+  .ifertig{margin-top:12px; padding:11px 14px; border-radius:10px; background:#E7F5EC;
+           border:1px solid #BCE0C8; color:#1d7a4a; font-weight:700; font-size:14px; display:none}
+  .ifertig.da{display:block}
+  .iliste{margin-top:12px; display:none; border:1px solid var(--line); border-radius:12px;
+          padding:10px 14px; columns:2 220px; column-gap:24px; font-size:14px; background:#fff}
+  .iliste.da{display:block}
+  .iliste div{padding:3px 0; break-inside:avoid}
+  .iliste b{color:var(--petrol)}
+
   /* ---------- Vitrine ---------- */
   .tabs button .punkt{
     display:inline-block; width:7px; height:7px; border-radius:50%;
@@ -386,7 +442,7 @@
     ><svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg" focusable="false"><rect
       width="30" height="60" fill="#0055A4"/><rect x="30" width="30" height="60" fill="#fff"/><rect
       x="60" width="30" height="60" fill="#EF4135"/></svg></span></span></h1>
-  <div class="sub">Vier Übungen zum selbständigen Trainieren · kein Vokabelpauken, sondern Hören, Formen, Satzbau und Schreiben · fünfzehn Pokale zu holen</div>
+  <div class="sub">Sechs Übungen zum selbständigen Trainieren · Hören, Formen, Satzbau, Schreiben, Hervorheben und Wörter im Bild · achtzehn Pokale zu holen</div>
 </header>
 
 <nav class="tabs" role="tablist" aria-label="Übungen">
@@ -396,7 +452,8 @@
     <button role="tab" aria-selected="false" data-k="satzbau"><span class="nr">3</span>Ordre des mots</button>
     <button role="tab" aria-selected="false" data-k="mail"><span class="nr">4</span>Le courriel</button>
     <button role="tab" aria-selected="false" data-k="relief"><span class="nr">5</span>Mise en relief</button>
-    <button role="tab" aria-selected="false" data-k="vitrine"><span class="nr">6</span>Vitrine</button>
+    <button role="tab" aria-selected="false" data-k="bilder"><span class="nr">6</span>Images</button>
+    <button role="tab" aria-selected="false" data-k="vitrine"><span class="nr">7</span>Vitrine</button>
   </div>
 </nav>
 
@@ -568,6 +625,12 @@
     <p class="lead">Tippen Sie die Wörter in der richtigen Reihenfolge an. Nochmals antippen nimmt
     sie zurück. Hier entscheidet die Stellung, nicht die Vokabel.</p>
 
+    <div class="stufen" id="pStufen">
+      <button type="button" data-s="A" aria-pressed="true">Stufe A · Grundstellung</button>
+      <button type="button" data-s="B" aria-pressed="false">Stufe B · Verneinung und Frage</button>
+      <button type="button" data-s="C" aria-pressed="false">Stufe C · zwei Pronomen, Infinitiv</button>
+    </div>
+
     <p class="leiter"><b>Wenn zwei Pronomen zusammenkommen</b>, gilt immer diese Reihenfolge:
     <span>me · te · nous · vous</span> <i>→</i> <span>le · la · les</span> <i>→</i>
     <span>lui · leur</span> <i>→</i> <span>y</span> <i>→</i> <span>en</span>.
@@ -642,11 +705,46 @@
   </div>
 </section>
 
-<!-- ============================ 6 VITRINE ============================ -->
+<!-- =========================== 6 IMAGES ============================= -->
+<section class="kap" id="k-bilder" role="tabpanel">
+  <div class="card">
+    <h2>6. Images – die Dinge beim Namen nennen</h2>
+    <p class="lead">Drei Arbeitsorte, je fünfzehn Gegenstände – immer mit Artikel, denn das Geschlecht gehört zum Wort. Tippen Sie ein Wort an und dann
+    den Punkt, an den es gehört – oder zuerst den Punkt und dann das Wort.</p>
+
+    <div class="stufen" id="iSzenen">
+      <button type="button" data-z="buero" aria-pressed="true">KV · Au bureau</button>
+      <button type="button" data-z="laden" aria-pressed="false">Detailhandel · Au magasin</button>
+      <button type="button" data-z="apotheke" aria-pressed="false">Pharma · À la pharmacie</button>
+    </div>
+
+    <div class="iszene">
+      <svg id="iBild" viewBox="0 0 1536 1024" role="img" aria-label="Bild mit nummerierten Punkten">
+        <image id="iHinter" x="0" y="0" width="1536" height="1024" href=""/>
+        <g id="iPunkte"></g>
+        <g id="iMarken"></g>
+      </svg>
+    </div>
+    <p class="iwisch">↔ Das Bild lässt sich seitlich wischen.</p>
+
+    <div class="ivorrat" id="iVorrat"></div>
+    <p class="stand" id="iStand" style="margin-top:6px"></p>
+    <div class="ifertig" id="iFertig">Alle fünfzehn Wörter sitzen. Bravo !</div>
+    <div class="iliste" id="iListe"></div>
+
+    <div class="reihe" style="margin-top:14px">
+      <button class="knopf" type="button" id="iNeu">↻ Neue Runde</button>
+      <button class="knopf zweit" type="button" id="iLoesung">Auflösen</button>
+      <button class="knopf zweit" type="button" id="iWoerter">Wortliste Französisch – Deutsch</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ 7 VITRINE ============================ -->
 <section class="kap" id="k-vitrine" role="tabpanel">
   <div class="card">
-    <h2>6. Vitrine – was Sie schon geholt haben</h2>
-    <p class="lead">Für jedes der fünf Kapitel gibt es drei Pokale: Bronze, Silber, Gold. Sie kommen nicht
+    <h2>7. Vitrine – was Sie schon geholt haben</h2>
+    <p class="lead">Für jedes der sechs Kapitel gibt es drei Pokale: Bronze, Silber, Gold. Sie kommen nicht
     vom Glück, sondern vom Dranbleiben – und sie bleiben auf diesem Gerät gespeichert.</p>
 
     <div class="vgrid" id="vGrid"></div>
@@ -671,6 +769,8 @@
   Stimmenwahl nicht sauber ans System weiter und spricht Französisch mit deutscher
   Stimme; dort läuft die Dictée darum als Lesediktat. Ohne installierte französische
   Stimme ebenfalls.</p>
+  <p>Die drei Bilder im Kapitel <b>Images</b> sind mit einer Bild-KI erzeugt. Es sind keine
+  echten Räume, und auf Packungen und Schildern steht absichtlich nichts.</p>
   <p>Der Akkordeon-Auftakt und die beiden Quittungstöne stammen aus einer
   Musik-KI und stecken in der Datei selbst. Der Knopf oben rechts schaltet sie
   ab; die Einstellung bleibt gespeichert.</p>
@@ -732,13 +832,130 @@ var KLANG = (function(){
 })();
 
 
+/* ==================== Aufnahmen ====================
+   Wie im Englischen: Liegen im Ordner ton/ Aufnahmen, spielt die Seite sie
+   ab statt der Systemstimme. Das macht die Dictée vom Gerät unabhängig —
+   Firefox und Geräte ohne französische Stimme bekommen das echte Diktat.
+   Fehlt eine Datei, spricht wie bisher die Systemstimme; fehlt der ganze
+   Ordner, ist die Kachel genau so brauchbar wie vorher.                   */
+var AUFNAHME = (function(){
+  var fehlt = {};        /* Pfad -> true, sobald er nachweislich fehlt */
+  var satzDa = {};       /* Satznummer -> true/false */
+  var laeuft = null;
+
+  function pfad(satz, i){ return 'ton/fr_relief_' + satz + '_' + i + '.mp3'; }
+
+  function halt(){
+    if(laeuft){ try{ laeuft.pause(); }catch(e){} laeuft = null; }
+  }
+
+  /* Einmal nachsehen, für welche Sätze Aufnahmen da sind. Geprüft wird über
+     eine Tonspur und nicht über fetch: Wer die Datei doppelklickt, scheitert
+     bei fetch an der Herkunftsregel, die Tonspur lädt trotzdem. */
+  function pruefen(liste){
+    liste.forEach(function(paar){
+      var nr = paar[0];
+      if(nr in satzDa) return;
+      var a = new Audio(pfad(nr, paar[1]));
+      a.preload = 'metadata';
+      var fertig = false;
+      function fest(wert){ if(!fertig){ fertig = true; satzDa[nr] = wert; } }
+      a.addEventListener('loadedmetadata', function(){ fest(true); });
+      a.addEventListener('error', function(){ fest(false); });
+      setTimeout(function(){ fest(false); }, 2500);
+      try{ a.load(); }catch(e){ fest(false); }
+    });
+  }
+
+  /* Einzelne Datei prüfen — für Kapitel, die ihre Pfade selber bilden */
+  function pruefePfad(p, fertig){
+    if(fehlt[p]){ if(fertig) fertig(false); return; }
+    var erledigt = false;
+    function fest(wert, sicher){
+      if(erledigt) return;
+      erledigt = true;
+      /* Nur ein belegtes Fehlen wird gemerkt. Ein Zeitablauf sagt nichts über
+         die Datei aus — Firefox hat beim Laden schon einmal zu lange gebraucht
+         und die Aufnahmen damit dauerhaft ausgeschlossen (23.09.2026). */
+      if(!wert && sicher) fehlt[p] = true;
+      if(fertig) fertig(wert);
+    }
+    /* Über das Netz ist eine Kopfanfrage das Verlässlichste: eine Antwort,
+       kein Warten auf Tonkopfdaten. Bei einer per Doppelklick geöffneten
+       Datei scheitert sie an der Herkunftsregel — dann die Tonspur. */
+    function ueberTon(){
+      var a = new Audio(p);
+      a.preload = 'metadata';
+      a.addEventListener('loadedmetadata', function(){ fest(true, true); });
+      a.addEventListener('canplay', function(){ fest(true, true); });
+      a.addEventListener('error', function(){ fest(false, true); });
+      setTimeout(function(){ fest(false, false); }, 3000);
+      try{ a.load(); }catch(e){ fest(false, true); }
+    }
+    if(/^https?:$/i.test(location.protocol) && window.fetch){
+      try{
+        fetch(p, {method:'HEAD'}).then(function(antwort){
+          if(antwort && antwort.ok) fest(true, true); else fest(false, true);
+        })['catch'](function(){ ueberTon(); });
+        setTimeout(function(){ if(!erledigt) ueberTon(); }, 2500);
+        return;
+      }catch(e){}
+    }
+    ueberTon();
+  }
+
+  function spiel(satz, i, tempo, sonst){
+    return spielPfad(pfad(satz, i), tempo, sonst, satz);
+  }
+
+  function spielPfad(p, tempo, sonst, satz){
+    if(fehlt[p]){ if(sonst) sonst(); return null; }
+    halt();
+    var a = new Audio(p);
+    try{ a.playbackRate = tempo || 1; }catch(e){}
+    laeuft = a;
+    a.addEventListener('error', function(){
+      fehlt[p] = true;
+      if(laeuft === a) laeuft = null;
+      if(sonst) sonst();
+    });
+    a.addEventListener('playing', function(){
+      if(satz) satzDa[satz] = true;
+      if(typeof window.AUFNAHME_LAEUFT === 'function') window.AUFNAHME_LAEUFT();
+    });
+    a.addEventListener('ended', function(){ if(laeuft === a) laeuft = null; });
+    var pr = a.play();
+    if(pr && pr.catch) pr.catch(function(e){
+      /* Eine ohne Klick verweigerte Wiedergabe sagt nichts über die Datei */
+      if(!(e && e.name === 'NotAllowedError')) fehlt[p] = true;
+      if(sonst) sonst();
+    });
+    return a;
+  }
+
+  return {
+    spiel: spiel,
+    spielPfad: spielPfad,
+    halt: halt,
+    pruefen: pruefen,
+    pruefePfad: pruefePfad,
+    hatSatz: function(nr){ return satzDa[nr] === true; },
+    vorhanden: function(){
+      for(var k in satzDa){ if(satzDa[k] === true) return true; }
+      return false;
+    }
+  };
+})();
+
+
 /* ==================== Vitrine ====================
-   Vier Kapitel, je drei Stufen, dazu ein Kranz für alles in Gold. Gezählt
+   Sechs Kapitel, je drei Stufen, dazu ein Kranz für alles in Gold. Gezählt
    wird das, was Ausdauer verlangt, nicht das, was Glück bringt: fehlerfreie
    Diktate, richtige Verbformen, verschiedene gelegte Sätze, Mails, die
    durchgehen. Der Stand liegt im Gerät — kein Konto, kein Server, und wer
    den Browser wechselt, fängt neu an. Die Motive sind selber gezeichnet:
-   Schriftrolle, Römerhelm, Wildschwein, Amphore, Hinkelstein, Kranz.  */
+   Schriftrolle, Römerhelm, Wildschwein, Amphore, Hinkelstein, Rundschild,
+   Kranz.                                                                  */
 var POKAL = (function(){
 
   var FARBE = { 0:'#B0763F', 1:'#9FAAB4', 2:'#D4A331' };
@@ -787,6 +1004,16 @@ var POKAL = (function(){
     + '<path d="M18.6 11.3l2.6 6.4-3.4 2.1 3.9 5.6-2.2 1.5-4.7-6.8 3.3-2z" fill="#fff" opacity=".28"/>'
     + '<path d="M9.5 33.5h29c.8 0 1.5.7 1.5 1.5v3c0 .8-.7 1.5-1.5 1.5h-29c-.8 0-1.5-.7-1.5-1.5v-3c0-.8.7-1.5 1.5-1.5z"/>'
     + '<path d="M13 36h22v1.4H13z" fill="#fff" opacity=".3"/>',
+    /* Rundschild: Scheibe, heller Innenring, Buckel, Nieten am Rand */
+    schild:
+      '<circle cx="24" cy="24" r="17.5"/>'
+    + '<circle cx="24" cy="24" r="13.2" fill="#fff" opacity=".28"/>'
+    + '<circle cx="24" cy="24" r="5.4"/>'
+    + '<circle cx="22.4" cy="22.4" r="1.6" fill="#fff" opacity=".7"/>'
+    + '<circle cx="24" cy="8.8" r="1.3" fill="#fff" opacity=".6"/>'
+    + '<circle cx="39.2" cy="24" r="1.3" fill="#fff" opacity=".6"/>'
+    + '<circle cx="24" cy="39.2" r="1.3" fill="#fff" opacity=".6"/>'
+    + '<circle cx="8.8" cy="24" r="1.3" fill="#fff" opacity=".6"/>',
     /* Lorbeerkranz: zwei Zweige, oben offen, unten gebunden */
     kranz:
       '<path d="M23 40.4C14.8 39.7 8.4 32.8 8.4 24.4c0-4.8 2.1-9.1 5.4-12.1l2 2.2c-2.8 2.5-4.4 6-4.4 9.9 0 6.8 5.2 12.4 11.6 13zM25 40.4c8.2-.7 14.6-7.6 14.6-16 0-4.8-2.1-9.1-5.4-12.1l-2 2.2c2.8 2.5 4.4 6 4.4 9.9 0 6.8-5.2 12.4-11.6 13z" opacity=".2"/>'
@@ -799,10 +1026,11 @@ var POKAL = (function(){
     {k:'verben',  t:'Verbes',         b:'helm',    was:'richtige Verbformen',        stufen:[20, 50, 100]},
     {k:'satzbau', t:'Ordre des mots', b:'eber',    was:'verschiedene Sätze gelegt',  stufen:[6, 12, 18]},
     {k:'mail',    t:'Le courriel',    b:'amphore', was:'Mails, die durchgehen',      stufen:[1, 3, 6]},
-    {k:'relief',  t:'Mise en relief', b:'menhir',  was:'Sätze richtig hervorgehoben', stufen:[5, 15, 30]}
+    {k:'relief',  t:'Mise en relief', b:'menhir',  was:'Sätze richtig hervorgehoben', stufen:[5, 15, 30]},
+    {k:'bilder',  t:'Images',         b:'schild',  was:'Wörter im Bild gefunden',    stufen:[15, 30, 45]}
   ];
 
-  var stand = { diktat:0, verben:0, mail:0, relief:0, satzbau:[] };
+  var stand = { diktat:0, verben:0, mail:0, relief:0, satzbau:[], bilder:[] };
   try{
     var roh = JSON.parse(hol('fr-pokale', '') || '{}');
     if(roh && typeof roh === 'object'){
@@ -810,11 +1038,12 @@ var POKAL = (function(){
         if(typeof roh[k] === 'number' && roh[k] >= 0) stand[k] = Math.floor(roh[k]);
       });
       if(Object.prototype.toString.call(roh.satzbau) === '[object Array]') stand.satzbau = roh.satzbau;
+      if(Object.prototype.toString.call(roh.bilder) === '[object Array]') stand.bilder = roh.bilder;
     }
   }catch(e){}
 
   function sichern(){ try{ leg('fr-pokale', JSON.stringify(stand)); }catch(e){} }
-  function zahl(k){ return (k === 'satzbau') ? stand.satzbau.length : stand[k]; }
+  function zahl(k){ return (k === 'satzbau' || k === 'bilder') ? stand[k].length : stand[k]; }
   function stufe(e){
     var n = zahl(e.k), s = 0;
     for(var i = 0; i < e.stufen.length; i++) if(n >= e.stufen[i]) s = i + 1;
@@ -885,11 +1114,11 @@ var POKAL = (function(){
       kranz.className = 'vkranz' + (da ? '' : ' offen');
       kranz.innerHTML = svg(BILD.kranz, FARBE[2])
         + '<div><b>Der Lorbeerkranz</b><span>' + (da
-            ? 'Alle fünf Kapitel in Gold. Chapeau !'
-            : 'Gibt es, wenn alle fünf Kapitel in Gold stehen.') + '</span></div>';
+            ? 'Alle sechs Kapitel in Gold. Chapeau !'
+            : 'Gibt es, wenn alle sechs Kapitel in Gold stehen.') + '</span></div>';
     }
     var g = document.getElementById('vGesamt');
-    if(g) g.innerHTML = '<b>' + geholt + '</b> von <b>15</b> Pokalen' + (alleGold() ? ' – dazu der Kranz.' : '');
+    if(g) g.innerHTML = '<b>' + geholt + '</b> von <b>18</b> Pokalen' + (alleGold() ? ' – dazu der Kranz.' : '');
   }
 
   /* ---------- Zählen ---------- */
@@ -902,7 +1131,7 @@ var POKAL = (function(){
       if(jetzt === 3 && alleGold()){
         setTimeout(function(){
           jubel('kranz', FARBE[2], 'Der Lorbeerkranz',
-                'Alle fünf Kapitel in Gold. Mehr geht nicht.');
+                'Alle sechs Kapitel in Gold. Mehr geht nicht.');
         }, 5200);
       }
     }
@@ -915,6 +1144,13 @@ var POKAL = (function(){
     if(!e) return;
     var vorher = stufe(e);
     stand[k] = (stand[k] || 0) + 1;
+    nachher(e, vorher);
+  }
+  function wortGefunden(schluessel){
+    var e = LISTE.filter(function(x){ return x.k === 'bilder'; })[0];
+    if(stand.bilder.indexOf(schluessel) >= 0){ return; }   /* jedes Wort zählt einmal */
+    var vorher = stufe(e);
+    stand.bilder.push(schluessel);
     nachher(e, vorher);
   }
   function satzGelegt(satz){
@@ -940,14 +1176,14 @@ var POKAL = (function(){
       clearTimeout(zurueck);
       scharf = false;
       b.textContent = 'Alles zurücksetzen';
-      stand = { diktat:0, verben:0, mail:0, relief:0, satzbau:[] };
+      stand = { diktat:0, verben:0, mail:0, relief:0, satzbau:[], bilder:[] };
       sichern();
       zeichne();
     });
   })();
 
   zeichne();
-  return { plus:plus, satzGelegt:satzGelegt, zeichne:zeichne };
+  return { plus:plus, satzGelegt:satzGelegt, wortGefunden:wortGefunden, zeichne:zeichne };
 })();
 
 /* Der Auftakt soll beim Öffnen kommen. Die Browser verbieten Ton ohne
@@ -1282,6 +1518,27 @@ function vergleiche(ziel, eingabe){
   }
 
   function hinweisSetzen(){
+    /* Liegen Aufnahmen bereit, sind Browser und Systemstimme gleichgültig.
+       Die Stimmenzeile bleibt dann weg — sie beträfe nur den Notweg, und mit
+       ihr verschwinden die Anleitung zum Stimmen-Nachladen und die Warnung
+       vor den Figurenstimmen. Eine Stimme wird trotzdem bestimmt, damit der
+       Notweg bei einer fehlenden Datei nicht stumm bleibt. */
+    if(aufnahmenDa){
+      nurLesen(false);
+      fHinweis.style.display = 'none';
+      var zeile = document.getElementById('dStimmzeile');
+      if(zeile) zeile.style.display = 'none';
+      var hilfe = document.getElementById('dStimmhilfe');
+      if(hilfe) hilfe.style.display = 'none';
+      if(synth()) stimme = aktuelleStimme();
+      document.getElementById('dHoeren').disabled = false;
+      document.getElementById('dLangsam').disabled = false;
+      return;
+    }
+    /* Vor der Antwort der Tonprobe wird nichts aufgebaut, sonst erschiene die
+       Stimmenzeile kurz und verschwände gleich wieder (Flackern, im Englischen
+       am 23.09.2026 gemeldet). */
+    if(!aufnahmeGeklaert) return;
     if(istFuchs && !fuchsFrei){
       fHinweis.innerHTML =
         '<b>Firefox kann die Stimmen dieses Geräts nicht zuverlässig ansteuern.</b>'
@@ -1326,6 +1583,13 @@ function vergleiche(ziel, eingabe){
     document.getElementById('dHoeren').disabled = stumm;
     document.getElementById('dLangsam').disabled = stumm;
   }
+  /* Einmal nachsehen, ob der Ordner ton/ die Diktatsätze enthält */
+  AUFNAHME.pruefePfad('ton/fr_dikt_A1.mp3', function(da){
+    aufnahmenDa = !!da;
+    aufnahmeGeklaert = true;
+    hinweisSetzen();
+  });
+
   if(synth()){
     synth().onvoiceschanged = hinweisSetzen;
     /* Safari füllt die Liste sofort, Chrome braucht einen Moment. */
@@ -1484,7 +1748,39 @@ function vergleiche(ziel, eingabe){
       }
     }catch(e){ los(); }
   }
-  function sprechen(rate){ vorlesen(satz(), rate); }
+  /* ---------- Aufnahmen fürs Diktat ----------
+     Die 30 Sätze liegen – sobald aufgenommen – als ton/fr_dikt_<Stufe><Nummer>.mp3
+     im Repo, gesprochen von einer einzigen Stimme. Die Nummer ist die Stellung
+     im unvermischten Vorrat, nicht die in der gemischten Reihe. Solange die
+     Dateien fehlen, läuft alles wie bisher über die Stimme des Geräts.     */
+  var aufnahmenDa = false;
+  var aufnahmeGeklaert = false;   /* Hat die Tonprobe geantwortet? */
+
+  function diktatPfad(){
+    var vorrat = SAETZE[stufe] || [];
+    var i = vorrat.indexOf(satz());
+    return (i < 0) ? null : 'ton/fr_dikt_' + stufe + (i + 1) + '.mp3';
+  }
+
+  /* rate gilt für die Systemstimme, bandRate für die Aufnahme — eine Aufnahme
+     verträgt weniger Dehnung als eine synthetische Stimme, bevor sie leiert. */
+  function sprechen(rate, bandRate){
+    var p = diktatPfad();
+    if(p){
+      AUFNAHME.spielPfad(p, bandRate || rate, function(){ vorlesen(satz(), rate); });
+      return;
+    }
+    vorlesen(satz(), rate);
+  }
+
+  /* Meldet sich, sobald zum ersten Mal wirklich eine Aufnahme läuft: Dann
+     stimmt die Oberfläche nach, auch wenn die Probe nichts gefunden hat. */
+  window.AUFNAHME_LAEUFT = function(){
+    if(aufnahmenDa) return;
+    aufnahmenDa = true;
+    aufnahmeGeklaert = true;
+    hinweisSetzen();
+  };
 
   /* Die mise en relief braucht denselben Weg zur Stimme: eine Reihe von
      Stücken, die ohne Pause hintereinander gesprochen werden. Damit gelten
@@ -1511,8 +1807,8 @@ function vergleiche(ziel, eingabe){
     }catch(e){ los(); }
   };
 
-  document.getElementById('dHoeren').addEventListener('click', function(){ sprechen(1); });
-  document.getElementById('dLangsam').addEventListener('click', function(){ sprechen(0.65); });
+  document.getElementById('dHoeren').addEventListener('click', function(){ sprechen(1, 1); });
+  document.getElementById('dLangsam').addEventListener('click', function(){ sprechen(0.65, 0.72); });
   document.getElementById('dZeigen').addEventListener('click', function(){
     var d = document.getElementById('dSichtbar');
     d.style.display = (d.style.display === 'none') ? 'block' : 'none';
@@ -1667,8 +1963,10 @@ function pronomen(v, zeit, i){
   var box = document.getElementById('vZeiten');
   var fEin = document.getElementById('vEingabe');
 
+  var knopfVon = {};
   ZEITEN.forEach(function(z){
     var b = el('button', null, z.t);
+    knopfVon[z.k] = b;
     b.type = 'button';
     b.setAttribute('aria-pressed', String(!!an[z.k]));
     b.addEventListener('click', function(){
@@ -1696,6 +1994,10 @@ function pronomen(v, zeit, i){
     document.getElementById('vInf').textContent = v.i;
     document.getElementById('vZeit').textContent =
       z.t + ((z.k === 'pc' && v.aux === 'e') ? ' · männliche Form' : '');
+    /* Denselben Ton um den Knopf der gefragten Zeit legen */
+    ZEITEN.forEach(function(x){
+      if(knopfVon[x.k]) knopfVon[x.k].classList.toggle('gefragt', x.k === z.k);
+    });
     var s = document.getElementById('vSatz');
     s.innerHTML = '';
     s.appendChild(document.createTextNode(pronomen(v, z.k, i)));
@@ -1760,33 +2062,85 @@ function pronomen(v, zeit, i){
 
 /* ==================== 3 · ORDRE DES MOTS ==================== */
 var PUZZLE = [
-  {f:'Je le lui donne.',            d:'Ich gebe es ihm.', h:'Vor <b>lui</b> und <b>leur</b> steht die Sache zuerst: <b>le lui</b>. Vor <b>me, te, nous, vous</b> wäre es umgekehrt.'},
-  {f:'Elle nous en parle souvent.', d:'Sie spricht oft davon mit uns.', h:'<b>en</b> steht immer zuhinterst, direkt vor dem Verb.'},
-  {f:"Il me l'a dit hier.",         d:'Er hat es mir gestern gesagt.', h:'Beide Pronomen stehen vor dem Hilfsverb, nicht vor dem Partizip – und <b>me</b> kommt vor <b>le</b>.'},
-  {f:'Je ne le sais pas.',          d:'Ich weiss es nicht.', h:'<b>ne … pas</b> umklammert das Verb, das Pronomen bleibt innen.'},
-  {f:"Nous n'y allons jamais.",     d:'Wir gehen nie dorthin.', h:'<b>jamais</b> nimmt den Platz von <b>pas</b> ein.'},
-  {f:"Il n'a rien compris.",        d:'Er hat nichts verstanden.', h:'Im Passé composé klammern <b>ne … rien</b> das Hilfsverb ein.'},
-  {f:'Où allez-vous ?',             d:'Wohin gehen Sie?', h:'Frage mit Inversion: Verb vor Pronomen, mit Bindestrich.'},
-  {f:'Quand est-ce que vous partez ?', d:'Wann fahren Sie ab?', h:'Mit <b>est-ce que</b> bleibt die normale Wortstellung.'},
-  {f:'Pourquoi ne répond-il pas ?', d:'Warum antwortet er nicht?', h:'Bei der Inversion steht <b>pas</b> hinter dem ganzen Verbblock.'},
-  {f:"C'est une très belle maison.", d:'Das ist ein sehr schönes Haus.', h:'<b>beau</b> gehört zu den Adjektiven, die <i>vor</i> dem Nomen stehen.'},
-  {f:'Il parle très bien français.', d:'Er spricht sehr gut Französisch.', h:'Das Adverb steht nach dem Verb, nicht davor wie im Deutschen.'},
-  {f:"J'ai souvent travaillé le samedi.", d:'Ich habe oft am Samstag gearbeitet.', h:'Kurze Adverbien stehen zwischen Hilfsverb und Partizip.'},
-  {f:'Nous vous enverrons la facture demain.', d:'Wir senden Ihnen die Rechnung morgen.', h:'Pronomen vor dem Verb, Zeitangabe am Schluss.'},
-  {f:'Je voudrais vous poser une question.', d:'Ich möchte Ihnen eine Frage stellen.', h:'Beim Infinitiv hängt das Pronomen am Infinitiv, nicht am ersten Verb.'},
-  {f:'Le client a déjà payé la facture.', d:'Der Kunde hat die Rechnung schon bezahlt.', h:'<b>déjà</b> steht zwischen Hilfsverb und Partizip.'},
-  {f:"Pouvez-vous me l'envoyer aujourd'hui ?", d:'Können Sie es mir heute senden?', h:'Beide Pronomen hängen am Infinitiv, und hier steht die Person zuerst: <b>me</b> vor <b>le</b> – anders als bei <b>le lui</b>.'},
-  {f:"Nous ne l'avons pas encore reçu.", d:'Wir haben es noch nicht erhalten.', h:'<b>pas encore</b> bleibt zusammen, nach dem Hilfsverb.'},
-  {f:'Elle y travaille depuis trois ans.', d:'Sie arbeitet dort seit drei Jahren.', h:'<b>y</b> steht direkt vor dem Verb.'}
+  {s:'C', f:'Je le lui donne.',            d:'Ich gebe es ihm.', h:'Vor <b>lui</b> und <b>leur</b> steht die Sache zuerst: <b>le lui</b>. Vor <b>me, te, nous, vous</b> wäre es umgekehrt.'},
+  {s:'C', f:'Elle nous en parle souvent.', d:'Sie spricht oft davon mit uns.', h:'<b>en</b> steht immer zuhinterst, direkt vor dem Verb.'},
+  {s:'C', f:"Il me l'a dit hier.",         d:'Er hat es mir gestern gesagt.', h:'Beide Pronomen stehen vor dem Hilfsverb, nicht vor dem Partizip – und <b>me</b> kommt vor <b>le</b>.'},
+  {s:'B', f:'Je ne le sais pas.',          d:'Ich weiss es nicht.', h:'<b>ne … pas</b> umklammert das Verb, das Pronomen bleibt innen.'},
+  {s:'B', f:"Nous n'y allons jamais.",     d:'Wir gehen nie dorthin.', h:'<b>jamais</b> nimmt den Platz von <b>pas</b> ein.'},
+  {s:'B', f:"Il n'a rien compris.",        d:'Er hat nichts verstanden.', h:'Im Passé composé klammern <b>ne … rien</b> das Hilfsverb ein.'},
+  {s:'B', f:'Où allez-vous ?',             d:'Wohin gehen Sie?', h:'Frage mit Inversion: Verb vor Pronomen, mit Bindestrich.'},
+  {s:'B', f:'Quand est-ce que vous partez ?', d:'Wann fahren Sie ab?', h:'Mit <b>est-ce que</b> bleibt die normale Wortstellung.'},
+  {s:'B', f:'Pourquoi ne répond-il pas ?', d:'Warum antwortet er nicht?', h:'Bei der Inversion steht <b>pas</b> hinter dem ganzen Verbblock.'},
+  {s:'A', f:"C'est une très belle maison.", d:'Das ist ein sehr schönes Haus.', h:'<b>beau</b> gehört zu den Adjektiven, die <i>vor</i> dem Nomen stehen.'},
+  {s:'A', f:'Il parle très bien français.', d:'Er spricht sehr gut Französisch.', h:'Das Adverb steht nach dem Verb, nicht davor wie im Deutschen.'},
+  {s:'A', f:"J'ai souvent travaillé le samedi.", d:'Ich habe oft am Samstag gearbeitet.', h:'Kurze Adverbien stehen zwischen Hilfsverb und Partizip.'},
+  {s:'A', f:'Nous vous enverrons la facture demain.', d:'Wir senden Ihnen die Rechnung morgen.', h:'Pronomen vor dem Verb, Zeitangabe am Schluss.'},
+  {s:'C', f:'Je voudrais vous poser une question.', d:'Ich möchte Ihnen eine Frage stellen.', h:'Beim Infinitiv hängt das Pronomen am Infinitiv, nicht am ersten Verb.'},
+  {s:'A', f:'Le client a déjà payé la facture.', d:'Der Kunde hat die Rechnung schon bezahlt.', h:'<b>déjà</b> steht zwischen Hilfsverb und Partizip.'},
+  {s:'C', f:"Pouvez-vous me l'envoyer aujourd'hui ?", d:'Können Sie es mir heute senden?', h:'Beide Pronomen hängen am Infinitiv, und hier steht die Person zuerst: <b>me</b> vor <b>le</b> – anders als bei <b>le lui</b>.'},
+  {s:'B', f:"Nous ne l'avons pas encore reçu.", d:'Wir haben es noch nicht erhalten.', h:'<b>pas encore</b> bleibt zusammen, nach dem Hilfsverb.'},
+  {s:'A', f:'Elle y travaille depuis trois ans.', d:'Sie arbeitet dort seit drei Jahren.', h:'<b>y</b> steht direkt vor dem Verb.'},
+  {s:'A', f:'Nous avons une nouvelle cliente.', d:'Wir haben eine neue Kundin.',
+   h:'<b>nouveau / nouvelle</b> gehört zu den Adjektiven, die <i>vor</i> dem Nomen stehen.'},
+  {s:'A', f:'Le magasin ouvre à neuf heures.', d:'Der Laden öffnet um neun Uhr.',
+   h:'Subjekt, Verb, dann die Zeitangabe – ohne Umstellung wie im Deutschen.'},
+  {s:'A', f:'Elle travaille toujours le lundi.', d:'Sie arbeitet immer am Montag.',
+   h:'<b>toujours</b> steht direkt nach dem Verb, nicht davor.'},
+  {s:'A', f:'Il a bien compris la question.', d:'Er hat die Frage gut verstanden.',
+   h:'Kurze Adverbien wie <b>bien</b> stehen zwischen Hilfsverb und Partizip.'},
+  {s:'B', f:'Est-ce que vous avez reçu notre offre ?', d:'Haben Sie unser Angebot erhalten?',
+   h:'Nach <b>est-ce que</b> bleibt die normale Stellung: Subjekt vor Verb.'},
+  {s:'B', f:'Je ne travaille plus ici.', d:'Ich arbeite nicht mehr hier.',
+   h:'<b>ne … plus</b> umklammert das Verb wie <b>ne … pas</b>.'},
+  {s:'B', f:"Personne n'a appelé ce matin.", d:'Niemand hat heute Morgen angerufen.',
+   h:'Als Subjekt steht <b>personne</b> vorne, <b>ne</b> vor dem Hilfsverb – ein <b>pas</b> gibt es hier nicht.'},
+  {s:'C', f:"Je vous l'envoie tout de suite.", d:'Ich schicke es Ihnen sofort.',
+   h:'Vor <b>vous</b> steht die Person zuerst: <b>vous le</b>, zusammengezogen zu <b>vous l\'</b>.'},
+  {s:'C', f:'Il leur en a parlé.', d:'Er hat mit ihnen darüber gesprochen.',
+   h:'<b>leur</b> vor <b>en</b>, und beide stehen vor dem Hilfsverb.'},
+  {s:'C', f:'Je vais le leur expliquer.', d:'Ich werde es ihnen erklären.',
+   h:'Beim futur proche hängen die Pronomen am Infinitiv – und vor <b>leur</b> kommt die Sache zuerst: <b>le leur</b>.'},
+  {s:'C', f:'Ne le lui dites pas.', d:'Sagen Sie es ihm nicht.',
+   h:'Im verneinten Imperativ bleiben die Pronomen vorne, in der gewohnten Reihenfolge.'},
+  {s:'C', f:'Elle ne nous en a jamais parlé.', d:'Sie hat nie mit uns darüber gesprochen.',
+   h:'<b>ne</b> vor den Pronomen, <b>jamais</b> nach dem Hilfsverb, <b>nous</b> vor <b>en</b>.'}
 ];
 
 (function(){
-  var reihe = mischen(PUZZLE.slice()), pos = 0, richtig = 0, gemacht = 0, gelegt = [], vorrat = [];
+  /* Drei Stufen nach dem, was man können muss: A die Grundstellung mit
+     Adjektiv, Adverb und Zeitangabe, B Verneinung und Frage, C zwei Pronomen
+     und Pronomen am Infinitiv. Die Wahl wird gemerkt wie beim Diktat.     */
+  var stufe = hol('fr-satzbau-stufe', 'A');
+  if(['A','B','C'].indexOf(stufe) < 0) stufe = 'A';
+  var fStufen = document.getElementById('pStufen');
+
+  function vorratDerStufe(){
+    var teilmenge = PUZZLE.filter(function(p){ return p.s === stufe; });
+    return teilmenge.length ? teilmenge : PUZZLE;
+  }
+
+  var reihe = mischen(vorratDerStufe().slice()), pos = 0, richtig = 0, gemacht = 0, gelegt = [], vorrat = [];
   var fZiel = document.getElementById('pZiel'), fVor = document.getElementById('pVorrat');
+
+  if(fStufen){
+    Array.prototype.forEach.call(fStufen.querySelectorAll('button'), function(b){
+      b.setAttribute('aria-pressed', String(b.getAttribute('data-s') === stufe));
+      b.addEventListener('click', function(){
+        stufe = b.getAttribute('data-s');
+        leg('fr-satzbau-stufe', stufe);
+        Array.prototype.forEach.call(fStufen.querySelectorAll('button'), function(x){
+          x.setAttribute('aria-pressed', String(x === b));
+        });
+        reihe = mischen(vorratDerStufe().slice());
+        pos = 0;
+        neu();
+      });
+    });
+  }
 
   function teile(f){ return f.split(' '); }
   function neu(){
-    if(pos >= reihe.length){ reihe = mischen(PUZZLE.slice()); pos = 0; }
+    if(pos >= reihe.length){ reihe = mischen(vorratDerStufe().slice()); pos = 0; }
     var a = reihe[pos];
     document.getElementById('pDeutsch').innerHTML = 'Deutsch: <b>' + a.d + '</b>';
     gelegt = [];
@@ -2137,6 +2491,10 @@ var RELIEF = [
   var fModus = document.getElementById('bModus');
   var fLoes = document.getElementById('bLoesung');
   var aufg = null, offen = true, richtig = 0, gemacht = 0;
+  /* Beim Laden spricht nichts von selbst: Die Browser sperren Ton vor dem
+     ersten Klick ohnehin, und eine Kachel, die ungefragt zu reden anfängt,
+     überrascht im Schulzimmer mehr, als sie nützt (Sams Ansage 23.09.2026). */
+  var schonGetippt = false;
   var modus = hol('fr-relief-modus', 'bauen');      /* hoeren | bauen */
 
   function stimmeDa(){
@@ -2201,7 +2559,7 @@ var RELIEF = [
         b.addEventListener('click', function(){ if(offen) antwortDeutung(x, b); });
         fWahl.appendChild(b);
       });
-      sprich(1);
+      if(schonGetippt) sprich(1);
     }
   }
 
@@ -2263,9 +2621,15 @@ var RELIEF = [
     if(ok && stimmeDa()) setTimeout(function(){ sprichGanz(aufg.f.r); }, 350);
   }
 
-  document.getElementById('bHoeren').addEventListener('click', function(){ sprich(1); });
-  document.getElementById('bLangsam').addEventListener('click', function(){ sprich(0.72); });
-  document.getElementById('bNaechste').addEventListener('click', neu);
+  document.getElementById('bHoeren').addEventListener('click', function(){
+    schonGetippt = true; sprich(1);
+  });
+  document.getElementById('bLangsam').addEventListener('click', function(){
+    schonGetippt = true; sprich(0.72);
+  });
+  document.getElementById('bNaechste').addEventListener('click', function(){
+    schonGetippt = true; neu();
+  });
 
   /* Ohne Stimme bleibt nur das Bauen — dort geht es auch ohne Ton */
   setTimeout(function(){
@@ -2280,6 +2644,230 @@ var RELIEF = [
 
   neu(); stand();
 })();
+
+/* ==================== 6 Images ====================
+   Drei Bilder aus einer Bild-KI, je 15 Punkte. x/y liegen im Bild
+   (1536 × 1024). Kleine Dinge bekommen einen Fähnchenpunkt: der Kreis steht
+   daneben (lx/ly), ein Strich führt zum Gegenstand, damit er sichtbar
+   bleibt. m:'o' setzt das gefundene Wort über den Punkt statt darunter.
+   Für die Vitrine zählt jedes Wort pro Bild einmal – «Auflösen» zählt nicht.
+   Die französischen Wörter sind länger als die englischen: Einige stehen
+   darum über dem Punkt, und der Punkt beim Thermometer sitzt weiter rechts. */
+(function(){
+  var SZENEN = {
+    buero: { bild:'assets/en_bild_buero.webp?v=1', dinge:[
+      {w:"la fenêtre",         x:120,  y:165, d:'das Fenster'},
+      {w:"le tableau d'affichage",   x:600,  y:215, d:'die Pinnwand'},
+      {w:"l'étagère",          x:1010, y:365, gen:'f', d:'das Regal'},
+      {w:"l'imprimante",        x:1380, y:300, gen:'f', d:'der Drucker'},
+      {w:"le meuble de classement", x:1370, y:540, d:'der Aktenschrank'},
+      {w:"la plante",          x:95,   y:480, d:'die Pflanze'},
+      {w:"le téléphone",      x:465,  y:455, d:'das Telefon'},
+      {w:"l'agrafeuse",        x:340,  y:535, gen:'f', d:'der Bostitch (Hefter)'},
+      {w:"l'écran",         x:780,  y:390, gen:'m', d:'der Bildschirm'},
+      {w:"le clavier",       x:760,  y:540, d:'die Tastatur'},
+      {w:"la tasse",            x:1022, y:482, d:'die Tasse'},
+      {w:"la facture",        x:530,  y:555, d:'die Rechnung'},
+      {w:"le bureau",           x:1110, y:580, d:'der Schreibtisch'},
+      {w:"la chaise",          x:770,  y:700, d:'der Stuhl'},
+      {w:"la corbeille à papier",      x:1405, y:800, d:'der Papierkorb'}
+    ]},
+    laden: { bild:'assets/en_bild_laden.webp?v=1', dinge:[
+      {w:"la vitrine",      x:312,  y:400, d:'das Schaufenster'},
+      {w:"l'étagère",            x:690,  y:250, gen:'f', d:'das Regal'},
+      {w:"le portant",     x:960,  y:202, d:'die Kleiderstange'},
+      {w:"le cintre",           x:1010, y:150, m:'o', d:'der Kleiderbügel'},
+      {w:"la cabine d'essayage", m:'o',     x:1245, y:300, d:'die Umkleidekabine'},
+      {w:"le miroir",           x:1460, y:250, d:'der Spiegel'},
+      {w:"le comptoir",          x:620,  y:620, d:'der Ladentisch'},
+      {w:"la caisse", m:'o',             x:565,  y:465, d:'die Kasse'},
+      {w:"le terminal de paiement",      x:700,  y:462, d:'das Kartenterminal'},
+      {w:"le scanner", m:'o',  x:905,  y:470, d:'der Strichcode-Scanner'},
+      {w:"le ticket de caisse",          x:795,  y:490, lx:800,  ly:405, m:'o', d:'der Kassenzettel, die Quittung'},
+      {w:"le sac",      x:1025, y:440, d:'die Einkaufstasche'},
+      {w:"l'étiquette",        x:1058, y:288, lx:1112, ly:330, gen:'f', d:'das Preisschild'},
+      {w:"le panier",  x:590,  y:780, d:'der Einkaufskorb'},
+      {w:"le chariot", x:1260, y:720, d:'der Einkaufswagen'}
+    ]},
+    apotheke: { bild:'assets/en_bild_apotheke.webp?v=1', dinge:[
+      {w:"le comptoir",         x:300,  y:610, d:'die Theke'},
+      {w:"l'étagère",           x:650,  y:205, gen:'f', d:'das Regal'},
+      {w:"l'ordonnance",    x:140,  y:820, gen:'f', d:'das Rezept'},
+      {w:"la plaquette",    x:325,  y:770, d:'der Blister'},
+      {w:"la boîte de comprimés", m:'o',  x:470,  y:755, d:'die Tablettenschachtel'},
+      {w:"le tube de pommade",   x:570,  y:812, d:'die Salbentube'},
+      {w:"le flacon de sirop",    x:720,  y:760, d:'die Sirupflasche'},
+      {w:"le gobelet doseur",   x:805,  y:772, lx:835, ly:695, m:'o', d:'der Messbecher'},
+      {w:"le thermomètre",     x:790,  y:862, d:'das Fieberthermometer'},
+      {w:"les pansements",        x:1070, y:888, d:'die Pflaster'},
+      {w:"les masques",      x:1115, y:720, d:'die Hygienemasken'},
+      {w:"les gants",          x:1340, y:772, m:'o', d:'die Handschuhe'},
+      {w:"le pilulier",  x:1320, y:852, d:'der Tablettendosierer (Wochendose)'},
+      {w:"les tiroirs",         x:1155, y:440, d:'die Schubladen'},
+      {w:"le terminal de paiement",     x:790,  y:470, lx:870, ly:420, d:'das Kartenterminal'}
+    ]}
+  };
+
+  var NS = 'http://www.w3.org/2000/svg';
+  var gPunkte = document.getElementById('iPunkte');
+  var gMarken = document.getElementById('iMarken');
+  var fVorrat = document.getElementById('iVorrat');
+  if(!gPunkte || !fVorrat) return;
+  var szene = hol('fr-bild-szene', 'buero');
+  if(!SZENEN[szene]) szene = 'buero';
+  var DINGE = [], offen = [], gewaehlt = null, gemerkt = null, richtig = 0, versuche = 0;
+
+  function knoten(name, attrs){
+    var k = document.createElementNS(NS, name);
+    for(var a in attrs) k.setAttribute(a, attrs[a]);
+    return k;
+  }
+  function kreisVon(d){ return {x: d.lx != null ? d.lx : d.x, y: d.ly != null ? d.ly : d.y}; }
+
+  function zeichnePunkte(){
+    gPunkte.innerHTML = ''; gMarken.innerHTML = '';
+    DINGE.forEach(function(d, i){
+      var g = knoten('g', {'class':'ipunkt', 'tabindex':'0', 'role':'button',
+                           'aria-label':'Punkt ' + (i + 1)});
+      var k = kreisVon(d);
+      if(d.lx != null){
+        g.appendChild(knoten('line', {x1:k.x, y1:k.y, x2:d.x, y2:d.y}));
+        g.appendChild(knoten('line', {x1:k.x, y1:k.y, x2:d.x, y2:d.y, 'class':'innen'}));
+        g.appendChild(knoten('circle', {cx:d.x, cy:d.y, r:7, 'class':'fuss'}));
+      }
+      g.appendChild(knoten('circle', {cx:k.x, cy:k.y, r:24, 'class':'k'}));
+      var t = knoten('text', {x:k.x, y:k.y + 9});
+      t.textContent = String(i + 1);
+      g.appendChild(t);
+      g.addEventListener('click', function(){ tippePunkt(d); });
+      g.addEventListener('keydown', function(e){
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); tippePunkt(d); }
+      });
+      d.g = g;
+      gPunkte.appendChild(g);
+    });
+  }
+
+  function zeichneVorrat(){
+    fVorrat.innerHTML = '';
+    offen.forEach(function(d){
+      var b = el('button', 'ichip', d.w);
+      b.type = 'button';
+      b.setAttribute('data-w', d.w);
+      b.addEventListener('click', function(){ tippeWort(d); });
+      fVorrat.appendChild(b);
+    });
+  }
+
+  function tippeWort(d){
+    if(gemerkt){ var p = gemerkt; gemerkt = null; pruefe(d, p); return; }
+    gewaehlt = (gewaehlt && gewaehlt.w === d.w) ? null : d;
+    markiere();
+  }
+  function tippePunkt(d){
+    if(d.g.classList.contains('gefunden')) return;
+    if(gewaehlt){ pruefe(gewaehlt, d); return; }
+    gemerkt = (gemerkt === d) ? null : d;
+    markiere();
+  }
+  function markiere(){
+    Array.prototype.forEach.call(fVorrat.children, function(b){
+      b.classList.toggle('gewaehlt', !!gewaehlt && b.getAttribute('data-w') === gewaehlt.w);
+    });
+    DINGE.forEach(function(d){ d.g.classList.toggle('ziel', gemerkt === d); });
+  }
+
+  function pruefe(wort, punkt){
+    versuche++;
+    var g = punkt.g;
+    if(wort.w === punkt.w){
+      richtig++;
+      g.classList.add('gefunden');
+      setzeMarke(punkt);
+      offen = offen.filter(function(x){ return x.w !== wort.w; });
+      gewaehlt = null; gemerkt = null;
+      zeichneVorrat();
+      if(richtig === DINGE.length) KLANG.spiel('toll', 0.45); else KLANG.spiel('gut', 0.45);
+      POKAL.wortGefunden(szene + ':' + wort.w);
+    } else {
+      g.classList.add('daneben');
+      setTimeout(function(){ g.classList.remove('daneben'); }, 500);
+      Array.prototype.forEach.call(fVorrat.children, function(b){
+        if(b.getAttribute('data-w') !== wort.w) return;
+        b.classList.add('zittern');
+        setTimeout(function(){ b.classList.remove('zittern'); }, 450);
+      });
+      gemerkt = null;
+    }
+    markiere();
+    stand();
+  }
+
+  function setzeMarke(d){
+    var k = kreisVon(d);
+    var y = k.y + 56;
+    if(d.m === 'o' || y > 1005) y = k.y - 36;
+    var halb = d.w.length * 7.8 + 14;              /* halbe Wortbreite, grob */
+    var x = Math.min(Math.max(k.x, halb), 1536 - halb);
+    var t = knoten('text', {x:x, y:y, 'class':'imarke'});
+    t.textContent = d.w;
+    gMarken.appendChild(t);
+  }
+
+  function stand(){
+    document.getElementById('iStand').innerHTML =
+      '<b>' + richtig + '</b> von <b>' + DINGE.length + '</b> gefunden' +
+      (versuche ? ' · ' + versuche + ' Versuche' : '');
+    document.getElementById('iFertig').classList.toggle('da', richtig === DINGE.length);
+  }
+
+  /* Sortiert wird nach dem Nomen, nicht nach le/la/les */
+  function ohneArtikel(w){ return w.replace(/^(le |la |les |l')/, ''); }
+
+  function zeichneListe(){
+    var l = document.getElementById('iListe');
+    l.innerHTML = '';
+    DINGE.slice().sort(function(a, b){ return ohneArtikel(a.w).localeCompare(ohneArtikel(b.w), 'fr'); }).forEach(function(d){
+      var z = el('div');
+      z.appendChild(el('b', null, d.w));
+      z.appendChild(document.createTextNode((d.gen ? ' (' + d.gen + ')' : '') + ' – ' + d.d));
+      l.appendChild(z);
+    });
+  }
+
+  function neueRunde(){
+    DINGE = SZENEN[szene].dinge;
+    document.getElementById('iHinter').setAttribute('href', SZENEN[szene].bild);
+    offen = mischen(DINGE.slice());
+    richtig = 0; versuche = 0; gewaehlt = null; gemerkt = null;
+    zeichnePunkte(); zeichneVorrat(); zeichneListe(); stand();
+  }
+
+  var knoepfe = document.querySelectorAll('#iSzenen button');
+  Array.prototype.forEach.call(knoepfe, function(b){
+    b.setAttribute('aria-pressed', String(b.getAttribute('data-z') === szene));
+    b.addEventListener('click', function(){
+      szene = b.getAttribute('data-z'); leg('fr-bild-szene', szene);
+      Array.prototype.forEach.call(knoepfe, function(x){
+        x.setAttribute('aria-pressed', String(x === b));
+      });
+      neueRunde();
+    });
+  });
+  document.getElementById('iNeu').addEventListener('click', neueRunde);
+  document.getElementById('iLoesung').addEventListener('click', function(){
+    gMarken.innerHTML = '';
+    DINGE.forEach(function(d){ setzeMarke(d); d.g.classList.add('gefunden'); });
+    offen = []; gewaehlt = null; gemerkt = null;
+    zeichneVorrat();
+  });
+  document.getElementById('iWoerter').addEventListener('click', function(){
+    document.getElementById('iListe').classList.toggle('da');
+  });
+
+  neueRunde();
+})();
+
 
 /* ==================== Reiter ==================== */
 (function(){
