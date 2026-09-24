@@ -5,10 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>abu-tools.ch · Interaktive Tools für den ABU-Unterricht – HKV Aarau</title>
 <meta name="description" content="Interaktive Folien, Simulationen und Rechner für den allgemeinbildenden Unterricht an der HKV Aarau – die Ergänzung zu KV Digital.">
-<link rel="icon" href="favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
@@ -50,38 +46,6 @@ body{
 .wordmark .tld{color:#9fb2c6;font-weight:500}
 .lead{font-size:clamp(1rem,2.4vw,1.12rem);color:var(--grau);max-width:52ch}
 
-/* ── Hero: goldenes Bild + interaktive Zahnrad-Hotspots ── */
-.hero{position:relative;margin-bottom:.4rem}
-.hero-buehne{position:relative}
-.hero-media{position:relative;border-radius:16px;overflow:hidden}
-.hero-img{display:block;width:100%;height:auto}
-.hero-text{position:absolute;top:37%;left:clamp(1.1rem,4.5%,3rem);transform:translateY(-50%);width:min(46%,520px);z-index:4}
-@media(max-width:680px){.hero-text{position:static;transform:none;left:auto;width:auto;margin-top:1rem}}
-.hero-cr{position:absolute;left:clamp(1.1rem,4.5%,3rem);bottom:clamp(.6rem,3%,1.5rem);z-index:5;
-         font-size:clamp(10px,.86vw,13px);font-weight:700;letter-spacing:.03em;
-         color:rgba(255,255,255,.74);text-shadow:0 1px 3px rgba(10,25,45,.5)}
-.hero-cr a{color:inherit;text-decoration:underline;text-underline-offset:2px;text-decoration-color:rgba(255,255,255,.45)}
-.hero-cr a:hover,.hero-cr a:focus-visible{color:#fff;text-decoration-color:#fff}
-.hot{position:absolute;transform:translate(-50%,-50%);border-radius:50%;cursor:pointer;z-index:3}
-.hot .ring{position:absolute;inset:0;border-radius:50%;transition:box-shadow .2s,background .2s;box-shadow:0 0 0 3px rgba(216,174,102,0)}
-.hot:hover .ring{box-shadow:0 0 0 3px rgba(216,174,102,.9),0 0 26px 8px rgba(240,200,110,.55);background:radial-gradient(circle,rgba(255,244,205,.30) 55%,rgba(255,244,205,0) 100%)}
-.hot .lbl{position:absolute;left:50%;bottom:100%;transform:translate(-50%,-8px);background:var(--hkv);color:#fff;font-size:12.5px;font-weight:700;white-space:nowrap;padding:4px 10px;border-radius:999px;opacity:0;transition:opacity .18s;pointer-events:none}
-.hot:hover .lbl{opacity:1}
-.shine{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;z-index:2;background:linear-gradient(115deg,transparent 44%,rgba(255,246,214,.5) 50%,transparent 56%);transform:translateX(-75%);animation:sweep 8s ease-in-out infinite}
-@keyframes sweep{0%{transform:translateX(-75%)}42%{transform:translateX(75%)}100%{transform:translateX(75%)}}
-.tw{position:absolute;width:6px;height:6px;border-radius:50%;pointer-events:none;opacity:0;z-index:2;background:radial-gradient(circle,#fffdf2,#ffe9ad 45%,rgba(255,214,120,0) 72%);animation:twk 4.5s ease-in-out infinite}
-@keyframes twk{0%,100%{opacity:0;transform:scale(.3)}50%{opacity:.95;transform:scale(1.1)}}
-.rotor{position:absolute;transform:translate(-50%,-50%);transform-origin:50% 50%;z-index:1;pointer-events:none;will-change:transform}
-.patch{position:absolute;transform:translate(-50%,-50%);z-index:0;pointer-events:none}
-.p1{left:75.838%;top:81.410%;width:14.333%}
-.r1{left:75.838%;top:81.410%;width:14.333%;animation:rot 26s linear infinite}
-.r2{left:86.054%;top:87.711%;width:7.560%;animation:rotrev 13.5s linear infinite}
-.r3{left:91.283%;top:83.447%;width:4.798%;animation:rot 8.6s linear infinite}
-@keyframes rot{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(360deg)}}
-@keyframes rotrev{from{transform:translate(-50%,-50%) rotate(360deg)}to{transform:translate(-50%,-50%) rotate(0deg)}}
-@media(prefers-reduced-motion:reduce){.tw{animation:none}.shine{display:none}
-  .r1{animation-duration:70s}.r2{animation-duration:36s}.r3{animation-duration:23s}}
-
 /* Positionierung gegenüber KV Digital – kurz und dezent */
 .hinweis{
   margin-top:1.3rem;
@@ -94,24 +58,6 @@ body{
   max-width:62ch;
 }
 .hinweis b{color:var(--tinte);font-weight:700}
-.hinweis-zeile{display:flex; gap:14px; flex-wrap:wrap; align-items:stretch;}
-.hinweis-zeile .hinweis{flex:1 1 380px;}
-.wunschbox{
-  margin-top:1.3rem; flex:0 1 360px;
-  display:flex; align-items:center; gap:1rem;
-  padding:.85rem 1.1rem;
-  background:var(--karte); border:1px solid var(--linie);
-  border-left:3px solid var(--ocker); border-radius:8px;
-  font-size:.88rem; color:var(--grau); text-decoration:none;
-  transition:border-color .18s, box-shadow .18s;
-}
-.wunschbox:hover,.wunschbox:focus-visible{border-color:rgba(154,99,0,.55); box-shadow:0 4px 14px rgba(154,99,0,.12);}
-.wunschbox img{height:62px; width:auto; flex:0 0 auto; filter:drop-shadow(0 2px 3px rgba(0,0,0,.22));}
-.wunschbox b{color:var(--ocker); font-weight:700; display:block; margin-bottom:.15rem;}
-.wunschbox .wb-mail{display:block; margin-top:.25rem; font-size:.78rem; color:#8a97a6;}
-.kvd{color:var(--hkv);font-weight:700;text-decoration:underline;text-decoration-color:rgba(31,78,120,.35);text-underline-offset:3px}
-.kvd:hover,.kvd:focus-visible{text-decoration-color:currentColor}
-.kvd .pfeil-ex{font-size:.82em;opacity:.7;margin-left:.15em}
 .rule{height:1px;background:var(--linie);margin:2.2rem 0 0}
 
 /* ── Abschnitts-Label ── */
@@ -145,56 +91,11 @@ body{
 }
 .chip:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(31,78,120,.35)}
 
-/* ── Klickzaehler ── */
-.klickleiste{
-  display:none; align-items:center; flex-wrap:wrap; gap:.4rem;
-  margin:0 0 1.15rem;
-}
-.klickleiste.an{display:flex}
-.kl-titel{
-  font-family:'JetBrains Mono',monospace;
-  font-size:.62rem; letter-spacing:.12em; text-transform:uppercase;
-  color:var(--grau); margin-right:.25rem;
-}
-.kl-knopf{
-  font-family:'JetBrains Mono',monospace;
-  font-size:.62rem; letter-spacing:.1em; text-transform:uppercase;
-  padding:.36rem .68rem; min-height:30px;
-  background:var(--karte); color:var(--grau);
-  border:1px solid var(--linie); border-radius:999px;
-  cursor:pointer; transition:all .18s;
-}
-.kl-knopf:hover{border-color:var(--hkv); color:var(--hkv)}
-.kl-knopf[aria-pressed="true"]{background:var(--hkv); border-color:var(--hkv); color:#fff}
-.kl-knopf:focus-visible{outline:none; box-shadow:0 0 0 3px rgba(31,78,120,.35)}
-.kl-hinweis{
-  font-size:.72rem; color:var(--grau); opacity:.85; margin-left:.2rem;
-}
-.k-klicks{
-  position:absolute; top:.6rem; right:.7rem; z-index:3;
-  font-family:'JetBrains Mono',monospace;
-  font-size:.6rem; letter-spacing:.06em;
-  padding:.2rem .46rem; border-radius:999px; white-space:nowrap;
-  background:rgba(31,78,120,.09); color:var(--hkv);
-  border:1px solid rgba(31,78,120,.18);
-  pointer-events:none;
-}
-.karte:has(.k-klicks) .k-kopf{padding-right:52px}
-#klickChip[hidden], .k-klicks[hidden]{display:none}
-
 /* ── Kacheln ── */
 .grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(255px,1fr));
   gap:1rem;
-}
-.zeilen-anker{grid-column:1}  /* Spielplaene beginnen immer eine neue (letzte) Reihe */
-/* Auf grossen Bildschirmen aus dem 920-px-Container ausbrechen: bis 4 Spalten */
-@media(min-width:1120px){
-  .grid, .filter, .sort-hinweis{
-    width:min(1220px, calc(100vw - 3rem));
-    margin-inline:calc((100% - min(1220px, calc(100vw - 3rem))) / 2);
-  }
 }
 .karte{
   display:flex;flex-direction:column;
@@ -230,75 +131,8 @@ body{
 .karte[data-kat="lernen"]:hover,.karte[data-kat="lernen"]:focus-visible{border-left-color:#514386}
 .karte[data-kat="rechner"]{background:#EAF4F4;border-left-color:#2E6B77}
 .karte[data-kat="rechner"]:hover,.karte[data-kat="rechner"]:focus-visible{border-left-color:#1F4E58}
-
-/* ------- Kachel-Deko ------- */
-.karte{position:relative}
-.k-deko{
-  position:absolute; right:14px; bottom:14px; height:58px; width:auto;
-  pointer-events:none; filter:drop-shadow(0 2px 3px rgba(0,0,0,.28));
-}
-.karte-1875{min-height:200px}
-.k-deko-breit{height:82px}
-.k-deko-hoch{height:84px}
-.k-deko-mittel{height:64px}
-.k-deko-schlank{height:88px}
-.karte:has(.k-deko) .k-einsatz{padding-right:96px}
-.karte:has(.k-deko-breit) .k-einsatz{padding-right:118px}
-.k-deko-flug{height:50px}
-.karte:has(.k-deko-flug) .k-einsatz{padding-right:124px}
-.k-deko-turm{right:18px; bottom:14px; height:min(72%,230px); filter:drop-shadow(0 4px 10px rgba(0,0,0,.32))}
-.k-deko-em{height:66px; right:10px; bottom:12px}
-.k-deko-emlogo{height:56px; right:12px; bottom:88px}
-.k-deko-hkv{height:92px; right:16px; bottom:64px;
-  pointer-events:auto; cursor:pointer;
-  transition:transform .18s ease, filter .18s ease}
-.k-deko-hkv:hover, .k-deko-hkv:focus-visible{transform:translateY(-2px) scale(1.04);
-  filter:drop-shadow(0 5px 9px rgba(0,0,0,.42))}
-.k-deko-hkv:focus-visible{outline:2px solid #c9a227; outline-offset:3px; border-radius:2px}
-.karte:has(.k-deko-em) .k-einsatz{padding-right:140px}
-.karte:has(.k-deko-emlogo) .k-einsatz{padding-right:148px}
-.karte:has(.k-deko-hkv) .k-einsatz{padding-right:72px}
-.k-deko-gruppe{height:86px; right:10px; bottom:12px}
-.karte:has(.k-deko-gruppe) .k-einsatz{padding-right:112px}
-.k-deko-timer{height:72px; right:14px; bottom:14px; filter:drop-shadow(0 3px 7px rgba(60,20,120,.35))}
-.karte:has(.k-deko-timer) .k-einsatz{padding-right:100px}
-.k-deko-hammer{height:84px; right:12px; bottom:12px}
-.karte:has(.k-deko-hammer) .k-einsatz{padding-right:104px}
-.k-deko-auto{height:58px; right:10px; bottom:11px; filter:drop-shadow(0 6px 12px rgba(0,0,0,.38))}
-.k-deko-eu{height:72px; right:13px; bottom:13px; filter:drop-shadow(0 3px 7px rgba(0,0,0,.30))}
-/* Die Tricolore ist gezeichnet, nicht fotografiert: ein SVG bleibt bei jeder
-   Bildschirmdichte scharf und braucht keine zweite Datei. */
-.k-deko-fr{height:52px; width:78px; right:15px; bottom:16px;
-           filter:drop-shadow(0 3px 6px rgba(0,0,0,.26))}
-.karte:has(.k-deko-fr) .k-einsatz{padding-right:94px}
-.k-deko-uk{height:52px; width:104px; right:15px; bottom:16px;
-           filter:drop-shadow(0 3px 6px rgba(0,0,0,.26))}
-.karte:has(.k-deko-uk) .k-einsatz{padding-right:120px}
-.karte:has(.k-deko-eu) .k-einsatz{padding-right:126px}
-.karte:has(.k-deko-auto) .k-einsatz{padding-right:142px}
-
-/* Countdown-Plakette auf der Kachel */
-.k-count{
-  font-family:'JetBrains Mono',monospace;
-  font-size:.66rem; letter-spacing:.1em; text-transform:uppercase;
-  color:var(--ocker); border:1px solid rgba(216,174,102,.55);
-  border-radius:999px; padding:.16rem .6rem;
-  display:none; align-self:flex-start; margin-top:.55rem;
-  white-space:nowrap; background:rgba(216,174,102,.09);
-}
-.k-count[data-an]{display:inline-block}
-.k-count b{font-weight:600; font-variant-numeric:tabular-nums}
-.k-start{
-  font-family:'JetBrains Mono',monospace;
-  font-size:.66rem; letter-spacing:.1em; text-transform:uppercase;
-  color:var(--ocker); border:1px solid rgba(216,174,102,.55);
-  border-radius:999px; padding:.16rem .6rem;
-  display:inline-block; align-self:flex-start; margin-top:.55rem;
-  white-space:nowrap; background:rgba(216,174,102,.09);
-}
-.k-start b{font-weight:600; font-variant-numeric:tabular-nums}
 .k-kopf{
-  display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:.35rem .7rem;
+  display:flex;justify-content:space-between;align-items:baseline;gap:.7rem;
   margin-bottom:.5rem;
 }
 .k-thema{
@@ -327,92 +161,7 @@ body{
   margin-top:.8rem;display:inline-flex;align-items:center;gap:.4rem;font-weight:500;
 }
 .k-aktion .pfeil{transition:transform .22s cubic-bezier(.4,0,.2,1)}
-/* ------- Kauf-Knopf + Popup («Der Kauf») ------- */
-.k-kauf{
-  font-family:'JetBrains Mono',monospace;
-  font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;font-weight:500;
-  color:#fff;background:var(--ocker);border-radius:999px;
-  padding:.34rem .8rem;margin-top:.8rem;margin-right:.6rem;
-  display:inline-flex;align-items:center;gap:.4rem;cursor:pointer;
-  position:relative;z-index:2;
-}
-.k-kauf:hover,.k-kauf:focus-visible{background:#7d5100}
-.kauf-overlay{
-  position:fixed;inset:0;background:rgba(21,35,50,.55);z-index:60;
-  display:none;align-items:center;justify-content:center;padding:1.2rem;
-}
-.kauf-overlay.offen{display:flex}
-.kauf-dialog{
-  background:var(--karte);border-radius:16px;max-width:420px;width:100%;
-  padding:1.6rem 1.7rem 1.5rem;box-shadow:0 24px 60px rgba(21,35,50,.35);
-  position:relative;
-}
-.kauf-dialog h2{
-  font-family:'Fraunces',serif;font-size:1.35rem;color:var(--tinte);margin:0 0 .8rem;
-}
-.kauf-dialog p{margin:.55rem 0;color:var(--tinte);font-size:.95rem;line-height:1.55}
-.kauf-twint{
-  background:var(--papier);border:1px solid var(--linie);border-radius:12px;
-  padding:.9rem 1rem;margin:.9rem 0;
-}
-.kauf-twint b{font-size:1.15rem}
-.kauf-twint .nr{font-family:'JetBrains Mono',monospace;font-size:1.05rem;white-space:nowrap}
-.kauf-rabatt{color:var(--ocker);font-weight:500}
-.kauf-zu{
-  position:absolute;top:.7rem;right:.8rem;border:0;background:none;cursor:pointer;
-  font-size:1.5rem;line-height:1;color:var(--grau);padding:.3rem;
-}
-.kauf-zu:hover{color:var(--tinte)}
 .karte:hover .k-aktion .pfeil,.karte:focus-visible .k-aktion .pfeil{transform:translateX(4px)}
-
-/* ── „In Arbeit"-Kennzeichnung ── */
-.karte{overflow:hidden}
-.karte[data-wip]{border-left-style:dashed}
-.karte[data-wip] .k-kopf{flex-direction:column;align-items:flex-start;gap:.3rem;padding-right:44px}
-.karte[data-wip]::before{
-  content:""; position:absolute; inset:0; pointer-events:none;
-  background:repeating-linear-gradient(-45deg,rgba(244,196,0,.10) 0 14px,rgba(244,196,0,0) 14px 28px);
-}
-.wip-ribbon{
-  position:absolute; top:16px; right:-44px; width:160px; z-index:2;
-  transform:rotate(45deg);
-  background:#F4C400; color:#3a2c00;
-  font-family:'JetBrains Mono',monospace; font-size:.58rem; font-weight:700;
-  letter-spacing:.1em; text-transform:uppercase; text-align:center;
-  padding:.34rem 0; box-shadow:0 2px 6px rgba(0,0,0,.22);
-  border-top:1px solid rgba(255,255,255,.55); border-bottom:1px solid rgba(0,0,0,.18);
-}
-.wip-tag{
-  display:inline-flex;align-items:center;gap:.35rem;
-  font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.06em;
-  text-transform:uppercase;color:#7a5a00;font-weight:700;
-  background:#FCEFB8;border:1px solid #EBD37A;border-radius:999px;
-  padding:.16rem .55rem;margin-top:.6rem;width:fit-content;
-}
-
-/* ------- Kachel-Icon ------- */
-.k-icon{
-  align-self:flex-start;
-  width:44px;height:44px;border-radius:12px;
-  display:flex;align-items:center;justify-content:center;
-  background:rgba(255,255,255,.9);
-  border:1px solid var(--linie);
-  color:var(--hkv);
-  margin-bottom:.8rem;
-  transition:transform .22s cubic-bezier(.4,0,.2,1), box-shadow .22s;
-  box-shadow:0 1px 2px rgba(21,35,50,.05);
-}
-.k-icon svg{width:25px;height:25px;display:block}
-.karte:hover .k-icon,.karte:focus-visible .k-icon{
-  transform:translateY(-1px) scale(1.07);
-  box-shadow:0 4px 12px rgba(21,35,50,.13);
-}
-.karte[data-kat="wirtschaft"] .k-icon{color:#9A6C1E;border-color:rgba(154,108,30,.3)}
-.karte[data-kat="politik"]    .k-icon{color:#1F4E78;border-color:rgba(31,78,120,.3)}
-.karte[data-kat="oekologie"]  .k-icon{color:#3A5E34;border-color:rgba(58,94,52,.3)}
-.karte[data-kat="gesundheit"] .k-icon{color:#8E403A;border-color:rgba(142,64,58,.3)}
-.karte[data-kat="lernen"]     .k-icon{color:#514386;border-color:rgba(81,67,134,.3)}
-.karte[data-kat="rechner"]    .k-icon{color:#1F4E58;border-color:rgba(31,78,88,.3)}
 
 /* ── Fuss ── */
 .fuss{
@@ -437,55 +186,24 @@ body{
   .karte:nth-child(11){animation-delay:.76s}
   @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 }
-
-/* ------- Sortiermodus: Kacheln frei anordnen ------- */
-#sortChip{margin-left:auto; border-style:dashed;}
-#sortChip[aria-pressed="true"]{background:var(--ocker); border-color:var(--ocker); color:#fff;}
-@media (hover:none){ #sortChip{display:none} }   /* Touch: kein Drag&Drop */
-.grid.sortieren .karte{cursor:grab; border-style:dashed;}
-.grid.sortieren .karte:active{cursor:grabbing;}
-.grid.sortieren .karte.zieht{opacity:.35;}
-.sort-hinweis{display:none; font-size:.8rem; color:var(--grau); margin:-0.4rem 0 1rem;}
-.sort-hinweis.an{display:block;}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <header class="hero">
-    <div class="hero-buehne">
-    <div class="hero-media">
-      <img class="hero-img" src="abu_hero2.jpg?v=3" alt="Kopf aus goldenen Zahnrädern, die die ABU-Themen bilden">
-      <div class="shine"></div>
-      <div class="tw" style="left:60%;top:15%"></div><div class="tw" style="left:83%;top:24%;animation-delay:1.6s"></div><div class="tw" style="left:72%;top:38%;animation-delay:2.8s"></div><div class="tw" style="left:82%;top:55%;animation-delay:.9s"></div><div class="tw" style="left:70%;top:62%;animation-delay:3.3s"></div>
-      <img class="patch p1" src="abu_gear_patch.png?v=5" alt="" aria-hidden="true">
-      <img class="rotor r1" src="abu_gear_solo.png?v=5" alt="" aria-hidden="true">
-      <img class="rotor r2" src="abu_gear_solo.png?v=5" alt="" aria-hidden="true">
-      <img class="rotor r3" src="abu_gear_solo.png?v=5" alt="" aria-hidden="true">
-      <div class="hero-cr">&copy; 2026 <a href="mailto:samuel.mollet@hkv.ch" title="E-Mail an Samuel Mollet">S.&nbsp;Mollet</a></div>
-    </div>
-    <div class="hero-text">
-      <div class="eyebrow">HKV Aarau · Allgemeinbildung</div>
-      <h1 class="wordmark">abu-tools<span class="tld">.ch</span></h1>
-      <p class="lead">Interaktive Folien, Simulationen und Rechner für den allgemeinbildenden Unterricht – direkt nutzbar am Beamer, Tablet oder Laptop.</p>
-    </div>
-    </div><!-- /hero-buehne -->
-    <div class="hinweis-zeile">
+  <header>
+    <div class="eyebrow">HKV Aarau · Allgemeinbildung</div>
+    <h1 class="wordmark">abu-tools<span class="tld">.ch</span></h1>
+    <p class="lead">Interaktive Folien, Simulationen und Rechner für den allgemeinbildenden Unterricht – direkt nutzbar am Beamer, Tablet oder Laptop.</p>
     <div class="hinweis">
-      Die Aufträge, Lernziele und Theorie finden Sie in <a class="kvd" href="https://go.kvdigital.swiss/dashboard" target="_blank" rel="noopener">KV&nbsp;Digital<span class="pfeil-ex">↗</span></a>.
+      Die Aufträge, Lernziele und Theorie finden Sie in <b>KV&nbsp;Digital</b>.
       abu-tools.ch ergänzt den Unterricht mit interaktiven Werkzeugen, die sich dort verlinken lassen.
-    </div>
-    <a class="wunschbox" id="wunschbox" href="mailto:samuel.mollet@hkv.ch?subject=Wunsch%3A%20interaktive%20Folie&body=Hallo%20Herr%20Mollet%0A%0AIch%20w%C3%BCnsche%20mir%20eine%20interaktive%20Folie%20zu%3A%0A%0A">
-      <img id="wunschPost" src="wunschbox_post_0.png?v=1" alt="" onerror="this.style.display='none'">
-      <span><b>Wunschbox</b>Welche interaktive Folie fehlt dir? Schreib mir deinen Wunsch.
-      <span class="wb-mail">samuel.mollet@hkv.ch</span></span>
-    </a>
     </div>
     <div class="rule"></div>
   </header>
 
   <main>
-    <div class="materialien" id="werkzeuge"><span>Werkzeuge</span></div>
+    <div class="materialien"><span>Werkzeuge</span></div>
 
     <div class="filter" role="group" aria-label="Nach Kategorie filtern">
       <button class="chip" type="button" data-filter="alle" aria-pressed="true">Alle</button>
@@ -495,120 +213,11 @@ body{
       <button class="chip" type="button" data-filter="oekologie" aria-pressed="false">Ökologie &amp; Mobilität</button>
       <button class="chip" type="button" data-filter="lernen" aria-pressed="false">Lernen &amp; Selbstmanagement</button>
       <button class="chip" type="button" data-filter="rechner" aria-pressed="false">Rechner &amp; Organisation</button>
-      <button class="chip" type="button" id="sortChip" aria-pressed="false" title="Kacheln per Ziehen anordnen">↕ Sortieren</button>
-      <button class="chip" type="button" id="klickChip" aria-pressed="false" hidden title="Die meistgeöffneten Werkzeuge nach oben">★ Beliebteste</button>
-    </div>
-    <p class="sort-hinweis" id="sortHinweis">Kacheln mit der Maus verschieben – die Anordnung bleibt in diesem Browser-Tab erhalten. Zum Öffnen der Tools den Sortiermodus wieder ausschalten.</p>
-
-    <div class="klickleiste" id="klickleiste" role="group" aria-label="Zeitraum der Öffnungszahlen">
-      <span class="kl-titel">Geöffnet</span>
-      <button class="kl-knopf" type="button" data-fenster="heute" aria-pressed="false">Heute</button>
-      <button class="kl-knopf" type="button" data-fenster="woche" aria-pressed="false">Diese Woche</button>
-      <button class="kl-knopf" type="button" data-fenster="monat" aria-pressed="false">Diesen Monat</button>
-      <button class="kl-knopf" type="button" data-fenster="total" aria-pressed="true">Total</button>
-      <span class="kl-hinweis" id="klHinweis"></span>
     </div>
 
     <div class="grid" id="grid">
 
-      <a class="karte" href="maslow-bildergeschichte.html" data-kat="gesundheit">
-        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2.6 20.4h18.8L12 3Z"/><path d="M9.4 8.4h5.2"/><path d="M7.4 12.6h9.2"/><path d="M5 16.6h14"/></svg></span>
-        <div class="k-kopf">
-          <span class="k-thema">Bedürfnisse · ABU</span>
-          <span class="k-typ">Bildergeschichte</span>
-        </div>
-        <div class="k-titel">Fünf Stufen, eine Siedlung</div>
-        <p class="k-text">Die Bedürfnispyramide nach Maslow als Steinzeitsiedlung: In sieben Stationen fährt das Bild von Stufe zu Stufe — jede mit einer kurzen Geschichte und der Übersetzung in den Alltag von heute.</p>
-        <div class="k-einsatz">Plenum am Beamer · Einstieg · rund 10 Minuten</div>
-        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
-        <img class="k-deko k-deko-hoch" src="kachel_speer_feuer.png?v=1" alt="" onerror="this.style.display='none'">
-      </a>
-      <a class="karte" href="dreisatz.html" data-kat="rechner">
-        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2v17.2"/><path d="M7.4 20.6h9.2"/><path d="M3.4 7.1h2.2c1.9 0 4.6-.9 6.4-1.8 1.8.9 4.5 1.8 6.4 1.8h2.2"/><path d="m17 15.6 2.8-7.4 2.8 7.4c-.8.6-1.75.9-2.8.9s-2-.3-2.8-.9z"/><path d="m1.4 15.6 2.8-7.4L7 15.6c-.8.6-1.75.9-2.8.9s-2-.3-2.8-.9z"/></svg></span>
-        <div class="k-kopf">
-          <span class="k-thema">Rechnen · ABU</span>
-          <span class="k-typ">Trainer</span>
-        </div>
-        <div class="k-titel">Dreisatz</div>
-        <p class="k-text">Gerader und ungerader Dreisatz Schritt für Schritt erklärt – mit endlosem Aufgaben-Trainer, Berufs-Niveaus (EBA, EFZ, KV, Apotheke) und eingebautem Taschenrechner.</p>
-        <div class="k-einsatz">Einzelarbeit · Selbstübung · Niveaus wählbar</div>
-        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
-              <img class="k-deko k-deko-mittel" src="kachel_lager.png?v=1" alt="" onerror="this.style.display=&#39;none&#39;">
-      </a>
-
-      <a class="karte" href="eisenhower_matrix.html" data-kat="lernen">
-        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2.2"/><path d="M12 3v18M3 12h18"/><rect x="4.9" y="4.9" width="5.2" height="5.2" rx="1.1" fill="currentColor" stroke="none"/></svg></span>
-        <div class="k-kopf">
-          <span class="k-thema">Selbstmanagement</span>
-          <span class="k-typ">Interaktive Folie</span>
-        </div>
-        <div class="k-titel">Eisenhower-Matrix</div>
-        <p class="k-text">Aufgaben nach Dringlichkeit und Wichtigkeit ordnen – interaktiv erkunden, was sofort erledigt, geplant, delegiert oder gestrichen wird.</p>
-        <div class="k-einsatz">Einzelarbeit · Lerncoaching</div>
-        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
-              <img class="k-deko k-deko-mittel" src="kachel_wecker.png?v=1" alt="" onerror="this.style.display=&#39;none&#39;">
-      </a>
-
-      <a class="karte" href="franzoesisch.html" data-kat="lernen">
-        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 12.4c0 3.9-3.9 7-8.6 7-1 0-2-.15-2.9-.42L4.4 20.6l1.3-3.4C4.2 15.9 3.4 14.2 3.4 12.4c0-3.9 3.9-7 8.6-7s8.6 3.1 8.6 7Z"/><circle cx="8.6" cy="12.4" r=".95" fill="currentColor" stroke="none"/><circle cx="12" cy="12.4" r=".95" fill="currentColor" stroke="none"/><circle cx="15.4" cy="12.4" r=".95" fill="currentColor" stroke="none"/></svg></span>
-        <div class="k-kopf">
-          <span class="k-thema">Französisch · Sprache</span>
-          <span class="k-typ">Trainer</span>
-        </div>
-        <div class="k-titel">Français – s'entraîner</div>
-        <p class="k-text">Diktat mit der Stimme des Geräts, unregelmässige Verben in fünf Zeiten, Satzstellung als Puzzle und eine Geschäftsmail zum Zusammenbauen – kein Vokabelpauken.</p>
-        <div class="k-einsatz">Selbständiges Üben · Handy · Hausaufgabe</div>
-        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
-                    <svg class="k-deko k-deko-fr" viewBox="0 0 120 80" aria-hidden="true" focusable="false">
-                <defs>
-                  <clipPath id="frWelle"><path d="M3 12c19-9 38 7 57 2s34-9 57-6v55c-23-3-38 1-57 6s-38-11-57-2Z"/></clipPath>
-                  <linearGradient id="frFalte" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0" stop-color="#000" stop-opacity=".16"/>
-                    <stop offset=".22" stop-color="#000" stop-opacity="0"/>
-                    <stop offset=".52" stop-color="#fff" stop-opacity=".22"/>
-                    <stop offset=".74" stop-color="#000" stop-opacity=".14"/>
-                    <stop offset="1" stop-color="#000" stop-opacity="0"/>
-                  </linearGradient>
-                </defs>
-                <g clip-path="url(#frWelle)">
-                  <rect x="0" y="0" width="40" height="80" fill="#0055A4"/>
-                  <rect x="40" y="0" width="40" height="80" fill="#F7F7F7"/>
-                  <rect x="80" y="0" width="40" height="80" fill="#EF4135"/>
-                  <rect x="0" y="0" width="120" height="80" fill="url(#frFalte)"/>
-                </g>
-                <path d="M3 12c19-9 38 7 57 2s34-9 57-6v55c-23-3-38 1-57 6s-38-11-57-2Z"
-                      fill="none" stroke="rgba(20,30,45,.22)" stroke-width="2"/>
-              </svg>
-</a>
-
-      <a class="karte" href="englisch.html" data-kat="lernen">
-        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 12.4c0 3.9-3.9 7-8.6 7-1 0-2-.15-2.9-.42L4.4 20.6l1.3-3.4C4.2 15.9 3.4 14.2 3.4 12.4c0-3.9 3.9-7 8.6-7s8.6 3.1 8.6 7Z"/><path d="M9.1 15V9.4h5.8M9.1 12.2h4.4"/></svg></span>
-        <div class="k-kopf">
-          <span class="k-thema">Englisch · Sprache</span>
-          <span class="k-typ">Trainer</span>
-        </div>
-        <div class="k-titel">English – practise</div>
-        <p class="k-text">Diktat und Satzbetonung mit echten Aufnahmen, unregelmässige Verben in fünf Zeiten, Wortstellung in drei Stufen, eine Geschäftsmail zum Zusammenbauen und Bildwortschatz für Büro, Laden und Apotheke.</p>
-        <div class="k-einsatz">Selbständiges Üben · Handy · Hausaufgabe</div>
-        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
-              <svg class="k-deko k-deko-uk" viewBox="0 0 60 30" aria-hidden="true" focusable="false">
-                <defs>
-                  <clipPath id="ukKachelA"><rect width="60" height="30" rx="2"/></clipPath>
-                  <clipPath id="ukKachelB"><path d="M30 15h30v15zv15H0zH0V0zV0h30z"/></clipPath>
-                </defs>
-                <g clip-path="url(#ukKachelA)">
-                  <rect width="60" height="30" fill="#012169"/>
-                  <path d="M0 0l60 30m0-30L0 30" stroke="#fff" stroke-width="6"/>
-                  <path d="M0 0l60 30m0-30L0 30" clip-path="url(#ukKachelB)" stroke="#C8102E" stroke-width="4"/>
-                  <path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/>
-                  <path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/>
-                </g>
-                <rect x=".6" y=".6" width="58.8" height="28.8" rx="2" fill="none" stroke="rgba(20,30,45,.22)" stroke-width="1.2"/>
-              </svg>
-      </a>
-
       <a class="karte" href="parlament_sitzplan.html" data-kat="politik">
-        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.6 19a9.4 9.4 0 0 1 18.8 0"/><path d="M7.2 19a4.8 4.8 0 0 1 9.6 0"/><path d="M2.6 19h18.8"/><circle cx="6" cy="13.6" r="1.05" fill="currentColor" stroke="none"/><circle cx="12" cy="11.4" r="1.05" fill="currentColor" stroke="none"/><circle cx="18" cy="13.6" r="1.05" fill="currentColor" stroke="none"/></svg></span>
         <div class="k-kopf">
           <span class="k-thema">Staatskunde</span>
           <span class="k-typ">Simulation</span>
@@ -617,100 +226,9 @@ body{
         <p class="k-text">Interaktiver Sitzplan von National- und Ständerat – filterbar nach Partei, Fraktion, Kanton, Geschlecht und Sprache.</p>
         <div class="k-einsatz">Beamer · Klassenaktivität · Bundesratswahl-Simulation</div>
         <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
-              <img class="k-deko k-deko-breit" src="kachel_bundeshaus.png?v=2" alt="" onerror="this.style.display=&#39;none&#39;">
-      </a>
-
-      <a class="karte" href="schweiz_europa.html" data-kat="politik">
-        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7.4v9.2M7.4 12h9.2"/><circle cx="12" cy="2.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="20.3" cy="7.25" r="1.2" fill="currentColor" stroke="none"/><circle cx="20.3" cy="16.75" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="21.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="3.7" cy="16.75" r="1.2" fill="currentColor" stroke="none"/><circle cx="3.7" cy="7.25" r="1.2" fill="currentColor" stroke="none"/></svg></span>
-        <div class="k-kopf">
-          <span class="k-thema">Staatskunde · Europa</span>
-          <span class="k-typ">Dossier</span>
-        </div>
-        <div class="k-titel">Die Schweiz und Europa</div>
-        <p class="k-text">EU, EWR, Schengen, EFTA und Eurozone auseinanderhalten – den bilateralen Weg von 1972 bis heute nachvollziehen und den Stand der Bilateralen III verfolgen.</p>
-        <div class="k-einsatz">Beamer · Einzelarbeit · Abstimmungsvorbereitung</div>
-        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
-              <img class="k-deko k-deko-eu" src="kachel_europa.png?v=1" alt="" onerror="this.style.display=&#39;none&#39;">
-      </a>
-
-      <a class="karte" href="qv_medikamente.html" data-kat="gesundheit">
-        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="8.5" width="19" height="7" rx="3.5"/><path d="M12 8.5v7"/><circle cx="6.8" cy="12" r="1.1"/></svg></span>
-        <div class="k-kopf">
-          <span class="k-thema">Pharma · QV</span>
-          <span class="k-typ">Lerntrainer</span>
-        </div>
-        <div class="k-titel">QV-Trainer Medikamente</div>
-        <p class="k-text">Die offizielle Medikamentenliste von pharmaSuisse zum Üben: 413 Präparate in 16 Themen – als Karteikarte, mit Zuordnungsübung zu Thema und Wirkstoff und einer Merkliste zum Ausdrucken.</p>
-        <div class="k-einsatz">Fachfrau/Fachmann Apotheke EFZ · Prüfungsvorbereitung · Einzelarbeit</div>
-        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
-      </a>
-
-      <a class="karte" href="rechtsfaehigkeit.html" data-kat="wirtschaft">
-        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M8 21h8"/><path d="M12 6h7"/><path d="M12 6H5"/><path d="m5 6-2.6 6a2.9 2.9 0 0 0 5.2 0z"/><path d="m19 6-2.6 6a2.9 2.9 0 0 0 5.2 0z"/></svg></span>
-        <div class="k-kopf">
-          <span class="k-thema">Recht · ZGB</span>
-          <span class="k-typ">Interaktive Folie</span>
-        </div>
-        <div class="k-titel">Rechtsfähig – urteilsfähig – handlungsfähig</div>
-        <p class="k-text">Wer darf was im Recht? Die drei Fähigkeiten des ZGB als anklickbare Treppe – mit sechs Fallbeispielen aus dem Lehrlingsalltag und Quiz.</p>
-        <div class="k-einsatz">Beamer · 1. Lehrjahr · Einzelarbeit</div>
-        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
-        <img class="k-deko k-deko-hammer" src="kachel_richterhammer.png?v=1" alt="" onerror="this.style.display='none'">
-      </a>
-
-      <a class="karte" href="kaufvertrag.html" data-kat="wirtschaft">
-        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5.4 7.4h13.2l-1.15 13.2H6.55z"/><path d="M9 7.4V5.9a3 3 0 0 1 6 0v1.5"/></svg></span>
-        <div class="k-kopf">
-          <span class="k-thema">Recht · OR</span>
-          <span class="k-typ">Lernspiel</span>
-        </div>
-        <div class="k-titel">Der Kauf</div>
-        <p class="k-text">Ein Kaufvertrag, drei Störungen: Lieferverzug, Zahlungsverzug und Mängelrüge als spielbares Dialog-Abenteuer – mit Produktwahl und Rechtsquotient.</p>
-        <div class="k-einsatz">Einzelarbeit · drei Wege · Wiederspielwert</div>
-        <span class="k-start">Start Verkauf <b>1.8.2026</b></span>
-        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span><span class="k-kauf" id="kaufKnopf" role="button" tabindex="0" aria-haspopup="dialog">Vollversion kaufen</span>
-        <img class="k-deko k-deko-hkv" src="kachel_hkv_banner.png?v=2"
-             alt="HKV Aarau – zur Berufsfachschule" title="HKV Aarau – Berufsfachschule"
-             role="link" tabindex="0" onerror="this.style.display=&#39;none&#39;">
-      </a>
-
-      <a class="karte" href="co2_alltag.html" data-kat="oekologie">
-        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6.8 17.4h9.4a3.7 3.7 0 0 0 .4-7.4 5.4 5.4 0 0 0-10.3 1.2 3.2 3.2 0 0 0 .5 6.2Z"/><path d="M4.2 20.6h5.1M12.4 20.6h7.4"/></svg></span>
-        <div class="k-kopf">
-          <span class="k-thema">Ökologie · Konsum</span>
-          <span class="k-typ">Interaktive Folie</span>
-        </div>
-        <div class="k-titel">CO₂ im Alltag</div>
-        <p class="k-text">Zwanzig Verkehrsmittel auf frei wählbarer Distanz und fünfzehn Lebensmittel auf dem Teller – mit Schweizer KBOB-Faktoren, einem Umschalter pro Kilo oder pro Portion und neun Quizfragen.</p>
-        <div class="k-einsatz">Beamer · vier Reiter · Quiz</div>
-        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
-              <img class="k-deko k-deko-flug" src="kachel_flugzeug.png?v=1" alt="" onerror="this.style.display=&#39;none&#39;">
-      </a>
-
-      <a class="karte" href="slp_karte.html" data-kat="lernen">
-        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.8 6.4 9 3.8l6 2.6 6.2-2.6v13.8L15 20.2l-6-2.6-6.2 2.6z"/><path d="M9 3.8v13.8M15 6.4v13.8"/></svg></span>
-        <div class="k-thema">Lehrplan · ABU</div>
-        <div class="k-titel">SLP-Landkarte 2026</div>
-        <p class="k-text">Der ganze Aargauer Schullehrplan auf einer Karte: 7 Themen × 8 Aspekte, 26 Kompetenzen, 185 klickbare Stichworte mit Suche und Detailansicht.</p>
-        <span class="k-aktion">Öffnen <span class="pfeil">→</span></span>
-              <img class="k-deko" src="kachel_kompass.png?v=1" alt="" onerror="this.style.display=&#39;none&#39;">
-      </a>
-
-      <a class="karte" href="notenrechner.html" data-kat="rechner">
-        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4.6" y="2.6" width="14.8" height="18.8" rx="2.2"/><path d="M7.8 6.6h8.4"/><circle cx="9" cy="12" r=".95" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r=".95" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r=".95" fill="currentColor" stroke="none"/><circle cx="9" cy="16.6" r=".95" fill="currentColor" stroke="none"/><circle cx="12" cy="16.6" r=".95" fill="currentColor" stroke="none"/><circle cx="15" cy="16.6" r=".95" fill="currentColor" stroke="none"/></svg></span>
-        <div class="k-kopf">
-          <span class="k-thema">Qualifikationsverfahren</span>
-          <span class="k-typ">Rechner</span>
-        </div>
-        <div class="k-titel">Notenrechner QV</div>
-        <p class="k-text">QV-Gesamtnote und Bestehen live berechnet – für Apotheke, Detailhandel und Kaufleute (EFZ, EBA und BM1).</p>
-        <div class="k-einsatz">Einzelarbeit · QV-Vorbereitung</div>
-        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
-              <img class="k-deko" src="kachel_taschenrechner.png?v=1" alt="" onerror="this.style.display=&#39;none&#39;">
       </a>
 
       <a class="karte" href="ernaehrungspyramide.html" data-kat="gesundheit">
-        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 21.2 20H2.8z"/><path d="M7.2 14.2h9.6"/><path d="M9.6 9.7h4.8"/></svg></span>
         <div class="k-kopf">
           <span class="k-thema">Gesundheit</span>
           <span class="k-typ">Interaktive Grafik</span>
@@ -719,138 +237,9 @@ body{
         <p class="k-text">Die Schweizer Lebensmittelpyramide (Stand 2024) interaktiv – mit Ländervergleich, Nährstoffen und Gesundheitswissen.</p>
         <div class="k-einsatz">Beamer · Einzelarbeit</div>
         <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
-              <img class="k-deko" src="kachel_apfel.png?v=2" alt="" onerror="this.style.display=&#39;none&#39;">
       </a>
 
-      <a class="karte" href="angebot_nachfrage.html" data-kat="wirtschaft">
-        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v17h17"/><path d="M6.4 17.6 18.6 6.2"/><path d="M6.4 6.6 18.6 17.8"/><circle cx="12.4" cy="12.1" r="1.5" fill="currentColor" stroke="none"/></svg></span>
-        <div class="k-kopf">
-          <span class="k-thema">Wirtschaft</span>
-          <span class="k-typ">Simulation</span>
-        </div>
-        <div class="k-titel">Angebot und Nachfrage</div>
-        <p class="k-text">Wie Marktpreis und Menge entstehen – Angebots- und Nachfragekurven verschieben und das Gleichgewicht beobachten.</p>
-        <div class="k-einsatz">Beamer · Einzelarbeit</div>
-        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
-              <img class="k-deko k-deko-mittel" src="kachel_marktstand.png?v=1" alt="" onerror="this.style.display=&#39;none&#39;">
-      </a>
-
-      <a class="karte" href="wolkenarten.html" data-kat="oekologie">
-        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5.4" rx="6.4" ry="2.05"/><ellipse cx="9.9" cy="12" rx="7.5" ry="2.35"/><ellipse cx="13.4" cy="18.6" rx="6" ry="2.05"/></svg></span>
-        <div class="k-kopf">
-          <span class="k-thema">Geografie</span>
-          <span class="k-typ">Interaktive Folie</span>
-        </div>
-        <div class="k-titel">Wolken lesen</div>
-        <p class="k-text">Die zehn Wolkengattungen in ihren drei Stockwerken – anklickbarer Himmel, Baukasten für die lateinischen Namen und ein Schnittbild durch die Gewitterwolke.</p>
-        <div class="k-einsatz">Beamer · Einzelarbeit · Wetterkunde</div>
-        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
-              <img class="k-deko k-deko-mittel" src="kachel_gewitterwolke.png?v=1" alt="" onerror="this.style.display=&#39;none&#39;">
-      </a>
-
-      <a class="karte" href="energie_wasserkraft.html" data-kat="oekologie">
-        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12.9 6.4 8.4 13.1h3.3l-.6 4.5 4.5-6.7h-3.3z"/></svg></span>
-        <div class="k-kopf">
-          <span class="k-thema">Energie · Schweiz</span>
-          <span class="k-typ">Interaktive Grafik</span>
-        </div>
-        <div class="k-titel">Woher der Strom kommt</div>
-        <p class="k-text">Fünf Kraftwerke im Schnittbild – Wasser mit Pumpbetrieb-Schalter, Kernkraft, Solar aufs eigene Dach, Wind und Gezeiten. Dazu der Schweizer Strommix, die Planungsdauern im Vergleich und ein Ausblick auf Wasserstoff, Fusion und Antimaterie.</p>
-        <div class="k-einsatz">Beamer · sieben Reiter · Klick-Stationen mit Zifferntasten</div>
-        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
-              <img class="k-deko k-deko-schlank" src="kachel_strommast.png?v=1" alt="" onerror="this.style.display=&#39;none&#39;">
-      </a>
-
-      <div class="karte karte-1875" data-kat="lernen" data-wip aria-disabled="true">
-        <span class="wip-ribbon">🚧 Coming soon</span>
-        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7.4 21V10.3L12 4.7l4.6 5.6V21z"/><path d="M5.6 21h12.8"/><rect x="10.5" y="13.2" width="3" height="4.2" rx=".8"/><path d="M12 4.7V2.4"/></svg></span>
-        <div class="k-kopf">
-          <span class="k-thema">Lernspiel</span>
-        </div>
-        <div class="k-titel">1875</div>
-        <img class="k-deko k-deko-turm" src="kachel_1875_turm.png?v=5" alt="" onerror="this.style.display=&#39;none&#39;">
-      </div>
-
-      <a class="karte" href="wirtschaftskreislauf.html" data-kat="wirtschaft">
-        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.6" y="3.2" width="7.6" height="6" rx="1.6"/><rect x="13.8" y="14.8" width="7.6" height="6" rx="1.6"/><path d="M13.4 6.2h3.6a3.4 3.4 0 0 1 3.4 3.4v2.2"/><path d="m18.4 10.9 2 1.9 2-1.9"/><path d="M10.6 17.8H7a3.4 3.4 0 0 1-3.4-3.4v-2.2"/><path d="m5.6 13.1-2-1.9-2 1.9"/></svg></span>
-        <div class="k-kopf">
-          <span class="k-thema">Wirtschaft</span>
-          <span class="k-typ">Interaktive Folie</span>
-        </div>
-        <div class="k-titel">Wirtschaftskreislauf</div>
-        <p class="k-text">Vom einfachen zum erweiterten Kreislauf – Haushalte, Unternehmen, Banken, Staat und Ausland mit animierten Geld- und Güterströmen.</p>
-        <div class="k-einsatz">Beamer · KV Digital · geführte Tour</div>
-        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
-              <img class="k-deko" src="kachel_sparschwein.png?v=1" alt="" onerror="this.style.display=&#39;none&#39;">
-      </a>
-
-      <a class="karte" href="oev-erwacht.html" data-kat="oekologie">
-        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="4.8" cy="6" r="1.9"/><circle cx="19.2" cy="7.4" r="1.9"/><circle cx="12" cy="12.8" r="1.9"/><circle cx="5.8" cy="19" r="1.9"/><circle cx="18.2" cy="18.4" r="1.9"/><path d="m6.3 7.4 4.2 4.1"/><path d="m13.8 11.9 3.7-3.2"/><path d="m10.7 14.2-3.4 3.4"/><path d="m13.6 14.1 3 2.9"/></svg></span>
-        <div class="k-kopf">
-          <span class="k-thema">Mobilität · Schweiz</span>
-          <span class="k-typ">Datenvisualisierung</span>
-        </div>
-        <div class="k-titel">Der Puls der Schweiz</div>
-        <p class="k-text">Ein ganzer Fahrplantag mit 304'613 echten Fahrten – das Zeitfenster ist frei wählbar, und das Schweizer ÖV-Netz baut sich live auf der Karte auf.</p>
-        <div class="k-einsatz">Beamer · Storytelling-Einstieg · Zeitfenster wählbar</div>
-        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
-              <img class="k-deko" src="kachel_postauto.png?v=1" alt="" onerror="this.style.display=&#39;none&#39;">
-      </a>
-
-      <a class="karte" href="wasserkreislauf.html" data-kat="oekologie">
-        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.4 12.6a8.4 8.4 0 0 1-13.6 5.6"/><path d="M3.6 11.4a8.4 8.4 0 0 1 13.6-5.6"/><path d="m6.8 14.4-.2 3.9 3.9-.4"/><path d="m17.2 9.6.2-3.9-3.9.4"/><path d="M12 8.4c1.9 1.9 2.9 3.3 2.9 4.4a2.9 2.9 0 0 1-5.8 0c0-1.1 1-2.5 2.9-4.4z"/></svg></span>
-        <div class="k-kopf">
-          <span class="k-thema">Geografie</span>
-          <span class="k-typ">Interaktive Folie</span>
-        </div>
-        <div class="k-titel">Wasserkreislauf</div>
-        <p class="k-text">Sechs Stationen in einer echten Landschaft, dazu Transpiration, Schneeschmelze und Quelle als Nebenpfade. Mit Spotlight, Verweilzeiten und einem Regler, der den natürlichen in den gestörten Kreislauf überblendet.</p>
-        <div class="k-einsatz">Beamer · 6 Stationen · Quiz</div>
-        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
-              <img class="k-deko k-deko-mittel" src="kachel_regenwolke.png?v=1" alt="" onerror="this.style.display=&#39;none&#39;">
-      </a>
-
-            <a class="karte" href="stadt_land_fluss.html" data-kat="lernen">
-        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="2"/><path d="M3 9.5h18"/><path d="M9 9.5v10M15 9.5v10"/><path d="M5.6 7h1.2M9.4 7h1.2M13.2 7h1.2"/></svg></span>
-        <div class="k-kopf">
-          <span class="k-thema">Methode · Spiel</span>
-          <span class="k-typ">Druckvorlage</span>
-        </div>
-        <div class="k-titel">Stadt · Land · Fluss</div>
-        <p class="k-text">Der Klassiker mit eigenen Kategorien – von Rechtsbegriff bis Versicherung. Buchstaben ziehen, Zeit stoppen, Spielblatt als PDF drucken.</p>
-        <div class="k-einsatz">Klasse · Einstieg &amp; Repetition · A4-Blatt</div>
-        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
-        <img class="k-deko k-deko-timer" src="kachel_slf_timer.png?v=1" alt="" onerror="this.style.display='none'">
-      </a>
-
-      <a class="karte" href="versicherungen.html" data-kat="wirtschaft">
-        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.9 4.6 5.9v5.5c0 4.4 3.1 8.3 7.4 9.7 4.3-1.4 7.4-5.3 7.4-9.7V5.9z"/><path d="M9.2 12.2l2 2 3.6-4"/></svg></span>
-        <div class="k-kopf">
-          <span class="k-thema">Wirtschaft · Recht</span>
-          <span class="k-typ">Interaktive Folie</span>
-        </div>
-        <div class="k-titel">Versicherungen verstehen</div>
-        <p class="k-text">Vom Risiko zur Franchise: gemeinsamer Topf, Rechnung Schritt für Schritt, Franchise-Experiment mit Regler, Jahressimulation – und am Schluss Zuordnen von Haftpflicht, Hausrat und Co.</p>
-        <div class="k-einsatz">Beamer · 10 Stationen · Quiz</div>
-        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
-        <img class="k-deko k-deko-gruppe" src="kachel_vers_gruppe.png?v=1" alt="" onerror="this.style.display='none'">
-      </a>
-
-      <a class="karte" href="leasing.html" data-kat="wirtschaft">
-        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.6v18.8"/><path d="M16.2 7.3c0-1.7-1.9-2.8-4.2-2.8S7.8 5.6 7.8 7.3c0 2 2.2 2.7 4.2 3.2 2.2.6 4.4 1.3 4.4 3.5 0 2-2.1 3.1-4.4 3.1s-4.4-1.1-4.4-3.1"/></svg></span>
-        <div class="k-kopf">
-          <span class="k-thema">Wirtschaft · Recht</span>
-          <span class="k-typ">Interaktive Folie</span>
-        </div>
-        <div class="k-titel">CHF 299.– pro Monat?</div>
-        <p class="k-text">Aus der Leasingwerbung wird eine echte Rechnung: Im dunklen Showroom geht mit jedem Klick ein Licht an – und aus CHF 299.– werden CHF 971.–. Dazu Leasen gegen Kaufen mit Zinsregler und elf Karten zu Pflichten und Rechten.</p>
-        <div class="k-einsatz">Beamer · Quiz</div>
-        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
-        <img class="k-deko k-deko-auto" src="kachel_leasing_auto.png?v=1" alt="" onerror="this.style.display='none'">
-      </a>
-
-<a class="karte zeilen-anker" href="wm2026_spielplan.html" data-kat="gesundheit">
-        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.7 16.09 10.67 14.53 15.48H9.47L7.91 10.67z"/><path d="M12 7.7V3.1"/><path d="m16.09 10.67 4.37-1.42"/><path d="m14.53 15.48 2.7 3.72"/><path d="M9.47 15.48 6.77 19.2"/><path d="M7.91 10.67 3.54 9.25"/></svg></span>
+      <a class="karte" href="wm2026_spielplan.html" data-kat="gesundheit">
         <div class="k-kopf">
           <span class="k-thema">Sport &amp; Aktualität</span>
           <span class="k-typ">Visualisierung</span>
@@ -859,29 +248,102 @@ body{
         <p class="k-text">Der komplette Spielplan der Fussball-WM 2026 – mit Live-Tabellen und automatisch berechnetem K.-o.-Baum.</p>
         <div class="k-einsatz">Beamer · Aktualität im Unterricht</div>
         <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
-              <img class="k-deko k-deko-hoch" src="kachel_pokal.png?v=3" alt="" onerror="this.style.display=&#39;none&#39;">
       </a>
 
-      <a class="karte" href="euro2028_spielplan.html" data-kat="gesundheit">
-        <span class="k-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h4"/><path d="M3 15h4"/><path d="M7 5v10"/><path d="M7 10h3"/><path d="M21 5h-4"/><path d="M21 15h-4"/><path d="M17 5v10"/><path d="M17 10h-3"/><circle cx="12" cy="10" r="2"/></svg></span>
+      <a class="karte" href="notenrechner.html" data-kat="rechner">
         <div class="k-kopf">
-          <span class="k-thema">Sport &amp; Aktualität</span>
+          <span class="k-thema">Qualifikationsverfahren</span>
+          <span class="k-typ">Rechner</span>
+        </div>
+        <div class="k-titel">Notenrechner QV</div>
+        <p class="k-text">QV-Gesamtnote und Bestehen live berechnet – für Apotheke, Detailhandel und Kaufleute (EFZ, EBA und BM1).</p>
+        <div class="k-einsatz">Einzelarbeit · QV-Vorbereitung</div>
+        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
+      </a>
+
+      <a class="karte" href="wasserkreislauf.html" data-kat="oekologie">
+        <div class="k-kopf">
+          <span class="k-thema">Geografie</span>
           <span class="k-typ">Interaktive Folie</span>
         </div>
-        <div class="k-titel">EURO 2028 Spielplan</div>
-        <p class="k-text">Alle 51 Spiele der Fussball-EM in Grossbritannien und Irland – mit Turnierbaum, Stadionkarte und der Frage, warum dort noch keine Ländernamen stehen.</p>
-        <div class="k-einsatz">Beamer · Aktualität · Namensrechte</div>
-        <span class="k-count" id="emCount"></span>
+        <div class="k-titel">Wasserkreislauf</div>
+        <p class="k-text">Der Wasserkreislauf interaktiv – Verdunstung, Kondensation, Niederschlag und Abfluss Schritt für Schritt erklärt.</p>
+        <div class="k-einsatz">Beamer · KV Digital · Quiz integriert</div>
         <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
-              <img class="k-deko k-deko-emlogo" src="kachel_em2028_logo.png?v=1" alt="" onerror="this.style.display=&#39;none&#39;">
+      </a>
+
+      <a class="karte" href="eisenhower_matrix.html" data-kat="lernen">
+        <div class="k-kopf">
+          <span class="k-thema">Selbstmanagement</span>
+          <span class="k-typ">Interaktive Folie</span>
+        </div>
+        <div class="k-titel">Eisenhower-Matrix</div>
+        <p class="k-text">Aufgaben nach Dringlichkeit und Wichtigkeit ordnen – interaktiv erkunden, was sofort erledigt, geplant, delegiert oder gestrichen wird.</p>
+        <div class="k-einsatz">Einzelarbeit · Lerncoaching</div>
+        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
+      </a>
+
+      <a class="karte" href="angebot_nachfrage.html" data-kat="wirtschaft">
+        <div class="k-kopf">
+          <span class="k-thema">Wirtschaft</span>
+          <span class="k-typ">Simulation</span>
+        </div>
+        <div class="k-titel">Angebot und Nachfrage</div>
+        <p class="k-text">Wie Marktpreis und Menge entstehen – Angebots- und Nachfragekurven verschieben und das Gleichgewicht beobachten.</p>
+        <div class="k-einsatz">Beamer · Einzelarbeit</div>
+        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
+      </a>
+
+      <a class="karte" href="wirtschaftskreislauf.html" data-kat="wirtschaft">
+        <div class="k-kopf">
+          <span class="k-thema">Wirtschaft</span>
+          <span class="k-typ">Interaktive Folie</span>
+        </div>
+        <div class="k-titel">Wirtschaftskreislauf</div>
+        <p class="k-text">Vom einfachen zum erweiterten Kreislauf – Haushalte, Unternehmen, Banken, Staat und Ausland mit animierten Geld- und Güterströmen.</p>
+        <div class="k-einsatz">Beamer · KV Digital · geführte Tour</div>
+        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
+      </a>
+
+      <a class="karte" href="kaufvertrag.html" data-kat="wirtschaft">
+        <div class="k-kopf">
+          <span class="k-thema">Recht · OR</span>
+          <span class="k-typ">Lernspiel</span>
+        </div>
+        <div class="k-titel">Der Kauf</div>
+        <p class="k-text">Ein Kaufvertrag, drei Störungen: Lieferverzug, Zahlungsverzug und Mängelrüge als spielbares Dialog-Abenteuer – mit Produktwahl und Rechtsquotient.</p>
+        <div class="k-einsatz">Einzelarbeit · drei Wege · Wiederspielwert</div>
+        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
+      </a>
+
+      <a class="karte" href="oev-erwacht.html" data-kat="oekologie">
+        <div class="k-kopf">
+          <span class="k-thema">Mobilität · Schweiz</span>
+          <span class="k-typ">Datenvisualisierung</span>
+        </div>
+        <div class="k-titel">Der Puls der Schweiz</div>
+        <p class="k-text">Ein ganzer Fahrplantag mit 304'613 echten Fahrten – das Zeitfenster ist frei wählbar, und das Schweizer ÖV-Netz baut sich live auf der Karte auf.</p>
+        <div class="k-einsatz">Beamer · Storytelling-Einstieg · Zeitfenster wählbar</div>
+        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
+      </a>
+
+      <a class="karte" href="energie_wasserkraft.html" data-kat="oekologie">
+        <div class="k-kopf">
+          <span class="k-thema">Energie · Schweiz</span>
+          <span class="k-typ">Interaktive Grafik</span>
+        </div>
+        <div class="k-titel">Strom aus den Alpen</div>
+        <p class="k-text">Das Wasserkraftwerk im Schnittbild: acht Stationen vom Stausee bis ins Netz – mit Pumpbetrieb-Schalter und dem echten Schweizer Strommix 2024.</p>
+        <div class="k-einsatz">Beamer · Klick-Stationen · Tasten 1–8</div>
+        <span class="k-aktion">Tool öffnen <span class="pfeil">→</span></span>
       </a>
 
     </div>
   </main>
 
   <footer class="fuss">
-    <b>abu-tools.ch</b> — interaktive Werkzeuge für den ABU-Unterricht an der HKV Aarau · © 2026 <a href="mailto:samuel.mollet@hkv.ch" title="E-Mail an Samuel Mollet" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">S. Mollet</a>, ABU &amp; Sport<br>
-    Aufträge und Lerninhalte: <a class="kvd" href="https://go.kvdigital.swiss/dashboard" target="_blank" rel="noopener">KV&nbsp;Digital<span class="pfeil-ex">↗</span></a>
+    <b>abu-tools.ch</b> — interaktive Werkzeuge für den ABU-Unterricht an der HKV Aarau · S. Mollet, ABU &amp; Sport<br>
+    Aufträge und Lerninhalte: KV Digital.
   </footer>
 
 </div>
@@ -889,7 +351,7 @@ body{
 <script>
 (function(){
   'use strict';
-  var chips  = document.querySelectorAll('.chip[data-filter]');
+  var chips  = document.querySelectorAll('.chip');
   var karten = document.querySelectorAll('.karte');
 
   chips.forEach(function(chip){
@@ -903,322 +365,6 @@ body{
       });
     });
   });
-})();
-
-/* Countdown auf der EURO-2028-Kachel: Anpfiff 9. Juni 2028, Wembley */
-(function(){
-  'use strict';
-  var el = document.getElementById('emCount');
-  if (!el) { return; }
-  var start = new Date(2028, 5, 9, 21, 0, 0);
-  var tage  = Math.ceil((start - new Date()) / 86400000);
-  if (tage > 1) {
-    el.innerHTML = 'Noch <b>' + tage + '</b> Tage';
-  } else if (tage === 1) {
-    el.innerHTML = 'Noch <b>1</b> Tag';
-  } else if (tage > -31) {
-    el.innerHTML = 'Die EM läuft';
-  } else {
-    return;
-  }
-  el.setAttribute('data-an', '');
-})();
-</script>
-
-<div class="kauf-overlay" id="kaufOverlay" role="dialog" aria-modal="true" aria-labelledby="kaufTitel">
-  <div class="kauf-dialog">
-    <button class="kauf-zu" id="kaufZu" aria-label="Schliessen">×</button>
-    <h2 id="kaufTitel">«Der Kauf» – Vollversion</h2>
-    <p>Demo schon durchgespielt? Die Vollversion gibt es direkt per TWINT – ohne nochmals alles durchzuklicken.</p>
-    <div class="kauf-twint">
-      <p style="margin:0"><b>19.–</b> per TWINT an<br>
-      <span class="nr">076 490 28 00</span><br>
-      Vermerk: <b>«abu»</b></p>
-    </div>
-    <p class="kauf-rabatt">Sei unter den ersten zehn Käuferinnen und Käufern und erhalte 9.– Rabatt.</p>
-  </div>
-</div>
-<script>
-(function(){
-  var knopf = document.getElementById('kaufKnopf');
-  var overlay = document.getElementById('kaufOverlay');
-  var zu = document.getElementById('kaufZu');
-  if(!knopf || !overlay) return;
-  function oeffnen(e){
-    e.preventDefault(); e.stopPropagation();
-    overlay.classList.add('offen');
-    zu.focus();
-  }
-  function schliessen(){
-    overlay.classList.remove('offen');
-    knopf.focus();
-  }
-  knopf.addEventListener('click', oeffnen);
-  knopf.addEventListener('keydown', function(e){
-    if(e.key === 'Enter' || e.key === ' ') oeffnen(e);
-  });
-  zu.addEventListener('click', schliessen);
-  overlay.addEventListener('click', function(e){
-    if(e.target === overlay) schliessen();
-  });
-  document.addEventListener('keydown', function(e){
-    if(e.key === 'Escape' && overlay.classList.contains('offen')) schliessen();
-  });
-})();
-
-/* Sortiermodus: Kacheln per Drag & Drop anordnen (Merken pro Tab) */
-(function(){
-  var chip = document.getElementById('sortChip');
-  var grid = document.getElementById('grid');
-  var hinweis = document.getElementById('sortHinweis');
-  if(!chip || !grid) return;
-  var karten = function(){ return Array.prototype.slice.call(grid.querySelectorAll('.karte')); };
-  karten().forEach(function(k, i){
-    k.dataset.key = k.getAttribute('href') || ('karte-' + i);
-  });
-  /* gespeicherte Reihenfolge anwenden */
-  try{
-    var mem = sessionStorage.getItem('kachel_reihenfolge');
-    if(mem){
-      JSON.parse(mem).forEach(function(key){
-        var k = grid.querySelector('.karte[data-key="' + key + '"]');
-        if(k) grid.appendChild(k);
-      });
-    }
-  }catch(e){}
-  function merken(){
-    try{ sessionStorage.setItem('kachel_reihenfolge', JSON.stringify(karten().map(function(k){ return k.dataset.key; }))); }catch(e){}
-  }
-  var an = false, gezogen = null;
-  chip.addEventListener('click', function(){
-    an = !an;
-    chip.setAttribute('aria-pressed', String(an));
-    grid.classList.toggle('sortieren', an);
-    if(hinweis) hinweis.classList.toggle('an', an);
-    karten().forEach(function(k){ k.draggable = an; });
-  });
-  grid.addEventListener('click', function(e){
-    if(an){ e.preventDefault(); }
-  });
-  grid.addEventListener('dragstart', function(e){
-    var k = e.target.closest('.karte');
-    if(!an || !k) return;
-    gezogen = k;
-    k.classList.add('zieht');
-    e.dataTransfer.effectAllowed = 'move';
-    try{ e.dataTransfer.setData('text/plain', k.dataset.key); }catch(err){}
-  });
-  grid.addEventListener('dragend', function(){
-    if(gezogen) gezogen.classList.remove('zieht');
-    gezogen = null;
-    merken();
-  });
-  grid.addEventListener('dragover', function(e){
-    if(!an || !gezogen) return;
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    var ziel = e.target.closest('.karte');
-    if(!ziel || ziel === gezogen) return;
-    var r = ziel.getBoundingClientRect();
-    var davor = (e.clientX - r.left) < r.width / 2;
-    grid.insertBefore(gezogen, davor ? ziel : ziel.nextSibling);
-  });
-  grid.addEventListener('drop', function(e){ if(an) e.preventDefault(); });
-})();
-
-/* Wunschbox: Faehnchen hebt sich beim Drueberfahren */
-(function(){
-  var box = document.getElementById('wunschbox');
-  var bild = document.getElementById('wunschPost');
-  if(!box || !bild) return;
-  var pfade = ['wunschbox_post_0.png?v=1','wunschbox_post_1.png?v=1','wunschbox_post_2.png?v=1'];
-  pfade.forEach(function(p){ var i = new Image(); i.src = p; });
-  var stufe = 0, timer = null;
-  function lauf(ziel){
-    clearInterval(timer);
-    timer = setInterval(function(){
-      if(stufe === ziel){ clearInterval(timer); return; }
-      stufe += (ziel > stufe) ? 1 : -1;
-      bild.src = pfade[stufe];
-    }, 90);
-  }
-  box.addEventListener('mouseenter', function(){ lauf(2); });
-  box.addEventListener('mouseleave', function(){ lauf(0); });
-  box.addEventListener('focus', function(){ lauf(2); });
-  box.addEventListener('blur', function(){ lauf(0); });
-})();
-</script>
-<script>
-/* HKV-Banner auf der Kaufvertrag-Kachel: eigener Link zur Berufsfachschule.
-   Die Kachel selbst ist ein <a>, darum kein verschachteltes <a>, sondern
-   ein Klick-Handler, der das Weiterreichen an die Kachel unterbindet. */
-(function(){
-  var ZIEL='https://www.hkvaarau.ch/berufsfachschule';
-  document.querySelectorAll('.k-deko-hkv').forEach(function(el){
-    function los(e){
-      e.preventDefault();
-      e.stopPropagation();
-      window.open(ZIEL,'_blank','noopener');
-    }
-    el.addEventListener('click', los);
-    el.addEventListener('keydown', function(e){
-      if(e.key==='Enter' || e.key===' ' || e.key==='Spacebar') los(e);
-    });
-  });
-})();
-</script>
-
-<script>
-/* ===================== Klickzaehler der Kacheln =====================
-   Gezaehlt wird serverseitig, damit alle dieselben Zahlen sehen: eine
-   Zeile pro Kachel und Tag in Supabase, zwei Funktionen davor. Der
-   anon-Schluessel steht bewusst offen im Code — er darf nur die zwei
-   Funktionen aufrufen, die Tabelle selbst ist durch RLS ohne Policy
-   dicht. Ohne Netz passiert nichts: keine Plaketten, keine Leiste,
-   keine Sortierung, die Seite bleibt genau wie bisher.               */
-(function(){
-  'use strict';
-  var BASIS = 'https://eebmnyxqlubirwyykofo.supabase.co/rest/v1/rpc/';
-  var KEY   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlYm1ueXhxbHViaXJ3eXlrb2ZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxODA2MDYsImV4cCI6MjEwMzc1NjYwNn0.GhjZy-ZSQcRfdpUx1Jm3Yayk0iYhuiswpRuQILL1F7Q';
-
-  var grid    = document.getElementById('grid');
-  var leiste  = document.getElementById('klickleiste');
-  var chip    = document.getElementById('klickChip');
-  var hinweis = document.getElementById('klHinweis');
-  var sortChip = document.getElementById('sortChip');
-  if(!grid || !leiste || !chip) return;
-
-  var FENSTER = ['heute','woche','monat','total'];
-  var WORT = {heute:'heute', woche:'diese Woche', monat:'diesen Monat', total:'insgesamt'};
-  var fenster = 'total', beliebt = false, zahlen = null;
-
-  try{
-    var gf = localStorage.getItem('kachel_fenster');
-    if(FENSTER.indexOf(gf) >= 0) fenster = gf;
-    beliebt = localStorage.getItem('kachel_beliebt') === 'ja';
-  }catch(e){}
-
-  var alle = Array.prototype.slice.call(grid.querySelectorAll('.karte'));
-  var URSPRUNG = alle.slice();                      /* Reihenfolge beim Laden */
-
-  function ruf(name, koerper){
-    return fetch(BASIS + name, {
-      method: 'POST',
-      headers: {
-        'apikey': KEY,
-        'Authorization': 'Bearer ' + KEY,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify(koerper || {})
-    });
-  }
-
-  /* Gezaehlt wird nicht hier, sondern im Werkzeug selbst: jede Datei meldet
-     beim Laden ihre eigene Oeffnung. So zaehlen auch Lesezeichen, direkte
-     Links, QR-Codes und die iframe-Einbettungen in KV Digital mit. Der
-     Index liest die Zahlen nur und zeigt sie an. */
-
-  /* ---------- Plaketten setzen ---------- */
-  function plakette(k){
-    var p = k.querySelector('.k-klicks');
-    if(!p){
-      p = document.createElement('span');
-      p.className = 'k-klicks';
-      k.appendChild(p);
-    }
-    return p;
-  }
-  function zeichne(){
-    alle.forEach(function(k){
-      var name = k.getAttribute('href');
-      var z = (name && zahlen) ? zahlen[name] : null;
-      if(!z){ var alt = k.querySelector('.k-klicks'); if(alt) alt.hidden = true; return; }
-      var n = z[fenster];
-      var p = plakette(k);
-      if(!n){ p.hidden = true; return; }
-      p.hidden = false;
-      p.textContent = n.toLocaleString('de-CH') + ' \u00d7';
-      p.title = n.toLocaleString('de-CH') + ' Mal geöffnet, ' + WORT[fenster];
-    });
-  }
-
-  /* ---------- Reihenfolge ---------- */
-  function ordne(){
-    if(!beliebt){
-      URSPRUNG.forEach(function(k){ grid.appendChild(k); });
-      return;
-    }
-    var rang = {};
-    URSPRUNG.forEach(function(k, i){ rang[i] = i; });
-    var sortiert = URSPRUNG.slice().sort(function(a, b){
-      var na = a.getAttribute('href'), nb = b.getAttribute('href');
-      var za = (na && zahlen && zahlen[na]) ? zahlen[na][fenster] : -1;
-      var zb = (nb && zahlen && zahlen[nb]) ? zahlen[nb][fenster] : -1;
-      /* Zeilenanker (Spielplaene) und die Kachel ohne Link bleiben hinten */
-      var aa = a.classList.contains('zeilen-anker') || !na ? 1 : 0;
-      var ab = b.classList.contains('zeilen-anker') || !nb ? 1 : 0;
-      if(aa !== ab) return aa - ab;
-      if(zb !== za) return zb - za;
-      return URSPRUNG.indexOf(a) - URSPRUNG.indexOf(b);
-    });
-    sortiert.forEach(function(k){ grid.appendChild(k); });
-  }
-
-  function bandUndText(){
-    Array.prototype.forEach.call(leiste.querySelectorAll('.kl-knopf'), function(b){
-      b.setAttribute('aria-pressed', String(b.dataset.fenster === fenster));
-    });
-    chip.setAttribute('aria-pressed', String(beliebt));
-    if(hinweis){
-      var summe = 0;
-      if(zahlen) Object.keys(zahlen).forEach(function(n){ summe += zahlen[n][fenster]; });
-      hinweis.textContent = summe
-        ? summe.toLocaleString('de-CH') + ' Öffnungen ' + WORT[fenster]
-        : 'noch nichts geöffnet ' + WORT[fenster];
-    }
-  }
-
-  function frisch(){ zeichne(); ordne(); bandUndText(); }
-
-  /* ---------- Bedienung ---------- */
-  Array.prototype.forEach.call(leiste.querySelectorAll('.kl-knopf'), function(b){
-    b.addEventListener('click', function(){
-      fenster = b.dataset.fenster;
-      try{ localStorage.setItem('kachel_fenster', fenster); }catch(e){}
-      frisch();
-    });
-  });
-  chip.addEventListener('click', function(){
-    beliebt = !beliebt;
-    try{ localStorage.setItem('kachel_beliebt', beliebt ? 'ja' : 'nein'); }catch(e){}
-    /* Sortiermodus und Beliebtheitsreihenfolge schliessen sich aus */
-    if(beliebt && sortChip && sortChip.getAttribute('aria-pressed') === 'true') sortChip.click();
-    frisch();
-  });
-
-  /* ---------- Zahlen holen ---------- */
-  ruf('kachel_zaehler', {})
-    .then(function(a){ return a.ok ? a.json() : Promise.reject(a.status); })
-    .then(function(reihen){
-      zahlen = {};
-      alle.forEach(function(k){
-        var n = k.getAttribute('href');
-        if(n) zahlen[n] = {heute:0, woche:0, monat:0, total:0};
-      });
-      (reihen || []).forEach(function(z){
-        if(zahlen[z.kachel]){
-          zahlen[z.kachel] = {
-            heute:+z.heute || 0, woche:+z.woche || 0,
-            monat:+z.monat || 0, total:+z.total || 0
-          };
-        }
-      });
-      leiste.classList.add('an');
-      chip.hidden = false;
-      frisch();
-    })
-    .catch(function(){ /* offline oder Zaehler aus: Seite bleibt wie sie ist */ });
 })();
 </script>
 </body>
