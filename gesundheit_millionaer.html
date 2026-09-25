@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gesundheit – Millionärsquiz · ABU HKV Aarau</title>
+<title>Gesundheit – das grosse Quiz · ABU HKV Aarau</title>
 <style>
 
 :root{
@@ -133,16 +133,16 @@ h3{ font-size:15px; margin:16px 0 6px; color:var(--petrol); }
 .qopt.richtig{ border-color:var(--gruen); background:rgba(46,125,79,.1); }
 .qopt.falsch{ border-color:var(--rot); background:rgba(179,66,58,.07); }
 .qstand{ font-weight:800; color:var(--petrol); margin-top:6px; }
-/* Millionaers-Buehne */
+/* Quizbühne – eigenes Bild, bewusst ohne Anklang an eine TV-Sendung (25.09.2026) */
 .buehne{
   border-radius:16px; overflow:hidden; position:relative;
-  background:#060a2a url('millionaer_buehne.jpg?v=1') top center / 100% auto no-repeat;
+  background:#06101f url('quiz_buehne.jpg?v=1') top center / 100% auto no-repeat;
   padding:38% clamp(14px,3vw,60px) 28px;
-  box-shadow:0 8px 30px rgba(6,10,42,.5);
+  box-shadow:0 8px 30px rgba(5,16,32,.5);
 }
 .buehne::before{
   content:""; position:absolute; inset:0;
-  background:linear-gradient(180deg, rgba(6,10,42,0) 30%, rgba(6,10,42,.55) 55%, rgba(6,10,42,.92) 100%);
+  background:linear-gradient(180deg, rgba(5,16,32,0) 30%, rgba(5,16,32,.55) 55%, rgba(5,16,32,.92) 100%);
   pointer-events:none;
 }
 .buehne > *{ position:relative; }
@@ -152,26 +152,26 @@ h3{ font-size:15px; margin:16px 0 6px; color:var(--petrol); }
   height:28px; padding:0 11px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center;
   font-weight:800; font-size:12px; font-variant-numeric:tabular-nums;
   border:2px solid rgba(170,180,232,.45); color:#aab4e8;
-  background:rgba(6,10,42,.55); transition:all .25s;
+  background:rgba(5,16,32,.55); transition:all .25s;
 }
 .leiter span.geschafft{ border-color:#3fae62; background:rgba(46,125,79,.4); color:#c9f2d6; }
 .leiter span.aktuell{ border-color:#F3CE8E; background:rgba(216,174,102,.3); color:#F3CE8E; transform:scale(1.15); }
 .raute{
-  clip-path:polygon(26px 0, calc(100% - 26px) 0, 100% 50%, calc(100% - 26px) 100%, 26px 100%, 0 50%);
-  background:linear-gradient(180deg,#141d63 0%,#080d3d 55%,#0b1250 100%);
-  border-top:2px solid #5a79e8; border-bottom:2px solid #5a79e8;
+  border-radius:14px;
+  background:linear-gradient(180deg,#13324f 0%,#0a1f36 60%,#0e2742 100%);
+  border:2px solid #4f8fc4;
   color:#fff; padding:14px 40px; text-align:center;
 }
 .buehne .qfrage{ font-weight:700; font-size:16.5px; margin:0 auto 16px; max-width:820px; }
 .buehne .qoptzeile{ display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; max-width:860px; margin:0 auto; }
 .buehne .qopt{
-  clip-path:polygon(22px 0, calc(100% - 22px) 0, 100% 50%, calc(100% - 22px) 100%, 22px 100%, 0 50%);
-  background:linear-gradient(180deg,#141d63 0%,#080d3d 55%,#0b1250 100%);
-  border:none; border-top:2px solid #5a79e8; border-bottom:2px solid #5a79e8;
-  color:#fff; font-size:14.5px; text-align:left; padding:12px 16px 12px 34px; margin:0;
+  border-radius:12px;
+  background:linear-gradient(180deg,#13324f 0%,#0a1f36 60%,#0e2742 100%);
+  border:2px solid #4f8fc4;
+  color:#fff; font-size:14.5px; text-align:left; padding:12px 16px; margin:0;
   width:100%; cursor:pointer; transition:background .15s;
 }
-.buehne .qopt:hover{ background:linear-gradient(180deg,#d07b12 0%,#8f4e00 60%,#b06407 100%); border-color:#F3CE8E; }
+.buehne .qopt:hover{ background:linear-gradient(180deg,#3C6E73 0%,#24494e 60%,#2f5d62 100%); border-color:#F3CE8E; }
 .buehne .qopt .buchst{ color:#F3CE8E; font-weight:800; margin-right:.5em; }
 .buehne .qopt.richtig{ background:linear-gradient(180deg,#1f8c46 0%,#0e5427 60%,#15703a 100%); border-color:#7fe0a2; }
 .buehne .qopt.falsch{ background:linear-gradient(180deg,#a3271f 0%,#6b120d 60%,#8a1c15 100%); border-color:#f2a09a; }
@@ -206,15 +206,24 @@ h3{ font-size:15px; margin:16px 0 6px; color:var(--petrol); }
 /* Joker */
 .joker-overlay{ position:absolute; top:0; left:0; width:100%; aspect-ratio:3060/1139; pointer-events:none; }
 .joker-overlay button{
-  position:absolute; width:11.6%; pointer-events:auto;
-  background:transparent; border:none; border-radius:50%; cursor:pointer;
-  transition:box-shadow .15s;
+  position:absolute; left:3.4%; width:11.8%; height:20%; pointer-events:auto; cursor:pointer;
+  border-radius:999px; border:2px solid rgba(243,206,142,.85);
+  background:radial-gradient(ellipse at 50% 30%, rgba(79,143,196,.45), rgba(5,16,32,.92) 72%);
+  color:#F3CE8E; font:inherit; font-weight:800; font-size:clamp(11px,1.45vw,20px); line-height:1.05;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+  box-shadow:0 0 18px rgba(120,190,255,.28); transition:box-shadow .15s, transform .15s;
 }
-.joker-overlay button:hover{ box-shadow:0 0 0 3px rgba(243,206,142,.85), 0 0 24px rgba(243,206,142,.6); }
-.joker-overlay #j5050{ left:3.8%; top:14.6%; height:15.4%; }
-.joker-overlay #jtel{ left:4.1%; top:41.2%; height:18.4%; }
-.joker-overlay #jpub{ left:3.9%; top:69.6%; height:17.2%; }
-.joker-overlay button.verbraucht{ pointer-events:none; background:rgba(4,6,28,.55); }
+.joker-overlay button small{ font-size:.55em; font-weight:700; color:#dbe8f5; letter-spacing:.08em; text-transform:uppercase; }
+.joker-overlay button:hover{ box-shadow:0 0 0 3px rgba(243,206,142,.85), 0 0 24px rgba(243,206,142,.6); transform:scale(1.03); }
+.joker-overlay #j5050{ top:12%; }
+.joker-overlay #jtel{ top:40%; }
+.joker-overlay #jpub{ top:68%; }
+.joker-overlay button.verbraucht{ pointer-events:none; opacity:.55; }
+/* Titel auf der leeren Leuchtwand in der Bildmitte */
+.b-schirm{ position:absolute; left:28.4%; top:8.9%; width:43.2%; height:50.3%; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; text-align:center; color:#0c2740; pointer-events:none; }
+.b-schirm b{ font-size:clamp(16px,3.1vw,44px); font-weight:800; letter-spacing:.02em; line-height:1.05; }
+.b-schirm span{ font-size:clamp(10px,1.25vw,17px); font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:#2e5b80; margin-top:.5em; }
 .joker-overlay button.verbraucht::after{
   content:'✕'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
   color:#ff7a6e; font-size:clamp(18px,2.6vw,34px); font-weight:800;
@@ -223,12 +232,12 @@ h3{ font-size:15px; margin:16px 0 6px; color:var(--petrol); }
 .joker-zeile button{
   font:inherit; font-weight:800; font-size:13px; cursor:pointer;
   border:1.5px solid rgba(243,206,142,.7); border-radius:999px; color:#F3CE8E;
-  background:rgba(6,10,42,.6); padding:7px 14px;
+  background:rgba(5,16,32,.6); padding:7px 14px;
 }
 .joker-zeile button.verbraucht{ opacity:.35; pointer-events:none; text-decoration:line-through; }
 .joker-ausgabe{
   display:none; max-width:640px; margin:0 auto 14px; padding:12px 16px; border-radius:12px;
-  background:rgba(6,10,42,.75); border:1.5px solid rgba(243,206,142,.55); color:#fff; font-size:14px;
+  background:rgba(5,16,32,.75); border:1.5px solid rgba(243,206,142,.55); color:#fff; font-size:14px;
 }
 .joker-ausgabe.zeig{ display:block; }
 .joker-ausgabe .balkenzeile{ display:flex; align-items:center; gap:8px; margin:5px 0; }
@@ -241,7 +250,7 @@ h3{ font-size:15px; margin:16px 0 6px; color:var(--petrol); }
 }
 @media (max-width:640px){
   .buehne .qoptzeile{ grid-template-columns:1fr; }
-  .buehne{ background-size:cover; }
+  .buehne{ background-size:100% auto; }
 }
 
 footer{ text-align:center; padding:18px 12px 26px; }
@@ -312,14 +321,14 @@ html.eingebettet body{ zoom:.82; }
 
 <header>
   <a class="hkvlogo" href="https://www.hkvaarau.ch/berufsfachschule" target="_blank" rel="noopener" title="Handelsschule KV Aarau"><img src="hkv_logo_weiss.png?v=1" alt="HKV Aarau" onerror="this.parentNode.style.display=&#39;none&#39;"></a>
-  <h1>Gesundheit – das <b>Millionärsquiz</b></h1>
+  <h1>Gesundheit – das <b>grosse Quiz</b></h1>
   <div class="sub">Thema 4 «Verantwortung übernehmen», Block Gesundheit: WHO-Definition, Work-Life-Balance, Stress, Ernährung, Essstörungen und Sucht.</div>
 </header>
 
 <div class="wrap">
   <div class="hinweis-card">
     <h2>Zum Üben für die Prüfung</h2>
-    <p>Über 60 Fragen im Pool, 15 pro Runde – jede Runde ist anders zusammengesetzt. Eine falsche Antwort beendet die Runde. Drei Joker helfen weiter: 50:50, Telefon und Publikum.</p>
+    <p>Über 60 Fragen im Pool, 15 pro Runde – jede Runde ist anders zusammengesetzt. Eine falsche Antwort beendet die Runde. Drei Joker helfen weiter: 50:50, Tipp und Umfrage.</p>
     <p>Alle Zahlen stammen aus amtlichen Schweizer Quellen: BAG, Bundesamt für Statistik, Bundesamt für Lebensmittelsicherheit, Sucht Schweiz, Gesundheitsförderung Schweiz und WHO. Stand August 2026.</p>
     <div class="themen">
       <span>WHO-Definition</span><span>Bewegung</span><span>Work-Life-Balance</span><span>Matrix wichtig und dringend</span>
@@ -332,16 +341,17 @@ html.eingebettet body{ zoom:.82; }
   <section class="seite an" id="seite-quiz">
     <div class="buehne">
       <div class="joker-overlay" aria-label="Joker">
-        <button type="button" id="j5050" data-joker="fifty" title="50:50-Joker – eine falsche Antwort verschwindet"></button>
-        <button type="button" id="jtel" data-joker="tel" title="Telefonjoker – ein Anruf, ein Tipp"></button>
-        <button type="button" id="jpub" data-joker="pub" title="Publikumsjoker – das Publikum stimmt ab"></button>
+        <div class="b-schirm" aria-hidden="true"><b>Gesundheit</b><span>Das grosse Quiz</span></div>
+        <button type="button" id="j5050" data-joker="fifty" title="50:50-Joker – eine falsche Antwort verschwindet">50:50<small>Joker</small></button>
+        <button type="button" id="jtel" data-joker="tel" title="Tipp-Joker – eine Fachperson gibt einen Tipp">Tipp<small>Joker</small></button>
+        <button type="button" id="jpub" data-joker="pub" title="Umfrage-Joker – die Klasse stimmt ab">Umfrage<small>Joker</small></button>
       </div>
-      <div class="geldleiter" id="geldLeiter" aria-label="Gewinnstufen"></div>
-      <p class="b-hinweis">Eine falsche Antwort – und die Runde ist vorbei. Jede Runde bringt andere Fragen. <b>Wer schafft alle 15 bis zur Million?</b></p>
+      <div class="geldleiter" id="geldLeiter" aria-label="Punktestufen"></div>
+      <p class="b-hinweis">Eine falsche Antwort – und die Runde ist vorbei. Jede Runde bringt andere Fragen. <b>Wer schafft alle 15 Stufen?</b></p>
       <div class="joker-zeile">
         <button type="button" data-joker="fifty">50:50</button>
-        <button type="button" data-joker="tel">☎ Telefon</button>
-        <button type="button" data-joker="pub">👥 Publikum</button>
+        <button type="button" data-joker="tel">💡 Tipp</button>
+        <button type="button" data-joker="pub">📊 Umfrage</button>
       </div>
       <div class="joker-ausgabe" id="jokerAusgabe"></div>
       <div class="leiter" id="qLeiter"></div>
@@ -446,8 +456,8 @@ var POOL = [
 
 
 var ZIEL = 15;
-var BETRAEGE = [100, 200, 300, 500, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 125000, 250000, 500000, 1000000];
-function geld(n){ return 'CHF ' + String(n).replace(/\B(?=(\d{3})+(?!\d))/g, "'"); }
+var BETRAEGE = [100, 200, 300, 500, 750, 1000, 1500, 2000, 3000, 4000, 5000, 6500, 8000, 10000, 15000];
+function geld(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, "'") + ' Punkte'; }
 var runde = [], stufe = 0, best = 0;
 var joker = { fifty:false, tel:false, pub:false };
 var anzeige = { opts:[], korrekt:0 };
@@ -468,7 +478,7 @@ function zeichneLeiter(){
   leiter.innerHTML = '';
   for (var i=0;i<ZIEL;i++){
     var sp = document.createElement('span');
-    sp.textContent = geld(BETRAEGE[i]).replace('CHF ','');
+    sp.textContent = geld(BETRAEGE[i]).replace(' Punkte','');
     sp.title = 'Frage ' + (i+1) + ': ' + geld(BETRAEGE[i]);
     if (i < stufe) sp.className = 'geschafft';
     else if (i === stufe) sp.className = 'aktuell';
@@ -480,12 +490,12 @@ function zeichneLeiter(){
     for (var k=ZIEL-1; k>=0; k--){
       var z = document.createElement('div');
       z.className = 'gl-zeile' + (k < stufe ? ' geschafft' : (k === stufe ? ' aktuell' : ''));
-      z.innerHTML = '<span class="gl-nr">' + (k+1) + '</span><span>' + geld(BETRAEGE[k]).replace('CHF ','') + '</span>';
+      z.innerHTML = '<span class="gl-nr">' + (k+1) + '</span><span>' + geld(BETRAEGE[k]).replace(' Punkte','') + '</span>';
       gl.appendChild(z);
     }
   }
   var wert = document.getElementById('qWert');
-  if (wert) wert.textContent = (stufe < ZIEL) ? ('Diese Frage ist ' + geld(BETRAEGE[stufe]) + ' wert') : '';
+  if (wert) wert.textContent = (stufe < ZIEL) ? ('Diese Frage bringt ' + geld(BETRAEGE[stufe])) : '';
 }
 function zeigeStand(){
   stand.textContent = best > 0 ? ('Bestmarke in dieser Sitzung: ' + best + (best>=ZIEL?' – Leiter komplett! 🏆':'')) : '';
@@ -529,8 +539,8 @@ function nutzeJoker(name){
     var tipp = (Math.random() < 0.75) ? anzeige.korrekt : sichtbar.filter(function(j){ return j !== anzeige.korrekt; })[0];
     if (tipp === undefined) tipp = anzeige.korrekt;
     var buchst = ['A','B','C','D'][tipp];
-    jokerAusgabe.innerHTML = '<b style="color:#F3CE8E">☎ Dein Telefonjoker:</b> «Hmm … ich bin ziemlich sicher, es ist <b>' + buchst + '</b>. Aber nagle mich nicht fest!»'
-      + '<div class="prozent" style="margin-top:4px">Telefonjoker liegen meistens richtig – aber nicht immer.</div>';
+    jokerAusgabe.innerHTML = '<b style="color:#F3CE8E">💡 Tipp von der Fachperson:</b> «Ich bin ziemlich sicher, es ist <b>' + buchst + '</b>. Aber nagle mich nicht fest!»'
+      + '<div class="prozent" style="margin-top:4px">Tipps liegen meistens richtig – aber nicht immer.</div>';
     jokerAusgabe.classList.add('zeig');
   }
   if (name === 'pub'){
@@ -545,13 +555,13 @@ function nutzeJoker(name){
       if (k === andere.length-1){ werte[j] = rest; }
       else { var t = Math.floor(Math.random()*rest); werte[j] = t; rest -= t; }
     });
-    var html = '<b style="color:#F3CE8E">👥 Das Publikum hat abgestimmt:</b>';
+    var html = '<b style="color:#F3CE8E">📊 Die Klasse hat abgestimmt:</b>';
     sicht.forEach(function(j){
       html += '<div class="balkenzeile"><b>' + ['A','B','C','D'][j] + '</b>'
         + '<div class="balken" style="width:' + Math.max(3, werte[j]*2.6) + 'px"></div>'
         + '<span class="prozent">' + werte[j] + ' %</span></div>';
     });
-    html += '<div class="prozent" style="margin-top:4px">Auch das Publikum kann sich täuschen.</div>';
+    html += '<div class="prozent" style="margin-top:4px">Auch die Mehrheit kann sich täuschen.</div>';
     jokerAusgabe.innerHTML = html;
     jokerAusgabe.classList.add('zeig');
   }
@@ -590,8 +600,8 @@ function naechsteFrage(){
           setTimeout(function(){
             if (window.QuizMusik) QuizMusik.sieg();
             ql.innerHTML = '<div class="q-ende sieg">'
-              + '<img class="sieg-bild" src="millionaer_sieg.jpg?v=1" alt="Der Moderator gratuliert mit Daumen hoch" onerror="this.style.display=&#39;none&#39;">'
-              + '<h3>🏆 ' + geld(1000000) + ' – die Leiter ist komplett!</h3>'
+              + '<img class="sieg-bild" src="quiz_sieg.jpg?v=1" alt="Leere Quizbühne mit Pokal und Konfetti" onerror="this.style.display=&#39;none&#39;">'
+              + '<h3>🏆 ' + geld(BETRAEGE[ZIEL-1]) + ' – alle Stufen geschafft!</h3>'
               + '<p>Fünfzehn am Stück: WHO, Stress, Ernährung und Sucht sitzen. Chapeau.</p>'
               + '<button type="button" class="q-neustart" id="qNochmal">Neue Runde – neue Fragen</button></div>';
             document.getElementById('qNochmal').addEventListener('click', neueRunde);
