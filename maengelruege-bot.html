@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Mängelrüge an die Elektro Meier AG</title>
+<style>
+  :root{ --gruen:#315220; --dunkel:#1A1A1A; --grau:#5f6b73; --linie:#d9dee3;
+         --gelb:#FEF9C3; --blau:#E0F2FE; --gut:#1f7a3a; --schlecht:#b42318; --flaeche:#f5f7f9; }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; height:100%; background:#fff; color:var(--dunkel);
+             font-family:"Aptos","Segoe UI",Helvetica,Arial,sans-serif; font-size:14px; }
+  #app{ height:100vh; display:flex; flex-direction:column; padding:10px 12px; gap:8px; }
+  header{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
+  h1{ font-size:19px; margin:0; color:var(--gruen); }
+  .lead{ margin:0; color:var(--grau); font-size:12.5px; }
+  #runde{ font-size:12px; color:#fff; background:var(--gruen); border-radius:999px; padding:2px 10px; white-space:nowrap; }
+  main{ flex:1; min-height:0; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .fenster{ border:1px solid var(--linie); border-radius:8px; display:flex; flex-direction:column; min-height:0; overflow:hidden; }
+  .titelleiste{ background:var(--flaeche); border-bottom:1px solid var(--linie); padding:6px 10px;
+                font-size:12px; font-weight:600; color:var(--grau); display:flex; justify-content:space-between; align-items:center; }
+  .zeile{ display:flex; align-items:center; gap:8px; padding:5px 10px; border-bottom:1px solid var(--linie); font-size:13px; }
+  .zeile label{ width:58px; color:var(--grau); flex:none; }
+  .zeile input{ flex:1; border:none; font:inherit; padding:2px 0; outline:none; min-width:0; }
+  .zeile .fix{ flex:1; color:var(--dunkel); }
+  textarea{ flex:1; min-height:0; border:none; resize:none; padding:10px; font:inherit; line-height:1.45; outline:none; }
+  .fuss{ display:flex; gap:8px; align-items:center; padding:7px 10px; border-top:1px solid var(--linie); background:var(--flaeche); }
+  button{ font:inherit; border-radius:6px; border:1px solid var(--gruen); background:var(--gruen); color:#fff;
+          padding:6px 14px; cursor:pointer; font-weight:600; }
+  button.leise{ background:#fff; color:var(--gruen); }
+  button:disabled{ opacity:.45; cursor:default; }
+  #woerter{ margin-left:auto; font-size:12px; color:var(--grau); }
+  #posteingang{ flex:1; min-height:0; overflow-y:auto; padding:10px; display:flex; flex-direction:column; gap:10px; }
+  .leer{ color:var(--grau); font-size:13px; line-height:1.5; }
+  .mail{ border:1px solid var(--linie); border-radius:8px; overflow:hidden; flex:none; }
+  .coach{ flex:none; }
+  .mail .kopf{ background:var(--blau); padding:6px 10px; font-size:12px; line-height:1.5; }
+  .mail .kopf b{ font-size:13px; }
+  .mail .text{ padding:8px 10px; line-height:1.45; white-space:pre-wrap; }
+  .coach{ border:1px solid #e9dc8b; background:var(--gelb); border-radius:8px; padding:8px 10px; }
+  .coach h2{ font-size:13.5px; margin:0 0 5px; }
+  .coach ul{ list-style:none; margin:0; padding:0; }
+  .coach li{ padding:2px 0 2px 22px; position:relative; line-height:1.35; font-size:13px; }
+  .coach li::before{ position:absolute; left:0; top:1px; font-weight:700; }
+  .coach li.ok::before{ content:"✔"; color:var(--gut); }
+  .coach li.nein::before{ content:"✘"; color:var(--schlecht); }
+  .coach li.info::before{ content:"ℹ"; color:#1d4f91; }
+  .coach .punkte{ font-weight:700; margin:6px 0 2px; }
+  .coach .tipp{ margin:6px 0 0; font-size:13px; }
+  .hinweis{ font-size:11.5px; color:var(--grau); margin:0; }
+  body.eingebettet #app{ padding:6px 8px; }
+  @media (max-width:760px){ main{ grid-template-columns:1fr; grid-template-rows:minmax(300px,1fr) minmax(260px,1fr); } #app{ height:auto; min-height:100vh; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div>
+      <h1>Mängelrüge an die Elektro Meier AG</h1>
+      <p class="lead">Ihr Tablet (Fr. 389.–, bestellt am 24. September) kam heute mit einem 5 cm langen Riss im Bildschirm an. Schreiben Sie dem Kundendienst eine E-Mail.</p>
+    </div>
+    <span id="runde">Runde 1</span>
+  </header>
+  <main>
+    <section class="fenster" aria-label="Neue E-Mail">
+      <div class="titelleiste"><span>Neue E-Mail</span><span>✉</span></div>
+      <div class="zeile"><label>An:</label><span class="fix">kundendienst@elektro-meier.example</span></div>
+      <div class="zeile"><label for="betreff">Betreff:</label><input id="betreff" autocomplete="off" placeholder="Betreff eingeben"></div>
+      <textarea id="text" spellcheck="true" placeholder="Schreiben Sie hier Ihre Mängelrüge …"></textarea>
+      <div class="fuss">
+        <button id="senden">Senden</button>
+        <button id="neu" class="leise" title="Alles löschen und von vorne beginnen">Neu beginnen</button>
+        <span id="woerter">0 Wörter</span>
+      </div>
+    </section>
+    <section class="fenster" aria-label="Posteingang">
+      <div class="titelleiste"><span>Posteingang</span><span id="zaehler"></span></div>
+      <div id="posteingang">
+        <p class="leer">Hier erscheint die Antwort der Elektro Meier AG – und darunter Ihre Rückmeldung.<br><br>
+        Der Bot prüft Ihren Text nach festen Regeln direkt in diesem Browser. Nichts wird gespeichert oder verschickt.
+        Schreiben Sie trotzdem keine echten Namen, Adressen oder Telefonnummern.</p>
+      </div>
+    </section>
+  </main>
+  <p class="hinweis">Übungs-Bot von abu-tools.ch · Firma, Personen und Adressen sind erfunden · Er erkennt Stichworte und Muster, er versteht Ihren Text nicht wie ein Mensch.</p>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const betreffEl = $('betreff'), textEl = $('text'), eingang = $('posteingang');
+  let runde = 1, versand = 0;
+
+  if (window.self !== window.top) document.body.classList.add('eingebettet');
+
+  function woerter(t){ return (t.trim().match(/\S+/g) || []).length; }
+  textEl.addEventListener('input', () => { $('woerter').textContent = woerter(textEl.value) + ' Wörter'; });
+
+  const esc = s => s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  const heute = () => new Date().toLocaleDateString('de-CH', {day:'numeric', month:'long', year:'numeric'});
+
+  // ---------- Erkennung ----------
+  const MONATE = 'januar|februar|märz|maerz|april|mai|juni|juli|august|september|oktober|november|dezember';
+  const RE = {
+    betreff:   /mängel|maengel|mangel|reklamation|beanstand|defekt|riss|schaden|beschädig/i,
+    anrede:    /^\s*(sehr geehrte|geehrte|guten tag|grüezi|gruezi|liebe[rs]?\s|hallo|hoi|hi\b|salü)/i,
+    anredeLocker: /^\s*(hallo|hoi|hi\b|salü|hey)/i,
+    datum:     new RegExp('\\b\\d{1,2}\\.\\s?\\d{1,2}\\.(\\s?\\d{2,4})?|\\b\\d{1,2}\\.\\s?(' + MONATE + ')|bestellt am|bestellung vom|bestellnummer|auftragsnummer', 'i'),
+    produkt:   /tablet/i,
+    mangel:    /riss|gerissen|gesprungen|sprung|kratz|gebrochen|zerbrochen|beschädig|kaputt|defekt|mangel/i,
+    ersatz:    /ersatzlieferung|ersatzgerät|ersatz\b|neues gerät|neues tablet|einwandfreies|umtausch|austausch/i,
+    wandelung: /wandelung|rückgängig|rueckgaengig|vom vertrag zurück|geld zurück|rückerstattung|rueckerstattung|kaufpreis zurück/i,
+    minderung: /minderung|preisnachlass|preisreduktion|reduktion des preises|rabatt|teil des (kauf)?preises/i,
+    reparatur: /reparatur|reparieren|repariert/i,
+    frist:     new RegExp('\\bbis (zum |am |spätestens )?\\d|\\bbis (zum |am |spätestens )?\\d{1,2}\\.\\s?(' + MONATE + ')|innert \\d+|innerhalb (von )?\\d+|innert (einer|zwei|drei|zehn|vierzehn) |frist|spätestens', 'i'),
+    recht:     /\bor\b|obligationenrecht|art\.?\s?20[1-6]|art\.?\s?197|gewährleistung|gewaehrleistung|garantie/i,
+    or201:     /20[1]|prüf- und rügepflicht|rügepflicht/i,
+    verfuegung:/zur verfügung|zur verfuegung|zu ihrer verfügung|zu ihrer verfuegung|zu verfügung|aufbewahr|abhol|zurücksend|zuruecksend|zurückschick|zurueckschick|unbenutzt/i,
+    gruss:     /(freundliche[n]? grüsse|freundlichen grüssen|mit freundlichen|beste grüsse|besten dank und|freundliche grüße|freundlichen grüßen|herzliche grüsse|mfg\b)/i,
+    grussLocker: /(lg\b|liebe grüsse|gruss\s*$|tschüss|ciao|bye)/i,
+    vorwurf:   /unverschämt|frechheit|skandal|lächerlich|betrug|abzocke|sauerei|schweinerei|inkompetent|unfähig|idiot|mist|scheiss|scheiß|nie wieder|anzeigen|anwalt|zumutung/i,
+    agb:       /\bagb\b|geschäftsbedingungen|geschaeftsbedingungen/i,
+    agbKritik: /(nicht|nie)\s+(akzeptiert|zugestimmt|erhalten|gesehen|gelesen|hingewiesen|vereinbart|unterschrieben)|beim kauf|bei der bestellung|vertragsbestandteil|zur kenntnis|kenntnis genommen|hingewiesen/i,
+    gesetz:    /\bor\b|obligationenrecht|art\.?\s?(197|205|206|210)|gewährleistung|gewaehrleistung|gesetz/i
+  };
+
+  function pruefe(betreff, text){
+    const t = text.trim();
+    const zeilen = t.split(/\n/).map(z => z.trim()).filter(Boolean);
+    const letzte = zeilen.slice(-3).join('\n');
+    const f = {};
+    f.betreff = betreff.trim().length >= 4 && RE.betreff.test(betreff);
+    f.betreffLeer = betreff.trim().length < 2;
+    f.anrede = RE.anrede.test(t);
+    f.anredeLocker = RE.anredeLocker.test(t);
+    f.datum = RE.datum.test(t);
+    f.produkt = RE.produkt.test(t);
+    f.mangel = RE.mangel.test(t);
+    f.ersatz = RE.ersatz.test(t);
+    f.wandelung = RE.wandelung.test(t);
+    f.minderung = RE.minderung.test(t);
+    f.forderung = f.ersatz || f.wandelung || f.minderung;
+    f.nurReparatur = RE.reparatur.test(t) && !f.forderung;
+    f.frist = RE.frist.test(t);
+    f.recht = RE.recht.test(t);
+    f.or201 = RE.or201.test(t);
+    f.verfuegung = RE.verfuegung.test(t);
+    f.gruss = RE.gruss.test(letzte) || RE.gruss.test(t);
+    f.grussLocker = RE.grussLocker.test(letzte);
+    f.name = zeilen.length > 0 && /^[A-ZÄÖÜ][\wäöüéèà.\- ]{1,40}$/.test(zeilen[zeilen.length - 1]) && !RE.gruss.test(zeilen[zeilen.length - 1]);
+    f.ausrufe = (t.match(/!/g) || []).length;
+    f.caps = (t.match(/\b[A-ZÄÖÜ]{4,}\b/g) || []).filter(w => !/^(AGB|MWST|CHF|PDF|USB|HKV)$/.test(w)).length;
+    f.vorwurf = RE.vorwurf.test(t);
+    f.ton = f.ausrufe <= 1 && f.caps === 0 && !f.vorwurf && !f.anredeLocker;
+    f.eszett = /ß/.test(t + betreff);
+    f.woerter = woerter(t);
+    f.laenge = f.woerter >= 60 && f.woerter <= 260;
+    f.agb = RE.agb.test(t);
+    f.agbKritik = RE.agbKritik.test(t);
+    f.gesetz = RE.gesetz.test(t);
+    return f;
+  }
+
+  // ---------- Antworten der Firma ----------
+  function antwortRunde1(f){
+    const hallo = 'Guten Tag\n\nBesten Dank für Ihre Nachricht.';
+    const ende = '\n\nFreundliche Grüsse\nSandra Keller\nKundendienst · Elektro Meier AG · Bahnhofstrasse 7 · 5000 Aarau';
+    if (f.woerter < 25) return { weiter:false, text: hallo + '\n\nLeider verstehen wir aus Ihrer kurzen Nachricht nicht, worum es geht. Um welches Gerät handelt es sich, wann haben Sie es bestellt und was genau ist defekt?' + ende };
+    if (!f.ton) return { weiter:false, text: 'Guten Tag\n\nWir bedauern, dass Sie verärgert sind. Wir bitten Sie aber um einen sachlichen Ton – nur so können wir Ihr Anliegen rasch und korrekt bearbeiten. Bitte schildern Sie uns noch einmal in Ruhe, was vorgefallen ist und was Sie von uns erwarten.' + ende };
+    if (!f.mangel || !f.produkt) return { weiter:false, text: hallo + '\n\nDamit wir Ihnen helfen können, brauchen wir eine genaue Beschreibung: Um welches Gerät geht es, und was genau ist beschädigt?' + ende };
+    if (f.nurReparatur) return { weiter:false, text: hallo + '\n\nGerne schicken wir das Tablet zur Reparatur ein. Das dauert erfahrungsgemäss drei bis vier Wochen.\n\n(Hinweis vom Coach: Wollten Sie das wirklich? Bei einem neuen Gerät mit Mangel können Sie mehr verlangen.)' + ende };
+    if (!f.forderung) return { weiter:false, text: hallo + '\n\nEs tut uns leid, dass das Tablet beschädigt angekommen ist. Was genau erwarten Sie nun von uns? Bitte teilen Sie uns mit, welche Lösung Sie wünschen.' + ende };
+    if (!f.frist) return { weiter:false, text: hallo + '\n\nWir haben Ihre Reklamation erhalten und werden sie prüfen. Wir melden uns so bald wie möglich bei Ihnen.\n\n(Hinweis vom Coach: «So bald wie möglich» kann lange dauern. Was fehlt in Ihrer Mail, damit die Firma handeln muss?)' + ende };
+    // vollständig: Firma blockt mit AGB
+    const was = f.ersatz ? 'ein Ersatzgerät' : f.wandelung ? 'die Rückerstattung des Kaufpreises' : 'einen Preisnachlass';
+    return { weiter:true, text: hallo + '\n\nWir bedauern den Schaden. ' + 'Gemäss unseren Allgemeinen Geschäftsbedingungen (AGB) beheben wir Mängel jedoch ausschliesslich durch eine Reparatur. ' + was.charAt(0).toUpperCase() + was.slice(1) + ' können wir Ihnen daher leider nicht anbieten. Bitte senden Sie uns das Tablet zu – die Reparatur dauert rund drei Wochen.' + ende };
+  }
+
+  function antwortRunde2(f){
+    const ende = '\n\nFreundliche Grüsse\nSandra Keller\nKundendienst · Elektro Meier AG';
+    const gut = f.ton && (f.gesetz || f.agbKritik) && (f.forderung || /reparatur/i.test(textEl.value)) ;
+    if (!f.ton) return 'Guten Tag\n\nWir bitten Sie um einen sachlichen Ton. Unsere Position bleibt: Wir bieten Ihnen eine Reparatur an.' + ende;
+    if (gut && f.frist) return 'Guten Tag\n\nSie haben recht: Auf unsere AGB haben wir Sie bei der Bestellung nicht ausdrücklich hingewiesen. Wir kommen Ihnen deshalb entgegen und erfüllen Ihre Forderung innert der von Ihnen gesetzten Frist. Das beschädigte Tablet holt unser Kurier bei Ihnen ab.\n\nWir entschuldigen uns für die Umstände.' + ende;
+    if (gut) return 'Guten Tag\n\nWir haben Ihre Argumente geprüft und sind grundsätzlich bereit, Ihnen entgegenzukommen. Wir melden uns in den nächsten Wochen mit einem Vorschlag.\n\n(Hinweis vom Coach: Fast geschafft – was fehlt noch, damit die Firma nicht auf Zeit spielen kann?)' + ende;
+    return 'Guten Tag\n\nWir bleiben bei unserem Angebot einer Reparatur gemäss AGB.\n\n(Hinweis vom Coach: Womit können Sie argumentieren? Denken Sie an Ihre Rechte aus dem Gesetz – und daran, ob Sie den AGB beim Kauf überhaupt zugestimmt haben.)' + ende;
+  }
+
+  // ---------- Coach ----------
+  function coachRunde1(f, weiter){
+    const k = [];
+    const add = (ok, txt) => k.push({ ok, txt });
+    add(f.betreff, f.betreffLeer ? 'Betreff fehlt – z. B. «Mängelrüge: Tablet mit Riss im Bildschirm»' : 'Betreff nennt das Anliegen (Mängelrüge, Mangel, Reklamation …)');
+    add(f.anrede && !f.anredeLocker, f.anredeLocker ? 'Anrede zu locker – im Geschäftsbrief: «Sehr geehrte Damen und Herren»' : 'Anrede (z. B. «Sehr geehrte Damen und Herren»)');
+    add(f.datum, 'Bestelldatum oder Bestellnummer genannt');
+    add(f.produkt && f.mangel, 'Gerät und Mangel genau beschrieben');
+    add(f.forderung, f.nurReparatur ? 'Nur Reparatur verlangt – das Gesetz gibt Ihnen Ersatzlieferung, Wandelung oder Minderung' : 'Klare Forderung: Ersatzlieferung, Wandelung oder Minderung');
+    add(f.frist, 'Frist gesetzt (z. B. «bis zum 10. Oktober»)');
+    add(f.recht, 'Rechtsgrundlage erwähnt (Gewährleistung, OR 201/205/206)');
+    add(f.verfuegung, 'Angeboten, das Gerät zur Verfügung zu halten oder zurückzusenden');
+    add(f.ton, f.vorwurf ? 'Ton: Vorwürfe oder Drohungen weglassen' : f.ausrufe > 1 ? 'Ton: zu viele Ausrufezeichen (' + f.ausrufe + ')' : f.caps > 0 ? 'Ton: keine Wörter in GROSSBUCHSTABEN' : 'Sachlicher, höflicher Ton');
+    add(f.gruss && !f.grussLocker, f.grussLocker ? 'Grussformel zu locker – «Freundliche Grüsse»' : 'Grussformel (z. B. «Freundliche Grüsse»)');
+    add(f.name, 'Name unter der Grussformel');
+    add(!f.eszett, f.eszett ? 'Schweizer Schreibweise: ss statt ß' : 'Schweizer Schreibweise (ss)');
+    add(f.laenge, f.woerter < 60 ? 'Länge: eher zu kurz (' + f.woerter + ' Wörter)' : f.woerter > 260 ? 'Länge: eher zu lang (' + f.woerter + ' Wörter) – kürzen' : 'Angemessene Länge (' + f.woerter + ' Wörter)');
+    const punkte = k.filter(x => x.ok).length;
+    const tipps = k.filter(x => !x.ok).slice(0, 2).map(x => x.txt);
+    const infos = ['Rechtlich: Eine Mängelrüge per E-Mail ist gültig. Aber: Können Sie beweisen, dass sie angekommen ist? Bitten Sie um eine Eingangsbestätigung – oder schicken Sie die Rüge zusätzlich eingeschrieben.'];
+    if (weiter) infos.push('Die Firma beruft sich jetzt auf ihre AGB. Antworten Sie in Runde 2 – sachlich und mit Argumenten.');
+    return { k, punkte, max: k.length, tipps, infos };
+  }
+
+  function coachRunde2(f){
+    const k = [];
+    const add = (ok, txt) => k.push({ ok, txt });
+    add(f.agb && f.agbKritik, 'Die AGB hinterfragt (z. B. «Auf die AGB wurde ich beim Kauf nicht hingewiesen»)');
+    add(f.gesetz, 'Auf das Gesetz verwiesen (Gewährleistung, OR 205/206)');
+    add(f.forderung, 'Forderung wiederholt (Ersatzlieferung, Wandelung oder Minderung)');
+    add(f.frist, 'Neue Frist gesetzt');
+    add(f.ton, 'Sachlich und höflich geblieben');
+    add(f.anrede && !f.anredeLocker && f.gruss, 'Anrede und Grussformel');
+    add(!f.eszett, 'Schweizer Schreibweise (ss)');
+    const punkte = k.filter(x => x.ok).length;
+    const tipps = k.filter(x => !x.ok).slice(0, 2).map(x => x.txt);
+    const infos = ['Gut zu wissen: AGB dürfen die Gewährleistung einschränken (OR 199) – aber nur, wenn sie beim Kauf Vertragsbestandteil wurden, also wenn Sie darauf hingewiesen wurden und sie lesen konnten.'];
+    return { k, punkte, max: k.length, tipps, infos };
+  }
+
+  // ---------- Anzeige ----------
+  function zeigeMail(von, betreff, text){
+    const d = document.createElement('div'); d.className = 'mail';
+    d.innerHTML = '<div class="kopf"><b>' + esc(von) + '</b><br>Betreff: ' + esc(betreff) + '<br>' + heute() + '</div><div class="text">' + esc(text) + '</div>';
+    return d;
+  }
+  function zeigeCoach(c, titel){
+    const d = document.createElement('div'); d.className = 'coach';
+    let h = '<h2>' + titel + '</h2><ul>';
+    c.k.forEach(x => { h += '<li class="' + (x.ok ? 'ok' : 'nein') + '">' + esc(x.txt) + '</li>'; });
+    c.infos.forEach(x => { h += '<li class="info">' + esc(x) + '</li>'; });
+    h += '</ul><p class="punkte">' + c.punkte + ' von ' + c.max + ' Punkten erfüllt</p>';
+    if (c.tipps.length) h += '<p class="tipp"><b>Ihre nächsten Schritte:</b> ' + c.tipps.map(esc).join(' · ') + '</p>';
+    else h += '<p class="tipp"><b>Stark!</b> Alle Punkte erfüllt.</p>';
+    d.innerHTML = h;
+    return d;
+  }
+
+  $('senden').addEventListener('click', () => {
+    const b = betreffEl.value, t = textEl.value;
+    if (woerter(t) < 5){ textEl.focus(); textEl.placeholder = 'Bitte zuerst Ihre Mängelrüge schreiben …'; return; }
+    const f = pruefe(b, t);
+    versand++;
+    const leer = eingang.querySelector('.leer'); if (leer) leer.remove();
+    let mail, coach;
+    if (runde === 1){
+      const a = antwortRunde1(f);
+      mail = zeigeMail('Sandra Keller, Kundendienst Elektro Meier AG', 'AW: ' + (b.trim() || '(kein Betreff)'), a.text);
+      coach = zeigeCoach(coachRunde1(f, a.weiter), 'Rückmeldung zu Ihrer Mängelrüge (Versuch ' + versand + ')');
+      if (a.weiter){
+        runde = 2; $('runde').textContent = 'Runde 2';
+        betreffEl.value = 'AW: ' + (b.trim() || 'Mängelrüge');
+        textEl.value = ''; textEl.placeholder = 'Antworten Sie Frau Keller: Die Firma will nur reparieren. Was entgegnen Sie?';
+      }
+    } else {
+      mail = zeigeMail('Sandra Keller, Kundendienst Elektro Meier AG', (b.trim() || 'AW: Mängelrüge'), antwortRunde2(f));
+      coach = zeigeCoach(coachRunde2(f), 'Rückmeldung zu Ihrer Antwort (Runde 2)');
+    }
+    eingang.prepend(coach); eingang.prepend(mail);
+    eingang.scrollTop = 0;
+    $('zaehler').textContent = versand + (versand === 1 ? ' Antwort' : ' Antworten');
+    $('woerter').textContent = woerter(textEl.value) + ' Wörter';
+  });
+
+  $('neu').addEventListener('click', () => {
+    runde = 1; versand = 0; $('runde').textContent = 'Runde 1';
+    betreffEl.value = ''; textEl.value = ''; textEl.placeholder = 'Schreiben Sie hier Ihre Mängelrüge …';
+    eingang.innerHTML = '<p class="leer">Hier erscheint die Antwort der Elektro Meier AG – und darunter Ihre Rückmeldung.</p>';
+    $('zaehler').textContent = ''; $('woerter').textContent = '0 Wörter';
+  });
+})();
+</script>
+</body>
+</html>
