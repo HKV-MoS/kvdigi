@@ -167,8 +167,8 @@
   function antwortRunde1(f){
     const hallo = 'Guten Tag\n\nBesten Dank für Ihre Nachricht.';
     const ende = '\n\nFreundliche Grüsse\nSandra Keller\nKundendienst · Elektro Meier AG · Bahnhofstrasse 7 · 5000 Aarau';
-    if (f.woerter < 25) return { weiter:false, text: hallo + '\n\nLeider verstehen wir aus Ihrer kurzen Nachricht nicht, worum es geht. Um welches Gerät handelt es sich, wann haben Sie es bestellt und was genau ist defekt?' + ende };
     if (!f.ton) return { weiter:false, text: 'Guten Tag\n\nWir bedauern, dass Sie verärgert sind. Wir bitten Sie aber um einen sachlichen Ton – nur so können wir Ihr Anliegen rasch und korrekt bearbeiten. Bitte schildern Sie uns noch einmal in Ruhe, was vorgefallen ist und was Sie von uns erwarten.' + ende };
+    if (f.woerter < 25) return { weiter:false, text: hallo + '\n\nLeider verstehen wir aus Ihrer kurzen Nachricht nicht, worum es geht. Um welches Gerät handelt es sich, wann haben Sie es bestellt und was genau ist defekt?' + ende };
     if (!f.mangel || !f.produkt) return { weiter:false, text: hallo + '\n\nDamit wir Ihnen helfen können, brauchen wir eine genaue Beschreibung: Um welches Gerät geht es, und was genau ist beschädigt?' + ende };
     if (f.nurReparatur) return { weiter:false, text: hallo + '\n\nGerne schicken wir das Tablet zur Reparatur ein. Das dauert erfahrungsgemäss drei bis vier Wochen.\n\n(Hinweis vom Coach: Wollten Sie das wirklich? Bei einem neuen Gerät mit Mangel können Sie mehr verlangen.)' + ende };
     if (!f.forderung) return { weiter:false, text: hallo + '\n\nEs tut uns leid, dass das Tablet beschädigt angekommen ist. Was genau erwarten Sie nun von uns? Bitte teilen Sie uns mit, welche Lösung Sie wünschen.' + ende };
