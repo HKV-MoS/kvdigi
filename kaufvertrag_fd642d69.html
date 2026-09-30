@@ -1,10 +1,24 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de-CH">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
 <title>Der Kauf – ein Rechtsfall in drei Wegen</title>
+<!--
+  Einbettung in kv digital: Rahmen 976 × 720 px. Alle Medien (kaufvertrag_*.png/.mp3,
+  kaufvertrag_intro.mp4, figur_*.png) liegen relativ neben dieser Datei auf abu-tools.ch.
+  Eingebettet wird über die URL, mit Versionsparameter gegen alte Fassungen im Cache:
+  <iframe src="https://abu-tools.ch/kaufvertrag_fd642d69.html?embed=1&v=2" width="976" height="720"
+          style="border:0" allow="fullscreen; autoplay"></iframe>
+  Im iframe (oder mit ?embed=1) gilt der Einbettungsmodus: kompakte Kopfzeile, Bühne auf
+  976 × 720 eingepasst, kein Seiten-Scrollbalken, kein Vollbild, keine Konsole, kein GoatCounter.
+-->
+<script>
+  var EINGEBETTET = false;
+  try{ EINGEBETTET = (window.self !== window.top) || /[?&]embed=1\b/.test(location.search); }catch(e){ EINGEBETTET = true; }
+  if(EINGEBETTET) document.documentElement.classList.add('embed');
+</script>
 <style>
   /* ZAK-McKRACKEN-LOOK: EGA-Palette, schwarzes Interface, Pixel-Szenen */
   :root{
@@ -380,6 +394,52 @@
 #sp-schild2{ opacity:0; transition:opacity 1.6s steps(8); }
 #sp-schild2.schild-an{ opacity:1; }
 .rechner-zappel{ animation: rechnerZappel 1.9s ease-in-out infinite; }
+
+  /* ------- Einbettungsmodus (kv digital, 976 × 720) ------- */
+  html.embed, html.embed body{ height:100%; overflow:hidden; }
+  html.embed body{ padding:0; min-height:0; background:#000; display:flex; justify-content:center; align-items:flex-start; }
+  html.embed .rahmen{ width:976px; height:720px; max-width:none; margin:0; flex:0 0 auto;
+    display:flex; flex-direction:column; overflow:hidden; background:#000; }
+  html.embed header{ flex:0 0 auto; flex-wrap:nowrap; align-items:center; margin:0; padding:5px 10px;
+    height:46px; border-bottom:2px solid var(--ega-dgrau); background:#000; position:relative; z-index:95; }
+  html.embed h1{ font-size:1.05rem; letter-spacing:1.5px; white-space:nowrap; }
+  html.embed h1 small{ display:none; }
+  html.embed .rq{ padding:2px 10px; font-size:.95rem; }
+  html.embed .weg-anzeige{ display:none; }
+  html.embed .buehne{ flex:1 1 auto; min-height:0; display:flex; flex-direction:column; border:none; box-shadow:none; }
+  html.embed .szene-wrap{ flex:0 0 auto; }
+  html.embed .dialog{ flex:1 1 auto; min-height:0; overflow-y:auto; overscroll-behavior:contain; }
+  html.embed .quelle{ display:none; }
+  html.embed .dialog .klebeBox{ position:sticky; bottom:0; background:#000; padding-top:6px; z-index:3; }
+  html.embed .dialog .klebt{ position:sticky; bottom:4px; z-index:3; box-shadow:0 -10px 18px 6px #000; }
+  .menuBtn{ font:inherit; font-size:.85rem; background:#000; color:var(--ega-gruen); border:2px solid var(--ega-gruen);
+    padding:4px 10px; cursor:pointer; white-space:nowrap; }
+  .menuBtn:hover,.menuBtn[aria-expanded="true"]{ color:#000; background:var(--ega-gruen); }
+  .menuPanel{ position:absolute; top:46px; right:10px; z-index:96; background:#05070a; border:2px solid var(--ega-gruen);
+    padding:10px 12px; display:flex; flex-direction:column; gap:8px; min-width:280px; box-shadow:0 10px 30px rgba(0,0,0,.8); }
+  .menuPanel[hidden]{ display:none; }
+  .menuPanel .mzeile{ display:flex; align-items:center; gap:8px; }
+  .menuPanel .mknopf{ font:inherit; font-size:.85rem; text-align:left; background:#000; color:var(--ega-grau);
+    border:2px solid var(--ega-dgrau); padding:6px 10px; cursor:pointer; text-decoration:none; display:block; }
+  .menuPanel .mknopf:hover{ color:var(--ega-gelb); border-color:var(--ega-gelb); }
+  .startTor .tonwahl{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+  .startTor .tonwahl button{ font-size:.9rem; padding:.45rem .9rem; color:#AAAAAA; border-color:#555555; background:#000; }
+  .startTor .tonwahl button[aria-pressed="true"]{ color:#FFFF55; border-color:#FFFF55; background:#141400; }
+  .startTor .stand{ color:#55FFFF; font-size:.85rem; margin:0; }
+  .startTor .knopfreihe{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+  .startTor button.zweit{ color:#AAAAAA; border-color:#555555; background:#000; }
+  .startTor button.zweit:hover{ background:#AAAAAA; color:#000; }
+  .kvBox{ position:fixed; inset:0; z-index:9900; background:rgba(0,0,8,.82); display:flex; align-items:center; justify-content:center; padding:16px; }
+  .kvBox .kvPanel{ background:#0c1014; border:2px solid var(--ega-gelb); padding:18px 20px; max-width:min(520px,94vw); color:#e8e8e0;
+    font-family:"Courier New","Lucida Console",monospace; font-weight:bold; box-shadow:0 0 30px rgba(0,0,0,.8); }
+  .kvBox p{ margin:0 0 12px; line-height:1.5; }
+  .kvBox input{ font:inherit; width:100%; padding:6px 8px; margin:0 0 12px; background:#000; color:#fff; border:2px solid var(--ega-dgrau); }
+  .kvBox .kvKnoepfe{ display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; }
+  .kvBox button{ font:inherit; padding:6px 14px; cursor:pointer; background:#000; color:var(--ega-gruen); border:2px solid var(--ega-gruen); }
+  .kvBox button.nein{ color:var(--ega-grau); border-color:var(--ega-dgrau); }
+  .ergCode{ margin:10px 0 4px; padding:10px 12px; border:2px dashed var(--ega-cyan); color:var(--ega-cyan); font-size:.95rem; }
+  .ergCode code{ font-size:1.25rem; color:#fff; letter-spacing:1px; margin:0 8px; user-select:all; }
+  .ergCode button{ font:inherit; font-size:.8rem; background:#000; color:var(--ega-cyan); border:1px solid var(--ega-cyan); padding:3px 8px; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -484,6 +544,7 @@ function ersetze(t){
     .replaceAll('{NAME}', p.name)
     .replaceAll('{P}', p.nom)
     .replaceAll('{PA}', p.akk)
+    .replaceAll('{ES}', p.akk.indexOf('den ')===0 ? 'ihn' : (p.akk.indexOf('die ')===0 ? 'sie' : 'es'))
     .replaceAll('{Pgross}', p.nom.charAt(0).toUpperCase()+p.nom.slice(1))
     .replaceAll('{PREIS}', chf(p.preis))
     .replaceAll('{NEUPREIS}', chf(p.neupreis))
@@ -537,10 +598,10 @@ front:[
   { id:'schild', name:'Ladenschild', x:58,y:40,w:264,h:42,
     a:{ anschauen:'«Meier &amp; Co Elektro» – handgemalt, mit Goldrand und Patina. Seit 1998 hält das Schild jedem Aargauer Wetter stand.' } },
   { id:'laterne', name:'Strassenlaterne', x:20,y:0,w:52,h:255,
-    a:{ anschauen:'Eine schmiedeiserne Gaslaterne – längst auf LED umgerüstet, aber das bleibt unter uns.',
+    a:{ anschauen:'Eine schmiedeeiserne Gaslaterne – längst auf LED umgerüstet, aber das bleibt unter uns.',
         benutze:'Sie lehnen sich lässig an. Sehr Film noir. Niemand schaut.' } },
   { id:'hausnummer', name:'Hausnummer', x:13,y:100,w:22,h:24,
-    a:{ anschauen:'Nummer 12. Falls Sie mal eine Betreibungsandrohung adressieren müssen, wissen Sie jetzt wohin. Hoffen wir, dass es nie so weit kommt.' } },
+    a:{ anschauen:'Nummer 12. Falls Sie mal einen Zahlungsbefehl adressieren müssen, wissen Sie jetzt wohin. Hoffen wir, dass es nie so weit kommt.' } },
   { id:'schaufenster', name:'Schaufenster', x:62,y:112,w:116,h:122,
     a:{ anschauen:'Röhrenfernseher, Radios, ein Ventilator – jedes Gerät mit sauberem Preisschild. Die Preisanschrift ist Pflicht, und hier wird sie zelebriert.',
         oeffne:'Das Schaufenster bleibt zu. Der Weg führt durch die Tür.' } },
@@ -558,7 +619,7 @@ front:[
         benutze:'Lieber nicht. Wasserschaden ist ein anderes Kapitel des OR.' } },
   { id:'brunnen', name:'Brunnen', x:504,y:148,w:136,h:110,
     a:{ anschauen:'Ein Altstadtbrunnen mit plätscherndem Trinkwasser – einer von <b>rund 90 öffentlichen Brunnen</b> in Aarau. Und ja: Manchmal muss man die im <b>Sportunterricht der HKV</b> alle suchen gehen. Fragen Sie nicht, woher Alex das weiss.',
-        benutze:'Sie trinken einen Schluck. Erfrischend, gratis – und im Gegensatz zum Föhn garantiert mängelfrei. Nur noch 89 Brunnen bis zum vollständigen Brunnen-OL.' } },
+        benutze:'Sie trinken einen Schluck. Erfrischend, gratis – und im Gegensatz zum Föhn garantiert mangelfrei. Nur noch 89 Brunnen bis zum vollständigen Brunnen-OL.' } },
   { id:'hkv', name:'Gebäude gegenüber', x:366,y:0,w:196,h:146,
     fund:{ verb:'anschauen', rq:1, text:'Moment … das Gebäude gegenüber – das ist ja die <b>HKV Aarau</b>! Kein Wunder, kennt sich Alex mit dem OR aus. Grüsse aus dem Schulzimmer.' },
     a:{ anschauen:'Ein stattliches Schulhaus hinter Bäumen. Kommt Ihnen sehr bekannt vor …' } },
@@ -647,7 +708,7 @@ schule:[
     a:{ anschauen:'Lavabo mit Seifenspender. Für Kreidefinger und Krisen aller Art.',
         benutze:'Sie waschen sich die Hände. In Unschuld, versteht sich.' } },
   { id:'lehrperson', name:'Lehrperson', x:140,y:128,w:250,h:70,
-    fund:{ verb:'anschauen', rq:1, text:'Die Lehrperson wandert erklärend vor der Tafel hin und her. Kommt Ihnen bekannt vor? Man sagt, er unterrichte auch <b>Sport</b> – und kenne alle 90 Brunnen von Aarau.' },
+    fund:{ verb:'anschauen', rq:1, text:'Die Lehrperson wandert erklärend vor der Tafel hin und her. Kommt Ihnen bekannt vor? Man sagt, diese Lehrperson unterrichte auch <b>Sport</b> – und kenne alle 90 Brunnen von Aarau.' },
     a:{ anschauen:'Die Lehrperson, mitten im Element: Ablaufschema, Kreide, Leidenschaft.',
         redemit:'Jetzt nicht – gleich läutet es. Ihre Fragen beantwortet das Leben. Oder der Mega-Discount.' } },
   { id:'schlaefer', name:'Schlafender Mitschüler', x:94,y:216,w:96,h:44,
@@ -1061,7 +1122,7 @@ HOTSPOTS.treppe = [
     a:{ anschauen:'«<b>Rektorat · Sitzungszimmer</b>». Dahinter werden Stundenpläne geschmiedet und Budgets gebogen.',
         oeffne:'Ohne Traktandenliste kommt hier niemand rein. Nicht einmal Sie.' } },
   { id:'uhr', name:'Wanduhr', x:580,y:20,w:40,h:60,
-    fund:{ verb:'anschauen', rq:2, text:'<b>Tempus fugit</b> – «die Zeit flieht». Der Sekundenzeiger dreht unbeirrt weiter, w&auml;hrend <b>17:04</b> stehen bleibt. Passt: Im Kaufvertragsrecht z&auml;hlt jede Frist – wer den <b>Liefertermin</b> verpasst, kommt in <b>Verzug</b> (Art. 102 OR). Gut, hat die Uhr Sie daran erinnert.' },
+    fund:{ verb:'anschauen', rq:2, text:'<b>Tempus fugit</b> – «die Zeit flieht». Der Sekundenzeiger dreht unbeirrt weiter, w&auml;hrend <b>17:04</b> stehen bleibt. Passt: Im Kaufvertragsrecht z&auml;hlt jede Frist – wer einen <b>fest vereinbarten</b> Liefertermin verpasst, kommt in <b>Verzug</b> (Art. 102 OR). Gut, hat die Uhr Sie daran erinnert.' },
     a:{ anschauen:'Genau <b>17:04</b> – Feierabend seit vier Minuten. Die Uhr tickt hier oben etwas feierlicher als im Schulzimmer – findet die Uhr.',
         benutze:'Sie tickt auch ohne Sie. Zuverlässigste Mitarbeiterin des Hauses.' } },
   { id:'feuermelder', name:'Feuermelder', x:154,y:116,w:20,h:20,
@@ -1503,7 +1564,7 @@ function lautAnwenden(){
 }
 
 /* =====================================================
-   SOUND-FX: synthetische Effekte, default AUS (FX-Schalter)
+   SOUND-FX: synthetische Effekte, Standard AUS – eingeschaltet wird am Start oder mit dem FX-Schalter
    ===================================================== */
 const FX_BOOST = 2.2;   /* FX generell 120 % lauter; der Regler skaliert darunter */
 const fx = { an:false, ctx:null, master:null };
@@ -1664,7 +1725,7 @@ function fxFuer(hid){
 }
 const fxBtn = document.getElementById('fx');
 function fxAnzeige(){ fxBtn.className = fx.an ? 'an' : ''; fxBtn.textContent = fx.an ? 'FX ♪' : 'FX'; }
-try{ fx.an = (typeof localStorage==='undefined') || localStorage.getItem('derkauf_fx') !== '0'; }catch(e){ fx.an = true; }
+try{ fx.an = (typeof localStorage!=='undefined') && localStorage.getItem('derkauf_fx') === '1'; }catch(e){ fx.an = false; }   /* Standard: aus */
 if(fx.an) fxDateienLaden();
 fxAnzeige();
 fxBtn.addEventListener('click', ()=>{
@@ -1846,24 +1907,67 @@ function dialogSperren(zu){
     dialogEl.style.opacity = zu ? '.35' : '';
   }catch(e){}
 }
-/* Ton-Freigabe: erst der Klick macht Musik + FX moeglich (Browser-Regel) — dann Intro */
-function startTorZeigen(){
+/* Startfrage: Ton wird bewusst gewaehlt (Standard aus). Liegt ein Spielstand vor,
+   wird gefragt, ob weitergespielt oder neu begonnen wird – auf geteilten Schulgeraeten
+   soll niemand im Stand der vorherigen Person landen. */
+function tonSetzen(an){
+  grv.an = !!an; fx.an = !!an;
+  try{ localStorage.setItem('derkauf_musik', an?'1':'0'); localStorage.setItem('derkauf_fx', an?'1':'0'); }catch(e){}
+  try{ musikAnzeige(); fxAnzeige(); }catch(e){}
+  if(an){
+    try{ fxDateienLaden(); }catch(e){}
+    try{ if(grv.ctx) grv.ctx.resume(); }catch(e){}
+    try{ if(fx.ctx) fx.ctx.resume(); }catch(e){}
+  } else {
+    try{ grooveStop(); trackStop(); fxAllesStoppen(); }catch(e){}
+  }
+}
+function startTorZeigen(stand){
   try{
     const wrap = szeneEl.parentElement;
     if(!wrap) return;
     autoStop();
     const d = document.createElement('div');
     d.className = 'startTor';
-    d.innerHTML = '<h2>DER KAUF</h2>' +
-      '<p>Für das beste Spielerlebnis erlauben Sie bitte <b>Musik und Soundeffekte</b>.<br>Kopfhörer empfohlen – dann geht es los.</p>' +
-      '<button type="button">▶ Spiel mit Ton starten</button>';
-    d.querySelector('button').addEventListener('click', ()=>{
-      try{ if(grv.ctx) grv.ctx.resume(); }catch(e){}
-      try{ if(fx.ctx) fx.ctx.resume(); }catch(e){}
-      try{ musikWechsel('titel'); }catch(e){}
-      try{ d.remove(); }catch(e){}
-      introZeigen();
-    });
+    if(stand){
+      let tonAn = false;
+      d.innerHTML = '<h2>DER KAUF</h2>' +
+        '<p class="stand">Auf diesem Gerät ist ein Spielstand gespeichert: ' + stand.produkt + ' · RQ ' + stand.rq + '.</p>' +
+        '<p>Spielen Sie selbst weiter – oder beginnen Sie neu, wenn vorher jemand anderes an diesem Gerät gespielt hat.</p>' +
+        '<div class="tonwahl" role="group" aria-label="Ton"><button type="button" data-ton="0" aria-pressed="true">🔇 Ohne Ton</button>' +
+        '<button type="button" data-ton="1" aria-pressed="false">🔊 Mit Ton</button></div>' +
+        '<div class="knopfreihe"><button type="button" data-a="weiter">▶ Weiterspielen</button>' +
+        '<button type="button" class="zweit" data-a="neu">↺ Neu beginnen</button></div>';
+      d.querySelectorAll('.tonwahl button').forEach(b=>b.addEventListener('click', ()=>{
+        tonAn = b.dataset.ton === '1';
+        d.querySelectorAll('.tonwahl button').forEach(x=>x.setAttribute('aria-pressed', String(x===b)));
+      }));
+      d.querySelector('[data-a="weiter"]').addEventListener('click', ()=>{
+        tonSetzen(tonAn);
+        try{ d.remove(); }catch(e){}
+        dialogSperren(false);
+        if(!ladeSpielstand()){ introZeigen(); }
+      });
+      d.querySelector('[data-a="neu"]').addEventListener('click', ()=>{
+        tonSetzen(tonAn);
+        loescheSpielstand();
+        try{ d.remove(); }catch(e){}
+        if(tonAn){ try{ musikWechsel('titel'); }catch(e){} }
+        introZeigen();
+      });
+    } else {
+      d.innerHTML = '<h2>DER KAUF</h2>' +
+        '<p>Ein Rechtsfall in drei Wegen. Mit Ton gibt es Musik und Geräusche – dann am besten mit Kopfhörern.</p>' +
+        '<div class="knopfreihe"><button type="button" data-ton="1">▶ Mit Ton starten</button>' +
+        '<button type="button" class="zweit" data-ton="0">▶ Ohne Ton starten</button></div>';
+      d.querySelectorAll('[data-ton]').forEach(b=>b.addEventListener('click', ()=>{
+        const an = b.dataset.ton === '1';
+        tonSetzen(an);
+        if(an){ try{ musikWechsel('titel'); }catch(e){} }
+        try{ d.remove(); }catch(e){}
+        introZeigen();
+      }));
+    }
     wrap.appendChild(d);
     dialogSperren(true);
   }catch(e){}
@@ -1919,7 +2023,7 @@ setInterval(()=>{
 /* Musik-Schalter (separat) */
 const musikBtn = document.getElementById('musik');
 function musikAnzeige(){ if(musikBtn){ musikBtn.className = grv.an ? 'an' : ''; musikBtn.textContent = grv.an ? '♫ an' : '♫'; } }
-try{ grv.an = (typeof localStorage==='undefined') || localStorage.getItem('derkauf_musik') !== '0'; }catch(e){ grv.an = true; }
+try{ grv.an = (typeof localStorage!=='undefined') && localStorage.getItem('derkauf_musik') === '1'; }catch(e){ grv.an = false; }   /* Standard: aus */
 musikAnzeige();
 const lautMusikRegler = document.getElementById('lautMusik');
 if(lautMusikRegler){
@@ -2714,7 +2818,7 @@ function veloReaktion(){
   if(veloN % 10 === 0){
     let bonus=false;
     if(zustand.funde && !zustand.funde.veloMoron){ zustand.funde.veloMoron=true; try{ geheimFund('veloMoron'); }catch(e){} bonus=true; }
-    setTimeout(()=>{ try{ veloSpruch(bonus ? 'What a moron. (✦ Geheimnis)' : 'What a moron.'); }catch(e){} }, 650);
+    setTimeout(()=>{ try{ veloSpruch(bonus ? 'So ein Tollpatsch. (✦ Geheimnis)' : 'So ein Tollpatsch.'); }catch(e){} }, 650);
   }
   if(veloT) clearTimeout(veloT);
   veloT = setTimeout(()=>{
@@ -2925,7 +3029,7 @@ function schachKlick(feld){
           bonus = ' <span class="rq-delta">✦ Geheimnis entdeckt · Wer vorausdenkt, gewinnt.</span>';
         }
       }catch(e){}
-      schachSag('<b>MATT!</b> Paul Morphy komponierte dieses Problem 1856 – mit neun Jahren.' + bonus);
+      schachSag('<b>MATT!</b> Paul Morphy komponierte dieses Problem 1856 – mit 19 Jahren, ein Jahr bevor er die Schachwelt eroberte.' + bonus);
     } else { schachFalsch(); }
   }
 }
@@ -3058,7 +3162,7 @@ function meierText(t){
 }
 
 /* =====================================================
-   VERSTECKTE AARAU-FRAGEN (+16 RQ -> total 100)
+   VERSTECKTE AARAU-FRAGEN (Geheimnisse – zaehlen nicht auf den RQ)
    ===================================================== */
 const AARAU_FRAGEN = {
   schild: { punkte:5, frage:'Da Sie gerade vor dem Schild stehen: In welchem Jahr wurde die HKV Aarau gegründet?',
@@ -3098,7 +3202,7 @@ function frageOeffnen(hid){
   d.className = 'frageDeckel';
   const p = document.createElement('div');
   p.className = 'fragePanel';
-  p.innerHTML = '<span class="frageTitel">✦ VERSTECKTE AARAU-FRAGE · +'+f.punkte+' RQ ✦</span><p class="frageText">'+f.frage+'</p>';
+  p.innerHTML = '<span class="frageTitel">✦ VERSTECKTE AARAU-FRAGE ✦</span><p class="frageText">'+f.frage+'</p>';
   const box = document.createElement('div');
   const misch = f.antworten.slice().sort(()=>Math.random()-0.5);
   misch.forEach(a=>{
@@ -3203,7 +3307,7 @@ schule2:{ szene:'schule', sprecher:'ERZÄHLER',
       fb:'«Gar nichts! <b>Unbestellte Ware</b> müssen Sie <b>weder aufbewahren noch zurückschicken</b> (OR 6a). Nur bei offensichtlich falscher Adresse benachrichtigen Sie die Absenderin.»',
       ziel:'schuleEnde' },
     { t:'«Kann ich Gekauftes im Laden einfach zurückbringen?»', rq:1,
-      fb:'«Beliebter Irrtum! Im Laden gibt es <b>kein gesetzliches Rückgaberecht</b> – Umtausch ist reine Kulanz. Anders beim <b>Haustürkauf</b>: ab Fr. 100.– gilt ein <b>Widerrufsrecht von 14 Tagen</b>, schriftlich per Einschreiben (OR 40a–f).»',
+      fb:'«Beliebter Irrtum! Im Laden gibt es <b>kein gesetzliches Rückgaberecht</b> – Umtausch ist reine Kulanz. Anders beim <b>Haustürkauf</b>: Kostet der Kauf mehr als Fr. 100.–, gilt ein <b>Widerrufsrecht von 14 Tagen</b> (OR 40a–f). Der Widerruf ist an keine Form gebunden. Weil Sie ihn aber beweisen müssen, schicken Sie ihn am besten eingeschrieben. Und aufgepasst: Beim <b>Onlinekauf</b> gibt es kein gesetzliches Widerrufsrecht.»',
       ziel:'schuleEnde' },
     { t:'Bereits mal leise zusammenpacken.', rq:0,
       fb:'Der Reissverschluss ist schneller als das Schema. Verständlich. Die Theorie holt Sie schon noch ein – versprochen.',
@@ -3223,11 +3327,11 @@ treppe:{ szene:'treppe', sprecher:'ERZÄHLER',
 
 /* ---------- AKT 0 ---------- */
 start:{ art:'produktwahl', szene:'discount', sprecher:'ERZÄHLER',
-  text:'Aarau, Freitagabend. Sie – Alex, Lernende/r im 1. Lehrjahr – sind auf dem Nachhauseweg zum Bahnhof, als unten an der Bahnhofstrasse der grelle «MEGA-DISCOUNT» leuchtet. Sie haben etwas gespart und wollen sich etwas leisten. <b>Was darf es sein?</b>' },
+  text:'Aarau, Freitagabend. Sie – Alex, im 1. Lehrjahr – sind auf dem Nachhauseweg zum Bahnhof, als unten an der Bahnhofstrasse der grelle «MEGA-DISCOUNT» leuchtet. Sie haben etwas gespart und wollen sich etwas leisten. <b>Was darf es sein?</b>' },
 
 /* ---------- AKT 0b: Der Preisvergleich ---------- */
 zoegern:{ szene:'discount', sprecher:'ERZÄHLER',
-  text:'{P} also. Sie halten das Preisschild fest im Blick: <b>{NEUPREIS}</b>. Das ist… schon noch viel Geld. Sie überlegen es sich noch einmal. Und war da nicht etwas? <b>Lea aus Ihrer Klasse</b> hat doch von diesem Laden in der Altstadt erzählt – geprüfte Occasionen, «Meier &amp; Co.» oder so ähnlich.',
+  text:'{P} also. Sie halten das Preisschild fest im Blick: <b>{NEUPREIS}</b>. Das ist … schon noch viel Geld. Sie überlegen es sich noch einmal. Und war da nicht etwas? <b>Lea aus Ihrer Klasse</b> hat doch von diesem Laden in der Altstadt erzählt – geprüfte Occasionen, «Meier &amp; Co.» oder so ähnlich.',
   optionen:[
     { t:'Erst einmal heim – und eine Nacht darüber schlafen.', rq:0, fb:null, ziel:'discount' },
   ]},
@@ -3245,7 +3349,7 @@ discount:{ szene:'front', sprecher:'ERZÄHLER',
       fb:'Besonnen! Impulskäufe sind der Feind jedes Budgets. Aber genau das haben Sie letzte Nacht schon getan – der Vergleich ist gemacht, die geprüfte Occasion gewinnt.',
       ziel:'k1' },
     { t:'Neu kaufen – auf Kredit. Dafür gibt es doch Kleinkredite.', rq:0,
-      fb:'<b>Vorsicht, Konsumkredit!</b> Zinsen von 10 Prozent und mehr machen den Neupreis erst richtig teuer – und das Konsumkreditgesetz verlangt nicht umsonst eine Budgetprüfung. Sie verwerfen die Idee. Schnell.',
+      fb:'<b>Vorsicht, Konsumkredit!</b> Zinsen von bis zu 10 Prozent machen den Neupreis erst richtig teuer – und das Konsumkreditgesetz verlangt nicht umsonst eine Budgetprüfung. Sie verwerfen die Idee. Schnell.',
       ziel:'k1' },
   ]},
 
@@ -3253,16 +3357,16 @@ discount:{ szene:'front', sprecher:'ERZÄHLER',
 k1:{ szene:'laden', sprecher:'HERR MEIER',
   text:'«Grüezi! Sie interessieren sich für {PA}? Ein gutes Stück, frisch geprüft aus einer Geschäftsauflösung. Für Sie: <b>{PREIS}</b>.»',
   optionen:[
-    { t:'«Ich nehme es. Abgemacht.»', rq:2,
+    { t:'«Abgemacht – ich nehme {PA}.»', rq:2,
       fb:'Direkt und klar – auch das ist eine gültige <b>Annahme</b> seines Antrags. Über den Preis zu sprechen, hätte sich aber vielleicht gelohnt.',
       ziel:'k3' },
     { t:'«Ist am Preis noch etwas zu machen?»', rq:3,
-      fb:'Gutes Vorgehen: Sie prüfen den <b>Antrag</b>, statt sofort anzunehmen. Verhandeln gehört zum Kaufvertrag – jede neue Zahl ist rechtlich ein <b>Gegenantrag</b>.',
+      fb:'Gutes Vorgehen: Sie prüfen den <b>Antrag</b>, statt sofort anzunehmen. Verhandeln gehört zum Kaufvertrag – jede neue Zahl ist rechtlich ein <b>Gegenantrag</b> – ein neues Angebot, das Herr Meier annehmen oder ablehnen kann.',
       ziel:'k2' },
-    { t:'«Ich schaue mich nur um.»', rq:1,
-      fb:'Kein Problem – wer nur schaut, gibt keine Willenserklärung ab. Es entsteht: nichts. Irgendwann müssen Sie sich aber entscheiden.',
+    { t:'«Ich schaue mich nur um.»', rq:0,
+      fb:'Kein Problem – wer nur schaut, gibt keine <b>Willenserklärung</b> ab, also keine verbindliche Äusserung, einen Vertrag zu wollen. Es entsteht: nichts. Irgendwann müssen Sie sich aber entscheiden.',
       ziel:'k1' },
-    { t:'«Ich zahle höchstens die Hälfte!»', rq:1,
+    { t:'«Ich zahle höchstens die Hälfte!»', rq:0,
       fb:'Rechtlich ein <b>Gegenantrag</b> – erlaubt ist das. Aber ein unrealistischer Gegenantrag beendet Verhandlungen schnell: Herr Meier lacht herzlich und wartet, bis Sie ein ernsthaftes Wort sagen.',
       ziel:'k1' },
   ]},
@@ -3288,7 +3392,7 @@ k3:{ szene:'laden', sprecher:'HERR MEIER',
   text:'Sie werden sich einig. Herr Meier streckt die Hand aus: «Abgemacht – <b>per Handschlag</b>?» Sie schlagen ein. <b>Frage an Sie: Ist der Kaufvertrag damit bereits gültig zustande gekommen?</b>',
   optionen:[
     { t:'«Nein – wir haben ja noch nichts unterschrieben.»', rq:0,
-      fb:'Herr Meier schmunzelt: «Junger Mensch, dann hätte ich seit 1998 kaum je etwas verkauft.» Ein Kaufvertrag ist <b>grundsätzlich formlos gültig</b> – auch mündlich oder per Handschlag. Die Schriftform ist die Ausnahme (z. B. Grundstückkauf).',
+      fb:'Herr Meier schmunzelt: «Junger Mensch, dann hätte ich seit 1998 kaum je etwas verkauft.» Ein Kaufvertrag ist <b>grundsätzlich formlos gültig</b> – auch mündlich oder per Handschlag. Formvorschriften sind die Ausnahme (z. B. öffentliche Beurkundung beim Grundstückkauf).',
       ziel:'k4' },
     { t:'«Ja – wir sind uns über Sache und Preis einig. Das genügt.»', rq:5, kann:'vertrag',
       fb:'<b>Genau richtig.</b> Einigung über die wesentlichen Punkte – Kaufsache und Preis – lässt den Vertrag entstehen. Formlos gültig, mündlich verbindlich.',
@@ -3311,21 +3415,21 @@ k4:{ szene:'laden', sprecher:'HERR MEIER',
       fb:'Der Vertrag gilt so oder so – aber ohne Quittung wird es <b>schwierig zu beweisen</b>, dass Sie angezahlt haben. Vertrauen ist gut, ein Beleg ist besser.',
       ziel:'k4b' },
     { t:'Einverstanden – «aber ohne Anzahlung, bitte.»', rq:1,
-      fb:'Verhandeln dürfen Sie. Doch Herr Meier bleibt freundlich-fest: «Bei Bestellware üblich – sonst bleibe ich auf ihr sitzen.» Ohne Anzahlung keine Bestellung; Sie willigen ein.',
+      fb:'Verhandeln dürfen Sie. Doch Herr Meier bleibt freundlich-fest: «Bei reservierter Ware üblich – sonst bleibe ich darauf sitzen.» Ohne Anzahlung keine Bestellung; Sie willigen ein.',
       ziel:'k4b' },
   ]},
 
 k4b:{ szene:'laden', sprecher:'HERR MEIER',
-  text:'Herr Meier greift zum abgegriffenen Bestellbuch. «Dann trage ich Sie ein. <b>Lieferung in zehn Tagen</b> – passt das so?» Der Kugelschreiber wartet über der Zeile.',
+  text:'Herr Meier greift zum abgegriffenen Bestellbuch. «Dann trage ich Sie ein. <b>Lieferung in etwa zehn Tagen</b> – passt das so?» Der Kugelschreiber wartet über der Zeile.',
   optionen:[
-    { t:'«Ja – und halten wir den Liefertermin bitte gleich schriftlich fest.»', rq:5, flag:'terminFix', kann:'verzug',
-      fb:'Klug! Damit ist der Liefertermin ein <b>bestimmter Verfalltag</b>. Sollte Herr Meier zu spät liefern, gerät er <b>ohne Mahnung</b> in Verzug (OR Art. 102 Abs. 2). Das wird sich vielleicht noch auszahlen …',
+    { t:'«Machen wir ein genaues Datum ab: Lieferung am Dienstag, 24. März – bitte notieren Sie mir das.»', rq:5, flag:'terminFix', kann:'verzug',
+      fb:'Klug! Ein genaues Datum ist ein <b>Verfalltag</b>: Liefert Herr Meier zu spät, ist er <b>ohne Mahnung</b> in Verzug (OR Art. 102 Abs. 2). Die Notiz sichert zusätzlich den Beweis.',
       ziel:'k5' },
-    { t:'«Ja, passt.» – Zehn Tage sind zehn Tage, das muss man nicht aufschreiben.', rq:2,
-      fb:'Abgemacht ist abgemacht – auch mündlich. Nur: Was mündlich vereinbart wurde, muss im Streitfall <b>bewiesen</b> werden. Und Herr Meier hat ein Bestellbuch, Sie haben Ihr Gedächtnis.',
+    { t:'«Ungefähr zehn Tage, das passt.»', rq:2,
+      fb:'Abgemacht ist abgemacht – auch mündlich. Aber «ca. zehn Tage» ist <b>kein genaues Datum</b>. Kommt die Ware nicht, müssen Sie Herrn Meier zuerst <b>mahnen</b> (OR Art. 102 Abs. 1) und ihm eine Nachfrist setzen (OR Art. 107). Das nennt man <b>Mahnkauf</b>.',
       ziel:'k5' },
-    { t:'«Ach, kein fester Termin nötig – ich hole es ab, wenn es da ist.»', rq:0,
-      fb:'Freundlich, aber ungünstig: <b>Ohne Termin gibt es keine Verspätung.</b> Wer nie zu spät ist, kommt auch nie in Verzug – und Sie hätten kein Druckmittel, falls sich die Lieferung zieht.',
+    { t:'«Ach, kein fester Termin nötig – ich komme vorbei, wenn die Ware da ist.»', rq:0, flag:'keinTermin',
+      fb:'Freundlich, aber ungünstig: Ohne festen Termin müssen Sie Herrn Meier zuerst <b>mahnen</b>, um ihn in Verzug zu setzen (OR Art. 102 Abs. 1). Das kostet Zeit – und Sie haben weniger Druckmittel, falls sich die Lieferung zieht.',
       ziel:'k5' },
   ]},
 
@@ -3376,7 +3480,7 @@ l2:{ szene:'zimmer2', sprecher:'ERZÄHLER',
   ]},
 
 l3:{ szene:'zimmer2', sprecher:'ERZÄHLER',
-  text:'Die Nachfrist verstreicht – nichts geschieht. Jetzt haben Sie die <b>drei Wahlrechte von OR Art. 107/109</b>. Wofür entscheiden Sie sich?',
+  text:'Die Nachfrist verstreicht – nichts geschieht. Jetzt haben Sie die <b>drei Wahlrechte von OR Art. 107/109</b>. Entscheiden Sie rasch: Verzicht und Rücktritt müssen <b>unverzüglich</b> erklärt werden. Wofür entscheiden Sie sich?',
   optionen:[
     { t:'Weiterhin auf Lieferung bestehen – plus Ersatz des Verspätungsschadens.', rq:3, kann:'wahlrecht',
       fb:'Ihr gutes Recht: Sie halten am Vertrag fest und fordern {PA} weiterhin ein. Zusätzlich schuldet Herr Meier <b>Schadenersatz wegen Verspätung</b> (z. B. Mietkosten für ein Ersatzgerät).',
@@ -3385,7 +3489,7 @@ l3:{ szene:'zimmer2', sprecher:'ERZÄHLER',
       fb:'Sie geben die Lieferung auf und verlangen Ersatz des Schadens aus der Nichterfüllung – etwa den Mehrpreis, wenn Sie {PA} anderswo teurer kaufen müssen. Wichtig: Diesen Verzicht müssen Sie <b>unverzüglich erklären</b>.',
       ziel:'l4b' },
     { t:'Vom Vertrag zurücktreten – Anzahlung zurück.', rq:3, kann:'wahlrecht',
-      fb:'Der Rücktritt löst den Vertrag auf: Bereits Geleistetes wird <b>zurückerstattet</b> – Ihre Anzahlung von {ANZ} gehört zurück auf Ihr Konto.',
+      fb:'Der Rücktritt löst den Vertrag auf: Bereits Geleistetes wird <b>zurückerstattet</b> – Ihre Anzahlung von {ANZ} gehört Ihnen wieder. Wichtig: Auch den Rücktritt müssen Sie <b>unverzüglich</b> erklären (OR Art. 107 Abs. 2).',
       ziel:'l4c' },
     { t:'Die Polizei einschalten – das ist doch fast Betrug!', rq:0,
       fb:'Halt: Nichterfüllung ist <b>Zivilrecht</b>, kein Fall für die Polizei. Betrug bräuchte Täuschungsabsicht von Anfang an. Ihre Werkzeuge heissen Erfüllung, Schadenersatz oder Rücktritt – wählen Sie.',
@@ -3397,18 +3501,18 @@ l4a:{ szene:'laden', sprecher:'ERZÄHLER',
   optionen:[ { t:'Zur Auswertung', rq:0, fb:null, ziel:'ende' } ]},
 
 l4b:{ szene:'zimmer2', sprecher:'ERZÄHLER',
-  text:'Sie kaufen {PA} bei einem anderen Händler – etwas teurer. Die Differenz stellen Sie Herrn Meier als <b>Schadenersatz wegen Nichterfüllung</b> in Rechnung, zusammen mit der Rückforderung der Anzahlung. Nach zähem Briefwechsel zahlt er. <b>Fall gelöst: Deckungskauf.</b>',
+  text:'Sie kaufen {PA} bei einem anderen Händler – etwas teurer. Die Differenz stellen Sie Herrn Meier als <b>Schadenersatz wegen Nichterfüllung</b> in Rechnung, zusammen mit der Rückforderung der Anzahlung. Nach zähem Briefwechsel zahlt er. <b>Fall gelöst: Deckungskauf</b> – so heisst der Ersatzkauf bei einem anderen Händler.',
   optionen:[ { t:'Zur Auswertung', rq:0, fb:null, ziel:'ende' } ]},
 
 l4c:{ szene:'laden', sprecher:'ERZÄHLER', dynamisch:'ruecktritt' },
 
 /* ---------- WEG Z: ZAHLUNGSVERZUG ---------- */
 z0:{ szene:'zimmer', sprecher:'ERZÄHLER',
-  text:'<b>Die rote Mahnung.</b> Diesmal läuft die Lieferung tadellos: Nach zehn Tagen holen Sie {PA} ab. Den Restbetrag von <b>{REST}</b> dürfen Sie «innert 30 Tagen» überweisen. Dann: Ferien, Schule, QV-Stress – die Rechnung gerät in Vergessenheit. Zwei Monate später liegt ein Brief im Fach: <b>«2. Mahnung»</b>, rot gedruckt. Was tun Sie?',
+  text:'<b>Die rote Mahnung.</b> Diesmal läuft die Lieferung tadellos: Nach zehn Tagen holen Sie {PA} ab. Den Restbetrag von <b>{REST}</b> dürfen Sie «innert 30 Tagen» überweisen. Dann: Ferien, Schule, Prüfungsstress – die Rechnung gerät in Vergessenheit. Zwei Monate nach Ablauf der Zahlungsfrist liegt ein Brief im Fach: <b>«2. Mahnung»</b>, rot gedruckt. Was tun Sie?',
   optionen:[
     { t:'Ignorieren – der soll sich nicht so haben.', rq:0,
       fb:'Sie legen den roten Brief auf den Stapel zu den anderen Dingen, die man später erledigt. Zwei Wochen lang passiert nichts.',
-      sackgasse:'Dann liegt Post vom <b>Betreibungsamt</b> im Kasten: ein <b>Zahlungsbefehl</b> über {REST}, dazu Verzugszins und Betreibungskosten. Diesmal waren <b>Sie</b> die säumige Partei – und Herr Meier hatte genau die Rechte, die Sie auf dem anderen Weg gegen ihn gehabt hätten. Der Eintrag im Betreibungsregister bleibt <b>fünf Jahre</b> einsehbar und wird Sie bei der nächsten Wohnungsbewerbung freundlich grüssen.',
+      sackgasse:'Dann liegt Post vom <b>Betreibungsamt</b> im Kasten: ein <b>Zahlungsbefehl</b> über {REST}, dazu Verzugszins und Betreibungskosten. Diesmal waren <b>Sie</b> die säumige Partei – und Herr Meier hatte Anspruch auf den Kaufpreis samt 5 % Verzugszins. Der Eintrag im Betreibungsregister bleibt <b>fünf Jahre</b> einsehbar und wird Sie bei der nächsten Wohnungsbewerbung freundlich grüssen.',
       ziel:'z1' },
     { t:'Sofort den Restbetrag überweisen und sich kurz entschuldigen.', rq:3,
       fb:'Die beste Sofortmassnahme: Zahlen stoppt das Anwachsen der Verzugsfolgen. Die Entschuldigung kostet nichts und erhält die Kundenbeziehung.',
@@ -3466,11 +3570,11 @@ m0:{ szene:'zimmer', sprecher:'ERZÄHLER',
   text:'<b>Der Knacks.</b> Die Lieferung klappt pünktlich, Sie zahlen den Restbetrag und tragen {PA} nach Hause. Doch schon beim ersten Ausprobieren: {MANGEL} Was tun Sie?',
   optionen:[
     { t:'Sofort gründlich prüfen, den Mangel notieren und Meier &amp; Co. noch heute melden.', rq:5, kann:'ruege',
-      fb:'<b>Mustergültig.</b> OR Art. 201 verlangt: Ware <b>sofort prüfen</b> und Mängel <b>sofort rügen</b>. Wer das versäumt, gilt als einverstanden – die Ware ist dann «genehmigt».',
+      fb:'<b>Mustergültig.</b> OR Art. 201 verlangt: Ware <b>sofort prüfen</b> und Mängel <b>sofort rügen</b>. Wer das versäumt, gilt als einverstanden – die Ware ist dann «genehmigt». Zeigt sich ein Mangel erst später, rügen Sie sofort nach der Entdeckung (Abs. 3). Und: Die beanstandete Ware bewahren Sie auf (OR Art. 204).',
       ziel:'m1' },
     { t:'Erst mal weiterbenutzen – vielleicht gibt sich das. In ein paar Wochen kann ich immer noch reklamieren.', rq:0,
-      fb:'Sie stellen {PA} zurück und benutzen es weiter. Der Mangel gibt sich nicht – er wird schlimmer. Nach drei Wochen fahren Sie doch zu Meier &amp; Co.',
-      sackgasse:'«Und warum melden Sie sich erst jetzt?» Frau Meier legt den Kopf schief. «Drei Wochen. Da hätten Sie zehnmal anrufen können.» – Wer einen <b>erkennbaren Mangel</b> nicht sofort rügt, verliert seine Mängelrechte: Die Ware gilt als <b>genehmigt</b> (OR Art. 201 Abs. 2). Keine Wandelung, keine Minderung, kein Anspruch auf Reparatur. Alex bleibt auf {PA} sitzen – mit der Macke.',
+      fb:'Sie stellen {PA} zurück und benutzen {ES} weiter. Der Mangel gibt sich nicht – er wird schlimmer. Nach drei Wochen fahren Sie doch zu Meier &amp; Co.',
+      sackgasse:'«Und warum melden Sie sich erst jetzt?» Frau Meier legt den Kopf schief. «Drei Wochen. Da hätten Sie zehnmal anrufen können.» – Wer einen <b>erkennbaren Mangel</b> nicht sofort rügt, verliert seine Mängelrechte: Die Ware gilt als <b>genehmigt</b> (OR Art. 201 Abs. 2). Keine Wandelung, keine Minderung, keine Ersatzlieferung. Alex bleibt auf {PA} sitzen – mit der Macke.',
       ziel:'m1' },
     { t:'Eine wütende 1-Stern-Bewertung schreiben. Das wird ihn lehren!', rq:0,
       fb:'Verständlicher Frust – aber eine Online-Bewertung ist <b>keine Mängelrüge</b>. Rechte sichern Sie sich nur direkt beim Verkäufer. (Und unfaire Bewertungen können sogar rechtliche Folgen für Sie haben.)',
@@ -3498,16 +3602,16 @@ m1:{ szene:'zimmer', sprecher:'ERZÄHLER',
   ]},
 
 m2:{ szene:'laden', sprecher:'FRAU MEIER',
-  text:'Im Laden steht heute <b>Frau Meier</b> – ihr Mann ist an einer Occasions-Börse, und <b>vom Kauf weiss sie nichts</b>. Gut, dass Ihre Rüge dokumentiert ist: Sie prüft E-Mail und Beleg, begutachtet {PA} und seufzt. «Alles klar, das geht auf uns. Ich schlage vor: <b>Wir reparieren kostenlos</b> – eine Woche Geduld.» Wie reagieren Sie?',
+  text:'Im Laden steht heute <b>Frau Meier</b> – ihr Mann ist an einer Occasions-Börse, und <b>vom Kauf weiss sie nichts</b>. Gut, dass Ihre Rüge dokumentiert ist: Sie prüft E-Mail und Beleg, begutachtet {PA} und seufzt. (Hätte auf dem Beleg «Occasion – ohne Gewähr» gestanden, wäre die Gewährleistung wegbedungen gewesen, OR Art. 199 – ausser bei arglistig verschwiegenen Mängeln.) «Alles klar, das geht auf uns. Ich schlage vor: <b>Wir reparieren kostenlos</b> – eine Woche Geduld.» Wie reagieren Sie?',
   optionen:[
     { t:'Einverstanden – Nachbesserung ist fair.', rq:3,
       fb:'Pragmatisch und üblich: Die <b>Nachbesserung</b> löst viele Fälle schnell. (Streng nach OR ist sie beim Kauf nicht Ihr Anspruch, aber einvernehmlich jederzeit möglich – und meist im Interesse beider.)',
       ziel:'m3' },
     { t:'«Nein – ich will sofort mein Geld zurück!»', rq:1,
-      fb:'Die <b>Wandelung</b> ist tatsächlich eines Ihrer Rechte – aber gleich mit der Maximalforderung einzusteigen, verbaut oft die einfache Lösung. Herr Meier hebt beschwichtigend die Hände; Sie einigen sich vorerst auf den Reparaturversuch.',
+      fb:'Die <b>Wandelung</b> ist tatsächlich eines Ihrer Rechte – aber gleich mit der Maximalforderung einzusteigen, verbaut oft die einfache Lösung. Frau Meier hebt beschwichtigend die Hände; Sie einigen sich vorerst auf den Reparaturversuch.',
       ziel:'m3' },
-    { t:'«Ich möchte ein einwandfreies Ersatzgerät.»', rq:3,
-      fb:'Beim <b>Gattungskauf</b> (Ware ist beliebig ersetzbar) können Sie Ersatzlieferung verlangen (OR Art. 206). Herr Meier hat aber kein zweites Exemplar am Lager – es bleibt beim Reparaturversuch.',
+    { t:'«Ich möchte ein einwandfreies Ersatzgerät.»', rq:1,
+      fb:'Bei einer Occasion (einem Einzelstück, <b>Stückkauf</b>) gibt es keinen Anspruch auf Ersatzlieferung – OR Art. 206 gilt nur für <b>Gattungsware</b>, also beliebig ersetzbare Neuware. Frau Meier könnte Ihnen höchstens freiwillig ein anderes Gerät anbieten. Sie einigen sich vorerst auf einen Reparaturversuch.',
       ziel:'m3' },
     { t:'Um Bedenkzeit bitten und zu Hause die Rechtslage nachlesen.', rq:2,
       fb:'Besonnen. Zu Hause lesen Sie im ABU-Ordner: Wandelung, Minderung, Ersatzlieferung. Am nächsten Tag nehmen Sie das Reparaturangebot an – gut informiert entscheidet es sich leichter.',
@@ -3527,7 +3631,7 @@ m3:{ szene:'zimmer', sprecher:'ERZÄHLER',
       fb:'Halt! Ein Mangel ist noch kein <b>Betrug</b> – dafür müsste Herr Meier Sie absichtlich getäuscht haben. Bleiben Sie beim Gewährleistungsrecht: Wandelung oder Minderung.',
       ziel:'m3' },
     { t:'Nichts mehr unternehmen – irgendwann stört der Mangel nicht mehr.', rq:0,
-      fb:'Wer zu lange zuwartet, verschenkt seine Rechte – die Gewährleistung <b>verjährt</b> (bei Occasionen oft vertraglich verkürzt). Warum warten, wenn OR Art. 205 Ihnen jetzt zwei starke Hebel gibt? Sie handeln.',
+      fb:'Wer zu lange zuwartet, verschenkt seine Rechte – die Gewährleistung <b>verjährt</b> (bei Occasionen darf sie auf ein Jahr verkürzt werden, OR 210 Abs. 4). Warum warten, wenn OR Art. 205 Ihnen jetzt zwei starke Hebel gibt? Sie handeln.',
       ziel:'m3' },
   ]},
 
@@ -3561,11 +3665,11 @@ ende:{ art:'ende', szene:'ende', sprecher:'ERZÄHLER', text:'' },
 function dynamischeOptionen(art){
   if(art==='verzug'){
     if(zustand.flags.terminFix){
-      return { text:'Und jetzt zahlt sich Ihre Weitsicht aus: Sie haben den Liefertermin <b>schriftlich festgehalten</b> – einen bestimmten Verfalltag. Damit ist Herr Meier <b>ohne Mahnung in Verzug</b> geraten (OR Art. 102 Abs. 2). <span class="rq-delta">+3 RQ Bonus.</span>',
-        bonus:3,
+      return { text:'Und jetzt zahlt sich Ihre Weitsicht aus: Sie haben ein <b>genaues Lieferdatum</b> abgemacht – einen <b>Verfalltag</b>. Damit ist Herr Meier <b>ohne Mahnung in Verzug</b> geraten (OR Art. 102 Abs. 2), und Ihre Notiz beweist die Abmachung. <span class="rq-delta">+4 RQ Bonus.</span>',
+        bonus:4,
         optionen:[ { t:'Weiter – ihm eine Nachfrist setzen.', rq:0, fb:null, ziel:'l2' } ] };
     }
-    return { text:'Ein Liefertermin wurde nur mündlich vereinbart – im Streitfall schwer zu beweisen. Auf Nummer sicher gehen Sie so: Sie setzen Herrn Meier durch eine <b>Mahnung</b> in Verzug (OR Art. 102 Abs. 1).',
+    return { text:'Ein genaues Lieferdatum haben Sie nicht abgemacht – «ca. zehn Tage» ist kein Verfalltag. Darum müssen Sie Herrn Meier zuerst durch eine <b>Mahnung</b> in Verzug setzen (OR Art. 102 Abs. 1).',
       optionen:[
         { t:'Eingeschriebene Mahnung schicken: «Ich fordere Sie auf, {PA} zu liefern.»', rq:4, kann:'verzug',
           fb:'<b>Sauber gemacht.</b> Die Mahnung ist die ausdrückliche Aufforderung zu leisten – eingeschrieben ist sie auch beweisbar. Herr Meier ist damit im Verzug.',
@@ -3587,7 +3691,7 @@ function dynamischeOptionen(art){
         bonus:2,
         optionen:[ { t:'Zur Auswertung', rq:0, fb:null, ziel:'ende' } ] };
     }
-    return { text:'Im Laden steht <b>Frau Meier</b> – ihr Mann ist unterwegs. «Rücktritt? Anzahlung?» Sie blättert im Geschäftsbuch: «Hier steht nichts, und ich war nicht dabei.» <b>Ohne Quittung</b> stehen Sie erst einmal da: Mündliche Geschäfte kennen nur zwei Zeugen – und einer davon ist abwesend. Erst mit Kontoauszug und einer Kollegin als Zeugin lenkt sie ein. Merken Sie sich diesen Moment. <b>Fall gelöst: Rücktritt (mit Ach und Krach).</b>',
+    return { text:'Im Laden steht <b>Frau Meier</b> – ihr Mann ist unterwegs. «Rücktritt? Anzahlung?» Sie blättert im Geschäftsbuch: «Hier steht nichts, und ich war nicht dabei.» <b>Ohne Quittung</b> stehen Sie erst einmal da: Mündliche Geschäfte kennen nur zwei Zeugen – und einer davon ist abwesend. Erst als eine Kollegin bezeugt, dass sie bei der Anzahlung dabei war, lenkt sie ein. Merken Sie sich diesen Moment. <b>Fall gelöst: Rücktritt (mit Ach und Krach).</b>',
       optionen:[ { t:'Zur Auswertung', rq:0, fb:null, ziel:'ende' } ] };
   }
   if(art==='zinsrechnung'){
@@ -3674,7 +3778,7 @@ const GESETZE = [
   ['OR 107','Nachfrist & Wahlrechte'],
   ['OR 108','Fixkauf'],
   ['OR 184','Kaufvertrag'],
-  ['OR 201','Pruef- & Ruegepflicht'],
+  ['OR 201','Prüf- & Rügepflicht'],
   ['OR 205','Wandelung / Minderung'],
   ['OR 206','Ersatzlieferung (Gattungskauf)'],
 ];
@@ -3753,7 +3857,7 @@ function speichereSpielstand(id){
       flags:zustand.flags, flagsAkt1:zustand.flagsAkt1,
       weg:zustand.weg, ergebnisse:zustand.ergebnisse,
       funde:zustand.funde, undoJoker:zustand.undoJoker, gesetze:zustand.gesetze, stimmung:zustand.stimmung,
-      geheim:zustand.geheim, koennen:zustand.koennen,
+      geheim:zustand.geheim, koennen:zustand.koennen, quiz:zustand.quiz||null,
     }));
   }catch(e){ /* privater Modus o.ae. - dann eben ohne Speichern */ }
 }
@@ -3772,7 +3876,7 @@ function ladeSpielstand(){
       flags:d.flags||{}, flagsAkt1:d.flagsAkt1||{},
       weg:d.weg||null, ergebnisse:d.ergebnisse||{},
       funde:d.funde||{}, undoJoker:(d.undoJoker===0?0:1), gesetze:d.gesetze||{}, stimmung:(d.stimmung==null?2:d.stimmung),
-      geheim:d.geheim||{}, koennen:d.koennen||{},
+      geheim:d.geheim||{}, koennen:d.koennen||{}, quiz:d.quiz||null,
     });
     rqAnzeigen(); gesetzBadge(); geheimBadge(); stimmungAnzeigen();
     setzeWegAnzeige();
@@ -3780,6 +3884,15 @@ function ladeSpielstand(){
     blaseHinweis('Spielstand geladen – weiter geht\'s. (Klick auf den Titel beginnt von vorne.)', 6000);
     return true;
   }catch(e){ return false; }
+}
+function spielstandVorschau(){
+  try{
+    const d = JSON.parse(localStorage.getItem(SPIELSTAND_KEY) || 'null');
+    if(!d || d.v!==1 || !d.produktId || !(d.knoten in KNOTEN)) return null;
+    const p = PRODUKTE.find(x=>x.id===d.produktId);
+    if(!p) return null;
+    return { produkt:p.name, rq:d.rq||0 };
+  }catch(e){ return null; }
 }
 function loescheSpielstand(){
   try{ if(typeof localStorage!=='undefined') localStorage.removeItem(SPIELSTAND_KEY); }catch(e){}
@@ -3857,8 +3970,8 @@ const QUIZ_FRAGEN = [
     a:['eine verbindliche Offerte','unverbindliche Werbung','eine Anfrage','ein Vertragsabschluss'], k:0,
     fb:'Preisangaben im Schaufenster und am Regal sind verbindliche Offerten (OR 7).' },
   { f:'Der Preis im Prospekt ist …',
-    a:['verbindlich wie im Schaufenster','eine unverbindliche Offerte','ein Fixpreis','eine Bestellung'], k:1,
-    fb:'Prospekte, Kataloge und Inserate sind unverbindlich – Preise können sich seit der Publikation geändert haben.' },
+    a:['verbindlich wie im Schaufenster','unverbindlich – keine Offerte','ein Fixpreis','eine Bestellung'], k:1,
+    fb:'Prospekte, Kataloge und Inserate sind gar keine Offerte (OR 7 Abs. 2) – Preise können sich seit der Publikation geändert haben.' },
   { f:'Im Regal steht aus Versehen «Fr. 4.90» statt «Fr. 490.–». Muss der Laden zu diesem Preis verkaufen?',
     a:['Ja, Offerte ist Offerte','Ja, aber nur ein Stück','Nein – das wäre Betrug des Kunden','Nein – wesentlicher Irrtum (OR 23)'], k:3,
     fb:'Beim offensichtlichen Preisfehler schützt OR 23 den Verkäufer: Die Offerte wird unverbindlich.' },
@@ -3867,16 +3980,16 @@ const QUIZ_FRAGEN = [
     fb:'OR 6a: Unbestellte Ware müssen Sie weder aufbewahren noch zurückschicken. Nur bei offensichtlicher Fehladressierung: Absenderin benachrichtigen.' },
   { f:'Mit welcher Handlung kommt der Kaufvertrag zustande?',
     a:['Mit der Anfrage','Mit der Offerte','Mit der Bestellung','Mit der Lieferung'], k:2,
-    fb:'Die Bestellung ist die Annahme der Offerte – damit entsteht der Kaufvertrag (OR 184 ff.).' },
+    fb:'Die Bestellung ist die Annahme der Offerte – damit entsteht der Kaufvertrag (OR 1, OR 184).' },
   { f:'Herr Meier sagt mündlich zu, Sie schlagen ein. Gilt die Abmachung?',
     a:['Nein, nur schriftlich gilt','Ja – mündliche Zusagen sind bindend','Nur mit Zeugen','Nur bis Ladenschluss'], k:1,
     fb:'Auch mündliche Verträge sind verbindlich. Schriftliches lässt sich nur leichter beweisen.' },
   { f:'Die Lieferfrist ist verstrichen, nichts kommt. Erster korrekter Schritt?',
     a:['Sofort vom Vertrag zurücktreten','Betreibung einleiten','Eingeschriebene Mahnung mit Nachfrist','Preis mindern'], k:2,
-    fb:'Mahnkauf OR 107: zuerst eingeschrieben mahnen und eine Nachfrist setzen.' },
+    fb:'Mahnkauf: zuerst mahnen – am besten eingeschrieben – und eine Nachfrist setzen (OR 102, 107).' },
   { f:'Das Hochzeitskleid ist fest auf den 14. Juni bestellt – und kommt nicht. Was gilt?',
-    a:['Fixkauf: sofort in Verzug, ohne Mahnung (OR 108)','Normale Nachfrist von 30 Tagen','Kein Verzug – einfach Pech','Automatisch Wandelung'], k:0,
-    fb:'Beim Fixkauf ist der Liefertermin entscheidend – die Verkäuferin ist sofort in Verzug.' },
+    a:['Fixkauf: Rücktritt sofort möglich, ohne Nachfrist (OR 108)','Normale Nachfrist von 30 Tagen','Kein Verzug – einfach Pech','Automatisch Wandelung'], k:0,
+    fb:'Das genaue Datum ist ein Verfalltag: Die Verkäuferin ist ohne Mahnung in Verzug (OR 102 Abs. 2). Weil das Kleid nach der Hochzeit nutzlos ist, braucht es auch keine Nachfrist – Sie können sofort zurücktreten (OR 108 Ziff. 3).' },
   { f:'Die Nachfrist läuft ungenutzt ab. Was gehört NICHT zu Ihren Möglichkeiten?',
     a:['Auf Lieferung bestehen plus Schadenersatz','Verzicht mit Schadenersatzforderung','Rücktritt vom Vertrag','Die Ware gratis behalten'], k:3,
     fb:'OR 107/109 gibt Ihnen drei Wahlrechte – geschenkt wird nichts.' },
@@ -3905,8 +4018,8 @@ const QUIZ_FRAGEN = [
     a:['1 Jahr','2 Jahre','5 bis 10 Jahre','Gar nicht'], k:2,
     fb:'Die meisten Forderungen verjähren nach 5 bis 10 Jahren (OR 127/128) – so lange ist die Quittung Ihr Beweis.' },
   { f:'An der Haustür einen Staubsauger für Fr. 300.– gekauft. Was gilt?',
-    a:['Kauf ist Kauf','Widerruf innert 14 Tagen, schriftlich per Einschreiben','Widerruf nur am selben Tag','Nur der Verkäufer darf widerrufen'], k:1,
-    fb:'Haustürkauf über Fr. 100.–: 14 Tage Widerrufsrecht (OR 40a–f), das Datum des Poststempels zählt.' },
+    a:['Kauf ist Kauf','Widerruf innert 14 Tagen – am besten eingeschrieben, damit Sie ihn beweisen können','Widerruf nur am selben Tag','Nur der Verkäufer darf widerrufen'], k:1,
+    fb:'Haustürkauf über Fr. 100.–: 14 Tage Widerrufsrecht (OR 40a–f). Der Widerruf ist formfrei, muss aber bewiesen werden – darum eingeschrieben. Die Frist ist gewahrt, wenn Sie ihn am letzten Tag der Post übergeben.' },
   { f:'Im Laden gekauft – zu Hause gefällt die Farbe nicht mehr. Ihr Rückgaberecht?',
     a:['14 Tage, wie immer','30 Tage mit Quittung','Keines – Umtausch ist reine Kulanz','Nur bei Occasionen'], k:2,
     fb:'Im Laden gibt es KEIN gesetzliches Rückgaberecht – was viele Geschäfte anbieten, ist freiwillige Kulanz.' },
@@ -4042,9 +4155,12 @@ function quizEnde(){
   const n = QUIZ_FRAGEN.length;
   let rang;
   if(quiz.richtig >= 18) rang = 'Rechtsprofi – Herr Meier würde Sie sofort einstellen.';
-  else if(quiz.richtig >= 14) rang = 'Sattelfest – dem QV sehen Sie gelassen entgegen.';
+  else if(quiz.richtig >= 14) rang = 'Sattelfest – der nächsten Prüfung sehen Sie gelassen entgegen.';
   else if(quiz.richtig >= 9) rang = 'Solide Basis – ein zweiter Durchgang lohnt sich.';
   else rang = 'Noch Luft nach oben – das Spiel kennt den Weg.';
+  zustand.quiz = { richtig:quiz.richtig, n:n };
+  try{ if(knotenSnapshot) speichereSpielstand(knotenSnapshot.id); }catch(e){}
+  try{ ergebnisAnzeigen(); }catch(e){}
   w.querySelector('#quizFrage').innerHTML = '<div class="quizEnde"><h2>Geschafft!</h2>' +
     '<p><b>' + quiz.richtig + ' von ' + n + '</b> richtig · <b>' + quiz.punkte + ' Punkte</b><br>' + rang + '</p></div>';
   w.querySelector('#quizGitter').innerHTML = '';
@@ -4159,7 +4275,7 @@ function zeige(id){
   szeneEl.innerHTML = bildOk[k.szene] ? bildSzene(k.szene)
                     : bildFehler[k.szene] ? (SZENEN[k.szene] || '')
                     : LADE_SVG;
-  dialogEl.innerHTML = '';
+  dialogEl.innerHTML = ''; dialogEl.scrollTop = 0;
   blaseDialog(null,''); blaseHinweis('');
   if(id==='schule' || id==='schule2'){ setTimeout(()=>{ try{ if(aktuelleSzeneId==='schule') mundFlap('lehrer', lpFrames(), 4200); }catch(e){} }, 350); }
 
@@ -4283,9 +4399,10 @@ function waehle(o, box){
   }
 
   const w = document.createElement('button');
-  w.className='weiter'; w.type='button'; w.textContent='Weiter ▸';
+  w.className='weiter klebt'; w.type='button'; w.textContent='Weiter ▸';
   w.addEventListener('click', ()=> zeige(o.ziel));
   box.appendChild(w);
+  if(EINGEBETTET){ try{ dialogEl.scrollTop = Math.max(0, fb.offsetTop - dialogEl.offsetTop - 8); }catch(e){} }
   if(zustand.undoJoker>0 && knotenSnapshot){
     const snap = knotenSnapshot;
     const u = document.createElement('button');
@@ -4300,7 +4417,7 @@ function waehle(o, box){
     });
     box.appendChild(u);
   }
-  w.focus();
+  if(EINGEBETTET){ try{ w.focus({ preventScroll:true }); }catch(e){ w.focus(); } } else w.focus();
 }
 
 /* ---------- Spezialbildschirme ---------- */
@@ -4349,7 +4466,7 @@ function baueProduktwahl(k){
     const b=document.createElement('button'); b.className='pkarte'; b.type='button';
     b.innerHTML = '<span class="pico">'+p.ico+'</span><span class="pname">'+p.name+'</span><span class="ppreis">'+chf(p.preis)+'</span>';
     b.addEventListener('click', ()=>{
-      zustand.produkt=p; zustand.rq=0; zustand.flags={}; zustand.ergebnisse={}; zustand.funde={}; zustand.gesetze={}; zustand.geheim={}; zustand.koennen={}; zustand.stimmung=2; try{gesetzBadge();geheimBadge();stimmungAnzeigen();}catch(e){}
+      zustand.produkt=p; zustand.flags={}; zustand.ergebnisse={}; zustand.koennen={}; zustand.stimmung=2; try{gesetzBadge();geheimBadge();stimmungAnzeigen();}catch(e){}   /* RQ, Gesetze und Geheimnisse aus dem Schulzimmer bleiben erhalten */
       zustand.haendler = 'herr';   /* Akt 1: der Chef persoenlich */
       zustand.undoJoker = 1;
       rqAnzeigen();
@@ -4366,21 +4483,22 @@ function baueVertrag(k){
   const v=document.createElement('div'); v.className='vertrag';
   v.innerHTML =
     '<h3>KAUFVERTRAG (mündlich)</h3><table>'+
-    '<tr><td>Parteien:</td><td>Alex (Käufer/in) · Meier &amp; Co. (Verkäufer)</td></tr>'+
+    '<tr><td>Parteien:</td><td>Alex ('+(zustand.kaeuferin==='w'?'Käuferin':'Käufer')+') · Meier &amp; Co. (Verkäufer)</td></tr>'+
     '<tr><td>Kaufsache:</td><td>'+p.name+'</td></tr>'+
     '<tr><td>Preis:</td><td>'+chf(p.preis)+' (Anzahlung '+chf(anzahlung())+' geleistet'+(zustand.flags.quittung?' – quittiert':'')+')</td></tr>'+
-    '<tr><td>Lieferung:</td><td>in 10 Tagen'+(zustand.flags.terminFix?' (schriftlich festgehalten)':' (mündlich vereinbart)')+'</td></tr>'+
+    '<tr><td>Lieferung:</td><td>'+(zustand.flags.terminFix?'Dienstag, 24. März (genaues Datum, notiert)':(zustand.flags.keinTermin?'kein fester Termin':'ca. 10 Tage (kein fester Termin)'))+'</td></tr>'+
     '<tr><td>Form:</td><td>per Handschlag – formlos gültig</td></tr>'+
     '</table><span class="stempel">RECHTSGÜLTIG</span>';
   dialogEl.appendChild(v);
   if(fx.an){ try{ setTimeout(()=>ambEinmal('kaufvertrag_fx_kasse.mp3', 0.6), 260); }catch(e){} }   /* Kaufvertrag kommt zustande */
   const box=document.createElement('div'); box.className='optionen';
-  const w=document.createElement('button'); w.className='weiter'; w.type='button'; w.textContent='Weiter ▸';
+  const w=document.createElement('button'); w.className='weiter klebt'; w.type='button'; w.textContent='Weiter ▸';
   w.addEventListener('click', ()=>{
     zustand.rqAkt1 = zustand.rq;
     zustand.flagsAkt1 = Object.assign({}, zustand.flags);
     zeige('weiche');
   });
+  box.classList.add('klebeBox');
   box.appendChild(w); dialogEl.appendChild(box);
 }
 
@@ -4415,7 +4533,7 @@ let endeFadeTimer = null;
 function sterne(rq, max){
   const p = max>0 ? rq/max : 0;
   let n, titel;
-  if(p>=0.90){ n=5; titel='Jurist:in des Jahres'; }
+  if(p>=0.90){ n=5; titel='Rechtsprofi des Jahres'; }
   else if(p>=0.72){ n=4; titel='Sehr gut gelöst'; }
   else if(p>=0.52){ n=3; titel='Solide durchgekommen'; }
   else if(p>=0.32){ n=2; titel='Fast geschafft'; }
@@ -4426,14 +4544,14 @@ function sterne(rq, max){
    (Feld kann:'…' an der jeweiligen Option), nicht dadurch, dass eine Artikelnummer
    irgendwo auf dem Bildschirm stand. Ein Haken heisst hier wirklich «kann ich». */
 const KOMPETENZEN = [
-  ['Du erkennst, wann ein Kaufvertrag zustande kommt','vertrag','OR 184'],
-  ['Du weisst, wann jemand in Verzug gerät','verzug','OR 102'],
-  ['Du kannst eine angemessene Nachfrist setzen','nachfrist','OR 107'],
-  ['Du kennst deine Wahlrechte nach Ablauf der Nachfrist','wahlrecht','OR 107'],
-  ['Du kannst den Verzugszins berechnen','zins','OR 104'],
-  ['Du rügst einen Mangel rechtzeitig und beweisbar','ruege','OR 201'],
-  ['Du unterscheidest Wandelung und Minderung','gewaehr','OR 205'],
-  ['Du unterscheidest Spezies- und Gattungskauf','gattung','OR 206'],
+  ['Sie erkennen, wann ein Kaufvertrag zustande kommt','vertrag','OR 1'],
+  ['Sie wissen, wann jemand in Verzug gerät','verzug','OR 102'],
+  ['Sie können eine angemessene Nachfrist setzen','nachfrist','OR 107'],
+  ['Sie kennen Ihre Wahlrechte nach Ablauf der Nachfrist','wahlrecht','OR 107'],
+  ['Sie können den Verzugszins berechnen','zins','OR 104'],
+  ['Sie rügen einen Mangel rechtzeitig und beweisbar','ruege','OR 201'],
+  ['Sie unterscheiden Wandelung und Minderung','gewaehr','OR 205'],
+  ['Sie unterscheiden Stück- und Gattungskauf','gattung','OR 206'],
 ];
 function kannIch(schluessel){ return !!(zustand.koennen && zustand.koennen[schluessel]); }
 function kompetenzZahl(){ return KOMPETENZEN.filter(k=>kannIch(k[1])).length; }
@@ -4472,6 +4590,8 @@ function lernberichtOeffnen(){
     +'<h3 style="color:#7a1f2b;font-size:1.02rem;margin:14px 0 6px">Ergebnis</h3>'
     +'<div style="font-size:1.15rem;margin-bottom:4px"><b>'+stw.s+'</b> &nbsp; '+stw.titel+'</div>'
     +'<table style="width:100%;border-collapse:collapse;font-size:.9rem;margin:8px 0"><thead><tr style="text-align:left;border-bottom:1px solid #ccc"><th style="padding:3px 6px">Weg</th><th style="padding:3px 6px">Rechtsquotient</th><th style="padding:3px 6px">Sterne</th></tr></thead><tbody>'+wegRows+'</tbody></table>'
+    +(zustand.quiz ? '<div style="font-size:.9rem;margin:4px 0">Quiz: <b>'+zustand.quiz.richtig+' von '+zustand.quiz.n+'</b> richtig</div>' : '<div style="font-size:.9rem;margin:4px 0;color:#777">Quiz: noch nicht gespielt</div>')
+    +'<div style="font-size:.9rem;margin:4px 0">Ergebniscode: <b style="font-family:Courier New,monospace">'+ergebnisCode()+'</b></div>'
     +'<div style="font-size:.88rem;color:#333">Stimmung von Alex am Ende: <span style="font-size:1.2rem">'+stim+'</span></div>'
     +'<h3 style="color:#7a1f2b;font-size:1.02rem;margin:18px 0 6px">Im Spiel begegnete Gesetzesartikel ('+gefunden+' / '+GESETZE.length+') · Geheimnisse '+geheimZahl()+'/'+geheimMax()+'</h3>'
     +'<ul style="list-style:none;padding:0;margin:0;columns:2;font-size:.88rem">'+gRows+'</ul>'
@@ -4480,13 +4600,92 @@ function lernberichtOeffnen(){
     +'<h3 style="color:#7a1f2b;font-size:1.02rem;margin:18px 0 6px">Meine Reflexion</h3>'
     +'<textarea placeholder="Was habe ich über den Kaufvertrag gelernt? Wo würde ich heute anders entscheiden?" style="width:100%;min-height:90px;border:1px solid #ccc;border-radius:4px;padding:8px;font-family:inherit;font-size:.9rem;box-sizing:border-box;resize:vertical"></textarea>'
     +'<div class="lbNoPrint" style="margin-top:20px;display:flex;gap:10px;justify-content:flex-end">'
-      +'<button type="button" id="lbPrint" style="background:#7a1f2b;color:#fff;border:none;border-radius:5px;padding:8px 18px;cursor:pointer;font-family:inherit;font-size:.9rem">Drucken / als PDF speichern</button>'
+      +'<button type="button" id="lbBild" style="background:#7a1f2b;color:#fff;border:none;border-radius:5px;padding:8px 14px;cursor:pointer;font-family:inherit;font-size:.9rem">Als Bild speichern</button>'
+      +'<button type="button" id="lbTab" style="background:#fff;color:#7a1f2b;border:1px solid #7a1f2b;border-radius:5px;padding:8px 14px;cursor:pointer;font-family:inherit;font-size:.9rem">In neuem Tab öffnen und drucken</button>'
+      +(EINGEBETTET ? '' : '<button type="button" id="lbPrint" style="background:#fff;color:#7a1f2b;border:1px solid #7a1f2b;border-radius:5px;padding:8px 14px;cursor:pointer;font-family:inherit;font-size:.9rem">Drucken</button>')
       +'<button type="button" id="lbClose" style="background:#eee;color:#333;border:1px solid #bbb;border-radius:5px;padding:8px 18px;cursor:pointer;font-family:inherit;font-size:.9rem">Schliessen</button>'
     +'</div></div>';
   document.body.appendChild(ov);
-  document.getElementById('lbPrint').addEventListener('click', function(){ try{ window.print(); }catch(e){} });
+  const lbP = document.getElementById('lbPrint');
+  if(lbP) lbP.addEventListener('click', function(){ try{ window.print(); }catch(e){} });
+  document.getElementById('lbBild').addEventListener('click', function(){ lernberichtBild(ov); });
+  document.getElementById('lbTab').addEventListener('click', function(){ lernberichtTab(ov); });
   document.getElementById('lbClose').addEventListener('click', function(){ ov.remove(); });
   ov.addEventListener('click', function(e){ if(e.target===ov) ov.remove(); });
+}
+/* Lernbericht ohne Druckdialog: als PNG (Canvas, reiner Text) oder als eigene Seite in neuem Tab */
+function lbWerte(ov){
+  const name = (ov.querySelector('input[type=text]')||{}).value || '';
+  const refl = (ov.querySelector('textarea')||{}).value || '';
+  return { name:name.trim(), refl:refl.trim() };
+}
+function lernberichtBild(ov){
+  const w = lbWerte(ov);
+  const c = document.createElement('canvas'); c.width = 1240; c.height = 1754;
+  const g = c.getContext('2d');
+  g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height);
+  let y = 110; const x = 90, breite = c.width - 2*x;
+  function zeile(text, font, farbe, abstand){
+    g.font = font; g.fillStyle = farbe || '#1a1a1a';
+    const woerter = String(text).split(' '); let z = '';
+    woerter.forEach(wort=>{ const t = z ? z + ' ' + wort : wort; if(g.measureText(t).width > breite && z){ g.fillText(z, x, y); y += abstand; z = wort; } else z = t; });
+    if(z){ g.fillText(z, x, y); y += abstand; }
+  }
+  zeile('Der Kauf – Lernbericht', 'bold 52px Georgia, serif', '#7a1f2b', 64);
+  let datum = ''; try{ datum = new Date().toLocaleDateString('de-CH'); }catch(e){}
+  zeile('Kaufvertragsrecht nach OR · HKV Aarau · ' + datum, '26px Georgia, serif', '#555', 56);
+  g.fillStyle = '#7a1f2b'; g.fillRect(x, y - 30, breite, 4); y += 20;
+  zeile('Name: ' + (w.name || '______________________'), '30px Georgia, serif', '#1a1a1a', 56);
+  zeile('Ergebniscode: ' + ergebnisCode(), 'bold 32px Courier New, monospace', '#1a1a1a', 56);
+  Object.keys(WEGE).forEach(k=>{ if(k in zustand.ergebnisse){ const st = sterne(zustand.ergebnisse[k], RQ_MAX[k]);
+    zeile(WEGE[k].titel + ': RQ ' + zustand.ergebnisse[k] + ' / ' + RQ_MAX[k] + '  ' + st.s, '28px Georgia, serif', '#1a1a1a', 44); } });
+  zeile(zustand.quiz ? ('Quiz: ' + zustand.quiz.richtig + ' von ' + zustand.quiz.n + ' richtig') : 'Quiz: noch nicht gespielt', '28px Georgia, serif', '#1a1a1a', 60);
+  zeile('Nachgewiesene Kompetenzen', 'bold 32px Georgia, serif', '#7a1f2b', 48);
+  KOMPETENZEN.forEach(t=> zeile((kannIch(t[1]) ? '☑ ' : '☐ ') + t[0] + ' (' + t[2] + ')', '26px Georgia, serif', '#1a1a1a', 40));
+  y += 20;
+  zeile('Meine Reflexion', 'bold 32px Georgia, serif', '#7a1f2b', 48);
+  zeile(w.refl || '–', '26px Georgia, serif', '#1a1a1a', 38);
+  const dateiname = 'Lernbericht_Der_Kauf' + (w.name ? '_' + w.name.replace(/[^A-Za-z0-9ÄÖÜäöüéèà]+/g, '_') : '') + '.png';
+  /* Das Bild erscheint immer auch im Bericht: Ist der Download blockiert (iframe mit sandbox),
+     laesst es sich mit Rechtsklick bzw. langem Druecken speichern. */
+  try{
+    const alt = ov.querySelector('.lbVorschau'); if(alt) alt.remove();
+    const v = document.createElement('div'); v.className = 'lbVorschau lbNoPrint';
+    v.style.cssText = 'margin:14px 0 0;padding:10px;border:2px dashed #7a1f2b;border-radius:6px;text-align:center;font-size:.85rem;color:#333';
+    v.innerHTML = 'Falls der Download nicht startet: Bild mit <b>Rechtsklick → «Bild speichern unter …»</b> sichern, auf dem Tablet lange darauf drücken.';
+    const im = document.createElement('img'); im.src = c.toDataURL('image/png'); im.alt = 'Lernbericht als Bild';
+    im.style.cssText = 'display:block;width:100%;max-width:420px;margin:10px auto 0;border:1px solid #ccc';
+    v.appendChild(im);
+    ov.querySelector('.lbSheet').appendChild(v);
+    v.scrollIntoView({ block:'nearest' });
+  }catch(e){}
+  try{
+    c.toBlob(function(blob){
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = dateiname; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url), 4000);
+    }, 'image/png');
+  }catch(e){}
+}
+function lernberichtTab(ov){
+  const w = lbWerte(ov);
+  const blatt = ov.querySelector('.lbSheet').cloneNode(true);
+  const nb = blatt.querySelector('.lbNoPrint'); if(nb) nb.remove();
+  const inp = blatt.querySelector('input[type=text]'); if(inp){ const sp = document.createElement('b'); sp.textContent = w.name || '______________________'; inp.replaceWith(sp); }
+  const ta = blatt.querySelector('textarea'); if(ta){ const d = document.createElement('div'); d.style.cssText = 'white-space:pre-wrap;border:1px solid #ccc;border-radius:4px;padding:8px;min-height:60px'; d.textContent = w.refl || '–'; ta.replaceWith(d); }
+  const html = '<!DOCTYPE html><html lang="de-CH"><head><meta charset="utf-8"><title>Lernbericht – Der Kauf</title>' +
+    '<style>body{margin:0;padding:24px;font-family:Georgia,serif;background:#f4f4f4}.lbSheet{margin:0 auto}' +
+    '.knopf{display:block;margin:0 auto 14px;font:inherit;padding:8px 18px;background:#7a1f2b;color:#fff;border:none;border-radius:5px;cursor:pointer}' +
+    '@media print{body{background:#fff;padding:0}.knopf{display:none}.lbSheet{box-shadow:none!important}}</style></head><body>' +
+    '<button class="knopf" onclick="window.print()">Drucken / als PDF speichern</button>' + blatt.outerHTML + '</body></html>';
+  let ok = false;
+  try{
+    const url = URL.createObjectURL(new Blob([html], { type:'text/html' }));
+    const f = window.open(url, '_blank');
+    ok = !!f;
+    setTimeout(()=>URL.revokeObjectURL(url), 60000);
+  }catch(e){}
+  if(!ok) blaseHinweis('Der neue Tab wurde blockiert. Bitte «Als Bild speichern» verwenden.', 5000);
 }
 function baueEnde(){
 
@@ -4498,7 +4697,7 @@ function baueEnde(){
   dialogEl.appendChild(sp);
 
   const wert=document.createElement('p'); wert.className='ende-wertung';
-  wert.textContent='RQ '+zustand.rq+' von '+rqMaxAktuell()+' möglich – '+wertungsText(zustand.rq);
+  wert.textContent='RQ '+zustand.rq+' von '+rqMaxAktuell()+' möglich – '+wertungsText(zustand.rq, rqMaxAktuell());
   dialogEl.appendChild(wert);
   const st=sterne(zustand.rq, rqMaxAktuell());
   const sterneEl=document.createElement('p'); sterneEl.className='ende-sterne';
@@ -4528,11 +4727,11 @@ function baueEnde(){
   const tx=document.createElement('p'); tx.className='dtext';
   tx.innerHTML = gespielt>=3
     ? '<b>Alle drei Wege gemeistert!</b> Sie haben erlebt: Der gleiche Vertrag kann auf ganz unterschiedliche Weise in Schieflage geraten – und das OR hält für jede Störung ein Rezept bereit. Vergleichen Sie zum Abschluss mit der Übersicht: Welche <b>«wichtigen Elemente»</b> des Kaufvertrags sind Ihnen in den Geschichten begegnet?'
-    : 'Tipp: Spielen Sie auch die anderen Wege – dieselbe Ausgangslage, ganz andere Rechtsfragen. Entscheidungen aus Akt 1 (Quittung? Termin schriftlich?) wirken dort unterschiedlich nach.';
+    : 'Tipp: Spielen Sie auch die anderen Wege – dieselbe Ausgangslage, ganz andere Rechtsfragen. Entscheidungen aus Akt 1 (Quittung? Genaues Lieferdatum?) wirken dort unterschiedlich nach.';
   dialogEl.appendChild(tx);
 
   const refl=document.createElement('div'); refl.className='lernbox';
-  let lz='<div class="lerntitel">⚖️ Das kannst du – nachgewiesen durch deine Entscheidungen ('+kompetenzZahl()+'/'+KOMPETENZEN.length+')</div><ul class="lernliste">';
+  let lz='<div class="lerntitel">⚖️ Das können Sie – nachgewiesen durch Ihre Entscheidungen ('+kompetenzZahl()+'/'+KOMPETENZEN.length+')</div><ul class="lernliste">';
   KOMPETENZEN.forEach(([txt,k,art])=>{ const ok=kannIch(k); lz+='<li class="'+(ok?'ja':'nein')+'">'+(ok?'☑':'☐')+' '+txt+'<span class="lz-art">'+art+'</span></li>'; });
   lz+='</ul>';
   const begegnet=Object.keys(zustand.gesetze||{}).length;
@@ -4540,7 +4739,17 @@ function baueEnde(){
   refl.innerHTML=lz;
   dialogEl.appendChild(refl);
 
+  const code=document.createElement('div'); code.className='ergCode';
+  code.innerHTML='Ergebniscode für kv digital: <code id="ergCodeText"></code><button type="button">kopieren</button>';
+  code.querySelector('button').addEventListener('click', function(){ const b=this; textKopieren(ergebnisCode(), ok=>{ b.textContent = ok ? '✓ kopiert' : 'bitte markieren'; }); });
+  dialogEl.appendChild(code);
+  ergebnisAnzeigen();
+
   const box=document.createElement('div'); box.className='optionen';
+  const bQ=document.createElement('button'); bQ.className='weiter'; bQ.type='button';
+  bQ.textContent = zustand.quiz ? '🧠 Quiz nochmals (' + zustand.quiz.richtig + '/' + zustand.quiz.n + ')' : '🧠 Wissen testen – Quiz mit 20 Fragen';
+  bQ.addEventListener('click', ()=> quizOeffnen());
+  box.appendChild(bQ);
   if(gespielt<3){
     const b1=document.createElement('button'); b1.className='weiter'; b1.type='button';
     b1.textContent='Anderen Weg erkunden ▸';
@@ -4572,11 +4781,41 @@ function baueEnde(){
   }
 }
 
-function wertungsText(rq){
-  if(rq>=26) return 'Rechtsprofi! ⚖️';
-  if(rq>=18) return 'Solide unterwegs.';
-  if(rq>=10) return 'Grundlagen sitzen – Details üben.';
-  return 'Nochmals ins OR schauen!';
+/* Gleiche Schwellen wie sterne(): beides rechnet in Prozent des erreichbaren Maximums */
+/* Kurzer Code fuer die Lehrperson, z. B. «L-38-4★ · Q-16/20» – zum Eintragen in kv digital */
+function sterneZahl(rq, max){ return (sterne(rq, max).s.match(/★/g) || []).length; }
+function ergebnisCode(){
+  const teile = [];
+  Object.keys(WEGE).forEach(k=>{ if(k in zustand.ergebnisse) teile.push(k + '-' + zustand.ergebnisse[k] + '-' + sterneZahl(zustand.ergebnisse[k], RQ_MAX[k]) + '★'); });
+  if(zustand.quiz) teile.push('Q-' + zustand.quiz.richtig + '/' + zustand.quiz.n);
+  return teile.join(' · ') || '–';
+}
+function ergebnisMelden(){
+  try{
+    if(window.parent && window.parent !== window){
+      window.parent.postMessage({ quelle:'derkauf', code:ergebnisCode(), ergebnisse:zustand.ergebnisse,
+        maximum:{ L:RQ_MAX.L, Z:RQ_MAX.Z, M:RQ_MAX.M }, quiz:zustand.quiz||null }, '*');
+    }
+  }catch(e){}
+}
+function ergebnisAnzeigen(){
+  const el = document.getElementById('ergCodeText');
+  if(el) el.textContent = ergebnisCode();
+  ergebnisMelden();
+}
+function textKopieren(t, fertig){
+  const notweg = ()=>{
+    const h = document.createElement('textarea'); h.value = t; h.style.position = 'fixed'; h.style.opacity = '0';
+    document.body.appendChild(h); h.select();
+    try{ document.execCommand('copy'); fertig(true); }catch(e){ fertig(false); }
+    h.remove();
+  };
+  try{ if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(t).then(()=>fertig(true), notweg); return; } }catch(e){}
+  notweg();
+}
+function wertungsText(rq, max){
+  const p = max>0 ? rq/max : 0;
+  return Math.round(p*100) + ' %';
 }
 
 function neustart(){
@@ -4585,6 +4824,33 @@ function neustart(){
   zustand.flags={}; zustand.flagsAkt1={}; zustand.weg=null; zustand.ergebnisse={}; zustand.funde={}; zustand.undoJoker=1; zustand.gesetze={}; zustand.geheim={}; zustand.koennen={}; zustand.stimmung=2; try{gesetzBadge();geheimBadge();stimmungAnzeigen();}catch(e){}
   rqAnzeigen(); setzeWegAnzeige();
   zeige('titel');
+}
+/* ---------- Eigene Dialoge (confirm, prompt und alert sind in iframes mit sandbox blockiert) ---------- */
+function kvDialog(html, knoepfe, eingabe){
+  const alt = document.querySelector('.kvBox'); if(alt) alt.remove();
+  const box = document.createElement('div'); box.className = 'kvBox';
+  const p = document.createElement('div'); p.className = 'kvPanel'; p.setAttribute('role','dialog');
+  p.innerHTML = '<p>' + html + '</p>';
+  let inp = null;
+  if(eingabe){ inp = document.createElement('input'); inp.type = 'text'; inp.autocomplete = 'off'; p.appendChild(inp); }
+  const reihe = document.createElement('div'); reihe.className = 'kvKnoepfe';
+  knoepfe.forEach((k, i)=>{
+    const b = document.createElement('button'); b.type = 'button'; b.textContent = k.t;
+    if(k.nein) b.className = 'nein';
+    b.addEventListener('click', ()=>{ box.remove(); if(k.tu) k.tu(inp ? inp.value : undefined); });
+    reihe.appendChild(b);
+    if(i === 0 && !inp) setTimeout(()=>{ try{ b.focus(); }catch(e){} }, 0);
+  });
+  p.appendChild(reihe); box.appendChild(p);
+  box.addEventListener('click', e=>{ if(e.target === box) box.remove(); });
+  if(inp) inp.addEventListener('keydown', e=>{ if(e.key === 'Enter'){ const b = reihe.querySelector('button'); if(b) b.click(); } });
+  document.body.appendChild(box);
+  if(inp) setTimeout(()=>{ try{ inp.focus(); }catch(e){} }, 0);
+}
+function neustartFragen(){
+  if(!zustand.produkt){ neustart(); return; }
+  kvDialog('Zurück zum Anfang? Der aktuelle Durchlauf geht verloren.',
+    [ { t:'Ja, neu beginnen', tu:neustart }, { t:'Abbrechen', nein:true } ]);
 }
 /* ---------- Vollbild ---------- */
 try{ const _lpb=document.getElementById('lpBtn'); if(_lpb) _lpb.addEventListener('click', lpWaehlen); }catch(e){}
@@ -4604,6 +4870,7 @@ vollbildBtn.addEventListener('click', ()=>{
   }
 });
 function vollbildAnzeige(){ vollbildBtn.textContent = imVollbild() ? '🗗' : '⛶'; }
+function eigeneAdresse(){ return location.href.replace(/([?&])embed=1&?/, '$1').replace(/[?&]$/, ''); }
 if(document.addEventListener){
   document.addEventListener('fullscreenchange', vollbildAnzeige);
   document.addEventListener('webkitfullscreenchange', vollbildAnzeige);
@@ -4612,17 +4879,22 @@ if(document.addEventListener){
 /* ---------- Prätorianer-Konsole (π) ---------- */
 let praeAuth = false;
 try{ praeAuth = (typeof localStorage!=='undefined') && localStorage.getItem('derkauf_prae')==='1'; }catch(e){}
+/* Die Antwort steht nur als Pruefsumme im Quelltext. Eingebettet ist die Konsole gesperrt. */
+function praeSumme(t){ let h = 5381; for(let i=0;i<t.length;i++){ h = ((h*33) ^ t.charCodeAt(i)) >>> 0; } return h; }
+if(EINGEBETTET){ praeAuth = false; }
 document.getElementById('pi').addEventListener('click', ()=>{
+  if(EINGEBETTET) return;
   if(praeAuth){ zeigeGalerie(); return; }               /* schon eingeloggt: kein Passwort mehr */
-  if(typeof prompt==='undefined') return;
-  const antwort = prompt('Was fürchtet ein einbeiniger Pirat am meisten?');
-  if(antwort===null) return;
-  if(antwort.trim().toLowerCase()==='specht'){ praeAuth=true; try{ localStorage.setItem('derkauf_prae','1'); }catch(e){} zeigeGalerie(); }
-  else if(typeof alert!=='undefined'){ alert('Zugriff verweigert. Die Prätorianer grüssen.'); }
+  kvDialog('Was fürchtet ein einbeiniger Pirat am meisten?', [
+    { t:'OK', tu:(antwort)=>{
+        if(praeSumme(String(antwort||'').trim().toLowerCase()) === 2145637212){ praeAuth=true; try{ localStorage.setItem('derkauf_prae','1'); }catch(e){} zeigeGalerie(); }
+        else { blaseHinweis('Zugriff verweigert. Die Prätorianer grüssen.', 4000); }
+      } },
+    { t:'Abbrechen', nein:true } ], true);
 });
 /* Prätorianer-Modus nach Cmd+R wiederherstellen: Kontrollpult erneut oeffnen, falls es offen war */
 try{
-  if(praeAuth && typeof localStorage!=='undefined' && localStorage.getItem('derkauf_pult')==='1'){
+  if(!EINGEBETTET && praeAuth && typeof localStorage!=='undefined' && localStorage.getItem('derkauf_pult')==='1'){
     setTimeout(()=>{ try{ pultZeigen(); }catch(e){} }, 400);
   }
 }catch(e){}
@@ -4761,18 +5033,68 @@ function zeigeGalerie(){
   document.body.appendChild(g);
 }
 
-document.getElementById('titel').addEventListener('click', ()=>{
-  if(zustand.produkt && typeof confirm!=='undefined' &&
-     !confirm('Zurück zum Anfang? Der aktuelle Durchlauf geht verloren.')) return;
-  neustart();
-});
+document.getElementById('titel').addEventListener('click', neustartFragen);
+
+/* ---------- Einbettung: kompakte Kopfzeile, Menü, Einpassen auf 976 × 720 ---------- */
+const rahmenEl = document.querySelector('.rahmen');
+function einpassen(){
+  if(!EINGEBETTET || !rahmenEl) return;
+  const z = Math.min(window.innerWidth / 976, window.innerHeight / 720);
+  if(window.CSS && CSS.supports && CSS.supports('zoom', '1')){
+    rahmenEl.style.zoom = z; rahmenEl.style.transform = '';
+  } else {
+    rahmenEl.style.transformOrigin = 'top center'; rahmenEl.style.transform = 'scale(' + z + ')';
+  }
+}
+function menuBauen(){
+  const kopf = document.querySelector('header'); if(!kopf) return;
+  const leiste = kopf.children[1];
+  const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'menuBtn';
+  btn.textContent = '☰ Menü'; btn.setAttribute('aria-expanded', 'false');
+  const panel = document.createElement('div'); panel.className = 'menuPanel'; panel.hidden = true;
+  const zeile = (els)=>{ const z = document.createElement('div'); z.className = 'mzeile'; els.forEach(e=>{ if(e) z.appendChild(e); }); panel.appendChild(z); };
+  zeile([document.getElementById('musik'), document.getElementById('lautMusik')]);
+  zeile([document.getElementById('fx'), document.getElementById('lautFx')]);
+  const knopf = (text, tu)=>{ const b = document.createElement('button'); b.type = 'button'; b.className = 'mknopf'; b.textContent = text;
+    b.addEventListener('click', ()=>{ panel.hidden = true; btn.setAttribute('aria-expanded','false'); tu(); }); return b; };
+  panel.appendChild(knopf('🧠 Wissen testen (Quiz, 20 Fragen)', ()=> quizOeffnen()));
+  const lp = document.getElementById('lpBtn');
+  if(lp){ panel.appendChild(knopf('👤 Lehrperson wählen', ()=> lpWaehlen())); lp.style.display = 'none'; }
+  panel.appendChild(knopf('↺ Neu beginnen', neustartFragen));
+  const a = document.createElement('a'); a.className = 'mknopf'; a.href = eigeneAdresse(); a.target = '_blank'; a.rel = 'noopener';
+  a.textContent = '↗ In neuem Tab öffnen (Vollbild)'; panel.appendChild(a);
+  if(vollbildBtn) vollbildBtn.style.display = 'none';
+  btn.addEventListener('click', ()=>{ panel.hidden = !panel.hidden; btn.setAttribute('aria-expanded', String(!panel.hidden)); });
+  document.addEventListener('click', e=>{ if(!panel.hidden && !panel.contains(e.target) && e.target !== btn){ panel.hidden = true; btn.setAttribute('aria-expanded','false'); } });
+  if(leiste) leiste.insertBefore(btn, leiste.firstChild);
+  kopf.appendChild(panel);
+}
+if(EINGEBETTET){
+  try{ menuBauen(); }catch(e){}
+  const pi = document.getElementById('pi'); if(pi) pi.style.display = 'none';
+  einpassen();
+  window.addEventListener('resize', einpassen);
+  window.addEventListener('load', einpassen);
+}
 
 /* ---------- Start ---------- */
-if(!ladeSpielstand()){ zeige('titel'); startTorZeigen(); }
+zeige('titel');
+startTorZeigen(spielstandVorschau());
 
 })();
 </script>
-<script data-goatcounter="https://abu-tools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+/* GoatCounter nur direkt auf abu-tools.ch, nicht eingebettet in kv digital (Datenschutz) */
+(function(){
+  try{
+    if(typeof EINGEBETTET !== 'undefined' && EINGEBETTET) return;
+    if(!/(^|\.)abu-tools\.ch$/i.test(location.hostname)) return;
+    var s = document.createElement('script'); s.async = true; s.src = '//gc.zgo.at/count.js';
+    s.setAttribute('data-goatcounter', 'https://abu-tools.goatcounter.com/count');
+    document.body.appendChild(s);
+  }catch(e){}
+})();
+</script>
 <script>
 /* ---- abu-tools.ch: eine Oeffnung dieses Werkzeugs melden ----
    Gezaehlt wird nur, was wirklich auf abu-tools.ch laeuft; lokal per

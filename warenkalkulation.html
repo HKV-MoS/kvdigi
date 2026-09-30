@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Warenkalkulation – HKV Aarau</title>
+<style>
+  *{ box-sizing:border-box; }
+  [hidden]{ display:none !important; }
+  body{ margin:0; font-family:'Aptos','Segoe UI',system-ui,-apple-system,sans-serif; background:#F4F8FB; color:#1A2B3A; font-size:15px; line-height:1.55; }
+  header{ background:linear-gradient(135deg,#213B42 0%,#3C6E73 100%); color:#fff; padding:16px 22px 22px; box-shadow:0 2px 8px rgba(0,0,0,.12); text-align:center; }
+  .kopfwappen{ display:inline-block; line-height:0; margin:0 0 10px; opacity:.96; transition:opacity .15s ease, transform .15s ease; }
+  .kopfwappen img{ height:46px; width:auto; display:block; }
+  .kopfwappen:hover{ opacity:1; transform:scale(1.03); }
+  @media (max-width:560px){ .kopfwappen img{ height:36px; } }
+  .brand-eyebrow{ font-size:11px; font-weight:800; letter-spacing:2.5px; color:#D8AE66; margin-bottom:3px; text-transform:uppercase; }
+  .brand-eyebrow .be-cr{ font-weight:600; letter-spacing:.2px; opacity:.72; text-transform:none; font-size:11.5px; }
+  .brand-eyebrow .be-cr a{ color:inherit; text-decoration:underline; text-underline-offset:2px; }
+  .brand-eyebrow .be-cr a:hover{ opacity:1; color:#F3CE8E; }
+  @media (max-width:640px){
+    .brand-eyebrow{ letter-spacing:1.6px; line-height:1.7; }
+    .brand-eyebrow .be-cr{ display:block; letter-spacing:.2px; }
+    .brand-eyebrow .be-pkt{ display:none; }
+  }
+  header h1{ margin:0 0 2px; font-size:22px; font-weight:800; letter-spacing:-.3px; }
+  header .sub{ font-size:13px; opacity:.93; max-width:760px; margin:0 auto; }
+
+  /* Kette im Kopf: der ganze Weg auf einen Blick */
+  .kopfkette{ display:flex; flex-wrap:wrap; justify-content:center; gap:4px 3px; margin:14px auto 0; max-width:900px; }
+  .kopfkette span{ font-size:11.5px; font-weight:800; letter-spacing:.3px; padding:4px 9px; border-radius:999px;
+    background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.26); white-space:nowrap; }
+  .kopfkette span.e{ background:rgba(216,174,102,.22); border-color:rgba(216,174,102,.55); }
+  .kopfkette i{ font-style:normal; opacity:.6; align-self:center; font-size:12px; }
+
+  .wrap{ max-width:980px; margin:0 auto; padding:16px; }
+
+  .tabs{ display:flex; gap:8px; margin:6px 0 4px; flex-wrap:wrap; }
+  .tab{ font-family:inherit; font-size:14px; font-weight:700; padding:9px 18px; border-radius:10px 10px 0 0; border:none; background:transparent; color:#5B6B7A; cursor:pointer; border-bottom:3px solid transparent; }
+  .tab:hover{ color:#213B42; }
+  .tab.active{ color:#213B42; border-bottom-color:#D8AE66; background:#fff; box-shadow:0 -2px 8px rgba(20,50,80,.05); }
+  .tab:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
+  .panel{ display:none; }
+  .panel.active{ display:block; }
+  @media (max-width:560px){ .tab{ padding:8px 11px; font-size:13px; } .tabs{ gap:4px; } }
+
+  .card{ background:#fff; border-radius:14px; box-shadow:0 2px 10px rgba(20,50,80,.08); padding:18px 20px; margin-bottom:16px; }
+  .card h2{ margin:0 0 4px; font-size:18px; color:#213B42; font-weight:800; }
+  .card h3{ margin:16px 0 6px; font-size:14px; font-weight:800; color:#3C6E73; text-transform:uppercase; letter-spacing:.5px; }
+  .card p{ margin:6px 0; }
+  .lead{ color:#41585f; }
+  .hl{ background:#FBF3DF; padding:1px 6px; border-radius:5px; font-weight:700; }
+  @media (max-width:560px){ .card{ padding:15px 14px; } }
+
+  /* Begriffe */
+  .begriffe{ width:100%; border-collapse:collapse; margin:8px 0 4px; font-size:14px; }
+  .begriffe th, .begriffe td{ text-align:left; vertical-align:top; padding:8px 10px; border-top:1px solid #E1EBF1; }
+  .begriffe tr:last-child td, .begriffe tr:last-child th{ border-bottom:1px solid #E1EBF1; }
+  .begriffe th{ width:34%; background:#F3F8FC; color:#213B42; font-weight:800; }
+  .begriffe th small{ display:block; font-weight:700; color:#3C6E73; font-size:12px; }
+  .begriffe td .bsp{ display:block; color:#6a7c88; font-size:12.5px; margin-top:2px; }
+  @media (max-width:560px){ .begriffe th{ width:40%; } .begriffe{ font-size:13.5px; } }
+
+  .formeln{ display:flex; gap:10px; flex-wrap:wrap; margin:12px 0 4px; }
+  .formel{ background:#E9F3F2; border:1.5px solid #A7D2CE; color:#213B42; border-radius:12px; padding:9px 16px; font-weight:800; font-size:15.5px; letter-spacing:.3px; }
+  .formel.gold{ background:#FBF3DF; border-color:#EBD6A8; }
+
+  .merk{ margin-top:12px; padding:11px 14px; border-radius:10px; background:#FBF3DF; border-left:4px solid #D8AE66; font-size:14px; color:#4d3c12; }
+  .merk b{ color:#2e2306; }
+  .merk.gruen{ background:#EDF7F1; border-left-color:#2E9D6B; color:#1f4d35; }
+  .merk.gruen b{ color:#123522; }
+  .merk.blau{ background:#EAF2F8; border-left-color:#3C6E73; color:#23404a; }
+  .merk a, .querlink a{ color:#213B42; font-weight:800; text-decoration:underline; text-underline-offset:2px; }
+  .querlink{ margin-top:12px; font-size:13px; color:#5B6B7A; }
+
+  /* Kalkulationsblatt */
+  .eingaben{ display:flex; flex-wrap:wrap; gap:10px 14px; align-items:flex-end; margin:10px 0 6px; }
+  .feld{ display:flex; flex-direction:column; gap:3px; }
+  .feld label{ font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.6px; color:#3C6E73; }
+  .feld .inp{ display:flex; align-items:center; gap:5px; }
+  .feld input{ font-family:inherit; font-size:16px; font-weight:700; padding:7px 9px; border:2px solid #CBD7E2; border-radius:9px; width:112px; color:#213B42; background:#fff; }
+  .feld input.kurz{ width:74px; }
+  .feld input:focus{ outline:none; border-color:#3C6E73; }
+  .feld .u{ font-size:13.5px; font-weight:700; color:#5B6B7A; }
+  .chips{ display:flex; gap:6px; flex-wrap:wrap; }
+  .chip{ font-family:inherit; font-size:13px; font-weight:600; padding:6px 12px; border-radius:8px; border:1.5px solid #CBD7E2; background:#fff; color:#3C6E73; cursor:pointer; }
+  .chip:hover{ border-color:#3C6E73; }
+  .chip.on{ background:#213B42; color:#fff; border-color:#213B42; }
+  .chip:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
+  .flab{ font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:#3C6E73; margin:10px 0 6px; }
+
+  .blattwrap{ overflow-x:auto; margin:12px 0 4px; -webkit-overflow-scrolling:touch; }
+  table.blatt{ border-collapse:collapse; font-variant-numeric:tabular-nums; min-width:520px; width:100%; max-width:760px; font-size:15px; }
+  table.blatt td{ padding:5px 8px; white-space:nowrap; }
+  table.blatt td.op{ width:18px; text-align:center; color:#5B6B7A; font-weight:800; padding-right:2px; }
+  table.blatt td.nm{ color:#213B42; }
+  table.blatt td.nm .ab{ color:#6a7c88; font-size:13px; }
+  table.blatt td.chf{ color:#8AA0B4; font-size:13px; text-align:right; padding-right:2px; }
+  table.blatt td.bt{ text-align:right; font-weight:700; color:#213B42; min-width:92px; }
+  table.blatt td.p{ text-align:right; color:#3C6E73; font-weight:700; min-width:62px; }
+  table.blatt td.nt{ color:#B5641E; font-size:12.5px; font-weight:700; padding-left:14px; }
+  table.blatt tr.eq td{ border-top:1.5px solid #213B42; }
+  table.blatt tr.schluss td{ border-bottom:1.5px solid #213B42; }
+  table.blatt tr.eq td.nm, table.blatt tr.eq td.bt{ font-weight:800; }
+  table.blatt tr.ges td.bt{ background:#FBF3DF; color:#8a4d0f; border-radius:6px; }
+  table.blatt tr.ges td.nm{ color:#8a4d0f; }
+  table.blatt tr.grp-v td.nm{ color:#1d4f3a; }
+  table.blatt tr.trenn td{ padding:3px 8px; font-size:10.5px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:#8AA0B4; }
+  table.blatt tr.versteckt{ visibility:hidden; }
+  table.blatt tr.neu td{ animation:auf .45s ease-out; }
+  @keyframes auf{ from{ background:#FBF3DF; } to{ background:transparent; } }
+  @media (max-width:560px){ table.blatt{ font-size:13.5px; min-width:0; } table.blatt td{ padding:4px 4px; } table.blatt td.chf, table.blatt td.nt, table.blatt td.nm .ab{ display:none; } table.blatt td.nm{ white-space:normal; line-height:1.25; } table.blatt td.bt{ min-width:0; } table.blatt td.p{ min-width:0; padding-left:6px; } }
+
+  .blattknoepfe{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+  .notiz{ font-size:13px; color:#5B6B7A; margin-top:8px; }
+  .notiz b{ color:#213B42; }
+  .zusatz{ margin-top:10px; padding:10px 14px; background:#EEF6F4; border-left:4px solid #2E9D6B; border-radius:8px; font-size:14.5px; color:#16603c; font-weight:700; }
+  .zusatz span{ display:block; }
+
+  /* Balken */
+  .balken{ margin:14px 0 4px; max-width:760px; }
+  .brow{ display:grid; grid-template-columns:112px 1fr; gap:10px; align-items:center; margin:5px 0; }
+  .brow .bl{ font-size:12px; font-weight:800; color:#41585f; text-align:right; }
+  .bbar{ display:flex; height:30px; border-radius:7px; overflow:hidden; background:#EEF3F7; }
+  .seg{ display:flex; align-items:center; justify-content:center; font-size:11.5px; font-weight:800; color:#fff; white-space:nowrap; overflow:hidden; min-width:0; transition:flex-basis .35s ease; border-right:1px solid rgba(255,255,255,.55); }
+  .seg:last-child{ border-right:none; }
+  .seg.leer{ background:repeating-linear-gradient(135deg,#F3D9D6 0 6px,#FBEEEC 6px 12px); color:#9d2f26; }
+  .s-bap{ background:#213B42; } .s-rb{ background:#3C6E73; } .s-nap{ background:#4d7d82; }
+  .s-vp{ background:#213B42; } .s-sk{ background:#5f8a8f; } .s-ep{ background:#3C6E73; }
+  .s-gk{ background:#C9973F; } .s-rg{ background:#2E9D6B; } .s-bg{ background:#B5641E; }
+  .seg .k{ display:none; }
+  @media (max-width:560px){ .brow{ grid-template-columns:0 1fr; gap:0; } .seg{ font-size:10.5px; } .seg .l{ display:none; } .seg .k{ display:inline; } .brow .bl .lg{ display:none; } }
+  .brow .bl .kz{ display:none; }
+  @media (max-width:560px){ .brow .bl .kz{ display:inline; } }
+
+  /* Trainer */
+  .filterzeile{ display:flex; gap:18px; flex-wrap:wrap; }
+  .filterzeile > div{ flex:1 1 260px; }
+  .scoreboard{ display:flex; gap:10px; flex-wrap:wrap; }
+  .scard{ flex:1 1 110px; background:linear-gradient(160deg,#213B42,#2E5054); color:#fff; border-radius:12px; padding:12px 14px; text-align:center; }
+  .scard .n{ font-size:28px; font-weight:900; line-height:1; }
+  .scard .l{ font-size:11px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; color:#A9C3C8; margin-top:4px; }
+  .trainer-shell{ display:flex; gap:16px; align-items:flex-start; }
+  .trainer-shell .qcard{ flex:1 1 auto; min-width:0; }
+  .calc-card{ flex:0 0 232px; position:sticky; top:14px; margin-bottom:16px; }
+  @media (max-width:820px){ .trainer-shell{ flex-direction:column; } .calc-card{ position:static; width:100%; max-width:320px; flex:1 1 auto; } }
+  .qmeta{ font-size:12px; color:#8AA0B4; margin-bottom:6px; font-weight:700; letter-spacing:.3px; }
+  .qtext{ font-size:17.5px; font-weight:500; color:#213B42; line-height:1.55; }
+  .qtext .frage{ display:block; margin-top:8px; font-weight:800; }
+  .numrow{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:14px; }
+  .numrow .q{ font-size:13.5px; font-weight:800; color:#28435E; }
+  .numrow input{ font-family:inherit; font-size:18px; font-weight:800; padding:9px 12px; border:2px solid #CBD7E2; border-radius:9px; width:150px; color:#213B42; }
+  .numrow input:focus{ outline:none; border-color:#3C6E73; }
+  .numrow input.richtig{ border-color:#2E9D6B; background:#EEF8F2; }
+  .numrow input.falsch{ border-color:#E2574C; background:#FDF1EF; }
+  .numrow .unit{ font-size:15px; font-weight:800; color:#5B6B7A; }
+  .btnbar{ display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+  .btn{ font-family:inherit; font-size:14px; font-weight:800; cursor:pointer; border-radius:10px; padding:10px 18px; border:none; }
+  .btn-primary{ background:#3C6E73; color:#fff; } .btn-primary:hover{ background:#325c60; }
+  .btn-ghost{ background:#fff; color:#3C6E73; border:1.5px solid #CBD7E2; } .btn-ghost:hover{ background:#F3F8FC; }
+  .btn-klein{ font-size:13px; padding:7px 13px; }
+  .btn:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
+  .btn:disabled{ opacity:.5; cursor:default; }
+  .feedback{ margin-top:14px; padding:12px 16px; border-radius:10px; font-weight:700; display:none; }
+  .feedback.show{ display:block; }
+  .feedback.ok{ background:#E7F6EE; color:#16603c; border-left:4px solid #2E9D6B; }
+  .feedback.no{ background:#FBEBE9; color:#9d2f26; border-left:4px solid #E2574C; }
+  .feedback .diag{ display:block; margin-top:7px; padding-top:7px; border-top:1px solid rgba(226,87,76,.28); font-size:13.5px; font-weight:600; }
+  .hintbox{ font-size:14px; color:#41585f; background:#F3F8FC; border-radius:9px; padding:10px 14px; margin-top:12px; display:none; }
+  .hintbox.show{ display:block; }
+  .solution{ margin-top:12px; display:none; border-top:1px dashed #CBD7E2; padding-top:10px; }
+  .solution.show{ display:block; }
+  .solution .weg{ font-size:14px; color:#41585f; margin:4px 0 0; padding-left:18px; }
+  .solution .weg li{ margin:3px 0; }
+
+  .calcpad{ background:#213B42; border-radius:14px; padding:13px; box-shadow:0 2px 10px rgba(20,50,80,.18); }
+  .cbrand{ display:flex; align-items:center; gap:7px; margin-bottom:9px; }
+  .emblem{ width:24px; height:24px; flex:0 0 24px; }
+  .mos{ font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-weight:800; font-size:12px; letter-spacing:1.5px; color:#B9CDD1; user-select:none; }
+  .calcpad .disp{ background:#0f2024; color:#EAF6F2; font-size:26px; font-weight:800; text-align:right; padding:11px 13px; border-radius:10px; min-height:50px; word-break:break-all; font-variant-numeric:tabular-nums; margin-bottom:10px; }
+  .calcpad .grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:7px; }
+  .calcpad .grid button{ font-family:inherit; font-size:18px; font-weight:700; padding:13px 0; border-radius:9px; border:none; cursor:pointer; background:#3C6E73; color:#fff; }
+  .calcpad .grid button:hover{ filter:brightness(1.14); }
+  .calcpad .grid button:active{ filter:brightness(.88); }
+  .calcpad .grid button.op{ background:#4d7d82; }
+  .calcpad .grid button.fn{ background:#2b4d52; font-size:16px; }
+  .calcpad .grid button.eq{ background:#D8AE66; color:#213B42; grid-row:span 2; }
+  .calcpad .grid button.zero{ grid-column:span 2; }
+  .calcpad .toanswer{ width:100%; margin-top:9px; background:#2E9D6B; color:#fff; font-weight:800; font-size:13px; padding:10px; border-radius:9px; border:none; cursor:pointer; }
+
+  .footer{ max-width:980px; margin:6px auto 26px; padding:0 18px; }
+  .footer .cr{ color:#94A3B0; font-size:11px; }
+  .footer .cr a{ color:inherit; text-decoration:underline; text-underline-offset:2px; }
+  @media (prefers-reduced-motion:reduce){ *{ transition-duration:.01ms !important; animation-duration:.01ms !important; } }
+  @media print{ header .kopfkette, .tabs, .calc-card{ display:none; } .panel{ display:block !important; } }
+</style>
+<style>
+/* Kompaktmodus im iframe (KV Digital): alles etwas kleiner */
+html.eingebettet body{ zoom:.82; }
+</style>
+</head>
+<body>
+<script>if(window.self!==window.top){document.documentElement.classList.add('eingebettet');}</script>
+
+<header>
+  <a class="kopfwappen" href="https://www.hkvaarau.ch/berufsfachschule" target="_blank"
+     rel="noopener" title="Handelsschule KV Aarau"><img src="hkv_logo_weiss.png?v=1" alt="HKV Aarau" onerror="this.parentNode.style.display='none'"></a>
+  <div class="brand-eyebrow">Rechnen im Detailhandel <span class="be-cr"><span class="be-pkt">· </span>© 2026 <a
+    href="mailto:samuel.mollet@hkv.ch" title="E-Mail an Samuel Mollet">S. Mollet</a></span></div>
+  <h1>Warenkalkulation</h1>
+  <div class="sub">Vom Listenpreis des Lieferanten bis zum Verkaufspreis im Laden: Einkaufs- und Verkaufskalkulation mit Kalkulationsblatt und endlosem Trainer.</div>
+  <div class="kopfkette" aria-label="Der Weg der Kalkulation">
+    <span class="e">BAP</span><i>−</i><span class="e">Rabatt</span><i>=</i><span class="e">RB</span><i>−</i><span class="e">Skonto</span><i>=</i><span class="e">NAP</span><i>+</i><span>BK</span><i>=</i><span>EP</span><i>+</i><span>GK</span><i>=</i><span>SK</span><i>+</i><span>RG</span><i>=</i><span>VP</span>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-tab="einkauf" role="tab">1 · Einkauf</button>
+    <button class="tab" data-tab="verkauf" role="tab">2 · Verkauf</button>
+    <button class="tab" data-tab="kette" role="tab">3 · Ganze Kette</button>
+    <button class="tab" data-tab="trainer" role="tab">4 · Trainer</button>
+  </nav>
+
+  <!-- ================= EINKAUF ================= -->
+  <section class="panel active" id="p-einkauf">
+    <div class="card">
+      <h2>Einkaufskalkulation: Rabatt und Skonto</h2>
+      <p class="lead">Beim Einkauf zahlt der Detailhandel selten den Listenpreis. Zwei Preisnachlässe verkleinern den Betrag Schritt für Schritt: zuerst der <b>Rabatt</b>, dann der <b>Skonto</b>.</p>
+      <table class="begriffe">
+        <tr><th>Bruttoankaufspreis<small>BAP</small></th><td>Preis laut Katalog oder Preisliste des Lieferanten, vor allen Abzügen. Auch «Listenpreis».</td></tr>
+        <tr><th>Rabatt<small>Rab · in % des BAP</small></th><td>Preisnachlass auf den Listenpreis.<span class="bsp">Mengenrabatt, Wiederverkäuferrabatt, Messerabatt, Saisonrabatt, Treuerabatt</span></td></tr>
+        <tr><th>Rechnungsbetrag<small>RB</small></th><td>Der Betrag, der auf der Rechnung steht: BAP minus Rabatt.</td></tr>
+        <tr><th>Skonto<small>Sko · in % des RB</small></th><td>Eine Art Zeitrabatt: Abzug für rasches Bezahlen – nur erlaubt, wenn die vereinbarte Zahlungsfrist eingehalten wird.<span class="bsp">«Zahlbar innert 30 Tagen netto, innert 10 Tagen mit 2 % Skonto»</span></td></tr>
+        <tr><th>Nettoankaufspreis<small>NAP</small></th><td>Was tatsächlich an den Lieferanten bezahlt wird: RB minus Skonto.</td></tr>
+      </table>
+      <div class="formeln"><span class="formel">BAP − Rab = RB</span><span class="formel">RB − Sko = NAP</span></div>
+      <div class="merk"><b>Der Rechnungsbetrag wird wieder 100 %.</b> Der Skonto wird nicht vom Listenpreis berechnet, sondern vom Rechnungsbetrag. Deshalb ergeben 20 % Rabatt und 2 % Skonto zusammen <b>nicht 22 %</b>, sondern nur 21.6 % Ersparnis. Im Schema steht darum eine zweite Prozentspalte.</div>
+      <div class="merk blau"><b>Das ist ein Dreisatz.</b> Die Randnotiz «÷ 100, × 20» im Schema heisst: zuerst auf 1 % hinunter, dann auf 20 % hinauf.
+        Sitzt das noch nicht? <a href="dreisatz.html">📐 Zum Dreisatz-Trainer →</a></div>
+      <div class="merk gruen"><b>Rückwärts rechnen:</b> Ist der bezahlte Betrag (NAP) bekannt, entspricht er nicht 100 %, sondern zum Beispiel 98 % des RB. Also: NAP ÷ 98 × 100 = RB. Nicht einfach 2 % dazuzählen!</div>
+    </div>
+
+    <div class="card">
+      <h2>Kalkulationsblatt Einkauf</h2>
+      <p class="lead">Zahlen eingeben – das Schema rechnet mit. Mit «Schritt für Schritt» baut es sich Zeile um Zeile auf, zum Beispiel am Beamer.</p>
+      <div class="flab">Was ist gegeben?</div>
+      <div class="chips" id="eRichtung">
+        <button class="chip on" data-r="vor">Listenpreis (vorwärts)</button>
+        <button class="chip" data-r="rueck">Bezahlter Betrag (rückwärts)</button>
+      </div>
+      <div class="eingaben" id="eVor">
+        <div class="feld"><label for="eMenge">Menge</label><div class="inp"><input id="eMenge" class="kurz" inputmode="decimal" value="40"><span class="u">Stk.</span></div></div>
+        <div class="feld"><label for="ePreis">Listenpreis pro Stück</label><div class="inp"><span class="u">CHF</span><input id="ePreis" inputmode="decimal" value="85"></div></div>
+        <div class="feld"><label for="eRab">Rabatt</label><div class="inp"><input id="eRab" class="kurz" inputmode="decimal" value="20"><span class="u">%</span></div></div>
+        <div class="feld"><label for="eSko">Skonto</label><div class="inp"><input id="eSko" class="kurz" inputmode="decimal" value="2"><span class="u">%</span></div></div>
+      </div>
+      <div class="eingaben" id="eRueck" hidden>
+        <div class="feld"><label for="eNap">Bezahlt (NAP)</label><div class="inp"><span class="u">CHF</span><input id="eNap" inputmode="decimal" value="2665.60"></div></div>
+        <div class="feld"><label for="eRab2">Rabatt</label><div class="inp"><input id="eRab2" class="kurz" inputmode="decimal" value="20"><span class="u">%</span></div></div>
+        <div class="feld"><label for="eSko2">Skonto</label><div class="inp"><input id="eSko2" class="kurz" inputmode="decimal" value="2"><span class="u">%</span></div></div>
+      </div>
+      <div class="blattwrap"><div id="eBlatt"></div></div>
+      <div class="blattknoepfe" data-blatt="e"></div>
+      <div id="eZusatz"></div>
+      <div class="balken" id="eBalken" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <!-- ================= VERKAUF ================= -->
+  <section class="panel" id="p-verkauf">
+    <div class="card">
+      <h2>Verkaufskalkulation: vom Einstandspreis zum Verkaufspreis</h2>
+      <p class="lead">Der Verkaufspreis muss mehr decken als die Ware: Auch Transport, Löhne, Miete und Strom wollen bezahlt sein – und am Schluss soll etwas übrig bleiben.</p>
+      <table class="begriffe">
+        <tr><th>Nettoankaufspreis<small>NAP</small></th><td>Was an den Lieferanten bezahlt wurde – nach Rabatt und Skonto (siehe Einkauf).</td></tr>
+        <tr><th>Bezugskosten<small>BK</small></th><td>Alle Kosten für den Weg der Ware vom Lieferanten ins eigene Lager. Bei <b>Frankolieferung</b> übernimmt sie der Lieferant – dann sind sie null.<span class="bsp">Transport (LKW, Bahn, Post), Zoll, Transportversicherung, Verpackung</span></td></tr>
+        <tr><th>Einstandspreis<small>EP</small></th><td>Was die Ware den Betrieb bis ins Lager kostet: NAP plus BK.</td></tr>
+        <tr><th>Gemeinkosten<small>GK · meist in % des EP</small></th><td>Alle übrigen Kosten des Betriebs.<span class="bsp">Personal, Miete, Heizung, Licht, Kühlung, Büro, Werbung, Zinsen, Abschreibungen – Kosten, die sich nicht genau einer einzelnen Ware zuordnen lassen</span></td></tr>
+        <tr><th>Selbstkosten<small>SK · auch Selbstkostenpreis</small></th><td>Was das Produkt den Betrieb insgesamt kostet – alle Kosten, aber noch kein Gewinn: EP plus GK. Wer darunter verkauft, macht Verlust.</td></tr>
+        <tr><th>Reingewinn<small>RG · meist in % der SK</small></th><td>Was nach Deckung aller Kosten übrig bleibt – Entschädigung für das eingesetzte Kapital und Reserve. Ist der Verkaufspreis zu tief, entsteht ein <b>Reinverlust</b>.</td></tr>
+        <tr><th>Bruttogewinn<small>BG · meist in % des EP</small></th><td>Der ganze Aufschlag auf den Einstandspreis: GK plus RG, oder VP minus EP.</td></tr>
+        <tr><th>Verkaufspreis<small>VP</small></th><td>Der Preis, zu dem die Ware der Kundschaft angeboten wird: SK plus RG.</td></tr>
+      </table>
+      <div class="formeln"><span class="formel">NAP + BK = EP</span><span class="formel">EP + GK = SK</span><span class="formel">SK + RG = VP</span><span class="formel gold">BG = GK + RG = VP − EP</span></div>
+      <div class="merk"><b>Auf die Bezugsgrösse achten:</b> Gemeinkosten und Bruttogewinn rechnet man in Prozent des <b>Einstandspreises</b>, den Reingewinn in Prozent der <b>Selbstkosten</b>. Darum beginnt beim Reingewinn eine neue 100-%-Spalte.</div>
+      <p class="notiz">Die <b>Einzelkalkulation</b> rechnet so für ein einzelnes Produkt. Die <b>Gesamtkalkulation</b> erfasst alle Kosten des ganzen Betriebs.</p>
+    </div>
+
+    <div class="card">
+      <h2>Kalkulationsblatt Verkauf</h2>
+      <div class="flab">Rechenweg</div>
+      <div class="chips" id="vWeg">
+        <button class="chip on" data-w="gkrg">über Gemeinkosten und Reingewinn</button>
+        <button class="chip" data-w="bg">direkt über den Bruttogewinn</button>
+      </div>
+      <div class="eingaben">
+        <div class="feld"><label for="vNap">NAP</label><div class="inp"><span class="u">CHF</span><input id="vNap" inputmode="decimal" value="180"></div></div>
+        <div class="feld"><label for="vBk">Bezugskosten</label><div class="inp"><span class="u">CHF</span><input id="vBk" class="kurz" inputmode="decimal" value="20"></div></div>
+        <div class="feld" data-nur="gkrg"><label for="vGk">GK in % des EP</label><div class="inp"><input id="vGk" class="kurz" inputmode="decimal" value="40"><span class="u">%</span></div></div>
+        <div class="feld" data-nur="gkrg"><label for="vRg">RG in % der SK</label><div class="inp"><input id="vRg" class="kurz" inputmode="decimal" value="10"><span class="u">%</span></div></div>
+        <div class="feld" data-nur="bg" hidden><label for="vBg">BG in % des EP</label><div class="inp"><input id="vBg" class="kurz" inputmode="decimal" value="54"><span class="u">%</span></div></div>
+      </div>
+      <div class="blattwrap"><div id="vBlatt"></div></div>
+      <div class="blattknoepfe" data-blatt="v"></div>
+      <div id="vZusatz"></div>
+      <h3>Grafisches Schema</h3>
+      <div class="balken" id="vBalken" aria-hidden="true"></div>
+      <p class="notiz">Die Balken sind massstäblich: Ändern Sie die Prozente oben und beobachten Sie, wie sich die Anteile verschieben.</p>
+    </div>
+  </section>
+
+  <!-- ================= GANZE KETTE ================= -->
+  <section class="panel" id="p-kette">
+    <div class="card">
+      <h2>Die ganze Kette: vom Listenpreis zum Verkaufspreis</h2>
+      <p class="lead">Einkauf und Verkauf hängen zusammen. Die ganze Kette teilt sich in zwei Teile: Die <b>Bezugskalkulation</b> führt vom Listenpreis bis zum Einstandspreis – was die Ware kostet, bis sie im Lager liegt. Die <b>Verkaufskalkulation</b> führt vom Einstandspreis zum Verkaufspreis.</p>
+      <div class="eingaben">
+        <div class="feld"><label for="kBap">Listenpreis (BAP)</label><div class="inp"><span class="u">CHF</span><input id="kBap" inputmode="decimal" value="250"></div></div>
+        <div class="feld"><label for="kRab">Rabatt</label><div class="inp"><input id="kRab" class="kurz" inputmode="decimal" value="20"><span class="u">%</span></div></div>
+        <div class="feld"><label for="kSko">Skonto</label><div class="inp"><input id="kSko" class="kurz" inputmode="decimal" value="2"><span class="u">%</span></div></div>
+        <div class="feld"><label for="kBk">Bezugskosten</label><div class="inp"><span class="u">CHF</span><input id="kBk" class="kurz" inputmode="decimal" value="4"></div></div>
+        <div class="feld"><label for="kGk">GK in % des EP</label><div class="inp"><input id="kGk" class="kurz" inputmode="decimal" value="40"><span class="u">%</span></div></div>
+        <div class="feld"><label for="kRg">RG in % der SK</label><div class="inp"><input id="kRg" class="kurz" inputmode="decimal" value="10"><span class="u">%</span></div></div>
+      </div>
+      <div class="blattwrap"><div id="kBlatt"></div></div>
+      <div class="blattknoepfe" data-blatt="k"></div>
+      <div id="kZusatz"></div>
+    </div>
+  </section>
+
+  <!-- ================= TRAINER ================= -->
+  <section class="panel" id="p-trainer">
+    <div class="card">
+      <div class="filterzeile">
+        <div>
+          <div class="flab" style="margin-top:0">Bereich</div>
+          <div class="chips" id="tBereich">
+            <button class="chip on" data-b="E">Einkauf</button>
+            <button class="chip" data-b="V">Verkauf</button>
+            <button class="chip" data-b="K">Ganze Kette</button>
+            <button class="chip" data-b="M">Gemischt</button>
+          </div>
+        </div>
+        <div>
+          <div class="flab" style="margin-top:0">Stufe</div>
+          <div class="chips" id="tStufe">
+            <button class="chip on" data-s="1">1 · Einzelschritte</button>
+            <button class="chip" data-s="2">2 · Ganzes Schema</button>
+            <button class="chip" data-s="3">3 · Rückwärts und Prozente</button>
+          </div>
+        </div>
+      </div>
+      <p class="querlink">Unsicher beim Prozentrechnen? Die Grundlage übt der <a href="dreisatz.html">📐 Dreisatz-Trainer</a>.</p>
+    </div>
+
+    <div class="card">
+      <div class="scoreboard">
+        <div class="scard"><div class="n" id="scGel">0</div><div class="l">Gelöst</div></div>
+        <div class="scard"><div class="n" id="scRi">0</div><div class="l">Auf Anhieb richtig</div></div>
+        <div class="scard"><div class="n" id="scSe">0</div><div class="l">Serie</div></div>
+        <div class="scard"><div class="n" id="scRe">0</div><div class="l">Rekord</div></div>
+      </div>
+    </div>
+
+    <div class="trainer-shell">
+      <div class="card qcard">
+        <div class="qmeta" id="qMeta"></div>
+        <div class="qtext" id="qText"></div>
+        <div class="numrow">
+          <label class="q" for="antwort" id="qLabel">Ihre Antwort</label>
+          <span class="unit" id="qVorEinheit"></span>
+          <input id="antwort" inputmode="decimal" autocomplete="off">
+          <span class="unit" id="qEinheit"></span>
+        </div>
+        <div class="btnbar">
+          <button class="btn btn-primary" id="bPruefen">Prüfen</button>
+          <button class="btn btn-ghost" id="bTipp">💡 Tipp</button>
+          <button class="btn btn-ghost" id="bLoesung">Lösung zeigen</button>
+          <button class="btn btn-ghost" id="bNeu">Neue Aufgabe ↻</button>
+        </div>
+        <div class="hintbox" id="tipp"></div>
+        <div class="feedback" id="feedback"></div>
+        <div class="solution" id="loesung"></div>
+      </div>
+
+      <div class="calc-card">
+        <div class="calcpad">
+          <div class="cbrand">
+            <svg class="emblem" viewBox="0 0 100 100" aria-hidden="true">
+              <circle cx="50" cy="50" r="45" fill="none" stroke="#D8AE66" stroke-width="7"/>
+              <path fill="#D8AE66" d="M50 18 L57 52 L50 84 L43 52 Z"/>
+              <path fill="#D8AE66" d="M43 52 C33 49 26 40 25 28 C36 39 42 45 49 49 Z"/>
+              <path fill="#D8AE66" d="M57 52 C67 49 74 40 75 28 C64 39 58 45 51 49 Z"/>
+            </svg>
+            <span class="mos">MoS</span>
+          </div>
+          <div class="disp" id="cdisp">0</div>
+          <div class="grid" id="cgrid">
+            <button class="fn" data-k="C">C</button>
+            <button class="fn" data-k="back">⌫</button>
+            <button class="op" data-k="÷">÷</button>
+            <button class="op" data-k="×">×</button>
+            <button data-k="7">7</button>
+            <button data-k="8">8</button>
+            <button data-k="9">9</button>
+            <button class="op" data-k="-">−</button>
+            <button data-k="4">4</button>
+            <button data-k="5">5</button>
+            <button data-k="6">6</button>
+            <button class="op" data-k="+">+</button>
+            <button data-k="1">1</button>
+            <button data-k="2">2</button>
+            <button data-k="3">3</button>
+            <button class="eq" data-k="=">=</button>
+            <button class="zero" data-k="0">0</button>
+            <button data-k=".">,</button>
+          </div>
+          <button class="toanswer" id="calcToAnswer">↳ Ergebnis ins Antwortfeld</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="footer">
+  <div class="cr">Warenkalkulation · Rechnen im Detailhandel · HKV Aarau · © 2026 <a href="mailto:samuel.mollet@hkv.ch" title="E-Mail an Samuel Mollet">Samuel Mollet</a> · realisiert mit Claude (Anthropic) · Grundlage: <a href="dreisatz.html">Dreisatz</a><br>
+  Begriffe und Aufbau des Schemas nach dem Unterricht im Detailhandel (Einkaufs- und Verkaufskalkulation). Beispiele und Trainer-Aufgaben sind eigens für dieses Werkzeug erstellt; die Beträge sind erfunden.</div>
+</div>
+
+<script>
+(function(){
+'use strict';
+var $ = function(id){ return document.getElementById(id); };
+
+/* ---------- Zahlen ---------- */
+function tsd(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, "'"); }
+/* Rappen -> «2'125.–» oder «2'082.50» */
+function fr(c){
+  c = Math.round(c);
+  var neg = c < 0; c = Math.abs(c);
+  var f = Math.floor(c/100), r = c % 100;
+  return (neg ? '−' : '') + tsd(f) + '.' + (r === 0 ? '–' : (r < 10 ? '0' : '') + r);
+}
+function frPlain(c){ c = Math.round(c); var neg=c<0; c=Math.abs(c); var f=Math.floor(c/100), r=c%100; return (neg?'−':'')+tsd(f)+'.'+(r<10?'0':'')+r; }
+function pz(p){ var v = Math.round(p*100)/100; return String(v).replace('-', '−') + '\u00a0%'; }
+function pzn(p){ var v = Math.round(p*100)/100; return String(v); }
+function zahl(t){
+  t = String(t == null ? '' : t).trim().replace(/[’'`\s ]/g, '').replace(/chf|fr\.?|%/gi, '').replace(/[–—-]+$/, '');
+  t = t.replace(',', '.');
+  if (/\.$/.test(t)) t = t.slice(0, -1);
+  if (!/^-?\d*\.?\d+$/.test(t)) return NaN;
+  return parseFloat(t);
+}
+function rp(chf){ return Math.round(chf*100); }          /* Franken -> Rappen */
+function auf5(c){ return Math.round(c/5)*5; }            /* auf 5 Rappen */
+function ri(a, b){ return a + Math.floor(Math.random()*(b - a + 1)); }
+function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+
+/* ---------- Kalkulationsblatt ----------
+   Zeile: {op, nm, ab, c (Rappen), p1, p2, nt, eq, schluss, ges, grp, trenn} */
+var TRENN = ['Bruttoankaufs','Nettoankaufs','Rechnungs','Einstands','Selbst','Gemein','Verkaufs','Brutto','Rein','Bezugs'];
+function weich(t){ return String(t).replace(/(Bruttoankaufs|Nettoankaufs|Rechnungs|Einstands|Selbst|Gemein|Verkaufs|Bezugs|Rein|Brutto)(preis|betrag|kosten|gewinn)/g, '$1&shy;$2').replace(/(Brutto|Netto)(ankaufs)/g, '$1&shy;$2'); }
+function blattHTML(rows){
+  var h = '<table class="blatt">';
+  rows.forEach(function(r, i){
+    if (r.trenn){ h += '<tr class="trenn" data-s="' + i + '"><td></td><td colspan="6">' + r.trenn + '</td></tr>'; return; }
+    var cls = [];
+    if (r.eq) cls.push('eq');
+    if (r.schluss) cls.push('schluss');
+    if (r.ges) cls.push('ges');
+    if (r.grp) cls.push('grp-' + r.grp);
+    h += '<tr class="' + cls.join(' ') + '" data-s="' + i + '">' +
+      '<td class="op">' + (r.op || '') + '</td>' +
+      '<td class="nm">' + weich(r.nm) + (r.ab ? ' <span class="ab">(' + r.ab + ')</span>' : '') + '</td>' +
+      '<td class="chf">' + (r.c == null ? '' : 'CHF') + '</td>' +
+      '<td class="bt">' + (r.c == null ? (r.ges ? '?' : '') : (r.ges && r.verdeckt ? '?' : fr(r.c))) + '</td>' +
+      '<td class="p">' + (r.p1 || '') + '</td>' +
+      '<td class="p">' + (r.p2 || '') + '</td>' +
+      '<td class="nt">' + (r.nt || '') + '</td></tr>';
+  });
+  return h + '</table>';
+}
+function dreisatz(basis, teil){ return '÷ ' + pzn(basis) + ', × ' + pzn(teil); }
+
+/* Einkauf vorwärts: bap in Rappen, r und s in Prozent (s darf null sein) */
+function einkaufVor(bap, r, s){
+  var rab = Math.round(bap*r/100), rb = bap - rab;
+  var v = { bap:bap, rab:rab, rb:rb, r:r, s:s };
+  var rows = [
+    { nm:'Bruttoankaufspreis', ab:'BAP', c:bap, p1:'100 %', k:'bap' },
+    { op:'−', nm:'Rabatt', ab:'Rab', c:rab, p1:pz(r), nt:dreisatz(100, r), k:'rab' },
+    { op:'=', nm:'Rechnungsbetrag', ab:'RB', c:rb, p1:pz(100 - r), p2:(s != null ? '100 %' : ''), eq:true, k:'rb', schluss:(s == null) }
+  ];
+  if (s != null){
+    var sko = Math.round(rb*s/100), nap = rb - sko;
+    v.sko = sko; v.nap = nap;
+    rows.push({ op:'−', nm:'Skonto', ab:'Sko', c:sko, p2:pz(s), nt:dreisatz(100, s), k:'sko' });
+    rows.push({ op:'=', nm:'Nettoankaufspreis', ab:'NAP', c:nap, p2:pz(100 - s), eq:true, schluss:true, k:'nap' });
+  }
+  return { rows:rows, v:v };
+}
+/* Nur Skonto: ab Rechnungsbetrag */
+function skontoVor(rb, s){
+  var sko = Math.round(rb*s/100), nap = rb - sko;
+  return { v:{ rb:rb, sko:sko, nap:nap, s:s }, rows:[
+    { nm:'Rechnungsbetrag', ab:'RB', c:rb, p1:'100 %', k:'rb' },
+    { op:'−', nm:'Skonto', ab:'Sko', c:sko, p1:pz(s), nt:dreisatz(100, s), k:'sko' },
+    { op:'=', nm:'Nettoankaufspreis', ab:'NAP', c:nap, p1:pz(100 - s), eq:true, schluss:true, k:'nap' } ] };
+}
+/* Einkauf rückwärts: vom bezahlten Betrag zum Listenpreis */
+function einkaufRueck(nap, r, s){
+  var rb = Math.round(nap*100/(100 - s)), sko = rb - nap;
+  var bap = Math.round(rb*100/(100 - r)), rab = bap - rb;
+  return { v:{ bap:bap, rab:rab, rb:rb, sko:sko, nap:nap, r:r, s:s }, rows:[
+    { nm:'Nettoankaufspreis', ab:'NAP', c:nap, p1:pz(100 - s), k:'nap' },
+    { op:'+', nm:'Skonto', ab:'Sko', c:sko, p1:pz(s), nt:dreisatz(100 - s, s), k:'sko' },
+    { op:'=', nm:'Rechnungsbetrag', ab:'RB', c:rb, p1:'100 %', p2:pz(100 - r), eq:true, k:'rb' },
+    { op:'+', nm:'Rabatt', ab:'Rab', c:rab, p2:pz(r), nt:dreisatz(100 - r, r), k:'rab' },
+    { op:'=', nm:'Bruttoankaufspreis', ab:'BAP', c:bap, p2:'100 %', eq:true, schluss:true, k:'bap' } ] };
+}
+/* Verkauf über GK und RG */
+function verkaufGkRg(nap, bk, g, r){
+  var ep = nap + bk, gk = Math.round(ep*g/100), sk = ep + gk, rg = Math.round(sk*r/100), vp = sk + rg, bg = gk + rg;
+  var v = { nap:nap, bk:bk, ep:ep, gk:gk, sk:sk, rg:rg, vp:vp, bg:bg, g:g, r:r, bgp:(ep ? bg/ep*100 : 0) };
+  var rows = [];
+  if (nap != null){
+    rows.push({ nm:'Nettoankaufspreis', ab:'NAP', c:nap, grp:'v', k:'nap' });
+    rows.push({ op:'+', nm:'Bezugskosten', ab:'BK', c:bk, grp:'v', k:'bk' });
+  }
+  rows.push({ op:(nap != null ? '=' : ''), nm:'Einstandspreis', ab:'EP', c:ep, p1:'100 %', eq:(nap != null), grp:'v', k:'ep' });
+  rows.push({ op:'+', nm:'Gemeinkosten', ab:'GK', c:gk, p1:pz(g), nt:dreisatz(100, g), grp:'v', k:'gk' });
+  rows.push({ op:'=', nm:'Selbstkosten', ab:'SK', c:sk, p1:pz(100 + g), p2:'100 %', eq:true, grp:'v', k:'sk' });
+  rows.push({ op:'+', nm:'Reingewinn', ab:'RG', c:rg, p2:pz(r), nt:dreisatz(100, r), grp:'v', k:'rg' });
+  rows.push({ op:'=', nm:'Verkaufspreis', ab:'VP', c:vp, p2:pz(100 + r), eq:true, schluss:true, grp:'v', k:'vp' });
+  return { rows:rows, v:v };
+}
+/* Verkauf direkt über den Bruttogewinn */
+function verkaufBg(nap, bk, b){
+  var ep = nap + bk, bg = Math.round(ep*b/100), vp = ep + bg;
+  var rows = [];
+  if (nap != null){
+    rows.push({ nm:'Nettoankaufspreis', ab:'NAP', c:nap, grp:'v', k:'nap' });
+    rows.push({ op:'+', nm:'Bezugskosten', ab:'BK', c:bk, grp:'v', k:'bk' });
+  }
+  rows.push({ op:(nap != null ? '=' : ''), nm:'Einstandspreis', ab:'EP', c:ep, p1:'100 %', eq:(nap != null), grp:'v', k:'ep' });
+  rows.push({ op:'+', nm:'Bruttogewinn', ab:'BG', c:bg, p1:pz(b), nt:dreisatz(100, b), grp:'v', k:'bg' });
+  rows.push({ op:'=', nm:'Verkaufspreis', ab:'VP', c:vp, p1:pz(100 + b), eq:true, schluss:true, grp:'v', k:'vp' });
+  return { rows:rows, v:{ nap:nap, bk:bk, ep:ep, bg:bg, vp:vp, b:b } };
+}
+function markiere(rows, k){ rows.forEach(function(r){ if (r.k === k) r.ges = true; }); return rows; }
+
+/* ---------- Schritt für Schritt ---------- */
+var schritte = { e:null, v:null, k:null };   /* null = alles zeigen, sonst Zahl sichtbarer Zeilen */
+function zeigeSchritte(id){
+  var tab = $(id + 'Blatt').querySelector('table'); if (!tab) return;
+  var n = schritte[id];
+  var zeilen = tab.querySelectorAll('tr');
+  zeilen.forEach(function(tr, i){
+    tr.classList.toggle('versteckt', n != null && i >= n);
+    if (n != null && i === n - 1) { tr.classList.remove('neu'); void tr.offsetWidth; tr.classList.add('neu'); }
+  });
+  var box = document.querySelector('.blattknoepfe[data-blatt="' + id + '"]');
+  if (n == null){
+    box.innerHTML = '<button class="btn btn-ghost btn-klein" data-a="start">▶ Schritt für Schritt</button>';
+  } else {
+    var fertig = n >= zeilen.length;
+    box.innerHTML = '<button class="btn btn-primary btn-klein" data-a="weiter"' + (fertig ? ' disabled' : '') + '>Nächster Schritt ▶</button>' +
+      '<button class="btn btn-ghost btn-klein" data-a="alles">Alles zeigen</button>' +
+      '<span class="notiz" style="align-self:center">Zeile ' + Math.min(n, zeilen.length) + ' von ' + zeilen.length + '</span>';
+  }
+}
+document.querySelectorAll('.blattknoepfe').forEach(function(box){
+  box.addEventListener('click', function(ev){
+    var b = ev.target.closest('button'); if (!b) return;
+    var id = box.getAttribute('data-blatt');
+    if (b.dataset.a === 'start') schritte[id] = 1;
+    else if (b.dataset.a === 'weiter') schritte[id] = (schritte[id] || 0) + 1;
+    else schritte[id] = null;
+    zeigeSchritte(id);
+  });
+});
+
+/* ---------- Balken ---------- */
+/* lang: ausgeschrieben, kurz: fürs Handy */
+function seg(cls, anteil, text, titel, kurz){
+  var a = Math.max(0, anteil);
+  var lang = a > 0.09 ? text : (a > 0.045 ? text.split(' ')[0] : '');
+  var k = kurz || text;
+  var kk = a > 0.2 ? k : (a > 0.1 ? k.split(' ')[0] : '');
+  return '<div class="seg ' + cls + '" style="flex:0 0 ' + (a*100).toFixed(3) + '%" title="' + (titel || text) + '"><span class="l">' + lang + '</span><span class="k">' + kk + '</span></div>';
+}
+function brow(label, inhalt, kz){ return '<div class="brow"><div class="bl"><span class="lg">' + label + '</span><span class="kz">' + (kz != null ? kz : label) + '</span></div><div class="bbar">' + inhalt + '</div></div>'; }
+
+/* ---------- Einkauf-Blatt ---------- */
+var eRichtung = 'vor';
+function feldZahl(id, stdwert){ var z = zahl($(id).value); return isNaN(z) ? stdwert : z; }
+function prozentOk(p){ return !isNaN(p) && p >= 0 && p < 100; }
+function rechneEinkauf(){
+  var box = $('eZusatz'), bal = $('eBalken'), r, s, e;
+  if (eRichtung === 'vor'){
+    var menge = zahl($('eMenge').value), preis = zahl($('ePreis').value);
+    r = zahl($('eRab').value); s = zahl($('eSko').value);
+    if (isNaN(menge) || menge <= 0 || isNaN(preis) || preis < 0 || !prozentOk(r) || !prozentOk(s)){
+      $('eBlatt').innerHTML = '<p class="notiz">Bitte gültige Zahlen eingeben (Prozente von 0 bis unter 100).</p>'; box.innerHTML = ''; bal.innerHTML = ''; return;
+    }
+    var bap = Math.round(menge*rp(preis));
+    e = einkaufVor(bap, r, s);
+    $('eBlatt').innerHTML = blattHTML(e.rows);
+    var t = '';
+    if (menge !== 1) t += '<span>BAP insgesamt: ' + tsd(menge) + ' × CHF ' + fr(rp(preis)) + ' = CHF ' + fr(bap) + '</span>';
+    var gespart = (e.v.bap ? (1 - e.v.nap/e.v.bap)*100 : 0);
+    t += '<span>Bezahlt werden CHF ' + fr(e.v.nap) + ' – das sind ' + pz(Math.round(gespart*100)/100) + ' weniger als der Listenpreis (nicht ' + pz(r + s) + ').</span>';
+    if (menge !== 1){
+      var proStk = e.v.nap/menge;
+      var gerundet = auf5(proStk);
+      t += '<span>NAP pro Stück: CHF ' + frPlain(proStk) + (Math.abs(proStk - Math.round(proStk)) > 1e-9 ? ' (genau ' + (proStk/100).toFixed(4).replace(/0+$/, '') + ')' : '') +
+        (Math.abs(gerundet - proStk) > 0.001 ? ' → auf 5 Rappen gerundet CHF ' + fr(gerundet) : '') + '</span>';
+    }
+    box.innerHTML = '<div class="zusatz">' + t + '</div>';
+    bal.innerHTML = balkenEinkauf(e.v);
+  } else {
+    var nap = zahl($('eNap').value);
+    r = zahl($('eRab2').value); s = zahl($('eSko2').value);
+    if (isNaN(nap) || nap < 0 || !prozentOk(r) || !prozentOk(s)){
+      $('eBlatt').innerHTML = '<p class="notiz">Bitte gültige Zahlen eingeben (Prozente von 0 bis unter 100).</p>'; box.innerHTML = ''; bal.innerHTML = ''; return;
+    }
+    e = einkaufRueck(rp(nap), r, s);
+    $('eBlatt').innerHTML = blattHTML(e.rows);
+    box.innerHTML = '<div class="zusatz"><span>Rechnungsbetrag: CHF ' + fr(e.v.rb) + ' · Listenpreis: CHF ' + fr(e.v.bap) + '</span>' +
+      '<span style="font-weight:600">Der bezahlte Betrag entspricht ' + pz(100 - s) + ' des RB – darum ÷ ' + pzn(100 - s) + ' × 100, nicht + ' + pz(s) + '.</span></div>';
+    bal.innerHTML = balkenEinkauf(e.v);
+  }
+  zeigeSchritte('e');
+}
+function balkenEinkauf(v){
+  if (!v.bap) return '';
+  var a = function(x){ return x / v.bap; };
+  return brow('BAP', seg('s-bap', 1, 'Listenpreis ' + fr(v.bap), null, 'BAP ' + fr(v.bap)), '') +
+         brow('RB', seg('s-rb', a(v.rb), 'Rechnung ' + fr(v.rb), null, 'RB ' + fr(v.rb)) + seg('leer', a(v.rab), 'Rabatt ' + fr(v.rab), null, 'Rab ' + fr(v.rab)), '') +
+         brow('NAP', seg('s-nap', a(v.nap), 'Bezahlt ' + fr(v.nap), null, 'NAP ' + fr(v.nap)) + seg('leer', a(v.sko), 'Sko ' + fr(v.sko), 'Skonto ' + fr(v.sko)) + seg('leer', a(v.rab), 'Rabatt ' + fr(v.rab), null, 'Rab ' + fr(v.rab)), '');
+}
+$('eRichtung').addEventListener('click', function(ev){
+  var b = ev.target.closest('.chip'); if (!b) return;
+  eRichtung = b.dataset.r;
+  this.querySelectorAll('.chip').forEach(function(c){ c.classList.toggle('on', c === b); });
+  $('eVor').hidden = eRichtung !== 'vor'; $('eRueck').hidden = eRichtung === 'vor';
+  schritte.e = null; rechneEinkauf();
+});
+['eMenge','ePreis','eRab','eSko','eNap','eRab2','eSko2'].forEach(function(id){ $(id).addEventListener('input', rechneEinkauf); });
+
+/* ---------- Verkauf-Blatt ---------- */
+var vWeg = 'gkrg';
+function rechneVerkauf(){
+  var nap = zahl($('vNap').value), bk = zahl($('vBk').value), box = $('vZusatz'), bal = $('vBalken'), e;
+  if (isNaN(nap) || nap < 0 || isNaN(bk) || bk < 0){ $('vBlatt').innerHTML = '<p class="notiz">Bitte gültige Beträge eingeben.</p>'; box.innerHTML = ''; bal.innerHTML = ''; return; }
+  if (vWeg === 'gkrg'){
+    var g = zahl($('vGk').value), r = zahl($('vRg').value);
+    if (isNaN(g) || g < 0 || isNaN(r) || r < 0){ $('vBlatt').innerHTML = '<p class="notiz">Bitte gültige Prozente eingeben.</p>'; box.innerHTML = ''; bal.innerHTML = ''; return; }
+    e = verkaufGkRg(rp(nap), rp(bk), g, r);
+    $('vBlatt').innerHTML = blattHTML(e.rows);
+    box.innerHTML = '<div class="zusatz"><span>Bruttogewinn = GK + RG = ' + fr(e.v.gk) + ' + ' + fr(e.v.rg) + ' = CHF ' + fr(e.v.bg) + '</span>' +
+      '<span>BG in % des EP = 100 % ÷ ' + fr(e.v.ep) + ' × ' + fr(e.v.bg) + ' = ' + pz(Math.round(e.v.bgp*100)/100) + '</span></div>';
+    bal.innerHTML = balkenVerkauf(e.v);
+  } else {
+    var b = zahl($('vBg').value);
+    if (isNaN(b) || b < 0){ $('vBlatt').innerHTML = '<p class="notiz">Bitte gültige Prozente eingeben.</p>'; box.innerHTML = ''; bal.innerHTML = ''; return; }
+    e = verkaufBg(rp(nap), rp(bk), b);
+    $('vBlatt').innerHTML = blattHTML(e.rows);
+    box.innerHTML = '<div class="zusatz"><span>Der Bruttogewinn von CHF ' + fr(e.v.bg) + ' muss die Gemeinkosten decken – was darüber hinausgeht, ist Reingewinn.</span></div>';
+    bal.innerHTML = balkenVerkauf({ ep:e.v.ep, bg:e.v.bg, vp:e.v.vp });
+  }
+  zeigeSchritte('v');
+}
+function balkenVerkauf(v){
+  if (!v.vp) return '';
+  var a = function(x){ return x / v.vp; };
+  var h = brow('Verkaufspreis', seg('s-vp', 1, 'VP ' + fr(v.vp)), '');
+  if (v.sk != null){
+    h += brow('', seg('s-sk', a(v.sk), 'Selbstkosten ' + fr(v.sk), null, 'SK ' + fr(v.sk)) + seg('s-rg', a(v.rg), 'RG ' + fr(v.rg), 'Reingewinn ' + fr(v.rg)), '');
+    h += brow('', seg('s-ep', a(v.ep), 'Einstandspreis ' + fr(v.ep), null, 'EP ' + fr(v.ep)) + seg('s-gk', a(v.gk), 'GK ' + fr(v.gk), 'Gemeinkosten ' + fr(v.gk)) + seg('s-rg', a(v.rg), 'RG ' + fr(v.rg), 'Reingewinn ' + fr(v.rg)), '');
+  }
+  h += brow('', seg('s-ep', a(v.ep), 'Einstandspreis ' + fr(v.ep), null, 'EP ' + fr(v.ep)) + seg('s-bg', a(v.bg), 'Bruttogewinn ' + fr(v.bg), null, 'BG ' + fr(v.bg)), '');
+  return h;
+}
+$('vWeg').addEventListener('click', function(ev){
+  var b = ev.target.closest('.chip'); if (!b) return;
+  vWeg = b.dataset.w;
+  this.querySelectorAll('.chip').forEach(function(c){ c.classList.toggle('on', c === b); });
+  document.querySelectorAll('#p-verkauf [data-nur]').forEach(function(f){ f.hidden = f.getAttribute('data-nur') !== vWeg; });
+  schritte.v = null; rechneVerkauf();
+});
+['vNap','vBk','vGk','vRg','vBg'].forEach(function(id){ $(id).addEventListener('input', rechneVerkauf); });
+
+/* ---------- Ganze Kette ---------- */
+function ketteRows(bap, r, s, bk, g, rgp){
+  var e = einkaufVor(bap, r, s), v = verkaufGkRg(e.v.nap, bk, g, rgp);
+  var rows = [{ trenn:'Bezugskalkulation' }].concat(e.rows);
+  rows[rows.length - 1].schluss = false;
+  var vr = v.rows.slice(1);           /* NAP steht schon oben */
+  vr[0].grp = ''; vr[1].grp = '';     /* BK und EP gehören zur Bezugskalkulation */
+  rows.push(vr[0], vr[1], { trenn:'Verkaufskalkulation' });
+  rows = rows.concat(vr.slice(2));
+  return { rows:rows, e:e.v, v:v.v };
+}
+function rechneKette(){
+  var bap = zahl($('kBap').value), r = zahl($('kRab').value), s = zahl($('kSko').value), bk = zahl($('kBk').value), g = zahl($('kGk').value), rg = zahl($('kRg').value);
+  if ([bap, bk, g, rg].some(function(x){ return isNaN(x) || x < 0; }) || !prozentOk(r) || !prozentOk(s)){
+    $('kBlatt').innerHTML = '<p class="notiz">Bitte gültige Zahlen eingeben.</p>'; $('kZusatz').innerHTML = ''; return;
+  }
+  var k = ketteRows(rp(bap), r, s, rp(bk), g, rg);
+  $('kBlatt').innerHTML = blattHTML(k.rows);
+  var faktor = k.e.bap ? k.v.vp / k.e.bap : 0;
+  $('kZusatz').innerHTML = '<div class="zusatz"><span>Listenpreis CHF ' + fr(k.e.bap) + ' → Verkaufspreis CHF ' + fr(k.v.vp) + '</span>' +
+    '<span style="font-weight:600">Bruttogewinn CHF ' + fr(k.v.bg) + ' = ' + pz(Math.round(k.v.bgp*100)/100) + ' des Einstandspreises. Der Verkaufspreis ist das ' + (Math.round(faktor*100)/100) + '-Fache des Listenpreises.</span></div>';
+  zeigeSchritte('k');
+}
+['kBap','kRab','kSko','kBk','kGk','kRg'].forEach(function(id){ $(id).addEventListener('input', rechneKette); });
+
+/* =====================================================================
+   TRAINER
+   ===================================================================== */
+var WAREN = [
+  { s:'Velohelm', g:'m', m:'Velohelme', laden:'das Velogeschäft', preis:[45,160] },
+  { s:'Paar Laufschuhe', g:'n', m:'Paar Laufschuhe', laden:'das Sportgeschäft', preis:[60,190] },
+  { s:'Rucksack', g:'m', m:'Rucksäcke', laden:'das Sportgeschäft', preis:[30,140] },
+  { s:'Kaffeemaschine', g:'f', m:'Kaffeemaschinen', laden:'das Haushaltsgeschäft', preis:[120,560] },
+  { s:'Winterjacke', g:'f', m:'Winterjacken', laden:'die Boutique', preis:[90,320] },
+  { s:'Flasche Schaumwein', g:'f', m:'Flaschen Schaumwein', laden:'die Weinhandlung', preis:[9,42] },
+  { s:'Flasche Olivenöl', g:'f', m:'Flaschen Olivenöl', laden:'der Feinkostladen', preis:[8,28] },
+  { s:'Bluetooth-Lautsprecher', g:'m', m:'Bluetooth-Lautsprecher', laden:'das Elektronikgeschäft', preis:[35,160] },
+  { s:'Skibrille', g:'f', m:'Skibrillen', laden:'das Sportgeschäft', preis:[40,170] },
+  { s:'Bratpfanne', g:'f', m:'Bratpfannen', laden:'das Haushaltsgeschäft', preis:[28,120] },
+  { s:'Duvet', g:'n', m:'Duvets', laden:'das Bettwarengeschäft', preis:[70,260] },
+  { s:'Fussball', g:'m', m:'Fussbälle', laden:'das Sportgeschäft', preis:[18,65] },
+  { s:'E\u2011Bike', g:'n', m:'E\u2011Bikes', laden:'das Velogeschäft', preis:[1900,4200] },
+  { s:'Brettspiel', g:'n', m:'Brettspiele', laden:'das Spielwarengeschäft', preis:[22,70] },
+  { s:'Stabmixer', g:'m', m:'Stabmixer', laden:'das Haushaltsgeschäft', preis:[40,150] },
+  { s:'Blumentopf aus Ton', g:'m', m:'Blumentöpfe aus Ton', laden:'die Gärtnerei', preis:[12,60] }
+];
+var RABATTE = ['Wiederverkäuferrabatt','Messerabatt','Mengenrabatt','Treuerabatt','Saisonrabatt','Einführungsrabatt','Aktionsrabatt'];
+var R_PROZ = [5,8,10,12,15,20,25,30,35,40];
+var S_PROZ = [1,2,2,2,3,3];
+var FRIST = { 1:'10 Tagen', 2:'10 Tagen', 3:'8 Tagen' };
+var G_PROZ = [20,25,30,35,40,45,50,60,75,80];
+var RG_PROZ = [4,5,6,8,10,12,15,20];
+var BG_PROZ = [30,40,45,50,60,70,75,80,90,100];
+
+function einN(w){ return w.g === 'f' ? 'eine' : 'ein'; }
+function einA(w){ return w.g === 'f' ? 'eine' : (w.g === 'm' ? 'einen' : 'ein'); }
+function listenpreis(w){ var p = ri(w.preis[0], w.preis[1]); if (p > 400) p = Math.round(p/10)*10; return p*100 + (p < 100 ? pick([0,0,0,50,90]) : 0); }
+function sauber(){ for (var i = 0; i < arguments.length; i++){ var c = arguments[i]; if (Math.round(c) !== c || c % 5 !== 0) return false; } return true; }
+function gross(t){ return t.charAt(0).toUpperCase() + t.slice(1); }
+function chf(c){ return 'CHF\u00a0' + fr(c); }
+
+/* Jede Aufgabe: { ber, st, typ, text, frage, label, einheit ('CHF'|'%'), w, blatt(rows), weg[], tipp, diag[{w,t}] } */
+var TYPEN = [];
+function typ(ber, st, name, fn){ TYPEN.push({ ber:ber, st:st, name:name, fn:fn }); }
+
+/* ----- Einkauf ----- */
+typ('E', 1, 'Rechnungsbetrag', function(){
+  var w = pick(WAREN), bap = listenpreis(w), r = pick(R_PROZ), e = einkaufVor(bap, r, null);
+  if (!sauber(e.v.rab, e.v.rb)) return null;
+  return { text: gross(w.laden) + ' bestellt ' + einA(w) + ' ' + w.s + ' zum Listenpreis von ' + chf(bap) + '. Der Lieferant gewährt ' + pz(r) + ' ' + pick(RABATTE) + '.',
+    frage:'Wie hoch ist der Rechnungsbetrag?', label:'Rechnungsbetrag', einheit:'CHF', w:e.v.rb,
+    blatt:markiere(e.rows, 'rb'), weg:['Rabatt = ' + chf(bap) + ' ÷ 100 × ' + pzn(r) + ' = ' + chf(e.v.rab), 'Rechnungsbetrag = ' + chf(bap) + ' − ' + chf(e.v.rab) + ' = ' + chf(e.v.rb)],
+    tipp:'BAP − Rabatt = RB. Der Rabatt ist ein Anteil des Listenpreises (BAP = 100 %).',
+    diag:[{ w:e.v.rab, t:'Das ist der Rabatt selbst. Gefragt ist, was nach dem Abzug auf der Rechnung steht.' }] };
+});
+typ('E', 1, 'Rabatt in Franken', function(){
+  var w = pick(WAREN), bap = listenpreis(w), r = pick(R_PROZ), e = einkaufVor(bap, r, null);
+  if (!sauber(e.v.rab, e.v.rb)) return null;
+  var art = pick(RABATTE);
+  return { text:'Im Katalog kostet ' + einN(w) + ' ' + w.s + ' ' + chf(bap) + '. ' + gross(w.laden) + ' erhält ' + pz(r) + ' ' + art + '.',
+    frage:'Wie viele Franken beträgt der ' + art + '?', label:'Rabatt', einheit:'CHF', w:e.v.rab,
+    blatt:markiere(e.rows, 'rab'), weg:['Rabatt = ' + chf(bap) + ' ÷ 100 × ' + pzn(r) + ' = ' + chf(e.v.rab)],
+    tipp:'Der Listenpreis (BAP) ist 100 %. Rechnen Sie über 1 %: ÷ 100, dann × ' + pzn(r) + '.',
+    diag:[{ w:e.v.rb, t:'Das ist der Rechnungsbetrag nach Abzug des Rabatts. Gefragt ist nur der Rabatt.' }] };
+});
+typ('E', 1, 'Skonto abziehen', function(){
+  var w = pick(WAREN), rb = listenpreis(w)*ri(2, 12), s = pick(S_PROZ), e = skontoVor(rb, s);
+  if (!sauber(e.v.sko, e.v.nap)) return null;
+  return { text:'Auf der Rechnung für ' + w.m + ' stehen ' + chf(rb) + '. Die Zahlungsbedingung lautet: «Zahlbar innert 30 Tagen netto, innert ' + FRIST[s] + ' mit ' + pz(s) + ' Skonto.» ' + gross(w.laden) + ' bezahlt nach 6 Tagen.',
+    frage:'Welchen Betrag überweist ' + w.laden + '?', label:'Nettoankaufspreis', einheit:'CHF', w:e.v.nap,
+    blatt:markiere(e.rows, 'nap'), weg:['Skonto = ' + chf(rb) + ' ÷ 100 × ' + pzn(s) + ' = ' + chf(e.v.sko), 'Nettoankaufspreis = ' + chf(rb) + ' − ' + chf(e.v.sko) + ' = ' + chf(e.v.nap)],
+    tipp:'Die Frist ist eingehalten, der Skonto darf abgezogen werden. RB − Skonto = NAP.',
+    diag:[{ w:e.v.sko, t:'Das ist der Skonto. Überwiesen wird der Rechnungsbetrag minus Skonto.' }, { w:rb, t:'Die Zahlung erfolgt innert Frist – der Skonto darf abgezogen werden.' }] };
+});
+typ('E', 2, 'Rabatt und Skonto', function(){
+  var w = pick(WAREN), bap = listenpreis(w)*ri(1, 6), r = pick(R_PROZ), s = pick(S_PROZ), e = einkaufVor(bap, r, s);
+  if (!sauber(e.v.rab, e.v.rb, e.v.sko, e.v.nap)) return null;
+  var falsch = Math.round(bap*(100 - r - s)/100);
+  return { text:gross(w.laden) + ' kauft ' + w.m + ' zum Listenpreis von insgesamt ' + chf(bap) + '. Der Lieferant gewährt ' + pz(r) + ' ' + pick(RABATTE) + ' und bei Zahlung innert ' + FRIST[s] + ' ' + pz(s) + ' Skonto. Die Rechnung wird fristgerecht bezahlt.',
+    frage:'Wie hoch ist der Nettoankaufspreis?', label:'Nettoankaufspreis', einheit:'CHF', w:e.v.nap,
+    blatt:markiere(e.rows, 'nap'), weg:['Rechnungsbetrag = ' + chf(bap) + ' ÷ 100 × ' + pzn(100 - r) + ' = ' + chf(e.v.rb), 'Nettoankaufspreis = ' + chf(e.v.rb) + ' ÷ 100 × ' + pzn(100 - s) + ' = ' + chf(e.v.nap)],
+    tipp:'Zwei Schritte: zuerst den Rabatt vom Listenpreis, dann den Skonto vom <b>Rechnungsbetrag</b> – der RB ist wieder 100 %.',
+    diag:[{ w:falsch, t:'Sie haben ' + pz(r) + ' und ' + pz(s) + ' zusammengezählt und beides vom Listenpreis abgezogen. Der Skonto wird aber vom Rechnungsbetrag berechnet.' },
+          { w:e.v.rb, t:'Das ist der Rechnungsbetrag. Der Skonto fehlt noch.' }] };
+});
+typ('E', 2, 'Menge mit Mengenrabatt', function(){
+  var w = pick(WAREN), stk = listenpreis(w), n = pick([12,20,24,25,30,36,40,48,50,60,80,100]), ab = pick([10,12,20,24]);
+  if (ab >= n) ab = 10;
+  var r = pick([10,15,20,25,30]), s = pick(S_PROZ), bap = stk*n, e = einkaufVor(bap, r, s);
+  if (!sauber(e.v.rab, e.v.rb, e.v.sko, e.v.nap)) return null;
+  var proStk = Math.random() < 0.5;
+  if (proStk && (e.v.nap % n !== 0 || (e.v.nap/n) % 5 !== 0)) proStk = false;
+  var wert = proStk ? e.v.nap/n : e.v.nap;
+  var weg = ['Listenpreis insgesamt = ' + n + ' × ' + chf(stk) + ' = ' + chf(bap), 'Rechnungsbetrag = ' + chf(bap) + ' ÷ 100 × ' + pzn(100 - r) + ' = ' + chf(e.v.rb), 'Nettoankaufspreis = ' + chf(e.v.rb) + ' ÷ 100 × ' + pzn(100 - s) + ' = ' + chf(e.v.nap)];
+  if (proStk) weg.push('Pro Stück: ' + chf(e.v.nap) + ' ÷ ' + n + ' = ' + chf(wert));
+  return { text:'Ein Grossist bietet ' + w.m + ' zu ' + chf(stk) + ' pro Stück an. Ab ' + ab + ' Stück gibt es ' + pz(r) + ' Mengenrabatt, bei Zahlung innert ' + FRIST[s] + ' zusätzlich ' + pz(s) + ' Skonto. ' + gross(w.laden) + ' bestellt ' + n + ' Stück und bezahlt fristgerecht.',
+    frage: proStk ? 'Wie viel kostet ein Stück nach allen Abzügen?' : 'Wie viel bezahlt ' + w.laden + ' für die ganze Lieferung?', label: proStk ? 'NAP pro Stück' : 'Nettoankaufspreis', einheit:'CHF', w:wert,
+    blatt:markiere(e.rows, 'nap'), weg:weg,
+    tipp:'Zuerst den Listenpreis der ganzen Lieferung ausrechnen (Menge × Stückpreis). Dann Rabatt, dann Skonto vom RB.' + (proStk ? ' Am Schluss durch die Menge teilen.' : ''),
+    diag:[{ w:proStk ? e.v.nap : e.v.nap/n, t: proStk ? 'Das ist der Betrag für die ganze Lieferung. Gefragt ist der Preis pro Stück.' : 'Das ist der Preis pro Stück. Gefragt ist die ganze Lieferung.' },
+          { w:(proStk ? 1/n : 1)*Math.round(bap*(100 - r - s)/100), t:'Rabatt und Skonto zusammengezählt? Der Skonto wird vom Rechnungsbetrag berechnet, nicht vom Listenpreis.' }] };
+});
+typ('E', 3, 'Rabatt in Prozent', function(){
+  var w = pick(WAREN), bap = listenpreis(w), r = pick(R_PROZ), e = einkaufVor(bap, r, null);
+  if (!sauber(e.v.rab, e.v.rb)) return null;
+  var rows = markiere(e.rows.slice(), 'rab'); rows[1].p1 = '? %'; rows[2].p1 = '';
+  return { text:gross(einN(w)) + ' ' + w.s + ' kostet laut Preisliste ' + chf(bap) + '. Auf der Rechnung stehen nur noch ' + chf(e.v.rb) + '.',
+    frage:'Wie viele Prozent Rabatt wurden gewährt?', label:'Rabatt', einheit:'%', w:r,
+    blatt:e.rows.map(function(x, i){ return i === 1 ? Object.assign({}, x, { ges:true, p1:pz(r), nt:dreisatz(bap/100, e.v.rab/100) }) : x; }),
+    weg:['Rabatt in Franken = ' + chf(bap) + ' − ' + chf(e.v.rb) + ' = ' + chf(e.v.rab), 'Rabatt in % = 100 % ÷ ' + fr(bap) + ' × ' + fr(e.v.rab) + ' = ' + pz(r)],
+    tipp:'Erst den Rabatt in Franken ausrechnen (BAP − RB). Dann: Welcher Anteil vom Listenpreis (100 %) ist das?',
+    diag:[{ w:100 - r, t:'Das ist der Anteil, der auf der Rechnung bleibt. Gefragt ist der Abzug.' },
+          { w:Math.round(e.v.rab/e.v.rb*10000)/100, t:'Sie haben den Rabatt auf den Rechnungsbetrag bezogen. Der Rabatt ist ein Anteil des <b>Listenpreises</b>.' }] };
+});
+typ('E', 3, 'Listenpreis aus Rechnung', function(){
+  var w = pick(WAREN), bap = listenpreis(w)*ri(1, 4), r = pick(R_PROZ), e = einkaufVor(bap, r, null);
+  if (!sauber(e.v.rab, e.v.rb)) return null;
+  var rows = [
+    { nm:'Rechnungsbetrag', ab:'RB', c:e.v.rb, p1:pz(100 - r) },
+    { op:'+', nm:'Rabatt', ab:'Rab', c:e.v.rab, p1:pz(r), nt:dreisatz(100 - r, r) },
+    { op:'=', nm:'Bruttoankaufspreis', ab:'BAP', c:bap, p1:'100 %', eq:true, schluss:true, ges:true } ];
+  return { text:gross(w.laden) + ' hat für ' + w.m + ' eine Rechnung über ' + chf(e.v.rb) + ' erhalten. Darin ist ein ' + pick(RABATTE) + ' von ' + pz(r) + ' bereits abgezogen.',
+    frage:'Wie hoch war der Listenpreis (BAP)?', label:'Bruttoankaufspreis', einheit:'CHF', w:bap,
+    blatt:rows, weg:['Der Rechnungsbetrag entspricht ' + pz(100 - r) + ' des Listenpreises.', 'BAP = ' + chf(e.v.rb) + ' ÷ ' + pzn(100 - r) + ' × 100 = ' + chf(bap)],
+    tipp:'Welchem Prozentsatz entspricht der Rechnungsbetrag? Nicht 100 % – sondern ' + (100 - r) + ' %.',
+    diag:[{ w:Math.round(e.v.rb*(100 + r)/100), t:'Sie haben ' + pz(r) + ' auf den Rechnungsbetrag aufgeschlagen. Der RB ist aber nur ' + pz(100 - r) + ' des Listenpreises: ÷ ' + pzn(100 - r) + ' × 100.' }] };
+});
+typ('E', 3, 'Rückwärts vom bezahlten Betrag', function(){
+  var w = pick(WAREN), bap = listenpreis(w)*ri(2, 10), r = pick(R_PROZ), s = pick(S_PROZ), e = einkaufVor(bap, r, s);
+  if (!sauber(e.v.rab, e.v.rb, e.v.sko, e.v.nap)) return null;
+  var z = einkaufRueck(e.v.nap, r, s);
+  if (z.v.bap !== bap) return null;
+  var nachRb = Math.random() < 0.4;
+  return { text:'Für eine Lieferung ' + w.m + ' hat ' + w.laden + ' ' + chf(e.v.nap) + ' überwiesen. Abgezogen wurden ' + pz(r) + ' Rabatt und ' + pz(s) + ' Skonto.',
+    frage: nachRb ? 'Wie hoch war der Rechnungsbetrag?' : 'Wie hoch war der Listenpreis (BAP) der Lieferung?', label: nachRb ? 'Rechnungsbetrag' : 'Bruttoankaufspreis', einheit:'CHF', w: nachRb ? e.v.rb : bap,
+    blatt:markiere(z.rows, nachRb ? 'rb' : 'bap'),
+    weg:['NAP = ' + pz(100 - s) + ' des RB → RB = ' + chf(e.v.nap) + ' ÷ ' + pzn(100 - s) + ' × 100 = ' + chf(e.v.rb)].concat(nachRb ? [] : ['RB = ' + pz(100 - r) + ' des BAP → BAP = ' + chf(e.v.rb) + ' ÷ ' + pzn(100 - r) + ' × 100 = ' + chf(bap)]),
+    tipp:'Rückwärts rechnen: Der bezahlte Betrag ist ' + (100 - s) + ' % des Rechnungsbetrags' + (nachRb ? '.' : ', der Rechnungsbetrag ist ' + (100 - r) + ' % des Listenpreises.'),
+    diag:[{ w: nachRb ? Math.round(e.v.nap*(100 + s)/100) : Math.round(Math.round(e.v.nap*(100 + s)/100)*(100 + r)/100), t:'Sie haben die Prozente einfach dazugezählt. Rückwärts gilt: Der bekannte Betrag ist weniger als 100 % – also ÷ ' + (100 - s) + ' × 100.' },
+          { w: Math.round(e.v.nap*100/(100 - r - s)), t:'Rabatt und Skonto zusammengezählt? Beide haben eine andere Grundlage – rechnen Sie in zwei Schritten.' },
+          { w: nachRb ? bap : e.v.rb, t: nachRb ? 'Das ist bereits der Listenpreis. Gefragt ist der Rechnungsbetrag.' : 'Das ist der Rechnungsbetrag. Es fehlt noch der Rabatt-Schritt zum Listenpreis.' }] };
+});
+typ('E', 3, 'Skonto in Prozent', function(){
+  var w = pick(WAREN), rb = listenpreis(w)*ri(3, 10), s = pick([1,2,3,4]), e = skontoVor(rb, s);
+  if (!sauber(e.v.sko, e.v.nap)) return null;
+  return { text:'Eine Rechnung über ' + chf(rb) + ' wurde innert Frist mit ' + chf(e.v.nap) + ' beglichen.',
+    frage:'Wie viele Prozent Skonto wurden abgezogen?', label:'Skonto', einheit:'%', w:s,
+    blatt:e.rows.map(function(x, i){ return i === 1 ? Object.assign({}, x, { ges:true, nt:dreisatz(rb/100, e.v.sko/100) }) : x; }),
+    weg:['Skonto in Franken = ' + chf(rb) + ' − ' + chf(e.v.nap) + ' = ' + chf(e.v.sko), 'Skonto in % = 100 % ÷ ' + fr(rb) + ' × ' + fr(e.v.sko) + ' = ' + pz(s)],
+    tipp:'Skonto in Franken = RB − bezahlter Betrag. Der Rechnungsbetrag ist 100 %.',
+    diag:[{ w:100 - s, t:'Das ist der Anteil, der bezahlt wurde. Gefragt ist der Abzug.' }] };
+});
+
+/* ----- Verkauf ----- */
+typ('V', 1, 'Einstandspreis pro Stück', function(){
+  var w = pick(WAREN), n = pick([6,8,10,12,15,20,24,25,30,40,50]), napStk = listenpreis(w), bk = pick([2500,3000,4000,4500,5000,6000,7500,8000,9000,12000]);
+  var nap = napStk*n, ep = nap + bk;
+  if (ep % n !== 0 || (ep/n) % 5 !== 0) return null;
+  var epStk = ep/n;
+  return { text:'Für eine Lieferung von ' + n + ' ' + w.m + ' bezahlt ' + w.laden + ' dem Lieferanten ' + chf(nap) + '. Für den Transport verrechnet der Camionneur ' + chf(bk) + ' für die ganze Sendung.',
+    frage:'Wie hoch ist der Einstandspreis pro Stück?', label:'EP pro Stück', einheit:'CHF', w:epStk,
+    blatt:[{ nm:'Nettoankaufspreis', ab:'NAP', c:nap }, { op:'+', nm:'Bezugskosten', ab:'BK', c:bk }, { op:'=', nm:'Einstandspreis total', ab:'EP', c:ep, eq:true }, { op:'÷', nm:n + ' Stück → EP pro Stück', c:epStk, eq:true, schluss:true, ges:true }],
+    weg:['Einstandspreis = ' + chf(nap) + ' + ' + chf(bk) + ' = ' + chf(ep), 'Pro Stück: ' + chf(ep) + ' ÷ ' + n + ' = ' + chf(epStk)],
+    tipp:'Die Transportkosten sind Bezugskosten und gehören zum Einstandspreis: NAP + BK = EP. Dann durch die Stückzahl teilen.',
+    diag:[{ w:napStk, t:'Die Bezugskosten fehlen. Auch der Transport gehört zum Einstandspreis.' }, { w:ep, t:'Das ist der Einstandspreis der ganzen Sendung. Gefragt ist ein Stück.' }] };
+});
+typ('V', 1, 'Bruttogewinn in Franken', function(){
+  var w = pick(WAREN), ep = listenpreis(w), b = pick(BG_PROZ);
+  var bg = Math.round(ep*b/100);
+  if (!sauber(bg)) return null;
+  var rows = [{ nm:'Einstandspreis', ab:'EP', c:ep, p1:'100 %' }, { op:'+', nm:'Bruttogewinn', ab:'BG', c:bg, p1:pz(b), nt:dreisatz(100, b), ges:true }, { op:'=', nm:'Verkaufspreis', ab:'VP', c:ep + bg, p1:pz(100 + b), eq:true, schluss:true }];
+  return { text:gross(w.laden) + ' kalkuliert für ' + einA(w) + ' ' + w.s + ' mit einem Einstandspreis von ' + chf(ep) + '. Der Bruttogewinn soll ' + pz(b) + ' des Einstandspreises betragen.',
+    frage:'Wie viele Franken beträgt der Bruttogewinn?', label:'Bruttogewinn', einheit:'CHF', w:bg,
+    blatt:rows, weg:['Bruttogewinn = ' + chf(ep) + ' ÷ 100 × ' + pzn(b) + ' = ' + chf(bg)],
+    tipp:'Der Einstandspreis ist 100 %.',
+    diag:[{ w:ep + bg, t:'Das ist bereits der Verkaufspreis. Gefragt ist nur der Bruttogewinn.' }] };
+});
+typ('V', 1, 'Bruttogewinn in Prozent', function(){
+  var w = pick(WAREN), ep = listenpreis(w)*ri(1, 3), b = pick(BG_PROZ), bg = Math.round(ep*b/100);
+  if (!sauber(bg)) return null;
+  var rows = [{ nm:'Einstandspreis', ab:'EP', c:ep, p1:'100 %' }, { op:'+', nm:'Bruttogewinn', ab:'BG', c:bg, p1:pz(b), nt:dreisatz(ep/100, bg/100), ges:true }];
+  return { text:'Der Einstandspreis beträgt ' + chf(ep) + ', der Bruttogewinn ' + chf(bg) + '.',
+    frage:'Wie viele Prozent des Einstandspreises beträgt der Bruttogewinn?', label:'Bruttogewinn', einheit:'%', w:b,
+    blatt:rows, weg:['BG in % = 100 % ÷ ' + fr(ep) + ' × ' + fr(bg) + ' = ' + pz(b)],
+    tipp:'Der Einstandspreis ist 100 %. Welcher Anteil davon ist der Bruttogewinn?',
+    diag:[{ w:Math.round(bg/(ep + bg)*10000)/100, t:'Sie haben den Bruttogewinn auf den Verkaufspreis bezogen. Grundlage ist der Einstandspreis.' }] };
+});
+typ('V', 2, 'Bruttogewinn aus VP und EP', function(){
+  var w = pick(WAREN), ep = listenpreis(w)*ri(1, 3), b = pick(BG_PROZ), bg = Math.round(ep*b/100), vp = ep + bg;
+  if (!sauber(bg, vp)) return null;
+  var rows = [{ nm:'Verkaufspreis', ab:'VP', c:vp }, { op:'−', nm:'Einstandspreis', ab:'EP', c:ep, p1:'100 %' }, { op:'=', nm:'Bruttogewinn', ab:'BG', c:bg, p1:pz(b), nt:dreisatz(ep/100, bg/100), eq:true, schluss:true, ges:true }];
+  return { text:gross(w.laden) + ' verkauft ' + einA(w) + ' ' + w.s + ' für ' + chf(vp) + '. Der Einstandspreis beträgt ' + chf(ep) + '.',
+    frage:'Wie viele Prozent des Einstandspreises beträgt der Bruttogewinn?', label:'Bruttogewinn', einheit:'%', w:b,
+    blatt:rows, weg:['Bruttogewinn = ' + chf(vp) + ' − ' + chf(ep) + ' = ' + chf(bg), 'BG in % = 100 % ÷ ' + fr(ep) + ' × ' + fr(bg) + ' = ' + pz(b)],
+    tipp:'Erst den Bruttogewinn in Franken: VP − EP. Dann in Prozent des Einstandspreises.',
+    diag:[{ w:Math.round(bg/vp*10000)/100, t:'Sie haben durch den Verkaufspreis geteilt. Der Bruttogewinn wird in Prozent des <b>Einstandspreises</b> angegeben.' }, { w:100 + b, t:'Das ist der Verkaufspreis in Prozent des EP. Gefragt ist nur der Aufschlag.' }] };
+});
+typ('V', 2, 'Verkaufspreis über GK und RG', function(){
+  var w = pick(WAREN), nap = listenpreis(w), bk = pick([0,100,150,200,250,300,400,500,800,1000]), g = pick(G_PROZ), r = pick(RG_PROZ);
+  var x = verkaufGkRg(nap, bk, g, r);
+  if (!sauber(x.v.gk, x.v.rg, x.v.vp)) return null;
+  var falsch = x.v.ep + Math.round(x.v.ep*(g + r)/100);
+  return { text:'Der Nettoankaufspreis für ' + einA(w) + ' ' + w.s + ' beträgt ' + chf(nap) + (bk ? ', dazu kommen ' + chf(bk) + ' Bezugskosten. ' : '; der Lieferant liefert franko. ') + gross(w.laden) + ' rechnet mit ' + pz(g) + ' Gemeinkosten (vom Einstandspreis) und ' + pz(r) + ' Reingewinn (von den Selbstkosten).',
+    frage:'Zu welchem Preis muss verkauft werden?', label:'Verkaufspreis', einheit:'CHF', w:x.v.vp,
+    blatt:markiere(x.rows, 'vp'), weg:['Einstandspreis = ' + chf(nap) + ' + ' + chf(bk) + ' = ' + chf(x.v.ep), 'Gemeinkosten = ' + chf(x.v.ep) + ' ÷ 100 × ' + pzn(g) + ' = ' + chf(x.v.gk), 'Selbstkosten = ' + chf(x.v.ep) + ' + ' + chf(x.v.gk) + ' = ' + chf(x.v.sk), 'Reingewinn = ' + chf(x.v.sk) + ' ÷ 100 × ' + pzn(r) + ' = ' + chf(x.v.rg), 'Verkaufspreis = ' + chf(x.v.sk) + ' + ' + chf(x.v.rg) + ' = ' + chf(x.v.vp)],
+    tipp:'NAP + BK = EP → + GK (vom EP) = SK → + RG (von den SK!) = VP.',
+    diag:[{ w:falsch, t:'Sie haben den Reingewinn vom Einstandspreis berechnet. Er wird von den <b>Selbstkosten</b> berechnet – dort beginnt eine neue 100-%-Spalte.' },
+          { w:verkaufGkRg(nap, 0, g, r).v.vp, t:'Die Bezugskosten fehlen: NAP + BK = Einstandspreis.' },
+          { w:x.v.sk, t:'Das sind die Selbstkosten. Der Reingewinn fehlt noch.' }] };
+});
+typ('V', 2, 'Verkaufspreis über den Bruttogewinn', function(){
+  var w = pick(WAREN), nap = listenpreis(w), bk = pick([0,100,200,250,300,500,600,1000]), b = pick(BG_PROZ);
+  var x = verkaufBg(nap, bk, b);
+  if (!sauber(x.v.bg, x.v.vp)) return null;
+  return { text:'Nettoankaufspreis ' + chf(nap) + (bk ? ', Bezugskosten ' + chf(bk) + '. ' : ', Lieferung franko (keine Bezugskosten). ') + gross(w.laden) + ' kalkuliert mit einem Bruttogewinn von ' + pz(b) + ' des Einstandspreises.',
+    frage:'Wie hoch ist der Verkaufspreis?', label:'Verkaufspreis', einheit:'CHF', w:x.v.vp,
+    blatt:markiere(x.rows, 'vp'), weg:['Einstandspreis = ' + chf(nap) + ' + ' + chf(bk) + ' = ' + chf(x.v.ep), 'Bruttogewinn = ' + chf(x.v.ep) + ' ÷ 100 × ' + pzn(b) + ' = ' + chf(x.v.bg), 'Verkaufspreis = ' + chf(x.v.ep) + ' + ' + chf(x.v.bg) + ' = ' + chf(x.v.vp)],
+    tipp:'Erst den Einstandspreis (NAP + BK). Der ist 100 %, der Verkaufspreis ' + (100 + b) + ' %.',
+    diag:[{ w:Math.round(nap*(100 + b)/100), t:'Der Bruttogewinn wurde vom NAP berechnet – die Bezugskosten gehören aber in den Einstandspreis.' }, { w:x.v.bg, t:'Das ist nur der Bruttogewinn.' }] };
+});
+typ('V', 2, 'Einstandspreis aus VP, GK und RG', function(){
+  var w = pick(WAREN), ep = listenpreis(w), g = pick(G_PROZ), r = pick(RG_PROZ), x = verkaufGkRg(ep, 0, g, r);
+  if (!sauber(x.v.gk, x.v.rg, x.v.vp)) return null;
+  var rows = [{ nm:'Verkaufspreis', ab:'VP', c:x.v.vp }, { op:'−', nm:'Reingewinn', ab:'RG', c:x.v.rg }, { op:'=', nm:'Selbstkosten', ab:'SK', c:x.v.sk, eq:true }, { op:'−', nm:'Gemeinkosten', ab:'GK', c:x.v.gk }, { op:'=', nm:'Einstandspreis', ab:'EP', c:ep, eq:true, schluss:true, ges:true }];
+  return { text:gross(einN(w)) + ' ' + w.s + ' wird für ' + chf(x.v.vp) + ' verkauft. Die Gemeinkosten dafür betragen ' + chf(x.v.gk) + ', der Reingewinn ' + chf(x.v.rg) + '.',
+    frage:'Wie hoch ist der Einstandspreis?', label:'Einstandspreis', einheit:'CHF', w:ep,
+    blatt:rows, weg:['Einstandspreis = ' + chf(x.v.vp) + ' − ' + chf(x.v.gk) + ' − ' + chf(x.v.rg) + ' = ' + chf(ep)],
+    tipp:'Rückwärts durch das Schema: Vom Verkaufspreis Reingewinn und Gemeinkosten wegzählen.',
+    diag:[{ w:x.v.sk, t:'Das sind die Selbstkosten. Auch die Gemeinkosten müssen noch weg.' }, { w:x.v.vp - x.v.gk, t:'Der Reingewinn muss auch noch abgezogen werden.' }] };
+});
+typ('V', 3, 'Bruttogewinn aus VP, GK und RG', function(){
+  var w = pick(WAREN), ep = listenpreis(w)*ri(1, 3), g = pick(G_PROZ), r = pick(RG_PROZ), x = verkaufGkRg(ep, 0, g, r);
+  if (!sauber(x.v.gk, x.v.rg, x.v.vp)) return null;
+  var bgp = Math.round(x.v.bg/ep*10000)/100;
+  if (Math.abs(bgp*10 - Math.round(bgp*10)) > 1e-6) return null;
+  var rows = [{ nm:'Verkaufspreis', ab:'VP', c:x.v.vp }, { op:'−', nm:'Gemeinkosten', ab:'GK', c:x.v.gk }, { op:'−', nm:'Reingewinn', ab:'RG', c:x.v.rg }, { op:'=', nm:'Einstandspreis', ab:'EP', c:ep, p1:'100 %', eq:true }, { nm:'Bruttogewinn = GK + RG', ab:'BG', c:x.v.bg, p1:pz(bgp), nt:dreisatz(ep/100, x.v.bg/100), eq:true, schluss:true, ges:true }];
+  return { text:'Verkaufspreis ' + chf(x.v.vp) + ', Gemeinkosten ' + chf(x.v.gk) + ', Reingewinn ' + chf(x.v.rg) + '.',
+    frage:'Wie viele Prozent des Einstandspreises beträgt der Bruttogewinn?', label:'Bruttogewinn', einheit:'%', w:bgp,
+    blatt:rows, weg:['Einstandspreis = ' + chf(x.v.vp) + ' − ' + chf(x.v.gk) + ' − ' + chf(x.v.rg) + ' = ' + chf(ep), 'Bruttogewinn = ' + chf(x.v.gk) + ' + ' + chf(x.v.rg) + ' = ' + chf(x.v.bg), 'BG in % = 100 % ÷ ' + fr(ep) + ' × ' + fr(x.v.bg) + ' = ' + pz(bgp)],
+    tipp:'Zwei Dinge brauchen Sie: den Bruttogewinn (GK + RG) und den Einstandspreis (VP − GK − RG).',
+    diag:[{ w:Math.round(x.v.bg/x.v.vp*10000)/100, t:'Sie haben durch den Verkaufspreis geteilt. Grundlage ist der Einstandspreis.' }] };
+});
+typ('V', 3, 'Mehrere Stück: BG in Prozent', function(){
+  var w = pick(WAREN), n = pick([2,3,4,5,6,8,10]), epStk = listenpreis(w), b = pick(BG_PROZ);
+  var bgStk = Math.round(epStk*b/100); if (!sauber(bgStk)) return null;
+  var vp = (epStk + bgStk)*n, bg = bgStk*n;
+  var frageEp = Math.random() < 0.4;
+  var rows = [{ nm:'Verkaufserlös für ' + n + ' Stück', c:vp }, { op:'−', nm:'Bruttogewinn', ab:'BG', c:bg }, { op:'=', nm:'Einstandspreis total', ab:'EP', c:epStk*n, eq:true }, { op:'÷', nm:n + ' Stück → EP pro Stück', c:epStk, eq:true, ges:frageEp, schluss:frageEp }];
+  if (!frageEp) rows.push({ nm:'BG in % des EP', c:null, p1:pz(b), nt:dreisatz(epStk*n/100, bg/100), eq:true, schluss:true, ges:true });
+  return { text:gross(w.laden) + ' verkauft an einem Tag ' + n + ' ' + w.m + ' für zusammen ' + chf(vp) + ' und erzielt damit ' + chf(bg) + ' Bruttogewinn.',
+    frage: frageEp ? 'Wie hoch ist der Einstandspreis für ein Stück?' : 'Wie viele Prozent des Einstandspreises beträgt der Bruttogewinn?', label: frageEp ? 'EP pro Stück' : 'Bruttogewinn', einheit: frageEp ? 'CHF' : '%', w: frageEp ? epStk : b,
+    blatt:rows, weg:['Einstandspreis total = ' + chf(vp) + ' − ' + chf(bg) + ' = ' + chf(epStk*n)].concat(frageEp ? ['Pro Stück: ' + chf(epStk*n) + ' ÷ ' + n + ' = ' + chf(epStk)] : ['BG in % = 100 % ÷ ' + fr(epStk*n) + ' × ' + fr(bg) + ' = ' + pz(b)]),
+    tipp:'VP − BG = EP. Ob pro Stück oder für alle zusammen – beim Prozentsatz kommt dasselbe heraus.',
+    diag: frageEp ? [{ w:epStk*n, t:'Das ist der Einstandspreis aller Stück. Gefragt ist ein Stück.' }, { w:vp/n, t:'Das ist der Verkaufspreis pro Stück.' }] : [{ w:Math.round(bg/vp*10000)/100, t:'Sie haben durch den Verkaufserlös geteilt. Grundlage ist der Einstandspreis.' }] };
+});
+typ('V', 3, 'Reingewinn in Prozent', function(){
+  var w = pick(WAREN), ep = listenpreis(w), g = pick(G_PROZ), r = pick(RG_PROZ), x = verkaufGkRg(ep, 0, g, r);
+  if (!sauber(x.v.gk, x.v.rg, x.v.vp)) return null;
+  var rows = x.rows.slice(); rows[0] = Object.assign({}, rows[0], { op:'', eq:false });
+  rows = rows.map(function(z){ return z.k === 'rg' ? Object.assign({}, z, { ges:true, nt:dreisatz(x.v.sk/100, x.v.rg/100) }) : z; });
+  return { text:'Einstandspreis ' + chf(ep) + ', Gemeinkosten ' + pz(g) + ' des Einstandspreises. Verkauft wird zu ' + chf(x.v.vp) + '.',
+    frage:'Wie viele Prozent der Selbstkosten beträgt der Reingewinn?', label:'Reingewinn', einheit:'%', w:r,
+    blatt:rows, weg:['Gemeinkosten = ' + chf(ep) + ' ÷ 100 × ' + pzn(g) + ' = ' + chf(x.v.gk), 'Selbstkosten = ' + chf(ep) + ' + ' + chf(x.v.gk) + ' = ' + chf(x.v.sk), 'Reingewinn = ' + chf(x.v.vp) + ' − ' + chf(x.v.sk) + ' = ' + chf(x.v.rg), 'RG in % = 100 % ÷ ' + fr(x.v.sk) + ' × ' + fr(x.v.rg) + ' = ' + pz(r)],
+    tipp:'Erst die Selbstkosten (EP + GK). Reingewinn = VP − SK, und die SK sind 100 %.',
+    diag:[{ w:Math.round(x.v.rg/ep*10000)/100, t:'Sie haben den Reingewinn auf den Einstandspreis bezogen. Grundlage sind die <b>Selbstkosten</b>.' }, { w:Math.round((x.v.vp - ep)/ep*10000)/100, t:'Das ist der Bruttogewinn in Prozent. Die Gemeinkosten müssen zuerst gedeckt sein.' }] };
+});
+
+/* ----- Ganze Kette ----- */
+typ('K', 2, 'Vom Listenpreis zum Verkaufspreis', function(){
+  var w = pick(WAREN), bap = Math.max(1000, Math.round(listenpreis(w)/1000)*1000), r = pick(R_PROZ), s = pick(S_PROZ), bk = pick([0,100,150,200,250,300,500]), g = pick(G_PROZ), rg = pick(RG_PROZ);
+  var k = ketteRows(bap, r, s, bk, g, rg);
+  if (!sauber(k.e.rab, k.e.rb, k.e.sko, k.e.nap, k.v.gk, k.v.rg, k.v.vp)) return null;
+  return { text:gross(w.laden) + ' kauft ' + einA(w) + ' ' + w.s + ' zum Listenpreis von ' + chf(bap) + ' ein: ' + pz(r) + ' Rabatt, ' + pz(s) + ' Skonto, ' + (bk ? 'Bezugskosten ' + chf(bk) : 'Lieferung franko') + '. Kalkuliert wird mit ' + pz(g) + ' Gemeinkosten (vom EP) und ' + pz(rg) + ' Reingewinn (von den SK).',
+    frage:'Wie hoch ist der Verkaufspreis?', label:'Verkaufspreis', einheit:'CHF', w:k.v.vp,
+    blatt:markiere(k.rows, 'vp'), weg:['RB = ' + chf(bap) + ' ÷ 100 × ' + pzn(100 - r) + ' = ' + chf(k.e.rb), 'NAP = ' + chf(k.e.rb) + ' ÷ 100 × ' + pzn(100 - s) + ' = ' + chf(k.e.nap), 'EP = ' + chf(k.e.nap) + ' + ' + chf(bk) + ' = ' + chf(k.v.ep), 'SK = ' + chf(k.v.ep) + ' ÷ 100 × ' + pzn(100 + g) + ' = ' + chf(k.v.sk), 'VP = ' + chf(k.v.sk) + ' ÷ 100 × ' + pzn(100 + rg) + ' = ' + chf(k.v.vp)],
+    tipp:'Das ganze Schema von oben nach unten: BAP → RB → NAP → EP → SK → VP. Bei jedem Prozentschritt die richtige Grundlage wählen.',
+    diag:[{ w:verkaufGkRg(k.e.nap, bk, g, 0).v.ep + Math.round(verkaufGkRg(k.e.nap, bk, g, 0).v.ep*(g + rg)/100), t:'Der Reingewinn wurde vom Einstandspreis berechnet – er gehört auf die Selbstkosten.' },
+          { w:verkaufGkRg(Math.round(bap*(100 - r - s)/100), bk, g, rg).v.vp, t:'Rabatt und Skonto zusammengezählt? Der Skonto wird vom Rechnungsbetrag berechnet.' }] };
+});
+typ('K', 3, 'Bruttogewinn über die ganze Kette', function(){
+  var w = pick(WAREN), bap = listenpreis(w), r = pick(R_PROZ), s = pick(S_PROZ), bk = pick([0,100,200,300,500]), b = pick(BG_PROZ);
+  var e = einkaufVor(bap, r, s), ep = e.v.nap + bk, bg = Math.round(ep*b/100), vp = ep + bg;
+  if (!sauber(e.v.rab, e.v.rb, e.v.sko, e.v.nap, bg, vp)) return null;
+  var rows = [{ trenn:'Bezugskalkulation' }].concat(e.rows);
+  rows[rows.length - 1].schluss = false;
+  rows.push({ op:'+', nm:'Bezugskosten', ab:'BK', c:bk });
+  rows.push({ op:'=', nm:'Einstandspreis', ab:'EP', c:ep, p1:'100 %', eq:true });
+  rows.push({ trenn:'Verkaufskalkulation' });
+  rows.push({ op:'+', nm:'Bruttogewinn', ab:'BG', c:bg, p1:pz(b), nt:dreisatz(ep/100, bg/100), grp:'v', ges:true });
+  rows.push({ op:'=', nm:'Verkaufspreis', ab:'VP', c:vp, p1:pz(100 + b), eq:true, schluss:true, grp:'v' });
+  return { text:'Listenpreis ' + chf(bap) + ', ' + pz(r) + ' Rabatt, ' + pz(s) + ' Skonto, ' + (bk ? 'Bezugskosten ' + chf(bk) : 'Lieferung franko') + '. ' + gross(w.laden) + ' verkauft zu ' + chf(vp) + '.',
+    frage:'Wie viele Prozent des Einstandspreises beträgt der Bruttogewinn?', label:'Bruttogewinn', einheit:'%', w:b,
+    blatt:rows, weg:['RB = ' + chf(e.v.rb) + ', NAP = ' + chf(e.v.nap), 'EP = ' + chf(e.v.nap) + ' + ' + chf(bk) + ' = ' + chf(ep), 'BG = ' + chf(vp) + ' − ' + chf(ep) + ' = ' + chf(bg), 'BG in % = 100 % ÷ ' + fr(ep) + ' × ' + fr(bg) + ' = ' + pz(b)],
+    tipp:'Zuerst den Einstandspreis über die Einkaufskalkulation (BAP → RB → NAP, dann + BK). Danach BG = VP − EP.',
+    diag:[{ w:Math.round((vp - bap)/bap*10000)/100, t:'Sie haben mit dem Listenpreis gerechnet. Grundlage ist der Einstandspreis nach Rabatt, Skonto und Bezugskosten.' }, { w:Math.round(bg/vp*10000)/100, t:'Sie haben durch den Verkaufspreis geteilt. Grundlage ist der Einstandspreis.' }] };
+});
+
+/* ---------- Trainer-Ablauf ---------- */
+var tBer = 'E', tSt = 1, aufgabe = null, versucht = false, erledigt = false;
+var stand = { gel:0, ri:0, se:0, re:0 };
+try { var s0 = JSON.parse(localStorage.getItem('wk-stand') || 'null'); if (s0 && typeof s0.gel === 'number'){ stand.gel = s0.gel; stand.ri = s0.ri; stand.re = s0.re; } } catch(e){}
+function speichern(){ try { localStorage.setItem('wk-stand', JSON.stringify({ gel:stand.gel, ri:stand.ri, re:stand.re })); } catch(e){} }
+function zeigeStand(){ $('scGel').textContent = stand.gel; $('scRi').textContent = stand.ri; $('scSe').textContent = stand.se; $('scRe').textContent = stand.re; }
+
+var BER_NAME = { E:'Einkauf', V:'Verkauf', K:'Ganze Kette' };
+var letzterTyp = null;
+function kandidaten(){
+  var bers = tBer === 'M' ? ['E','V','K'] : [tBer];
+  var liste = TYPEN.filter(function(t){ return bers.indexOf(t.ber) >= 0 && t.st === tSt; });
+  if (!liste.length) liste = TYPEN.filter(function(t){ return bers.indexOf(t.ber) >= 0 && t.st <= tSt; });
+  if (!liste.length) liste = TYPEN.filter(function(t){ return bers.indexOf(t.ber) >= 0; });
+  return liste;
+}
+function neueAufgabe(){
+  var liste = kandidaten(), a = null, t = null;
+  for (var i = 0; i < 6000 && !a; i++){
+    t = pick(liste);
+    if (liste.length > 1 && t === letzterTyp && i < 200) continue;
+    a = t.fn();
+  }
+  while (!a){ t = pick(TYPEN); a = t.fn(); }   /* Notweg, sollte nie greifen */
+  letzterTyp = t;
+  aufgabe = a; aufgabe.typ = t; versucht = false; erledigt = false;
+  $('qMeta').textContent = BER_NAME[t.ber] + ' · Stufe ' + t.st + ' · ' + t.name;
+  $('qText').innerHTML = a.text + '<span class="frage">' + a.frage + '</span>';
+  $('qLabel').textContent = a.label;
+  $('qVorEinheit').textContent = a.einheit === 'CHF' ? 'CHF' : '';
+  $('qEinheit').textContent = a.einheit === '%' ? '%' : '';
+  var inp = $('antwort'); inp.value = ''; inp.className = '';
+  ['tipp','feedback','loesung'].forEach(function(id){ $(id).className = $(id).className.replace(/\s*show/g, ''); $(id).innerHTML = ''; });
+  $('feedback').className = 'feedback';
+  $('bPruefen').disabled = false;
+}
+function stimmt(ein, w, einheit){
+  if (einheit === '%') return Math.abs(ein - w) <= 0.051;
+  var c = ein*100;
+  return Math.abs(c - w) <= 1.01;
+}
+function trifft(ein, w, einheit){ return einheit === '%' ? Math.abs(ein - w) <= 0.051 : Math.abs(ein*100 - w) <= 1.01; }
+function zeigeLoesung(){
+  var a = aufgabe;
+  var wert = a.einheit === '%' ? pz(a.w) : chf(a.w);
+  $('loesung').innerHTML = '<div class="flab" style="margin-top:0">Lösung: ' + a.label + ' = ' + wert + '</div>' +
+    '<div class="blattwrap">' + blattHTML(a.blatt) + '</div>' +
+    '<ol class="weg">' + a.weg.map(function(z){ return '<li>' + z + '</li>'; }).join('') + '</ol>';
+  $('loesung').classList.add('show');
+}
+function pruefen(){
+  if (erledigt){ neueAufgabe(); $('antwort').focus(); return; }
+  var ein = zahl($('antwort').value), fb = $('feedback');
+  if (isNaN(ein)){ fb.className = 'feedback no show'; fb.innerHTML = 'Bitte eine Zahl eingeben, zum Beispiel 1234.50'; return; }
+  var ok = stimmt(ein, aufgabe.w, aufgabe.einheit);
+  if (!versucht){ stand.gel++; if (ok){ stand.ri++; stand.se++; if (stand.se > stand.re) stand.re = stand.se; } else stand.se = 0; speichern(); zeigeStand(); }
+  versucht = true;
+  $('antwort').className = ok ? 'richtig' : 'falsch';
+  if (ok){
+    erledigt = true;
+    fb.className = 'feedback ok show';
+    fb.innerHTML = pick(['Richtig!','Genau so.','Stimmt!','Sauber gerechnet.']) + ' ' + aufgabe.label + ' = ' + (aufgabe.einheit === '%' ? pz(aufgabe.w) : chf(aufgabe.w)) + '. <span style="font-weight:600">Mit Enter geht es weiter.</span>';
+    zeigeLoesung();
+  } else {
+    var d = (aufgabe.diag || []).filter(function(x){ return x.w != null && isFinite(x.w) && Math.abs(x.w - aufgabe.w) > 1 && trifft(ein, x.w, aufgabe.einheit); })[0];
+    fb.className = 'feedback no show';
+    fb.innerHTML = 'Noch nicht richtig. Versuchen Sie es noch einmal – oder holen Sie sich einen Tipp.' + (d ? '<span class="diag">🔎 ' + d.t + '</span>' : '');
+  }
+}
+$('bPruefen').addEventListener('click', pruefen);
+$('antwort').addEventListener('keydown', function(ev){ if (ev.key === 'Enter'){ ev.preventDefault(); pruefen(); } });
+$('bTipp').addEventListener('click', function(){ $('tipp').innerHTML = '💡 ' + aufgabe.tipp; $('tipp').classList.add('show'); });
+$('bLoesung').addEventListener('click', function(){
+  if (!versucht){ stand.gel++; stand.se = 0; speichern(); zeigeStand(); versucht = true; }
+  erledigt = true; zeigeLoesung();
+});
+$('bNeu').addEventListener('click', function(){ neueAufgabe(); });
+function chipWahl(boxId, attr, setze){
+  $(boxId).addEventListener('click', function(ev){
+    var b = ev.target.closest('.chip'); if (!b) return;
+    this.querySelectorAll('.chip').forEach(function(c){ c.classList.toggle('on', c === b); });
+    setze(b.getAttribute(attr)); neueAufgabe();
+  });
+}
+chipWahl('tBereich', 'data-b', function(v){ tBer = v; });
+chipWahl('tStufe', 'data-s', function(v){ tSt = +v; });
+
+/* ---------- Taschenrechner ---------- */
+var cexpr = '';
+function cdisp(){ $('cdisp').textContent = (cexpr || '0').replace(/\./g, ',').replace(/-/g, '−'); }
+function calcInput(v){
+  if (cexpr === 'Fehler' && v !== 'C') cexpr = '';
+  if (v === 'C') cexpr = '';
+  else if (v === 'back') cexpr = cexpr.slice(0, -1);
+  else if (v === '=') return evalCalc();
+  else if ('+-×÷'.indexOf(v) >= 0){
+    if (cexpr === '' && v !== '-') return;
+    if ('+-×÷'.indexOf(cexpr.slice(-1)) >= 0) cexpr = cexpr.slice(0, -1) + v; else cexpr += v;
+  } else {
+    if (v === '.'){ var sg = cexpr.split(/[+\-×÷]/).pop(); if (sg.indexOf('.') >= 0) return; if (sg === '') cexpr += '0'; }
+    cexpr += v;
+  }
+  cdisp();
+}
+function evalCalc(){
+  if (!cexpr) return;
+  var e = cexpr.replace(/×/g, '*').replace(/÷/g, '/').replace(/[+\-*/.]+$/, '');
+  if (!/^[-0-9+*/. ]+$/.test(e)){ cexpr = 'Fehler'; return cdisp(); }
+  var r; try { r = Function('return (' + e + ')')(); } catch(_){ r = null; }
+  cexpr = (r === null || typeof r !== 'number' || !isFinite(r)) ? 'Fehler' : String(Math.round(r*1e6)/1e6);
+  cdisp();
+}
+$('cgrid').addEventListener('click', function(e){ var b = e.target.closest('button'); if (b) calcInput(b.dataset.k); });
+$('calcToAnswer').addEventListener('click', function(){ evalCalc(); if (cexpr && cexpr !== 'Fehler' && !isNaN(parseFloat(cexpr))){ $('antwort').value = cexpr; $('antwort').focus(); } });
+
+/* ---------- Reiter ---------- */
+var REITER = ['einkauf','verkauf','kette','trainer'];
+function zeigeReiter(name, still){
+  if (REITER.indexOf(name) < 0) name = 'einkauf';
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.toggle('active', t.dataset.tab === name); });
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.toggle('active', p.id === 'p-' + name); });
+  if (!still){ try { history.replaceState(null, '', '#' + name); } catch(e){} }
+  if (name === 'trainer' && !aufgabe) neueAufgabe();
+}
+document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click', function(){ zeigeReiter(t.dataset.tab); }); });
+window.addEventListener('hashchange', function(){ zeigeReiter(location.hash.slice(1), true); });
+
+/* Für Tests */
+window.__wk = { TYPEN:TYPEN, einkaufVor:einkaufVor, einkaufRueck:einkaufRueck, verkaufGkRg:verkaufGkRg, verkaufBg:verkaufBg, ketteRows:ketteRows, zahl:zahl, fr:fr, stimmt:stimmt, aufgabe:function(){ return aufgabe; } };
+
+rechneEinkauf(); rechneVerkauf(); rechneKette(); zeigeStand();
+zeigeReiter(location.hash.slice(1) || 'einkauf', true);
+})();
+</script>
+<style>
+/* Zoomleiste: +/- und Vollbild */
+.zoomleiste{position:fixed; right:12px; top:12px; z-index:99999; display:flex; gap:2px;
+  background:rgba(255,255,255,.78); border:1px solid rgba(21,35,50,.14); border-radius:999px;
+  padding:3px; box-shadow:0 3px 12px rgba(21,35,50,.18);
+  opacity:.55; transition:opacity .18s; backdrop-filter:blur(4px);}
+.zoomleiste:hover,.zoomleiste:focus-within{opacity:1;}
+.zoomleiste button{width:27px; height:27px; border-radius:999px; padding:0;
+  border:none; background:transparent; color:#152332;
+  font-size:14px; line-height:1; cursor:pointer;}
+.zoomleiste button:hover{background:rgba(21,35,50,.09);}
+@media print{.zoomleiste{display:none}}
+</style>
+<script>
+(function(){
+  var z = (window.self !== window.top) ? 0.82 : 1;
+  var leiste = document.createElement('div');
+  leiste.className = 'zoomleiste';
+  function setZ(nz){
+    z = Math.max(0.5, Math.min(1.4, Math.round(nz*100)/100));
+    document.body.style.zoom = z;
+    leiste.style.zoom = 1/z;   /* Leiste bleibt gleich gross */
+  }
+  function mk(txt, titel, fn){
+    var b = document.createElement('button');
+    b.type = 'button'; b.textContent = txt; b.title = titel;
+    b.setAttribute('aria-label', titel);
+    b.addEventListener('click', fn);
+    leiste.appendChild(b);
+  }
+  mk('−', 'Kleiner', function(){ setZ(z - 0.1); });
+  mk('+', 'Grösser', function(){ setZ(z + 0.1); });
+  mk('⛶', 'Vollbild (Esc beendet)', function(){
+    var drin = document.fullscreenElement || document.webkitFullscreenElement;
+    if(drin){
+      (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    } else {
+      var el = document.documentElement;
+      var p = el.requestFullscreen ? el.requestFullscreen()
+            : el.webkitRequestFullscreen ? el.webkitRequestFullscreen() : null;
+      if(p && p.catch) p.catch(function(){});
+    }
+  });
+  document.body.appendChild(leiste);
+  setZ(z);
+})();
+</script>
+</body>
+</html>

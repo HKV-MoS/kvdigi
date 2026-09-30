@@ -280,6 +280,8 @@
 
   .footer{ max-width:980px; margin:6px auto 26px; padding:0 18px; }
   .footer .cr{ color:#94A3B0; font-size:11px; }
+  .weiter-karte{ border-left:4px solid #D8AE66; }
+  .weiter-karte a.btn{ display:inline-block; text-decoration:none; margin-top:8px; }
   @media (prefers-reduced-motion:reduce){
     *{ transition-duration:.01ms !important; animation-duration:.01ms !important;
        animation-iteration-count:1 !important; scroll-behavior:auto !important; }
@@ -404,7 +406,7 @@ html.eingebettet body{ zoom:.82; }
       <p>Die eine Grösse wächst, die andere sinkt: mehr Leute &rarr; weniger Zeit. Die beiden Schritte gehen in <b>entgegengesetzte</b> Richtung.</p>
 
       <h3>Beispiel</h3>
-      <p>📦 <b>Zu zweit</b> räumt ihr das Lager in <b>6 Stunden</b> auf. Wie lange braucht ihr <b>zu viert</b>?</p>
+      <p>📦 <b>Zu zweit</b> räumen Sie das Lager in <b>6 Stunden</b> auf. Wie lange brauchen Sie <b>zu viert</b>?</p>
 
       <div class="schema">
         <div class="srow"><span class="lhs">📦 2 Personen</span><span class="eq">=</span><span class="rhs">6 Stunden</span></div>
@@ -417,7 +419,7 @@ html.eingebettet body{ zoom:.82; }
         <div class="step"><div class="no">1</div><div class="body"><div class="calc">6 · 2 = 12</div><div class="why">Auf <b>1 Person</b>: mal 2 – <b>allein braucht man länger</b> (umgekehrt!).</div></div></div>
         <div class="step"><div class="no">2</div><div class="body"><div class="calc">12 : 4 = 3</div><div class="why">Auf <b>4 Personen</b>: durch 4 – mehr Leute, weniger Zeit.</div></div></div>
       </div>
-      <div class="result-line">📦 Zu viert braucht ihr 3 Stunden.</div>
+      <div class="result-line">📦 Zu viert brauchen Sie 3 Stunden.</div>
       <p style="margin-top:10px;"><b>Kontrolle:</b> Das Produkt bleibt gleich: 2 · 6 = 12 und 4 · 3 = 12. ✓</p>
 
       <figure class="illu">
@@ -455,6 +457,14 @@ html.eingebettet body{ zoom:.82; }
         <p>🎨 <b>„6 Maler brauchen 10 Tage."</b> Mehr Maler &rarr; <span class="hl">weniger</span> Tage &rarr; <b>ungerader</b> Dreisatz.<br>
         🧃 <b>„6 Liter kosten 9 Franken."</b> Mehr Liter &rarr; <span class="hl">mehr</span> Franken &rarr; <b>gerader</b> Dreisatz.</p>
       </div>
+    </div>
+
+    <div class="card weiter-karte">
+      <h2>Dreisatz im Laden: Rabatt und Skonto</h2>
+      <p>Jede Prozentrechnung ist ein Dreisatz über <span class="hl">1 %</span>: 20 % Rabatt auf CHF 85.– heisst
+        zuerst 85 ÷ 100 = 0.85 (das ist 1 %), dann 0.85 × 20 = <b>CHF 17.–</b>. Genau so rechnet die
+        <b>Warenkalkulation</b> – vom Listenpreis über Rabatt und Skonto bis zum Verkaufspreis im Laden.</p>
+      <a class="btn btn-ghost" href="warenkalkulation.html">🏷️ Zur Warenkalkulation →</a>
     </div>
 
     <div class="card" style="text-align:center;">
@@ -615,7 +625,7 @@ html.eingebettet body{ zoom:.82; }
 <div class="feier" id="feier"><div class="feierbox" id="feierbox"></div></div>
 
 <div class="footer">
-  <div class="cr">Dreisatz-Lerneinheit · ABU · HKV Aarau · © 2026 <a href="mailto:samuel.mollet@hkv.ch" title="E-Mail an Samuel Mollet" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Samuel Mollet</a> · realisiert mit Claude (Anthropic)</div>
+  <div class="cr">Dreisatz-Lerneinheit · ABU · HKV Aarau · © 2026 <a href="mailto:samuel.mollet@hkv.ch" title="E-Mail an Samuel Mollet" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Samuel Mollet</a> · realisiert mit Claude (Anthropic) · Weiter üben: <a href="warenkalkulation.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Warenkalkulation</a></div>
 </div>
 
 <script>

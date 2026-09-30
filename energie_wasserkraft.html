@@ -29,7 +29,7 @@ h1 .accent{color:var(--hkv);}
 /* ── Reiter: Wasserkraft / Kernkraft / Solar ── */
 .reiter{max-width:1240px;margin:20px auto 0;display:flex;justify-content:center;gap:8px;
   flex-wrap:wrap;border-bottom:2px solid var(--line);padding-bottom:0;}
-.reiter-btn{font:inherit;font-weight:800;font-size:15px;min-height:46px;padding:11px 22px;
+.reiter-btn{font:inherit;font-weight:800;font-size:15px;min-height:46px;padding:11px 15px;
   border:2px solid transparent;border-bottom:none;border-radius:12px 12px 0 0;
   background:transparent;color:var(--muted);cursor:pointer;position:relative;bottom:-2px;
   display:inline-flex;align-items:center;gap:.5em;transition:all .18s;}
@@ -323,6 +323,85 @@ body.folieziehen{ cursor:nwse-resize; user-select:none; }
 @media (max-width:820px){ #ziehecke{ display:none; } [data-ziehbar]{ width:100%; } }
 @media print{ #ziehecke{ display:none; } }
 </style>
+<style>
+/* ── Reiter «Schweiz 2040» ── */
+.s4-lage{max-width:1240px;margin:18px auto 0;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));}
+.s4-fakt{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 15px;
+  box-shadow:0 4px 14px rgba(21,35,50,.05);font-size:13px;}
+.s4-fakt > b{display:block;color:var(--hkv);font-size:15px;margin:2px 0 3px;}
+.s4-fi{font-size:22px;line-height:1;}
+.s4-haupt{max-width:1240px;margin:16px auto 0;display:grid;grid-template-columns:1.1fr .9fr;gap:16px;align-items:start;}
+.s4-bilanz{position:sticky;top:12px;}
+.s4-kurz{display:none;}
+@media (max-width:900px){ .s4-kurz{display:block;position:sticky;bottom:10px;margin-top:12px;padding:9px 12px;border-radius:11px;
+  font-size:13px;font-weight:800;box-shadow:0 4px 16px rgba(21,35,50,.18);} }
+.s4-kurz.gruen{background:#e7f4e3;color:#2f5e1c;} .s4-kurz.gelb{background:#fbf1d8;color:#7a5a06;} .s4-kurz.rot{background:#f8e1dd;color:#8a2f24;}
+@media (max-width:900px){ .s4-haupt{grid-template-columns:1fr;} .s4-bilanz{position:static;} }
+.s4-block{max-width:1240px;margin:16px auto 0;}
+.s4-zeile{display:grid;grid-template-columns:minmax(150px,1.05fr) 1.4fr 64px;gap:4px 12px;align-items:center;
+  padding:10px 0;border-top:1px solid var(--line);}
+.s4-zeile:first-child{border-top:none;}
+.s4-name{font-weight:800;font-size:14px;line-height:1.25;}
+.s4-name small{display:block;font-weight:600;font-size:11.5px;color:var(--muted);}
+.s4-name i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:1px;}
+.s4-zeile input[type=range]{width:100%;accent-color:var(--hkv);}
+.s4-wert{text-align:right;font-weight:800;font-size:15px;font-variant-numeric:tabular-nums;white-space:nowrap;}
+.s4-wert small{font-size:11px;color:var(--muted);font-weight:700;}
+.s4-pm{grid-column:1 / -1;font-size:12px;color:var(--muted);line-height:1.45;}
+.s4-pm .p{color:#2f6e1f;} .s4-pm .m{color:#9a3a2e;}
+.s4-seg{display:flex;flex-wrap:wrap;gap:5px;}
+.s4-seg button{font:inherit;font-size:12px;font-weight:800;padding:6px 10px;border-radius:9px;cursor:pointer;
+  border:1.5px solid var(--line);background:#fff;color:var(--hkv);}
+.s4-seg button[aria-pressed="true"]{background:var(--hkv);border-color:var(--hkv);color:#fff;}
+@media (max-width:560px){ .s4-zeile{grid-template-columns:1fr 64px;} .s4-zeile .s4-ctl{grid-column:1 / -1;order:3;} .s4-pm{order:4;} }
+.s4-knoepfe{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px;}
+.s4-btn{font:inherit;font-weight:800;font-size:14px;padding:10px 16px;border-radius:11px;border:none;cursor:pointer;
+  background:var(--hkv);color:#fff;}
+.s4-btn:hover{background:var(--hkv-tief);}
+.s4-btn.hell{background:#fff;color:var(--hkv);border:1.5px solid var(--line);}
+.s4-btn.hell:hover{background:#f3f8f8;}
+.s4-btn:focus-visible,.s4-seg button:focus-visible{outline:3px solid rgba(60,110,115,.45);outline-offset:2px;}
+.s4-btn[hidden],.s4-ereignis[hidden],.s4-tab[hidden],.s4-fazit[hidden]{display:none;}
+.s4-hj{margin-top:12px;}
+.s4-hj-kopf{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:13.5px;}
+.s4-hj-kopf span{color:var(--muted);font-size:12.5px;font-variant-numeric:tabular-nums;}
+.s4-bar{position:relative;height:30px;margin:7px 0 20px;background:#eef2f6;border-radius:8px;}
+.s4-bar .seg{position:absolute;top:0;bottom:0;transition:left .3s,width .3s;}
+.s4-bar .seg:first-child{border-radius:8px 0 0 8px;}
+.s4-bar .bedarf{position:absolute;top:-5px;bottom:-5px;width:3px;background:#152332;border-radius:2px;transition:left .3s;}
+.s4-bar .bedarf span{position:absolute;bottom:-18px;transform:translateX(-50%);font-size:10.5px;font-weight:800;white-space:nowrap;color:#152332;}
+.s4-status{font-size:13px;font-weight:700;padding:8px 11px;border-radius:9px;margin-top:10px;}
+.s4-status b{font-size:17px;}
+.s4-status.gruen{background:#e7f4e3;color:#2f5e1c;} .s4-status.gelb{background:#fbf1d8;color:#7a5a06;}
+.s4-status.rot{background:#f8e1dd;color:#8a2f24;} .s4-status.neutral{background:#eef3f7;color:#34495e;}
+.s4-legende{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:10px;font-size:11.5px;color:var(--muted);}
+.s4-legende i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px;}
+.s4-kz{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
+.s4-kz div{background:#f5f8fa;border-radius:10px;padding:9px 11px;font-size:12px;color:var(--muted);}
+.s4-kz b{display:block;font-size:16px;color:var(--ink);}
+@media (max-width:420px){ .s4-kz{grid-template-columns:1fr;} }
+.s4-ereignis{margin-top:12px;border-left:5px solid #D8AE66;background:#fbf6e9;border-radius:10px;padding:12px 14px;font-size:14px;}
+.s4-ereignis b{font-size:15.5px;}
+.s4-tabwrap{overflow-x:auto;}
+.s4-tab{width:100%;border-collapse:collapse;margin-top:12px;font-size:13.5px;}
+.s4-tab th{text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:6px 8px;border-bottom:2px solid var(--line);}
+.s4-tab td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top;}
+.s4-tab td.z{font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums;}
+.s4-punkt{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px;vertical-align:-1px;}
+.s4-punkt.gruen{background:#5BA829;} .s4-punkt.gelb{background:#E0A22E;} .s4-punkt.rot{background:#B4564E;}
+.s4-fazit{margin-top:12px;padding:12px 14px;border-radius:10px;background:#eef4f3;font-size:14px;}
+.s4-text{width:100%;min-height:120px;margin-top:8px;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;font-size:14.5px;}
+.s4-text:focus{outline:none;border-color:var(--hkv);}
+.s4-woerter{text-align:right;font-size:12px;color:var(--muted);margin-top:3px;}
+.s4-woerter.zuviel{color:#9a3a2e;font-weight:800;}
+.s4-meldung{font-size:13px;color:#2f5e1c;font-weight:700;}
+.s4-modell{max-width:1240px;margin:16px auto 0;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;font-size:13px;}
+.s4-modell summary{cursor:pointer;font-weight:800;color:var(--hkv);}
+.s4-modell p{margin-top:8px;color:var(--muted);}
+.s4-modell table{border-collapse:collapse;margin-top:10px;font-size:12.5px;width:100%;}
+.s4-modell td,.s4-modell th{padding:4px 8px;border-bottom:1px solid var(--line);text-align:left;}
+.s4-modell td.r{text-align:right;font-variant-numeric:tabular-nums;}
+</style>
 </head>
 <body>
 <script>if(window.self!==window.top){document.documentElement.classList.add('eingebettet');}</script>
@@ -377,6 +456,12 @@ body.folieziehen{ cursor:nwse-resize; user-select:none; }
       die es tatsächlich gibt. Für jede Technologie steht hier, wie weit sie ist und
       wann realistischerweise Strom daraus fliesst.</p>
   </div>
+  <div class="kopf-var" data-fuer="schweiz2040" hidden>
+    <h1>Schweiz 2040 – <span class="accent">Ihr Strommix im Winter-Stresstest</span></h1>
+    <p class="subtitle">Entscheiden, prüfen, begründen · Simulation</p>
+    <p class="lead">Stellen Sie den Strommix für das Jahr 2040 zusammen. Reicht er auch im Winter –
+      wenn die Sonne tief steht, die Seen sich leeren und der Verbrauch am höchsten ist?</p>
+  </div>
 </header>
 
 <div class="reiter" role="tablist" aria-label="Kraftwerkstyp">
@@ -394,6 +479,8 @@ body.folieziehen{ cursor:nwse-resize; user-select:none; }
           aria-controls="tab-dauer" data-tab="dauer">⏱️ Wie lange?</button>
   <button class="reiter-btn" id="rb-zukunft" role="tab" aria-selected="false"
           aria-controls="tab-zukunft" data-tab="zukunft">🔮 Zukunft</button>
+  <button class="reiter-btn" id="rb-schweiz2040" role="tab" aria-selected="false"
+          aria-controls="tab-schweiz2040" data-tab="schweiz2040">🎛️ Schweiz 2040</button>
 </div>
 
 <section id="tab-wasser" class="reiter-panel" role="tabpanel" aria-labelledby="rb-wasser">
@@ -1245,6 +1332,109 @@ body.folieziehen{ cursor:nwse-resize; user-select:none; }
     ein Generator, in dem sich etwas dreht.</p>
 </section><!-- /tab-zukunft -->
 
+<section id="tab-schweiz2040" class="reiter-panel" role="tabpanel" aria-labelledby="rb-schweiz2040" hidden>
+  <div class="s4-lage">
+    <div class="s4-fakt"><span class="s4-fi">📈</span><b>Mehr Verbrauch</b>
+      <p>2025 brauchte die Schweiz rund 62 TWh Strom, Netzverluste eingerechnet. Wärmepumpen und
+      Elektroautos treiben den Bedarf bis 2040 auf rund <b>70 TWh</b> – gut die Hälfte davon im Winterhalbjahr.</p></div>
+    <div class="s4-fakt"><span class="s4-fi">☢️</span><b>Beznau geht vom Netz</b>
+      <p>Axpo legt die beiden Blöcke 2032 und 2033 still. Gösgen und Leibstadt laufen, solange die
+      Aufsicht sie als sicher beurteilt – 2040 wären sie 61 und 56 Jahre alt.</p></div>
+    <div class="s4-fakt"><span class="s4-fi">⚖️</span><b>Richtwert im Stromgesetz</b>
+      <p>Im Winterhalbjahr soll die Schweiz netto höchstens <b>5 TWh</b> importieren. Im Winter 2025/26
+      waren es rund 7 TWh – auch weil Gösgen monatelang stillstand.</p></div>
+    <div class="s4-fakt"><span class="s4-fi">🗳️</span><b>Eine offene Frage</b>
+      <p>Das Parlament hat im Juni 2026 das Verbot neuer Kernkraftwerke aufgehoben; dagegen wurde das
+      Referendum ergriffen. Strom aus einem neuen Werk gäbe es 2040 so oder so noch nicht
+      (siehe «Wie lange?»).</p></div>
+  </div>
+
+  <div class="s4-haupt">
+    <div class="karte s4-regler">
+      <div class="k-tit">1 · Stellen Sie Ihren Strommix 2040 zusammen</div>
+      <p class="k-sub">Ausgangslage sind die heutigen Anlagen ohne Beznau. Alle Werte in Terawattstunden
+        pro Jahr – 1 TWh ist rund der Jahresverbrauch von 200'000 Haushalten.</p>
+      <div id="s4-liste"></div>
+      <div class="s4-knoepfe">
+        <button type="button" class="s4-btn hell" id="s4-reset">↺ Zurück zur Ausgangslage</button>
+      </div>
+      <div class="s4-kurz" id="s4-kurz" aria-hidden="true"></div>
+    </div>
+
+    <div class="karte s4-bilanz" aria-live="polite">
+      <div class="k-tit">Ihre Bilanz 2040</div>
+      <div class="s4-hj">
+        <div class="s4-hj-kopf"><b>❄️ Winterhalbjahr</b><span id="s4-w-zahlen"></span></div>
+        <div class="s4-bar" id="s4-w-bar"></div>
+        <div class="s4-status" id="s4-w-status"></div>
+      </div>
+      <div class="s4-hj">
+        <div class="s4-hj-kopf"><b>☀️ Sommerhalbjahr</b><span id="s4-s-zahlen"></span></div>
+        <div class="s4-bar" id="s4-s-bar"></div>
+        <div class="s4-status neutral" id="s4-s-status"></div>
+      </div>
+      <div class="s4-legende" id="s4-legende"></div>
+      <div class="s4-kz" id="s4-kz"></div>
+    </div>
+  </div>
+
+  <div class="karte s4-block">
+    <div class="k-tit">2 · Der Winter-Stresstest</div>
+    <p class="k-sub">Sechs Winter, die es so oder ähnlich schon gegeben hat. Jedes Ereignis trifft Ihren Mix
+      einzeln – wie viel müsste die Schweiz dann importieren, und könnten die Nachbarn liefern?</p>
+    <div class="s4-knoepfe">
+      <button type="button" class="s4-btn" id="s4-start">▶ Stresstest starten</button>
+      <button type="button" class="s4-btn" id="s4-weiter" hidden>Nächster Winter ▶</button>
+    </div>
+    <div class="s4-ereignis" id="s4-ereignis" hidden></div>
+    <div class="s4-tabwrap"><table class="s4-tab" id="s4-tab" hidden>
+      <thead><tr><th>Winter</th><th>Import nötig</th><th>Beurteilung</th></tr></thead><tbody></tbody></table></div>
+    <div class="s4-fazit" id="s4-fazit" hidden></div>
+  </div>
+
+  <div class="karte s4-block">
+    <div class="k-tit">3 · Begründen Sie Ihren Entscheid</div>
+    <p class="k-sub">Schreiben Sie in höchstens 100 Wörtern, warum Ihr Strommix für die Schweiz 2040 sinnvoll ist.
+      Nennen Sie mindestens <b>einen Vorteil</b> und <b>einen Nachteil</b> Ihrer Lösung – und wer den Nachteil trägt.</p>
+    <textarea id="s4-text" class="s4-text" placeholder="Ich setze vor allem auf …, weil …" aria-label="Begründung"></textarea>
+    <div class="s4-woerter" id="s4-woerter">0 / 100 Wörter</div>
+    <div class="s4-knoepfe">
+      <button type="button" class="s4-btn" id="s4-kopie">📋 Kurz-Dossier kopieren</button>
+      <span class="s4-meldung" id="s4-meldung"></span>
+    </div>
+    <p class="k-sub" style="margin-top:8px">Das Kurz-Dossier enthält Ihren Mix, die Bilanz, das Ergebnis des Stresstests
+      und Ihre Begründung – zum Einfügen in ein Dokument oder in den Chat der Klasse.</p>
+  </div>
+
+  <div class="zuk-grid zwei">
+    <div class="zuk">
+      <div class="zuk-kopf"><span class="zuk-icon">🔋</span><div><b>Speichern ist nicht Erzeugen</b>
+        <span class="zuk-unter">Der rote Faden zum Reiter «Zukunft»</span></div></div>
+      <p>Batterien verschieben Strom um <b>Stunden</b> – vom Mittag in den Abend. Für den Winter braucht es
+        Speicher über <b>Monate</b>: Das können heute nur die Stauseen. Neue Staumauern erzeugen kaum
+        zusätzliche Energie; sie verschieben Sommerwasser in den Winter.</p>
+    </div>
+    <div class="zuk">
+      <div class="zuk-kopf"><span class="zuk-icon">⚡</span><div><b>Leistung ist nicht Energie</b>
+        <span class="zuk-unter">Warum die Jahreszahl allein täuscht</span></div></div>
+      <p>Eine Solaranlage kann an einem Junimittag so stark sein wie ein Kraftwerk – im Dezember liefert sie
+        nur einen Bruchteil. Entscheidend ist nicht, wie stark eine Anlage sein kann, sondern
+        <b>wann und wie lange</b> sie tatsächlich produziert.</p>
+    </div>
+  </div>
+
+  <details class="s4-modell">
+    <summary>So rechnet das Modell – Annahmen und Quellen</summary>
+    <div id="s4-annahmen"></div>
+    <p>Das ist ein <b>Lernmodell</b>, keine Prognose. Es rechnet mit Halbjahren; Stunden, Tage und das Netz
+      bleiben aussen vor. Der Verbrauch 2040 stützt sich auf die Energieperspektiven 2050+ des Bundes
+      (74 TWh im Jahr 2035 und 84 TWh im Jahr 2050, jeweils mit den Speicherpumpen; das Modell rechnet ohne sie).
+      Die Winteranteile sind gerundete Erfahrungswerte aus der Elektrizitätsstatistik und von Branchenverbänden.
+      Die Grenze von 10 TWh für Importe ist eine Annahme: So viel können die Nachbarn im Winter netto
+      realistischerweise liefern.</p>
+  </details>
+</section><!-- /tab-schweiz2040 -->
+
 <div class="wissen">
   <div class="karte">
     <div class="k-tit">Der Schweizer Strommix 2024</div>
@@ -1323,7 +1513,9 @@ body.folieziehen{ cursor:nwse-resize; user-select:none; }
   Gezeitenkraftwerke: Betreiber- und Länderangaben; Planungs- und Bauzeiten: Suisse Eole,
   KKW Gösgen, UVEK, Runder Tisch Wasserkraft; Zukunftstechnologien: ITER / Max-Planck-Institut
   für Plasmaphysik, EnergieSchweiz, Bulletin electrosuisse; Holzvergaser Nordkorea:
-  Radio Free Asia · Stand Juli 2026 ·
+  Radio Free Asia; Schweiz 2040: BFE Elektrizitätsbilanz 2025, Energieperspektiven 2050+, Stromgesetz (Richtwert
+  Winterimport), Axpo (Beznau), Parlamentsdienste (Kernenergiegesetz, Juni 2026), Kanton Zürich (Windenergie) ·
+  Stand September 2026 ·
   Aufbereitet für den ABU-Unterricht.</p>
 <footer>© 2026 <a href="mailto:samuel.mollet@hkv.ch" title="E-Mail an Samuel Mollet" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Samuel Mollet</a> · HKV Aarau · realisiert mit Claude (Anthropic)</footer>
 
@@ -2037,6 +2229,23 @@ dauer:[
        "Ein konzentriertes kantonales Verfahren, nur noch eine Beschwerde auf Kantonsebene","Die Bauzeiten wurden gesetzlich begrenzt"], r:2,
     e:"Der Standortkanton erteilt die Bewilligungen in einem Zug statt nacheinander – und der Rechtsmittelweg wurde gekürzt." }
 ],
+schweiz2040:[
+  { f:"Warum genügt es nicht, übers ganze Jahr genug Strom zu erzeugen?",
+    o:["Weil Strom im Sommer teurer ist","Weil Sommerstrom sich nicht in grossen Mengen bis in den Winter speichern lässt",
+       "Weil der Verbrauch im Sommer höher ist","Weil im Winter weniger Leute zu Hause sind"], r:1,
+    e:"Im Winter ist der Bedarf am höchsten und die Produktion am tiefsten. Über Monate speichern können nur die Stauseen." },
+  { f:"Welche Quelle liefert rund zwei Drittel ihres Stroms im Winterhalbjahr?",
+    o:["Photovoltaik auf Dächern","Laufwasserkraftwerke","Windkraft","Kernkraft"], r:2,
+    e:"Wind weht in der Schweiz vor allem im Winter. Dachsolaranlagen liefern dagegen nur gut ein Viertel im Winter." },
+  { f:"Was verlangt der Richtwert im Stromgesetz?",
+    o:["Die Schweiz darf keinen Strom importieren","Netto höchstens 5 TWh Import im Winterhalbjahr",
+       "Mindestens 50 % Solarstrom","Alle Kernkraftwerke gehen bis 2040 vom Netz"], r:1,
+    e:"Im Winter 2025/26 lag der Nettoimport bei rund 7 TWh – über dem Richtwert." },
+  { f:"Was bewirken neue oder erhöhte Staumauern vor allem?",
+    o:["Sie erzeugen viel zusätzlichen Strom im Sommer","Sie ersetzen ein Kernkraftwerk",
+       "Sie verschieben Wasser vom Sommer in den Winter","Sie senken den Stromverbrauch"], r:2,
+    e:"Speichern ist nicht Erzeugen: Die Seen halten Schmelzwasser zurück, bis es im Winter gebraucht wird." }
+],
 zukunft:[
   { f:"Was übernimmt die Grossbatterie, was der Speichersee nicht kann?",
     o:["Den Ausgleich zwischen Sommer und Winter","Den Ausgleich zwischen Mittag und Abend",
@@ -2060,7 +2269,7 @@ zukunft:[
 const mf=document.getElementById('mini-fragen');
 const mtyp=document.getElementById('mini-typ');
 const TYPNAME={wasser:'Wasserkraft', akw:'Kernkraft', solar:'Solar', wind:'Wind',
-               gezeiten:'Gezeiten', dauer:'Wie lange?', zukunft:'Zukunft'};
+               gezeiten:'Gezeiten', dauer:'Wie lange?', zukunft:'Zukunft', schweiz2040:'Schweiz 2040'};
 
 function baueFragen(typ){
   const liste = FRAGEN[typ] || FRAGEN.wasser;
@@ -2231,6 +2440,238 @@ baueTab('tab-gezeiten', GEZEITEN);
 </script>
 
 <script>
+/* ── Reiter «Schweiz 2040»: Strommix-Simulation ──
+   Halbjahresmodell in TWh. Jede Quelle hat einen Winteranteil (Oktober–März).
+   Winterlücke = Bedarf im Winter − Produktion im Winter = nötiger Nettoimport. */
+(function(){
+  const $ = id => document.getElementById(id);
+  if(!$('s4-liste')) return;
+  const BEDARF = 70, W_ANTEIL_BEDARF = 0.56, RICHTWERT = 5, IMPORT_MAX = 10;
+  const CO2_GAS = 0.36;     /* Mio. t CO2 pro TWh aus einem Gas-Kombikraftwerk */
+  const GWH_WINDANLAGE = 6; /* eine moderne Anlage, rund 6 GWh pro Jahr */
+  const KM2_PV = 5, KM2_PV_ALPIN = 3.5;  /* Modulfläche pro TWh */
+  const Q = [
+    { k:'wasser', n:'Wasserkraft', u:'Lauf- und Speicherkraftwerke', f:'#4FA3D1', min:34, max:40, st:0.5, start:37.5, w:0.45,
+      p:'erneuerbar, Speicherseen lassen sich regeln', m:'kaum noch ausbaubar; trockene Jahre und schwindende Gletscher' },
+    { k:'speicher', n:'Neue Speicherprojekte', u:'höhere Staumauern, neue Seen', f:'#2a5f64', min:0, max:2, st:0.1, start:0, w:1,
+      p:'liefert genau im Winter (16 Projekte im Stromgesetz, rund 2 TWh)', m:'Eingriff in Landschaft und Gewässer, lange Verfahren' },
+    { k:'kern', n:'Kernkraft', u:'Gösgen und Leibstadt', f:'#8a5a00', seg:[[0,'keine mehr'],[9.6,'nur Leibstadt'],[17.6,'Gösgen und Leibstadt']], start:17.6, w:0.52,
+      p:'liefert Tag und Nacht, auch im Winter; kaum CO₂', m:'2040 über 55 Jahre alt; radioaktive Abfälle; fällt ein grosses Werk aus, fehlt viel auf einmal' },
+    { k:'pv', n:'Photovoltaik', u:'auf Dächern und Fassaden', f:'#E0A22E', min:5, max:45, st:1, start:8, w:0.28,
+      p:'schnell gebaut, auf bestehenden Flächen, grosses Potenzial', m:'im Winter wenig; Mittagsspitzen im Sommer' },
+    { k:'alpin', n:'Alpine Solaranlagen', u:'über dem Nebel', f:'#b8741a', min:0, max:3, st:0.1, start:0, w:0.45,
+      p:'viel Winterstrom: über dem Nebel, Schnee reflektiert', m:'Anlagen in unberührter Landschaft, teure Erschliessung, Widerstand in Gemeinden' },
+    { k:'wind', n:'Windkraft', u:'Jura und Voralpen', f:'#5BA829', min:0, max:6, st:0.1, start:0.2, w:0.67,
+      p:'zwei Drittel im Winter', m:'Landschaftsbild, Einsprachen, wenige gute Standorte' },
+    { k:'bio', n:'Holz, Biogas, Kehricht', u:'thermisch, erneuerbar', f:'#9aa7b4', min:3, max:5, st:0.1, start:3.6, w:0.55,
+      p:'planbar, nutzt Abfälle', m:'begrenzte Mengen an Holz und Abfall' },
+    { k:'gas', n:'Gaskraftwerk', u:'läuft nur im Winter', f:'#5f6b78', min:0, max:5, st:0.1, start:0, w:1,
+      p:'jederzeit einsetzbar, schnell gebaut', m:'CO₂-Ausstoss; Gas kommt aus dem Ausland' },
+    { k:'sparen', n:'Stromsparen', u:'effizientere Geräte, weniger Verschwendung', f:null, min:0, max:10, st:1, start:0, einheit:'%',
+      p:'jede eingesparte Kilowattstunde muss niemand erzeugen', m:'braucht Investitionen und Verhaltensänderung' }
+  ];
+  const START = {}; Q.forEach(q => START[q.k] = q.start);
+  let wert = Object.assign({}, START);
+  try{ const g = JSON.parse(localStorage.getItem('s40-mix') || 'null'); if(g) Q.forEach(q => { if(typeof g[q.k] === 'number') wert[q.k] = g[q.k]; }); }catch(e){}
+  function merken(){ try{ localStorage.setItem('s40-mix', JSON.stringify(wert)); }catch(e){} }
+
+  const zahl = (x, d) => (Math.round(x*Math.pow(10, d == null ? 1 : d))/Math.pow(10, d == null ? 1 : d)).toFixed(d == null ? 1 : d);
+  const tsd = n => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, "'");
+
+  /* ---------- Regler bauen ---------- */
+  const liste = $('s4-liste');
+  Q.forEach(q => {
+    const z = document.createElement('div'); z.className = 's4-zeile';
+    const anteil = q.w != null ? ' · ' + Math.round(q.w*100) + ' % im Winter' : '';
+    let ctl;
+    if(q.seg){
+      ctl = '<div class="s4-seg" role="group" aria-label="' + q.n + '">' + q.seg.map(([v,t]) =>
+        '<button type="button" data-v="' + v + '" aria-pressed="false">' + t + '</button>').join('') + '</div>';
+    } else {
+      ctl = '<input type="range" min="' + q.min + '" max="' + q.max + '" step="' + q.st + '" aria-label="' + q.n + '">';
+    }
+    z.innerHTML = '<div class="s4-name">' + (q.f ? '<i style="background:' + q.f + '"></i>' : '✂️ ') + q.n +
+      '<small>' + q.u + anteil + '</small></div><div class="s4-ctl">' + ctl + '</div><div class="s4-wert"></div>' +
+      '<div class="s4-pm"><span class="p">＋ ' + q.p + '</span> · <span class="m">− ' + q.m + '</span></div>';
+    z.dataset.k = q.k;
+    liste.appendChild(z);
+    const inp = z.querySelector('input');
+    if(inp){ inp.value = wert[q.k]; inp.addEventListener('input', () => { wert[q.k] = +inp.value; rechne(); }); }
+    z.querySelectorAll('.s4-seg button').forEach(b => b.addEventListener('click', () => { wert[q.k] = +b.dataset.v; rechne(); }));
+  });
+  $('s4-reset').addEventListener('click', () => {
+    wert = Object.assign({}, START);
+    liste.querySelectorAll('.s4-zeile').forEach(z => { const i = z.querySelector('input'); if(i) i.value = wert[z.dataset.k]; });
+    rechne();
+  });
+
+  /* ---------- Bilanz ---------- */
+  function bilanz(v, stoer){
+    stoer = stoer || {};
+    const bedarf = BEDARF*(1 - v.sparen/100);
+    let bw = bedarf*W_ANTEIL_BEDARF + (stoer.mehrBedarf || 0), bs = bedarf*(1 - W_ANTEIL_BEDARF);
+    const teileW = [], teileS = [];
+    let pw = 0, ps = 0;
+    Q.forEach(q => {
+      if(q.k === 'sparen') return;
+      let w = v[q.k]*q.w, s = v[q.k] - w;
+      if(stoer.faktorW && stoer.faktorW[q.k] != null) w *= stoer.faktorW[q.k];
+      if(stoer.minusW && stoer.minusW[q.k]) w = Math.max(0, w - stoer.minusW[q.k]);
+      pw += w; ps += s;
+      teileW.push([q, w]); teileS.push([q, s]);
+    });
+    return { bedarf, bw, bs, pw, ps, teileW, teileS, importW: bw - pw, saldoS: ps - bs,
+             importMax: stoer.importMax || IMPORT_MAX };
+  }
+  function urteil(b){
+    const imp = b.importW;
+    if(imp <= RICHTWERT) return { cls:'gruen', txt: imp <= 0 ? 'Die Schweiz kommt im Winter ohne Import aus.' : 'Der Richtwert von 5 TWh ist eingehalten.' };
+    if(imp <= b.importMax) return { cls:'gelb', txt:'Über dem Richtwert: Die Schweiz ist im Winter stark auf ihre Nachbarn angewiesen.' };
+    return { cls:'rot', txt:'Mehr, als die Nachbarn liefern können: Es droht eine Strommangellage.' };
+  }
+  function balken(el, teile, bedarf, summe){
+    const max = Math.max(bedarf, summe)*1.04 || 1;
+    let x = 0, h = '';
+    teile.forEach(([q, t]) => {
+      if(t <= 0) return;
+      h += '<div class="seg" title="' + q.n + ': ' + zahl(t) + ' TWh" style="left:' + (x/max*100) + '%;width:' + (t/max*100) + '%;background:' + q.f + '"></div>';
+      x += t;
+    });
+    const l = bedarf/max*100;
+    h += '<div class="bedarf" style="left:calc(' + l + '% - 1.5px)"><span style="' + (l > 80 ? 'transform:translateX(-90%)' : '') + '">Bedarf</span></div>';
+    el.innerHTML = h;
+  }
+  function rechne(){
+    liste.querySelectorAll('.s4-zeile').forEach(z => {
+      const q = Q.find(x => x.k === z.dataset.k), v = wert[q.k];
+      z.querySelector('.s4-wert').innerHTML = q.einheit === '%' ? v + ' <small>%</small>' : zahl(v) + ' <small>TWh</small>';
+      z.querySelectorAll('.s4-seg button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.v === v)));
+    });
+    const b = bilanz(wert), u = urteil(b);
+    balken($('s4-w-bar'), b.teileW, b.bw, b.pw);
+    balken($('s4-s-bar'), b.teileS, b.bs, b.ps);
+    $('s4-w-zahlen').textContent = 'Bedarf ' + zahl(b.bw) + ' · Produktion ' + zahl(b.pw) + ' TWh';
+    $('s4-s-zahlen').textContent = 'Bedarf ' + zahl(b.bs) + ' · Produktion ' + zahl(b.ps) + ' TWh';
+    const ws = $('s4-w-status');
+    ws.className = 's4-status ' + u.cls;
+    ws.innerHTML = (b.importW > 0 ? 'Import nötig: <b>' + zahl(b.importW) + ' TWh</b>' : 'Überschuss: <b>' + zahl(-b.importW) + ' TWh</b>') + '<br>' + u.txt;
+    $('s4-kurz').className = 's4-kurz ' + u.cls;
+    $('s4-kurz').textContent = '❄️ Winter: ' + (b.importW > 0 ? 'Import ' + zahl(b.importW) + ' TWh' : 'Überschuss ' + zahl(-b.importW) + ' TWh') +
+      ' · ☀️ Sommer: ' + (b.saldoS >= 0 ? '+' : '−') + zahl(Math.abs(b.saldoS)) + ' TWh';
+    $('s4-s-status').innerHTML = b.saldoS >= 0
+      ? 'Überschuss: <b>' + zahl(b.saldoS) + ' TWh</b><br>Wird exportiert, in Stauseen gepumpt oder abgeregelt.'
+      : 'Import nötig: <b>' + zahl(-b.saldoS) + ' TWh</b><br>Sogar im Sommer reicht es nicht.';
+    const jahr = b.pw + b.ps - b.bedarf;
+    const wind = wert.wind*1000/GWH_WINDANLAGE, flaeche = wert.pv*KM2_PV + wert.alpin*KM2_PV_ALPIN;
+    const kern = wert.kern === 0 ? 'ausgestiegen' : (wert.kern < 10 ? 'nur Leibstadt' : 'beide laufen');
+    $('s4-kz').innerHTML =
+      '<div>Jahresbilanz<b>' + (jahr >= 0 ? '+' : '−') + zahl(Math.abs(jahr)) + ' TWh</b>' + (jahr >= 0 ? 'mehr erzeugt als gebraucht' : 'weniger erzeugt als gebraucht') + '</div>' +
+      '<div>CO₂ aus Gaskraftwerken<b>' + zahl(wert.gas*CO2_GAS, 2) + ' Mio. t</b>pro Jahr</div>' +
+      '<div>Windkraft<b>rund ' + tsd(wind) + ' Anlagen</b>zu je rund 6 GWh pro Jahr</div>' +
+      '<div>Solarmodule<b>rund ' + tsd(flaeche) + ' km²</b>Zürichsee: 88 km²</div>' +
+      '<div>Kernkraft 2040<b>' + kern + '</b>' + (wert.kern ? zahl(wert.kern) + ' TWh pro Jahr' : 'Gösgen und Leibstadt stillgelegt') + '</div>' +
+      '<div>Stromsparen<b>' + zahl(BEDARF - b.bedarf) + ' TWh</b>weniger Bedarf</div>';
+    merken();
+    if(testLaeuft) stoppeTest();
+  }
+  $('s4-legende').innerHTML = Q.filter(q => q.f).map(q => '<span><i style="background:' + q.f + '"></i>' + q.n + '</span>').join('');
+
+  /* ---------- Stresstest ---------- */
+  const EREIGNISSE = [
+    { t:'❄️ Ein ganz normaler Winter', d:'Kein besonderes Ereignis – Ihr Mix, wie Sie ihn gebaut haben.', s:{} },
+    { t:'🌫️ Wochenlang Hochnebel und Flaute', d:'Die Sonne kommt kaum durch, der Wind schläft ein. Anlagen über dem Nebel trifft es weniger.',
+      s:{ faktorW:{ pv:0.7, alpin:0.9, wind:0.75 } } },
+    { t:'🏜️ Ein trockenes Jahr', d:'Wenig Schnee, ein trockener Herbst: Die Stauseen gehen halbvoll in den Winter – wie 2025.',
+      s:{ faktorW:{ wasser:0.85, speicher:0.85 } } },
+    { t:'⚙️ Ein Kernkraftwerk fällt aus', d:'Wie Gösgen 2025: Ein Schaden verlängert die Revision um Monate. Es fehlen rund 4 TWh Winterstrom.',
+      s:{ minusW:{ kern:4.2 } }, nurKern:true },
+    { t:'🥶 Kältewelle im Januar', d:'Zwei Wochen Frost: Wärmepumpen laufen auf Hochtouren, der Bedarf steigt um 1.5 TWh.',
+      s:{ mehrBedarf:1.5 } },
+    { t:'🇪🇺 Knappheit in ganz Europa', d:'Auch die Nachbarn haben wenig Strom und Gas. Sie können höchstens noch 6 TWh liefern statt 10.',
+      s:{ importMax:6 } }
+  ];
+  let schritt = -1, testLaeuft = false, ergebnisse = [];
+  function stoppeTest(){
+    testLaeuft = false; schritt = -1; ergebnisse = [];
+    $('s4-weiter').hidden = true; $('s4-ereignis').hidden = true; $('s4-tab').hidden = true; $('s4-fazit').hidden = true;
+    $('s4-start').textContent = '▶ Stresstest starten';
+  }
+  function naechstes(){
+    schritt++;
+    const tb = $('s4-tab').querySelector('tbody');
+    if(schritt >= EREIGNISSE.length){ fazit(); return; }
+    const e = EREIGNISSE[schritt], b = bilanz(wert, e.s), u = urteil(b);
+    let d = e.d;
+    if(e.nurKern && !wert.kern) d += ' <i>Ihr Mix enthält keine Kernkraft – dieses Ereignis trifft Sie nicht.</i>';
+    ergebnisse.push({ e, b, u });
+    $('s4-ereignis').hidden = false;
+    $('s4-ereignis').innerHTML = '<b>' + e.t + '</b><br>' + d + '<br><span class="s4-punkt ' + u.cls + '"></span>' +
+      (b.importW > 0 ? 'Import nötig: <b>' + zahl(b.importW) + ' TWh</b>' : 'Kein Import nötig') + ' – ' + u.txt;
+    $('s4-tab').hidden = false;
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td>' + e.t + '</td><td class="z">' + (b.importW > 0 ? zahl(b.importW) + ' TWh' : '–') + '</td><td><span class="s4-punkt ' + u.cls + '"></span>' + u.txt + '</td>';
+    tb.appendChild(tr);
+    $('s4-weiter').textContent = schritt === EREIGNISSE.length - 1 ? 'Auswertung ▶' : 'Nächster Winter ▶';
+  }
+  function fazit(){
+    $('s4-weiter').hidden = true;
+    const g = ergebnisse.filter(x => x.u.cls === 'gruen').length, r = ergebnisse.filter(x => x.u.cls === 'rot').length;
+    const schwach = ergebnisse.filter(x => x.u.cls === 'rot').map(x => x.e.t.replace(/^\S+\s/, ''));
+    $('s4-fazit').hidden = false;
+    $('s4-fazit').innerHTML = '<b>Auswertung:</b> In <b>' + g + ' von ' + ergebnisse.length + '</b> Wintern hält Ihr Mix den Richtwert ein, in <b>' + r + '</b> droht eine Mangellage.' +
+      (schwach.length ? ' Verletzlich ist er bei: ' + schwach.join(', ') + '.' : ' Eine echte Mangellage entsteht in keinem Szenario.') +
+      '<br>Das ist keine Note. Entscheidend ist, dass Sie erklären können, wo Ihr Mix stark ist, wo er verletzlich ist – und welchen Preis Sie dafür zahlen.';
+  }
+  $('s4-start').addEventListener('click', () => {
+    stoppeTest(); testLaeuft = true;
+    $('s4-tab').querySelector('tbody').innerHTML = '';
+    $('s4-weiter').hidden = false; $('s4-start').textContent = '↺ Neu starten';
+    naechstes();
+  });
+  $('s4-weiter').addEventListener('click', naechstes);
+
+  /* ---------- Begründung und Kurz-Dossier ---------- */
+  const ta = $('s4-text');
+  try{ ta.value = localStorage.getItem('s40-text') || ''; }catch(e){}
+  function woerter(){
+    const n = ta.value.trim() ? ta.value.trim().split(/\s+/).length : 0;
+    $('s4-woerter').textContent = n + ' / 100 Wörter';
+    $('s4-woerter').classList.toggle('zuviel', n > 100);
+    try{ localStorage.setItem('s40-text', ta.value); }catch(e){}
+  }
+  ta.addEventListener('input', woerter); woerter();
+  function dossier(){
+    const b = bilanz(wert), u = urteil(b);
+    const mix = Q.map(q => q.n + ': ' + (q.einheit === '%' ? wert[q.k] + ' %' : zahl(wert[q.k]) + ' TWh')).join('\n');
+    let t = 'SCHWEIZ 2040 – MEIN STROMMIX\n\n' + mix + '\n\nWinter: Bedarf ' + zahl(b.bw) + ' TWh, Produktion ' + zahl(b.pw) + ' TWh → ' +
+      (b.importW > 0 ? 'Import ' + zahl(b.importW) + ' TWh' : 'Überschuss ' + zahl(-b.importW) + ' TWh') + ' (' + u.txt + ')\n' +
+      'Sommer: ' + (b.saldoS >= 0 ? 'Überschuss ' : 'Import ') + zahl(Math.abs(b.saldoS)) + ' TWh\n';
+    if(ergebnisse.length) t += '\nStresstest:\n' + ergebnisse.map(x => '– ' + x.e.t.replace(/^\S+\s/, '') + ': ' + (x.b.importW > 0 ? zahl(x.b.importW) + ' TWh Import' : 'kein Import') + ' (' + x.u.txt + ')').join('\n') + '\n';
+    t += '\nBegründung:\n' + (ta.value.trim() || '(noch keine)') + '\n';
+    return t;
+  }
+  function kopiere(t){
+    const ok = () => { $('s4-meldung').textContent = '✓ Kopiert – jetzt einfügen.'; };
+    function notweg(){
+      const h = document.createElement('textarea'); h.value = t; h.style.position = 'fixed'; h.style.opacity = '0';
+      document.body.appendChild(h); h.select();
+      try{ document.execCommand('copy'); ok(); }catch(e){ $('s4-meldung').textContent = 'Kopieren nicht möglich – bitte von Hand markieren.'; }
+      document.body.removeChild(h);
+    }
+    if(navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(t).then(ok, notweg); else notweg();
+  }
+  $('s4-kopie').addEventListener('click', () => kopiere(dossier()));
+
+  /* ---------- Annahmen offenlegen ---------- */
+  $('s4-annahmen').innerHTML = '<table><tr><th>Quelle</th><th>Ausgangslage</th><th>Winteranteil</th></tr>' +
+    Q.filter(q => q.w != null).map(q => '<tr><td>' + q.n + '</td><td class="r">' + zahl(q.start) + ' TWh</td><td class="r">' + Math.round(q.w*100) + ' %</td></tr>').join('') +
+    '<tr><td>Verbrauch 2040</td><td class="r">' + BEDARF + ' TWh</td><td class="r">' + Math.round(W_ANTEIL_BEDARF*100) + ' %</td></tr></table>';
+
+  window.S40 = { bilanz: v => bilanz(v || wert), wert: () => wert, Q, EREIGNISSE };
+  rechne();
+})();
+</script>
+<script>
 /* ── Reiter-Umschaltung: Wasserkraft / Kernkraft / Solar ── */
 (function(){
   const btns   = Array.from(document.querySelectorAll('.reiter-btn'));
@@ -2240,7 +2681,8 @@ baueTab('tab-gezeiten', GEZEITEN);
                   wind:    document.getElementById('tab-wind'),
                   gezeiten:document.getElementById('tab-gezeiten'),
                   dauer:   document.getElementById('tab-dauer'),
-                  zukunft: document.getElementById('tab-zukunft')};
+                  zukunft: document.getElementById('tab-zukunft'),
+                  schweiz2040: document.getElementById('tab-schweiz2040')};
   const koepfe = Array.from(document.querySelectorAll('.kopf-var'));
   const titel  = {wasser:  'Strom aus den Alpen – das Wasserkraftwerk im Schnittbild',
                   akw:     'Strom aus dem Atom – das Kernkraftwerk im Schnittbild',
@@ -2248,7 +2690,8 @@ baueTab('tab-gezeiten', GEZEITEN);
                   wind:    'Strom aus dem Wind – die Windkraftanlage im Schnittbild',
                   gezeiten:'Strom aus Ebbe und Flut – das Gezeitenkraftwerk im Schnittbild',
                   dauer:   'Vom ersten Plan bis zum ersten Strom – wie lange dauert das?',
-                  zukunft: 'Und morgen? – Energieformen zwischen Labor und Baustelle'};
+                  zukunft: 'Und morgen? – Energieformen zwischen Labor und Baustelle',
+                  schweiz2040: 'Schweiz 2040 – Ihr Strommix im Winter-Stresstest'};
 
   function ausHash(){
     const h = location.hash.replace('#','');
