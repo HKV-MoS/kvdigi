@@ -29,7 +29,7 @@ h1 .accent{color:var(--hkv);}
 /* ── Reiter: Wasserkraft / Kernkraft / Solar ── */
 .reiter{max-width:1240px;margin:20px auto 0;display:flex;justify-content:center;gap:8px;
   flex-wrap:wrap;border-bottom:2px solid var(--line);padding-bottom:0;}
-.reiter-btn{font:inherit;font-weight:800;font-size:15px;min-height:46px;padding:11px 15px;
+.reiter-btn{font:inherit;font-weight:800;font-size:14.5px;min-height:46px;padding:11px 12px;
   border:2px solid transparent;border-bottom:none;border-radius:12px 12px 0 0;
   background:transparent;color:var(--muted);cursor:pointer;position:relative;bottom:-2px;
   display:inline-flex;align-items:center;gap:.5em;transition:all .18s;}
@@ -402,6 +402,63 @@ body.folieziehen{ cursor:nwse-resize; user-select:none; }
 .s4-modell td,.s4-modell th{padding:4px 8px;border-bottom:1px solid var(--line);text-align:left;}
 .s4-modell td.r{text-align:right;font-variant-numeric:tabular-nums;}
 </style>
+<style>
+/* ── Reiter «Erdöl» ── */
+.oel-ansicht{max-width:1240px;margin:18px auto 0;display:flex;flex-wrap:wrap;gap:8px;}
+.oel-ansicht button{font:inherit;font-size:14px;font-weight:800;padding:9px 16px;border-radius:999px;border:2px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;}
+.oel-ansicht button[aria-pressed="true"]{background:#3C6E73;border-color:#3C6E73;color:#fff;}
+.oel-bild{max-width:1240px;margin:12px auto 0;}
+.oel-bild img{display:block;width:100%;height:auto;border-radius:10px;}
+.oel-bild figcaption{font-size:14px;margin-top:10px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;}
+.oel-los{font:inherit;font-weight:800;font-size:14px;padding:8px 14px;border-radius:999px;border:0;background:#c0522b;color:#fff;cursor:pointer;}
+.oel-haupt[hidden], .oel-bild[hidden]{display:none!important;}
+.oel-haupt{max-width:1240px;margin:18px auto 0;display:grid;grid-template-columns:1.05fr .95fr;gap:16px;align-items:start;}
+@media (max-width:900px){ .oel-haupt{grid-template-columns:1fr;} }
+.oel-block{max-width:1240px;margin:16px auto 0;}
+#oel-svg{width:100%;max-width:520px;height:auto;display:block;margin:8px auto 0;}
+#oel-svg .boden{cursor:pointer;}
+#oel-svg .boden:focus{outline:none;}
+#oel-svg .boden:focus .oel-fl, #oel-svg .boden:hover .oel-fl{stroke:#152332;stroke-width:3;}
+#oel-svg .boden.gewaehlt .oel-fl{stroke:#D8AE66;stroke-width:4;}
+#oel-svg .boden .oel-fl{transition:fill .5s ease;}
+#oel-svg .ziel .oel-fl{stroke:#3C6E73;stroke-width:3;stroke-dasharray:6 4;}
+.oel-regler{margin-top:10px;}
+.oel-regler label{font-weight:800;font-size:14px;}
+.oel-regler input{width:100%;accent-color:#c0522b;}
+.oel-skala{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);}
+.oel-stand{font-size:13.5px;margin-top:6px;min-height:2.8em;}
+.oel-info .oel-ikon{font-size:34px;line-height:1;}
+.oel-info h3{font-size:19px;color:var(--hkv);margin:6px 0 2px;}
+.oel-info .oel-meta{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;}
+.oel-info .oel-meta span{background:#f1f5f8;border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700;}
+.oel-info p{font-size:14px;margin-top:8px;}
+.oel-info ul{margin:6px 0 0 18px;font-size:14px;}
+.oel-info .oel-ch{font-size:12.5px;color:var(--muted);border-top:1px dashed var(--line);padding-top:8px;margin-top:10px;}
+.oel-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.oel-chip{font:inherit;font-size:13.5px;font-weight:700;padding:8px 12px;border-radius:999px;border:2px solid var(--line);background:#fff;cursor:pointer;color:var(--ink);}
+.oel-chip:hover{border-color:var(--hkv);}
+.oel-chip[aria-pressed="true"]{border-color:#D8AE66;background:#fbf3df;}
+.oel-chip.ok{cursor:default;opacity:.9;color:#fff;border-color:transparent;}
+.oel-chip.falsch{animation:oelwackel .35s;}
+@keyframes oelwackel{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.oel-boeden{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
+.oel-boeden button{font:inherit;font-size:12.5px;font-weight:800;padding:7px 10px;border-radius:9px;border:1.5px solid var(--line);cursor:pointer;color:#152332;}
+.oel-boeden button:disabled{opacity:.45;cursor:default;}
+.oel-spielstand{margin-top:10px;font-size:14px;font-weight:700;min-height:1.5em;}
+.oel-spielstand.gut{color:#2f6e1f;} .oel-spielstand.nein{color:#9a3a2e;}
+.oel-fakten{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:10px;}
+.oel-fakt{background:#f7f9fb;border:1px solid var(--line);border-radius:12px;padding:11px 13px;font-size:13px;}
+.oel-fakt span{font-size:20px;} .oel-fakt b{display:block;font-size:18px;color:var(--hkv);margin:2px 0;}
+.oel-zwei{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:16px;}
+@media (max-width:700px){ .oel-zwei{grid-template-columns:1fr;} }
+.oel-gtit{font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.oel-bz{display:grid;grid-template-columns:110px 1fr 52px;gap:8px;align-items:center;font-size:13px;margin:4px 0;}
+.oel-bz i{display:block;height:14px;border-radius:4px;}
+.oel-bz span:last-child{text-align:right;font-weight:800;font-variant-numeric:tabular-nums;}
+.oel-co2{margin-top:14px;font-size:14px;background:#eef6f4;border-left:4px solid #3C6E73;border-radius:8px;padding:10px 13px;}
+.oel-co2 a{color:var(--hkv);font-weight:800;}
+@media (prefers-reduced-motion:reduce){ #oel-svg .dampf{display:none;} }
+</style>
 </head>
 <body>
 <script>if(window.self!==window.top){document.documentElement.classList.add('eingebettet');}</script>
@@ -462,6 +519,12 @@ body.folieziehen{ cursor:nwse-resize; user-select:none; }
     <p class="lead">Stellen Sie den Strommix für das Jahr 2040 zusammen. Reicht er auch im Winter –
       wenn die Sonne tief steht, die Seen sich leeren und der Verbrauch am höchsten ist?</p>
   </div>
+  <div class="kopf-var" data-fuer="erdoel" hidden>
+    <h1>Vom Rohöl zum Treibstoff – <span class="accent">die Raffinerie im Schnitt</span></h1>
+    <p class="subtitle">Fraktionierte Destillation · Interaktive Folie</p>
+    <p class="lead">Rohöl ist ein Gemisch aus Tausenden Stoffen. Im Destillationsturm trennt die Hitze es
+      in Fraktionen: Heizen Sie den Ofen, klicken Sie die Böden an – und ordnen Sie zu, was daraus wird.</p>
+  </div>
 </header>
 
 <div class="reiter" role="tablist" aria-label="Kraftwerkstyp">
@@ -469,6 +532,8 @@ body.folieziehen{ cursor:nwse-resize; user-select:none; }
           aria-controls="tab-wasser" data-tab="wasser">💧 Wasserkraft</button>
   <button class="reiter-btn" id="rb-akw" role="tab" aria-selected="false"
           aria-controls="tab-akw" data-tab="akw">☢️ Kernkraft</button>
+  <button class="reiter-btn" id="rb-erdoel" role="tab" aria-selected="false"
+          aria-controls="tab-erdoel" data-tab="erdoel">🛢️ Erdöl</button>
   <button class="reiter-btn" id="rb-solar" role="tab" aria-selected="false"
           aria-controls="tab-solar" data-tab="solar">☀️ Solar</button>
   <button class="reiter-btn" id="rb-wind" role="tab" aria-selected="false"
@@ -698,6 +763,72 @@ body.folieziehen{ cursor:nwse-resize; user-select:none; }
     <p class="hz-quelle">Quelle: SRF News, Sommer 2026 · Angaben Axpo, KKL</p>
   </div>
 </section><!-- /tab-akw -->
+
+<section id="tab-erdoel" class="reiter-panel" role="tabpanel" aria-labelledby="rb-erdoel" hidden>
+  <div class="oel-ansicht" role="group" aria-label="Ansicht wählen">
+    <button type="button" data-ansicht="bild" aria-pressed="true">🖼️ Schnittbild</button>
+    <button type="button" data-ansicht="turm" aria-pressed="false">🔥 Selbst heizen und erkunden</button>
+  </div>
+  <figure class="karte oel-bild" id="oel-bild">
+    <a href="energie_erdoel.jpg?v=1" target="_blank" rel="noopener" title="Bild gross öffnen"><img src="energie_erdoel.jpg?v=1" width="1920" height="1094" loading="lazy"
+         alt="Schnittbild einer Destillationskolonne: Rohöl wird im Ofen erhitzt und strömt unten in den Turm. Von oben nach unten werden abgezapft: Gase unter 30 °C, Benzin 30–100 °C, Naphtha 100–180 °C, Kerosin 180–250 °C, Gasöl (Diesel, Heizöl) 250–350 °C und ganz unten der Rückstand über 350 °C."></a>
+    <figcaption>Der Dampf steigt im Turm auf und kühlt dabei ab. Jede Fraktion kondensiert auf «ihrem» Boden
+      und wird seitlich abgezapft – was nicht verdampft, bleibt unten als Rückstand.
+      <button type="button" class="oel-los" data-ansicht="turm">Jetzt selbst heizen →</button></figcaption>
+  </figure>
+  <div class="oel-haupt" id="oel-haupt" hidden>
+    <div class="karte oel-turmkarte">
+      <div class="k-tit">1 · Der Destillationsturm</div>
+      <p class="k-sub">Unten heiss, oben kühl. Jeder Stoff steigt als Dampf auf, bis es ihm zu kalt wird –
+        dort kondensiert er und wird abgezapft. Klicken Sie einen Boden an.</p>
+      <svg id="oel-svg" viewBox="0 0 500 640" role="img" aria-label="Destillationsturm mit sechs Böden"></svg>
+      <div class="oel-regler">
+        <label for="oel-temp">🔥 Ofen heizen: <b id="oel-temp-wert">20 °C</b></label>
+        <input id="oel-temp" type="range" min="20" max="400" step="5" value="20">
+        <div class="oel-skala"><span>20 °C</span><span>Raffinerie: 350–400 °C</span><span>400 °C</span></div>
+        <p class="oel-stand" id="oel-stand" aria-live="polite"></p>
+      </div>
+    </div>
+    <div class="karte oel-info" id="oel-info" aria-live="polite"></div>
+  </div>
+
+  <div class="karte oel-block">
+    <div class="k-tit">2 · Was kommt woher?</div>
+    <p class="k-sub">Tippen Sie zuerst ein Produkt an, dann den passenden Boden – im Turm oder in der Leiste darunter.</p>
+    <div class="oel-chips" id="oel-chips"></div>
+    <div class="oel-boeden" id="oel-boeden"></div>
+    <div class="oel-spielstand" id="oel-spielstand" aria-live="polite"></div>
+  </div>
+
+  <div class="karte oel-block">
+    <div class="k-tit">3 · Erdöl und die Schweiz</div>
+    <div class="oel-fakten">
+      <div class="oel-fakt"><span>🇨🇭</span><b>46,5 %</b>der Energie, welche die Schweiz verbraucht, stammte 2023 aus Erdölprodukten –
+        vor allem Treibstoffe und Heizöl.</div>
+      <div class="oel-fakt"><span>🏭</span><b>1 Raffinerie</b>Cressier NE ist die letzte der Schweiz (Collombey VS schloss 2015).
+        Sie verarbeitet bis zu 68'000 Fass Rohöl pro Tag – rund 10,8 Millionen Liter.</div>
+      <div class="oel-fakt"><span>🛢️</span><b>¼ aus dem Inland</b>Cressier deckte 2024 rund 26 % des Absatzes. Der Rest kommt als
+        fertiges Produkt, zu zwei Dritteln aus Deutschland.</div>
+      <div class="oel-fakt"><span>🚢</span><b>Pipeline aus Marseille</b>Das Rohöl kommt per Schiff nach Fos-sur-Mer und von dort
+        durch eine Pipeline über den Jura nach Cressier.</div>
+    </div>
+    <div class="oel-zwei">
+      <div><div class="oel-gtit">Woher das Rohöl für Cressier kam (2024)</div><div id="oel-herkunft"></div></div>
+      <div><div class="oel-gtit">Was die Schweiz an Erdölprodukten kaufte (2024)</div><div id="oel-absatz"></div></div>
+    </div>
+    <p class="oel-co2">🌍 <b>Und das CO₂?</b> Wer ein Kilogramm Benzin oder Diesel verbrennt, setzt rund
+      <b>3 Kilogramm CO₂</b> frei – mehr als der Treibstoff selbst wiegt, weil Sauerstoff aus der Luft dazukommt.
+      Wie der Strom der Zukunft aussehen könnte, zeigt der Reiter <a href="#schweiz2040">«Schweiz 2040»</a>.</p>
+  </div>
+
+  <details class="s4-modell">
+    <summary>Hinweise für die Lehrperson</summary>
+    <p>Die Temperaturen sind gerundete Lehrbuchwerte; je nach Raffinerie und Quelle verschieben sich die Grenzen
+      um einige Grad. Der Rückstand wird nicht weiter erhitzt, weil die langen Moleküle ab etwa 400 °C zerfallen:
+      Man destilliert ihn ein zweites Mal unter Unterdruck (Vakuumdestillation). Ein Teil der schweren Fraktionen
+      wird in Crackanlagen in kürzere Moleküle zerlegt – daraus entsteht zusätzliches Benzin.</p>
+  </details>
+</section><!-- /tab-erdoel -->
 
 <section id="tab-solar" class="reiter-panel" role="tabpanel" aria-labelledby="rb-solar" hidden>
   <p class="m-text">Photovoltaik deckte 2024 rund <b>7,4 %</b> der Schweizer Stromproduktion –
@@ -1515,7 +1646,8 @@ body.folieziehen{ cursor:nwse-resize; user-select:none; }
   für Plasmaphysik, EnergieSchweiz, Bulletin electrosuisse; Holzvergaser Nordkorea:
   Radio Free Asia; Schweiz 2040: BFE Elektrizitätsbilanz 2025, Energieperspektiven 2050+, Stromgesetz (Richtwert
   Winterimport), Axpo (Beznau), Parlamentsdienste (Kernenergiegesetz, Juni 2026), Kanton Zürich (Windenergie) ·
-  Stand September 2026 ·
+  Erdöl: Avenergy Suisse (Jahresbericht 2024, Statistiken), BFE (Endenergieverbrauch 2023), Varo/Powerfacts (Raffinerie Cressier),
+  Siedebereiche nach gängigen Lehrmitteln gerundet · Stand Oktober 2026 ·
   Aufbereitet für den ABU-Unterricht.</p>
 <footer>© 2026 <a href="mailto:samuel.mollet@hkv.ch" title="E-Mail an Samuel Mollet" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Samuel Mollet</a> · HKV Aarau · realisiert mit Claude (Anthropic)</footer>
 
@@ -2229,6 +2361,22 @@ dauer:[
        "Ein konzentriertes kantonales Verfahren, nur noch eine Beschwerde auf Kantonsebene","Die Bauzeiten wurden gesetzlich begrenzt"], r:2,
     e:"Der Standortkanton erteilt die Bewilligungen in einem Zug statt nacheinander – und der Rechtsmittelweg wurde gekürzt." }
 ],
+erdoel:[
+  { f:"Weshalb lassen sich die Stoffe im Rohöl im Destillationsturm trennen?",
+    o:["Weil sie verschieden schwer sind und absinken","Weil sie bei verschiedenen Temperaturen sieden",
+       "Weil sie verschiedene Farben haben","Weil sie mit Wasser vermischt werden"], r:1,
+    e:"Jede Fraktion hat ihren eigenen Siedebereich: Der Dampf steigt, bis es ihm zu kalt wird, und kondensiert auf diesem Boden." },
+  { f:"Wo im Turm wird das Kerosin für Flugzeuge abgezapft?",
+    o:["Ganz oben, bei den Gasen","Ganz unten, beim Rückstand","In der Mitte, zwischen Benzin und Diesel","Im Ofen"], r:2,
+    e:"Kerosin siedet zwischen etwa 180 und 250 °C – schwerer als Benzin, leichter als Diesel." },
+  { f:"Warum wird der Rückstand nicht einfach weiter erhitzt?",
+    o:["Weil er sonst explodiert","Weil seine langen Moleküle ab etwa 400 °C zerfallen würden",
+       "Weil er nicht mehr gebraucht wird","Weil der Ofen nicht heisser wird"], r:1,
+    e:"Darum destilliert man ihn ein zweites Mal unter Unterdruck – so siedet er schon bei tieferer Temperatur." },
+  { f:"Wie viele Erdöl-Raffinerien gibt es heute noch in der Schweiz?",
+    o:["Keine","Eine – in Cressier NE","Drei","In jedem Kanton eine"], r:1,
+    e:"Collombey VS hat 2015 geschlossen. Cressier deckt rund einen Viertel des Absatzes, den Rest importiert die Schweiz als fertige Produkte." }
+],
 schweiz2040:[
   { f:"Warum genügt es nicht, übers ganze Jahr genug Strom zu erzeugen?",
     o:["Weil Strom im Sommer teurer ist","Weil Sommerstrom sich nicht in grossen Mengen bis in den Winter speichern lässt",
@@ -2269,7 +2417,7 @@ zukunft:[
 const mf=document.getElementById('mini-fragen');
 const mtyp=document.getElementById('mini-typ');
 const TYPNAME={wasser:'Wasserkraft', akw:'Kernkraft', solar:'Solar', wind:'Wind',
-               gezeiten:'Gezeiten', dauer:'Wie lange?', zukunft:'Zukunft', schweiz2040:'Schweiz 2040'};
+               gezeiten:'Gezeiten', dauer:'Wie lange?', zukunft:'Zukunft', schweiz2040:'Schweiz 2040', erdoel:'Erdöl'};
 
 function baueFragen(typ){
   const liste = FRAGEN[typ] || FRAGEN.wasser;
@@ -2672,6 +2820,216 @@ baueTab('tab-gezeiten', GEZEITEN);
 })();
 </script>
 <script>
+/* ── Reiter «Erdöl»: fraktionierte Destillation ── */
+(function(){
+  const $ = id => document.getElementById(id);
+  const svg = $('oel-svg'); if(!svg) return;
+  const NS = 'http://www.w3.org/2000/svg';
+  /* Lehrbuchwerte (gerundet). von = ab dieser Temperatur verdampft die Fraktion */
+  const F = [
+    { k:'gas', kurz:'Grill, Camping', n:'Gase', u:'Propan, Butan', t:'unter 30 °C', von:-50, c:'1–4', farbe:'#bfe0f0', ikon:'🔥',
+      eig:'Sehr kurze Moleküle, schon bei Zimmertemperatur gasförmig. Sie steigen bis ganz nach oben.',
+      wozu:['Flüssiggas in Gasflaschen: Grill, Campingkocher, Heizstrahler','Heizgas für die Raffinerie selbst'], ch:'' },
+    { k:'benzin', kurz:'Autos, Töffs', n:'Benzin', u:'Leichtbenzin', t:'30–100 °C', von:30, c:'5–7', farbe:'#d8ecb4', ikon:'🚗',
+      eig:'Leicht entzündlich und flüchtig – deshalb riecht es an der Tankstelle.',
+      wozu:['Treibstoff für Autos und Töffs (Bleifrei 95/98)'], ch:'Benzin machte 2024 knapp ein Viertel der Erdölprodukte aus, die in der Schweiz verkauft wurden.' },
+    { k:'naphtha', kurz:'Kunststoffe', n:'Naphtha', u:'Schwerbenzin', t:'100–180 °C', von:100, c:'7–12', farbe:'#f3e9a2', ikon:'🧴',
+      eig:'Etwas schwerer als Leichtbenzin. Wichtigster Rohstoff der Chemie.',
+      wozu:['Grundstoff für Kunststoffe, Farben, Medikamente','Wird zu Autobenzin veredelt','Lösungsmittel (Testbenzin)'], ch:'' },
+    { k:'kerosin', kurz:'Flugzeuge', n:'Kerosin', u:'Petroleum', t:'180–250 °C', von:180, c:'10–15', farbe:'#f6d38c', ikon:'✈️',
+      eig:'Brennt sauber und gefriert erst weit unter null – ideal für Flugzeuge in grosser Höhe.',
+      wozu:['Flugpetrol (Jet A-1)','Lampenpetrol'], ch:'Flugpetrol: 20 % des Schweizer Absatzes 2024 – fast so viel wie Benzin.' },
+    { k:'gasoel', kurz:'Diesel, Heizöl', n:'Gasöl', u:'Diesel und Heizöl', t:'250–350 °C', von:250, c:'15–20', farbe:'#f0b070', ikon:'🚚',
+      eig:'Ölig, schwer entzündlich. Diesel und Heizöl extra-leicht sind fast derselbe Stoff.',
+      wozu:['Diesel für Lastwagen, Busse, Traktoren und Autos','Heizöl extra-leicht für die Ölheizung'], ch:'Diesel war 2024 mit 29 % das meistverkaufte Erdölprodukt der Schweiz.' },
+    { k:'rest', kurz:'Schiffe, Strassen', n:'Rückstand', u:'bleibt flüssig', t:'über 350 °C', von:9999, c:'über 20', farbe:'#a5694a', ikon:'🛣️',
+      eig:'Lange, schwere Moleküle. Zähflüssig bis fest. Weiter erhitzen geht nicht – die Moleküle würden zerfallen.',
+      wozu:['Schweröl für grosse Schiffe','Schmieröl für Motoren und Maschinen','Bitumen für Strassenbelag und Dachpappe'],
+      ch:'Der Rückstand wird ein zweites Mal destilliert – unter Unterdruck, damit er schon bei tieferer Temperatur siedet (Vakuumdestillation).' }
+  ];
+  /* Turm-Geometrie: Boden 0 = oben (Gase) … Boden 5 = unten (Rückstand) */
+  const X0 = 150, X1 = 300, Y0 = 70, H = 72;
+  const yBoden = i => Y0 + i*H;
+  const TEMP_OBEN = ['≈ 30 °C','≈ 70 °C','≈ 140 °C','≈ 200 °C','≈ 290 °C','≈ 370 °C'];
+
+  function el(n, a, kinder){ const e = document.createElementNS(NS, n); for(const k in a) e.setAttribute(k, a[k]); (kinder||[]).forEach(c=>e.appendChild(c)); return e; }
+  function txt(x, y, t, a){ const e = el('text', Object.assign({ x, y }, a||{})); e.textContent = t; return e; }
+
+  /* Grundgerüst */
+  const def = el('defs', {}, [
+    el('linearGradient', { id:'oel-temp-g', x1:0, y1:0, x2:0, y2:1 }, [
+      el('stop', { offset:'0', 'stop-color':'#4a90c2' }), el('stop', { offset:'1', 'stop-color':'#d2462c' }) ]) ]);
+  svg.appendChild(def);
+  /* Temperaturpfeil links */
+  svg.appendChild(el('rect', { x:40, y:Y0, width:12, height:6*H, rx:6, fill:'url(#oel-temp-g)' }));
+  svg.appendChild(txt(46, Y0-12, 'kühl', { 'text-anchor':'middle', 'font-size':13, 'font-weight':800, fill:'#2f6f9c' }));
+  svg.appendChild(txt(46, Y0+6*H+22, 'heiss', { 'text-anchor':'middle', 'font-size':13, 'font-weight':800, fill:'#b23b22' }));
+  TEMP_OBEN.forEach((t,i)=> svg.appendChild(txt(62, yBoden(i)+H/2+4, t, { 'font-size':11, fill:'#5b6b7d' })));
+  /* Kuppel, Ofen, Zuleitung */
+  svg.appendChild(el('path', { d:'M'+X0+' '+Y0+' Q '+(X0+X1)/2+' '+(Y0-46)+' '+X1+' '+Y0+' Z', fill:'#dfe6ec', stroke:'#7c8b97', 'stroke-width':2 }));
+  svg.appendChild(el('rect', { x:X0-22, y:yBoden(6)+24, width:X1-X0+44, height:70, rx:8, fill:'#59636c', stroke:'#3a4249', 'stroke-width':2 }));
+  const flamme = el('g', { id:'oel-flamme' });
+  [0,1,2,3,4].forEach(i=>{ flamme.appendChild(el('path', { d:'M'+(X0+8+i*30)+' '+(yBoden(6)+86)+' q 10 -34 18 0 z', fill:i%2?'#f5a623':'#e8562a', opacity:0 })); });
+  svg.appendChild(flamme);
+  svg.appendChild(txt((X0+X1)/2, yBoden(6)+50, 'OFEN', { 'text-anchor':'middle', 'font-size':13, 'font-weight':800, fill:'#fff', 'letter-spacing':2 }));
+  svg.appendChild(el('path', { d:'M 10 '+(yBoden(6)+60)+' H '+(X0-22), stroke:'#5b4a3a', 'stroke-width':10, fill:'none' }));
+  svg.appendChild(txt(10, yBoden(6)+84, 'Rohöl', { 'font-size':12, 'font-weight':800, fill:'#5b4a3a' }));
+  svg.appendChild(el('path', { d:'M '+((X0+X1)/2)+' '+(yBoden(6)+24)+' V '+(yBoden(6)), stroke:'#7c8b97', 'stroke-width':10, fill:'none' }));
+  /* Böden */
+  const boeden = [];
+  F.forEach((f,i)=>{
+    const y = yBoden(i);
+    const g = el('g', { class:'boden', tabindex:0, role:'button', 'aria-label':f.n+', '+f.t, 'data-i':i });
+    g.appendChild(el('rect', { class:'oel-fl', x:X0, y:y, width:X1-X0, height:H, fill:'#eef2f5', stroke:'#7c8b97', 'stroke-width':1.5 }));
+    g.appendChild(el('line', { x1:X0, y1:y+H-1, x2:X1, y2:y+H-1, stroke:'#7c8b97', 'stroke-width':3 }));
+    g.appendChild(txt((X0+X1)/2, y+30, f.n, { 'text-anchor':'middle', 'font-size':16, 'font-weight':800, fill:'#152332' }));
+    g.appendChild(txt((X0+X1)/2, y+50, f.t, { 'text-anchor':'middle', 'font-size':12.5, fill:'#34495e' }));
+    /* Abzug nach rechts mit Produkt */
+    g.appendChild(el('path', { d:'M '+X1+' '+(y+H/2)+' H '+(X1+46), stroke:'#9aa7b4', 'stroke-width':8, fill:'none' }));
+    g.appendChild(txt(X1+70, y+H/2+12, f.ikon, { 'text-anchor':'middle', 'font-size':30 }));
+    g.appendChild(txt(X1+100, y+H/2+5, f.kurz, { 'font-size':11.5, fill:'#5b6b7d' }));
+    svg.appendChild(g); boeden.push(g);
+    g.addEventListener('click', ()=> bodenKlick(i));
+    g.addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); bodenKlick(i); } });
+  });
+  const dampfEbene = el('g', { class:'dampf' }); svg.appendChild(dampfEbene);
+
+  /* ---------- Infofeld ---------- */
+  let gewaehlt = 4;
+  function zeigeInfo(i){
+    gewaehlt = i;
+    boeden.forEach((g,j)=> g.classList.toggle('gewaehlt', j===i));
+    const f = F[i];
+    $('oel-info').innerHTML = '<span class="oel-ikon">'+f.ikon+'</span><h3>'+f.n+' <small style="font-size:13px;color:#5b6b7d">('+f.u+')</small></h3>' +
+      '<div class="oel-meta"><span>🌡️ '+(f.k==='rest'?'siedet über 350 °C':'siedet '+f.t)+'</span><span>🔗 rund '+f.c+' C-Atome pro Molekül</span><span>'+(i===0?'⬆️ ganz oben':(i===5?'⬇️ ganz unten':'Boden '+(i+1)+' von oben'))+'</span></div>' +
+      '<p>'+f.eig+'</p><p><b>Daraus wird:</b></p><ul>'+f.wozu.map(w=>'<li>'+w+'</li>').join('')+'</ul>' +
+      (f.ch ? '<p class="oel-ch">🇨🇭 '+f.ch+'</p>' : '') +
+      '<p class="oel-ch">Die Regel: Je <b>länger</b> die Moleküle, desto <b>höher</b> der Siedepunkt – und desto <b>weiter unten</b> im Turm wird die Fraktion abgezapft.</p>';
+  }
+
+  /* ---------- Temperatur-Regler ---------- */
+  let T = 20;
+  function verdampft(f){ return f.k !== 'rest' && T >= f.von; }
+  function zeichneTemp(){
+    $('oel-temp-wert').textContent = T + ' °C';
+    F.forEach((f,i)=>{
+      const voll = f.k === 'rest' ? T >= 350 : verdampft(f);
+      boeden[i].querySelector('.oel-fl').setAttribute('fill', voll ? f.farbe : '#eef2f5');
+    });
+    const flammen = svg.querySelectorAll('#oel-flamme path');
+    flammen.forEach((p,j)=> p.setAttribute('opacity', T > 40 + j*70 ? 1 : 0.15));
+    const weg = F.filter(f=>f.k!=='rest' && verdampft(f)).map(f=>f.n);
+    const fl = F.filter(f=>f.k!=='rest' && !verdampft(f)).map(f=>f.n);
+    let t;
+    if(T < 30) t = 'Nur die <b>Gase</b> entweichen schon bei Zimmertemperatur. Alles andere bleibt flüssig im Ofen. Heizen Sie weiter!';
+    else if(fl.length) t = 'Bei <b>'+T+' °C</b> verdampft: <b>'+weg.join(', ')+'</b>. Noch flüssig: '+fl.join(', ')+' und der Rückstand.';
+    else t = 'Bei <b>'+T+' °C</b> ist alles verdampft, was verdampfen kann. Übrig bleibt der <b>Rückstand</b> – noch heisser darf es nicht werden, sonst zerfallen die Moleküle.';
+    $('oel-stand').innerHTML = t;
+  }
+  $('oel-temp').addEventListener('input', e=>{ T = +e.target.value; zeichneTemp(); });
+
+  /* Dampfblasen steigen bis zu ihrem Boden */
+  const blasen = [];
+  let letzte = 0;
+  function tick(zeit){
+    requestAnimationFrame(tick);
+    const panel = $('tab-erdoel'); if(!panel || panel.hidden || $('oel-haupt').hidden) return;
+    if(zeit - letzte > 260){
+      letzte = zeit;
+      const kand = F.filter(f=>f.k!=='rest' && verdampft(f));
+      if(kand.length && blasen.length < 26){
+        const f = kand[Math.floor(Math.random()*kand.length)], i = F.indexOf(f);
+        const c = el('circle', { cx:(Math.random()<.5 ? X0+9+Math.random()*16 : X1-25+Math.random()*16), cy:yBoden(6)-4, r:4+Math.random()*3, fill:f.farbe, stroke:'#7c8b97', 'stroke-width':1, opacity:.9 });
+        dampfEbene.appendChild(c);
+        blasen.push({ c, y:yBoden(6)-4, ziel:yBoden(i)+H-14, v:1.2+Math.random()*0.8 });
+      }
+    }
+    for(let j=blasen.length-1;j>=0;j--){
+      const b = blasen[j]; b.y -= b.v;
+      b.c.setAttribute('cy', b.y);
+      if(b.y <= b.ziel){ b.c.remove(); blasen.splice(j,1); }
+    }
+  }
+  if(!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) requestAnimationFrame(tick);
+
+  /* ---------- Zuordnungsspiel ---------- */
+  const P = [
+    ['🔥','Gasflasche für den Grill','gas'], ['🏕️','Kartusche für den Campingkocher','gas'],
+    ['🚗','Benzin fürs Auto','benzin'], ['🛵','Benzin für den Töff','benzin'],
+    ['🧴','Kunststoff-Flasche (über die Chemie)','naphtha'], ['🎨','Lösungsmittel für Farben','naphtha'],
+    ['✈️','Flugpetrol','kerosin'], ['🪔','Lampenpetrol','kerosin'],
+    ['🚚','Diesel für den Lastwagen','gasoel'], ['🏠','Heizöl für die Ölheizung','gasoel'],
+    ['🚢','Schweröl für das Containerschiff','rest'], ['🛣️','Bitumen für den Strassenbelag','rest']
+  ];
+  let auswahl = null, richtig = 0, versuche = 0;
+  const chips = $('oel-chips');
+  P.slice().sort(()=>Math.random()-0.5).forEach(p=>{
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'oel-chip';
+    b.textContent = p[0] + ' ' + p[1]; b.dataset.k = p[2]; b.setAttribute('aria-pressed','false');
+    b.addEventListener('click', ()=>{
+      if(b.classList.contains('ok')) return;
+      auswahl = (auswahl === b) ? null : b;
+      chips.querySelectorAll('.oel-chip').forEach(x=> x.setAttribute('aria-pressed', String(x === auswahl)));
+      boeden.forEach(g=> g.classList.toggle('ziel', !!auswahl));
+      if(auswahl) $('oel-spielstand').textContent = 'Wohin gehört «' + p[1] + '»? Tippen Sie den Boden an.';
+    });
+    chips.appendChild(b);
+  });
+  const leiste = $('oel-boeden');
+  F.forEach((f,i)=>{
+    const b = document.createElement('button'); b.type = 'button'; b.style.background = f.farbe;
+    b.textContent = f.n + ' · ' + f.t;
+    b.addEventListener('click', ()=> bodenKlick(i));
+    leiste.appendChild(b);
+  });
+  function bodenKlick(i){
+    if(!auswahl){ zeigeInfo(i); return; }
+    const f = F[i], st = $('oel-spielstand');
+    versuche++;
+    if(auswahl.dataset.k === f.k){
+      richtig++;
+      auswahl.classList.add('ok'); auswahl.style.background = '#3C6E73'; auswahl.setAttribute('aria-pressed','false');
+      auswahl.textContent = '✓ ' + auswahl.textContent + ' → ' + f.n;
+      st.className = 'oel-spielstand gut';
+      st.textContent = richtig === P.length
+        ? '🏆 Alle ' + P.length + ' richtig zugeordnet – mit ' + versuche + ' Versuchen.'
+        : 'Richtig! ' + richtig + ' von ' + P.length + ' zugeordnet.';
+      zeigeInfo(i);
+    } else {
+      auswahl.classList.remove('falsch'); void auswahl.offsetWidth; auswahl.classList.add('falsch');
+      const soll = F.findIndex(x=>x.k===auswahl.dataset.k);
+      st.className = 'oel-spielstand nein';
+      st.textContent = 'Nicht ganz: ' + (soll < i ? 'Das Produkt ist leichter – es steigt weiter nach oben.' : 'Das Produkt ist schwerer – es kondensiert weiter unten.');
+      return;
+    }
+    auswahl = null;
+    chips.querySelectorAll('.oel-chip').forEach(x=> x.setAttribute('aria-pressed','false'));
+    boeden.forEach(g=> g.classList.remove('ziel'));
+    if(richtig === P.length) leiste.querySelectorAll('button').forEach(b=> b.disabled = true);
+  }
+
+  /* ---------- Schweiz: zwei Balkendiagramme ---------- */
+  function balken(id, daten, farbe){
+    const max = Math.max.apply(null, daten.map(d=>d[1]));
+    $(id).innerHTML = daten.map(d=>'<div class="oel-bz"><span>'+d[0]+'</span><i style="width:'+(d[1]/max*100)+'%;background:'+(d[2]||farbe)+'"></i><span>'+String(d[1]).replace('.',',')+' %</span></div>').join('');
+  }
+  balken('oel-herkunft', [['USA',54.5],['Nigeria',36.9],['Algerien',3.7],['Libyen',3.6],['Kasachstan',1.1]], '#5f6b78');
+  balken('oel-absatz', [['Diesel',29.4,'#f0b070'],['Benzin',23.8,'#d8ecb4'],['Heizöle',21.7,'#e3a565'],['Flugpetrol',20.0,'#f6d38c'],['Übrige',5.1,'#bfc8d0']]);
+
+  /* ---------- Ansicht: Schnittbild oder interaktiver Turm ---------- */
+  function ansicht(a){
+    $('oel-bild').hidden = (a !== 'bild'); $('oel-haupt').hidden = (a === 'bild');
+    document.querySelectorAll('.oel-ansicht button').forEach(b=> b.setAttribute('aria-pressed', String(b.dataset.ansicht === a)));
+  }
+  document.querySelectorAll('#tab-erdoel [data-ansicht]').forEach(b=> b.addEventListener('click', ()=>{
+    ansicht(b.dataset.ansicht);
+    if(b.classList.contains('oel-los')) $('oel-haupt').scrollIntoView({ behavior:'smooth', block:'start' });
+  }));
+
+  zeigeInfo(4); zeichneTemp();
+})();
+</script>
+<script>
 /* ── Reiter-Umschaltung: Wasserkraft / Kernkraft / Solar ── */
 (function(){
   const btns   = Array.from(document.querySelectorAll('.reiter-btn'));
@@ -2682,7 +3040,8 @@ baueTab('tab-gezeiten', GEZEITEN);
                   gezeiten:document.getElementById('tab-gezeiten'),
                   dauer:   document.getElementById('tab-dauer'),
                   zukunft: document.getElementById('tab-zukunft'),
-                  schweiz2040: document.getElementById('tab-schweiz2040')};
+                  schweiz2040: document.getElementById('tab-schweiz2040'),
+                  erdoel: document.getElementById('tab-erdoel')};
   const koepfe = Array.from(document.querySelectorAll('.kopf-var'));
   const titel  = {wasser:  'Strom aus den Alpen – das Wasserkraftwerk im Schnittbild',
                   akw:     'Strom aus dem Atom – das Kernkraftwerk im Schnittbild',
@@ -2691,7 +3050,8 @@ baueTab('tab-gezeiten', GEZEITEN);
                   gezeiten:'Strom aus Ebbe und Flut – das Gezeitenkraftwerk im Schnittbild',
                   dauer:   'Vom ersten Plan bis zum ersten Strom – wie lange dauert das?',
                   zukunft: 'Und morgen? – Energieformen zwischen Labor und Baustelle',
-                  schweiz2040: 'Schweiz 2040 – Ihr Strommix im Winter-Stresstest'};
+                  schweiz2040: 'Schweiz 2040 – Ihr Strommix im Winter-Stresstest',
+                  erdoel: 'Vom Rohöl zum Treibstoff – die Raffinerie im Schnitt'};
 
   function ausHash(){
     const h = location.hash.replace('#','');
