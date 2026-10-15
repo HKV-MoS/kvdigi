@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lernziele Kapitel R Wohnen · DF24</title>
+<style>
+:root{--petrol:#1F4E5A;--hell:#F4F7F8;--blau:#DCE7EA;--grau:#595959;--linie:#8A9EA3;--bg:#fff;--fg:#1d1d1d}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:Calibri,"Segoe UI",Helvetica,Arial,sans-serif;font-size:15px;line-height:1.4}
+main{max-width:860px;margin:0 auto;padding:24px 16px 48px}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;border-bottom:3px solid var(--petrol);padding-bottom:10px;margin-bottom:18px}
+header img{width:100px;height:35px}
+h1{margin:0 0 4px;font-size:24px;color:var(--petrol)}
+.meta{color:var(--grau);font-size:14px;margin:0}
+.meta em{display:block;font-size:13px}
+h2{background:var(--petrol);color:#fff;font-size:15px;font-weight:400;padding:6px 10px;margin:22px 0 6px;border-radius:3px}
+h2 span{font-weight:700;font-size:17px;margin-right:10px}
+h3{color:var(--petrol);font-size:15px;margin:14px 0 4px}
+h4{color:var(--petrol);font-size:15px;margin:14px 0 4px}
+p{margin:0 0 8px}
+.hinweis{color:var(--grau);font-size:13px}
+table{width:100%;border-collapse:collapse;margin-bottom:6px}
+th,td{border:1px solid var(--linie);padding:4px 7px;vertical-align:middle;text-align:left;font-size:14px}
+th{background:var(--hell);font-weight:700}
+.gew th{background:var(--blau)}
+.nr{width:44px;text-align:center;color:var(--grau)}
+.k{width:44px;text-align:center;font-weight:700;color:var(--petrol)}
+.ok{width:44px;text-align:center}
+.ok input{width:18px;height:18px;accent-color:var(--petrol);cursor:pointer}
+.m{text-align:center}
+tr:has(input:checked) td{background:#EEF5F0}
+td small{display:block;color:var(--grau);font-size:12px;margin-top:2px}
+tr.np td{color:#8a8a8a;background:#fafafa}
+tr.np td.k{color:#9aa}
+tr.np td small.npl{color:#9a6b2a;font-style:italic}
+.stand{display:flex;align-items:center;gap:18px;margin:14px 0 0;padding:10px 14px;border:1px solid var(--linie);border-radius:6px;background:var(--hell)}
+.ring{width:96px;height:96px;flex:none}
+.ring circle{fill:none;stroke-width:12}
+.ring .rest{stroke:#D4DBDD}
+.ring .done{stroke:#C62828;stroke-linecap:butt;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dasharray .4s ease,stroke .4s ease}
+.ring text{font-family:inherit;font-weight:700;font-size:22px;fill:var(--petrol);text-anchor:middle;dominant-baseline:central}
+.legende{flex:1;font-size:14px}
+.legende b{display:block;font-size:15px;color:var(--petrol);margin-bottom:4px}
+.legende span{display:inline-flex;align-items:center;gap:6px;margin-right:16px;color:var(--grau)}
+.legende i{display:inline-block;width:12px;height:12px;border-radius:2px}
+.legende small{display:block;margin-top:4px;color:var(--grau);font-size:12px}
+.legende small a{color:var(--petrol);font-weight:600}
+.legende .ie{background:#C62828}.legende .io{background:#D4DBDD}
+.stand button{font:inherit;padding:4px 10px;border:1px solid var(--petrol);background:#fff;color:var(--petrol);border-radius:4px;cursor:pointer}
+footer{margin-top:28px;border-top:1px solid var(--linie);padding-top:6px;font-size:12px;color:var(--grau);display:flex;justify-content:space-between}
+body.eingebettet main{padding:10px 14px 24px;max-width:none}
+body.eingebettet header{margin-bottom:10px;padding-bottom:6px}
+body.eingebettet h1{font-size:20px}
+body.eingebettet .stand{position:sticky;top:0;z-index:2;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+@media print{.stand button{display:none}main{padding:0}h2{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div>
+    <h1>Lernziele Kapitel R – Wohnen</h1>
+    <p class="meta">ABU · Detailhandelsfachleute EFZ · Lehrmittel S. 448–467 · Klasse DF24<em>Stand 15. Oktober 2026</em></p>
+  </div>
+  <img src="hkv_logo.png" alt="HKV Aarau">
+</header>
+
+<h4>So lesen Sie diese Liste</h4>
+<p>Jedes Lernziel ist mit der Seite oder der Aufgabe im Lehrmittel verknüpft, an der Sie es üben. Die Stufe K zeigt den Anspruch: K1 nennen · K2 erklären und begründen · K3 anwenden und berechnen · K4 analysieren und beurteilen · K5 Stellung nehmen · K6 entwickeln. In der Spalte ✓ haken Sie ab, was Sie sicher können.</p>
+<p class="hinweis">Grau gesetzte Lernziele gehören zum Kapitel, werden an der Prüfung aber nicht abgefragt.</p>
+<div class="stand" aria-live="polite">
+  <svg class="ring" viewBox="0 0 100 100" role="img" aria-labelledby="ringt"><title id="ringt">Fortschritt</title>
+    <circle class="rest" cx="50" cy="50" r="40"></circle>
+    <circle class="done" id="ringdone" cx="50" cy="50" r="40" stroke-dasharray="0 251.3"></circle>
+    <text x="50" y="50" id="ringpct">0 %</text>
+  </svg>
+  <div class="legende"><b id="stand">0 von 38 Lernzielen abgehakt</b>
+    <span><i class="ie" id="farbe"></i>erledigt <strong id="ne">0</strong></span><span><i class="io"></i>offen <strong id="no">38</strong></span>
+    <small id="speicherhinweis">Ihr Stand bleibt in diesem Browser gespeichert.</small>
+  </div>
+  <button type="button" id="reset">Alle Häkchen entfernen</button>
+</div>
+
+<section class="kap"><h2><span>Kapitel R</span>Wohnen · Lehrmittel S. 448–467</h2><h3>Block A · Wohnform und Budget</h3><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">1</td><td>Sie unterscheiden die Wohnformen eigene Wohnung, einzelnes Zimmer und Wohngemeinschaft und nennen je einen Vorteil und einen Nachteil.<small>Üben: S. 450</small></td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 1 erreicht"></td></tr><tr><td class="nr">2</td><td>Sie erstellen für Ihre eigene Situation ein Wohnbudget und wenden dabei die Faustregel für den Mietanteil am Lohn an.<small>Üben: S. 450 · PA 32</small></td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 2 erreicht"></td></tr><tr><td class="nr">3</td><td>Sie beurteilen konkrete Wohnungsinserate nach Ihren Bedürfnissen und Ihren finanziellen Möglichkeiten und begründen Ihren Entscheid.<small>Üben: PA 32</small></td><td class="k">K4</td><td class="ok"><input type="checkbox" aria-label="Lernziel 3 erreicht"></td></tr><tr><td class="nr">4</td><td>Sie erklären, was eine Wohnbaugenossenschaft ist, und nennen Merkmale des Wohnens in einer Genossenschaft.<small>Üben: R20 · S. 463</small></td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 4 erreicht"></td></tr><tr><td class="nr">5</td><td>Sie begründen, welche Wohnform für Ihre in naher Zukunft eintretende Lebenssituation geeignet ist.<small>Üben: PA 33</small></td><td class="k">K5</td><td class="ok"><input type="checkbox" aria-label="Lernziel 5 erreicht"></td></tr></tbody></table><h3>Block B · Der Mietvertrag: Abschluss und Inhalt</h3><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">6</td><td>Sie erklären, wozu sich Vermieterin und Mieter im Mietvertrag gegenseitig verpflichten.<small>Üben: S. 448</small></td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 6 erreicht"></td></tr><tr><td class="nr">7</td><td>Sie nennen die Formvorschrift für den Mietvertrag und leiten daraus ab, weshalb die schriftliche Form trotzdem zu empfehlen ist.<small>Üben: S. 448 · R1</small></td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 7 erreicht"></td></tr><tr><td class="nr">8</td><td>Sie unterscheiden bewegliche und unbewegliche Sachen, die vermietet werden können, und ordnen Beispiele zu.<small>Üben: S. 448</small></td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 8 erreicht"></td></tr><tr><td class="nr">9</td><td>Sie unterscheiden ein befristetes von einem unbefristeten Mietverhältnis und erklären, wie das eine und das andere endet.<small>Üben: S. 451 · R9</small></td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 9 erreicht"></td></tr></tbody></table><h3>Block C · Pflichten der Mieterin und des Mieters</h3><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">10</td><td>Sie nennen die Hauptpflichten der Mietpartei.<small>Üben: S. 448 · R5</small></td><td class="k">K1</td><td class="ok"><input type="checkbox" aria-label="Lernziel 10 erreicht"></td></tr><tr><td class="nr">11</td><td>Sie unterscheiden Nettomiete, Nebenkosten und Verbraucherkosten und ordnen einzelne Kostenarten der richtigen Kategorie zu.<small>Üben: S. 448–449 · R10</small></td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 11 erreicht"></td></tr><tr><td class="nr">12</td><td>Sie erklären die Abrechnung von Akontozahlungen für Nebenkosten und berechnen an einem Beispiel die Nach- oder Rückzahlung.<small>Üben: S. 449</small></td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 12 erreicht"></td></tr><tr><td class="nr">13</td><td>Sie nennen die zulässige Höhe der Mietkaution bei Wohnräumen und erklären, wo sie hinterlegt wird und wem das Geld gehört.<small>Üben: S. 449 · R1</small></td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 13 erreicht"></td></tr><tr><td class="nr">14</td><td>Sie erklären, bis zu welchem Betrag die Mietpartei kleine Reparaturen selbst zu tragen hat, und entscheiden an einem Fall, wer eine Rechnung bezahlen muss.<small>Üben: S. 449 · R11</small></td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 14 erreicht"></td></tr><tr><td class="nr">15</td><td>Sie erläutern, unter welchen Voraussetzungen eine Untermiete zulässig ist und wann die Vermieterin sie verweigern darf.<small>Üben: S. 450 · R13</small></td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 15 erreicht"></td></tr></tbody></table><h3>Block D · Pflichten der Vermieterin und des Vermieters</h3><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">16</td><td>Sie nennen die Pflichten der Vermieterpartei.<small>Üben: S. 449 · R5</small></td><td class="k">K1</td><td class="ok"><input type="checkbox" aria-label="Lernziel 16 erreicht"></td></tr><tr><td class="nr">17</td><td>Sie erklären Zweck und Inhalt des Übergabe- und des Rückgabeprotokolls und begründen, weshalb beide im eigenen Interesse der Mietpartei liegen.<small>Üben: S. 449, 452</small></td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 17 erreicht"></td></tr><tr><td class="nr">18</td><td>Sie beschreiben, in welcher Form eine Mietzinserhöhung angekündigt werden muss, und nennen die Frist, innert der sie angefochten werden kann.<small>Üben: S. 449 · R18, R21</small></td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 18 erreicht"></td></tr><tr><td class="nr">19</td><td>Sie ordnen einzelne Pflichten der Mieter- oder der Vermieterpartei zu und begründen die Zuordnung.<small>Üben: R5</small></td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 19 erreicht"></td></tr></tbody></table><h3>Block E · Beendigung des Mietverhältnisses</h3><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">20</td><td>Sie unterscheiden Kündigungsfrist und Kündigungstermin und erklären den Unterschied an einem Beispiel.<small>Üben: S. 451 · Gelesen–Verstanden 4</small></td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 20 erreicht"></td></tr><tr><td class="nr">21</td><td>Sie nennen Kündigungsfristen und Kündigungstermine für Wohnungen, Geschäftsräume, möblierte Zimmer und bewegliche Sachen.<small>Üben: S. 451</small></td><td class="k">K1</td><td class="ok"><input type="checkbox" aria-label="Lernziel 21 erreicht"></td></tr><tr><td class="nr">22</td><td>Sie bestimmen an einem Fall mit Datumsangaben, ob eine Kündigung rechtzeitig eingetroffen ist, und benennen die Folge einer verspäteten Kündigung.<small>Üben: R3, R6, R17</small></td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 22 erreicht"></td></tr><tr><td class="nr">23</td><td>Sie erklären, weshalb die Vermieterpartei für die Kündigung ein amtliches Formular verwenden muss, und nennen die Folge, wenn sie es nicht tut.<small>Üben: S. 451 · R4</small></td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 23 erreicht"></td></tr><tr><td class="nr">24</td><td>Sie erläutern die besonderen Regeln für Wohngemeinschaften und für Familienwohnungen und begründen, weshalb der Gesetzgeber Familien hier stärker schützt.<small>Üben: S. 452 · R12, R16</small></td><td class="k">K4</td><td class="ok"><input type="checkbox" aria-label="Lernziel 24 erreicht"></td></tr><tr><td class="nr">25</td><td>Sie erklären, unter welchen Bedingungen ein vorzeitiger Auszug mit Nachmieterin oder Nachmieter möglich ist, und prüfen an einem Fall, ob ein Vorschlag zumutbar ist.<small>Üben: S. 452–453 · R2, R12</small></td><td class="k">K4</td><td class="ok"><input type="checkbox" aria-label="Lernziel 25 erreicht"></td></tr></tbody></table><h3>Block F · Rückgabe der Wohnung</h3><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">26</td><td>Sie erklären, in welchem Zustand die Mietsache zurückzugeben ist, und grenzen normale Abnützung von Schaden ab.<small>Üben: S. 452 · R7</small></td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 26 erreicht"></td></tr><tr><td class="nr">27</td><td>Sie berechnen mit der Lebensdauertabelle den Anteil, den die Mietpartei an einen Ersatz zu tragen hat.<small>Üben: S. 452 · R7</small></td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 27 erreicht"></td></tr><tr><td class="nr">28</td><td>Sie beurteilen kritisch, welche Kosten eine Privathaftpflichtversicherung bei der Wohnungsabgabe übernimmt und welche nicht.<small>Üben: R19</small></td><td class="k">K4</td><td class="ok"><input type="checkbox" aria-label="Lernziel 28 erreicht"></td></tr></tbody></table><h3>Block G · Vertragsverletzungen und Rechtsschutz</h3><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">29</td><td>Sie nennen die Ansprüche der Mietpartei bei Mängeln während der Mietdauer.<small>Üben: S. 452</small></td><td class="k">K1</td><td class="ok"><input type="checkbox" aria-label="Lernziel 29 erreicht"></td></tr><tr><td class="nr">30</td><td>Sie beschreiben das Vorgehen der Vermieterpartei bei Zahlungsverzug und bei Verletzung der Sorgfalts- und Rücksichtnahmepflicht, einschliesslich der Fristen.<small>Üben: S. 453</small></td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 30 erreicht"></td></tr><tr><td class="nr">31</td><td>Sie stellen an einem Zahlenstrahl Fälligkeit, Nachfrist und Kündigungsfrist dar und bestimmen den Kündigungstermin.<small>Üben: R17</small></td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 31 erreicht"></td></tr><tr><td class="nr">32</td><td>Sie erklären, wie eine Kündigung angefochten wird, und nennen Frist und zuständige Stelle.<small>Üben: S. 452 · Gelesen–Verstanden 5</small></td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 32 erreicht"></td></tr><tr><td class="nr">33</td><td>Sie beurteilen einfache Fälle aus dem Mietrecht und beziehen begründet Stellung.<small>Üben: R11–R17</small></td><td class="k">K5</td><td class="ok"><input type="checkbox" aria-label="Lernziel 33 erreicht"></td></tr></tbody></table><h3>Block H · Vertiefung</h3><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr class="np"><td class="nr">34</td><td>Sie erklären, was der hypothekarische Referenzzinssatz ist und welche Bedeutung er für die Festsetzung der Mieten hat.<small>Üben: R21</small><small class="npl">wird nicht geprüft</small></td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 34 erreicht"></td></tr><tr class="np"><td class="nr">35</td><td>Sie beschreiben, wie eine Mietzinssenkung verlangt wird, und halten das Vorgehen in Stichworten fest.<small>Üben: R21</small><small class="npl">wird nicht geprüft</small></td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 35 erreicht"></td></tr><tr class="np"><td class="nr">36</td><td>Sie vergleichen Mietzinsdepot und Mietkautionsversicherung an einem Rechnungsbeispiel und begründen, welche Lösung für Sie günstiger ist.<small>Üben: R8, R23</small><small class="npl">wird nicht geprüft</small></td><td class="k">K5</td><td class="ok"><input type="checkbox" aria-label="Lernziel 36 erreicht"></td></tr><tr class="np"><td class="nr">37</td><td>Sie setzen sich mit ökologischen Wohnformen auseinander, zeigen Schwachstellen auf und entwickeln ein eigenes Projekt mit geringem Ressourcenverbrauch.<small>Üben: R15 · S. 460</small><small class="npl">wird nicht geprüft</small></td><td class="k">K6</td><td class="ok"><input type="checkbox" aria-label="Lernziel 37 erreicht"></td></tr><tr><td class="nr">38</td><td>Sie erklären die wichtigsten Fachbegriffe des Mietrechts in eigenen Worten.<small>Üben: R22</small></td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 38 erreicht"></td></tr></tbody></table></section>
+
+<footer><span>DF24 · Lernziele Kapitel R – Wohnen · S. Mollet</span><span>HKV Aarau</span></footer>
+</main>
+<script>
+(function(){
+  if(window.self!==window.top){document.body.classList.add('eingebettet');}
+  var boxes=document.querySelectorAll('.ok input'),stand=document.getElementById('stand');
+  var ring=document.getElementById('ringdone'),pct=document.getElementById('ringpct'),ne=document.getElementById('ne'),no=document.getElementById('no'),farbe=document.getElementById('farbe');
+  var U=2*Math.PI*40;
+  function farbeFuer(f){ /* 0 = Rot, 0.5 = Orange, 1 = Gruen (OKLCH-nah ueber HSL) */
+    var h=f<0.5?35*2*f:35+95*2*(f-0.5), s=f<0.5?70+30*2*f:100-45*2*(f-0.5), l=f<0.5?42+4*2*f:46-10*2*(f-0.5); return 'hsl('+Math.round(h)+' '+Math.round(s)+'% '+Math.round(l)+'%)'; }
+  var KEY='lernziele_df24_kapitel_r';
+  var hinweis=document.getElementById('speicherhinweis');
+  function kannSpeichern(){try{localStorage.setItem(KEY+'_t','1');localStorage.removeItem(KEY+'_t');return true;}catch(e){return false;}}
+  function lesen(){try{var s=localStorage.getItem(KEY);if(!s)return;var a=JSON.parse(s);boxes.forEach(function(b,i){b.checked=!!a[i]});}catch(e){}}
+  function speichern(){try{var a=[];boxes.forEach(function(b){a.push(b.checked?1:0)});localStorage.setItem(KEY,JSON.stringify(a));}catch(e){}}
+  function statusZeigen(){
+    if(kannSpeichern()){hinweis.innerHTML='Ihr Stand bleibt in diesem Browser gespeichert.';return;}
+    hinweis.innerHTML='Speichern ist in diesem Rahmen blockiert. <a href="'+location.href.split('?')[0]+'" target="_blank" rel="noopener">Liste in eigenem Tab öffnen</a>, dort bleibt der Stand erhalten.';
+    if(document.requestStorageAccess){
+      var versucht=false;
+      document.addEventListener('click',function(){ if(versucht)return; versucht=true;
+        document.requestStorageAccess().then(function(){ if(kannSpeichern()){lesen();z();statusZeigen();} },function(){}); },true);
+    }
+  }
+  function z(){var n=0;boxes.forEach(function(b){if(b.checked)n++});var m=boxes.length,f=m?n/m:0;speichern();
+    stand.textContent=n+' von '+m+' Lernzielen abgehakt';ne.textContent=n;no.textContent=m-n;
+    pct.textContent=Math.round(f*100)+' %';ring.setAttribute('stroke-dasharray',(U*f)+' '+(U*(1-f)));
+    var c=farbeFuer(f);ring.style.stroke=c;farbe.style.background=c;}
+  boxes.forEach(function(b){b.addEventListener('change',z)});
+  document.getElementById('reset').addEventListener('click',function(){boxes.forEach(function(b){b.checked=false});z();});
+  lesen();z();statusZeigen();
+})();
+</script>
+</body>
+</html>
