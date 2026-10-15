@@ -41,6 +41,7 @@ tr:has(input:checked) td{background:#EEF5F0}
 .legende span{display:inline-flex;align-items:center;gap:6px;margin-right:16px;color:var(--grau)}
 .legende i{display:inline-block;width:12px;height:12px;border-radius:2px}
 .legende small{display:block;margin-top:4px;color:var(--grau);font-size:12px}
+.legende small a{color:var(--petrol);font-weight:600}
 .legende .ie{background:#C62828}.legende .io{background:#D4DBDD}
 .stand button{font:inherit;padding:4px 10px;border:1px solid var(--petrol);background:#fff;color:var(--petrol);border-radius:4px;cursor:pointer}
 footer{margin-top:28px;border-top:1px solid var(--linie);padding-top:6px;font-size:12px;color:var(--grau);display:flex;justify-content:space-between}
@@ -79,7 +80,7 @@ body.eingebettet .stand{position:sticky;top:0;z-index:2;box-shadow:0 2px 6px rgb
   </svg>
   <div class="legende"><b id="stand">0 von 40 Lernzielen abgehakt</b>
     <span><i class="ie" id="farbe"></i>erledigt <strong id="ne">0</strong></span><span><i class="io"></i>offen <strong id="no">40</strong></span>
-    <small>Ihr Stand bleibt in diesem Browser gespeichert.</small>
+    <small id="speicherhinweis">Ihr Stand bleibt in diesem Browser gespeichert.</small>
   </div>
   <button type="button" id="reset">Alle Häkchen entfernen</button>
 </div>
@@ -97,15 +98,26 @@ body.eingebettet .stand{position:sticky;top:0;z-index:2;box-shadow:0 2px 6px rgb
   function farbeFuer(f){ /* 0 = Rot, 0.5 = Orange, 1 = Gruen (OKLCH-nah ueber HSL) */
     var h=f<0.5?35*2*f:35+95*2*(f-0.5), s=f<0.5?70+30*2*f:100-45*2*(f-0.5), l=f<0.5?42+4*2*f:46-10*2*(f-0.5); return 'hsl('+Math.round(h)+' '+Math.round(s)+'% '+Math.round(l)+'%)'; }
   var KEY='lernziele_p25c_versicherungen_oekologie';
+  var hinweis=document.getElementById('speicherhinweis');
+  function kannSpeichern(){try{localStorage.setItem(KEY+'_t','1');localStorage.removeItem(KEY+'_t');return true;}catch(e){return false;}}
   function lesen(){try{var s=localStorage.getItem(KEY);if(!s)return;var a=JSON.parse(s);boxes.forEach(function(b,i){b.checked=!!a[i]});}catch(e){}}
   function speichern(){try{var a=[];boxes.forEach(function(b){a.push(b.checked?1:0)});localStorage.setItem(KEY,JSON.stringify(a));}catch(e){}}
+  function statusZeigen(){
+    if(kannSpeichern()){hinweis.innerHTML='Ihr Stand bleibt in diesem Browser gespeichert.';return;}
+    hinweis.innerHTML='Speichern ist in diesem Rahmen blockiert. <a href="'+location.href.split('?')[0]+'" target="_blank" rel="noopener">Liste in eigenem Tab öffnen</a>, dort bleibt der Stand erhalten.';
+    if(document.requestStorageAccess){
+      var versucht=false;
+      document.addEventListener('click',function(){ if(versucht)return; versucht=true;
+        document.requestStorageAccess().then(function(){ if(kannSpeichern()){lesen();z();statusZeigen();} },function(){}); },true);
+    }
+  }
   function z(){var n=0;boxes.forEach(function(b){if(b.checked)n++});var m=boxes.length,f=m?n/m:0;speichern();
     stand.textContent=n+' von '+m+' Lernzielen abgehakt';ne.textContent=n;no.textContent=m-n;
     pct.textContent=Math.round(f*100)+' %';ring.setAttribute('stroke-dasharray',(U*f)+' '+(U*(1-f)));
     var c=farbeFuer(f);ring.style.stroke=c;farbe.style.background=c;}
   boxes.forEach(function(b){b.addEventListener('change',z)});
   document.getElementById('reset').addEventListener('click',function(){boxes.forEach(function(b){b.checked=false});z();});
-  lesen();z();
+  lesen();z();statusZeigen();
 })();
 </script>
 </body>
