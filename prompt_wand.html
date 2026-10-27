@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompt-Wand · Prompt des Tages</title>
+<style>
+:root{--petrol:#1F4E5A;--hell:#F4F7F8;--blau:#DCE7EA;--grau:#595959;--linie:#8A9EA3;--gold:#E9B949;--goldhell:#FBF3DC;--rot:#C62828;--ok:#2E7D32;--fg:#1d2a2e;--bg:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:#eef2f3;color:var(--fg);font-family:Calibri,"Segoe UI",Helvetica,Arial,sans-serif;font-size:16px;line-height:1.45}
+.wrap{max-width:980px;margin:0 auto;padding:24px 16px 40px}
+.karte{background:var(--bg);border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.08);padding:22px 26px}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;border-bottom:3px solid var(--petrol);padding-bottom:10px;margin-bottom:14px}
+h1{font-size:28px;color:var(--petrol);margin:0}
+.meta{margin:2px 0 0;color:var(--grau);font-size:15px}
+header img{width:110px;height:auto}
+.form{display:grid;grid-template-columns:200px 1fr auto;gap:10px;align-items:end;background:var(--hell);border:1px solid var(--blau);border-radius:6px;padding:12px}
+.form label{font-weight:700;font-size:14px;color:var(--petrol);display:block;margin-bottom:3px}
+input,textarea{font:inherit;width:100%;padding:8px;border:1px solid var(--linie);border-radius:4px;background:#fff;color:var(--fg)}
+textarea{resize:vertical;min-height:62px}
+button{font:inherit;font-weight:700;padding:8px 14px;border:1px solid var(--petrol);background:var(--petrol);color:#fff;border-radius:4px;cursor:pointer;white-space:nowrap}
+button.zweit{background:#fff;color:var(--petrol)}
+button:disabled{opacity:.55;cursor:default}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #9cc3cc;outline-offset:2px}
+.status{min-height:1.4em;font-weight:600;font-size:14px;margin:6px 2px 0}
+.kopfzeile{display:flex;justify-content:space-between;align-items:baseline;margin:20px 0 8px;gap:12px;flex-wrap:wrap}
+.kopfzeile h2{margin:0;font-size:20px;color:var(--petrol)}
+.kopfzeile small{color:var(--grau)}
+#liste{position:relative;display:grid;gap:10px}
+.eintrag{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;border:1px solid var(--linie);border-radius:8px;padding:10px 12px;background:#fff;position:relative;overflow:hidden}
+.eintrag .balken{position:absolute;left:0;top:0;bottom:0;background:var(--blau);opacity:.55;transition:width .6s ease;z-index:0}
+.eintrag > *{position:relative;z-index:1}
+.platz{font-size:22px;font-weight:800;color:var(--petrol);text-align:center}
+.paar{font-weight:700;color:var(--petrol)}
+.text{white-space:pre-wrap;overflow-wrap:anywhere;margin-top:2px}
+.rechts{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:110px}
+.zahl{font-size:26px;font-weight:800;color:var(--petrol);line-height:1}
+.zahl small{display:block;font-size:12px;font-weight:600;color:var(--grau)}
+.eintrag.erster{border:2px solid var(--gold);background:var(--goldhell)}
+.eintrag.erster .balken{background:var(--gold);opacity:.35}
+.krone{display:inline-block;background:var(--gold);color:#3b2a00;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:10px;margin-left:8px;vertical-align:2px}
+.eigen{font-size:12px;color:var(--grau);text-align:center}
+.huepf{animation:huepf .5s ease}
+@keyframes huepf{0%{transform:scale(1)}40%{transform:scale(1.03)}100%{transform:scale(1)}}
+.leer{border:2px dashed var(--linie);border-radius:8px;padding:22px;text-align:center;color:var(--grau)}
+.lp{margin-top:22px;font-size:14px;color:var(--grau)}
+.lp details{display:inline}
+.lp input{width:110px;display:inline-block;margin:0 6px}
+.weg{background:#fff;color:var(--rot);border-color:var(--rot);font-size:13px;padding:4px 8px}
+footer{display:flex;justify-content:space-between;color:var(--grau);font-size:13px;margin-top:20px;border-top:1px solid var(--blau);padding-top:8px}
+@media (max-width:720px){.form{grid-template-columns:1fr}.eintrag{grid-template-columns:34px 1fr}.rechts{grid-column:1 / -1;flex-direction:row;justify-content:space-between}}
+body.eingebettet{background:#fff}
+body.eingebettet .wrap{padding:0}
+body.eingebettet .karte{box-shadow:none;border-radius:0;padding:16px 22px}
+body.beamer{font-size:20px}
+body.beamer .form,body.beamer .lp,body.beamer .stimmknopf{display:none}
+body.beamer h1{font-size:36px}
+@media (prefers-reduced-motion:reduce){.huepf{animation:none}.eintrag .balken{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="karte">
+<header>
+  <div><h1>Prompt-Wand: Prompt des Tages</h1>
+  <p class="meta">Tragen Sie Ihren besten Prompt ein und stimmen Sie für den besten der anderen. Je mehr Stimmen, desto höher steigt er. <span id="raumAnzeige"></span></p></div>
+  <img src="hkv_logo.png" alt="HKV Aarau">
+</header>
+
+<form class="form" id="form" autocomplete="off">
+  <div><label for="paar">Paar-Name</label><input id="paar" maxlength="40" placeholder="z. B. Team Pizza" required></div>
+  <div><label for="prompt">Ihr bester Prompt</label><textarea id="prompt" maxlength="1500" placeholder="Prompt hier einfügen …" required></textarea></div>
+  <div><button type="submit" id="senden">An die Wand</button></div>
+</form>
+<p class="status" id="status" aria-live="polite"></p>
+
+<div class="kopfzeile"><h2>Rangliste</h2><small id="info">wird geladen …</small></div>
+<div id="liste" aria-live="polite"></div>
+
+<div class="lp" id="lp">
+  <details><summary>Lehrperson</summary>
+    PIN <input id="pin" type="password" inputmode="numeric" maxlength="8" aria-label="PIN der Lehrperson">
+    <button type="button" class="zweit" id="pinOk">Bearbeiten</button>
+    <button type="button" class="weg" id="leeren" hidden>Ganze Wand leeren</button>
+  </details>
+</div>
+
+<footer><span>Keine Namen, keine Personendaten: nur Paar-Spitzname und Prompt.</span><span>HKV Aarau · S. Mollet</span></footer>
+</div></div>
+
+<script>
+(function(){
+  var API='https://eebmnyxqlubirwyykofo.supabase.co/rest/v1/rpc/', KEY='sb_publishable_kaEkMADZLvc-Jok0dlxkBA_u3cbNaQt';
+  var q=new URLSearchParams(location.search);
+  if(window.self!==window.top)document.body.classList.add('eingebettet');
+  if(q.get('beamer')==='1')document.body.classList.add('beamer');
+  var heute=new Date(), zw=function(n){return (n<10?'0':'')+n;};
+  var RAUM=(q.get('raum')||'P26A')+'-'+heute.getFullYear()+'-'+zw(heute.getMonth()+1)+'-'+zw(heute.getDate());
+  document.getElementById('raumAnzeige').textContent='Wand: '+RAUM;
+
+  // Geräte-Kennung (bleibt im Browser; fällt sonst auf eine Sitzungs-Kennung zurück)
+  var GERAET;
+  try{GERAET=localStorage.getItem('prompt_wand_geraet');if(!GERAET){GERAET='g-'+Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem('prompt_wand_geraet',GERAET);}}
+  catch(e){GERAET='s-'+Math.random().toString(36).slice(2)+Date.now().toString(36);}
+
+  function rpc(fn,daten){return fetch(API+fn,{method:'POST',headers:{'apikey':KEY,'Content-Type':'application/json'},body:JSON.stringify(daten)})
+    .then(function(r){return r.text().then(function(t){var d=t?JSON.parse(t):null;if(!r.ok)throw new Error((d&&d.message)||'Verbindung fehlgeschlagen.');return d;});});}
+
+  var liste=document.getElementById('liste'), info=document.getElementById('info'), st=document.getElementById('status');
+  var alt={}, pin='', bearbeiten=false;
+  function melde(t,ok){st.textContent=t;st.style.color=ok?'var(--ok)':'var(--rot)';}
+
+  function zeichne(daten){
+    var max=Math.max(1,daten.reduce(function(m,d){return Math.max(m,d.stimmen);},0));
+    var total=daten.reduce(function(s,d){return s+d.stimmen;},0);
+    info.textContent=daten.length+(daten.length===1?' Prompt':' Prompts')+' · '+total+(total===1?' Stimme':' Stimmen');
+    // FLIP: alte Positionen merken
+    var vorher={};[].forEach.call(liste.children,function(el){if(el.dataset.id)vorher[el.dataset.id]=el.getBoundingClientRect().top;});
+    if(!daten.length){liste.innerHTML='<div class="leer">Noch keine Prompts an der Wand. Der erste kann gleich oben eingetragen werden.</div>';alt={};return;}
+    var vorhanden={};[].forEach.call(liste.children,function(el){if(el.dataset.id)vorhanden[el.dataset.id]=el;});
+    var neu=document.createDocumentFragment();
+    daten.forEach(function(d,i){
+      var el=vorhanden[d.id]||document.createElement('div');
+      el.className='eintrag'+(i===0&&d.stimmen>0?' erster':''); el.dataset.id=d.id;
+      var knopf=d.eigen?'<div class="eigen">Ihr Prompt</div>':
+        '<button type="button" class="stimmknopf'+(d.gewaehlt?' zweit':'')+'" data-id="'+d.id+'" data-g="'+(d.gewaehlt?1:0)+'">'+(d.gewaehlt?'Stimme zurück':'Stimme geben')+'</button>';
+      el.innerHTML='<div class="balken" style="width:'+Math.round(d.stimmen/max*100)+'%"></div>'
+        +'<div class="platz">'+(i+1)+'</div>'
+        +'<div><div class="paar"></div><div class="text"></div></div>'
+        +'<div class="rechts"><div class="zahl">'+d.stimmen+'<small>'+(d.stimmen===1?'Stimme':'Stimmen')+'</small></div>'+knopf
+        +(bearbeiten?'<button type="button" class="weg" data-weg="'+d.id+'">Entfernen</button>':'')+'</div>';
+      el.querySelector('.paar').textContent=d.paar;
+      if(i===0&&d.stimmen>0){var k=document.createElement('span');k.className='krone';k.textContent='Prompt des Tages';el.querySelector('.paar').appendChild(k);}
+      el.querySelector('.text').textContent=d.prompt;
+      if(alt[d.id]!==undefined&&d.stimmen>alt[d.id]){el.classList.remove('huepf');void el.offsetWidth;el.classList.add('huepf');}
+      alt[d.id]=d.stimmen; neu.appendChild(el);
+    });
+    liste.innerHTML=''; liste.appendChild(neu);
+    // FLIP: von alter zu neuer Position gleiten
+    if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      [].forEach.call(liste.children,function(el){var a=vorher[el.dataset.id];if(a===undefined)return;var dy=a-el.getBoundingClientRect().top;if(!dy)return;
+        el.style.transition='none';el.style.transform='translateY('+dy+'px)';requestAnimationFrame(function(){requestAnimationFrame(function(){el.style.transition='transform .6s ease';el.style.transform='';});});});
+    }
+  }
+
+  var laeuft=false;
+  function laden(){if(laeuft)return;laeuft=true;
+    rpc('wand_liste',{p_raum:RAUM,p_geraet:GERAET}).then(zeichne).catch(function(e){info.textContent='Keine Verbindung: '+e.message;}).then(function(){laeuft=false;});}
+
+  document.getElementById('form').addEventListener('submit',function(e){e.preventDefault();
+    var paar=document.getElementById('paar').value.trim(), pr=document.getElementById('prompt').value.trim(), b=document.getElementById('senden');
+    if(pr.length<5){melde('Der Prompt ist zu kurz.',false);return;}
+    b.disabled=true;
+    rpc('wand_eintragen',{p_raum:RAUM,p_geraet:GERAET,p_paar:paar,p_prompt:pr})
+      .then(function(){document.getElementById('prompt').value='';melde('Ihr Prompt hängt an der Wand.',true);laden();})
+      .catch(function(err){melde(err.message,false);}).then(function(){b.disabled=false;});
+  });
+
+  liste.addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b)return;
+    if(b.dataset.weg){rpc('wand_loeschen',{p_pin:pin,p_raum:RAUM,p_prompt_id:b.dataset.weg}).then(laden).catch(function(err){melde(err.message,false);});return;}
+    if(!b.dataset.id)return; b.disabled=true;
+    var p=b.dataset.g==='1'?rpc('wand_zurueck',{p_raum:RAUM,p_geraet:GERAET}):rpc('wand_stimmen',{p_raum:RAUM,p_geraet:GERAET,p_prompt_id:b.dataset.id});
+    p.then(function(){melde(b.dataset.g==='1'?'Stimme zurückgenommen.':'Stimme abgegeben. Sie haben eine Stimme und können sie jederzeit verschieben.',true);laden();})
+     .catch(function(err){melde(err.message,false);b.disabled=false;});
+  });
+
+  document.getElementById('pinOk').addEventListener('click',function(){
+    pin=document.getElementById('pin').value; bearbeiten=!!pin;
+    document.getElementById('leeren').hidden=!bearbeiten; alt={}; laden();
+  });
+  document.getElementById('leeren').addEventListener('click',function(){
+    var b=this; if(b.dataset.sicher!=='1'){b.dataset.sicher='1';b.textContent='Wirklich alles löschen?';return;}
+    rpc('wand_loeschen',{p_pin:pin,p_raum:RAUM,p_prompt_id:null}).then(function(n){melde(n+' Prompts gelöscht.',true);b.dataset.sicher='';b.textContent='Ganze Wand leeren';laden();})
+      .catch(function(err){melde(err.message,false);b.dataset.sicher='';b.textContent='Ganze Wand leeren';});
+  });
+
+  laden(); setInterval(function(){if(!document.hidden)laden();},3000);
+})();
+</script>
+</body>
+</html>
