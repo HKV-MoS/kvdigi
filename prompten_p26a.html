@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Richtig prompten · P26A</title>
+<style>
+:root{--petrol:#1F4E5A;--hell:#F4F7F8;--blau:#DCE7EA;--grau:#595959;--linie:#8A9EA3;--gold:#FBF3DC;--rot:#C62828;--ok:#2E7D32;--bg:#ffffff;--fg:#1d2a2e;--tomate:#E4572E;--teig:#F3D9A4}
+*{box-sizing:border-box}
+body{margin:0;background:#eef2f3;color:var(--fg);font-family:Calibri,"Segoe UI",Helvetica,Arial,sans-serif;font-size:16px;line-height:1.45}
+.wrap{max-width:980px;margin:0 auto;padding:24px 16px 40px}
+.karte{background:var(--bg);border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.08);padding:24px 28px}
+header.kopf{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;border-bottom:3px solid var(--petrol);padding-bottom:12px;margin-bottom:16px}
+h1{font-size:28px;color:var(--petrol);margin:0}
+.meta{margin:4px 0 0;color:var(--grau);font-size:15px}
+header.kopf img{width:110px;height:auto}
+h2{background:var(--petrol);color:#fff;font-size:18px;padding:7px 12px;border-radius:3px;margin:28px 0 12px}
+h2 small{font-weight:400;opacity:.85;margin-left:8px}
+p{margin:0 0 10px}
+table{border-collapse:collapse;width:100%;margin:6px 0 12px}
+th,td{border:1px solid var(--linie);padding:7px 9px;text-align:left;vertical-align:top}
+th{background:var(--blau)}
+.hinweis{background:var(--hell);border-left:4px solid var(--petrol);padding:10px 14px;margin:0 0 12px}
+button{font:inherit;font-weight:600;padding:7px 14px;border:1px solid var(--petrol);background:var(--petrol);color:#fff;border-radius:4px;cursor:pointer}
+button.zweit{background:#fff;color:var(--petrol)}
+button:focus-visible,select:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid #9cc3cc;outline-offset:2px}
+textarea,select{font:inherit;width:100%;padding:8px;border:1px solid var(--linie);border-radius:4px;background:#fff;color:var(--fg)}
+.status{font-weight:600;margin-left:8px}
+/* Pizza-o-Meter */
+.pizza{display:grid;grid-template-columns:200px 1fr;gap:20px;align-items:start}
+.pizza svg{width:200px;height:200px}
+.pizza label{display:flex;gap:10px;align-items:flex-start;padding:6px 8px;border-radius:4px;cursor:pointer}
+.pizza label:hover{background:var(--hell)}
+.pizza input{width:20px;height:20px;margin-top:2px;accent-color:var(--tomate);flex:none}
+.pizza .bs{font-weight:700;color:var(--petrol)}
+#pizzaText{font-weight:700;text-align:center;margin-top:6px;color:var(--petrol)}
+.duell{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:6px 0 12px}
+.duell div{border:1px solid var(--linie);border-radius:6px;padding:8px 10px;background:var(--hell)}
+.duell b{display:block;color:var(--petrol)}
+/* Trainer */
+.prompt{border:1px solid var(--linie);background:var(--hell);padding:12px 14px;font-family:Consolas,Menlo,monospace;font-size:14px;white-space:pre-wrap;margin:10px 0 8px}
+.zwei{display:grid;grid-template-columns:1fr 2fr;gap:12px}
+/* Fehlerjagd */
+.jagd{border-left:4px solid var(--rot);background:var(--gold);padding:12px 14px;font-size:17px;line-height:1.7}
+.satz{cursor:pointer;border-radius:3px;padding:1px 2px}
+.satz:hover{background:#f5e3b5}
+.satz.markiert{background:#f8d0d0;text-decoration:underline wavy var(--rot)}
+ol li{margin-bottom:6px}
+footer{display:flex;justify-content:space-between;color:var(--grau);font-size:13px;margin-top:24px;border-top:1px solid var(--blau);padding-top:8px}
+@media (max-width:700px){.pizza,.zwei{grid-template-columns:1fr}.duell{grid-template-columns:1fr 1fr}.karte{padding:16px}}
+/* im Rahmen von KV digital */
+body.eingebettet{background:#fff}
+body.eingebettet .wrap{padding:0}
+body.eingebettet .karte{box-shadow:none;border-radius:0;padding:18px 24px}
+@media (prefers-reduced-motion:no-preference){.keil{transition:fill .35s}}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="karte">
+
+<header class="kopf">
+  <div><h1>Richtig prompten: KI als Lernhilfe</h1>
+  <p class="meta">ABU · Klasse P26A · Sie arbeiten zu zweit. Bei Fragen kommen Sie nach vorne.</p></div>
+  <img src="hkv_logo.png" alt="HKV Aarau">
+</header>
+
+<table>
+  <tr><th style="width:90px">Zeit</th><th>Was</th><th style="width:140px">Wie</th></tr>
+  <tr><td>0–7′</td><td>Der schlechteste Prompt der Welt</td><td>alle zusammen</td></tr>
+  <tr><td>7–15′</td><td>Prompten wie eine Pizza bestellen</td><td>alle zusammen</td></tr>
+  <tr><td>15–27′</td><td>Spiel 1: Prompt-Duell</td><td>zu zweit</td></tr>
+  <tr><td>27–39′</td><td>Spiel 2: KI als strenger Trainer</td><td>zu zweit</td></tr>
+  <tr><td>39–51′</td><td>Spiel 3: Fehlerjagd «Erwischt!»</td><td>zu zweit</td></tr>
+  <tr><td>51–60′</td><td>Regeln und Prompt des Tages</td><td>alle zusammen</td></tr>
+</table>
+
+<h2>Prompten wie eine Pizza bestellen</h2>
+<p>Niemand ruft in der Pizzeria an und sagt nur «Essen». Ein guter Prompt hat fünf Bausteine.</p>
+<table>
+  <tr><th>Baustein</th><th>Pizza-Bestellung</th><th>Im Prompt</th><th>Beispiel</th></tr>
+  <tr><td><b>1. Rolle</b></td><td>«Pizzeria Bella Napoli?»</td><td>Wer soll die KI sein?</td><td>«Du bist meine strenge, aber witzige ABU-Lehrerin.»</td></tr>
+  <tr><td><b>2. Aufgabe</b></td><td>«Eine Pizza Margherita»</td><td>Was genau soll sie tun?</td><td>«Stelle uns fünf Prüfungsfragen.»</td></tr>
+  <tr><td><b>3. Kontext</b></td><td>«Für vier Personen, eine hat eine Allergie»</td><td>Wer sind wir, worum geht es?</td><td>«Wir sind Lernende Fachleute Apotheke im 1. Lehrjahr. Hier sind unsere Lernziele: …»</td></tr>
+  <tr><td><b>4. Format</b></td><td>«In acht Stücke geschnitten, um 19 Uhr»</td><td>Wie soll die Antwort aussehen?</td><td>«Eine Frage nach der anderen, warte auf unsere Antwort, höchstens drei Sätze.»</td></tr>
+  <tr><td><b>5. Grenzen</b></td><td>«Ohne Oliven!»</td><td>Was soll sie nicht tun?</td><td>«Verrate die Lösung nicht, gib nur Hinweise. Halte dich ans Schweizer Recht.»</td></tr>
+</table>
+
+<h2>Spiel 1: Prompt-Duell <small>zu zweit, 12 Minuten</small></h2>
+<p>Ihr Paar tritt gegen ein anderes Paar an. Beide erhalten den gleichen schwachen Prompt. Verbessern Sie ihn in 5 Minuten und lassen Sie die KI antworten. Die Klasse stimmt ab: Welche Antwort hilft mehr für die Prüfung?</p>
+<div class="duell">
+  <div><b>Duell A</b>«Erklär mir den Lehrvertrag.»</div>
+  <div><b>Duell B</b>«Schreib mir einen Text über Stress.»</div>
+  <div><b>Duell C</b>«Was ist Eustress?»</div>
+  <div><b>Duell D</b>«Mach mir einen Wochenplan.»</div>
+</div>
+<p><b>Ihr verbesserter Prompt</b></p>
+<div class="pizza">
+  <div><svg id="pizzaSvg" viewBox="0 0 200 200" role="img" aria-labelledby="pizzaTitel"><title id="pizzaTitel">Pizza-o-Meter</title></svg>
+  <div id="pizzaText">0 von 5 Zutaten</div></div>
+  <div>
+    <textarea id="duellPrompt" rows="4" placeholder="Schreiben Sie hier Ihren verbesserten Prompt …"></textarea>
+    <p style="margin:10px 0 4px">Haken Sie ab, welche Bausteine Ihr Prompt enthält. Erst mit allen fünf ist die Pizza komplett.</p>
+    <label><input type="checkbox" class="zutat"><span><span class="bs">Rolle:</span> Ich sage der KI, wer sie sein soll.</span></label>
+    <label><input type="checkbox" class="zutat"><span><span class="bs">Aufgabe:</span> Ich sage genau, was sie tun soll.</span></label>
+    <label><input type="checkbox" class="zutat"><span><span class="bs">Kontext:</span> Sie weiss, wer wir sind und worum es geht.</span></label>
+    <label><input type="checkbox" class="zutat"><span><span class="bs">Format:</span> Ich sage, wie die Antwort aussehen soll.</span></label>
+    <label><input type="checkbox" class="zutat"><span><span class="bs">Grenzen:</span> Ich sage, was sie nicht tun soll.</span></label>
+  </div>
+</div>
+
+<h2>Spiel 2: KI als strenger Trainer <small>zu zweit, 12 Minuten</small></h2>
+<p>Wählen Sie eine Rolle, fügen Sie die Lernziele des aktuellen Kapitels ein und kopieren Sie den fertigen Prompt in das KI-Werkzeug. Antworten Sie abwechselnd.</p>
+<div class="zwei">
+  <div><label for="rolle"><b>Rolle der KI</b></label>
+    <select id="rolle">
+      <option>eine Sportreporterin, die jede Antwort live kommentiert</option>
+      <option>mein Grosi, das alles ganz genau wissen will</option>
+      <option>ein pingeliger Bünzli-Hauswart</option>
+      <option>ein strenger Prüfungsexperte</option>
+    </select></div>
+  <div><label for="ziele"><b>Lernziele einfügen</b></label>
+    <textarea id="ziele" rows="3" placeholder="Lernziele aus KV digital hier hineinkopieren …"></textarea></div>
+</div>
+<div class="prompt" id="trainerPrompt"></div>
+<button type="button" id="kopieren">Prompt kopieren</button><span class="status" id="kopierStatus" aria-live="polite"></span>
+<p style="margin-top:12px"><b>Nachhaken lohnt sich:</b> «Erklär das einfacher.» · «Gib uns ein Beispiel aus der Apotheke.» · «Was haben wir vergessen?» · «Woher weisst du das? Nenne den Artikel.»</p>
+
+<h2>Spiel 3: Fehlerjagd «Erwischt!» <small>zu zweit, 12 Minuten</small></h2>
+<p>Diese «KI-Antwort» enthält <b>drei Fehler</b>. Klicken Sie auf die falschen Sätze und prüfen Sie. Belegen Sie jeden Fehler mit dem Lehrmittel oder dem OR. Das schnellste Paar mit drei Belegen gewinnt eine Schoggi.</p>
+<div class="jagd" id="jagd">
+  <span class="satz" data-f="0">Ein Lehrvertrag muss schriftlich abgeschlossen werden.</span>
+  <span class="satz" data-f="1">Die Probezeit dauert mindestens einen Monat und höchstens sechs Monate.</span>
+  <span class="satz" data-f="1">Während der Probezeit können beide Seiten mit einer Frist von einem Monat kündigen.</span>
+  <span class="satz" data-f="0">Bei Minderjährigen unterschreibt zusätzlich die gesetzliche Vertretung.</span>
+  <span class="satz" data-f="1">Geprüft und genehmigt wird der Vertrag von der Berufsfachschule.</span>
+</div>
+<p style="margin-top:10px"><button type="button" id="pruefen">Prüfen</button><span class="status" id="jagdStatus" aria-live="polite"></span></p>
+
+<h2>Die vier Regeln</h2>
+<ol>
+  <li><b>Keine Personendaten.</b> Keine Namen, Fotos oder Noten von Ihnen oder anderen, keine Kundendaten aus der Apotheke. Dort gilt das Berufsgeheimnis.</li>
+  <li><b>Die KI kann sich irren.</b> Fakten prüfen Sie mit Lehrmittel, Gesetz oder Lernzielen.</li>
+  <li><b>Lernen passiert beim Selbermachen.</b> Lassen Sie sich fragen, erklären und Feedback geben, statt fertige Lösungen zu übernehmen.</li>
+  <li><b>Bei bewerteten Arbeiten gilt, was die Lehrperson erlaubt.</b> Wer einen KI-Text als eigene Leistung abgibt, täuscht. Wer KI genutzt hat, sagt das.</li>
+</ol>
+
+<h2>Zum Schluss: Prompt des Tages</h2>
+<p class="hinweis">Stellen Sie Ihren besten Prompt der Klasse vor und tragen Sie ihn in KV digital ein. Die Klasse kürt gemeinsam den Prompt des Tages.</p>
+
+<footer><span>P26A · Richtig prompten · S. Mollet</span><span>HKV Aarau</span></footer>
+</div></div>
+
+<script>
+(function(){
+  if (window.self !== window.top) document.body.classList.add('eingebettet');
+
+  // ---- Pizza-o-Meter: fünf Stücke, je Baustein eines ----
+  var svg=document.getElementById('pizzaSvg'), NS='http://www.w3.org/2000/svg', keile=[];
+  var rand=document.createElementNS(NS,'circle'); rand.setAttribute('cx',100);rand.setAttribute('cy',100);rand.setAttribute('r',96);rand.setAttribute('fill','#E0B66E'); svg.appendChild(rand);
+  for(var i=0;i<5;i++){
+    var a1=(-90+i*72)*Math.PI/180, a2=(-90+(i+1)*72)*Math.PI/180, r=86;
+    var p=document.createElementNS(NS,'path');
+    p.setAttribute('d','M100 100 L'+(100+r*Math.cos(a1)).toFixed(1)+' '+(100+r*Math.sin(a1)).toFixed(1)+' A'+r+' '+r+' 0 0 1 '+(100+r*Math.cos(a2)).toFixed(1)+' '+(100+r*Math.sin(a2)).toFixed(1)+' Z');
+    p.setAttribute('fill','#F3E6CC'); p.setAttribute('stroke','#fff'); p.setAttribute('stroke-width','3'); p.setAttribute('class','keil');
+    svg.appendChild(p); keile.push(p);
+  }
+  var zutaten=[].slice.call(document.querySelectorAll('.zutat')), txt=document.getElementById('pizzaText');
+  var belag=['#E4572E','#F2C14E','#4C9A2A','#D7263D','#F08A4B'];
+  function pizza(){var n=0;zutaten.forEach(function(z,i){keile[i].setAttribute('fill',z.checked?belag[i]:'#F3E6CC');if(z.checked)n++;});
+    txt.textContent=n===5?'Bestellung komplett!':n+' von 5 Zutaten';txt.style.color=n===5?'#2E7D32':'';}
+  zutaten.forEach(function(z){z.addEventListener('change',pizza);}); pizza();
+
+  // ---- Trainer-Prompt ----
+  var rolle=document.getElementById('rolle'), ziele=document.getElementById('ziele'), out=document.getElementById('trainerPrompt');
+  function bau(){var z=ziele.value.trim()||'[Lernziele einfügen]';
+    out.textContent='Du bist '+rolle.value+'. Wir sind zwei Lernende Fachleute Apotheke im 1. Lehrjahr und bereiten uns auf eine ABU-Prüfung vor. Hier sind unsere Lernziele: '+z+'\n\nStelle uns fünf Fragen dazu, eine nach der anderen, und warte jeweils auf unsere Antwort. Verrate die Lösung nicht sofort. Gib uns nach jeder Antwort ein kurzes Feedback in deiner Rolle und sag ehrlich, was noch fehlt.';}
+  rolle.addEventListener('change',bau); ziele.addEventListener('input',bau); bau();
+  var ks=document.getElementById('kopierStatus');
+  function alt(s){try{var ta=document.createElement('textarea');ta.value=s;ta.style.position='fixed';ta.style.left='-9999px';document.body.appendChild(ta);ta.select();var ok=document.execCommand('copy');document.body.removeChild(ta);return ok;}catch(e){return false;}}
+  document.getElementById('kopieren').addEventListener('click',function(){var s=out.textContent;
+    function m(ok){ks.textContent=ok?'Kopiert. Jetzt ins KI-Werkzeug einfügen.':'Bitte den Text markieren und von Hand kopieren.';ks.style.color=ok?'var(--ok)':'var(--rot)';}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(s).then(function(){m(true);},function(){m(alt(s));});}else m(alt(s));});
+
+  // ---- Fehlerjagd: verrät nur die Anzahl, nicht welche ----
+  var saetze=[].slice.call(document.querySelectorAll('.satz')), js=document.getElementById('jagdStatus');
+  saetze.forEach(function(s){s.setAttribute('tabindex','0');s.setAttribute('role','button');
+    function t(){s.classList.toggle('markiert');js.textContent='';}
+    s.addEventListener('click',t); s.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();t();}});});
+  document.getElementById('pruefen').addEventListener('click',function(){
+    var richtig=0,zuviel=0; saetze.forEach(function(s){if(s.classList.contains('markiert')){if(s.dataset.f==='1')richtig++;else zuviel++;}});
+    if(richtig===3&&zuviel===0){js.textContent='Erwischt! Alle drei Fehler gefunden. Jetzt die Belege zeigen.';js.style.color='var(--ok)';}
+    else{js.textContent=richtig+' von 3 Fehlern gefunden'+(zuviel?', '+zuviel+(zuviel===1?' Satz ist':' Sätze sind')+' aber richtig':'')+'. Weitersuchen!';js.style.color='var(--rot)';}
+  });
+})();
+</script>
+</body>
+</html>
