@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Steuern · Training</title>
+<style>
+:root{
+  --bg:#eef2f1; --surface:#ffffff; --ink:#17302b; --muted:#5b6e69; --line:#d4dedb;
+  --brand:#0b3d36; --brand-soft:#e3eeeb; --ok:#1f7a4d; --ok-soft:#e2f3ea; --bad:#b03a2e; --bad-soft:#f8e4e1;
+  --mid:#9a6b00; --mid-soft:#fbf0d6;
+  --f:"Aptos","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#101716; --surface:#18211f; --ink:#e3ece9; --muted:#9bb0aa; --line:#2c3a37;
+  --brand:#7fc4b6; --brand-soft:#1f2e2b; --ok:#6fd19c; --ok-soft:#163327; --bad:#f08a7e; --bad-soft:#3a1f1c;
+  --mid:#e8c46a; --mid-soft:#352c14; color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);font-size:16px;line-height:1.5}
+.wrap{padding:24px 16px 48px;display:flex;justify-content:center}
+.karte{background:var(--surface);max-width:1040px;width:100%;border-radius:14px;box-shadow:0 2px 14px rgba(0,0,0,.07);padding:26px 32px 22px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+header img{height:34px}
+@media (prefers-color-scheme: dark){header img{filter:brightness(0) invert(1)}}
+h1{font-size:26px;margin:4px 0 2px;line-height:1.2}
+.sub{color:var(--muted);margin:0}
+.fortschritt{min-width:220px}
+.balken{height:10px;background:var(--brand-soft);border-radius:6px;overflow:hidden}
+.balken i{display:block;height:100%;width:0;background:var(--brand);transition:width .4s}
+.fortschritt small{color:var(--muted)}
+nav{display:flex;gap:6px;margin:20px 0 16px;flex-wrap:wrap;border-bottom:2px solid var(--line)}
+nav button{font:inherit;font-weight:600;border:0;background:none;color:var(--muted);padding:9px 14px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+nav button[aria-selected="true"]{color:var(--brand);border-bottom-color:var(--brand)}
+nav button:focus-visible,button:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.teil{display:none}.teil.aktiv{display:block}
+.intro{background:var(--brand-soft);border-radius:10px;padding:12px 16px;margin-bottom:16px}
+.intro a{color:var(--brand);font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.fk{border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.fk h3{font-size:16px;margin:0}
+.fk .nr{color:var(--muted);font-weight:600;margin-right:4px}
+.fk textarea{font:inherit;font-size:15px;width:100%;min-height:54px;border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--bg);color:var(--ink);resize:vertical}
+.btn{font:inherit;font-weight:600;font-size:14px;border-radius:8px;padding:6px 12px;cursor:pointer;border:1px solid var(--brand);background:var(--surface);color:var(--brand)}
+.btn.voll{background:var(--brand);color:var(--surface)}
+.loes{display:none;background:var(--bg);border-left:4px solid var(--brand);border-radius:6px;padding:8px 12px;font-size:15px}
+.fk.offen .loes{display:block}
+.selbst{display:none;gap:6px;flex-wrap:wrap;align-items:center;font-size:14px;color:var(--muted)}
+.fk.offen .selbst{display:flex}
+.selbst button{font:inherit;font-size:13px;border-radius:20px;padding:3px 10px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.selbst button.an[data-w="2"]{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.selbst button.an[data-w="1"]{background:var(--mid-soft);border-color:var(--mid);color:var(--mid)}
+.selbst button.an[data-w="0"]{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.fall{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.fall p{margin:0 0 10px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opts button{font:inherit;text-align:left;border:1px solid var(--line);border-radius:8px;padding:8px 12px;background:var(--surface);color:var(--ink);cursor:pointer}
+.opts button:hover{border-color:var(--brand)}
+.opts button.richtig{background:var(--ok-soft);border-color:var(--ok)}
+.opts button.falsch{background:var(--bad-soft);border-color:var(--bad)}
+.opts button:disabled{cursor:default}
+.fb{display:none;margin-top:10px;border-radius:8px;padding:8px 12px;font-size:15px}
+.fb.zeig{display:block}
+.fb.gut{background:var(--ok-soft)}.fb.schlecht{background:var(--bad-soft)}
+.sortier{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px}
+.sortier h3{margin:0 0 4px;font-size:17px}
+.sortier .hinweis{color:var(--muted);font-size:14px;margin:0 0 10px}
+.item{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--line)}
+.item:first-of-type{border-top:0}
+.item .txt{flex:1 1 260px}
+.item .wahl{display:flex;gap:6px}
+.item .wahl button{font:inherit;font-size:14px;border:1px solid var(--line);border-radius:8px;padding:4px 10px;background:var(--surface);color:var(--ink);cursor:pointer}
+.item .wahl button.richtig{background:var(--ok-soft);border-color:var(--ok);color:var(--ok);font-weight:600}
+.item .wahl button.falsch{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.item .erk{flex-basis:100%;display:none;font-size:14px;color:var(--muted);padding-left:2px}
+.item.fertig .erk{display:block}
+.rechner{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;align-items:end;margin:6px 0 4px}
+.rechner label{font-size:14px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+.rechner input{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:100%}
+.ergebnis{font-size:15px;background:var(--brand-soft);border-radius:8px;padding:10px 12px;margin-top:10px}
+.ergebnis b{font-size:18px}
+footer{margin-top:18px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:13px}
+footer button{font:inherit;font-size:13px;background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer}
+body.eingebettet{background:var(--surface)}
+body.eingebettet .wrap{padding:0}
+body.eingebettet .karte{border-radius:0;box-shadow:none;padding:18px 24px 16px}
+body.eingebettet nav{position:sticky;top:0;background:var(--surface);z-index:2;margin-top:12px}
+@media (max-width:600px){.karte{padding:18px 16px}h1{font-size:22px}}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+@media print{.teil{display:block!important}.loes{display:block!important}nav,footer button,.selbst,textarea,.btn{display:none!important}.karte{box-shadow:none}}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="karte">
+
+<header>
+  <div>
+    <h1>Steuern verstehen</h1>
+    <p class="sub">Bund, Kanton, Gemeinde · Steuererklärung · QV-Vorbereitung</p>
+  </div>
+  <div class="fortschritt">
+    <small id="fortText">0 von 0 erledigt</small>
+    <div class="balken"><i id="fortBalken"></i></div>
+  </div>
+</header>
+
+<nav role="tablist">
+  <button role="tab" aria-selected="true" data-t="t1">1 · Grundlagen</button>
+  <button role="tab" aria-selected="false" data-t="t2">2 · Steuerfuss</button>
+  <button role="tab" aria-selected="false" data-t="t3">3 · Fälle</button>
+  <button role="tab" aria-selected="false" data-t="t4">4 · Abzüge &amp; Belege</button>
+  <button role="tab" aria-selected="false" data-t="t5">5 · Ehrlich?</button>
+</nav>
+
+<!-- 1 Grundlagen -->
+<section class="teil aktiv" id="t1" role="tabpanel">
+  <div class="intro">Schauen Sie zuerst das Video <a href="https://www.srf.ch/play/tv/srf-school/video/politik-und-gesellschaft-steuern-49?urn=urn:srf:video:93585342-6329-4543-bcc4-9e17c93b3b09" target="_blank" rel="noopener noreferrer">SRF school: Steuern</a>. Beantworten Sie dann jede Frage zuerst selbst, decken Sie die Lösung auf und schätzen Sie ehrlich ein, ob Sie es gewusst haben.</div>
+  <div class="grid" id="karten"></div>
+</section>
+
+<!-- 2 Steuerfuss -->
+<section class="teil" id="t2" role="tabpanel">
+  <div class="intro">Kanton und Gemeinde rechnen zuerst die <b>einfache Steuer</b> nach dem kantonalen Tarif aus. Diese wird dann mit dem <b>Steuerfuss</b> multipliziert. Spielen Sie mit den Zahlen: Was passiert, wenn Sie in eine Gemeinde mit tieferem Steuerfuss ziehen?</div>
+  <div class="rechner">
+    <label>Einfache Steuer (CHF)<input type="number" id="einfach" value="2000" min="0" step="100"></label>
+    <label>Steuerfuss Kanton (%)<input type="number" id="sfKanton" value="112" min="0" step="1"></label>
+    <label>Steuerfuss Gemeinde (%)<input type="number" id="sfGemeinde" value="105" min="0" step="1"></label>
+    <label>Andere Gemeinde (%)<input type="number" id="sfVergleich" value="85" min="0" step="1"></label>
+  </div>
+  <div class="ergebnis" id="ergebnis"></div>
+  <p class="sub" style="margin-top:10px;font-size:14px">Die Zahlen sind Beispiele. Den aktuellen Steuerfuss Ihrer Wohngemeinde finden Sie auf der Website des Kantonalen Steueramts oder Ihrer Gemeinde. Die direkte Bundessteuer kennt keinen Steuerfuss; sie ist in der ganzen Schweiz gleich hoch.</p>
+  <div class="fall" style="margin-top:14px" id="sfFrage"></div>
+</section>
+
+<!-- 3 Fälle -->
+<section class="teil" id="t3" role="tabpanel">
+  <div class="intro">Entscheiden Sie in jedem Fall. Die Rückmeldung erklärt, warum.</div>
+  <div id="faelle"></div>
+</section>
+
+<!-- 4 Steuererklärung -->
+<section class="teil" id="t4" role="tabpanel">
+  <div class="sortier" id="abzuege">
+    <h3>Darf ich das abziehen?</h3>
+    <p class="hinweis">«Das kannst du von den Steuern abziehen» hört man oft. Entscheiden Sie bei jedem Posten. Die Regeln gelten für Unselbständigerwerbende; die genauen Beträge legt jeder Kanton fest.</p>
+  </div>
+  <div class="sortier" id="unterlagen">
+    <h3>Was gehört auf den Tisch, wenn Sie die Steuererklärung ausfüllen?</h3>
+    <p class="hinweis">Brauchen Sie diesen Beleg oder nicht?</p>
+  </div>
+</section>
+
+<!-- 5 Steuerdelikte -->
+<section class="teil" id="t5" role="tabpanel">
+  <div class="sortier" id="delikte">
+    <h3>Steuerhinterziehung oder Steuerbetrug?</h3>
+    <p class="hinweis">Hinterziehung heisst: Einkommen oder Vermögen nicht oder zu tief angeben. Betrug heisst: dafür gefälschte oder unwahre Urkunden verwenden.</p>
+  </div>
+  <div id="faelle2"></div>
+</section>
+
+<footer>
+  <span>HKV Aarau · ABU · Stand November 2026</span>
+  <button id="reset" type="button">Alles zurücksetzen</button>
+</footer>
+
+</div></div>
+
+<script>
+(function(){
+const imRahmen = window.self !== window.top;
+if (imRahmen) document.body.classList.add("eingebettet");
+
+/* ---------- Inhalte ---------- */
+const KARTEN = [
+ ["Wer muss in der Schweiz Steuern bezahlen?",
+  "Natürliche Personen mit Wohnsitz oder längerem Aufenthalt in der Schweiz (auf Einkommen und Vermögen) und juristische Personen mit Sitz in der Schweiz (auf Gewinn und Kapital). Indirekte Steuern wie die Mehrwertsteuer bezahlen alle, auch Kinder, beim Einkaufen."],
+ ["Wozu braucht der Staat Steuern?",
+  "Damit Bund, Kantone und Gemeinden ihre Aufgaben erfüllen können: soziale Sicherheit, Bildung, Gesundheit, Verkehr, Sicherheit, Umwelt. Steuern sind Abgaben ohne direkte Gegenleistung, im Unterschied zu Gebühren (z. B. für einen Pass)."],
+ ["Ab wann füllen Sie eine eigene Steuererklärung aus?",
+  "Ab dem Steuerjahr, in dem Sie 18 werden. Den Lehrlingslohn müssen Sie aber schon vorher versteuern: Erwerbseinkommen von Minderjährigen wird selbständig besteuert, je nach Kanton mit einem vereinfachten Formular."],
+ ["Was ist der Unterschied zwischen Einkommen und steuerbarem Einkommen?",
+  "Einkommen sind alle Einkünfte, z. B. Lohn, Zinsen, Erwerbsersatz. Davon werden die erlaubten Abzüge abgezogen (z. B. Fahrkosten, Säule 3a, Versicherungsprämien). Was übrig bleibt, ist das steuerbare Einkommen; nur darauf wird die Steuer berechnet."],
+ ["Wovon hängt die Höhe Ihrer Steuern ab? Nennen Sie vier Faktoren.",
+  "Höhe von Einkommen und Vermögen · Abzüge · Zivilstand und Kinder · Wohnkanton und Wohngemeinde (Tarif und Steuerfuss) · Konfession (Kirchensteuer)."],
+ ["Was bedeutet Steuerprogression?",
+  "Mit steigendem Einkommen steigt nicht nur der Steuerbetrag, sondern auch der Steuersatz in Prozent. Wer doppelt so viel verdient, bezahlt deshalb mehr als doppelt so viel Steuern. Begründung: Wer mehr hat, ist wirtschaftlich leistungsfähiger."],
+ ["Was ist der Unterschied zwischen direkten und indirekten Steuern?",
+  "Direkte Steuern werden bei der steuerpflichtigen Person selbst erhoben, nach ihrer Leistungsfähigkeit (Einkommens-, Vermögens-, Gewinnsteuer; Bund, Kanton, Gemeinde). Indirekte Steuern stecken im Preis von Waren und Dienstleistungen, z. B. Mehrwertsteuer (Normalsatz 8.1 %), Mineralöl-, Tabak- oder Alkoholsteuer; sie gehen an den Bund."],
+ ["Was ist die Verrechnungssteuer und wozu dient sie?",
+  "Die Bank zieht 35 % von Zinsen über CHF 200 und von Dividenden direkt ab und liefert sie dem Bund. Wer das Vermögen und die Erträge in der Steuererklärung angibt, bekommt die 35 % zurück. Sie ist also ein Anreiz, ehrlich zu deklarieren."],
+ ["Was ist eine Lenkungsabgabe? Geben Sie ein Beispiel.",
+  "Eine Abgabe, die ein Verhalten steuern soll, nicht in erster Linie Geld einbringen. Beispiel CO2-Abgabe auf Heizöl und Erdgas: Sie macht fossile Brennstoffe teurer; ein grosser Teil des Ertrags wird über die Krankenkassenprämien an die Bevölkerung zurückverteilt."],
+ ["Wer entscheidet, wofür die Steuern ausgegeben werden?",
+  "Die Regierung (Bundesrat, Regierungsrat, Gemeinderat) erstellt das Budget, das Parlament beschliesst es: Bundesversammlung, Grosser Rat oder Gemeindeversammlung bzw. Einwohnerrat. In Kantonen und Gemeinden kann auch das Volk mitentscheiden, z. B. über Steuerfuss oder grosse Ausgaben."],
+ ["Was sagt die Fiskalquote aus? Wo steht die Schweiz?",
+  "Sie zeigt, wie viel Steuern und obligatorische Sozialversicherungsbeiträge im Verhältnis zur Wirtschaftsleistung (BIP) bezahlt werden. Die Schweiz liegt bei rund 27 % und damit deutlich unter dem Durchschnitt der OECD-Länder (rund 34 %)."],
+ ["Welches sind die grössten Einnahmen und Ausgaben des Bundes?",
+  "Einnahmen: Mehrwertsteuer und direkte Bundessteuer, je etwa ein Drittel. Ausgaben: Am meisten geht an die soziale Wohlfahrt (v. a. AHV/IV), danach folgen Finanzen und Steuern (Anteile der Kantone), Verkehr, Bildung und Forschung sowie Armee. Aktuelle Zahlen: Taschenstatistik der Eidgenössischen Finanzverwaltung."],
+];
+
+const SF_FRAGE = {
+ q:"Der Gemeinderat schlägt vor, den Steuerfuss von 105 % auf 100 % zu senken. Wer entscheidet darüber?",
+ o:["Das Kantonale Steueramt, weil es die Steuern veranlagt.",
+    "Die Stimmberechtigten der Gemeinde an der Gemeindeversammlung bzw. der Einwohnerrat, zusammen mit dem Budget.",
+    "Der Bundesrat, weil er für die ganze Schweiz einheitliche Steuern festlegt.",
+    "Der Gemeinderat allein, weil er die Gemeinde führt."],
+ r:1,
+ e:"Den Steuerfuss der Gemeinde beschliesst jedes Jahr die Gemeindeversammlung oder der Einwohnerrat mit dem Budget, den kantonalen Steuerfuss der Grosse Rat. Der Gemeinderat macht nur den Antrag."
+};
+
+const FAELLE = [
+ {q:"Nach der Lehre studieren Sie in Zürich und wohnen dort unter der Woche in einem WG-Zimmer. Jedes Wochenende fahren Sie zu Ihren Eltern nach Aarau, wo Ihr Freundeskreis und Ihr Verein sind. Wo bezahlen Sie Steuern?",
+  o:["In Zürich, weil Sie dort die meisten Tage verbringen.","In Aarau, weil Ihr Lebensmittelpunkt bei der Familie bleibt.","Je zur Hälfte in Zürich und in Aarau."], r:1,
+  e:"Ledige Personen in Ausbildung, die regelmässig zu den Eltern zurückkehren, sind Wochenaufenthalterinnen und Wochenaufenthalter. Ihr Steuerwohnsitz bleibt am Ort der Familie. In Zürich melden Sie sich als Wochenaufenthalter an."},
+ {q:"Nach dem QV reisen Sie für drei Monate nach Australien. Ihre Wohnung in der Schweiz behalten Sie, und Sie melden sich nicht ab. Was gilt für die Steuern?",
+  o:["Sie bleiben in der Schweiz steuerpflichtig wie bisher.","Für die drei Monate bezahlen Sie keine Steuern.","Sie müssen die Steuern in Australien bezahlen."], r:0,
+  e:"Ihr Wohnsitz bleibt in der Schweiz, also auch die Steuerpflicht. Weil Sie in dieser Zeit kein Einkommen haben, fallen die Steuern für dieses Jahr tiefer aus."},
+ {q:"Sie leisten nach der Lehre die Rekrutenschule. Sie erhalten Sold und Erwerbsersatz (EO). Was müssen Sie versteuern?",
+  o:["Beides, Sold und Erwerbsersatz.","Nur den Sold, die EO ist eine Sozialversicherung.","Nur den Erwerbsersatz, der Sold ist steuerfrei."], r:2,
+  e:"Der Sold für Militär-, Zivilschutz- und Zivildienst ist steuerfrei. Der Erwerbsersatz ersetzt Lohn und ist darum steuerbar; Sie erhalten dafür eine Bescheinigung für die Steuererklärung."},
+ {q:"Lea ist 17 und verdient als Lernende CHF 1’100 im Monat. Sie meint: «Steuern zahle ich erst ab 18.» Stimmt das?",
+  o:["Ja, vor 18 läuft alles über die Steuererklärung der Eltern.","Nein, ihr Lehrlingslohn wird schon jetzt selbständig besteuert.","Ja, Lehrlingslöhne sind grundsätzlich steuerfrei."], r:1,
+  e:"Erwerbseinkommen von Minderjährigen wird selbständig besteuert, auch der Lehrlingslohn. Weil der Lohn tief ist und Abzüge möglich sind, bleibt oft wenig oder nichts zu bezahlen. Vermögen und übrige Einkünfte von Minderjährigen werden noch bei den Eltern versteuert."},
+ {q:"Nach dem Lehrabschluss steigt Ihr Lohn von CHF 1’300 auf CHF 4’800. Worauf müssen Sie achten?",
+  o:["Auf nichts, die Steuern werden direkt vom Lohn abgezogen.","Die Steuern steigen stärker als der Lohn; legen Sie jeden Monat Geld dafür zur Seite.","Die Steuern bleiben gleich, bis Sie 25 sind."], r:1,
+  e:"Wegen der Progression steigt die Steuer überproportional. Die Rechnung kommt erst nachträglich (provisorische Rechnung im laufenden Jahr, Schlussrechnung später). Wer kein Geld zurücklegt, erlebt eine böse Überraschung. Faustregel: rund einen Monatslohn pro Jahr reservieren und Raten zahlen. Quellenbesteuert sind nur Personen ohne Niederlassungsbewilligung."},
+];
+
+const ABZUEGE = [
+ ["Generalabonnement oder Abo für den Arbeitsweg","ja","Fahrkosten zwischen Wohn- und Arbeitsort sind Berufskosten. Bei der direkten Bundessteuer gilt ein Maximum."],
+ ["Mehrkosten fürs Mittagessen auswärts","ja","Wer mittags nicht nach Hause kann, darf einen Pauschalabzug für auswärtige Verpflegung machen."],
+ ["Einzahlungen in die Säule 3a","ja","Bis zum gesetzlichen Maximum voll abziehbar. Darum lohnt sich die 3a doppelt."],
+ ["Krankenkassenprämien","teilweise","Nur im Rahmen des Versicherungsabzugs, eines festen Höchstbetrags. Erhaltene Prämienverbilligung wird abgezogen."],
+ ["Selbst bezahlte Arzt- und Medikamentenrechnungen","teilweise","Nur der Teil, der 5 % des Nettoeinkommens übersteigt. Franchise und Selbstbehalt zählen dazu."],
+ ["Weiterbildung im Beruf, selbst bezahlt","ja","Berufsorientierte Aus- und Weiterbildung ist bis zu einem Höchstbetrag abziehbar."],
+ ["Spende an eine gemeinnützige Organisation","ja","Ab einem Mindestbetrag (Bund: CHF 100) und bis zu einem Höchstanteil am Einkommen."],
+ ["Neue Kleider für den Ausgang","nein","Lebenshaltungskosten sind nie abziehbar."],
+ ["Privates Handyabo","nein","Private Ausgaben sind nicht abziehbar, auch wenn man das Handy manchmal für die Arbeit braucht."],
+ ["Busse wegen zu schnellen Fahrens","nein","Bussen sind nicht abziehbar."],
+];
+const ABZ_OPT = [["ja","abziehbar"],["teilweise","teilweise"],["nein","nicht abziehbar"]];
+
+const UNTERLAGEN = [
+ ["Lohnausweis des Arbeitgebers","ja","Grundlage für das Einkommen; der Arbeitgeber stellt ihn im Januar aus."],
+ ["Steuerausweis bzw. Zinsausweis der Bank per 31.12.","ja","Für Vermögen, Zinsen und die Rückforderung der Verrechnungssteuer."],
+ ["Bescheinigung über Einzahlungen in die Säule 3a","ja","Ohne Bescheinigung kein Abzug."],
+ ["Kassenzettel vom Wocheneinkauf","nein","Lebenshaltungskosten spielen keine Rolle."],
+ ["Prämienrechnung und Leistungsabrechnung der Krankenkasse","ja","Für den Versicherungsabzug und allfällige Krankheitskosten."],
+ ["Mietvertrag der Wohnung","nein","Mietkosten sind für Mieterinnen und Mieter nicht abziehbar (Ausnahme: einzelne Kantone kennen einen Mietabzug, Aargau nicht)."],
+ ["Bescheinigung über EO oder Arbeitslosenentschädigung","ja","Ersatzeinkommen ist steuerbar."],
+];
+const UNT_OPT = [["ja","brauche ich"],["nein","brauche ich nicht"]];
+
+const DELIKTE = [
+ ["Tim gibt den Lohn aus seinem Nebenjob im Service nicht an.","h","Er verschweigt Einkommen, verwendet aber keine falschen Dokumente: Hinterziehung."],
+ ["Sara ändert auf ihrem Lohnausweis den Betrag von 62’000 auf 52’000 Franken.","b","Sie fälscht eine Urkunde, um Steuern zu sparen: Betrug."],
+ ["Jonas vergisst, ein Sparkonto mit 8’000 Franken anzugeben.","h","Auch fahrlässig nicht angegebenes Vermögen ist Hinterziehung."],
+ ["Mia lässt sich von einer Kollegin eine Rechnung für einen Kurs ausstellen, den sie nie besucht hat, und zieht ihn ab.","b","Eine inhaltlich unwahre Urkunde ist Betrug, auch wenn sie echt aussieht."],
+];
+const DEL_OPT = [["h","Hinterziehung"],["b","Betrug"]];
+
+const FAELLE2 = [
+ {q:"Was passiert, wenn eine Steuerhinterziehung entdeckt wird?",
+  o:["Nur die fehlenden Steuern werden nachbezahlt.","Nachsteuer, Verzugszins und eine Busse, meist so hoch wie die hinterzogene Steuer.","Gefängnis von mindestens einem Jahr."], r:1,
+  e:"Zusätzlich zur Nachsteuer mit Zins wird eine Busse verhängt, in der Regel das Einfache der hinterzogenen Steuer, bis zum Dreifachen. Beim Steuerbetrug kommt ein Strafverfahren dazu (Geldstrafe oder Freiheitsstrafe bis drei Jahre). Wer sich einmal im Leben selbst anzeigt, bevor die Behörde etwas weiss, bezahlt Nachsteuer und Zins, aber keine Busse."},
+ {q:"Warum schadet Steuerhinterziehung allen, nicht nur dem Staat?",
+  o:["Weil die ehrlichen Steuerzahlenden mehr bezahlen müssen oder Leistungen gekürzt werden.","Weil die Hinterziehenden dann weniger Geld ausgeben.","Sie schadet niemandem, solange es kleine Beträge sind."], r:0,
+  e:"Fehlende Einnahmen müssen andere bezahlen, oder der Staat spart bei Schulen, Spitälern und Verkehr. Ausserdem leidet das Vertrauen: Wenn alle das Gefühl haben, die anderen schummeln, sinkt die Steuermoral."},
+];
+
+/* ---------- Speicher ---------- */
+const KEY="hkv_steuern_v1"; let S={};
+try{ S=JSON.parse(localStorage.getItem(KEY)||"{}"); }catch(e){ S={}; }
+function save(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} fort(); }
+
+/* ---------- Bauen ---------- */
+const el=(t,c,h)=>{const e=document.createElement(t); if(c)e.className=c; if(h!=null)e.innerHTML=h; return e;};
+
+const kw=document.getElementById("karten");
+KARTEN.forEach(([q,a],i)=>{
+  const id="k"+i, k=el("div","fk");
+  k.innerHTML=`<h3><span class="nr">${i+1}</span>${q}</h3>
+   <textarea placeholder="Ihre Antwort in Stichworten …" aria-label="Ihre Antwort"></textarea>
+   <div><button class="btn" type="button">Lösung zeigen</button></div>
+   <div class="loes">${a}</div>
+   <div class="selbst">Gewusst? <button data-w="2" type="button">ja</button><button data-w="1" type="button">teilweise</button><button data-w="0" type="button">nein</button></div>`;
+  const ta=k.querySelector("textarea");
+  ta.value=(S.t&&S.t[id])||"";
+  ta.addEventListener("input",()=>{S.t=S.t||{};S.t[id]=ta.value;save();});
+  k.querySelector(".btn").addEventListener("click",()=>{k.classList.toggle("offen");});
+  k.querySelectorAll(".selbst button").forEach(b=>b.addEventListener("click",()=>{
+    S[id]=b.dataset.w; save(); markSelbst(k,id);
+  }));
+  if(S[id]!=null){k.classList.add("offen");markSelbst(k,id);}
+  kw.appendChild(k);
+});
+function markSelbst(k,id){k.querySelectorAll(".selbst button").forEach(b=>b.classList.toggle("an",b.dataset.w===S[id]));}
+
+function mcBlock(f,id,ziel){
+  const d=el("div","fall");
+  d.innerHTML=`<p><b>${f.q}</b></p><div class="opts"></div><div class="fb"></div>`;
+  const os=d.querySelector(".opts"), fb=d.querySelector(".fb");
+  f.o.forEach((t,j)=>{const b=el("button",null,t); b.type="button"; b.addEventListener("click",()=>{S[id]=j;save();zeige();}); os.appendChild(b);});
+  function zeige(){
+    if(S[id]==null) return;
+    const ok=S[id]===f.r;
+    [...os.children].forEach((b,j)=>{b.disabled=true;b.classList.toggle("richtig",j===f.r);b.classList.toggle("falsch",j===S[id]&&!ok);});
+    fb.className="fb zeig "+(ok?"gut":"schlecht");
+    fb.innerHTML=(ok?"<b>Richtig.</b> ":"<b>Nicht ganz.</b> ")+f.e;
+  }
+  zeige(); ziel.appendChild(d);
+}
+mcBlock(SF_FRAGE,"sf",document.getElementById("sfFrage"));
+document.getElementById("sfFrage").classList.remove("fall");
+FAELLE.forEach((f,i)=>mcBlock(f,"f"+i,document.getElementById("faelle")));
+FAELLE2.forEach((f,i)=>mcBlock(f,"g"+i,document.getElementById("faelle2")));
+
+function sortBlock(liste,opts,pref,ziel){
+  liste.forEach(([t,r,e],i)=>{
+    const id=pref+i, it=el("div","item");
+    it.innerHTML=`<div class="txt">${t}</div><div class="wahl"></div><div class="erk"></div>`;
+    const w=it.querySelector(".wahl"), erk=it.querySelector(".erk");
+    opts.forEach(([v,l])=>{const b=el("button",null,l); b.type="button"; b.dataset.v=v; b.addEventListener("click",()=>{S[id]=v;save();zeige();}); w.appendChild(b);});
+    function zeige(){
+      if(S[id]==null) return;
+      const ok=S[id]===r;
+      [...w.children].forEach(b=>{b.disabled=true;b.classList.toggle("richtig",b.dataset.v===r);b.classList.toggle("falsch",b.dataset.v===S[id]&&!ok);});
+      it.classList.add("fertig"); erk.textContent=(ok?"✓ ":"✗ ")+e;
+    }
+    zeige(); ziel.appendChild(it);
+  });
+}
+sortBlock(ABZUEGE,ABZ_OPT,"a",document.getElementById("abzuege"));
+sortBlock(UNTERLAGEN,UNT_OPT,"u",document.getElementById("unterlagen"));
+sortBlock(DELIKTE,DEL_OPT,"d",document.getElementById("delikte"));
+
+/* ---------- Rechner ---------- */
+const chf=n=>"CHF "+Math.round(n).toLocaleString("de-CH").replace(/,/g,"’");
+function rechne(){
+  const e=+document.getElementById("einfach").value||0, k=+document.getElementById("sfKanton").value||0,
+        g=+document.getElementById("sfGemeinde").value||0, v=+document.getElementById("sfVergleich").value||0;
+  const a=e*k/100, b=e*g/100, c=e*v/100;
+  document.getElementById("ergebnis").innerHTML=
+   `Kantonssteuer ${chf(e)} × ${k} % = ${chf(a)}<br>Gemeindesteuer ${chf(e)} × ${g} % = ${chf(b)}<br>`+
+   `Total Kanton und Gemeinde: <b>${chf(a+b)}</b><br>`+
+   `In der anderen Gemeinde (${v} %): <b>${chf(a+c)}</b>, also ${chf(Math.abs(b-c))} ${b>=c?"weniger":"mehr"} pro Jahr.`;
+}
+["einfach","sfKanton","sfGemeinde","sfVergleich"].forEach(i=>document.getElementById(i).addEventListener("input",rechne));
+rechne();
+
+/* ---------- Fortschritt ---------- */
+const IDS=[...KARTEN.map((_,i)=>"k"+i),"sf",...FAELLE.map((_,i)=>"f"+i),...ABZUEGE.map((_,i)=>"a"+i),
+  ...UNTERLAGEN.map((_,i)=>"u"+i),...DELIKTE.map((_,i)=>"d"+i),...FAELLE2.map((_,i)=>"g"+i)];
+function fort(){
+  const n=IDS.filter(i=>S[i]!=null).length;
+  document.getElementById("fortText").textContent=n+" von "+IDS.length+" erledigt";
+  document.getElementById("fortBalken").style.width=(100*n/IDS.length)+"%";
+}
+fort();
+
+document.getElementById("reset").addEventListener("click",()=>{S={};save();location.reload();});
+
+/* ---------- Tabs ---------- */
+const tabs=[...document.querySelectorAll("nav button")];
+tabs.forEach(b=>b.addEventListener("click",()=>{
+  tabs.forEach(x=>x.setAttribute("aria-selected",x===b?"true":"false"));
+  document.querySelectorAll(".teil").forEach(s=>s.classList.toggle("aktiv",s.id===b.dataset.t));
+  try{ window.scrollTo(0,0); }catch(e){}
+}));
+})();
+</script>
+</body>
+</html>
