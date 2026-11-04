@@ -42,6 +42,8 @@ nav button:focus-visible,button:focus-visible{outline:3px solid var(--brand);out
 .fk textarea{font:inherit;font-size:15px;width:100%;min-height:54px;border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--bg);color:var(--ink);resize:vertical}
 .btn{font:inherit;font-weight:600;font-size:14px;border-radius:8px;padding:6px 12px;cursor:pointer;border:1px solid var(--brand);background:var(--surface);color:var(--brand)}
 .btn.voll{background:var(--brand);color:var(--surface)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.warte{font-size:13px;color:var(--muted);margin-left:8px}
 .loes{display:none;background:var(--bg);border-left:4px solid var(--brand);border-radius:6px;padding:8px 12px;font-size:15px}
 .fk.offen .loes{display:block}
 .selbst{display:none;gap:6px;flex-wrap:wrap;align-items:center;font-size:14px;color:var(--muted)}
@@ -113,7 +115,7 @@ body.eingebettet nav{position:sticky;top:0;background:var(--surface);z-index:2;m
 
 <!-- 1 Grundlagen -->
 <section class="teil aktiv" id="t1" role="tabpanel">
-  <div class="intro">Schauen Sie zuerst das Video <a href="https://www.srf.ch/play/tv/srf-school/video/politik-und-gesellschaft-steuern-49?urn=urn:srf:video:93585342-6329-4543-bcc4-9e17c93b3b09" target="_blank" rel="noopener noreferrer">SRF school: Steuern</a>. Beantworten Sie dann jede Frage zuerst selbst, decken Sie die Lösung auf und schätzen Sie ehrlich ein, ob Sie es gewusst haben.</div>
+  <div class="intro">Schauen Sie zuerst das Video <a href="https://www.srf.ch/play/tv/srf-school/video/politik-und-gesellschaft-steuern-49?urn=urn:srf:video:93585342-6329-4543-bcc4-9e17c93b3b09" target="_blank" rel="noopener noreferrer">SRF school: Steuern</a>. Beantworten Sie dann jede Frage zuerst selbst. Die Lösung lässt sich erst aufdecken, wenn Sie mindestens eine Minute und 60 Anschläge lang geschrieben haben; Einfügen zählt nicht. Schätzen Sie danach ehrlich ein, ob Sie es gewusst haben.</div>
   <div class="grid" id="karten"></div>
 </section>
 
@@ -281,13 +283,36 @@ KARTEN.forEach(([q,a],i)=>{
   const id="k"+i, k=el("div","fk");
   k.innerHTML=`<h3><span class="nr">${i+1}</span>${q}</h3>
    <textarea placeholder="Ihre Antwort in Stichworten …" aria-label="Ihre Antwort"></textarea>
-   <div><button class="btn" type="button">Lösung zeigen</button></div>
+   <div><button class="btn" type="button" disabled>Lösung zeigen</button><span class="warte"></span></div>
    <div class="loes">${a}</div>
    <div class="selbst">Gewusst? <button data-w="2" type="button">ja</button><button data-w="1" type="button">teilweise</button><button data-w="0" type="button">nein</button></div>`;
   const ta=k.querySelector("textarea");
   ta.value=(S.t&&S.t[id])||"";
-  ta.addEventListener("input",()=>{S.t=S.t||{};S.t[id]=ta.value;save();});
-  k.querySelector(".btn").addEventListener("click",()=>{k.classList.toggle("offen");});
+  const btn=k.querySelector(".btn"), warte=k.querySelector(".warte");
+  const WARTEZEIT=60000, ANSCHLAEGE=60;
+  function sperre(){
+    if(S[id]!=null){btn.disabled=false;warte.textContent="";return;}
+    const start=S.s&&S.s[id];
+    if(!ta.value.trim()){btn.disabled=true;warte.textContent="Schreiben Sie zuerst Ihre Antwort.";return;}
+    const rest=Math.ceil((start+WARTEZEIT-Date.now())/1000);
+    const fehlt=Math.max(0,ANSCHLAEGE-((S.n&&S.n[id])||0));
+    const teile=[];
+    if(rest>0) teile.push("Lösung in "+rest+" s");
+    if(fehlt>0) teile.push("noch "+fehlt+" Anschläge");
+    if(teile.length){btn.disabled=true;warte.textContent=teile.join(" · ");if(rest>0)setTimeout(sperre,1000);}
+    else{btn.disabled=false;warte.textContent="";}
+  }
+  ta.addEventListener("input",ev=>{
+    S.t=S.t||{};S.t[id]=ta.value;
+    const typ=ev.inputType||"";
+    if(typ==="insertText"||typ==="insertCompositionText"||typ==="insertLineBreak"){
+      S.n=S.n||{};S.n[id]=((S.n[id])||0)+Math.max(1,(ev.data||"").length);
+    }
+    if(ta.value.trim()&&!(S.s&&S.s[id])){S.s=S.s||{};S.s[id]=Date.now();}
+    save();sperre();
+  });
+  btn.addEventListener("click",()=>{if(!btn.disabled)k.classList.toggle("offen");});
+  sperre();
   k.querySelectorAll(".selbst button").forEach(b=>b.addEventListener("click",()=>{
     S[id]=b.dataset.w; save(); markSelbst(k,id);
   }));
