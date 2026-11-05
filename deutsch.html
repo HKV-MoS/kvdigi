@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deutsch üben – Rechtschreibung</title>
+<style>
+  :root{
+    --tief:#213B42; --petrol:#3C6E73; --gold:#D8AE66; --papier:#F4F8FB;
+    --ink:#1d2f36; --muted:#5b6b7d; --card:#ffffff; --line:#e2e8f1;
+    --gruen:#2E7D4F; --rot:#B3423A;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--papier); color:var(--ink);
+    font-family:'Aptos','Segoe UI',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;
+    font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:860px; margin:0 auto; padding:0 18px 70px}
+
+  header{
+    background:linear-gradient(135deg,#213B42 0%,#3C6E73 100%);
+    color:#fff; padding:20px 22px 20px; box-shadow:0 2px 8px rgba(0,0,0,.12); text-align:center;
+  }
+  .hkvlogo{ display:inline-block; line-height:0; margin:0 0 8px; opacity:.96;
+            transition:opacity .15s ease, transform .15s ease; }
+  .hkvlogo img{ height:38px; width:auto; display:block; }
+  .hkvlogo:hover{ opacity:1; transform:scale(1.03); }
+  @media (max-width:560px){ .hkvlogo img{ height:29px; } }
+  .augenbraue{font-size:11px;font-weight:700;letter-spacing:2.4px;color:var(--gold);
+              margin-bottom:5px;text-transform:uppercase}
+  .augenbraue .cr{font-weight:500;letter-spacing:.2px;opacity:.75;text-transform:none;font-size:11.5px}
+  .augenbraue .cr a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+  header h1{font-size:clamp(19px,3vw,25px); font-weight:700; letter-spacing:-.01em}
+  header h1 .gold{color:var(--gold)}
+  header .sub{margin-top:5px; font-size:13.5px; color:rgba(255,255,255,.84)}
+
+  nav.tabs{
+    position:sticky; top:0; z-index:20; background:rgba(244,248,251,.97);
+    backdrop-filter:saturate(140%) blur(6px); border-bottom:1px solid var(--line);
+  }
+  .tabs-inner{max-width:860px; margin:0 auto; padding:0 12px; display:flex; gap:2px; overflow-x:auto}
+  nav.tabs button{
+    flex:0 0 auto; appearance:none; background:none; border:0; border-bottom:3px solid transparent;
+    padding:12px 14px 10px; font:inherit; font-size:14px; font-weight:600; color:var(--muted);
+    cursor:pointer; white-space:nowrap; transition:color .15s, border-color .15s;
+  }
+  nav.tabs button:hover{color:var(--ink)}
+  nav.tabs button[aria-selected="true"]{color:var(--petrol); border-bottom-color:var(--petrol)}
+  nav.tabs .nr{display:inline-block; font-size:11.5px; font-weight:700; color:var(--gold); margin-right:6px}
+
+  section.kap{display:none; padding-top:22px}
+  section.kap.aktiv{display:block}
+
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:18px 20px; margin-bottom:16px; box-shadow:0 1px 3px rgba(20,50,80,.05);
+  }
+  .card h2{font-size:17.5px; font-weight:700; margin-bottom:3px}
+  .card .lead{color:var(--muted); font-size:14px; margin-bottom:14px}
+
+  .knopf{
+    appearance:none; border:0; border-radius:9px; background:var(--petrol); color:#fff;
+    font:inherit; font-weight:700; font-size:14.5px; padding:10px 18px; cursor:pointer;
+    transition:background .15s;
+  }
+  .knopf:hover{background:var(--tief)}
+  .knopf:disabled{opacity:.45; cursor:default}
+  .knopf.zweit{background:#fff; color:var(--petrol); border:1.5px solid var(--petrol)}
+  .knopf.zweit:hover{background:var(--papier)}
+  .knopf.klein{font-size:13px; padding:7px 13px}
+  .reihe{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+  .stand{font-size:13px; color:var(--muted); font-weight:600}
+  .stand b{color:var(--petrol)}
+
+  .stufen{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px}
+  .stufen button, .modus button{
+    appearance:none; background:#fff; border:1.5px solid var(--line); border-radius:999px;
+    padding:6px 14px; font:inherit; font-size:13px; font-weight:600; color:var(--muted); cursor:pointer;
+    transition:all .15s;
+  }
+  .stufen button:hover, .modus button:hover{border-color:var(--petrol); color:var(--petrol)}
+  .stufen button[aria-pressed="true"]{background:var(--petrol); border-color:var(--petrol); color:#fff}
+  .modus{display:inline-flex; gap:0; margin-bottom:14px; border:1.5px solid var(--line); border-radius:999px; padding:3px; background:#fff}
+  .modus button{border:0; padding:6px 15px}
+  .modus button[aria-pressed="true"]{background:var(--gold); color:#3A2A09}
+
+  /* ---------- Regel ---------- */
+  details.regel{
+    background:#fff; border:1px solid var(--line); border-left:4px solid var(--gold);
+    border-radius:12px; padding:12px 16px; margin-bottom:16px;
+  }
+  details.regel summary{
+    cursor:pointer; font-weight:800; color:var(--tief); font-size:15px; list-style:none;
+    display:flex; align-items:center; gap:8px;
+  }
+  details.regel summary::-webkit-details-marker{display:none}
+  details.regel summary::before{content:'▸'; color:var(--gold); font-size:12px; transition:transform .15s}
+  details.regel[open] summary::before{transform:rotate(90deg)}
+  details.regel summary .kurz{font-weight:600; color:var(--muted); font-size:13px}
+  .regelinhalt{margin-top:10px; display:grid; gap:10px}
+  .merk{background:#FFF6E2; border:1px solid #E9D59B; border-radius:10px; padding:10px 13px; font-size:14.4px}
+  .merk b{color:#6A4C10}
+  .bsp{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:8px}
+  .bsp div{background:var(--papier); border:1px solid var(--line); border-radius:10px; padding:9px 12px; font-size:13.8px}
+  .bsp h4{font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--petrol); margin-bottom:4px}
+  .bsp em{font-style:normal; font-weight:800; color:var(--tief); background:rgba(216,174,102,.28); border-radius:2px; padding:0}
+  .achtung{font-size:13.6px; border-top:1px dashed var(--line); padding-top:9px}
+  .achtung b{color:var(--rot)}
+
+  /* ---------- Lückenwörter ---------- */
+  .aufgabe{
+    background:var(--papier); border:1px solid var(--line); border-radius:12px;
+    padding:20px 18px; text-align:center; margin-bottom:14px;
+  }
+  .asatz{font-size:clamp(18px,2.6vw,22px); line-height:1.5; margin-bottom:16px}
+  .luecke{display:inline-block; min-width:4.2em; border-bottom:3px solid var(--gold); color:var(--petrol);
+          font-weight:800; padding:0 4px}
+  .luecke.ok{border-color:var(--gruen); color:var(--gruen)}
+  .luecke.nein{border-color:var(--rot); color:var(--rot)}
+  .wahl{display:flex; gap:10px; justify-content:center; flex-wrap:wrap}
+  .wahl button{
+    font:inherit; font-size:19px; font-weight:700; letter-spacing:.01em; min-width:132px;
+    padding:11px 20px; border-radius:11px; border:2px solid var(--line); background:#fff; color:var(--ink);
+    cursor:pointer; transition:border-color .12s, background .12s, transform .12s;
+  }
+  .wahl button:hover{border-color:var(--petrol); transform:translateY(-1px)}
+  .wahl button.richtig{border-color:var(--gruen); background:#E7F5EC; color:#1d6a40}
+  .wahl button.falsch{border-color:var(--rot); background:#FBECEA; color:var(--rot)}
+  .wahl button:disabled{cursor:default; transform:none}
+  .rueck{margin-top:14px; font-size:14.4px; min-height:1.6em}
+  .rueck.gut{color:var(--gruen); font-weight:700}
+  .rueck.nein{color:var(--rot); font-weight:700}
+  .rueck .warum{display:block; font-weight:500; color:var(--ink); margin-top:4px}
+
+  /* ---------- Fehler finden ---------- */
+  .ftext{
+    font-size:clamp(17px,2.4vw,21px); line-height:2.05; background:#fff; border:1px solid var(--line);
+    border-radius:12px; padding:14px 16px; margin-bottom:12px;
+  }
+  .fw{cursor:pointer; border-radius:5px; padding:1px 2px; transition:background .12s}
+  .fw:hover{background:rgba(60,110,115,.10)}
+  .fw.mark{background:#FDE7C2; box-shadow:inset 0 -2px 0 var(--gold)}
+  .fw.treffer{background:#E1F2E7; box-shadow:inset 0 -2px 0 var(--gruen)}
+  .fw.verpasst{background:#FBE3DF; box-shadow:inset 0 -2px 0 var(--rot)}
+  .fw.fehlalarm{text-decoration:line-through; text-decoration-color:var(--rot); background:#F3F3F3}
+  .fw .korr{display:inline-block; font-size:.78em; font-weight:800; color:var(--gruen); margin-left:3px; vertical-align:.25em}
+  .fhinweis{font-size:13px; color:var(--muted); margin-bottom:12px}
+  .fzaehl{font-weight:700; color:var(--petrol)}
+
+  /* ---------- Diktat ---------- */
+  .dhinweis{
+    background:#FFF6E2; border:1px solid #E3CE86; border-left:4px solid var(--gold);
+    border-radius:9px; padding:11px 14px; font-size:13.6px; margin-bottom:14px;
+  }
+  .stimmzeile{
+    display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+    background:#F3F7F7; border:1px solid var(--line); border-radius:10px;
+    padding:9px 12px; margin-bottom:14px;
+  }
+  .stimmzeile > label{font-size:12.6px; font-weight:700; color:var(--muted)}
+  .stimmzeile select{
+    font:inherit; font-size:13.4px; padding:6px 9px; max-width:100%;
+    border:1.5px solid var(--line); border-radius:8px; background:#fff; color:var(--ink);
+  }
+  @media (max-width:560px){ .stimmzeile select{flex:1 1 100%} }
+  .dfeld{
+    width:100%; font:inherit; font-size:16px; padding:12px 14px; border-radius:10px;
+    border:1.5px solid var(--line); background:#fff; color:var(--ink); resize:vertical;
+    min-height:76px; line-height:1.5;
+  }
+  .dfeld:focus{outline:none; border-color:var(--petrol); box-shadow:0 0 0 3px rgba(60,110,115,.14)}
+  .dloesung{margin-top:14px; padding:14px 16px; border-radius:10px; background:var(--papier);
+            border:1px solid var(--line); display:none}
+  .dloesung.zeig{display:block}
+  .dzeile{font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+          color:var(--muted); margin-bottom:5px}
+  .dsatz{font-size:17px; line-height:1.7; margin-bottom:12px; word-wrap:break-word}
+  .dsatz .ok{color:var(--gruen)}
+  .dsatz .falsch{color:var(--rot); background:rgba(179,66,58,.12); border-radius:3px; padding:0 2px}
+  .dsatz .gk{color:#8A5A00; background:rgba(216,174,102,.30); border-radius:3px; padding:0 2px}
+  .dsatz .fehlt{color:var(--rot); text-decoration:underline; text-decoration-style:wavy}
+  .dsatz .zuviel{color:var(--muted); text-decoration:line-through}
+  .durteil{font-size:14px; font-weight:600}
+  .durteil.gut{color:var(--gruen)} .durteil.fast{color:#8A6D0B} .durteil.schlecht{color:var(--rot)}
+  .legende{font-size:12.4px; color:var(--muted); margin-top:4px}
+  .legende span{padding:0 3px; border-radius:3px}
+
+  /* ---------- Vitrine ---------- */
+  .tabs button .punkt{display:inline-block; width:7px; height:7px; border-radius:50%;
+                      background:var(--gold); margin-left:5px; vertical-align:2px}
+  .vgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:13px; margin-top:4px}
+  .vkarte{border:1.5px solid var(--line); border-radius:12px; padding:13px 14px; background:#fff}
+  .vkarte h3{font-size:14.5px; margin:0 0 2px; color:var(--petrol)}
+  .vkarte .vwas{font-size:12.4px; color:var(--muted); margin-bottom:10px}
+  .vreihe{display:flex; gap:9px; align-items:flex-end}
+  .vstufe{text-align:center; flex:1 1 0; min-width:0}
+  .vstufe svg{width:100%; max-width:52px; height:auto; display:block; margin:0 auto 3px}
+  .vstufe .vzahl{font-size:11.4px; font-weight:700; color:var(--muted); white-space:nowrap}
+  .vstufe.offen svg{opacity:.22; filter:grayscale(1)}
+  .vstufe.offen .vzahl{font-weight:500}
+  .vbalken{height:6px; border-radius:999px; background:#E9EEF1; margin-top:11px; overflow:hidden}
+  .vbalken i{display:block; height:100%; background:var(--petrol); border-radius:999px; transition:width .4s}
+  .vrest{font-size:12.2px; color:var(--muted); margin-top:6px}
+  .vkranz{display:flex; gap:15px; align-items:center; margin-top:16px; padding:14px 16px;
+          border:1.5px solid var(--line); border-radius:12px; background:#FFFDF6}
+  .vkranz.offen{background:#fff}
+  .vkranz svg{width:66px; height:66px; flex:0 0 auto}
+  .vkranz.offen svg{opacity:.22; filter:grayscale(1)}
+  .vkranz b{display:block; font-size:14.5px; color:var(--petrol); margin-bottom:2px}
+  .vkranz span{font-size:12.8px; color:var(--muted)}
+  .vfuss{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-top:16px}
+  .vnull{font-size:12.4px; background:none; border:none; color:var(--muted);
+         text-decoration:underline; text-underline-offset:2px; cursor:pointer; padding:4px 2px; font-family:inherit}
+  .vnull:hover{color:var(--rot)}
+  .jubel{
+    position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(14px);
+    z-index:99998; display:flex; gap:11px; align-items:center; max-width:min(92vw,430px);
+    background:#fff; border:1.5px solid var(--gold); border-radius:13px;
+    padding:11px 16px 11px 13px; box-shadow:0 8px 26px rgba(21,35,50,.22);
+    opacity:0; pointer-events:none; transition:opacity .3s, transform .3s;
+  }
+  .jubel.da{opacity:1; transform:translateX(-50%) translateY(0)}
+  .jubel svg{width:40px; height:40px; flex:0 0 auto}
+  .jubel b{display:block; font-size:14px; color:var(--petrol)}
+  .jubel span{font-size:12.6px; color:var(--muted)}
+
+  .zoomleiste{
+    position:fixed; right:12px; top:12px; z-index:99999; display:flex; gap:2px;
+    background:rgba(255,255,255,.78); border:1px solid rgba(21,35,50,.14); border-radius:999px;
+    padding:3px; box-shadow:0 3px 12px rgba(21,35,50,.18);
+    opacity:.55; transition:opacity .18s; backdrop-filter:blur(4px);
+  }
+  .zoomleiste:hover,.zoomleiste:focus-within{opacity:1}
+  .zoomleiste button{
+    width:27px; height:27px; border-radius:999px; padding:0; border:none; background:transparent;
+    color:#152332; font-size:14px; line-height:1; cursor:pointer;
+  }
+  .zoomleiste button:hover{background:rgba(21,35,50,.09)}
+
+  footer.fuss{
+    max-width:860px; margin:30px auto 0; padding:16px 18px 0; border-top:1px solid var(--line);
+    font-size:12.4px; color:var(--muted);
+  }
+  footer.fuss p{margin-bottom:5px}
+  footer.fuss a{color:var(--petrol)}
+  @media print{ nav.tabs,.zoomleiste{display:none} section.kap{display:block!important} }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="hkvlogo" href="https://www.hkvaarau.ch/berufsfachschule" target="_blank" rel="noopener"
+     title="Handelsschule KV Aarau"><img src="hkv_logo_weiss.png?v=1" alt="HKV Aarau"
+     onerror="this.parentNode.style.display='none'"></a>
+  <div class="augenbraue">Deutsch üben <span class="cr">· © 2026 <a
+    href="mailto:samuel.mollet@hkv.ch" title="E-Mail an Samuel Mollet">S. Mollet</a></span></div>
+  <h1>Rechtschreibung – <span class="gold">die vier Stolpersteine</span></h1>
+  <div class="sub">Gross oder klein · Doppelkonsonant · Dehnungs-h · ä oder e · dazu ein Diktat · fünfzehn Pokale zu holen</div>
+</header>
+
+<nav class="tabs" role="tablist" aria-label="Übungen">
+  <div class="tabs-inner">
+    <button role="tab" aria-selected="true"  data-k="gross"><span class="nr">1</span>Gross / klein</button>
+    <button role="tab" aria-selected="false" data-k="doppel"><span class="nr">2</span>Doppelkonsonant</button>
+    <button role="tab" aria-selected="false" data-k="dehnung"><span class="nr">3</span>Dehnungs-h</button>
+    <button role="tab" aria-selected="false" data-k="umlaut"><span class="nr">4</span>ä oder e</button>
+    <button role="tab" aria-selected="false" data-k="diktat"><span class="nr">5</span>Diktat</button>
+    <button role="tab" aria-selected="false" data-k="vitrine"><span class="nr">6</span>Vitrine</button>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<!-- ============================ 1 GROSS / KLEIN ============================ -->
+<section class="kap aktiv" id="k-gross" role="tabpanel">
+  <details class="regel" open>
+    <summary>Die Regel <span class="kurz">· Wann schreibt man gross?</span></summary>
+    <div class="regelinhalt">
+      <div class="merk"><b>Gross</b> schreibt man das erste Wort im Satz, alle <b>Nomen</b> und die
+      <b>Höflichkeitsform</b> (Sie, Ihnen, Ihr). Alles andere – Verben, Adjektive, Pronomen – schreibt man klein.</div>
+      <div class="bsp">
+        <div><h4>Probe: Artikel davor?</h4>Passt <i>der, die, das</i> oder <i>ein</i> davor, ist es ein Nomen:
+          das <em>W</em>etter, die <em>K</em>asse, ein <em>F</em>ehler.</div>
+        <div><h4>Aus Verb oder Adjektiv wird ein Nomen</h4>Nach <i>beim, zum, das, etwas, nichts, viel, alles</i>
+          schreibt man gross: beim <em>E</em>ssen, zum <em>B</em>ezahlen, etwas <em>N</em>eues, alles <em>G</em>ute.</div>
+        <div><h4>Zeitangaben</h4>am <em>M</em>orgen, heute <em>A</em>bend, am <em>M</em>ontag – aber
+          <em>m</em>orgens, <em>m</em>ontags, <em>h</em>eute (mit -s oder ohne Nomen: klein).</div>
+        <div><h4>Anrede im Brief</h4>Wir danken <em>I</em>hnen für <em>I</em>hre Bestellung. – Aber: Die Kunden
+          zahlen <em>i</em>hre Rechnung (gemeint sind die Kunden, nicht Sie).</div>
+      </div>
+      <p class="achtung"><b>Achtung:</b> Ein Adjektiv vor einem Nomen bleibt klein, auch mit Artikel:
+      das <i>n</i>eue Handy, ein <i>g</i>utes <i>n</i>eues Jahr. Und <i>am besten</i> bleibt klein, weil man
+      mit «Wie?» fragt.</p>
+    </div>
+  </details>
+  <div class="card trainer" data-k="gross"></div>
+</section>
+
+<!-- ============================ 2 DOPPELKONSONANT ============================ -->
+<section class="kap" id="k-doppel" role="tabpanel">
+  <details class="regel" open>
+    <summary>Die Regel <span class="kurz">· Wann kommt ein doppelter Konsonant?</span></summary>
+    <div class="regelinhalt">
+      <div class="merk">Nach einem <b>kurzen, betonten Vokal</b> verdoppelt man den Konsonanten, wenn man nur
+      <b>einen</b> hört: ko<b>mm</b>en, Te<b>ll</b>er, So<b>nn</b>e. Statt kk schreibt man <b>ck</b>
+      (ba<b>ck</b>en), statt zz schreibt man <b>tz</b> (Ka<b>tz</b>e).</div>
+      <div class="bsp">
+        <div><h4>Probe: langsam sprechen</h4>Sprechen Sie das Wort langsam: Ist der Vokal kurz (<em>Ba</em>nn)
+          oder lang (<em>Ba</em>hn)? Kurz → meist doppelt.</div>
+        <div><h4>Kein Doppel</h4>wenn schon zwei verschiedene Konsonanten folgen: Ha<em>nd</em>, Wu<em>rst</em>,
+          Ke<em>rz</em>e – und nach langem Vokal: T<em>a</em>l, Sch<em>u</em>le, sp<em>ie</em>len.</div>
+        <div><h4>Die Wortfamilie hält zusammen</h4>ko<em>mm</em>en → er ko<em>mm</em>t, ka<em>nn</em> →
+          ich ka<em>nn</em>. Trick: Verlängern hilft: Ti<em>pp</em> → ti<em>pp</em>en.</div>
+        <div><h4>Kleine Wörter</h4>Einige kurze Wörter haben nie ein Doppel: <em>an, in, mit, bis, um, ab,
+          von, man, hat</em>.</div>
+      </div>
+      <p class="achtung"><b>Achtung Schweiz:</b> Weil es bei uns kein ß gibt, steht <i>ss</i> auch nach langem
+      Vokal oder Doppellaut: Stra<b>ss</b>e, gro<b>ss</b>, Gru<b>ss</b>. Hier hilft die Regel nicht – darum
+      kommen solche Wörter in den Übungen nicht vor. Und Fremdwörter haben eigene Gesetze: Ho<i>t</i>el,
+      Kredi<i>t</i>, Gale<i>r</i>ie, aber Progra<i>mm</i>, Ko<i>mm</i>ission.</p>
+    </div>
+  </details>
+  <div class="card trainer" data-k="doppel"></div>
+</section>
+
+<!-- ============================ 3 DEHNUNGS-H ============================ -->
+<section class="kap" id="k-dehnung" role="tabpanel">
+  <details class="regel" open>
+    <summary>Die Regel <span class="kurz">· Wann zeigt ein h den langen Vokal?</span></summary>
+    <div class="regelinhalt">
+      <div class="merk">Ein <b>Dehnungs-h</b> macht den Vokal davor lang. Es steht <b>nur vor l, m, n, r</b>:
+      Za<b>h</b>l, ne<b>h</b>men, Za<b>h</b>n, U<b>h</b>r. Aber Achtung: Es <b>kann</b> dort stehen, es muss
+      nicht – Schule, Name, Tor, Plan haben keines.</div>
+      <div class="bsp">
+        <div><h4>Faustregel: ohne h</h4>Die meisten langen Vokale stehen ohne Zeichen: T<em>a</em>l, Sch<em>u</em>le,
+          N<em>a</em>me. Nach <i>sch, sp, qu, gr, kr, t</i> fast nie ein h – Ausnahme: St<em>uh</em>l, St<em>ah</em>l.</div>
+        <div><h4>Langes i</h4>Langes i schreibt man fast immer <em>ie</em>: Z<em>ie</em>l, M<em>ie</em>te – ohne h.
+          Ausnahmen: <em>ihm, ihn, ihr, ihnen</em> und das Vieh.</div>
+        <div><h4>Die Wortfamilie</h4>fahren → Fahrt → Gefahr, zahlen → Zahl → bezahlen. Wer ein Familienmitglied
+          kennt, kennt alle.</div>
+        <div><h4>Gleich gesprochen, anders gemeint</h4>die <em>Wahl</em> / der <em>Wal</em>, <em>malen</em> (Farbe) /
+          <em>mahlen</em> (Korn), die <em>Ware</em> / das <em>Wahre</em>, <em>ihm</em> / <em>im</em>.</div>
+      </div>
+      <p class="achtung"><b>Nicht verwechseln:</b> In <i>ge-hen, se-hen, Schu-he</i> trennt das h zwei Silben.
+      Es bleibt in der ganzen Familie: er ge<b>h</b>t, sie sie<b>h</b>t, frü<b>h</b>, fro<b>h</b>.</p>
+    </div>
+  </details>
+  <div class="card trainer" data-k="dehnung"></div>
+</section>
+
+<!-- ============================ 4 Ä ODER E ============================ -->
+<section class="kap" id="k-umlaut" role="tabpanel">
+  <details class="regel" open>
+    <summary>Die Regel <span class="kurz">· ä oder e, äu oder eu?</span></summary>
+    <div class="regelinhalt">
+      <div class="merk">Man schreibt <b>ä</b>, wenn es ein verwandtes Wort mit <b>a</b> gibt, und <b>äu</b>, wenn
+      es eines mit <b>au</b> gibt. Sonst schreibt man <b>e</b> oder <b>eu</b>.</div>
+      <div class="bsp">
+        <div><h4>Probe: Gibt es ein a?</h4>H<em>ä</em>nde ← Hand, <em>ä</em>lter ← alt, f<em>ä</em>hrt ← fahren,
+          z<em>ä</em>hlen ← Zahl, Gespr<em>ä</em>ch ← Sprache.</div>
+        <div><h4>Probe: Gibt es ein au?</h4>H<em>äu</em>ser ← Haus, l<em>äu</em>ft ← laufen,
+          Verk<em>äu</em>ferin ← kaufen, Geb<em>äu</em>de ← bauen.</div>
+        <div><h4>Kein a, kein au</h4>Geld, Welt, Rechnung, Menge – und L<em>eu</em>te, Fr<em>eu</em>nd,
+          T<em>eu</em>erung (von teuer).</div>
+        <div><h4>Merkwörter mit ä</h4>Hier hilft keine Probe: K<em>ä</em>se, M<em>ä</em>rz, L<em>ä</em>rm, B<em>ä</em>r,
+          <em>ä</em>hnlich, w<em>ä</em>hrend, ungef<em>ä</em>hr, S<em>ä</em>ge.</div>
+      </div>
+      <p class="achtung"><b>Falle:</b> <i>Eltern</i> kommt zwar von <i>alt</i>, schreibt sich aber mit e.
+      Und <i>verkaufen</i> hat gar keinen Umlaut – erst die <i>Verkäuferin</i>.</p>
+    </div>
+  </details>
+  <div class="card trainer" data-k="umlaut"></div>
+</section>
+
+<!-- ============================ 5 DIKTAT ============================ -->
+<section class="kap" id="k-diktat" role="tabpanel">
+  <div class="card">
+    <h2>5. Diktat – hören und schreiben</h2>
+    <p class="lead">Der Satz wird vorgelesen. Hören Sie so oft, wie Sie wollen, und tippen Sie ihn.
+    Jeder Satz enthält mindestens einen der vier Stolpersteine. Gross- und Kleinschreibung zählt.</p>
+
+    <div class="dhinweis" id="dKeineStimme" style="display:none"><b>Auf diesem Gerät ist keine deutsche
+    Stimme zu finden.</b> Das Diktat läuft darum als <b>Lesediktat</b>: Der Satz erscheint fünf Sekunden lang,
+    dann schreiben Sie ihn aus dem Gedächtnis.</div>
+
+    <div class="stufen" id="dStufen">
+      <button type="button" data-s="A" aria-pressed="true">Stufe A · Alltag</button>
+      <button type="button" data-s="B" aria-pressed="false">Stufe B · Betrieb</button>
+      <button type="button" data-s="C" aria-pressed="false">Stufe C · anspruchsvoll</button>
+    </div>
+
+    <div class="stimmzeile" id="dStimmzeile" style="display:none">
+      <label for="dStimme">Stimme</label>
+      <select id="dStimme" title="Stimme für das Vorlesen wählen"></select>
+      <button class="knopf zweit klein" type="button" id="dProbe">🔊 Probe</button>
+    </div>
+
+    <div class="reihe" style="margin-bottom:14px">
+      <button class="knopf" type="button" id="dHoeren">▶ Vorlesen</button>
+      <button class="knopf zweit klein" type="button" id="dLangsam">🐢 Langsam</button>
+      <button class="knopf zweit klein" type="button" id="dZeigen">👁 Satz zeigen</button>
+      <span class="stand" id="dStand"></span>
+    </div>
+
+    <div id="dSichtbar" style="display:none; margin-bottom:12px">
+      <div class="dzeile">Der Satz</div>
+      <div class="dsatz" id="dSichtbarSatz"></div>
+    </div>
+
+    <label for="dEingabe" class="dzeile" style="display:block">Ihre Eingabe</label>
+    <textarea class="dfeld" id="dEingabe" rows="2" spellcheck="false" autocapitalize="sentences"
+              autocomplete="off" lang="de-CH" placeholder="Hier den Satz tippen …"></textarea>
+
+    <div class="reihe" style="margin-top:12px">
+      <button class="knopf" type="button" id="dPruefen">Prüfen</button>
+      <button class="knopf zweit" type="button" id="dNaechster">Nächster Satz →</button>
+    </div>
+
+    <div class="dloesung" id="dLoesung">
+      <div class="dzeile">Auswertung</div>
+      <div class="dsatz" id="dDiff"></div>
+      <div class="durteil" id="dUrteil"></div>
+      <div class="legende"><span class="ok" style="color:var(--gruen)">richtig</span> ·
+        <span style="background:rgba(216,174,102,.30)">nur gross/klein falsch</span> ·
+        <span style="background:rgba(179,66,58,.12)">falsch geschrieben</span> ·
+        <span style="text-decoration:underline wavy;color:var(--rot)">fehlt</span></div>
+      <div class="dzeile" style="margin-top:12px">Richtig wäre</div>
+      <div class="dsatz" id="dRichtig"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ 6 VITRINE ============================ -->
+<section class="kap" id="k-vitrine" role="tabpanel">
+  <div class="card">
+    <h2>6. Vitrine – was Sie schon geholt haben</h2>
+    <p class="lead">Für jedes der fünf Kapitel gibt es drei Pokale: Bronze, Silber, Gold. Sie kommen vom
+    Dranbleiben – und sie bleiben auf diesem Gerät gespeichert.</p>
+    <div class="vgrid" id="vGrid"></div>
+    <div class="vkranz" id="vKranz"></div>
+    <div class="vfuss">
+      <p class="stand" id="vGesamt"></p>
+      <button class="vnull" type="button" id="vNull">Alles zurücksetzen</button>
+    </div>
+  </div>
+</section>
+
+<footer class="fuss">
+  <p>Geschrieben wird nach den Regeln der <b>Schweizer Rechtschreibung</b>: kein ß, sondern immer ss.
+  Wörter, bei denen beide Schreibweisen erlaubt sind (zum Beispiel <i>aufwendig/aufwändig</i> oder
+  <i>seit Kurzem/kurzem</i>), kommen in den Übungen bewusst nicht vor.</p>
+  <p>Das Diktat liest mit der <b>deutschen Stimme Ihres Geräts</b> vor. Es wird nichts verschickt, und die
+  Pokale bleiben nur in diesem Browser gespeichert.</p>
+  <p><b>abu-tools.ch</b> · Allgemeinbildender Unterricht HKV Aarau · © 2026
+  <a href="mailto:samuel.mollet@hkv.ch">S. Mollet</a></p>
+</footer>
+
+</div>
+<script>
+/* ==================== Aufgaben ====================
+   Lückenwörter: {richtig|falsch|falsch} – das erste Wort ist richtig.
+   Bei Gross/klein genügt {Wort}: die zweite Wahl ist dasselbe Wort mit
+   umgekehrtem Anfangsbuchstaben. Dahinter steht die Begründung.
+   Fehler finden: {falsch>richtig}. Alle übrigen Wörter sind korrekt.
+   Schweizer Rechtschreibung, kein ß. Doppelt erlaubte Schreibweisen
+   (aufwendig/aufwändig, seit Kurzem/kurzem …) bewusst weggelassen.      */
+var DATEN = {
+gross: {
+  L: {
+    A: [
+      ['Am {Morgen} trinke ich einen Kaffee.', 'Nach «am» steht ein Nomen: der Morgen.'],
+      ['Ich gehe {morgens} früh aus dem Haus.', 'Zeitangaben mit -s sind keine Nomen: morgens, abends, montags.'],
+      ['Das {Wetter} ist heute schön.', 'Nomen: das Wetter.'],
+      ['Wir gehen {heute} ins Kino.', '«heute» ist kein Nomen – kein Artikel möglich.'],
+      ['Beim {Essen} schaue ich nicht aufs Handy.', 'Nach «beim» wird das Verb zum Nomen: das Essen.'],
+      ['Ich muss noch {essen}, dann komme ich.', 'Hier ist «essen» ein Verb – ich esse.'],
+      ['Die Ferien waren {schön}.', 'Adjektiv – wie waren die Ferien?'],
+      ['Ich wünsche dir alles {Gute}.', 'Nach «alles» wird das Adjektiv zum Nomen.'],
+      ['Das {neue} Handy war teuer.', 'Adjektiv vor einem Nomen bleibt klein: das neue Handy.'],
+      ['Am {Montag} habe ich Schule.', 'Wochentage nach «am» sind Nomen.'],
+      ['Ich arbeite {samstags} im Laden.', 'Mit -s klein: samstags, montags.'],
+      ['{Kannst} du mir helfen?', 'Am Satzanfang immer gross.'],
+      ['Ich habe viel {Glück} gehabt.', 'Nomen: das Glück.'],
+      ['Wir spielen am {Abend} Karten.', 'Nach «am»: der Abend.']
+    ],
+    B: [
+      ['Wir danken {Ihnen} für Ihre Bestellung.', 'Höflichkeitsform: Sie, Ihnen, Ihr – immer gross.'],
+      ['Die Kunden haben {ihre} Rechnungen bezahlt.', 'Gemeint sind die Kunden, nicht die angesprochene Person – klein.'],
+      ['Können {Sie} mir die Lieferung bestätigen?', 'Höflichkeitsform – gross.'],
+      ['Die Lieferanten sagen, {sie} liefern am Freitag.', '«sie» meint die Lieferanten – klein.'],
+      ['Wir freuen uns auf {Ihren} Besuch.', 'Höflichkeitsform – gross.'],
+      ['Beim {Bedienen} bleibe ich freundlich.', 'Nach «beim» wird das Verb zum Nomen.'],
+      ['Wir bieten etwas {Neues} an.', 'Nach «etwas» wird das Adjektiv zum Nomen.'],
+      ['Das ist nichts {Besonderes}.', 'Nach «nichts» wird das Adjektiv zum Nomen.'],
+      ['Die Ware ist {günstig}.', 'Adjektiv – wie ist die Ware?'],
+      ['Bitte melden Sie sich {rechtzeitig}.', 'Adverb – wann? Kein Nomen.'],
+      ['Zum {Bezahlen} gehen Sie bitte an die Kasse.', 'Nach «zum» wird das Verb zum Nomen.'],
+      ['Wir haben heute {Abend} bis 20 Uhr geöffnet.', 'heute Abend, morgen Früh: die Tageszeit ist ein Nomen.'],
+      ['Der Laden ist {sonntags} geschlossen.', 'Mit -s klein.'],
+      ['Wir wünschen Ihnen viel {Erfolg}.', 'Nomen: der Erfolg.']
+    ],
+    C: [
+      ['Im {Allgemeinen} sind unsere Kunden zufrieden.', '«im Allgemeinen» schreibt man gross.'],
+      ['Das {Beste} wäre, sofort anzurufen.', '«das Beste» – nominalisiertes Adjektiv.'],
+      ['Diese Lösung ist am {besten}.', '«am besten» antwortet auf «Wie?» – klein.'],
+      ['Sie kam als {Erste} ins Ziel.', 'Die Rangfolge als Nomen: die Erste.'],
+      ['Die {beiden} haben die Prüfung bestanden.', '«beide» ist ein Pronomen – klein.'],
+      ['Das Angebot gilt für Jung und {Alt}.', 'Feste Paare von Adjektiven als Nomen: Jung und Alt.'],
+      ['Wir haben das Problem im {Voraus} besprochen.', '«im Voraus» schreibt man gross.'],
+      ['Die Unterlagen liegen {bereit}.', 'Kein Nomen – klein.'],
+      ['Das Formular gibt es auch auf {Englisch}.', 'Nach «auf» ist die Sprache ein Nomen.'],
+      ['Wir treffen uns {übermorgen} am Nachmittag.', 'Adverb – klein.'],
+      ['Das {Zuspätkommen} wird notiert.', 'Zusammengesetztes Verb als Nomen – gross und zusammen.'],
+      ['Wir wünschen Ihnen ein gutes {neues} Jahr.', 'Das Adjektiv vor «Jahr» bleibt klein.'],
+      ['Wir sehen uns am {Dienstagabend}.', 'Wochentag und Tageszeit als ein Nomen.'],
+      ['Er hat sein {Bestes} gegeben.', '«sein Bestes» – nominalisiertes Adjektiv.']
+    ]
+  },
+  F: {
+    A: [
+      '{am>Am} Wochenende gehe ich mit meinen {freunden>Freunden} schwimmen.',
+      'Beim {lernen>Lernen} höre ich gerne Musik.',
+      'Mein Bruder {Arbeitet>arbeitet} am {samstag>Samstag} im Laden.',
+      'Das {Grosse>grosse} Auto gehört meiner {tante>Tante}.',
+      'Ich wünsche dir viel {spass>Spass} und alles {gute>Gute}.',
+      'Wir treffen uns {Morgens>morgens} vor der {schule>Schule}.'
+    ],
+    B: [
+      'Sehr geehrte Frau Meier, wir danken {ihnen>Ihnen} für {ihre>Ihre} {anfrage>Anfrage}.',
+      'Gerne senden wir Ihnen das {angebot>Angebot} bis {freitag>Freitag}.',
+      'Die Kundin hat {Ihre>ihre} Tasche an der {kasse>Kasse} vergessen.',
+      'Zum {bezahlen>Bezahlen} gehen Sie bitte nach {Vorne>vorne}.',
+      'Wir haben {Heute>heute} {abend>Abend} länger geöffnet.',
+      'Bitte rufen {sie>Sie} uns an, wenn Sie etwas {neues>Neues} brauchen.'
+    ],
+    C: [
+      'Im {allgemeinen>Allgemeinen} läuft das Geschäft am {Besten>besten} im Dezember.',
+      'Das {zuspätkommen>Zuspätkommen} der Lieferung hat uns viel {ärger>Ärger} gebracht.',
+      'Die {Beiden>beiden} Lernenden haben als {erste>Erste} abgegeben.',
+      'Wir haben alles im {voraus>Voraus} bezahlt und nichts {weiteres>Weiteres} gehört.',
+      'Das Formular gibt es auf {deutsch>Deutsch} und auf {französisch>Französisch}.',
+      'Wir wünschen Ihnen ein gutes {Neues>neues} Jahr und viel {erfolg>Erfolg}.'
+    ]
+  }
+},
+doppel: {
+  L: {
+    A: [
+      ['Die {Sonne|Sone} scheint.', 'Kurzes o, man hört nur ein n → nn.'],
+      ['Mein {Bruder|Brudder} wohnt in Bern.', 'Das u ist lang – also kein Doppel.'],
+      ['Ich {komme|kome} gleich.', 'Kurzes o → mm.'],
+      ['Der {Teller|Teler} ist leer.', 'Kurzes e → ll.'],
+      ['Wir {backen|bakken|baken} einen Kuchen.', 'Statt kk schreibt man ck.'],
+      ['Die {Katze|Kazze|Kaze} schläft.', 'Statt zz schreibt man tz.'],
+      ['Ich {kann|kan} das.', 'Kurzes a → nn.'],
+      ['Wir {schwimmen|schwimen} im See.', 'Kurzes i → mm.'],
+      ['Der {Hof|Hoff} ist gross.', 'Das o ist lang – kein Doppel.'],
+      ['Ich {spiele|spille} Gitarre.', 'Langes i (ie) – kein Doppel.'],
+      ['Das {Wasser|Waser} ist kalt.', 'Kurzes a → ss.'],
+      ['Die {Mitte|Mite} der Stadt ist schön.', 'Kurzes i → tt.'],
+      ['Die {Hand|Hannd} tut weh.', 'Nach dem a folgen schon zwei Konsonanten (n, d) – kein Doppel.'],
+      ['Ich {hoffe|hofe} auf gutes Wetter.', 'Kurzes o → ff.']
+    ],
+    B: [
+      ['Die {Kasse|Kase} ist offen.', 'Kurzes a → ss.'],
+      ['Bitte {füllen|fülen} Sie das Formular aus.', 'Kurzes ü → ll.'],
+      ['Wir {packen|paken} die Ware ein.', 'Statt kk schreibt man ck.'],
+      ['Wir {schicken|schiken} Ihnen die Unterlagen.', 'Statt kk schreibt man ck.'],
+      ['Die {Mittagspause|Mitagspause} dauert eine Stunde.', 'Mittag kommt von Mitte: kurzes i → tt.'],
+      ['Der {Lieferant|Liefferant} kommt am Morgen.', 'Langes ie – kein Doppel.'],
+      ['Der {Platz|Plaz|Plazz} ist reserviert.', 'Statt zz schreibt man tz.'],
+      ['Wir {treffen|trefen} uns um zehn Uhr.', 'Kurzes e → ff.'],
+      ['Die Lieferung {kam|kamm} zu spät.', '«kam» hat ein langes a – kein Doppel, auch wenn es zu «kommen» gehört.'],
+      ['Die {Kundinnen|Kundinen} warten.', 'Die Endung -in wird im Plural zu -innen.'],
+      ['Die {Brille|Brile} liegt auf dem Tisch.', 'Kurzes i → ll.'],
+      ['Bitte {kontrollieren|kontrolieren} Sie die Menge.', 'Wie «die Kontrolle» – ll.'],
+      ['Wir {nennen|nenen} Ihnen gerne einen Preis.', 'Kurzes e → nn.'],
+      ['Das {Paket|Packet} ist angekommen.', 'Paket – trotz des k-Lauts nur ein k.']
+    ],
+    C: [
+      ['Das {Ergebnis|Ergebniss} liegt vor.', 'Die Endung -nis hat im Singular nur ein s.'],
+      ['Die {Ergebnisse|Ergebnise} liegen vor.', 'Im Plural wird es -nisse.'],
+      ['Das {Programm|Program} ist neu.', 'Programm – mit mm.'],
+      ['Die {Kontrolle|Kontrole} war streng.', 'Kontrolle – mit ll.'],
+      ['Das {Interesse|Interese} ist gross.', 'Interesse – mit ss.'],
+      ['Der {Kredit|Kreditt} ist bewilligt.', 'Kredit – nur ein t.'],
+      ['Die {Adresse|Adrese} stimmt nicht.', 'Adresse – mit ss.'],
+      ['Der {Kapitän|Kapittän} gibt Anweisungen.', 'Kapitän – nur ein t.'],
+      ['Die {Galerie|Gallerie} ist geöffnet.', 'Galerie – nur ein l.'],
+      ['Die {Kommission|Komission} entscheidet.', 'Kommission – mm und ss.'],
+      ['Das {Hotel|Hottel} liegt am See.', 'Hotel – nur ein t.'],
+      ['Danke für den {Tipp|Tip}!', 'Tipp – mit pp, wie tippen.'],
+      ['Wir legen einen {Stopp|Stop} ein.', 'Stopp – mit pp, wie stoppen.'],
+      ['Er {nimmt|nimt} den Zug.', 'Kurzes i → mm, auch wenn «nehmen» lang ist.']
+    ]
+  },
+  F: {
+    A: [
+      'Ich {kome>komme} nach der Schule nach Hause.',
+      'Die {Kaze>Katze} {schläfft>schläft} auf dem Sofa.',
+      'Wir {bakken>backen} am {Sontag>Sonntag} einen Kuchen.',
+      'Mein Bruder {spillt>spielt} gern {Tenis>Tennis}.',
+      'Der {Teler>Teller} ist {vol>voll}.',
+      'Ich {kan>kann} heute nicht {schwimen>schwimmen}.'
+    ],
+    B: [
+      'Bitte {fülen>füllen} Sie das Formular aus und {schiken>schicken} Sie es zurück.',
+      'Wir {hofen>hoffen}, die Ware {kamm>kam} rechtzeitig an.',
+      'Der {Liefferant>Lieferant} hat das {Packet>Paket} gebracht.',
+      'Die {Kundinen>Kundinnen} warten an der {Kase>Kasse}.',
+      'Wir {trefen>treffen} uns nach der {Mitagspause>Mittagspause}.',
+      'Bitte {kontroliren>kontrollieren} Sie die {Adrese>Adresse}.'
+    ],
+    C: [
+      'Das {Ergebniss>Ergebnis} der {Komission>Kommission} liegt vor.',
+      'Das {Hottel>Hotel} bietet ein spannendes {Program>Programm} an.',
+      'Der {Kapittän>Kapitän} gibt uns einen {Tip>Tipp}.',
+      'Die {Gallerie>Galerie} weckt mein {Interese>Interesse}.',
+      'Der {Kreditt>Kredit} wurde nach der {Kontrole>Kontrolle} bewilligt.',
+      'Wir legen einen {Stop>Stopp} ein und prüfen die {Ergebnise>Ergebnisse}.'
+    ]
+  }
+},
+dehnung: {
+  L: {
+    A: [
+      ['Mein {Zahn|Zan} tut weh.', 'Langes a vor n – hier mit Dehnungs-h.'],
+      ['Wir {fahren|faren} mit dem Zug.', 'fahren, Fahrt, Gefahr – die ganze Familie hat h.'],
+      ['Ich {wohne|wone} in Aarau.', 'wohnen, Wohnung – mit h.'],
+      ['Die {Uhr|Ur} geht falsch.', 'Uhr – mit h.'],
+      ['Das {Jahr|Jar} ist bald vorbei.', 'Jahr – mit h.'],
+      ['Ich {nehme|neme} den Bus.', 'nehmen – mit h.'],
+      ['Die {Schule|Schuhle} beginnt um acht.', 'Nach sch fast nie ein h.'],
+      ['Der {Name|Nahme} ist falsch geschrieben.', 'Name – ohne h, obwohl das a lang ist.'],
+      ['Das {Tor|Tohr} ist offen.', 'Tor – ohne h.'],
+      ['Ich habe einen {Fehler|Feler} gemacht.', 'Fehler, fehlen – mit h.'],
+      ['Der {Stuhl|Stul} ist kaputt.', 'Ausnahme nach st: Stuhl.'],
+      ['Wir {zahlen|zalen} an der Kasse.', 'zahlen, Zahl – mit h.'],
+      ['Der {Plan|Plahn} ist fertig.', 'Plan – ohne h.'],
+      ['Ich brauche {mehr|mer} Zeit.', 'mehr – mit h.']
+    ],
+    B: [
+      ['Die {Ware|Wahre} ist angekommen.', 'Die Ware (Produkt) ohne h – «das Wahre» heisst «das Echte».'],
+      ['Bitte {zählen|zälen} Sie das Wechselgeld.', 'zählen kommt von Zahl – mit h.'],
+      ['Die {Zahl|Zal} stimmt nicht.', 'Zahl – mit h.'],
+      ['Wir {empfehlen|empfelen} Ihnen dieses Produkt.', 'empfehlen – mit h.'],
+      ['Der {Lohn|Lon} kommt Ende Monat.', 'Lohn – mit h.'],
+      ['Die {Gebühr|Gebür} beträgt zehn Franken.', 'Gebühr – mit h.'],
+      ['Das {Problem|Problehm} ist gelöst.', 'Problem – ohne h.'],
+      ['Die {Bahn|Ban} hat Verspätung.', 'Bahn – mit h.'],
+      ['Wir {bezahlen|bezalen} mit Karte.', 'bezahlen gehört zu Zahl – mit h.'],
+      ['Die {Lehre|Lere} dauert drei Jahre.', 'Lehre, lehren, Lehrling – mit h.'],
+      ['Die {Ausnahme|Ausname} bestätigt die Regel.', 'Ausnahme kommt von nehmen – mit h.'],
+      ['Der {Kran|Krahn} hebt die Palette.', 'Nach kr fast nie ein h.'],
+      ['Das {Ziel|Ziehl} ist erreicht.', 'Langes i als ie – ohne h.'],
+      ['Die {Miete|Miehte} ist bezahlt.', 'Langes i als ie – ohne h.']
+    ],
+    C: [
+      ['Ich gebe {ihm|im} das Paket.', '«ihm» (Person) mit h – «im» heisst «in dem».'],
+      ['Wir rufen {ihn|in} morgen an.', '«ihn» (Person) mit h – «in» ist eine Präposition.'],
+      ['Er {sieht|siet} das Problem.', 'sehen → sieht: das h bleibt in der Familie.'],
+      ['Sie {geht|get} früh nach Hause.', 'gehen → geht: das h bleibt.'],
+      ['Die {Mühe|Müe} hat sich gelohnt.', 'Mü-he: das h trennt die Silben.'],
+      ['Wir sind {froh|fro} über die Lösung.', 'froh – mit h.'],
+      ['Der Rahmen ist aus {Stahl|Stal}.', 'Ausnahme nach st: Stahl. «Stall» ist der Viehstall.'],
+      ['Die {Mahlzeit|Malzeit} ist fertig.', 'Mahlzeit gehört zu mahlen (Korn), nicht zu malen.'],
+      ['Die {Wahl|Wal} findet am Sonntag statt.', 'Die Wahl (wählen) – der Wal ist ein Tier.'],
+      ['Er {malt|mahlt} ein Bild.', 'Mit Farbe: malen – ohne h. Mahlen tut die Mühle.'],
+      ['Das ist ein typisches {Merkmal|Merkmahl}.', '-mal (Zeichen) – ohne h.'],
+      ['Die {Sohle|Sole} des Schuhs ist kaputt.', 'Schuhsohle mit h – die Sole ist Salzwasser.'],
+      ['Wir {dehnen|denen} uns vor dem Training.', 'dehnen mit h – «denen» ist ein Pronomen.'],
+      ['Er {nahm|nam} den Zug.', 'nehmen → nahm – mit h.']
+    ]
+  },
+  F: {
+    A: [
+      'Ich {fare>fahre} mit dem Velo zur {Schuhle>Schule}.',
+      'Mein {Zan>Zahn} tut weh, ich {neme>nehme} eine Tablette.',
+      'Die {Ur>Uhr} an der Wand geht {fahlsch>falsch}.',
+      'Wir {wonen>wohnen} seit einem {Jar>Jahr} in Suhr.',
+      'Der {Nahme>Name} auf dem {Stul>Stuhl} ist von mir.',
+      'Ich habe {mer>mehr} {Feler>Fehler} gemacht als du.'
+    ],
+    B: [
+      'Bitte {zälen>zählen} Sie die {Wahre>Ware} nach.',
+      'Wir {empfelen>empfehlen} Ihnen, mit Karte zu {bezalen>bezahlen}.',
+      'Der {Lon>Lohn} im zweiten {Lehrjar>Lehrjahr} ist höher.',
+      'Das {Problehm>Problem} mit der {Külung>Kühlung} ist gelöst.',
+      'Die {Zal>Zahl} auf der Rechnung ist {fahlsch>falsch}.',
+      'Die {Miehte>Miete} wird jeden Monat {bezalt>bezahlt}.'
+    ],
+    C: [
+      'Ich habe {im>ihm} das Formular für die {Wal>Wahl} gegeben.',
+      'Er {siet>sieht} heute sehr {fro>froh} aus.',
+      'Die Künstlerin {mahlt>malt} ein Bild, und die Mühle {malt>mahlt} Korn.',
+      'Nach der {Malzeit>Mahlzeit} {get>geht} es weiter.',
+      'Die {Sole>Sohle} meiner Schuhe ist nach einem {Jar>Jahr} kaputt.',
+      'Vor dem Training {denen>dehnen} wir uns, die {Müe>Mühe} lohnt sich.'
+    ]
+  }
+},
+umlaut: {
+  L: {
+    A: [
+      ['Ich wasche meine {Hände|Hende}.', 'Hände kommt von Hand – also ä.'],
+      ['Mein Bruder ist {älter|elter} als ich.', 'älter kommt von alt – also ä.'],
+      ['Die {Häuser|Heuser} sind neu.', 'Häuser kommt von Haus – also äu.'],
+      ['Er {fährt|fehrt} nach Bern.', 'fährt kommt von fahren – also ä.'],
+      ['Die {Bäume|Beume} sind grün.', 'Bäume kommt von Baum – also äu.'],
+      ['Das {Geld|Gäld} liegt im Portemonnaie.', 'Kein verwandtes Wort mit a – also e.'],
+      ['Der {Käse|Kese} kommt aus dem Emmental.', 'Merkwort: Käse.'],
+      ['Sie {läuft|leuft} schnell.', 'läuft kommt von laufen – also äu.'],
+      ['Die {Leute|Läute} warten.', 'Kein Wort mit au – also eu.'],
+      ['Im {März|Merz} beginnt der Frühling.', 'Merkwort: März.'],
+      ['Die {Nächte|Nechte} sind kalt.', 'Nächte kommt von Nacht – also ä.'],
+      ['Mein {Freund|Fräund} kommt mit.', 'Kein Wort mit au – also eu.'],
+      ['Er {schläft|schleft} lange.', 'schläft kommt von schlafen – also ä.'],
+      ['Die {Welt|Wält} ist gross.', 'Kein verwandtes Wort mit a – also e.']
+    ],
+    B: [
+      ['Die {Verkäuferin|Verkeuferin} hilft gern.', 'Verkäuferin kommt von kaufen – also äu.'],
+      ['Die Kundin {zählt|zehlt} das Geld.', 'zählt kommt von Zahl – also ä.'],
+      ['Wir {ändern|endern} den Termin.', 'ändern kommt von anders – also ä.'],
+      ['Das {Gespräch|Gesprech} war gut.', 'Gespräch kommt von sprach, Sprache – also ä.'],
+      ['Bei {Kälte|Kelte} bleibt die Ware frisch.', 'Kälte kommt von kalt – also ä.'],
+      ['Die {Gebäude|Gebeude} sind modern.', 'Gebäude kommt von bauen – also äu.'],
+      ['Die {Rechnung|Rächnung} ist bezahlt.', 'rechnen – kein Wort mit a, also e.'],
+      ['Der {Händler|Hendler} liefert morgen.', 'Händler kommt von Handel – also ä.'],
+      ['Wir {erklären|erkleren} Ihnen das Angebot.', 'erklären kommt von klar – also ä.'],
+      ['Die {Kästen|Kesten} stehen im Lager.', 'Kästen kommt von Kasten – also ä.'],
+      ['Wir {verkaufen|verkäufen} auch online.', 'verkaufen hat keinen Umlaut – erst die Verkäuferin.'],
+      ['Die {Teuerung|Täuerung} betrifft alle.', 'Teuerung kommt von teuer – also eu.'],
+      ['Die {Mängel|Mengel} sind notiert.', 'Mängel kommt von Mangel – also ä.'],
+      ['Die {Menge|Mänge} stimmt.', 'Kein verwandtes Wort mit a – also e.']
+    ],
+    C: [
+      ['Es ist {ähnlich|ehnlich} wie letztes Jahr.', 'Merkwort: ähnlich.'],
+      ['{Während|Wehrend} der Pause ist das Büro zu.', 'Merkwort: während.'],
+      ['Das kostet {ungefähr|ungefehr} zehn Franken.', 'Merkwort: ungefähr.'],
+      ['Der {Lärm|Lerm} stört beim Arbeiten.', 'Merkwort: Lärm.'],
+      ['Meine {Eltern|Ältern} kommen auch.', 'Falle: Eltern schreibt man mit e.'],
+      ['Die {Behälter|Behelter} sind leer.', 'Behälter kommt von halten – also ä.'],
+      ['Wir {schätzen|schetzen} Ihre Treue.', 'schätzen kommt von Schatz – also ä.'],
+      ['Die {Häufigkeit|Heufigkeit} nimmt ab.', 'häufig kommt von Haufen – also äu.'],
+      ['Das {Gelände|Gelende} ist gross.', 'Gelände kommt von Land – also ä.'],
+      ['Sie {fällt|fellt} eine Entscheidung.', 'fällen gehört zu fallen – also ä.'],
+      ['Wir danken für Ihr {Verständnis|Verstendnis}.', 'Verständnis kommt von Verstand – also ä.'],
+      ['Wir freuen uns über die {Abwechslung|Abwächslung}.', 'Abwechslung kommt von wechseln – also e.'],
+      ['Der Wal ist ein {Säugetier|Seugetier}.', 'Säugetier kommt von saugen – also äu.'],
+      ['Sie {räumt|reumt} das Lager auf.', 'räumen kommt von Raum – also äu.']
+    ]
+  },
+  F: {
+    A: [
+      'Ich wasche meine {Hende>Hände} mit warmem Wasser.',
+      'Die {Beume>Bäume} vor unseren {Heusern>Häusern} sind hoch.',
+      'Mein {Fräund>Freund} ist zwei Jahre {elter>älter} als ich.',
+      'Im {Merz>März} {fehrt>fährt} meine Familie in die Ferien.',
+      'Die {Läute>Leute} essen gern {Kese>Käse}.',
+      'Die {Nechte>Nächte} sind lang, und er {schleft>schläft} viel.'
+    ],
+    B: [
+      'Die {Verkeuferin>Verkäuferin} {zehlt>zählt} das Wechselgeld.',
+      'Wir {endern>ändern} den Termin für das {Gesprech>Gespräch}.',
+      'Das {Geret>Gerät} hat zwei {Mengel>Mängel}.',
+      'Der {Hendler>Händler} {erklert>erklärt} uns das Angebot.',
+      'Die {Täuerung>Teuerung} betrifft auch die {Gebeude>Gebäude}.',
+      'Wir {verkäufen>verkaufen} die {Kesten>Kästen} im Lager.'
+    ],
+    C: [
+      '{Ehnlich>Ähnlich} wie im letzten Jahr kostet es {ungefehr>ungefähr} hundert Franken.',
+      '{Wehrend>Während} der Arbeit stört der {Lerm>Lärm}.',
+      'Meine {Ältern>Eltern} {schetzen>schätzen} die Lehrstelle sehr.',
+      'Die {Behelter>Behälter} stehen auf dem {Gelende>Gelände}.',
+      'Danke für Ihr {Verstendnis>Verständnis}: Die Lieferung {fellt>fällt} heute aus.',
+      'Die {Heufigkeit>Häufigkeit} der Fehler nimmt ab, wir {schetzen>schätzen} das.'
+    ]
+  }
+}
+};
+
+var DIKTAT = {
+  A: [
+    'Am Morgen fahre ich mit dem Velo zur Schule.',
+    'Meine Hände sind kalt, weil es schon Winter ist.',
+    'Wir kommen am Montag um acht Uhr.',
+    'Der Bäcker backt jeden Tag frisches Brot.',
+    'Mein Bruder ist älter als ich und wohnt in Bern.',
+    'Beim Essen schaue ich nicht aufs Handy.',
+    'Die Katze schläft auf dem warmen Stuhl.',
+    'Im März fahren wir zu unseren Freunden.',
+    'Ich nehme den Bus, wenn es regnet.',
+    'Die Leute warten vor dem Haus.'
+  ],
+  B: [
+    'Wir danken Ihnen für Ihre Bestellung und wünschen Ihnen viel Freude.',
+    'Bitte füllen Sie das Formular aus und schicken Sie es zurück.',
+    'Die Verkäuferin zählt das Wechselgeld an der Kasse.',
+    'Der Lohn wird am Ende des Monats bezahlt.',
+    'Wir ändern den Termin für das Gespräch auf Freitag.',
+    'Das Gerät hat einen Fehler, wir senden Ihnen ein neues.',
+    'Zum Bezahlen gehen Sie bitte nach vorne.',
+    'Die Lieferung kam heute Morgen mit der Bahn.',
+    'Wir empfehlen Ihnen, die Ware im Kühlregal zu lagern.',
+    'Bei Fragen helfen wir Ihnen gerne weiter.'
+  ],
+  C: [
+    'Im Allgemeinen sind unsere Kunden mit dem Angebot zufrieden.',
+    'Während der Mittagspause bleibt die Kasse geschlossen.',
+    'Das Ergebnis der Kontrolle zeigt mehrere Mängel.',
+    'Die Mühle mahlt das Korn, und die Künstlerin malt ein Bild.',
+    'Das Beste wäre, wenn Sie uns im Voraus informieren.',
+    'Wir schätzen Ihr Verständnis für die längere Lieferzeit.',
+    'Meine Eltern wählen am Sonntag und gehen danach essen.',
+    'Das Zuspätkommen wird ab sofort im Programm notiert.',
+    'Ähnlich wie im letzten Jahr erhöhen wir die Gebühren nicht.',
+    'Ich habe ihm das Paket gegeben, und er hat sich sehr gefreut.'
+  ]
+};
+</script>
+<script>
+(function(){
+'use strict';
+
+/* ==================== Hilfsmittel ==================== */
+function el(t, c, x){ var e = document.createElement(t); if(c) e.className = c;
+  if(x !== undefined && x !== null) e.textContent = x; return e; }
+function mischen(a){
+  for(var i = a.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1)), h = a[i]; a[i] = a[j]; a[j] = h;
+  }
+  return a;
+}
+function hol(k, v){ try{ var g = localStorage.getItem(k); return g === null ? v : g; }catch(e){ return v; } }
+function leg(k, v){ try{ localStorage.setItem(k, String(v)); }catch(e){} }
+function esc(t){ return String(t).replace(/[&<>"]/g, function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+/* ==================== Klang ====================
+   Zwei kurze Töne, im Browser erzeugt (keine Tondatei nötig).
+   Abschalten über den Knopf oben rechts; die Entscheidung wird gemerkt. */
+var KLANG = (function(){
+  var an = hol('de-ton', 'ja') === 'ja';
+  var ctx = null;
+  function ton(folge, laut){
+    if(!an) return;
+    try{
+      ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
+      var t0 = ctx.currentTime + 0.01;
+      folge.forEach(function(f, i){
+        var o = ctx.createOscillator(), g = ctx.createGain();
+        o.type = 'sine'; o.frequency.value = f;
+        var s = t0 + i * 0.11;
+        g.gain.setValueAtTime(0.0001, s);
+        g.gain.exponentialRampToValueAtTime(laut, s + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, s + 0.35);
+        o.connect(g); g.connect(ctx.destination);
+        o.start(s); o.stop(s + 0.4);
+      });
+    }catch(e){}
+  }
+  return {
+    an: function(){ return an; },
+    schalten: function(){ an = !an; leg('de-ton', an ? 'ja' : 'nein'); return an; },
+    spiel: function(name){
+      if(name === 'gut') ton([660, 880], 0.08);
+      else if(name === 'toll') ton([523, 659, 784, 1047], 0.10);
+    }
+  };
+})();
+
+/* ==================== Pokale ==================== */
+var POKAL = (function(){
+  var FARBE = { 0:'#B0763F', 1:'#9FAAB4', 2:'#D4A331' };
+  var NAME  = { 0:'Bronze', 1:'Silber', 2:'Gold' };
+  function svg(inhalt, farbe){
+    return '<svg viewBox="0 0 48 48" fill="' + farbe + '" aria-hidden="true" focusable="false">' + inhalt + '</svg>';
+  }
+  var BILD = {
+    /* Grosses A auf einer Tafel */
+    initial:
+      '<rect x="6" y="6" width="36" height="36" rx="7"/>'
+    + '<path d="M21.4 13h5.2l8.6 23h-5l-1.8-5.2h-8.8L17.8 36h-5zm-.6 13.6h6.4L24 17.4z" fill="#fff"/>',
+    /* Kirschenpaar: zwei gleiche Früchte am selben Stiel */
+    kirschen:
+      '<circle cx="15" cy="33" r="8"/><circle cx="33" cy="33" r="8"/>'
+    + '<path d="M15 26c1.5-8 5-13.5 11.5-17l1.3 1.7c-5.4 3.4-8.4 8-9.8 15.6zM33 26c-.8-6.3-2.8-11-6.2-15.5l1.7-1.2c3.8 4.9 6 9.9 6.9 16.4z"/>'
+    + '<path d="M27.5 9.4c3.7-3.6 9.4-4.4 13.5-2.6-2.4 4.4-8.2 6-13.5 2.6z"/>'
+    + '<circle cx="12.3" cy="30.3" r="2.1" fill="#fff" opacity=".55"/><circle cx="30.3" cy="30.3" r="2.1" fill="#fff" opacity=".55"/>',
+    /* Sanduhr: das lange Warten des Dehnungs-h */
+    sanduhr:
+      '<rect x="10" y="5" width="28" height="5" rx="2"/><rect x="10" y="38" width="28" height="5" rx="2"/>'
+    + '<path d="M13 10h22c0 7-4.3 10.6-8 14 3.7 3.4 8 7 8 14H13c0-7 4.3-10.6 8-14-3.7-3.4-8-7-8-14z"/>'
+    + '<path d="M17.5 13h13c-.6 3.8-3.4 6.2-6.5 8.6-3.1-2.4-5.9-4.8-6.5-8.6zM18 35.5c1-3.2 3.3-5 6-6.8 2.7 1.8 5 3.6 6 6.8z" fill="#fff" opacity=".6"/>',
+    /* Apfel mit zwei Punkten – aus dem a wird ein ä */
+    apfel:
+      '<path d="M24 16c-3-2.6-9.6-3.4-13.2 1.4-3.8 5-2.5 13.4 1.7 19 2.6 3.5 5.6 5.4 8.4 4.3 1.3-.5 2.1-.5 3.1-.5s1.8 0 3.1.5c2.8 1.1 5.8-.8 8.4-4.3 4.2-5.6 5.5-14 1.7-19C33.6 12.6 27 13.4 24 16z"/>'
+    + '<path d="M23 15.5c-.2-3.6.9-6.8 3.4-9l1.6 1.4c-2 1.9-2.8 4.4-2.6 7.6z"/>'
+    + '<circle cx="18.5" cy="6.5" r="3"/><circle cx="35" cy="9" r="3"/>'
+    + '<path d="M15.5 22.5c1.4-2.4 3.8-3.4 6-3" stroke="#fff" stroke-width="2.2" stroke-linecap="round" fill="none" opacity=".6"/>',
+    /* Schreibfeder */
+    feder:
+      '<path d="M40.5 6.5C29 7.6 19.6 15 15.3 26.8l-2.2 6.3 2.4 1.1 2.5-5.3c3.7.8 8.5-.6 12-4.1-2.4-.2-4.2-.8-5.4-1.8 3.4-.1 6.4-1.4 8.8-3.9-1.8-.3-3.2-.9-4.1-1.8 4.3-.9 7.7-3.7 11.2-10.8z"/>'
+    + '<path d="M13.2 33 8 43.5l2.4 1 5.3-10.3z"/>',
+    /* Krone */
+    kranz:
+      '<path d="M9 16.5 15.5 25 24 11.5 32.5 25 39 16.5v17.5H9z"/>'
+    + '<rect x="8" y="34" width="32" height="6" rx="2"/>'
+    + '<circle cx="9" cy="14" r="3"/><circle cx="24" cy="8.5" r="3.4"/><circle cx="39" cy="14" r="3"/>'
+    + '<circle cx="17" cy="30" r="1.9" fill="#fff" opacity=".55"/>'
+    + '<circle cx="24" cy="30" r="1.9" fill="#fff" opacity=".55"/>'
+    + '<circle cx="31" cy="30" r="1.9" fill="#fff" opacity=".55"/>'
+  };
+  var LISTE = [
+    {k:'gross',   t:'Gross / klein',   b:'initial',  was:'richtig gelöst', stufen:[10, 30, 60]},
+    {k:'doppel',  t:'Doppelkonsonant', b:'kirschen', was:'richtig gelöst', stufen:[10, 30, 60]},
+    {k:'dehnung', t:'Dehnungs-h',      b:'sanduhr',  was:'richtig gelöst', stufen:[10, 30, 60]},
+    {k:'umlaut',  t:'ä oder e',        b:'apfel',    was:'richtig gelöst', stufen:[10, 30, 60]},
+    {k:'diktat',  t:'Diktat',          b:'feder',    was:'fehlerfreie Diktate', stufen:[3, 10, 20]}
+  ];
+  var LEER = function(){ return {gross:0, doppel:0, dehnung:0, umlaut:0, diktat:0}; };
+  var stand = LEER();
+  try{
+    var roh = JSON.parse(hol('de-pokale', '') || '{}');
+    if(roh && typeof roh === 'object') Object.keys(stand).forEach(function(k){
+      if(typeof roh[k] === 'number' && roh[k] >= 0) stand[k] = Math.floor(roh[k]);
+    });
+  }catch(e){}
+  function sichern(){ leg('de-pokale', JSON.stringify(stand)); }
+  function stufe(e){
+    var n = stand[e.k], s = 0;
+    for(var i = 0; i < e.stufen.length; i++) if(n >= e.stufen[i]) s = i + 1;
+    return s;
+  }
+  function alleGold(){ return LISTE.every(function(e){ return stufe(e) === 3; }); }
+
+  var kasten = null, weg = null;
+  function jubel(bild, farbe, titel, text){
+    if(!kasten){
+      kasten = el('div', 'jubel'); kasten.setAttribute('role', 'status');
+      document.body.appendChild(kasten);
+    }
+    kasten.innerHTML = svg(BILD[bild], farbe) + '<div><b>' + titel + '</b><span>' + text + '</span></div>';
+    void kasten.offsetWidth;
+    kasten.classList.add('da');
+    KLANG.spiel('toll');
+    clearTimeout(weg);
+    weg = setTimeout(function(){ kasten.classList.remove('da'); }, 5000);
+  }
+  function merkePunkt(){
+    var b = document.querySelector('.tabs button[data-k="vitrine"]');
+    if(b && !b.querySelector('.punkt')) b.appendChild(el('span', 'punkt'));
+  }
+  function zeichne(){
+    var gitter = document.getElementById('vGrid');
+    if(!gitter) return;
+    gitter.innerHTML = '';
+    var geholt = 0;
+    LISTE.forEach(function(e){
+      var n = stand[e.k], st = stufe(e);
+      geholt += st;
+      var reihe = e.stufen.map(function(schwelle, i){
+        return '<div class="vstufe' + (n < schwelle ? ' offen' : '') + '" title="' + NAME[i] + ' bei '
+             + schwelle + '">' + svg(BILD[e.b], FARBE[i]) + '<div class="vzahl">' + schwelle + '</div></div>';
+      }).join('');
+      var ziel = (st < 3) ? e.stufen[st] : e.stufen[2];
+      var d = el('div', 'vkarte');
+      d.innerHTML = '<h3>' + e.t + '</h3><div class="vwas">' + n + ' ' + e.was + '</div>'
+        + '<div class="vreihe">' + reihe + '</div>'
+        + '<div class="vbalken"><i style="width:' + Math.min(100, Math.round(n / ziel * 100)) + '%"></i></div>'
+        + '<p class="vrest">' + (st === 3 ? 'Alles geholt.' : 'Noch <b>' + (ziel - n) + '</b> bis ' + NAME[st] + '.') + '</p>';
+      gitter.appendChild(d);
+    });
+    var kranz = document.getElementById('vKranz');
+    if(kranz){
+      var da = alleGold();
+      kranz.className = 'vkranz' + (da ? '' : ' offen');
+      kranz.innerHTML = svg(BILD.kranz, FARBE[2]) + '<div><b>Die Krone</b><span>' + (da
+        ? 'Alle fünf Kapitel in Gold. Hervorragend!'
+        : 'Gibt es, wenn alle fünf Kapitel in Gold stehen.') + '</span></div>';
+    }
+    var g = document.getElementById('vGesamt');
+    if(g) g.innerHTML = '<b>' + geholt + '</b> von <b>15</b> Pokalen' + (alleGold() ? ' – dazu die Krone.' : '');
+  }
+  function plus(k){
+    var e = LISTE.filter(function(x){ return x.k === k; })[0];
+    if(!e) return;
+    var vorher = stufe(e);
+    stand[k]++;
+    var jetzt = stufe(e);
+    if(jetzt > vorher){
+      jubel(e.b, FARBE[jetzt - 1], NAME[jetzt - 1] + ' in «' + e.t + '»', stand[k] + ' ' + e.was + '. Weiter so!');
+      merkePunkt();
+      if(jetzt === 3 && alleGold()) setTimeout(function(){
+        jubel('kranz', FARBE[2], 'Die Krone', 'Alle fünf Kapitel in Gold. Mehr geht nicht.');
+      }, 5200);
+    }
+    sichern(); zeichne();
+  }
+  (function(){
+    var b = document.getElementById('vNull');
+    if(!b) return;
+    var scharf = false, zurueck = null;
+    b.addEventListener('click', function(){
+      if(!scharf){
+        scharf = true; b.textContent = 'Wirklich? Nochmals tippen.';
+        zurueck = setTimeout(function(){ scharf = false; b.textContent = 'Alles zurücksetzen'; }, 5000);
+        return;
+      }
+      clearTimeout(zurueck); scharf = false; b.textContent = 'Alles zurücksetzen';
+      stand = LEER(); sichern(); zeichne();
+    });
+  })();
+  return { plus: plus, zeichne: zeichne, stand: function(){ return stand; } };
+})();
+
+/* ==================== Trainer für die vier Stolpersteine ==================== */
+var TITEL = {
+  gross:   ['1. Gross oder klein?', 'Wählen Sie die richtige Schreibung – oder finden Sie die Fehler im Satz.'],
+  doppel:  ['2. Ein Konsonant oder zwei?', 'Kurzer Vokal oder langer? Hören Sie innerlich mit.'],
+  dehnung: ['3. Mit h oder ohne?', 'Das Dehnungs-h steht nur vor l, m, n, r – aber nicht immer.'],
+  umlaut:  ['4. ä oder e, äu oder eu?', 'Suchen Sie das verwandte Wort mit a oder au.']
+};
+
+/* «Satz {richtig|falsch}» → { vor, nach, wahl:[…], richtig } */
+function zerlegeLuecke(satz, k){
+  var m = satz.match(/^(.*)\{([^}]+)\}(.*)$/);
+  var teile = m[2].split('|');
+  if(teile.length === 1){
+    var w = teile[0], c = w.charAt(0);
+    var um = (c === c.toUpperCase() ? c.toLowerCase() : c.toUpperCase()) + w.slice(1);
+    teile = [w, um];
+  }
+  return { vor: m[1], nach: m[3], richtig: teile[0], wahl: mischen(teile.slice()) };
+}
+
+/* «… {falsch>richtig} …» → Liste von Wörtern {w, fehler, korr} und Zwischenräumen */
+function zerlegeFehler(satz){
+  var stuecke = [], re = /\{([^>}]+)>([^}]+)\}/g, pos = 0, m;
+  function text(t){
+    t.split(/(\s+)/).forEach(function(s){
+      if(!s) return;
+      if(/^\s+$/.test(s)) stuecke.push({ raum: s });
+      else {
+        /* Satzzeichen am Wortende als eigenes, nicht anklickbares Stück */
+        var mm = s.match(/^(.*?)([.,:;!?»«]*)$/);
+        if(mm[1]) stuecke.push({ w: mm[1], fehler: false });
+        if(mm[2]) stuecke.push({ zeichen: mm[2] });
+      }
+    });
+  }
+  while((m = re.exec(satz))){
+    text(satz.slice(pos, m.index));
+    stuecke.push({ w: m[1], fehler: true, korr: m[2] });
+    pos = re.lastIndex;
+  }
+  text(satz.slice(pos));
+  return stuecke;
+}
+
+function Trainer(box){
+  var k = box.dataset.k, D = DATEN[k];
+  var stufe = hol('de-stufe-' + k, 'A'), modus = hol('de-modus-' + k, 'L');
+  if(!D.L[stufe]) stufe = 'A';
+  if(modus !== 'L' && modus !== 'F') modus = 'L';
+  var stapel = {}, aktuell = null, versuch = { richtig:0, total:0 };
+
+  box.innerHTML = '<h2>' + TITEL[k][0] + '</h2><p class="lead">' + TITEL[k][1] + '</p>';
+  var stufen = el('div', 'stufen');
+  [['A','Stufe A · Alltag'],['B','Stufe B · Betrieb'],['C','Stufe C · anspruchsvoll']].forEach(function(s){
+    var b = el('button', null, s[1]); b.type = 'button'; b.dataset.s = s[0];
+    b.addEventListener('click', function(){ stufe = s[0]; leg('de-stufe-' + k, stufe); knoepfe(); neu(); });
+    stufen.appendChild(b);
+  });
+  var mod = el('div', 'modus');
+  [['L','Lückenwörter'],['F','Fehler finden']].forEach(function(s){
+    var b = el('button', null, s[1]); b.type = 'button'; b.dataset.m = s[0];
+    b.addEventListener('click', function(){ modus = s[0]; leg('de-modus-' + k, modus); knoepfe(); neu(); });
+    mod.appendChild(b);
+  });
+  var feld = el('div');
+  var fuss = el('div', 'reihe');
+  var standEl = el('span', 'stand');
+  fuss.appendChild(standEl);
+  box.appendChild(stufen); box.appendChild(mod); box.appendChild(feld); box.appendChild(fuss);
+
+  function knoepfe(){
+    Array.prototype.forEach.call(stufen.children, function(b){ b.setAttribute('aria-pressed', String(b.dataset.s === stufe)); });
+    Array.prototype.forEach.call(mod.children, function(b){ b.setAttribute('aria-pressed', String(b.dataset.m === modus)); });
+  }
+  function zeigeStand(){
+    standEl.innerHTML = versuch.total
+      ? 'Diese Runde: <b>' + versuch.richtig + '</b> von ' + versuch.total + ' richtig'
+      : 'Insgesamt in diesem Kapitel: <b>' + POKAL.stand()[k] + '</b> richtig gelöst';
+  }
+  /* Ziehen ohne Wiederholung, bis der Stapel leer ist */
+  function ziehe(){
+    var key = modus + stufe, liste = D[modus][stufe];
+    if(!stapel[key] || !stapel[key].length){
+      var neuS = mischen(liste.map(function(_, i){ return i; }));
+      if(aktuell !== null && neuS.length > 1 && neuS[neuS.length - 1] === aktuell.i) neuS.unshift(neuS.pop());
+      stapel[key] = neuS;
+    }
+    var i = stapel[key].pop();
+    return { i: i, daten: liste[i] };
+  }
+
+  function weiterKnopf(fokus){
+    var b = el('button', 'knopf', 'Weiter →'); b.type = 'button';
+    b.addEventListener('click', neu);
+    if(fokus) setTimeout(function(){ try{ b.focus({preventScroll:true}); }catch(e){} }, 30);
+    return b;
+  }
+
+  function lueckeZeigen(){
+    var z = zerlegeLuecke(aktuell.daten[0], k), warum = aktuell.daten[1];
+    feld.innerHTML = '';
+    var a = el('div', 'aufgabe');
+    var satz = el('div', 'asatz');
+    satz.appendChild(document.createTextNode(z.vor));
+    var l = el('span', 'luecke'); l.innerHTML = '&nbsp;';
+    satz.appendChild(l);
+    satz.appendChild(document.createTextNode(z.nach));
+    var wahl = el('div', 'wahl');
+    var rueck = el('div', 'rueck');
+    var erster = true;
+    z.wahl.forEach(function(w){
+      var b = el('button', null, w); b.type = 'button';
+      b.addEventListener('click', function(){
+        if(b.disabled) return;
+        var ok = (w === z.richtig);
+        Array.prototype.forEach.call(wahl.children, function(x){
+          x.disabled = true;
+          if(x.textContent === z.richtig) x.classList.add('richtig');
+        });
+        if(!ok) b.classList.add('falsch');
+        l.textContent = z.richtig;
+        l.className = 'luecke ' + (ok ? 'ok' : 'nein');
+        rueck.className = 'rueck ' + (ok ? 'gut' : 'nein');
+        rueck.innerHTML = (ok ? '✓ Richtig.' : '✗ Richtig ist «' + esc(z.richtig) + '».')
+          + '<span class="warum">' + esc(warum) + '</span>';
+        if(erster){
+          versuch.total++;
+          if(ok){ versuch.richtig++; KLANG.spiel('gut'); POKAL.plus(k); }
+        }
+        erster = false;
+        zeigeStand();
+        var w2 = el('div', 'reihe'); w2.style.justifyContent = 'center'; w2.style.marginTop = '12px';
+        w2.appendChild(weiterKnopf(true));
+        a.appendChild(w2);
+      });
+      wahl.appendChild(b);
+    });
+    a.appendChild(satz); a.appendChild(wahl); a.appendChild(rueck);
+    feld.appendChild(a);
+  }
+
+  function fehlerZeigen(){
+    var st = zerlegeFehler(aktuell.daten);
+    var anzahl = st.filter(function(s){ return s.fehler; }).length;
+    feld.innerHTML = '';
+    var hin = el('p', 'fhinweis');
+    hin.innerHTML = 'Tippen Sie die falsch geschriebenen Wörter an. In diesem Satz stecken <span class="fzaehl">'
+      + anzahl + ' Fehler</span>' + (k === 'gross' ? ' bei der Gross- und Kleinschreibung.' : '.');
+    var text = el('div', 'ftext');
+    var spans = [];
+    st.forEach(function(s){
+      if(s.raum){ text.appendChild(document.createTextNode(' ')); return; }
+      if(s.zeichen){ text.appendChild(document.createTextNode(s.zeichen)); return; }
+      var sp = el('span', 'fw', s.w);
+      sp.setAttribute('role', 'button'); sp.tabIndex = 0;
+      sp._s = s;
+      function umschalten(){ if(!text._fertig) sp.classList.toggle('mark'); }
+      sp.addEventListener('click', umschalten);
+      sp.addEventListener('keydown', function(e){ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); umschalten(); } });
+      spans.push(sp);
+      text.appendChild(sp);
+    });
+    var rueck = el('div', 'rueck');
+    var reihe = el('div', 'reihe');
+    var pruef = el('button', 'knopf', 'Prüfen'); pruef.type = 'button';
+    pruef.addEventListener('click', function(){
+      if(text._fertig) return;
+      text._fertig = true;
+      var treffer = 0, verpasst = 0, alarm = 0;
+      spans.forEach(function(sp){
+        var s = sp._s, m = sp.classList.contains('mark');
+        sp.classList.remove('mark');
+        if(s.fehler){
+          sp.classList.add(m ? 'treffer' : 'verpasst');
+          if(m) treffer++; else verpasst++;
+          var kr = el('span', 'korr', s.korr); sp.appendChild(kr);
+        } else if(m){ sp.classList.add('fehlalarm'); alarm++; }
+      });
+      var perfekt = (verpasst === 0 && alarm === 0);
+      versuch.total++;
+      if(perfekt){ versuch.richtig++; KLANG.spiel('gut'); POKAL.plus(k); }
+      rueck.className = 'rueck ' + (perfekt ? 'gut' : 'nein');
+      rueck.innerHTML = perfekt ? '✓ Alle Fehler gefunden.'
+        : '✗ ' + treffer + ' von ' + anzahl + ' gefunden'
+          + (alarm ? ', ' + alarm + ' richtige Wörter zu Unrecht markiert' : '') + '.'
+          + '<span class="warum">Grün: gefunden · Rot: übersehen · durchgestrichen: war richtig.</span>';
+      zeigeStand();
+      pruef.remove();
+      reihe.appendChild(weiterKnopf(true));
+    });
+    reihe.appendChild(pruef);
+    feld.appendChild(hin); feld.appendChild(text); feld.appendChild(reihe); feld.appendChild(rueck);
+  }
+
+  function neu(){
+    aktuell = ziehe();
+    if(modus === 'L') lueckeZeigen(); else fehlerZeigen();
+    zeigeStand();
+  }
+  knoepfe(); neu();
+}
+Array.prototype.forEach.call(document.querySelectorAll('.trainer'), function(b){ Trainer(b); });
+
+/* ==================== Diktat ==================== */
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var stufe = hol('de-dstufe', 'A');
+  if(!DIKTAT[stufe]) stufe = 'A';
+  var stapel = [], satz = '', gezeigt = false, gezaehlt = false;
+  var hatSprache = ('speechSynthesis' in window) && ('SpeechSynthesisUtterance' in window);
+  var stimmen = [], stimme = null;
+  /* Figuren- und Effektstimmen von Apple: stehen in jeder Sprache in der Liste,
+     sprechen aber oft mit der Systemstimme – nie vorauswählen. */
+  var FIGUREN = /^(Albert|Bad News|Bahh|Bells|Boing|Bubbles|Cellos|Eddy|Flo|Fred|Good News|Grandma|Grandpa|Jester|Junior|Kathy|Organ|Ralph|Reed|Rocko|Sandy|Shelley|Superstar|Trinoids|Whisper|Wobble|Zarvox)\b/i;
+
+  function stimmenLesen(){
+    if(!hatSprache) return;
+    var alle = speechSynthesis.getVoices() || [];
+    stimmen = alle.filter(function(v){ return /^de([-_]|$)/i.test(v.lang); });
+    function rang(v){
+      var r = 0;
+      if(FIGUREN.test(v.name)) r += 100;
+      if(!v.localService) r += 5;
+      if(/de[-_]CH/i.test(v.lang)) r -= 3; else if(/de[-_]DE/i.test(v.lang)) r -= 2;
+      if(/premium|enhanced|erweitert|natural/i.test(v.name)) r -= 1;
+      return r;
+    }
+    stimmen.sort(function(a, b){ return rang(a) - rang(b); });
+    var sel = $('dStimme');
+    sel.innerHTML = '';
+    stimmen.forEach(function(v, i){
+      var o = el('option', null, v.name + ' (' + v.lang + ')' + (v.localService ? '' : ' (online)')
+        + (FIGUREN.test(v.name) ? ' – Figurenstimme' : ''));
+      o.value = String(i); sel.appendChild(o);
+    });
+    var gemerkt = hol('de-stimme', '');
+    var idx = stimmen.findIndex ? stimmen.findIndex(function(v){ return v.name === gemerkt; }) : -1;
+    if(idx < 0) idx = 0;
+    stimme = stimmen[idx] || null;
+    sel.value = String(idx);
+    $('dStimmzeile').style.display = stimmen.length ? '' : 'none';
+    $('dKeineStimme').style.display = stimmen.length ? 'none' : '';
+  }
+  if(hatSprache){
+    stimmenLesen();
+    if('onvoiceschanged' in speechSynthesis) speechSynthesis.onvoiceschanged = stimmenLesen;
+    setTimeout(stimmenLesen, 800);
+  } else {
+    $('dKeineStimme').style.display = '';
+  }
+  $('dStimme').addEventListener('change', function(){
+    stimme = stimmen[+this.value] || null;
+    if(stimme) leg('de-stimme', stimme.name);
+  });
+
+  function sprich(t, tempo){
+    if(!hatSprache || !stimmen.length){ lesediktat(); return; }
+    try{
+      speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(t);
+      if(stimme){ u.voice = stimme; u.lang = stimme.lang; } else u.lang = 'de-CH';
+      u.rate = tempo; u.pitch = 1;
+      speechSynthesis.speak(u);
+    }catch(e){ lesediktat(); }
+  }
+  var lesetimer = null;
+  function lesediktat(){
+    $('dSichtbarSatz').textContent = satz;
+    $('dSichtbar').style.display = '';
+    clearTimeout(lesetimer);
+    lesetimer = setTimeout(function(){ if(!gezeigt) $('dSichtbar').style.display = 'none'; }, 5000);
+  }
+
+  function knoepfe(){
+    Array.prototype.forEach.call(document.querySelectorAll('#dStufen button'), function(b){
+      b.setAttribute('aria-pressed', String(b.dataset.s === stufe));
+    });
+  }
+  function neu(){
+    if(!stapel.length){
+      stapel = mischen(DIKTAT[stufe].slice());
+      if(stapel.length > 1 && stapel[stapel.length - 1] === satz) stapel.unshift(stapel.pop());
+    }
+    satz = stapel.pop();
+    gezeigt = false; gezaehlt = false;
+    $('dEingabe').value = '';
+    $('dLoesung').classList.remove('zeig');
+    $('dSichtbar').style.display = 'none';
+    $('dStand').innerHTML = 'Fehlerfreie Diktate: <b>' + POKAL.stand().diktat + '</b>';
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('#dStufen button'), function(b){
+    b.addEventListener('click', function(){
+      stufe = b.dataset.s; leg('de-dstufe', stufe); stapel = []; knoepfe(); neu();
+    });
+  });
+  $('dHoeren').addEventListener('click', function(){ sprich(satz, 0.92); });
+  $('dLangsam').addEventListener('click', function(){ sprich(satz, 0.62); });
+  $('dProbe').addEventListener('click', function(){ sprich('Guten Tag. So klinge ich beim Diktat.', 0.95); });
+  $('dZeigen').addEventListener('click', function(){
+    gezeigt = true;
+    $('dSichtbarSatz').textContent = satz;
+    $('dSichtbar').style.display = '';
+  });
+  $('dNaechster').addEventListener('click', function(){ neu(); setTimeout(function(){ sprich(satz, 0.92); }, 150); });
+
+  /* Wortweiser Vergleich: Satzzeichen zählen nicht, Gross/klein schon */
+  function woerter(t){
+    return t.replace(/[.,:;!?«»"„“()]/g, ' ').split(/\s+/).filter(Boolean);
+  }
+  function vergleiche(ist, soll){
+    var n = ist.length, m = soll.length, D = [], i, j;
+    for(i = 0; i <= n; i++){ D[i] = []; for(j = 0; j <= m; j++) D[i][j] = 0; }
+    for(i = 0; i <= n; i++) D[i][0] = i;
+    for(j = 0; j <= m; j++) D[0][j] = j;
+    for(i = 1; i <= n; i++) for(j = 1; j <= m; j++){
+      var gleich = ist[i-1].toLowerCase() === soll[j-1].toLowerCase();
+      D[i][j] = Math.min(D[i-1][j] + 1, D[i][j-1] + 1, D[i-1][j-1] + (gleich ? 0 : 1));
+    }
+    var ops = []; i = n; j = m;
+    while(i > 0 || j > 0){
+      if(i > 0 && j > 0){
+        var g = ist[i-1].toLowerCase() === soll[j-1].toLowerCase();
+        if(D[i][j] === D[i-1][j-1] + (g ? 0 : 1)){
+          ops.unshift(g ? (ist[i-1] === soll[j-1] ? {t:'ok', w:ist[i-1]} : {t:'gk', w:ist[i-1], s:soll[j-1]})
+                        : {t:'falsch', w:ist[i-1], s:soll[j-1]});
+          i--; j--; continue;
+        }
+      }
+      if(j > 0 && (i === 0 || D[i][j] === D[i][j-1] + 1)){ ops.unshift({t:'fehlt', s:soll[j-1]}); j--; }
+      else { ops.unshift({t:'zuviel', w:ist[i-1]}); i--; }
+    }
+    return ops;
+  }
+  $('dPruefen').addEventListener('click', function(){
+    var ein = $('dEingabe').value.trim();
+    if(!ein){ $('dEingabe').focus(); return; }
+    var ops = vergleiche(woerter(ein), woerter(satz));
+    var fehler = 0, gk = 0;
+    $('dDiff').innerHTML = ops.map(function(o){
+      if(o.t === 'ok') return '<span class="ok">' + esc(o.w) + '</span>';
+      fehler++;
+      if(o.t === 'gk'){ gk++; return '<span class="gk" title="richtig: ' + esc(o.s) + '">' + esc(o.w) + '</span>'; }
+      if(o.t === 'falsch') return '<span class="falsch" title="richtig: ' + esc(o.s) + '">' + esc(o.w) + '</span>';
+      if(o.t === 'fehlt') return '<span class="fehlt">[' + esc(o.s) + ']</span>';
+      return '<span class="zuviel">' + esc(o.w) + '</span>';
+    }).join(' ');
+    var u = $('dUrteil');
+    if(fehler === 0){
+      u.className = 'durteil gut';
+      u.textContent = gezeigt ? 'Fehlerfrei – mit Blick auf den Satz. Zählt diesmal nicht für die Vitrine.'
+                              : 'Fehlerfrei! Sehr gut.';
+      if(!gezeigt && !gezaehlt){ gezaehlt = true; KLANG.spiel('gut'); POKAL.plus('diktat'); }
+    } else if(fehler <= 2){
+      u.className = 'durteil fast';
+      u.textContent = fehler + (fehler === 1 ? ' Fehler' : ' Fehler') + (gk ? ', davon ' + gk + ' bei Gross/klein.' : '.') + ' Fast!';
+    } else {
+      u.className = 'durteil schlecht';
+      u.textContent = fehler + ' Fehler' + (gk ? ', davon ' + gk + ' bei Gross/klein' : '') + '. Hören Sie den Satz nochmals langsam.';
+    }
+    $('dRichtig').textContent = satz;
+    $('dLoesung').classList.add('zeig');
+    $('dStand').innerHTML = 'Fehlerfreie Diktate: <b>' + POKAL.stand().diktat + '</b>';
+  });
+  $('dEingabe').addEventListener('keydown', function(e){
+    if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); $('dPruefen').click(); }
+  });
+  knoepfe(); neu();
+})();
+
+/* ==================== Reiter ==================== */
+(function(){
+  var kn = document.querySelectorAll('nav.tabs button');
+  function zeige(k){
+    Array.prototype.forEach.call(kn, function(b){ b.setAttribute('aria-selected', String(b.dataset.k === k)); });
+    Array.prototype.forEach.call(document.querySelectorAll('.kap'), function(s){
+      s.classList.toggle('aktiv', s.id === 'k-' + k);
+    });
+    leg('de-kapitel', k);
+    if(k === 'vitrine'){
+      POKAL.zeichne();
+      var p = document.querySelector('.tabs button[data-k="vitrine"] .punkt');
+      if(p) p.parentNode.removeChild(p);
+    }
+    if(k !== 'diktat' && window.speechSynthesis){ try{ speechSynthesis.cancel(); }catch(e){} }
+    window.scrollTo(0, 0);
+  }
+  Array.prototype.forEach.call(kn, function(b){ b.addEventListener('click', function(){ zeige(b.dataset.k); }); });
+  var h = (location.hash || '').replace('#', '');
+  var g = document.getElementById('k-' + h) ? h : hol('de-kapitel', 'gross');
+  if(document.getElementById('k-' + g)) zeige(g);
+  POKAL.zeichne();
+})();
+
+/* ==================== Zoomleiste ==================== */
+(function(){
+  var z = (window.self !== window.top) ? 0.9 : 1;
+  var leiste = document.createElement('div');
+  leiste.className = 'zoomleiste';
+  function setZ(nz){
+    z = Math.max(0.5, Math.min(1.4, Math.round(nz * 100) / 100));
+    document.body.style.zoom = z;
+    leiste.style.zoom = 1 / z;
+  }
+  function mk(txt, titel, fn){
+    var b = document.createElement('button');
+    b.type = 'button'; b.textContent = txt; b.title = titel;
+    b.setAttribute('aria-label', titel);
+    b.addEventListener('click', fn);
+    leiste.appendChild(b);
+  }
+  mk('−', 'Kleiner', function(){ setZ(z - 0.1); });
+  mk('+', 'Grösser', function(){ setZ(z + 0.1); });
+  var tonKnopf = null;
+  mk(KLANG.an() ? '🔊' : '🔇', 'Töne ein- und ausschalten', function(){
+    var jetzt = KLANG.schalten();
+    if(tonKnopf){ tonKnopf.textContent = jetzt ? '🔊' : '🔇'; tonKnopf.title = jetzt ? 'Töne ausschalten' : 'Töne einschalten'; }
+    if(jetzt) KLANG.spiel('gut');
+  });
+  tonKnopf = leiste.lastChild;
+  mk('⛶', 'Vollbild (Esc beendet)', function(){
+    var drin = document.fullscreenElement || document.webkitFullscreenElement;
+    if(drin){ (document.exitFullscreen || document.webkitExitFullscreen).call(document); }
+    else {
+      var e = document.documentElement;
+      var p = e.requestFullscreen ? e.requestFullscreen() : e.webkitRequestFullscreen ? e.webkitRequestFullscreen() : null;
+      if(p && p.catch) p.catch(function(){});
+    }
+  });
+  document.body.appendChild(leiste);
+  setZ(z);
+})();
+
+})();
+</script>
+
+<script>
+/* ---- abu-tools.ch: eine Oeffnung dieses Werkzeugs melden ----
+   Gezaehlt wird nur, was wirklich auf abu-tools.ch laeuft; lokal per
+   Doppelklick geoeffnete Dateien bleiben draussen. Faellt der Aufruf aus,
+   passiert nichts. Der Schluessel ist oeffentlich und darf nur diese eine
+   Funktion aufrufen. Dieser Block ist in allen Werkzeugen zeichengleich —
+   bitte nur per Suchen-und-Ersetzen ueber alle Dateien aendern.        */
+(function(){
+  try{
+    if(location.protocol === 'file:') return;
+    if(!/(^|\.)abu-tools\.ch$/i.test(location.hostname)) return;
+    var n = (location.pathname.split('/').pop() || '');
+    if(!/^[a-z0-9][a-z0-9_.-]{2,59}\.html$/.test(n) || n === 'index.html') return;
+    var k = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlYm1ueXhxbHViaXJ3eXlrb2ZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxODA2MDYsImV4cCI6MjEwMzc1NjYwNn0.GhjZy-ZSQcRfdpUx1Jm3Yayk0iYhuiswpRuQILL1F7Q';
+    fetch('https://eebmnyxqlubirwyykofo.supabase.co/rest/v1/rpc/kachel_klick', {
+      method: 'POST',
+      headers: { 'apikey': k, 'Authorization': 'Bearer ' + k,
+                 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: '{"p_kachel":"' + n + '"}',
+      keepalive: true
+    }).catch(function(){});
+  }catch(e){}
+})();
+</script>
+</body>
+</html>
