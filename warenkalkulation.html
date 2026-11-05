@@ -25,8 +25,10 @@
   ::selection{ background:var(--rot); color:#fff; }
 
   /* Kopf bleibt HKV – mit Speedstreifen als Übergang */
-  header{ background:linear-gradient(135deg,#213B42 0%,#3C6E73 100%); color:#fff; padding:18px 22px 26px; text-align:center; position:relative; overflow:hidden; }
-  header::before{ content:''; position:absolute; inset:0; background:var(--carbon); opacity:.6; pointer-events:none; }
+  header{ background:linear-gradient(90deg,rgba(33,59,66,.96) 0%,rgba(33,59,66,.90) 38%,rgba(33,59,66,.45) 62%,rgba(33,59,66,.18) 100%), url('warenkalkulation_rennwagen.jpg') 62% 45% / cover no-repeat, linear-gradient(135deg,#213B42 0%,#3C6E73 100%); color:#fff; padding:26px 24px 30px; text-align:left; position:relative; overflow:hidden; text-shadow:0 1px 3px rgba(0,0,0,.6); min-height:300px; display:flex; flex-direction:column; justify-content:center; }
+  header .hk{ max-width:700px; }
+  @media (max-width:760px){ header{ text-align:center; min-height:0; background:linear-gradient(180deg,rgba(33,59,66,.92) 0%,rgba(33,59,66,.86) 100%), url('warenkalkulation_rennwagen.jpg') 60% 45% / cover no-repeat, linear-gradient(135deg,#213B42 0%,#3C6E73 100%); } header .hk{ max-width:none; } }
+  header::before{ content:''; position:absolute; inset:0; background:var(--carbon), radial-gradient(60% 90% at 50% 50%, rgba(13,17,23,.38), transparent 70%); opacity:.9; pointer-events:none; }
   header::after{ content:''; position:absolute; left:0; right:0; bottom:0; height:6px; background:linear-gradient(90deg, var(--rot) 0 34%, var(--blau) 34% 67%, var(--gelb) 67% 100%); }
   header > *{ position:relative; }
   .kopfwappen{ display:inline-block; line-height:0; margin:0 0 10px; opacity:.96; transition:opacity .15s ease, transform .15s ease; }
@@ -40,7 +42,8 @@
   header h1{ margin:0 0 4px; font-size:clamp(26px,3.8vw,34px); font-weight:900; letter-spacing:.06em; text-transform:uppercase; font-style:italic; }
   header h1 .ed{ display:inline-block; font-size:.42em; font-style:normal; letter-spacing:.22em; vertical-align:middle; margin-left:12px; padding:3px 9px; border:1.5px solid var(--gelb); color:var(--gelb); border-radius:4px; transform:skewX(-8deg); }
   header .sub{ font-size:14px; opacity:.93; max-width:720px; margin:0 auto; line-height:1.5; }
-  .kopfkette{ display:flex; flex-wrap:wrap; justify-content:center; gap:4px 3px; margin:16px auto 0; max-width:900px; }
+  .kopfkette{ display:flex; flex-wrap:wrap; justify-content:flex-start; gap:4px 3px; margin:16px 0 0; max-width:900px; }
+  @media (max-width:760px){ .kopfkette{ justify-content:center; margin:14px auto 0; } }
   .kopfkette span{ font-size:11.5px; font-weight:800; letter-spacing:.3px; padding:4px 11px; background:rgba(0,0,0,.28); border:1px solid rgba(255,255,255,.22); white-space:nowrap; clip-path:polygon(5px 0,100% 0,calc(100% - 5px) 100%,0 100%); }
   .kopfkette span.e{ background:rgba(216,174,102,.22); border-color:rgba(216,174,102,.55); }
   .kopfkette i{ font-style:normal; opacity:.6; align-self:center; font-size:12px; }
@@ -407,12 +410,14 @@ html.eingebettet body{ zoom:.82; }
 <header>
   <a class="kopfwappen" href="https://www.hkvaarau.ch/berufsfachschule" target="_blank"
      rel="noopener" title="Handelsschule KV Aarau"><img src="hkv_logo_weiss.png?v=1" alt="HKV Aarau" onerror="this.parentNode.style.display='none'"></a>
+  <div class="hk">
   <div class="brand-eyebrow">Rechnen im Detailhandel <span class="be-cr"><span class="be-pkt">· </span>© 2026 <a
     href="mailto:samuel.mollet@hkv.ch" title="E-Mail an Samuel Mollet">S. Mollet</a></span></div>
   <h1>Warenkalkulation<span class="ed">Racing Edition</span></h1>
-  <div class="sub">Vom Listenpreis des Lieferanten bis zum Verkaufspreis im Laden. Verstehen, worauf sich jeder Prozentsatz bezieht – dann Runden drehen, bis es sitzt.</div>
+  <div class="sub" style="margin:0">Vom Listenpreis des Lieferanten bis zum Verkaufspreis im Laden. Verstehen, worauf sich jeder Prozentsatz bezieht – dann Runden drehen, bis es sitzt.</div>
   <div class="kopfkette" aria-label="Der Weg der Kalkulation">
     <span class="e">BAP</span><i>−</i><span class="e">Rabatt</span><i>=</i><span class="e">RB</span><i>−</i><span class="e">Skonto</span><i>=</i><span class="e">NAP</span><i>+</i><span>BK</span><i>=</i><span>EP</span><i>+</i><span>GK</span><i>=</i><span>SK</span><i>+</i><span>RG</span><i>=</i><span>VP</span>
+  </div>
   </div>
 </header>
 
