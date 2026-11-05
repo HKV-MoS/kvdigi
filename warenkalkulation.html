@@ -5,119 +5,166 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Warenkalkulation – HKV Aarau</title>
 <style>
+  :root{
+    --tief:#213B42; --petrol:#3C6E73; --petrol2:#4d7d82; --gold:#D8AE66; --papier:#F4F8FB;
+    --ink:#1A2B3A; --muted:#5B6B7A; --line:#E1EBF1; --gruen:#2E9D6B; --rot:#E2574C; --ocker:#B5641E;
+  }
   *{ box-sizing:border-box; }
   [hidden]{ display:none !important; }
-  body{ margin:0; font-family:'Aptos','Segoe UI',system-ui,-apple-system,sans-serif; background:#F4F8FB; color:#1A2B3A; font-size:15px; line-height:1.55; }
-  header{ background:linear-gradient(135deg,#213B42 0%,#3C6E73 100%); color:#fff; padding:16px 22px 22px; box-shadow:0 2px 8px rgba(0,0,0,.12); text-align:center; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{ margin:0; font-family:'Aptos','Segoe UI',system-ui,-apple-system,sans-serif; background:var(--papier); color:var(--ink); font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased; }
+  header{ background:linear-gradient(135deg,#213B42 0%,#3C6E73 100%); color:#fff; padding:18px 22px 24px; box-shadow:0 2px 8px rgba(0,0,0,.12); text-align:center; }
   .kopfwappen{ display:inline-block; line-height:0; margin:0 0 10px; opacity:.96; transition:opacity .15s ease, transform .15s ease; }
   .kopfwappen img{ height:46px; width:auto; display:block; }
   .kopfwappen:hover{ opacity:1; transform:scale(1.03); }
   @media (max-width:560px){ .kopfwappen img{ height:36px; } }
-  .brand-eyebrow{ font-size:11px; font-weight:800; letter-spacing:2.5px; color:#D8AE66; margin-bottom:3px; text-transform:uppercase; }
+  .brand-eyebrow{ font-size:11px; font-weight:800; letter-spacing:2.5px; color:var(--gold); margin-bottom:3px; text-transform:uppercase; }
   .brand-eyebrow .be-cr{ font-weight:600; letter-spacing:.2px; opacity:.72; text-transform:none; font-size:11.5px; }
   .brand-eyebrow .be-cr a{ color:inherit; text-decoration:underline; text-underline-offset:2px; }
-  .brand-eyebrow .be-cr a:hover{ opacity:1; color:#F3CE8E; }
-  @media (max-width:640px){
-    .brand-eyebrow{ letter-spacing:1.6px; line-height:1.7; }
-    .brand-eyebrow .be-cr{ display:block; letter-spacing:.2px; }
-    .brand-eyebrow .be-pkt{ display:none; }
-  }
-  header h1{ margin:0 0 2px; font-size:22px; font-weight:800; letter-spacing:-.3px; }
-  header .sub{ font-size:13px; opacity:.93; max-width:760px; margin:0 auto; }
-
-  /* Kette im Kopf: der ganze Weg auf einen Blick */
-  .kopfkette{ display:flex; flex-wrap:wrap; justify-content:center; gap:4px 3px; margin:14px auto 0; max-width:900px; }
-  .kopfkette span{ font-size:11.5px; font-weight:800; letter-spacing:.3px; padding:4px 9px; border-radius:999px;
-    background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.26); white-space:nowrap; }
+  @media (max-width:640px){ .brand-eyebrow{ letter-spacing:1.6px; line-height:1.7; } .brand-eyebrow .be-cr{ display:block; } .brand-eyebrow .be-pkt{ display:none; } }
+  header h1{ margin:0 0 4px; font-size:clamp(24px,3.4vw,30px); font-weight:800; letter-spacing:-.4px; }
+  header .sub{ font-size:14px; opacity:.93; max-width:720px; margin:0 auto; line-height:1.5; }
+  .kopfkette{ display:flex; flex-wrap:wrap; justify-content:center; gap:4px 3px; margin:16px auto 0; max-width:900px; }
+  .kopfkette span{ font-size:11.5px; font-weight:800; letter-spacing:.3px; padding:4px 9px; border-radius:999px; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.26); white-space:nowrap; }
   .kopfkette span.e{ background:rgba(216,174,102,.22); border-color:rgba(216,174,102,.55); }
   .kopfkette i{ font-style:normal; opacity:.6; align-self:center; font-size:12px; }
 
-  .wrap{ max-width:980px; margin:0 auto; padding:16px; }
+  .wrap{ max-width:1000px; margin:0 auto; padding:18px 16px 24px; }
 
-  .tabs{ display:flex; gap:8px; margin:6px 0 4px; flex-wrap:wrap; }
-  .tab{ font-family:inherit; font-size:14px; font-weight:700; padding:9px 18px; border-radius:10px 10px 0 0; border:none; background:transparent; color:#5B6B7A; cursor:pointer; border-bottom:3px solid transparent; }
-  .tab:hover{ color:#213B42; }
-  .tab.active{ color:#213B42; border-bottom-color:#D8AE66; background:#fff; box-shadow:0 -2px 8px rgba(20,50,80,.05); }
-  .tab:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
+  /* ---------- Bereichswahl ---------- */
+  .bereiche{ display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin:0 0 18px; }
+  .bereich{ font-family:inherit; text-align:left; background:#fff; border:1.5px solid var(--line); border-radius:14px; padding:12px 13px; cursor:pointer; color:var(--ink); display:flex; gap:10px; align-items:flex-start; box-shadow:0 1px 3px rgba(20,50,80,.05); transition:border-color .15s, box-shadow .15s, transform .15s; }
+  .bereich:hover{ border-color:var(--petrol); transform:translateY(-1px); box-shadow:0 4px 12px rgba(20,50,80,.10); }
+  .bereich:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
+  .bereich svg{ width:30px; height:30px; flex:0 0 30px; stroke:var(--petrol); fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  .bereich .bt{ display:block; font-size:14.5px; font-weight:800; color:var(--tief); line-height:1.2; }
+  .bereich .bn{ display:block; font-size:11px; font-weight:800; letter-spacing:1px; color:var(--gold); margin-bottom:2px; }
+  .bereich .bd{ display:block; font-size:12px; color:var(--muted); margin-top:3px; line-height:1.35; }
+  .bereich.active{ border-color:var(--petrol); background:linear-gradient(160deg,#213B42,#2E5054); color:#fff; box-shadow:0 6px 18px rgba(33,59,66,.28); }
+  .bereich.active .bt{ color:#fff; } .bereich.active .bd{ color:#C7D8DB; } .bereich.active svg{ stroke:var(--gold); }
+  @media (max-width:860px){ .bereiche{ grid-template-columns:repeat(3,1fr); } }
+  @media (max-width:560px){ .bereiche{ grid-template-columns:repeat(2,1fr); gap:7px; } .bereich{ padding:10px 10px; gap:7px; } .bereich .bd{ display:none; } .bereich svg{ width:24px; height:24px; flex-basis:24px; } .bereich .bt{ font-size:13.5px; } }
   .panel{ display:none; }
   .panel.active{ display:block; }
-  @media (max-width:560px){ .tab{ padding:8px 11px; font-size:13px; } .tabs{ gap:4px; } }
 
-  .card{ background:#fff; border-radius:14px; box-shadow:0 2px 10px rgba(20,50,80,.08); padding:18px 20px; margin-bottom:16px; }
-  .card h2{ margin:0 0 4px; font-size:18px; color:#213B42; font-weight:800; }
-  .card h3{ margin:16px 0 6px; font-size:14px; font-weight:800; color:#3C6E73; text-transform:uppercase; letter-spacing:.5px; }
+  .card{ background:#fff; border:1px solid var(--line); border-radius:16px; box-shadow:0 2px 10px rgba(20,50,80,.06); padding:20px 22px; margin-bottom:18px; }
+  .card h2{ margin:0 0 6px; font-size:19px; color:var(--tief); font-weight:800; letter-spacing:-.2px; display:flex; align-items:center; gap:9px; }
+  .card h2 svg{ width:22px; height:22px; stroke:var(--petrol); fill:none; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; flex:0 0 22px; }
+  .card h3{ margin:18px 0 8px; font-size:13px; font-weight:800; color:var(--petrol); text-transform:uppercase; letter-spacing:.8px; }
   .card p{ margin:6px 0; }
-  .lead{ color:#41585f; }
-  .hl{ background:#FBF3DF; padding:1px 6px; border-radius:5px; font-weight:700; }
-  @media (max-width:560px){ .card{ padding:15px 14px; } }
+  .lead{ color:#41585f; font-size:14.5px; }
+  @media (max-width:560px){ .card{ padding:15px 14px; border-radius:13px; } }
 
   /* Begriffe */
-  .begriffe{ width:100%; border-collapse:collapse; margin:8px 0 4px; font-size:14px; }
-  .begriffe th, .begriffe td{ text-align:left; vertical-align:top; padding:8px 10px; border-top:1px solid #E1EBF1; }
-  .begriffe tr:last-child td, .begriffe tr:last-child th{ border-bottom:1px solid #E1EBF1; }
-  .begriffe th{ width:34%; background:#F3F8FC; color:#213B42; font-weight:800; }
-  .begriffe th small{ display:block; font-weight:700; color:#3C6E73; font-size:12px; }
+  .begriffe{ width:100%; border-collapse:collapse; margin:10px 0 4px; font-size:14px; }
+  .begriffe th, .begriffe td{ text-align:left; vertical-align:top; padding:9px 10px; border-top:1px solid var(--line); }
+  .begriffe tr:last-child td, .begriffe tr:last-child th{ border-bottom:1px solid var(--line); }
+  .begriffe th{ width:34%; background:#F3F8FC; color:var(--tief); font-weight:800; }
+  .begriffe th small{ display:block; font-weight:700; color:var(--petrol); font-size:12px; }
   .begriffe td .bsp{ display:block; color:#6a7c88; font-size:12.5px; margin-top:2px; }
+  .basischip{ display:inline-block; font-size:11px; font-weight:800; letter-spacing:.3px; padding:2px 8px; border-radius:999px; background:#FBF3DF; color:#6A4C10; border:1px solid #EBD6A8; white-space:nowrap; vertical-align:1px; }
   @media (max-width:560px){ .begriffe th{ width:40%; } .begriffe{ font-size:13.5px; } }
 
   .formeln{ display:flex; gap:10px; flex-wrap:wrap; margin:12px 0 4px; }
-  .formel{ background:#E9F3F2; border:1.5px solid #A7D2CE; color:#213B42; border-radius:12px; padding:9px 16px; font-weight:800; font-size:15.5px; letter-spacing:.3px; }
+  .formel{ background:#E9F3F2; border:1.5px solid #A7D2CE; color:var(--tief); border-radius:12px; padding:9px 16px; font-weight:800; font-size:15.5px; letter-spacing:.3px; }
   .formel.gold{ background:#FBF3DF; border-color:#EBD6A8; }
 
-  .merk{ margin-top:12px; padding:11px 14px; border-radius:10px; background:#FBF3DF; border-left:4px solid #D8AE66; font-size:14px; color:#4d3c12; }
+  .merk{ margin-top:12px; padding:12px 15px; border-radius:11px; background:#FBF3DF; border-left:4px solid var(--gold); font-size:14px; color:#4d3c12; }
   .merk b{ color:#2e2306; }
-  .merk.gruen{ background:#EDF7F1; border-left-color:#2E9D6B; color:#1f4d35; }
-  .merk.gruen b{ color:#123522; }
-  .merk.blau{ background:#EAF2F8; border-left-color:#3C6E73; color:#23404a; }
-  .merk a, .querlink a{ color:#213B42; font-weight:800; text-decoration:underline; text-underline-offset:2px; }
-  .querlink{ margin-top:12px; font-size:13px; color:#5B6B7A; }
+  .merk.gruen{ background:#EDF7F1; border-left-color:var(--gruen); color:#1f4d35; } .merk.gruen b{ color:#123522; }
+  .merk.blau{ background:#EAF2F8; border-left-color:var(--petrol); color:#23404a; }
+  .merk a, .querlink a{ color:var(--tief); font-weight:800; text-decoration:underline; text-underline-offset:2px; }
+  .querlink{ margin-top:12px; font-size:13px; color:var(--muted); }
 
-  /* Kalkulationsblatt */
+  /* Eingaben */
   .eingaben{ display:flex; flex-wrap:wrap; gap:10px 14px; align-items:flex-end; margin:10px 0 6px; }
   .feld{ display:flex; flex-direction:column; gap:3px; }
-  .feld label{ font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.6px; color:#3C6E73; }
+  .feld label{ font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.6px; color:var(--petrol); }
   .feld .inp{ display:flex; align-items:center; gap:5px; }
-  .feld input{ font-family:inherit; font-size:16px; font-weight:700; padding:7px 9px; border:2px solid #CBD7E2; border-radius:9px; width:112px; color:#213B42; background:#fff; }
-  .feld input.kurz{ width:74px; }
-  .feld input:focus{ outline:none; border-color:#3C6E73; }
-  .feld .u{ font-size:13.5px; font-weight:700; color:#5B6B7A; }
+  .feld input{ font-family:inherit; font-size:16px; font-weight:700; padding:8px 10px; border:2px solid #CBD7E2; border-radius:10px; width:116px; color:var(--tief); background:#fff; }
+  .feld input.kurz{ width:76px; }
+  .feld input:focus{ outline:none; border-color:var(--petrol); box-shadow:0 0 0 3px rgba(60,110,115,.14); }
+  .feld .u{ font-size:13.5px; font-weight:700; color:var(--muted); }
   .chips{ display:flex; gap:6px; flex-wrap:wrap; }
-  .chip{ font-family:inherit; font-size:13px; font-weight:600; padding:6px 12px; border-radius:8px; border:1.5px solid #CBD7E2; background:#fff; color:#3C6E73; cursor:pointer; }
-  .chip:hover{ border-color:#3C6E73; }
-  .chip.on{ background:#213B42; color:#fff; border-color:#213B42; }
+  .chip{ font-family:inherit; font-size:13px; font-weight:700; padding:7px 13px; border-radius:999px; border:1.5px solid #CBD7E2; background:#fff; color:var(--petrol); cursor:pointer; transition:all .12s; }
+  .chip:hover{ border-color:var(--petrol); }
+  .chip.on{ background:var(--tief); color:#fff; border-color:var(--tief); }
   .chip:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
-  .flab{ font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:#3C6E73; margin:10px 0 6px; }
+  .flab{ font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--petrol); margin:10px 0 6px; }
 
+  /* ---------- Kalkulationsblatt ---------- */
   .blattwrap{ overflow-x:auto; margin:12px 0 4px; -webkit-overflow-scrolling:touch; }
-  table.blatt{ border-collapse:collapse; font-variant-numeric:tabular-nums; min-width:520px; width:100%; max-width:760px; font-size:15px; }
-  table.blatt td{ padding:5px 8px; white-space:nowrap; }
-  table.blatt td.op{ width:18px; text-align:center; color:#5B6B7A; font-weight:800; padding-right:2px; }
-  table.blatt td.nm{ color:#213B42; }
+  table.blatt{ border-collapse:collapse; font-variant-numeric:tabular-nums; min-width:520px; width:100%; max-width:780px; font-size:15px; }
+  table.blatt td{ padding:6px 8px; white-space:nowrap; }
+  table.blatt tr.klick{ cursor:pointer; }
+  table.blatt tr.klick:hover td{ background:#F3F8FC; }
+  table.blatt tr.aktiv td{ background:#E9F3F2; }
+  table.blatt tr.basis td{ background:#FBF3DF; }
+  table.blatt tr.basis td.nm::after{ content:'100 %'; font-size:10px; font-weight:800; letter-spacing:.5px; color:#8a4d0f; background:#F3D9A4; border-radius:999px; padding:1px 6px; margin-left:7px; vertical-align:1px; }
+  table.blatt td.op{ width:18px; text-align:center; color:var(--muted); font-weight:800; padding-right:2px; }
+  table.blatt td.nm{ color:var(--tief); }
   table.blatt td.nm .ab{ color:#6a7c88; font-size:13px; }
+  table.blatt td.nm .i{ display:inline-flex; width:15px; height:15px; border-radius:50%; border:1.5px solid #9fb3bf; color:#5b7482; font-size:10px; font-weight:800; align-items:center; justify-content:center; margin-left:6px; vertical-align:1px; font-style:normal; }
+  table.blatt tr.klick:hover td.nm .i, table.blatt tr.aktiv td.nm .i{ border-color:var(--petrol); color:var(--petrol); }
   table.blatt td.chf{ color:#8AA0B4; font-size:13px; text-align:right; padding-right:2px; }
-  table.blatt td.bt{ text-align:right; font-weight:700; color:#213B42; min-width:92px; }
-  table.blatt td.p{ text-align:right; color:#3C6E73; font-weight:700; min-width:62px; }
-  table.blatt td.nt{ color:#B5641E; font-size:12.5px; font-weight:700; padding-left:14px; }
-  table.blatt tr.eq td{ border-top:1.5px solid #213B42; }
-  table.blatt tr.schluss td{ border-bottom:1.5px solid #213B42; }
+  table.blatt td.bt{ text-align:right; font-weight:700; color:var(--tief); min-width:92px; }
+  table.blatt td.p{ text-align:right; color:var(--petrol); font-weight:700; min-width:62px; }
+  table.blatt td.nt{ color:var(--ocker); font-size:12.5px; font-weight:700; padding-left:14px; }
+  table.blatt tr.eq td{ border-top:1.5px solid var(--tief); }
+  table.blatt tr.schluss td{ border-bottom:1.5px solid var(--tief); }
   table.blatt tr.eq td.nm, table.blatt tr.eq td.bt{ font-weight:800; }
   table.blatt tr.ges td.bt{ background:#FBF3DF; color:#8a4d0f; border-radius:6px; }
   table.blatt tr.ges td.nm{ color:#8a4d0f; }
   table.blatt tr.grp-v td.nm{ color:#1d4f3a; }
-  table.blatt tr.trenn td{ padding:3px 8px; font-size:10.5px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:#8AA0B4; }
+  table.blatt tr.trenn td{ padding:4px 8px; font-size:10.5px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:#8AA0B4; }
   table.blatt tr.versteckt{ visibility:hidden; }
   table.blatt tr.neu td{ animation:auf .45s ease-out; }
+  table.blatt td.bt input, table.blatt td.p input{ font-family:inherit; font-size:14.5px; font-weight:700; width:104px; padding:4px 7px; border:2px solid #CBD7E2; border-radius:8px; text-align:right; color:var(--tief); }
+  table.blatt td.p input{ width:64px; }
+  table.blatt td input:focus{ outline:none; border-color:var(--petrol); }
+  table.blatt td input.richtig{ border-color:var(--gruen); background:#EEF8F2; }
+  table.blatt td input.falsch{ border-color:var(--rot); background:#FDF1EF; }
+  table.blatt td input:disabled{ background:#F3F6F8; color:#8AA0B4; border-color:#E1EBF1; }
+  table.blatt tr.fehlerzeile{ cursor:pointer; }
+  table.blatt tr.fehlerzeile:hover td{ background:#F3F8FC; }
+  table.blatt tr.gewaehlt td{ background:#FBF3DF; }
+  table.blatt tr.istfehler td{ background:#FBEBE9; }
+  table.blatt tr.istfehler td.bt{ text-decoration:line-through; color:#9d2f26; }
+  table.blatt tr.warrichtig td{ background:#F3F3F3; }
   @keyframes auf{ from{ background:#FBF3DF; } to{ background:transparent; } }
-  @media (max-width:560px){ table.blatt{ font-size:13.5px; min-width:0; } table.blatt td{ padding:4px 4px; } table.blatt td.chf, table.blatt td.nt, table.blatt td.nm .ab{ display:none; } table.blatt td.nm{ white-space:normal; line-height:1.25; } table.blatt td.bt{ min-width:0; } table.blatt td.p{ min-width:0; padding-left:6px; } }
+  @media (max-width:560px){ table.blatt{ font-size:13.5px; min-width:0; } table.blatt td{ padding:4px 4px; } table.blatt td.chf, table.blatt td.nt, table.blatt td.nm .ab{ display:none; } table.blatt td.nm{ white-space:normal; line-height:1.25; } table.blatt td.bt{ min-width:0; } table.blatt td.p{ min-width:0; padding-left:6px; } table.blatt tr.basis td.nm::after{ display:none; } table.blatt td.bt input{ width:88px; } }
 
-  .blattknoepfe{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
-  .notiz{ font-size:13px; color:#5B6B7A; margin-top:8px; }
-  .notiz b{ color:#213B42; }
-  .zusatz{ margin-top:10px; padding:10px 14px; background:#EEF6F4; border-left:4px solid #2E9D6B; border-radius:8px; font-size:14.5px; color:#16603c; font-weight:700; }
+  .blattknoepfe{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; align-items:center; }
+  .notiz{ font-size:13px; color:var(--muted); margin-top:8px; }
+  .notiz b{ color:var(--tief); }
+  .zusatz{ margin-top:10px; padding:10px 14px; background:#EEF6F4; border-left:4px solid var(--gruen); border-radius:9px; font-size:14.5px; color:#16603c; font-weight:700; }
   .zusatz span{ display:block; }
 
-  /* Balken */
-  .balken{ margin:14px 0 4px; max-width:760px; }
+  /* Info-Panel zum angeklickten Begriff */
+  .info{ margin-top:12px; border:1.5px solid #A7D2CE; border-radius:13px; background:#F7FBFB; padding:14px 16px; display:none; }
+  .info.zeig{ display:block; animation:auf .5s; }
+  .info .ikopf{ display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
+  .info h4{ margin:0; font-size:16px; color:var(--tief); }
+  .info h4 .ab{ font-size:12.5px; color:var(--petrol); font-weight:800; margin-left:7px; background:#E9F3F2; border-radius:999px; padding:2px 8px; }
+  .info .zu{ font-family:inherit; font-size:13px; font-weight:700; color:var(--muted); background:none; border:none; cursor:pointer; padding:2px 4px; }
+  .info .zu:hover{ color:var(--tief); }
+  .info p{ margin:7px 0 0; font-size:14px; }
+  .info .ig{ display:grid; grid-template-columns:1fr 1fr; gap:10px 16px; margin-top:10px; }
+  .info .ig div{ font-size:13.5px; }
+  .info .ig b{ display:block; font-size:11px; letter-spacing:.8px; text-transform:uppercase; color:var(--petrol); margin-bottom:2px; }
+  .info .ig div.breit{ grid-column:1/-1; }
+  .info .ibsp{ font-variant-numeric:tabular-nums; background:#fff; border:1px solid var(--line); border-radius:9px; padding:7px 11px; font-weight:700; color:var(--tief); font-size:14px; }
+  .basisbar{ margin-top:6px; }
+  .basisbar .bb{ display:flex; height:26px; border-radius:7px; overflow:hidden; background:#EEF3F7; border:1px solid var(--line); }
+  .basisbar .bb span{ display:flex; align-items:center; justify-content:center; font-size:11.5px; font-weight:800; color:#fff; white-space:nowrap; overflow:hidden; }
+  .basisbar .bb .grund{ background:var(--tief); }
+  .basisbar .bb .teil{ background:var(--gold); color:#3A2A09; min-width:44px; }
+  .basisbar .bb .teil.minus{ background:repeating-linear-gradient(135deg,#F3D9D6 0 6px,#FBEEEC 6px 12px); color:#9d2f26; }
+  .basisbar .bl{ display:flex; justify-content:space-between; font-size:11.5px; color:var(--muted); margin-top:3px; font-weight:700; }
+  @media (max-width:560px){ .info .ig{ grid-template-columns:1fr; } }
+
+  /* Balken (massstäblich) */
+  .balken{ margin:14px 0 4px; max-width:780px; }
   .brow{ display:grid; grid-template-columns:112px 1fr; gap:10px; align-items:center; margin:5px 0; }
   .brow .bl{ font-size:12px; font-weight:800; color:#41585f; text-align:right; }
   .bbar{ display:flex; height:30px; border-radius:7px; overflow:hidden; background:#EEF3F7; }
@@ -132,66 +179,131 @@
   .brow .bl .kz{ display:none; }
   @media (max-width:560px){ .brow .bl .kz{ display:inline; } }
 
-  /* Trainer */
+  /* ---------- Kette als Stationen ---------- */
+  .stationen{ display:flex; flex-wrap:wrap; gap:7px; align-items:stretch; padding:6px 0 4px; }
+  .stationen .sphase{ flex:1 1 100%; font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:#8AA0B4; border-top:2px solid #D9E4EB; padding-top:5px; margin-top:4px; }
+  .stationen .sphase.v{ color:#1d4f3a; border-top-color:#9FD0B8; }
+  .station{ font-family:inherit; flex:1 1 118px; min-width:112px; max-width:190px; text-align:left; background:#fff; border:1.5px solid var(--line); border-radius:12px; padding:10px 10px 9px; cursor:pointer; position:relative; transition:border-color .12s, transform .12s, box-shadow .12s; color:var(--ink); }
+  .station:hover{ border-color:var(--petrol); transform:translateY(-2px); box-shadow:0 5px 14px rgba(20,50,80,.12); }
+  .station.aktiv{ border-color:var(--petrol); background:#E9F3F2; }
+  .station.basis{ border-color:var(--gold); background:#FBF3DF; }
+  .station .sab{ display:block; font-size:11px; font-weight:800; letter-spacing:1px; color:var(--petrol); }
+  .station .snm{ display:block; font-size:12.5px; font-weight:800; color:var(--tief); line-height:1.2; margin:2px 0 6px; min-height:2.4em; }
+  .station .sbt{ display:block; font-size:14px; font-weight:800; color:var(--tief); font-variant-numeric:tabular-nums; }
+  .station .sp{ display:block; font-size:11.5px; color:var(--muted); font-weight:700; }
+  .station.abzug{ background:#FFF8F7; }
+  .station.abzug.aktiv{ background:#E9F3F2; }
+  .station.ergebnis .sbt{ color:#1d4f3a; }
+  @media (max-width:560px){ .station{ flex-basis:calc(50% - 4px); max-width:none; } }
+
+  /* ---------- Trainer ---------- */
   .filterzeile{ display:flex; gap:18px; flex-wrap:wrap; }
-  .filterzeile > div{ flex:1 1 260px; }
+  .filterzeile > div{ flex:1 1 240px; }
   .scoreboard{ display:flex; gap:10px; flex-wrap:wrap; }
-  .scard{ flex:1 1 110px; background:linear-gradient(160deg,#213B42,#2E5054); color:#fff; border-radius:12px; padding:12px 14px; text-align:center; }
+  .scard{ flex:1 1 110px; background:linear-gradient(160deg,#213B42,#2E5054); color:#fff; border-radius:13px; padding:12px 14px; text-align:center; }
   .scard .n{ font-size:28px; font-weight:900; line-height:1; }
   .scard .l{ font-size:11px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; color:#A9C3C8; margin-top:4px; }
+  .entw{ margin-top:12px; }
+  .entw .strip{ display:flex; gap:3px; height:18px; align-items:flex-end; }
+  .entw .strip i{ flex:1 1 0; max-width:14px; border-radius:3px; background:#D9E4EB; height:60%; }
+  .entw .strip i.ok{ background:var(--gruen); height:100%; }
+  .entw .strip i.no{ background:#E8A39C; height:55%; }
+  .entw .q{ display:flex; gap:14px; flex-wrap:wrap; margin-top:6px; font-size:12.5px; color:var(--muted); font-weight:700; }
+  .entw .q b{ color:var(--tief); }
   .trainer-shell{ display:flex; gap:16px; align-items:flex-start; }
   .trainer-shell .qcard{ flex:1 1 auto; min-width:0; }
   .calc-card{ flex:0 0 232px; position:sticky; top:14px; margin-bottom:16px; }
   @media (max-width:820px){ .trainer-shell{ flex-direction:column; } .calc-card{ position:static; width:100%; max-width:320px; flex:1 1 auto; } }
-  .qmeta{ font-size:12px; color:#8AA0B4; margin-bottom:6px; font-weight:700; letter-spacing:.3px; }
-  .qtext{ font-size:17.5px; font-weight:500; color:#213B42; line-height:1.55; }
+  .qmeta{ font-size:12px; color:#8AA0B4; margin-bottom:6px; font-weight:700; letter-spacing:.3px; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .qmeta .uhr{ font-variant-numeric:tabular-nums; color:var(--petrol); }
+  .qtext{ font-size:17.5px; font-weight:500; color:var(--tief); line-height:1.55; }
   .qtext .frage{ display:block; margin-top:8px; font-weight:800; }
   .numrow{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:14px; }
   .numrow .q{ font-size:13.5px; font-weight:800; color:#28435E; }
-  .numrow input{ font-family:inherit; font-size:18px; font-weight:800; padding:9px 12px; border:2px solid #CBD7E2; border-radius:9px; width:150px; color:#213B42; }
-  .numrow input:focus{ outline:none; border-color:#3C6E73; }
-  .numrow input.richtig{ border-color:#2E9D6B; background:#EEF8F2; }
-  .numrow input.falsch{ border-color:#E2574C; background:#FDF1EF; }
-  .numrow .unit{ font-size:15px; font-weight:800; color:#5B6B7A; }
+  .numrow input{ font-family:inherit; font-size:18px; font-weight:800; padding:9px 12px; border:2px solid #CBD7E2; border-radius:10px; width:150px; color:var(--tief); }
+  .numrow input:focus{ outline:none; border-color:var(--petrol); }
+  .numrow input.richtig{ border-color:var(--gruen); background:#EEF8F2; }
+  .numrow input.falsch{ border-color:var(--rot); background:#FDF1EF; }
+  .numrow .unit{ font-size:15px; font-weight:800; color:var(--muted); }
   .btnbar{ display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
-  .btn{ font-family:inherit; font-size:14px; font-weight:800; cursor:pointer; border-radius:10px; padding:10px 18px; border:none; }
-  .btn-primary{ background:#3C6E73; color:#fff; } .btn-primary:hover{ background:#325c60; }
-  .btn-ghost{ background:#fff; color:#3C6E73; border:1.5px solid #CBD7E2; } .btn-ghost:hover{ background:#F3F8FC; }
+  .btn{ font-family:inherit; font-size:14px; font-weight:800; cursor:pointer; border-radius:10px; padding:10px 18px; border:none; transition:background .12s; }
+  .btn-primary{ background:var(--petrol); color:#fff; } .btn-primary:hover{ background:#325c60; }
+  .btn-ghost{ background:#fff; color:var(--petrol); border:1.5px solid #CBD7E2; } .btn-ghost:hover{ background:#F3F8FC; }
   .btn-klein{ font-size:13px; padding:7px 13px; }
   .btn:focus-visible{ outline:3px solid #A7D2CE; outline-offset:2px; }
   .btn:disabled{ opacity:.5; cursor:default; }
-  .feedback{ margin-top:14px; padding:12px 16px; border-radius:10px; font-weight:700; display:none; }
+  .feedback{ margin-top:14px; padding:12px 16px; border-radius:11px; font-weight:700; display:none; }
   .feedback.show{ display:block; }
-  .feedback.ok{ background:#E7F6EE; color:#16603c; border-left:4px solid #2E9D6B; }
-  .feedback.no{ background:#FBEBE9; color:#9d2f26; border-left:4px solid #E2574C; }
+  .feedback.ok{ background:#E7F6EE; color:#16603c; border-left:4px solid var(--gruen); }
+  .feedback.no{ background:#FBEBE9; color:#9d2f26; border-left:4px solid var(--rot); }
   .feedback .diag{ display:block; margin-top:7px; padding-top:7px; border-top:1px solid rgba(226,87,76,.28); font-size:13.5px; font-weight:600; }
-  .hintbox{ font-size:14px; color:#41585f; background:#F3F8FC; border-radius:9px; padding:10px 14px; margin-top:12px; display:none; }
+  .hintbox{ font-size:14px; color:#41585f; background:#F3F8FC; border-radius:10px; padding:10px 14px; margin-top:12px; display:none; }
   .hintbox.show{ display:block; }
   .solution{ margin-top:12px; display:none; border-top:1px dashed #CBD7E2; padding-top:10px; }
   .solution.show{ display:block; }
   .solution .weg{ font-size:14px; color:#41585f; margin:4px 0 0; padding-left:18px; }
   .solution .weg li{ margin:3px 0; }
 
-  .calcpad{ background:#213B42; border-radius:14px; padding:13px; box-shadow:0 2px 10px rgba(20,50,80,.18); }
+  /* Übungsformen */
+  .mc{ display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:14px; }
+  .mc button{ font-family:inherit; font-size:16px; font-weight:800; padding:12px 14px; border-radius:11px; border:2px solid #CBD7E2; background:#fff; color:var(--tief); cursor:pointer; text-align:center; font-variant-numeric:tabular-nums; transition:border-color .12s, transform .12s; }
+  .mc button:hover{ border-color:var(--petrol); transform:translateY(-1px); }
+  .mc button.richtig{ border-color:var(--gruen); background:#EEF8F2; color:#16603c; }
+  .mc button.falsch{ border-color:var(--rot); background:#FDF1EF; color:#9d2f26; }
+  .mc button:disabled{ cursor:default; transform:none; }
+  @media (max-width:560px){ .mc{ grid-template-columns:1fr; } }
+  .zuord{ display:grid; grid-template-columns:1fr 1fr; gap:10px 18px; margin-top:14px; }
+  .zuord .sp{ display:flex; flex-direction:column; gap:7px; }
+  .zuord button{ font-family:inherit; font-size:14px; font-weight:700; padding:10px 12px; border-radius:10px; border:2px solid #CBD7E2; background:#fff; color:var(--tief); cursor:pointer; text-align:left; line-height:1.35; transition:border-color .12s; }
+  .zuord button:hover{ border-color:var(--petrol); }
+  .zuord button.gewaehlt{ border-color:var(--gold); background:#FBF3DF; }
+  .zuord button.paar{ border-color:var(--gruen); background:#EEF8F2; color:#16603c; cursor:default; }
+  .zuord button.wackel{ animation:wackel .35s; }
+  @keyframes wackel{ 0%,100%{ transform:translateX(0); } 25%{ transform:translateX(-5px); } 75%{ transform:translateX(5px); } }
+  @media (max-width:560px){ .zuord{ grid-template-columns:1fr 1fr; gap:8px; } .zuord button{ font-size:12.5px; padding:8px 8px; } }
+  .schrittzeile{ margin-top:10px; font-size:13.5px; color:var(--muted); font-weight:700; }
+  .schrittzeile b{ color:var(--petrol); }
+
+  /* Lernkontrolle */
+  .testkopf{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+  .fortschritt{ height:10px; border-radius:999px; background:#E9EEF1; overflow:hidden; margin:10px 0 4px; }
+  .fortschritt i{ display:block; height:100%; background:var(--petrol); border-radius:999px; transition:width .3s; }
+  .punkte{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+  .punkte .pk{ flex:1 1 150px; border:1.5px solid var(--line); border-radius:12px; padding:11px 13px; background:#fff; }
+  .punkte .pk b{ display:block; font-size:12px; letter-spacing:.6px; text-transform:uppercase; color:var(--petrol); }
+  .punkte .pk span{ font-size:22px; font-weight:900; color:var(--tief); }
+  .punkte .pk.gut{ border-color:#9FD0B8; background:#F2FAF5; }
+  .punkte .pk.mittel{ border-color:#EBD6A8; background:#FFFBF0; }
+  .punkte .pk.schwach{ border-color:#F0B8B2; background:#FFF6F5; }
+  .punkte .pk small{ display:block; font-size:12px; color:var(--muted); font-weight:700; }
+  .testliste{ margin-top:12px; border-top:1px solid var(--line); }
+  .testliste div{ padding:9px 0; border-bottom:1px solid var(--line); font-size:14px; display:flex; gap:10px; align-items:flex-start; }
+  .testliste .sym{ flex:0 0 22px; font-weight:900; }
+  .testliste .ok .sym{ color:var(--gruen); } .testliste .no .sym{ color:var(--rot); }
+  .testliste .erk{ display:block; font-size:13px; color:var(--muted); margin-top:2px; }
+  .frueher{ margin-top:12px; font-size:13px; color:var(--muted); }
+  .frueher b{ color:var(--tief); }
+
+  .calcpad{ background:var(--tief); border-radius:14px; padding:13px; box-shadow:0 2px 10px rgba(20,50,80,.18); }
   .cbrand{ display:flex; align-items:center; gap:7px; margin-bottom:9px; }
   .emblem{ width:24px; height:24px; flex:0 0 24px; }
   .mos{ font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-weight:800; font-size:12px; letter-spacing:1.5px; color:#B9CDD1; user-select:none; }
   .calcpad .disp{ background:#0f2024; color:#EAF6F2; font-size:26px; font-weight:800; text-align:right; padding:11px 13px; border-radius:10px; min-height:50px; word-break:break-all; font-variant-numeric:tabular-nums; margin-bottom:10px; }
   .calcpad .grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:7px; }
-  .calcpad .grid button{ font-family:inherit; font-size:18px; font-weight:700; padding:13px 0; border-radius:9px; border:none; cursor:pointer; background:#3C6E73; color:#fff; }
+  .calcpad .grid button{ font-family:inherit; font-size:18px; font-weight:700; padding:13px 0; border-radius:9px; border:none; cursor:pointer; background:var(--petrol); color:#fff; }
   .calcpad .grid button:hover{ filter:brightness(1.14); }
   .calcpad .grid button:active{ filter:brightness(.88); }
   .calcpad .grid button.op{ background:#4d7d82; }
   .calcpad .grid button.fn{ background:#2b4d52; font-size:16px; }
-  .calcpad .grid button.eq{ background:#D8AE66; color:#213B42; grid-row:span 2; }
+  .calcpad .grid button.eq{ background:var(--gold); color:var(--tief); grid-row:span 2; }
   .calcpad .grid button.zero{ grid-column:span 2; }
-  .calcpad .toanswer{ width:100%; margin-top:9px; background:#2E9D6B; color:#fff; font-weight:800; font-size:13px; padding:10px; border-radius:9px; border:none; cursor:pointer; }
+  .calcpad .toanswer{ width:100%; margin-top:9px; background:var(--gruen); color:#fff; font-weight:800; font-size:13px; padding:10px; border-radius:9px; border:none; cursor:pointer; }
 
-  .footer{ max-width:980px; margin:6px auto 26px; padding:0 18px; }
+  .footer{ max-width:1000px; margin:6px auto 26px; padding:0 18px; }
   .footer .cr{ color:#94A3B0; font-size:11px; }
   .footer .cr a{ color:inherit; text-decoration:underline; text-underline-offset:2px; }
   @media (prefers-reduced-motion:reduce){ *{ transition-duration:.01ms !important; animation-duration:.01ms !important; } }
-  @media print{ header .kopfkette, .tabs, .calc-card{ display:none; } .panel{ display:block !important; } }
+  @media print{ header .kopfkette, .bereiche, .calc-card{ display:none; } .panel{ display:block !important; } }
 </style>
 <style>
 /* Kompaktmodus im iframe (KV Digital): alles etwas kleiner */
@@ -200,6 +312,13 @@ html.eingebettet body{ zoom:.82; }
 </head>
 <body>
 <script>if(window.self!==window.top){document.documentElement.classList.add('eingebettet');}</script>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-cart" viewBox="0 0 24 24"><path d="M3 4h2.2l2.1 10.2a1.5 1.5 0 0 0 1.5 1.2h8.4a1.5 1.5 0 0 0 1.5-1.2L20 8H6.2"/><circle cx="9.5" cy="19.5" r="1.3"/><circle cx="17" cy="19.5" r="1.3"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3.5 12.6V4.5a1 1 0 0 1 1-1h8.1a1 1 0 0 1 .7.3l7.6 7.6a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0l-7.6-7.6a1 1 0 0 1-.3-.7z"/><circle cx="8.3" cy="8.3" r="1.4"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1.2 1.2"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1.2-1.2"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.8"/><circle cx="12" cy="12" r="1.2"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M8 3.5h8a1 1 0 0 1 1 1V5h1.5a1 1 0 0 1 1 1v13.5a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1H7v-.5a1 1 0 0 1 1-1z"/><path d="M8.5 13.2l2.3 2.3 4.7-4.9"/></symbol>
+</svg>
 
 <header>
   <a class="kopfwappen" href="https://www.hkvaarau.ch/berufsfachschule" target="_blank"
@@ -207,30 +326,31 @@ html.eingebettet body{ zoom:.82; }
   <div class="brand-eyebrow">Rechnen im Detailhandel <span class="be-cr"><span class="be-pkt">· </span>© 2026 <a
     href="mailto:samuel.mollet@hkv.ch" title="E-Mail an Samuel Mollet">S. Mollet</a></span></div>
   <h1>Warenkalkulation</h1>
-  <div class="sub">Vom Listenpreis des Lieferanten bis zum Verkaufspreis im Laden: Einkaufs- und Verkaufskalkulation mit Kalkulationsblatt und endlosem Trainer.</div>
+  <div class="sub">Vom Listenpreis des Lieferanten bis zum Verkaufspreis im Laden. Verstehen, worauf sich jeder Prozentsatz bezieht – dann üben, bis es sitzt.</div>
   <div class="kopfkette" aria-label="Der Weg der Kalkulation">
     <span class="e">BAP</span><i>−</i><span class="e">Rabatt</span><i>=</i><span class="e">RB</span><i>−</i><span class="e">Skonto</span><i>=</i><span class="e">NAP</span><i>+</i><span>BK</span><i>=</i><span>EP</span><i>+</i><span>GK</span><i>=</i><span>SK</span><i>+</i><span>RG</span><i>=</i><span>VP</span>
   </div>
 </header>
 
 <div class="wrap">
-  <nav class="tabs" role="tablist">
-    <button class="tab active" data-tab="einkauf" role="tab">1 · Einkauf</button>
-    <button class="tab" data-tab="verkauf" role="tab">2 · Verkauf</button>
-    <button class="tab" data-tab="kette" role="tab">3 · Ganze Kette</button>
-    <button class="tab" data-tab="trainer" role="tab">4 · Trainer</button>
+  <nav class="bereiche" role="tablist" aria-label="Lernbereiche">
+    <button class="bereich active" data-tab="einkauf" role="tab"><svg><use href="#i-cart"/></svg><span><span class="bn">1</span><span class="bt">Einkauf</span><span class="bd">Rabatt und Skonto: vom Listenpreis zum bezahlten Betrag</span></span></button>
+    <button class="bereich" data-tab="verkauf" role="tab"><svg><use href="#i-tag"/></svg><span><span class="bn">2</span><span class="bt">Verkauf</span><span class="bd">Vom Einstandspreis über die Kosten zum Verkaufspreis</span></span></button>
+    <button class="bereich" data-tab="kette" role="tab"><svg><use href="#i-link"/></svg><span><span class="bn">3</span><span class="bt">Ganze Kette</span><span class="bd">Alle Stationen von BAP bis VP, zum Anklicken</span></span></button>
+    <button class="bereich" data-tab="trainer" role="tab"><svg><use href="#i-target"/></svg><span><span class="bn">4</span><span class="bt">Trainer</span><span class="bd">Endlos üben in sechs Formen und vier Stufen</span></span></button>
+    <button class="bereich" data-tab="test" role="tab"><svg><use href="#i-check"/></svg><span><span class="bn">5</span><span class="bt">Lernkontrolle</span><span class="bd">Acht Aufgaben, Auswertung und Stärken-Schwächen-Bild</span></span></button>
   </nav>
 
   <!-- ================= EINKAUF ================= -->
   <section class="panel active" id="p-einkauf">
     <div class="card">
-      <h2>Einkaufskalkulation: Rabatt und Skonto</h2>
-      <p class="lead">Beim Einkauf zahlt der Detailhandel selten den Listenpreis. Zwei Preisnachlässe verkleinern den Betrag Schritt für Schritt: zuerst der <b>Rabatt</b>, dann der <b>Skonto</b>.</p>
+      <h2><svg><use href="#i-cart"/></svg>Einkaufskalkulation: Rabatt und Skonto</h2>
+      <p class="lead">Beim Einkauf zahlt der Detailhandel selten den Listenpreis. Zwei Preisnachlässe verkleinern den Betrag Schritt für Schritt: zuerst der <b>Rabatt</b>, dann der <b>Skonto</b>. Jeder hat seine eigene Grundlage.</p>
       <table class="begriffe">
         <tr><th>Bruttoankaufspreis<small>BAP</small></th><td>Preis laut Katalog oder Preisliste des Lieferanten, vor allen Abzügen. Auch «Listenpreis».</td></tr>
-        <tr><th>Rabatt<small>Rab · in % des BAP</small></th><td>Preisnachlass auf den Listenpreis.<span class="bsp">Mengenrabatt, Wiederverkäuferrabatt, Messerabatt, Saisonrabatt, Treuerabatt</span></td></tr>
+        <tr><th>Rabatt<small>Rab · <span class="basischip">100 % = BAP</span></small></th><td>Preisnachlass auf den Listenpreis.<span class="bsp">Mengenrabatt, Wiederverkäuferrabatt, Messerabatt, Saisonrabatt, Treuerabatt</span></td></tr>
         <tr><th>Rechnungsbetrag<small>RB</small></th><td>Der Betrag, der auf der Rechnung steht: BAP minus Rabatt.</td></tr>
-        <tr><th>Skonto<small>Sko · in % des RB</small></th><td>Eine Art Zeitrabatt: Abzug für rasches Bezahlen – nur erlaubt, wenn die vereinbarte Zahlungsfrist eingehalten wird.<span class="bsp">«Zahlbar innert 30 Tagen netto, innert 10 Tagen mit 2 % Skonto»</span></td></tr>
+        <tr><th>Skonto<small>Sko · <span class="basischip">100 % = RB</span></small></th><td>Eine Art Zeitrabatt: Abzug für rasches Bezahlen – nur erlaubt, wenn die vereinbarte Zahlungsfrist eingehalten wird.<span class="bsp">«Zahlbar innert 30 Tagen netto, innert 10 Tagen mit 2 % Skonto»</span></td></tr>
         <tr><th>Nettoankaufspreis<small>NAP</small></th><td>Was tatsächlich an den Lieferanten bezahlt wird: RB minus Skonto.</td></tr>
       </table>
       <div class="formeln"><span class="formel">BAP − Rab = RB</span><span class="formel">RB − Sko = NAP</span></div>
@@ -242,7 +362,7 @@ html.eingebettet body{ zoom:.82; }
 
     <div class="card">
       <h2>Kalkulationsblatt Einkauf</h2>
-      <p class="lead">Zahlen eingeben – das Schema rechnet mit. Mit «Schritt für Schritt» baut es sich Zeile um Zeile auf, zum Beispiel am Beamer.</p>
+      <p class="lead">Zahlen eingeben – das Schema rechnet sofort mit. <b>Tippen Sie eine Zeile an</b>, um zu sehen, was sie bedeutet und worauf sich ihr Prozentsatz bezieht. Mit «Schritt für Schritt» baut sich das Blatt Zeile um Zeile auf, zum Beispiel am Beamer.</p>
       <div class="flab">Was ist gegeben?</div>
       <div class="chips" id="eRichtung">
         <button class="chip on" data-r="vor">Listenpreis (vorwärts)</button>
@@ -261,6 +381,7 @@ html.eingebettet body{ zoom:.82; }
       </div>
       <div class="blattwrap"><div id="eBlatt"></div></div>
       <div class="blattknoepfe" data-blatt="e"></div>
+      <div class="info" id="eInfo"></div>
       <div id="eZusatz"></div>
       <div class="balken" id="eBalken" aria-hidden="true"></div>
     </div>
@@ -269,16 +390,16 @@ html.eingebettet body{ zoom:.82; }
   <!-- ================= VERKAUF ================= -->
   <section class="panel" id="p-verkauf">
     <div class="card">
-      <h2>Verkaufskalkulation: vom Einstandspreis zum Verkaufspreis</h2>
+      <h2><svg><use href="#i-tag"/></svg>Verkaufskalkulation: vom Einstandspreis zum Verkaufspreis</h2>
       <p class="lead">Der Verkaufspreis muss mehr decken als die Ware: Auch Transport, Löhne, Miete und Strom wollen bezahlt sein – und am Schluss soll etwas übrig bleiben.</p>
       <table class="begriffe">
         <tr><th>Nettoankaufspreis<small>NAP</small></th><td>Was an den Lieferanten bezahlt wurde – nach Rabatt und Skonto (siehe Einkauf).</td></tr>
         <tr><th>Bezugskosten<small>BK</small></th><td>Alle Kosten für den Weg der Ware vom Lieferanten ins eigene Lager. Bei <b>Frankolieferung</b> übernimmt sie der Lieferant – dann sind sie null.<span class="bsp">Transport (LKW, Bahn, Post), Zoll, Transportversicherung, Verpackung</span></td></tr>
         <tr><th>Einstandspreis<small>EP</small></th><td>Was die Ware den Betrieb bis ins Lager kostet: NAP plus BK.</td></tr>
-        <tr><th>Gemeinkosten<small>GK · meist in % des EP</small></th><td>Alle übrigen Kosten des Betriebs.<span class="bsp">Personal, Miete, Heizung, Licht, Kühlung, Büro, Werbung, Zinsen, Abschreibungen – Kosten, die sich nicht genau einer einzelnen Ware zuordnen lassen</span></td></tr>
+        <tr><th>Gemeinkosten<small>GK · <span class="basischip">100 % = EP</span></small></th><td>Alle übrigen Kosten des Betriebs.<span class="bsp">Personal, Miete, Heizung, Licht, Kühlung, Büro, Werbung, Zinsen, Abschreibungen – Kosten, die sich nicht genau einer einzelnen Ware zuordnen lassen</span></td></tr>
         <tr><th>Selbstkosten<small>SK · auch Selbstkostenpreis</small></th><td>Was das Produkt den Betrieb insgesamt kostet – alle Kosten, aber noch kein Gewinn: EP plus GK. Wer darunter verkauft, macht Verlust.</td></tr>
-        <tr><th>Reingewinn<small>RG · meist in % der SK</small></th><td>Was nach Deckung aller Kosten übrig bleibt – Entschädigung für das eingesetzte Kapital und Reserve. Ist der Verkaufspreis zu tief, entsteht ein <b>Reinverlust</b>.</td></tr>
-        <tr><th>Bruttogewinn<small>BG · meist in % des EP</small></th><td>Der ganze Aufschlag auf den Einstandspreis: GK plus RG, oder VP minus EP.</td></tr>
+        <tr><th>Reingewinn<small>RG · <span class="basischip">100 % = SK</span></small></th><td>Was nach Deckung aller Kosten übrig bleibt – Entschädigung für das eingesetzte Kapital und Reserve. Ist der Verkaufspreis zu tief, entsteht ein <b>Reinverlust</b>.</td></tr>
+        <tr><th>Bruttogewinn<small>BG · <span class="basischip">100 % = EP</span></small></th><td>Der ganze Aufschlag auf den Einstandspreis: GK plus RG, oder VP minus EP.</td></tr>
         <tr><th>Verkaufspreis<small>VP</small></th><td>Der Preis, zu dem die Ware der Kundschaft angeboten wird: SK plus RG.</td></tr>
       </table>
       <div class="formeln"><span class="formel">NAP + BK = EP</span><span class="formel">EP + GK = SK</span><span class="formel">SK + RG = VP</span><span class="formel gold">BG = GK + RG = VP − EP</span></div>
@@ -288,6 +409,7 @@ html.eingebettet body{ zoom:.82; }
 
     <div class="card">
       <h2>Kalkulationsblatt Verkauf</h2>
+      <p class="lead">Tippen Sie eine Zeile an: Die Grundlage ihres Prozentsatzes leuchtet gelb auf.</p>
       <div class="flab">Rechenweg</div>
       <div class="chips" id="vWeg">
         <button class="chip on" data-w="gkrg">über Gemeinkosten und Reingewinn</button>
@@ -302,6 +424,7 @@ html.eingebettet body{ zoom:.82; }
       </div>
       <div class="blattwrap"><div id="vBlatt"></div></div>
       <div class="blattknoepfe" data-blatt="v"></div>
+      <div class="info" id="vInfo"></div>
       <div id="vZusatz"></div>
       <h3>Grafisches Schema</h3>
       <div class="balken" id="vBalken" aria-hidden="true"></div>
@@ -312,8 +435,8 @@ html.eingebettet body{ zoom:.82; }
   <!-- ================= GANZE KETTE ================= -->
   <section class="panel" id="p-kette">
     <div class="card">
-      <h2>Die ganze Kette: vom Listenpreis zum Verkaufspreis</h2>
-      <p class="lead">Einkauf und Verkauf hängen zusammen. Die ganze Kette teilt sich in zwei Teile: Die <b>Bezugskalkulation</b> führt vom Listenpreis bis zum Einstandspreis – was die Ware kostet, bis sie im Lager liegt. Die <b>Verkaufskalkulation</b> führt vom Einstandspreis zum Verkaufspreis.</p>
+      <h2><svg><use href="#i-link"/></svg>Die ganze Kette: vom Listenpreis zum Verkaufspreis</h2>
+      <p class="lead">Einkauf und Verkauf hängen zusammen. Die <b>Bezugskalkulation</b> führt vom Listenpreis bis zum Einstandspreis – was die Ware kostet, bis sie im Lager liegt. Die <b>Verkaufskalkulation</b> führt vom Einstandspreis zum Verkaufspreis. <b>Tippen Sie eine Station an.</b></p>
       <div class="eingaben">
         <div class="feld"><label for="kBap">Listenpreis (BAP)</label><div class="inp"><span class="u">CHF</span><input id="kBap" inputmode="decimal" value="250"></div></div>
         <div class="feld"><label for="kRab">Rabatt</label><div class="inp"><input id="kRab" class="kurz" inputmode="decimal" value="20"><span class="u">%</span></div></div>
@@ -322,6 +445,9 @@ html.eingebettet body{ zoom:.82; }
         <div class="feld"><label for="kGk">GK in % des EP</label><div class="inp"><input id="kGk" class="kurz" inputmode="decimal" value="40"><span class="u">%</span></div></div>
         <div class="feld"><label for="kRg">RG in % der SK</label><div class="inp"><input id="kRg" class="kurz" inputmode="decimal" value="10"><span class="u">%</span></div></div>
       </div>
+      <div class="stationen" id="kStationen" role="list"></div>
+      <div class="info" id="kInfo"></div>
+      <h3>Kalkulationsblatt</h3>
       <div class="blattwrap"><div id="kBlatt"></div></div>
       <div class="blattknoepfe" data-blatt="k"></div>
       <div id="kZusatz"></div>
@@ -338,15 +464,37 @@ html.eingebettet body{ zoom:.82; }
             <button class="chip on" data-b="E">Einkauf</button>
             <button class="chip" data-b="V">Verkauf</button>
             <button class="chip" data-b="K">Ganze Kette</button>
+            <button class="chip" data-b="P">Prozentrechnen</button>
+            <button class="chip" data-b="R">Rückwärts</button>
             <button class="chip" data-b="M">Gemischt</button>
           </div>
         </div>
         <div>
           <div class="flab" style="margin-top:0">Stufe</div>
           <div class="chips" id="tStufe">
-            <button class="chip on" data-s="1">1 · Einzelschritte</button>
-            <button class="chip" data-s="2">2 · Ganzes Schema</button>
-            <button class="chip" data-s="3">3 · Rückwärts und Prozente</button>
+            <button class="chip on" data-s="1">1 · Grundlagen</button>
+            <button class="chip" data-s="2">2 · Standard</button>
+            <button class="chip" data-s="3">3 · Anspruchsvoll</button>
+            <button class="chip" data-s="4">4 · Prüfungsniveau</button>
+          </div>
+        </div>
+      </div>
+      <div class="filterzeile" style="margin-top:12px">
+        <div>
+          <div class="flab" style="margin-top:0">Übungsform</div>
+          <div class="chips" id="tForm">
+            <button class="chip on" data-f="rechnen">Rechnen</button>
+            <button class="chip" data-f="luecke">Lückentext</button>
+            <button class="chip" data-f="mc">Multiple Choice</button>
+            <button class="chip" data-f="fehler">Fehler finden</button>
+            <button class="chip" data-f="zuordnen">Zuordnen</button>
+          </div>
+        </div>
+        <div style="flex:0 1 220px">
+          <div class="flab" style="margin-top:0">Zeit</div>
+          <div class="chips" id="tZeit">
+            <button class="chip on" data-z="0">ohne</button>
+            <button class="chip" data-z="1">⏱ Stoppuhr</button>
           </div>
         </div>
       </div>
@@ -360,13 +508,15 @@ html.eingebettet body{ zoom:.82; }
         <div class="scard"><div class="n" id="scSe">0</div><div class="l">Serie</div></div>
         <div class="scard"><div class="n" id="scRe">0</div><div class="l">Rekord</div></div>
       </div>
+      <div class="entw" id="entw"></div>
     </div>
 
     <div class="trainer-shell">
       <div class="card qcard">
-        <div class="qmeta" id="qMeta"></div>
+        <div class="qmeta"><span id="qMeta"></span><span class="uhr" id="qUhr"></span></div>
         <div class="qtext" id="qText"></div>
-        <div class="numrow">
+        <div id="qForm"></div>
+        <div class="numrow" id="qNum">
           <label class="q" for="antwort" id="qLabel">Ihre Antwort</label>
           <span class="unit" id="qVorEinheit"></span>
           <input id="antwort" inputmode="decimal" autocomplete="off">
@@ -420,11 +570,51 @@ html.eingebettet body{ zoom:.82; }
       </div>
     </div>
   </section>
+
+  <!-- ================= LERNKONTROLLE ================= -->
+  <section class="panel" id="p-test">
+    <div class="card" id="testStart">
+      <h2><svg><use href="#i-check"/></svg>Lernkontrolle</h2>
+      <p class="lead">Acht Aufgaben in gemischten Formen: Rechnen, Lückentext, Multiple Choice und Fehler finden. Ohne Tipp und ohne Lösung – am Schluss sehen Sie, was sitzt und was noch nicht. Das Ergebnis bleibt auf diesem Gerät gespeichert.</p>
+      <div class="flab">Bereich</div>
+      <div class="chips" id="testBereich">
+        <button class="chip on" data-b="E">Einkauf</button>
+        <button class="chip" data-b="V">Verkauf</button>
+        <button class="chip" data-b="K">Ganze Kette</button>
+        <button class="chip" data-b="M">Alles</button>
+      </div>
+      <div class="btnbar"><button class="btn btn-primary" id="testLos">Lernkontrolle starten</button></div>
+      <div class="frueher" id="testFrueher"></div>
+    </div>
+    <div class="card" id="testLauf" hidden>
+      <div class="testkopf"><b id="testNr"></b><span class="notiz" id="testBer" style="margin:0"></span></div>
+      <div class="fortschritt"><i id="testBar" style="width:0%"></i></div>
+      <div class="qtext" id="tqText"></div>
+      <div id="tqForm"></div>
+      <div class="numrow" id="tqNum">
+        <label class="q" for="tAntwort" id="tqLabel">Ihre Antwort</label>
+        <span class="unit" id="tqVorEinheit"></span>
+        <input id="tAntwort" inputmode="decimal" autocomplete="off">
+        <span class="unit" id="tqEinheit"></span>
+      </div>
+      <div class="btnbar"><button class="btn btn-primary" id="testWeiter">Antwort abgeben →</button><button class="btn btn-ghost" id="testAbbruch">Abbrechen</button></div>
+      <div class="feedback" id="tFeedback"></div>
+    </div>
+    <div class="card" id="testErgebnis" hidden>
+      <h2>Ergebnis</h2>
+      <div class="punkte" id="testPunkte"></div>
+      <h3>Was sitzt, was noch nicht</h3>
+      <div class="punkte" id="testBild"></div>
+      <h3>Die einzelnen Aufgaben</h3>
+      <div class="testliste" id="testListe"></div>
+      <div class="btnbar"><button class="btn btn-primary" id="testNochmal">Noch einmal</button><button class="btn btn-ghost" id="testZumTrainer">Im Trainer weiterüben</button></div>
+    </div>
+  </section>
 </div>
 
 <div class="footer">
   <div class="cr">Warenkalkulation · Rechnen im Detailhandel · HKV Aarau · © 2026 <a href="mailto:samuel.mollet@hkv.ch" title="E-Mail an Samuel Mollet">Samuel Mollet</a> · realisiert mit Claude (Anthropic) · Grundlage: <a href="dreisatz.html">Dreisatz</a><br>
-  Begriffe und Aufbau des Schemas nach dem Unterricht im Detailhandel (Einkaufs- und Verkaufskalkulation). Beispiele und Trainer-Aufgaben sind eigens für dieses Werkzeug erstellt; die Beträge sind erfunden.</div>
+  Begriffe und Aufbau des Schemas nach dem Unterricht im Detailhandel (Einkaufs- und Verkaufskalkulation). Beispiele und Trainer-Aufgaben sind eigens für dieses Werkzeug erstellt; die Beträge sind erfunden. Übungsstand und Lernkontrollen bleiben nur in diesem Browser gespeichert.</div>
 </div>
 
 <script>
@@ -460,8 +650,9 @@ function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
    Zeile: {op, nm, ab, c (Rappen), p1, p2, nt, eq, schluss, ges, grp, trenn} */
 var TRENN = ['Bruttoankaufs','Nettoankaufs','Rechnungs','Einstands','Selbst','Gemein','Verkaufs','Brutto','Rein','Bezugs'];
 function weich(t){ return String(t).replace(/(Bruttoankaufs|Nettoankaufs|Rechnungs|Einstands|Selbst|Gemein|Verkaufs|Bezugs|Rein|Brutto)(preis|betrag|kosten|gewinn)/g, '$1&shy;$2').replace(/(Brutto|Netto)(ankaufs)/g, '$1&shy;$2'); }
-function blattHTML(rows){
+function blattHTML(rows, klickbar){
   var h = '<table class="blatt">';
+  function inp(r){ return '<input data-n="' + r.inpN + '" inputmode="decimal" autocomplete="off" aria-label="' + r.nm + '">'; }
   rows.forEach(function(r, i){
     if (r.trenn){ h += '<tr class="trenn" data-s="' + i + '"><td></td><td colspan="6">' + r.trenn + '</td></tr>'; return; }
     var cls = [];
@@ -469,13 +660,15 @@ function blattHTML(rows){
     if (r.schluss) cls.push('schluss');
     if (r.ges) cls.push('ges');
     if (r.grp) cls.push('grp-' + r.grp);
-    h += '<tr class="' + cls.join(' ') + '" data-s="' + i + '">' +
+    var kl = klickbar && r.k && GLOSSAR[r.k];
+    if (kl) cls.push('klick');
+    h += '<tr class="' + cls.join(' ') + '" data-s="' + i + '"' + (r.k ? ' data-k="' + r.k + '"' : '') + (kl ? ' tabindex="0" role="button" title="Antippen: Erklärung und Prozentbasis"' : '') + '>' +
       '<td class="op">' + (r.op || '') + '</td>' +
-      '<td class="nm">' + weich(r.nm) + (r.ab ? ' <span class="ab">(' + r.ab + ')</span>' : '') + '</td>' +
-      '<td class="chf">' + (r.c == null ? '' : 'CHF') + '</td>' +
-      '<td class="bt">' + (r.c == null ? (r.ges ? '?' : '') : (r.ges && r.verdeckt ? '?' : fr(r.c))) + '</td>' +
-      '<td class="p">' + (r.p1 || '') + '</td>' +
-      '<td class="p">' + (r.p2 || '') + '</td>' +
+      '<td class="nm">' + weich(r.nm) + (r.ab ? ' <span class="ab">(' + r.ab + ')</span>' : '') + (kl ? '<i class="i" aria-hidden="true">i</i>' : '') + '</td>' +
+      '<td class="chf">' + (r.c == null && r.inp !== 'c' ? '' : 'CHF') + '</td>' +
+      '<td class="bt">' + (r.inp === 'c' ? inp(r) : (r.c == null ? (r.ges ? '?' : '') : (r.ges && r.verdeckt ? '?' : fr(r.c)))) + '</td>' +
+      '<td class="p">' + (r.inp === 'p1' ? inp(r) : (r.p1 || '')) + '</td>' +
+      '<td class="p">' + (r.inp === 'p2' ? inp(r) : (r.p2 || '')) + '</td>' +
       '<td class="nt">' + (r.nt || '') + '</td></tr>';
   });
   return h + '</table>';
@@ -548,6 +741,156 @@ function verkaufBg(nap, bk, b){
   return { rows:rows, v:{ nap:nap, bk:bk, ep:ep, bg:bg, vp:vp, b:b } };
 }
 function markiere(rows, k){ rows.forEach(function(r){ if (r.k === k) r.ges = true; }); return rows; }
+/* ---------- Glossar: jede Station der Kette ----------
+   basis = Schlüssel der Zeile, die für den Prozentsatz 100 % ist.
+   art: 'abzug' (wird weggenommen), 'zuschlag' (kommt dazu), 'stand' (Zwischen- oder Endbetrag) */
+var GLOSSAR = {
+  bap:{ nm:'Bruttoankaufspreis', ab:'BAP', art:'stand', basis:null,
+        erk:'Der Preis laut Katalog oder Preisliste des Lieferanten, bevor etwas abgezogen wird. Auch «Listenpreis». Er ist die Grundlage für den Rabatt.',
+        grund:'Ausgangspunkt – wird nicht berechnet, sondern aus der Preisliste gelesen.', bspl:'Ein Velohelm steht mit CHF 85.– im Katalog.' },
+  rab:{ nm:'Rabatt', ab:'Rab', art:'abzug', basis:'bap',
+        erk:'Ein Preisnachlass des Lieferanten auf den Listenpreis – als Mengenrabatt, Wiederverkäuferrabatt, Saisonrabatt oder Messerabatt.',
+        grund:'Rabatt = BAP ÷ 100 × Rabattsatz', bspl:'20 % von CHF 85.– sind CHF 17.–.' },
+  rb: { nm:'Rechnungsbetrag', ab:'RB', art:'stand', basis:'bap',
+        erk:'Der Betrag, der auf der Rechnung steht: Listenpreis minus Rabatt. Für den Skonto wird er zur neuen Grundlage – er ist wieder 100 %.',
+        grund:'RB = BAP − Rabatt', bspl:'CHF 85.– minus CHF 17.– ergibt CHF 68.– auf der Rechnung.' },
+  sko:{ nm:'Skonto', ab:'Sko', art:'abzug', basis:'rb',
+        erk:'Ein Abzug für rasches Bezahlen, meist 2 oder 3 %. Er darf nur abgezogen werden, wenn die Zahlungsfrist eingehalten wird – und er bezieht sich auf den Rechnungsbetrag, nicht auf den Listenpreis.',
+        grund:'Skonto = RB ÷ 100 × Skontosatz', bspl:'2 % von CHF 68.– sind CHF 1.36 – nicht 2 % von 85.–.' },
+  nap:{ nm:'Nettoankaufspreis', ab:'NAP', art:'stand', basis:'rb',
+        erk:'Was tatsächlich an den Lieferanten überwiesen wird: Rechnungsbetrag minus Skonto. Damit endet der Einkauf – die Ware ist aber noch nicht im Lager.',
+        grund:'NAP = RB − Skonto', bspl:'CHF 68.– minus CHF 1.36 ergibt CHF 66.64.' },
+  bk: { nm:'Bezugskosten', ab:'BK', art:'zuschlag', basis:null,
+        erk:'Alle Kosten für den Weg der Ware ins Lager: Transport, Zoll, Versicherung, Verpackung. Liefert der Lieferant franko, sind sie null.',
+        grund:'Werden in Franken dazugezählt, nicht in Prozent.', bspl:'Der Camionneur verrechnet CHF 4.– pro Helm.' },
+  ep: { nm:'Einstandspreis', ab:'EP', art:'stand', basis:null,
+        erk:'Was die Ware den Betrieb kostet, bis sie im Lager liegt: NAP plus Bezugskosten. Er ist die Grundlage für Gemeinkosten und Bruttogewinn.',
+        grund:'EP = NAP + BK', bspl:'CHF 66.64 plus CHF 4.– ergibt CHF 70.64.' },
+  gk: { nm:'Gemeinkosten', ab:'GK', art:'zuschlag', basis:'ep',
+        erk:'Alle übrigen Kosten des Betriebs, die sich nicht einer einzelnen Ware zuordnen lassen: Löhne, Miete, Strom, Werbung, Zinsen. Sie werden als Zuschlag auf den Einstandspreis verteilt.',
+        grund:'GK = EP ÷ 100 × Gemeinkostensatz', bspl:'40 % von CHF 70.64 sind CHF 28.26.' },
+  sk: { nm:'Selbstkosten', ab:'SK', art:'stand', basis:'ep',
+        erk:'Was das Produkt den Betrieb insgesamt kostet – alle Kosten, aber noch kein Gewinn. Wer darunter verkauft, macht Verlust. Für den Reingewinn sind die Selbstkosten die neue Grundlage.',
+        grund:'SK = EP + GK', bspl:'CHF 70.64 plus CHF 28.26 ergibt CHF 98.90.' },
+  rg: { nm:'Reingewinn', ab:'RG', art:'zuschlag', basis:'sk',
+        erk:'Was nach Deckung aller Kosten übrig bleibt: Entschädigung für das eingesetzte Kapital und Reserve für schlechte Zeiten. Er bezieht sich auf die Selbstkosten, nicht auf den Einstandspreis.',
+        grund:'RG = SK ÷ 100 × Reingewinnsatz', bspl:'10 % von CHF 98.90 sind CHF 9.89.' },
+  vp: { nm:'Verkaufspreis', ab:'VP', art:'stand', basis:'sk',
+        erk:'Der Preis, zu dem die Ware der Kundschaft angeboten wird: Selbstkosten plus Reingewinn. Damit ist die Kette geschlossen.',
+        grund:'VP = SK + RG', bspl:'CHF 98.90 plus CHF 9.89 ergibt CHF 108.79 – im Laden CHF 108.80.' },
+  bg: { nm:'Bruttogewinn', ab:'BG', art:'zuschlag', basis:'ep',
+        erk:'Der ganze Aufschlag auf den Einstandspreis – Gemeinkosten und Reingewinn zusammen. Er muss zuerst die Gemeinkosten decken; was darüber hinausgeht, ist Reingewinn.',
+        grund:'BG = GK + RG = VP − EP', bspl:'CHF 108.79 minus CHF 70.64 ergibt CHF 38.15 – das sind 54 % des EP.' }
+};
+function prozentAus(t){ var m = String(t || '').match(/-?[\d.]+/); return m ? parseFloat(m[0]) : null; }
+
+/* Info-Panel zur angeklickten Zeile: Erklärung, Grundlage, Prozentbasis als Balken, Rechenbeispiel mit den aktuellen Zahlen */
+var infoK = { e:null, v:null, k:null };
+function zeigeInfo(id, rows, k){
+  var box = $(id + 'Info'); if (!box) return;
+  var g = GLOSSAR[k]; if (!g){ box.className = 'info'; box.innerHTML = ''; return; }
+  var zeile = null, basisZeile = null;
+  rows.forEach(function(r){ if (r.k === k && !zeile) zeile = r; });
+  if (g.basis) rows.forEach(function(r){ if (r.k === g.basis && !basisZeile) basisZeile = r; });
+  var p = zeile ? (prozentAus(zeile.p1) != null && zeile.p1 !== '100 %' ? prozentAus(zeile.p1) : prozentAus(zeile.p2)) : null;
+  if (zeile && zeile.p1 === '100 %' && zeile.p2 && zeile.p2 !== '100 %') p = prozentAus(zeile.p2);
+  var h = '<div class="ikopf"><h4>' + g.nm + '<span class="ab">' + g.ab + '</span></h4><button class="zu" type="button" data-zu="' + id + '">✕ schliessen</button></div>';
+  h += '<p>' + g.erk + '</p><div class="ig">';
+  h += '<div><b>Berechnung</b>' + g.grund + '</div>';
+  if (g.basis){
+    h += '<div><b>Prozentbasis</b><span class="basischip">100 % = ' + GLOSSAR[g.basis].nm + ' (' + GLOSSAR[g.basis].ab + ')</span></div>';
+  } else {
+    h += '<div><b>Prozentbasis</b>' + (g.art === 'stand' && k !== 'bap' ? 'Wird selbst zur Grundlage (100 %) für den nächsten Schritt.' : 'Keine – ein Betrag in Franken.') + '</div>';
+  }
+  /* Rechenbeispiel mit den Zahlen im Blatt */
+  if (zeile && zeile.c != null && basisZeile && basisZeile.c != null && p != null){
+    var anteil = basisZeile.c ? zeile.c / basisZeile.c : 0;
+    var satz;
+    if (g.art === 'stand'){
+      satz = chf(basisZeile.c) + ' ÷ 100 × ' + pzn(p) + ' = ' + chf(zeile.c);
+    } else {
+      satz = chf(basisZeile.c) + ' ÷ 100 × ' + pzn(p) + ' = ' + chf(zeile.c);
+    }
+    h += '<div class="breit"><b>Rechenbeispiel mit diesen Zahlen</b><div class="ibsp">' + satz + '</div></div>';
+    var teilB = Math.min(1, Math.max(0, g.art === 'stand' ? anteil : anteil));
+    var teilCls = g.art === 'abzug' ? 'teil minus' : 'teil';
+    var grundB = g.art === 'zuschlag' ? 1 / (1 + anteil) : (g.art === 'abzug' ? 1 - anteil : teilB);
+    h += '<div class="breit"><b>Als Bild</b><div class="basisbar"><div class="bb">';
+    if (g.art === 'zuschlag'){
+      h += '<span class="grund" style="flex:0 0 ' + (grundB*100).toFixed(2) + '%">' + GLOSSAR[g.basis].ab + ' 100 %</span><span class="' + teilCls + '" style="flex:1 1 auto">+ ' + pz(p) + '</span>';
+    } else if (g.art === 'abzug'){
+      h += '<span class="grund" style="flex:0 0 ' + (grundB*100).toFixed(2) + '%">bleibt ' + pz(100 - p) + '</span><span class="' + teilCls + '" style="flex:1 1 auto">− ' + pz(p) + '</span>';
+    } else {
+      h += '<span class="grund" style="flex:0 0 ' + (Math.min(1, anteil)*100).toFixed(2) + '%">' + g.ab + ' ' + pz(p) + '</span>' + (anteil < 1 ? '<span class="teil minus" style="flex:1 1 auto">' + pz(Math.round((100 - p)*100)/100) + '</span>' : '');
+    }
+    h += '</div><div class="bl"><span>' + GLOSSAR[g.basis].nm + ' = 100 % = ' + chf(basisZeile.c) + '</span><span>' + g.nm + ' = ' + chf(zeile.c) + '</span></div></div></div>';
+  } else if (zeile && zeile.c != null) {
+    h += '<div class="breit"><b>Im Blatt</b><div class="ibsp">' + g.nm + ' = ' + chf(zeile.c) + '</div></div>';
+  } else {
+    h += '<div class="breit"><b>Beispiel</b><div class="ibsp">' + g.bspl + '</div></div>';
+  }
+  h += '</div>';
+  box.innerHTML = h; box.className = 'info zeig';
+  infoK[id] = k;
+  var tab = $(id + 'Blatt').querySelector('table');
+  if (tab) tab.querySelectorAll('tr').forEach(function(tr){
+    tr.classList.toggle('aktiv', tr.getAttribute('data-k') === k);
+    tr.classList.toggle('basis', !!g.basis && tr.getAttribute('data-k') === g.basis);
+  });
+  var st = $(id + 'Stationen');
+  if (st) st.querySelectorAll('.station').forEach(function(s){
+    s.classList.toggle('aktiv', s.getAttribute('data-k') === k);
+    s.classList.toggle('basis', !!g.basis && s.getAttribute('data-k') === g.basis);
+  });
+}
+function schliesseInfo(id){
+  infoK[id] = null;
+  var box = $(id + 'Info'); if (box){ box.className = 'info'; box.innerHTML = ''; }
+  var tab = $(id + 'Blatt').querySelector('table');
+  if (tab) tab.querySelectorAll('tr').forEach(function(tr){ tr.classList.remove('aktiv', 'basis'); });
+  var st = $(id + 'Stationen');
+  if (st) st.querySelectorAll('.station').forEach(function(s){ s.classList.remove('aktiv', 'basis'); });
+}
+var blattRows = { e:[], v:[], k:[] };
+function bindeBlatt(id, rows){
+  blattRows[id] = rows;
+  if (infoK[id]){
+    var da = rows.some(function(r){ return r.k === infoK[id]; });
+    if (da) zeigeInfo(id, rows, infoK[id]); else schliesseInfo(id);
+  }
+}
+['e','v','k'].forEach(function(id){
+  function klick(ev){
+    var tr = ev.target.closest('tr.klick'); if (!tr) return;
+    if (ev.type === 'keydown' && ev.key !== 'Enter' && ev.key !== ' ') return;
+    if (ev.type === 'keydown') ev.preventDefault();
+    var k = tr.getAttribute('data-k');
+    if (infoK[id] === k) schliesseInfo(id); else zeigeInfo(id, blattRows[id], k);
+  }
+  $(id + 'Blatt').addEventListener('click', klick);
+  $(id + 'Blatt').addEventListener('keydown', klick);
+});
+document.addEventListener('click', function(ev){
+  var b = ev.target.closest('button[data-zu]'); if (b) schliesseInfo(b.getAttribute('data-zu'));
+});
+
+/* Stationen der ganzen Kette */
+function stationenHTML(rows){
+  var h = '';
+  rows.forEach(function(r){
+    if (r.trenn){ h += '<div class="sphase' + (/Verkauf/.test(r.trenn) ? ' v' : '') + '">' + r.trenn + '</div>'; return; }
+    if (!r.k || !GLOSSAR[r.k]) return;
+    var g = GLOSSAR[r.k];
+    var cls = 'station' + (g.art === 'abzug' ? ' abzug' : '') + (r.eq ? ' ergebnis' : '');
+    var proz = (r.p1 && r.p1 !== '100 %' ? r.p1 : (r.p2 && r.p2 !== '100 %' ? r.p2 : ''));
+    h += '<button type="button" class="' + cls + '" data-k="' + r.k + '" role="listitem">' +
+      '<span class="sab">' + (r.op ? r.op + ' ' : '') + g.ab + '</span><span class="snm">' + weich(g.nm) + '</span>' +
+      '<span class="sbt">' + chf(r.c) + '</span>' + (proz ? '<span class="sp">' + proz + (g.basis ? ' von ' + GLOSSAR[g.basis].ab : '') + '</span>' : '<span class="sp">&nbsp;</span>') +
+      '</button>';
+  });
+  return h;
+}
+
 
 /* ---------- Schritt für Schritt ---------- */
 var schritte = { e:null, v:null, k:null };   /* null = alles zeigen, sonst Zahl sichtbarer Zeilen */
@@ -573,7 +916,7 @@ document.querySelectorAll('.blattknoepfe').forEach(function(box){
   box.addEventListener('click', function(ev){
     var b = ev.target.closest('button'); if (!b) return;
     var id = box.getAttribute('data-blatt');
-    if (b.dataset.a === 'start') schritte[id] = 1;
+    if (b.dataset.a === 'start'){ schritte[id] = 1; schliesseInfo(id); }
     else if (b.dataset.a === 'weiter') schritte[id] = (schritte[id] || 0) + 1;
     else schritte[id] = null;
     zeigeSchritte(id);
@@ -605,7 +948,7 @@ function rechneEinkauf(){
     }
     var bap = Math.round(menge*rp(preis));
     e = einkaufVor(bap, r, s);
-    $('eBlatt').innerHTML = blattHTML(e.rows);
+    $('eBlatt').innerHTML = blattHTML(e.rows, true); bindeBlatt('e', e.rows);
     var t = '';
     if (menge !== 1) t += '<span>BAP insgesamt: ' + tsd(menge) + ' × CHF ' + fr(rp(preis)) + ' = CHF ' + fr(bap) + '</span>';
     var gespart = (e.v.bap ? (1 - e.v.nap/e.v.bap)*100 : 0);
@@ -625,7 +968,7 @@ function rechneEinkauf(){
       $('eBlatt').innerHTML = '<p class="notiz">Bitte gültige Zahlen eingeben (Prozente von 0 bis unter 100).</p>'; box.innerHTML = ''; bal.innerHTML = ''; return;
     }
     e = einkaufRueck(rp(nap), r, s);
-    $('eBlatt').innerHTML = blattHTML(e.rows);
+    $('eBlatt').innerHTML = blattHTML(e.rows, true); bindeBlatt('e', e.rows);
     box.innerHTML = '<div class="zusatz"><span>Rechnungsbetrag: CHF ' + fr(e.v.rb) + ' · Listenpreis: CHF ' + fr(e.v.bap) + '</span>' +
       '<span style="font-weight:600">Der bezahlte Betrag entspricht ' + pz(100 - s) + ' des RB – darum ÷ ' + pzn(100 - s) + ' × 100, nicht + ' + pz(s) + '.</span></div>';
     bal.innerHTML = balkenEinkauf(e.v);
@@ -657,7 +1000,7 @@ function rechneVerkauf(){
     var g = zahl($('vGk').value), r = zahl($('vRg').value);
     if (isNaN(g) || g < 0 || isNaN(r) || r < 0){ $('vBlatt').innerHTML = '<p class="notiz">Bitte gültige Prozente eingeben.</p>'; box.innerHTML = ''; bal.innerHTML = ''; return; }
     e = verkaufGkRg(rp(nap), rp(bk), g, r);
-    $('vBlatt').innerHTML = blattHTML(e.rows);
+    $('vBlatt').innerHTML = blattHTML(e.rows, true); bindeBlatt('v', e.rows);
     box.innerHTML = '<div class="zusatz"><span>Bruttogewinn = GK + RG = ' + fr(e.v.gk) + ' + ' + fr(e.v.rg) + ' = CHF ' + fr(e.v.bg) + '</span>' +
       '<span>BG in % des EP = 100 % ÷ ' + fr(e.v.ep) + ' × ' + fr(e.v.bg) + ' = ' + pz(Math.round(e.v.bgp*100)/100) + '</span></div>';
     bal.innerHTML = balkenVerkauf(e.v);
@@ -665,7 +1008,7 @@ function rechneVerkauf(){
     var b = zahl($('vBg').value);
     if (isNaN(b) || b < 0){ $('vBlatt').innerHTML = '<p class="notiz">Bitte gültige Prozente eingeben.</p>'; box.innerHTML = ''; bal.innerHTML = ''; return; }
     e = verkaufBg(rp(nap), rp(bk), b);
-    $('vBlatt').innerHTML = blattHTML(e.rows);
+    $('vBlatt').innerHTML = blattHTML(e.rows, true); bindeBlatt('v', e.rows);
     box.innerHTML = '<div class="zusatz"><span>Der Bruttogewinn von CHF ' + fr(e.v.bg) + ' muss die Gemeinkosten decken – was darüber hinausgeht, ist Reingewinn.</span></div>';
     bal.innerHTML = balkenVerkauf({ ep:e.v.ep, bg:e.v.bg, vp:e.v.vp });
   }
@@ -705,16 +1048,22 @@ function ketteRows(bap, r, s, bk, g, rgp){
 function rechneKette(){
   var bap = zahl($('kBap').value), r = zahl($('kRab').value), s = zahl($('kSko').value), bk = zahl($('kBk').value), g = zahl($('kGk').value), rg = zahl($('kRg').value);
   if ([bap, bk, g, rg].some(function(x){ return isNaN(x) || x < 0; }) || !prozentOk(r) || !prozentOk(s)){
-    $('kBlatt').innerHTML = '<p class="notiz">Bitte gültige Zahlen eingeben.</p>'; $('kZusatz').innerHTML = ''; return;
+    $('kBlatt').innerHTML = '<p class="notiz">Bitte gültige Zahlen eingeben.</p>'; $('kZusatz').innerHTML = ''; $('kStationen').innerHTML = ''; return;
   }
   var k = ketteRows(rp(bap), r, s, rp(bk), g, rg);
-  $('kBlatt').innerHTML = blattHTML(k.rows);
+  $('kBlatt').innerHTML = blattHTML(k.rows, true); bindeBlatt('k', k.rows);
+  $('kStationen').innerHTML = stationenHTML(k.rows);
   var faktor = k.e.bap ? k.v.vp / k.e.bap : 0;
   $('kZusatz').innerHTML = '<div class="zusatz"><span>Listenpreis CHF ' + fr(k.e.bap) + ' → Verkaufspreis CHF ' + fr(k.v.vp) + '</span>' +
     '<span style="font-weight:600">Bruttogewinn CHF ' + fr(k.v.bg) + ' = ' + pz(Math.round(k.v.bgp*100)/100) + ' des Einstandspreises. Der Verkaufspreis ist das ' + (Math.round(faktor*100)/100) + '-Fache des Listenpreises.</span></div>';
   zeigeSchritte('k');
 }
 ['kBap','kRab','kSko','kBk','kGk','kRg'].forEach(function(id){ $(id).addEventListener('input', rechneKette); });
+$('kStationen').addEventListener('click', function(ev){
+  var s = ev.target.closest('.station'); if (!s) return;
+  var k = s.getAttribute('data-k');
+  if (infoK.k === k) schliesseInfo('k'); else zeigeInfo('k', blattRows.k, k);
+});
 
 /* =====================================================================
    TRAINER
@@ -735,7 +1084,13 @@ var WAREN = [
   { s:'E\u2011Bike', g:'n', m:'E\u2011Bikes', laden:'das Velogeschäft', preis:[1900,4200] },
   { s:'Brettspiel', g:'n', m:'Brettspiele', laden:'das Spielwarengeschäft', preis:[22,70] },
   { s:'Stabmixer', g:'m', m:'Stabmixer', laden:'das Haushaltsgeschäft', preis:[40,150] },
-  { s:'Blumentopf aus Ton', g:'m', m:'Blumentöpfe aus Ton', laden:'die Gärtnerei', preis:[12,60] }
+  { s:'Blumentopf aus Ton', g:'m', m:'Blumentöpfe aus Ton', laden:'die Gärtnerei', preis:[12,60] },
+  { s:'Paar Sportschuhe', g:'n', m:'Paar Sportschuhe', laden:'das Sportgeschäft', preis:[55,180] },
+  { s:'Gesichtscreme', g:'f', m:'Gesichtscremen', laden:'die Parfümerie', preis:[14,68] },
+  { s:'Hoodie', g:'m', m:'Hoodies', laden:'der Modeladen', preis:[25,90] },
+  { s:'Kopfhörer', g:'m', m:'Kopfhörer', laden:'das Elektronikgeschäft', preis:[30,220] },
+  { s:'Kiste Mineralwasser', g:'f', m:'Kisten Mineralwasser', laden:'der Getränkemarkt', preis:[8,16] },
+  { s:'Tablet-Hülle', g:'f', m:'Tablet-Hüllen', laden:'das Elektronikgeschäft', preis:[15,60] }
 ];
 var RABATTE = ['Wiederverkäuferrabatt','Messerabatt','Mengenrabatt','Treuerabatt','Saisonrabatt','Einführungsrabatt','Aktionsrabatt'];
 var R_PROZ = [5,8,10,12,15,20,25,30,35,40];
@@ -754,7 +1109,10 @@ function chf(c){ return 'CHF\u00a0' + fr(c); }
 
 /* Jede Aufgabe: { ber, st, typ, text, frage, label, einheit ('CHF'|'%'), w, blatt(rows), weg[], tipp, diag[{w,t}] } */
 var TYPEN = [];
-function typ(ber, st, name, fn){ TYPEN.push({ ber:ber, st:st, name:name, fn:fn }); }
+function typ(ber, st, name, fn){
+  /* Jeder Generator darf mehrmals würfeln, bis die Beträge «sauber» (auf 5 Rappen) aufgehen */
+  TYPEN.push({ ber:ber, st:st, name:name, fn:function(){ for (var i = 0; i < 400; i++){ var a = fn(); if (a) return a; } return null; } });
+}
 
 /* ----- Einkauf ----- */
 typ('E', 1, 'Rechnungsbetrag', function(){
@@ -1008,92 +1366,613 @@ typ('K', 3, 'Bruttogewinn über die ganze Kette', function(){
     diag:[{ w:Math.round((vp - bap)/bap*10000)/100, t:'Sie haben mit dem Listenpreis gerechnet. Grundlage ist der Einstandspreis nach Rabatt, Skonto und Bezugskosten.' }, { w:Math.round(bg/vp*10000)/100, t:'Sie haben durch den Verkaufspreis geteilt. Grundlage ist der Einstandspreis.' }] };
 });
 
-/* ---------- Trainer-Ablauf ---------- */
-var tBer = 'E', tSt = 1, aufgabe = null, versucht = false, erledigt = false;
-var stand = { gel:0, ri:0, se:0, re:0 };
-try { var s0 = JSON.parse(localStorage.getItem('wk-stand') || 'null'); if (s0 && typeof s0.gel === 'number'){ stand.gel = s0.gel; stand.ri = s0.ri; stand.re = s0.re; } } catch(e){}
-function speichern(){ try { localStorage.setItem('wk-stand', JSON.stringify({ gel:stand.gel, ri:stand.ri, re:stand.re })); } catch(e){} }
-function zeigeStand(){ $('scGel').textContent = stand.gel; $('scRi').textContent = stand.ri; $('scSe').textContent = stand.se; $('scRe').textContent = stand.re; }
+/* ----- Stufe 4: Prüfungsniveau ----- */
+typ('E', 4, 'Listenpreis pro Stück aus der Zahlung', function(){
+  var w = pick(WAREN), stk = listenpreis(w), n = pick([12,20,24,25,30,40,50,60]), r = pick(R_PROZ), s = pick(S_PROZ), bap = stk*n, e = einkaufVor(bap, r, s);
+  if (!sauber(e.v.rab, e.v.rb, e.v.sko, e.v.nap)) return null;
+  var z = einkaufRueck(e.v.nap, r, s); if (z.v.bap !== bap) return null;
+  var rows = z.rows.slice(); rows[rows.length - 1] = Object.assign({}, rows[rows.length - 1], { schluss:false, ges:false });
+  rows.push({ op:'÷', nm:n + ' Stück → Listenpreis pro Stück', c:stk, eq:true, schluss:true, ges:true });
+  return { text:gross(w.laden) + ' hat für ' + n + ' ' + w.m + ' nach Abzug von ' + pz(r) + ' Rabatt und ' + pz(s) + ' Skonto ' + chf(e.v.nap) + ' überwiesen.',
+    frage:'Wie hoch war der Listenpreis für ein Stück?', label:'Listenpreis pro Stück', einheit:'CHF', w:stk,
+    blatt:rows, weg:['RB = ' + chf(e.v.nap) + ' ÷ ' + pzn(100 - s) + ' × 100 = ' + chf(e.v.rb), 'BAP = ' + chf(e.v.rb) + ' ÷ ' + pzn(100 - r) + ' × 100 = ' + chf(bap), 'Pro Stück: ' + chf(bap) + ' ÷ ' + n + ' = ' + chf(stk)],
+    tipp:'Zweimal rückwärts (÷ ' + (100 - s) + ' × 100, dann ÷ ' + (100 - r) + ' × 100), am Schluss durch die Menge teilen.',
+    diag:[{ w:bap, t:'Das ist der Listenpreis der ganzen Lieferung. Gefragt ist ein Stück.' }, { w:Math.round(e.v.nap*(100 + s)/100*(100 + r)/100/n), t:'Die Prozente wurden dazugezählt statt rückwärts gerechnet: Der bezahlte Betrag ist weniger als 100 %.' }, { w:e.v.nap/n, t:'Das ist der bezahlte Betrag pro Stück, nicht der Listenpreis.' }] };
+});
+typ('V', 4, 'Verkaufspreis ohne Hinweis auf die Grundlage', function(){
+  var w = pick(WAREN), nap = listenpreis(w), bk = pick([100,150,200,250,300,500]), g = pick(G_PROZ), r = pick(RG_PROZ);
+  var x = verkaufGkRg(nap, bk, g, r);
+  if (!sauber(x.v.gk, x.v.rg, x.v.vp)) return null;
+  var falschRg = x.v.sk + Math.round(x.v.ep*r/100);
+  var falschGk = (nap + Math.round(nap*g/100)) ; var fSk2 = falschGk + bk; var falschBk = fSk2 + Math.round(fSk2*r/100);
+  return { text:gross(w.laden) + ' bezahlt für ' + einA(w) + ' ' + w.s + ' ' + chf(nap) + ' und ' + chf(bk) + ' für den Transport. Der Betrieb kalkuliert mit ' + pz(g) + ' Gemeinkosten und ' + pz(r) + ' Reingewinn.',
+    frage:'Zu welchem Preis wird ' + (w.g === 'f' ? 'die ' : (w.g === 'm' ? 'der ' : 'das ')) + w.s + ' angeboten?', label:'Verkaufspreis', einheit:'CHF', w:x.v.vp,
+    blatt:markiere(x.rows, 'vp'), weg:['EP = ' + chf(nap) + ' + ' + chf(bk) + ' = ' + chf(x.v.ep), 'GK = ' + chf(x.v.ep) + ' ÷ 100 × ' + pzn(g) + ' = ' + chf(x.v.gk) + ' (Grundlage EP)', 'SK = ' + chf(x.v.sk), 'RG = ' + chf(x.v.sk) + ' ÷ 100 × ' + pzn(r) + ' = ' + chf(x.v.rg) + ' (Grundlage SK)', 'VP = ' + chf(x.v.vp)],
+    tipp:'Die Aufgabe sagt nicht, worauf sich die Prozente beziehen – das müssen Sie wissen: GK vom EP, RG von den SK.',
+    diag:[{ w:falschRg, t:'Der Reingewinn wurde vom Einstandspreis berechnet. Grundlage sind die Selbstkosten.' }, { w:falschBk, t:'Die Transportkosten gehören in den Einstandspreis – vor den Gemeinkosten.' }, { w:x.v.sk, t:'Das sind erst die Selbstkosten.' }] };
+});
+typ('K', 4, 'Rückwärts durch die ganze Kette', function(){
+  var w = pick(WAREN), bap = listenpreis(w)*ri(1, 4), r = pick(R_PROZ), s = pick(S_PROZ), bk = pick([0,100,200,300,500]), g = pick(G_PROZ), rg = pick(RG_PROZ);
+  var k = ketteRows(bap, r, s, bk, g, rg);
+  if (!sauber(k.e.rab, k.e.rb, k.e.sko, k.e.nap, k.v.gk, k.v.rg, k.v.vp)) return null;
+  if (einkaufRueck(k.e.nap, r, s).v.bap !== bap) return null;
+  var rows = [{ nm:'Verkaufspreis', ab:'VP', c:k.v.vp, p2:pz(100 + rg), k:'vp' }, { op:'−', nm:'Reingewinn', ab:'RG', c:k.v.rg, p2:pz(rg), nt:dreisatz(100 + rg, rg), k:'rg' },
+    { op:'=', nm:'Selbstkosten', ab:'SK', c:k.v.sk, p1:pz(100 + g), p2:'100 %', eq:true, k:'sk' }, { op:'−', nm:'Gemeinkosten', ab:'GK', c:k.v.gk, p1:pz(g), nt:dreisatz(100 + g, g), k:'gk' },
+    { op:'=', nm:'Einstandspreis', ab:'EP', c:k.v.ep, p1:'100 %', eq:true, k:'ep' }, { op:'−', nm:'Bezugskosten', ab:'BK', c:bk, k:'bk' }, { op:'=', nm:'Nettoankaufspreis', ab:'NAP', c:k.e.nap, eq:true, k:'nap' }]
+    .concat(einkaufRueck(k.e.nap, r, s).rows.slice(1));
+  rows[rows.length - 1] = Object.assign({}, rows[rows.length - 1], { ges:true });
+  return { text:gross(w.laden) + ' verkauft ' + einA(w) + ' ' + w.s + ' für ' + chf(k.v.vp) + '. Kalkuliert wurde mit ' + pz(rg) + ' Reingewinn (von den SK) und ' + pz(g) + ' Gemeinkosten (vom EP); ' + (bk ? 'die Bezugskosten betrugen ' + chf(bk) : 'der Lieferant lieferte franko') + '. Beim Einkauf wurden ' + pz(r) + ' Rabatt und ' + pz(s) + ' Skonto abgezogen.',
+    frage:'Wie hoch war der Listenpreis (BAP)?', label:'Bruttoankaufspreis', einheit:'CHF', w:bap,
+    blatt:rows, weg:['SK = ' + chf(k.v.vp) + ' ÷ ' + pzn(100 + rg) + ' × 100 = ' + chf(k.v.sk), 'EP = ' + chf(k.v.sk) + ' ÷ ' + pzn(100 + g) + ' × 100 = ' + chf(k.v.ep), 'NAP = ' + chf(k.v.ep) + ' − ' + chf(bk) + ' = ' + chf(k.e.nap), 'RB = ' + chf(k.e.nap) + ' ÷ ' + pzn(100 - s) + ' × 100 = ' + chf(k.e.rb), 'BAP = ' + chf(k.e.rb) + ' ÷ ' + pzn(100 - r) + ' × 100 = ' + chf(bap)],
+    tipp:'Von unten nach oben durch das ganze Schema. Jeder Zuschlag macht den bekannten Betrag zu mehr als 100 %, jeder Abzug zu weniger als 100 %.',
+    diag:[{ w:k.v.ep, t:'Das ist der Einstandspreis. Jetzt noch rückwärts durch den Einkauf.' }, { w:k.e.nap, t:'Das ist der Nettoankaufspreis. Skonto und Rabatt fehlen noch.' }, { w:k.e.rb, t:'Das ist der Rechnungsbetrag. Der Rabatt-Schritt zum Listenpreis fehlt.' }] };
+});
+typ('K', 4, 'Ganze Kette mit Menge, Preis pro Stück', function(){
+  var w = pick(WAREN), stk = listenpreis(w), n = pick([10,12,20,24,25,40,50]), r = pick(R_PROZ), s = pick(S_PROZ), bkTotal = pick([5000,10000,15000,20000,25000,30000,40000]), g = pick(G_PROZ), rg = pick(RG_PROZ);
+  var bap = stk*n, k = ketteRows(bap, r, s, bkTotal, g, rg);
+  if (!sauber(k.e.rab, k.e.rb, k.e.sko, k.e.nap, k.v.gk, k.v.rg, k.v.vp)) return null;
+  var vpStk = auf5(k.v.vp/n), gerundet = vpStk !== k.v.vp/n;
+  var rows = k.rows.slice(); rows[rows.length - 1] = Object.assign({}, rows[rows.length - 1], { schluss:false });
+  rows.push({ op:'÷', nm:n + ' Stück → Verkaufspreis pro Stück' + (gerundet ? ' (auf 5 Rp.)' : ''), c:vpStk, eq:true, schluss:true, ges:true });
+  return { text:gross(w.laden) + ' bestellt ' + n + ' ' + w.m + ' zu ' + chf(stk) + ' pro Stück (Listenpreis). Der Lieferant gewährt ' + pz(r) + ' Rabatt und ' + pz(s) + ' Skonto; der Transport der ganzen Sendung kostet ' + chf(bkTotal) + '. Kalkuliert wird mit ' + pz(g) + ' Gemeinkosten und ' + pz(rg) + ' Reingewinn.',
+    frage:'Wie hoch ist der Verkaufspreis für ein Stück' + (gerundet ? ' (auf 5 Rappen gerundet)' : '') + '?', label:'VP pro Stück', einheit:'CHF', w:vpStk,
+    blatt:rows, weg:['BAP total = ' + n + ' × ' + chf(stk) + ' = ' + chf(bap), 'RB = ' + chf(k.e.rb) + ', NAP = ' + chf(k.e.nap), 'EP = ' + chf(k.e.nap) + ' + ' + chf(bkTotal) + ' = ' + chf(k.v.ep), 'SK = ' + chf(k.v.sk) + ', VP total = ' + chf(k.v.vp), 'Pro Stück: ' + chf(k.v.vp) + ' ÷ ' + n + ' = ' + (gerundet ? 'CHF ' + (k.v.vp/n/100).toFixed(3) + ' → ' : '') + chf(vpStk)],
+    tipp:'Rechnen Sie die ganze Lieferung durch das Schema – die Transportkosten gelten für alle Stück zusammen. Erst am Schluss durch die Menge teilen.',
+    diag:[{ w:k.v.vp, t:'Das ist der Verkaufspreis der ganzen Lieferung. Gefragt ist ein Stück.' }, { w:verkaufGkRg(Math.round(k.e.nap/n), bkTotal, g, rg).v.vp, t:'Die Transportkosten wurden auf ein einzelnes Stück geschlagen. Sie gelten für die ganze Sendung.' }] };
+});
 
-var BER_NAME = { E:'Einkauf', V:'Verkauf', K:'Ganze Kette' };
+/* Schlagwörter für die Bereiche Prozentrechnen (P) und Rückwärts (R) */
+var TAGS = {
+  'Rabatt in Prozent':['P'], 'Skonto in Prozent':['P'], 'Bruttogewinn in Prozent':['P'], 'Bruttogewinn aus VP und EP':['P'],
+  'Bruttogewinn aus VP, GK und RG':['P','R'], 'Mehrere Stück: BG in Prozent':['P'], 'Reingewinn in Prozent':['P'], 'Bruttogewinn über die ganze Kette':['P'],
+  'Listenpreis aus Rechnung':['R'], 'Rückwärts vom bezahlten Betrag':['R'], 'Einstandspreis aus VP, GK und RG':['R'],
+  'Listenpreis pro Stück aus der Zahlung':['R'], 'Rückwärts durch die ganze Kette':['R']
+};
+TYPEN.forEach(function(t){ t.tags = [t.ber].concat(TAGS[t.name] || []); });
+
+/* =====================================================================
+   ÜBUNGSFORMEN
+   Jede Form liefert eine Aufgabe {form, text, frage, …} und wird von
+   zeichneAufgabe() in einen Behälter gezeichnet. pruefeAufgabe() gibt
+   {fertig, ok, anteil} zurück – «ok» heisst: auf Anhieb richtig.
+   ===================================================================== */
+var BER_NAME = { E:'Einkauf', V:'Verkauf', K:'Ganze Kette', P:'Prozentrechnen', R:'Rückwärts', M:'Gemischt' };
+var FORM_NAME = { rechnen:'Rechnen', luecke:'Lückentext', mc:'Multiple Choice', fehler:'Fehler finden', zuordnen:'Zuordnen' };
+function berTag(t){ return t.ber; }
+
+/* ----- Rechnen: Typen nach Bereich und Stufe ----- */
 var letzterTyp = null;
-function kandidaten(){
-  var bers = tBer === 'M' ? ['E','V','K'] : [tBer];
-  var liste = TYPEN.filter(function(t){ return bers.indexOf(t.ber) >= 0 && t.st === tSt; });
-  if (!liste.length) liste = TYPEN.filter(function(t){ return bers.indexOf(t.ber) >= 0 && t.st <= tSt; });
-  if (!liste.length) liste = TYPEN.filter(function(t){ return bers.indexOf(t.ber) >= 0; });
+function kandidaten(ber, st){
+  var passt = function(t){ return ber === 'M' ? true : t.tags.indexOf(ber) >= 0; };
+  var liste = TYPEN.filter(function(t){ return passt(t) && t.st === st; });
+  if (!liste.length) liste = TYPEN.filter(function(t){ return passt(t) && t.st <= st; });
+  if (!liste.length) liste = TYPEN.filter(passt);
   return liste;
 }
-function neueAufgabe(){
-  var liste = kandidaten(), a = null, t = null;
+function rechnenAufgabe(ber, st){
+  var liste = kandidaten(ber, st), a = null, t = null;
   for (var i = 0; i < 6000 && !a; i++){
     t = pick(liste);
     if (liste.length > 1 && t === letzterTyp && i < 200) continue;
     a = t.fn();
   }
-  while (!a){ t = pick(TYPEN); a = t.fn(); }   /* Notweg, sollte nie greifen */
+  while (!a){ t = pick(TYPEN); a = t.fn(); }
   letzterTyp = t;
-  aufgabe = a; aufgabe.typ = t; versucht = false; erledigt = false;
-  $('qMeta').textContent = BER_NAME[t.ber] + ' · Stufe ' + t.st + ' · ' + t.name;
-  $('qText').innerHTML = a.text + '<span class="frage">' + a.frage + '</span>';
-  $('qLabel').textContent = a.label;
-  $('qVorEinheit').textContent = a.einheit === 'CHF' ? 'CHF' : '';
-  $('qEinheit').textContent = a.einheit === '%' ? '%' : '';
-  var inp = $('antwort'); inp.value = ''; inp.className = '';
-  ['tipp','feedback','loesung'].forEach(function(id){ $(id).className = $(id).className.replace(/\s*show/g, ''); $(id).innerHTML = ''; });
-  $('feedback').className = 'feedback';
+  a.form = 'rechnen'; a.typ = t; a.ber = t.ber; a.st = t.st; a.name = t.name;
+  return a;
+}
+
+/* ----- Szenarien für Lückentext und Fehler finden ----- */
+function szenarioE(st){
+  for (var i = 0; i < 5000; i++){
+    var w = pick(WAREN), bap = listenpreis(w)*ri(1, 5), r = pick(R_PROZ), s = (st === 1 ? null : pick(S_PROZ));
+    var e = einkaufVor(bap, r, s);
+    if (s == null ? !sauber(e.v.rab, e.v.rb) : !sauber(e.v.rab, e.v.rb, e.v.sko, e.v.nap)) continue;
+    if (s != null && einkaufRueck(e.v.nap, r, s).v.bap !== bap) continue;
+    return { w:w, bap:bap, r:r, s:s, e:e };
+  }
+  return null;
+}
+function szenarioV(st){
+  for (var i = 0; i < 5000; i++){
+    var w = pick(WAREN), nap = listenpreis(w), bk = pick([0,100,150,200,250,300,500]), g = pick(G_PROZ), r = pick(RG_PROZ), b = pick(BG_PROZ);
+    if (st === 1){
+      var y = verkaufBg(nap, bk, b);
+      if (!sauber(y.v.bg, y.v.vp)) continue;
+      return { w:w, nap:nap, bk:bk, b:b, x:y, weg:'bg' };
+    }
+    var x = verkaufGkRg(nap, bk, g, r);
+    if (!sauber(x.v.gk, x.v.rg, x.v.vp)) continue;
+    return { w:w, nap:nap, bk:bk, g:g, r:r, x:x, weg:'gkrg' };
+  }
+  return null;
+}
+function szenarioK(){
+  for (var i = 0; i < 30000; i++){
+    var w = pick(WAREN), bap = Math.max(1000, Math.round(listenpreis(w)/1000)*1000), r = pick(R_PROZ), s = pick(S_PROZ), bk = pick([0,100,200,300,500]), g = pick(G_PROZ), rg = pick(RG_PROZ);
+    var k = ketteRows(bap, r, s, bk, g, rg);
+    if (!sauber(k.e.rab, k.e.rb, k.e.sko, k.e.nap, k.v.gk, k.v.rg, k.v.vp)) continue;
+    if (einkaufRueck(k.e.nap, r, s).v.bap !== bap) continue;
+    return { w:w, bap:bap, r:r, s:s, bk:bk, g:g, rg:rg, k:k };
+  }
+  return null;
+}
+function kopie(rows){ return rows.map(function(r){ return Object.assign({}, r); }); }
+function basisText(k, rows){
+  var g = GLOSSAR[k]; if (!g || !g.basis) return '';
+  var b = null; rows.forEach(function(r){ if (r.k === g.basis && !b) b = r; });
+  return 'Grundlage: 100 % = ' + GLOSSAR[g.basis].nm + (b && b.c != null ? ' (' + chf(b.c) + ')' : '') + '.';
+}
+
+/* Lückentext: Blatt mit Eingabefeldern in den gesuchten Zellen. inputs = [{i (Zeile), feld 'c'|'p1'|'p2', w, hinweis}] */
+function lueckeAufgabe(ber, st){
+  var wahl = ber === 'M' ? pick(['E','V','K']) : (ber === 'P' ? pick(['E','V']) : (ber === 'R' ? pick(['E','V','K']) : ber));
+  var rows, inputs = [], text, t, z;
+  if (wahl === 'E'){
+    z = szenarioE(ber === 'R' || st >= 3 ? 2 : st);
+    if (ber === 'R' || st >= 3){
+      var zr = einkaufRueck(z.e.v.nap, z.r, z.s); rows = kopie(zr.rows);
+      text = 'Für ' + z.w.m + ' wurden nach ' + pz(z.r) + ' Rabatt und ' + pz(z.s) + ' Skonto ' + chf(z.e.v.nap) + ' überwiesen. Rechnen Sie rückwärts bis zum Listenpreis.';
+      inputs = [{ i:1, feld:'c', w:zr.v.sko, hinweis:'Der bezahlte Betrag ist ' + pzn(100 - z.s) + ' % des RB. Skonto = NAP ÷ ' + pzn(100 - z.s) + ' × ' + pzn(z.s) + '.' },
+                { i:2, feld:'c', w:zr.v.rb, hinweis:'RB = NAP + Skonto.' },
+                { i:3, feld:'c', w:zr.v.rab, hinweis:'Der RB ist ' + pzn(100 - z.r) + ' % des BAP. Rabatt = RB ÷ ' + pzn(100 - z.r) + ' × ' + pzn(z.r) + '.' },
+                { i:4, feld:'c', w:zr.v.bap, hinweis:'BAP = RB + Rabatt.' }];
+      t = 'Einkauf rückwärts';
+    } else if (ber === 'P'){
+      rows = kopie(z.e.rows);
+      text = gross(z.w.laden) + ' kauft ' + z.w.m + ': Listenpreis ' + chf(z.bap) + ', auf der Rechnung stehen ' + chf(z.e.v.rb) + (z.s != null ? ', überwiesen werden ' + chf(z.e.v.nap) : '') + '. Ergänzen Sie die Prozentsätze.';
+      inputs = [{ i:1, feld:'p1', w:z.r, hinweis:'100 % = BAP. Rabatt in % = 100 ÷ ' + fr(z.bap) + ' × ' + fr(z.e.v.rab) + '.' }];
+      if (z.s != null) inputs.push({ i:3, feld:'p2', w:z.s, hinweis:'100 % = RB. Skonto in % = 100 ÷ ' + fr(z.e.v.rb) + ' × ' + fr(z.e.v.sko) + '.' });
+      t = 'Einkauf: Prozente';
+    } else {
+      rows = kopie(z.e.rows);
+      text = gross(z.w.laden) + ' kauft ' + z.w.m + ' zum Listenpreis von ' + chf(z.bap) + '. Der Lieferant gewährt ' + pz(z.r) + ' ' + pick(RABATTE) + (z.s != null ? ' und bei fristgerechter Zahlung ' + pz(z.s) + ' Skonto' : '') + '. Füllen Sie das Schema aus.';
+      inputs = [{ i:1, feld:'c', w:z.e.v.rab, hinweis:'Rabatt = BAP ÷ 100 × ' + pzn(z.r) + '.' }, { i:2, feld:'c', w:z.e.v.rb, hinweis:'RB = BAP − Rabatt.' }];
+      if (z.s != null) inputs.push({ i:3, feld:'c', w:z.e.v.sko, hinweis:'Skonto = RB ÷ 100 × ' + pzn(z.s) + ' – vom Rechnungsbetrag, nicht vom Listenpreis!' }, { i:4, feld:'c', w:z.e.v.nap, hinweis:'NAP = RB − Skonto.' });
+      t = 'Einkauf';
+    }
+  } else if (wahl === 'V'){
+    z = szenarioV(ber === 'R' || st >= 2 ? 2 : 1);
+    var x = z.x;
+    if (ber === 'R' || st >= 3){
+      rows = [{ nm:'Verkaufspreis', ab:'VP', c:x.v.vp, p2:pz(100 + z.r), k:'vp' }, { op:'−', nm:'Reingewinn', ab:'RG', c:x.v.rg, p2:pz(z.r), k:'rg' }, { op:'=', nm:'Selbstkosten', ab:'SK', c:x.v.sk, p1:pz(100 + z.g), p2:'100 %', eq:true, k:'sk' }, { op:'−', nm:'Gemeinkosten', ab:'GK', c:x.v.gk, p1:pz(z.g), k:'gk' }, { op:'=', nm:'Einstandspreis', ab:'EP', c:x.v.ep, p1:'100 %', eq:true, schluss:true, k:'ep' }];
+      text = gross(einN(z.w)) + ' ' + z.w.s + ' wird für ' + chf(x.v.vp) + ' verkauft. Kalkuliert wurde mit ' + pz(z.g) + ' Gemeinkosten (vom EP) und ' + pz(z.r) + ' Reingewinn (von den SK). Rechnen Sie rückwärts bis zum Einstandspreis.';
+      inputs = [{ i:1, feld:'c', w:x.v.rg, hinweis:'Der VP ist ' + pzn(100 + z.r) + ' % der SK. RG = VP ÷ ' + pzn(100 + z.r) + ' × ' + pzn(z.r) + '.' }, { i:2, feld:'c', w:x.v.sk, hinweis:'SK = VP − RG.' }, { i:3, feld:'c', w:x.v.gk, hinweis:'Die SK sind ' + pzn(100 + z.g) + ' % des EP. GK = SK ÷ ' + pzn(100 + z.g) + ' × ' + pzn(z.g) + '.' }, { i:4, feld:'c', w:x.v.ep, hinweis:'EP = SK − GK.' }];
+      t = 'Verkauf rückwärts';
+    } else if (ber === 'P'){
+      rows = kopie(x.rows);
+      if (z.weg === 'bg'){
+        text = 'Einstandspreis ' + chf(x.v.ep) + ', Verkaufspreis ' + chf(x.v.vp) + ', Bruttogewinn ' + chf(x.v.bg) + '. Ergänzen Sie den Prozentsatz.';
+        inputs = [{ i:3, feld:'p1', w:z.b, hinweis:'100 % = EP. BG in % = 100 ÷ ' + fr(x.v.ep) + ' × ' + fr(x.v.bg) + '.' }];
+      } else {
+        text = 'NAP ' + chf(z.nap) + ', Bezugskosten ' + chf(z.bk) + ', Gemeinkosten ' + chf(x.v.gk) + ', Reingewinn ' + chf(x.v.rg) + '. Ergänzen Sie die beiden Prozentsätze.';
+        inputs = [{ i:3, feld:'p1', w:z.g, hinweis:'100 % = EP. GK in % = 100 ÷ ' + fr(x.v.ep) + ' × ' + fr(x.v.gk) + '.' }, { i:5, feld:'p2', w:z.r, hinweis:'100 % = SK. RG in % = 100 ÷ ' + fr(x.v.sk) + ' × ' + fr(x.v.rg) + '.' }];
+      }
+      t = 'Verkauf: Prozente';
+    } else {
+      rows = kopie(x.rows);
+      if (z.weg === 'bg'){
+        text = gross(z.w.laden) + ' bezahlt für ' + einA(z.w) + ' ' + z.w.s + ' ' + chf(z.nap) + (z.bk ? ' und ' + chf(z.bk) + ' Bezugskosten' : ' (Lieferung franko)') + '. Der Bruttogewinn soll ' + pz(z.b) + ' des Einstandspreises betragen.';
+        inputs = [{ i:2, feld:'c', w:x.v.ep, hinweis:'EP = NAP + BK.' }, { i:3, feld:'c', w:x.v.bg, hinweis:'BG = EP ÷ 100 × ' + pzn(z.b) + '.' }, { i:4, feld:'c', w:x.v.vp, hinweis:'VP = EP + BG.' }];
+      } else {
+        text = gross(z.w.laden) + ' bezahlt für ' + einA(z.w) + ' ' + z.w.s + ' ' + chf(z.nap) + (z.bk ? ' und ' + chf(z.bk) + ' Bezugskosten' : ' (Lieferung franko)') + '. Kalkuliert wird mit ' + pz(z.g) + ' Gemeinkosten (vom EP) und ' + pz(z.r) + ' Reingewinn (von den SK).';
+        inputs = [{ i:2, feld:'c', w:x.v.ep, hinweis:'EP = NAP + BK.' }, { i:3, feld:'c', w:x.v.gk, hinweis:'GK = EP ÷ 100 × ' + pzn(z.g) + '.' }, { i:4, feld:'c', w:x.v.sk, hinweis:'SK = EP + GK.' }, { i:5, feld:'c', w:x.v.rg, hinweis:'RG = SK ÷ 100 × ' + pzn(z.r) + ' – von den Selbstkosten, nicht vom EP!' }, { i:6, feld:'c', w:x.v.vp, hinweis:'VP = SK + RG.' }];
+      }
+      t = 'Verkauf';
+    }
+  } else {
+    z = szenarioK();
+    if (ber === 'R' || st >= 3){
+      var kr = TYPEN.filter(function(q){ return q.name === 'Rückwärts durch die ganze Kette'; })[0];
+      var rr = [{ nm:'Verkaufspreis', ab:'VP', c:z.k.v.vp, p2:pz(100 + z.rg), k:'vp' }, { op:'−', nm:'Reingewinn', ab:'RG', c:z.k.v.rg, p2:pz(z.rg), k:'rg' }, { op:'=', nm:'Selbstkosten', ab:'SK', c:z.k.v.sk, p1:pz(100 + z.g), p2:'100 %', eq:true, k:'sk' }, { op:'−', nm:'Gemeinkosten', ab:'GK', c:z.k.v.gk, p1:pz(z.g), k:'gk' }, { op:'=', nm:'Einstandspreis', ab:'EP', c:z.k.v.ep, p1:'100 %', eq:true, k:'ep' }, { op:'−', nm:'Bezugskosten', ab:'BK', c:z.bk, k:'bk' }, { op:'=', nm:'Nettoankaufspreis', ab:'NAP', c:z.k.e.nap, eq:true, k:'nap' }].concat(kopie(einkaufRueck(z.k.e.nap, z.r, z.s).rows.slice(1)));
+      rows = rr;
+      text = gross(z.w.laden) + ' verkauft ' + einA(z.w) + ' ' + z.w.s + ' für ' + chf(z.k.v.vp) + ': ' + pz(z.rg) + ' Reingewinn (von den SK), ' + pz(z.g) + ' Gemeinkosten (vom EP), Bezugskosten ' + chf(z.bk) + ', beim Einkauf ' + pz(z.r) + ' Rabatt und ' + pz(z.s) + ' Skonto. Rechnen Sie rückwärts bis zum Listenpreis.';
+      inputs = [{ i:1, feld:'c', w:z.k.v.rg, hinweis:'VP = ' + pzn(100 + z.rg) + ' % der SK.' }, { i:2, feld:'c', w:z.k.v.sk, hinweis:'SK = VP − RG.' }, { i:3, feld:'c', w:z.k.v.gk, hinweis:'SK = ' + pzn(100 + z.g) + ' % des EP.' }, { i:4, feld:'c', w:z.k.v.ep, hinweis:'EP = SK − GK.' }, { i:6, feld:'c', w:z.k.e.nap, hinweis:'NAP = EP − BK.' }, { i:7, feld:'c', w:z.k.e.sko, hinweis:'NAP = ' + pzn(100 - z.s) + ' % des RB.' }, { i:8, feld:'c', w:z.k.e.rb, hinweis:'RB = NAP + Skonto.' }, { i:9, feld:'c', w:z.k.e.rab, hinweis:'RB = ' + pzn(100 - z.r) + ' % des BAP.' }, { i:10, feld:'c', w:z.bap, hinweis:'BAP = RB + Rabatt.' }];
+      t = 'Ganze Kette rückwärts';
+    } else {
+      rows = kopie(z.k.rows);
+      text = gross(z.w.laden) + ' kauft ' + einA(z.w) + ' ' + z.w.s + ' zum Listenpreis von ' + chf(z.bap) + ': ' + pz(z.r) + ' Rabatt, ' + pz(z.s) + ' Skonto, ' + (z.bk ? 'Bezugskosten ' + chf(z.bk) : 'Lieferung franko') + '. Kalkuliert wird mit ' + pz(z.g) + ' Gemeinkosten (vom EP) und ' + pz(z.rg) + ' Reingewinn (von den SK). Füllen Sie das ganze Schema aus.';
+      /* Zeilen: 0 trenn, 1 bap, 2 rab, 3 rb, 4 sko, 5 nap, 6 bk, 7 ep, 8 trenn, 9 gk, 10 sk, 11 rg, 12 vp */
+      inputs = [{ i:2, feld:'c', w:z.k.e.rab, hinweis:'Rabatt = BAP ÷ 100 × ' + pzn(z.r) + '.' }, { i:3, feld:'c', w:z.k.e.rb, hinweis:'RB = BAP − Rabatt.' }, { i:4, feld:'c', w:z.k.e.sko, hinweis:'Skonto = RB ÷ 100 × ' + pzn(z.s) + ' (vom Rechnungsbetrag!).' }, { i:5, feld:'c', w:z.k.e.nap, hinweis:'NAP = RB − Skonto.' }, { i:7, feld:'c', w:z.k.v.ep, hinweis:'EP = NAP + BK.' }, { i:9, feld:'c', w:z.k.v.gk, hinweis:'GK = EP ÷ 100 × ' + pzn(z.g) + '.' }, { i:10, feld:'c', w:z.k.v.sk, hinweis:'SK = EP + GK.' }, { i:11, feld:'c', w:z.k.v.rg, hinweis:'RG = SK ÷ 100 × ' + pzn(z.rg) + ' (von den Selbstkosten!).' }, { i:12, feld:'c', w:z.k.v.vp, hinweis:'VP = SK + RG.' }];
+      t = 'Ganze Kette';
+    }
+  }
+  rows.forEach(function(r){ delete r.nt; delete r.ges; });
+  return { form:'luecke', ber:wahl, st:st, name:t, text:text, frage:'Füllen Sie die Felder der Reihe nach aus – jedes wird sofort geprüft.', rows:rows, inputs:inputs,
+    tipp:'Ein Feld nach dem andern. Fragen Sie sich bei jedem Prozentsatz: Was ist hier 100 %?' };
+}
+
+/* Fehler finden: ein Rechenweg mit genau einer falschen Zeile – alles darunter rechnet mit dem Fehler weiter */
+function fehlerAufgabe(ber, st){
+  var wahl = ber === 'M' || ber === 'P' || ber === 'R' ? pick(['E','V','K']) : ber;
+  var z, rows, fehlerIdx, richtig, erkl, text, name;
+  if (wahl === 'E'){
+    z = szenarioE(2);
+    var art = pick(['skoBasis','skoBasis','frist','rabPlus']);
+    var e = z.e.v;
+    if (art === 'skoBasis'){
+      var skoF = Math.round(z.bap*z.s/100);
+      rows = [{ nm:'Bruttoankaufspreis', ab:'BAP', c:z.bap, p1:'100 %', k:'bap' }, { op:'−', nm:'Rabatt', ab:'Rab', c:e.rab, p1:pz(z.r), k:'rab' }, { op:'=', nm:'Rechnungsbetrag', ab:'RB', c:e.rb, p1:pz(100 - z.r), p2:'100 %', eq:true, k:'rb' }, { op:'−', nm:'Skonto', ab:'Sko', c:skoF, p2:pz(z.s), k:'sko' }, { op:'=', nm:'Nettoankaufspreis', ab:'NAP', c:e.rb - skoF, p2:pz(100 - z.s), eq:true, schluss:true, k:'nap' }];
+      fehlerIdx = 3; richtig = e.sko; erkl = 'Der Skonto wurde vom Listenpreis berechnet (' + chf(z.bap) + ' ÷ 100 × ' + pzn(z.s) + '). Grundlage ist aber der Rechnungsbetrag: ' + chf(e.rb) + ' ÷ 100 × ' + pzn(z.s) + ' = ' + chf(e.sko) + '.';
+      text = 'Listenpreis ' + chf(z.bap) + ', ' + pz(z.r) + ' Rabatt, ' + pz(z.s) + ' Skonto, fristgerecht bezahlt.';
+    } else if (art === 'frist'){
+      rows = kopie(z.e.rows); fehlerIdx = 3; richtig = 0;
+      erkl = 'Die Zahlung kam nach 25 Tagen – die Skontofrist von ' + FRIST[z.s] + ' ist verpasst. Es darf kein Skonto abgezogen werden: NAP = RB = ' + chf(e.rb) + '.';
+      rows[4] = Object.assign({}, rows[4]);
+      text = 'Listenpreis ' + chf(z.bap) + ', ' + pz(z.r) + ' Rabatt. Zahlungsbedingung: «30 Tage netto, innert ' + FRIST[z.s] + ' ' + pz(z.s) + ' Skonto.» Die Rechnung wird nach 25 Tagen bezahlt.';
+    } else {
+      var rabF = Math.round(z.bap*(z.r + z.s)/100);
+      rows = [{ nm:'Bruttoankaufspreis', ab:'BAP', c:z.bap, p1:'100 %', k:'bap' }, { op:'−', nm:'Rabatt und Skonto', ab:'Rab + Sko', c:rabF, p1:pz(z.r + z.s), k:'rab' }, { op:'=', nm:'Nettoankaufspreis', ab:'NAP', c:z.bap - rabF, p1:pz(100 - z.r - z.s), eq:true, schluss:true, k:'nap' }];
+      fehlerIdx = 1; richtig = e.rab + e.sko; erkl = 'Rabatt und Skonto wurden zusammengezählt und beide vom Listenpreis abgezogen. Der Skonto bezieht sich aber auf den Rechnungsbetrag: Rabatt ' + chf(e.rab) + ' + Skonto ' + chf(e.sko) + ' = ' + chf(e.rab + e.sko) + ', NAP = ' + chf(e.nap) + '.';
+      text = 'Listenpreis ' + chf(z.bap) + ', ' + pz(z.r) + ' Rabatt, ' + pz(z.s) + ' Skonto, fristgerecht bezahlt.';
+    }
+    name = 'Einkauf';
+  } else if (wahl === 'V'){
+    z = szenarioV(2); var x = z.x.v;
+    var artV = pick(['rgBasis','rgBasis','bk']);
+    if (artV === 'rgBasis'){
+      var rgF = Math.round(x.ep*z.r/100);
+      rows = [{ nm:'Nettoankaufspreis', ab:'NAP', c:z.nap, k:'nap' }, { op:'+', nm:'Bezugskosten', ab:'BK', c:z.bk, k:'bk' }, { op:'=', nm:'Einstandspreis', ab:'EP', c:x.ep, p1:'100 %', eq:true, k:'ep' }, { op:'+', nm:'Gemeinkosten', ab:'GK', c:x.gk, p1:pz(z.g), k:'gk' }, { op:'=', nm:'Selbstkosten', ab:'SK', c:x.sk, p1:pz(100 + z.g), p2:'100 %', eq:true, k:'sk' }, { op:'+', nm:'Reingewinn', ab:'RG', c:rgF, p2:pz(z.r), k:'rg' }, { op:'=', nm:'Verkaufspreis', ab:'VP', c:x.sk + rgF, p2:pz(100 + z.r), eq:true, schluss:true, k:'vp' }];
+      fehlerIdx = 5; richtig = x.rg; erkl = 'Der Reingewinn wurde vom Einstandspreis berechnet. Grundlage sind die Selbstkosten: ' + chf(x.sk) + ' ÷ 100 × ' + pzn(z.r) + ' = ' + chf(x.rg) + '.';
+    } else {
+      var y = verkaufGkRg(z.nap, 0, z.g, z.r).v;
+      rows = [{ nm:'Nettoankaufspreis', ab:'NAP', c:z.nap, k:'nap' }, { op:'+', nm:'Bezugskosten', ab:'BK', c:z.bk, k:'bk' }, { op:'=', nm:'Einstandspreis', ab:'EP', c:z.nap, p1:'100 %', eq:true, k:'ep' }, { op:'+', nm:'Gemeinkosten', ab:'GK', c:y.gk, p1:pz(z.g), k:'gk' }, { op:'=', nm:'Selbstkosten', ab:'SK', c:y.sk, p1:pz(100 + z.g), p2:'100 %', eq:true, k:'sk' }, { op:'+', nm:'Reingewinn', ab:'RG', c:y.rg, p2:pz(z.r), k:'rg' }, { op:'=', nm:'Verkaufspreis', ab:'VP', c:y.vp, p2:pz(100 + z.r), eq:true, schluss:true, k:'vp' }];
+      fehlerIdx = 2; richtig = x.ep; erkl = 'Die Bezugskosten wurden nicht dazugezählt. EP = NAP + BK = ' + chf(z.nap) + ' + ' + chf(z.bk) + ' = ' + chf(x.ep) + '.';
+      if (!z.bk) return fehlerAufgabe(ber, st);
+    }
+    text = 'NAP ' + chf(z.nap) + ', Bezugskosten ' + chf(z.bk) + ', ' + pz(z.g) + ' Gemeinkosten (vom EP), ' + pz(z.r) + ' Reingewinn (von den SK).';
+    name = 'Verkauf';
+  } else {
+    z = szenarioK(); var k = z.k;
+    var artK = pick(['sko','rg']);
+    rows = kopie(k.rows);
+    if (artK === 'sko'){
+      var skoK = Math.round(z.bap*z.s/100), napK = k.e.rb - skoK, epK = napK + z.bk, gkK = Math.round(epK*z.g/100), skK = epK + gkK, rgK = Math.round(skK*z.rg/100);
+      rows[4].c = skoK; rows[5].c = napK; rows[7].c = epK; rows[9].c = gkK; rows[10].c = skK; rows[11].c = rgK; rows[12].c = skK + rgK;
+      fehlerIdx = 4; richtig = k.e.sko; erkl = 'Der Skonto wurde vom Listenpreis berechnet. Grundlage ist der Rechnungsbetrag: ' + chf(k.e.rb) + ' ÷ 100 × ' + pzn(z.s) + ' = ' + chf(k.e.sko) + '.';
+    } else {
+      var rgK2 = Math.round(k.v.ep*z.rg/100);
+      rows[11].c = rgK2; rows[12].c = k.v.sk + rgK2;
+      fehlerIdx = 11; richtig = k.v.rg; erkl = 'Der Reingewinn wurde vom Einstandspreis berechnet. Grundlage sind die Selbstkosten: ' + chf(k.v.sk) + ' ÷ 100 × ' + pzn(z.rg) + ' = ' + chf(k.v.rg) + '.';
+    }
+    text = 'Listenpreis ' + chf(z.bap) + ', ' + pz(z.r) + ' Rabatt, ' + pz(z.s) + ' Skonto, Bezugskosten ' + chf(z.bk) + ', ' + pz(z.g) + ' Gemeinkosten (vom EP), ' + pz(z.rg) + ' Reingewinn (von den SK).';
+    name = 'Ganze Kette';
+  }
+  /* Prozentspalten der Zwischenbeträge weg – sie würden den Fehler verraten; die 100-%-Marken und die gegebenen Sätze bleiben */
+  rows.forEach(function(r){ delete r.nt; delete r.ges; if (r.k && GLOSSAR[r.k] && GLOSSAR[r.k].art === 'stand'){ if (r.p1 !== '100 %') delete r.p1; if (r.p2 !== '100 %') delete r.p2; } });
+  return { form:'fehler', ber:wahl, st:st, name:name, text:text, frage:'In diesem Rechenweg steckt ein Fehler. Welche Zeile ist falsch gerechnet? Tippen Sie sie an.', rows:rows, fehlerIdx:fehlerIdx, richtig:richtig, erkl:erkl,
+    tipp:'Prüfen Sie bei jeder Prozentzeile: Wurde die richtige Grundlage (100 %) genommen? Und: Darf der Abzug überhaupt gemacht werden?' };
+}
+
+/* Multiple Choice: eine Rechenaufgabe mit vier Beträgen zur Wahl */
+function mcAufgabe(ber, st){
+  var a = rechnenAufgabe(ber, st);
+  var opts = [a.w], nah = a.einheit === '%' ? 0.3 : 1.5;
+  (a.diag || []).forEach(function(d){ if (d.w != null && isFinite(d.w) && d.w > 0 && !opts.some(function(o){ return Math.abs(o - d.w) < nah; })) opts.push(Math.round(d.w*100)/100); });
+  var ff = a.einheit === '%' ? [a.w + 1, a.w - 1, a.w + 2, 100 - a.w, a.w*2, a.w/2, a.w + 5, a.w + 0.5] : [1.1, 0.9, 1.2, 0.8, 1.05, 0.95, 1.5, 0.5].map(function(f){ return a.w*f; });
+  for (var i = 0; opts.length < 4 && i < ff.length; i++){
+    var c = a.einheit === '%' ? Math.round(ff[i]*10)/10 : Math.round(ff[i]/5)*5;
+    if (c > 0 && !opts.some(function(o){ return Math.abs(o - c) < nah; })) opts.push(c);
+  }
+  opts = opts.slice(0, 4);
+  for (var j = opts.length - 1; j > 0; j--){ var q = Math.floor(Math.random()*(j + 1)), h = opts[j]; opts[j] = opts[q]; opts[q] = h; }
+  a.form = 'mc'; a.opts = opts; a.name = a.name + ' (Wahl)';
+  return a;
+}
+
+/* Zuordnen: Paare aus dem Glossar */
+var KURZ = { bap:'Preis laut Preisliste, vor allen Abzügen', rab:'Nachlass des Lieferanten auf den Listenpreis', rb:'Steht auf der Rechnung: Listenpreis minus Rabatt', sko:'Abzug für rasches Bezahlen, innert Frist', nap:'Wird tatsächlich an den Lieferanten überwiesen', bk:'Transport, Zoll, Versicherung bis ins Lager', ep:'Was die Ware kostet, bis sie im Lager liegt', gk:'Löhne, Miete, Strom – auf die Ware verteilt', sk:'Alle Kosten zusammen, noch ohne Gewinn', rg:'Was nach allen Kosten übrig bleibt', vp:'Was die Kundschaft im Laden bezahlt', bg:'Ganzer Aufschlag auf den Einstandspreis' };
+function zuordnenAufgabe(ber, st){
+  var pool = ber === 'E' ? ['bap','rab','rb','sko','nap'] : (ber === 'V' ? ['nap','bk','ep','gk','sk','rg','vp','bg'] : Object.keys(GLOSSAR));
+  var paare, art, frage;
+  if (st === 1){ art = 'ab'; frage = 'Welche Abkürzung gehört zu welchem Begriff?'; }
+  else if (st === 2){ art = 'kurz'; frage = 'Welche Erklärung gehört zu welchem Begriff?'; }
+  else if (st === 3){ art = 'basis'; frage = 'Worauf bezieht sich der Prozentsatz? Ordnen Sie jedem Begriff seine 100-%-Grundlage zu.'; pool = pool.filter(function(k){ return GLOSSAR[k].basis && GLOSSAR[k].art !== 'stand'; }); if (pool.length < 4) pool = Object.keys(GLOSSAR).filter(function(k){ return GLOSSAR[k].basis && GLOSSAR[k].art !== 'stand'; }); }
+  else { art = 'grund'; frage = 'Welche Formel gehört zu welchem Begriff?'; pool = pool.filter(function(k){ return k !== 'bap' && k !== 'bk'; }); }
+  var keys = pool.slice(); for (var j = keys.length - 1; j > 0; j--){ var q = Math.floor(Math.random()*(j + 1)), h = keys[j]; keys[j] = keys[q]; keys[q] = h; }
+  keys = keys.slice(0, Math.min(6, keys.length));
+  paare = keys.map(function(k){
+    var g = GLOSSAR[k], rechts;
+    if (art === 'ab') rechts = g.ab; else if (art === 'kurz') rechts = KURZ[k]; else if (art === 'basis') rechts = '100 % = ' + GLOSSAR[g.basis].nm + ' (' + GLOSSAR[g.basis].ab + ')'; else rechts = g.grund;
+    return { k:k, links:g.nm, rechts:rechts };
+  });
+  return { form:'zuordnen', ber:ber === 'M' || ber === 'P' || ber === 'R' ? 'K' : ber, st:st, name:'Begriffe zuordnen', text:'', frage:frage, paare:paare,
+    tipp: art === 'basis' ? 'Rabatt und Skonto beziehen sich auf den Betrag direkt darüber im Schema. Reingewinn auf die Selbstkosten, Gemeinkosten und Bruttogewinn auf den Einstandspreis.' : 'Die Reihenfolge im Schema hilft: BAP → RB → NAP → EP → SK → VP.' };
+}
+
+function neueAufgabeFuer(form, ber, st){
+  if (form === 'luecke') return lueckeAufgabe(ber, st);
+  if (form === 'mc') return mcAufgabe(ber, st);
+  if (form === 'fehler') return fehlerAufgabe(ber, st);
+  if (form === 'zuordnen') return zuordnenAufgabe(ber, st);
+  return rechnenAufgabe(ber, st);
+}
+
+/* ---------- Zeichnen und Prüfen in einen Behälter ----------
+   ctx = { text, form, num, antwort, vor, ein, label, feedback } (Elemente) */
+function zeichneAufgabe(ctx, a, opts){
+  opts = opts || {};
+  a.versuche = 0; a.fertig = false; a.fehlerFrei = true; a.anteil = 0;
+  ctx.text.innerHTML = (a.text ? a.text : '') + '<span class="frage">' + a.frage + '</span>';
+  ctx.form.innerHTML = '';
+  ctx.num.hidden = a.form !== 'rechnen';
+  ctx.feedback.className = 'feedback'; ctx.feedback.innerHTML = '';
+  if (a.form === 'rechnen'){
+    ctx.label.textContent = a.label;
+    ctx.vor.textContent = a.einheit === 'CHF' ? 'CHF' : '';
+    ctx.ein.textContent = a.einheit === '%' ? '%' : '';
+    ctx.antwort.value = ''; ctx.antwort.className = '';
+    return;
+  }
+  if (a.form === 'mc'){
+    var h = '<div class="mc">';
+    a.opts.forEach(function(o, i){ h += '<button type="button" data-i="' + i + '">' + (a.einheit === '%' ? pz(o) : chf(o)) + '</button>'; });
+    ctx.form.innerHTML = h + '</div>';
+    ctx.form.querySelectorAll('.mc button').forEach(function(b){
+      b.addEventListener('click', function(){
+        if (a.fertig) return;
+        var o = a.opts[+b.dataset.i], ok = gleichWert(o, a.w, a.einheit);
+        a.versuche++;
+        if (ok){
+          a.fertig = true; a.anteil = 1;
+          ctx.form.querySelectorAll('.mc button').forEach(function(x){ x.disabled = true; if (x === b) x.classList.add('richtig'); });
+          if (opts.onOk) opts.onOk();
+        } else {
+          a.fehlerFrei = false; b.classList.add('falsch'); b.disabled = true;
+          var d = (a.diag || []).filter(function(x){ return x.w != null && gleichWert(o, x.w, a.einheit); })[0];
+          if (opts.sofortFertig){ a.fertig = true; a.anteil = 0; ctx.form.querySelectorAll('.mc button').forEach(function(x){ x.disabled = true; if (gleichWert(a.opts[+x.dataset.i], a.w, a.einheit)) x.classList.add('richtig'); }); }
+          if (opts.onFalsch) opts.onFalsch(d ? d.t : null);
+        }
+      });
+    });
+    return;
+  }
+  if (a.form === 'luecke'){
+    var rows = kopie(a.rows);
+    a.inputs.forEach(function(inp, n){ rows[inp.i].inp = inp.feld; rows[inp.i].inpN = n; });
+    ctx.form.innerHTML = '<div class="blattwrap">' + blattHTML(rows) + '</div><div class="schrittzeile" id="' + ctx.form.id + 'Schritt"></div>' + (opts.alleOffen ? '' : '<div class="btnbar"><button type="button" class="btn btn-primary btn-klein" data-l="pruef">Feld prüfen</button></div>');
+    var felder = ctx.form.querySelectorAll('input[data-n]');
+    a.aktuell = 0; a.gelöst = 0;
+    function statusZeile(){
+      var s = ctx.form.querySelector('.schrittzeile');
+      if (s) s.innerHTML = opts.alleOffen ? 'Alle Felder ausfüllen, dann «Antwort abgeben».' : 'Feld <b>' + Math.min(a.aktuell + 1, a.inputs.length) + '</b> von ' + a.inputs.length + (a.aktuell < a.inputs.length ? ': ' + rows[a.inputs[a.aktuell].i].nm : '');
+    }
+    function sperre(){
+      felder.forEach(function(f){ var n = +f.dataset.n; f.disabled = opts.alleOffen ? false : (n !== a.aktuell); });
+      if (!opts.alleOffen && felder[a.aktuell]) felder[a.aktuell].focus();
+      statusZeile();
+    }
+    function pruefeFeld(n){
+      var f = felder[n], inp = a.inputs[n], ein = zahl(f.value);
+      if (isNaN(ein)) return null;
+      var ok = inp.feld === 'c' ? Math.abs(ein*100 - inp.w) <= 1.01 : Math.abs(ein - inp.w) <= 0.051;
+      f.className = ok ? 'richtig' : 'falsch';
+      return ok;
+    }
+    a.pruefeAlle = function(){      /* Lernkontrolle: alle Felder auf einmal */
+      var richtig = 0;
+      felder.forEach(function(f, n){ var r = pruefeFeld(n); if (r) richtig++; f.disabled = true; });
+      a.fertig = true; a.anteil = richtig / a.inputs.length; a.fehlerFrei = richtig === a.inputs.length;
+      return a.anteil;
+    };
+    function weiter(){
+      var n = a.aktuell, ok = pruefeFeld(n);
+      if (ok === null){ felder[n].focus(); return; }
+      a.versuche++;
+      if (ok){
+        felder[n].disabled = true; a.aktuell++;
+        if (a.aktuell >= a.inputs.length){
+          a.fertig = true; a.anteil = 1;
+          if (opts.onOk) opts.onOk();
+        } else {
+          if (opts.onSchritt) opts.onSchritt(n);
+        }
+        sperre();
+      } else {
+        a.fehlerFrei = false;
+        var k = rows[a.inputs[n].i].k;
+        if (opts.onFalsch) opts.onFalsch(a.inputs[n].hinweis + ' ' + basisText(k, rows));
+        felder[n].focus(); felder[n].select();
+      }
+    }
+    if (!opts.alleOffen){
+      ctx.form.querySelector('[data-l="pruef"]').addEventListener('click', weiter);
+      felder.forEach(function(f){ f.addEventListener('keydown', function(ev){ if (ev.key === 'Enter'){ ev.preventDefault(); weiter(); } }); });
+    }
+    sperre();
+    return;
+  }
+  if (a.form === 'fehler'){
+    var rr = kopie(a.rows);
+    ctx.form.innerHTML = '<div class="blattwrap">' + blattHTML(rr) + '</div><div class="schrittzeile"></div><div id="' + ctx.form.id + 'Korr"></div>';
+    var tab = ctx.form.querySelector('table');
+    var trs = tab.querySelectorAll('tr');
+    trs.forEach(function(tr){ tr.classList.remove('klick'); if (!tr.classList.contains('trenn')) tr.classList.add('fehlerzeile'); });
+    a.phase = 1;
+    tab.addEventListener('click', function(ev){
+      var tr = ev.target.closest('tr.fehlerzeile'); if (!tr || a.phase !== 1 || a.fertig) return;
+      var idx = +tr.getAttribute('data-s');
+      a.versuche++;
+      if (idx === a.fehlerIdx){
+        tr.classList.add('istfehler'); a.phase = 2; a.anteil = 0.5;
+        var kBox = ctx.form.querySelector('#' + ctx.form.id + 'Korr');
+        kBox.innerHTML = '<div class="numrow"><span class="q">Richtig wäre:</span><span class="unit">CHF</span><input id="' + ctx.form.id + 'Wert" inputmode="decimal" autocomplete="off"><button type="button" class="btn btn-primary btn-klein" data-f="pruef">Prüfen</button></div>';
+        var inpW = kBox.querySelector('input');
+        function pruefW(){
+          var ein = zahl(inpW.value); if (isNaN(ein)) return;
+          a.versuche++;
+          if (Math.abs(ein*100 - a.richtig) <= 1.01){
+            inpW.className = 'richtig'; inpW.disabled = true; a.fertig = true; a.anteil = 1;
+            if (opts.onOk) opts.onOk(a.erkl);
+          } else {
+            inpW.className = 'falsch'; a.fehlerFrei = false;
+            if (opts.sofortFertig){ a.fertig = true; inpW.disabled = true; }
+            if (opts.onFalsch) opts.onFalsch(a.erkl.split('.')[0] + '.');
+          }
+        }
+        kBox.querySelector('[data-f="pruef"]').addEventListener('click', pruefW);
+        inpW.addEventListener('keydown', function(ev){ if (ev.key === 'Enter'){ ev.preventDefault(); pruefW(); } });
+        ctx.form.querySelector('.schrittzeile').innerHTML = '<b>Gefunden.</b> Jetzt den richtigen Betrag für diese Zeile eingeben.';
+        inpW.focus();
+      } else {
+        a.fehlerFrei = false;
+        tr.classList.add('warrichtig');
+        if (opts.sofortFertig){ a.fertig = true; a.anteil = 0; trs[a.fehlerIdx].classList.add('istfehler'); }
+        if (opts.onFalsch) opts.onFalsch('Diese Zeile stimmt. ' + (rr[idx].k && GLOSSAR[rr[idx].k] ? GLOSSAR[rr[idx].k].grund + '.' : ''));
+      }
+    });
+    return;
+  }
+  if (a.form === 'zuordnen'){
+    var links = a.paare.slice(), rechts = a.paare.slice();
+    for (var j = rechts.length - 1; j > 0; j--){ var q = Math.floor(Math.random()*(j + 1)), h2 = rechts[j]; rechts[j] = rechts[q]; rechts[q] = h2; }
+    var hh = '<div class="zuord"><div class="sp">' + links.map(function(p){ return '<button type="button" data-l="' + p.k + '">' + p.links + '</button>'; }).join('') + '</div><div class="sp">' + rechts.map(function(p){ return '<button type="button" data-r="' + p.k + '">' + p.rechts + '</button>'; }).join('') + '</div></div><div class="schrittzeile"></div>';
+    ctx.form.innerHTML = hh;
+    var gewL = null, offen = a.paare.length;
+    function gleichRechts(k1, k2){ var p1 = a.paare.filter(function(p){ return p.k === k1; })[0], p2 = a.paare.filter(function(p){ return p.k === k2; })[0]; return p1 && p2 && p1.rechts === p2.rechts; }
+    ctx.form.querySelectorAll('.zuord button').forEach(function(b){
+      b.addEventListener('click', function(){
+        if (a.fertig || b.classList.contains('paar')) return;
+        if (b.dataset.l){
+          ctx.form.querySelectorAll('[data-l]').forEach(function(x){ x.classList.remove('gewaehlt'); });
+          gewL = b; b.classList.add('gewaehlt'); return;
+        }
+        if (!gewL) return;
+        a.versuche++;
+        if (b.dataset.r === gewL.dataset.l || gleichRechts(b.dataset.r, gewL.dataset.l)){
+          gewL.classList.remove('gewaehlt'); gewL.classList.add('paar'); b.classList.add('paar'); gewL = null; offen--;
+          ctx.form.querySelector('.schrittzeile').innerHTML = 'Noch <b>' + offen + '</b> ' + (offen === 1 ? 'Paar' : 'Paare') + '.';
+          if (offen === 0){ a.fertig = true; a.anteil = 1; if (opts.onOk) opts.onOk(); }
+        } else {
+          a.fehlerFrei = false;
+          b.classList.remove('wackel'); void b.offsetWidth; b.classList.add('wackel');
+          if (opts.onFalsch) opts.onFalsch('«' + gewL.textContent + '» passt nicht zu «' + b.textContent + '».');
+        }
+      });
+    });
+    ctx.form.querySelector('.schrittzeile').innerHTML = 'Links einen Begriff antippen, dann rechts das Passende. Noch <b>' + offen + '</b> Paare.';
+  }
+}
+
+/* Lösung für alle Formen */
+function loesungHTML(a){
+  if (a.form === 'rechnen' || a.form === 'mc'){
+    return '<div class="flab" style="margin-top:0">Lösung: ' + a.label + ' = ' + (a.einheit === '%' ? pz(a.w) : chf(a.w)) + '</div><div class="blattwrap">' + blattHTML(a.blatt) + '</div><ol class="weg">' + a.weg.map(function(z){ return '<li>' + z + '</li>'; }).join('') + '</ol>';
+  }
+  if (a.form === 'luecke'){
+    var rows = kopie(a.rows); a.inputs.forEach(function(inp){ rows[inp.i].ges = true; });
+    return '<div class="flab" style="margin-top:0">Lösung: das ausgefüllte Schema</div><div class="blattwrap">' + blattHTML(rows) + '</div>';
+  }
+  if (a.form === 'fehler'){
+    var r2 = kopie(a.rows); r2[a.fehlerIdx].ges = true; r2[a.fehlerIdx].c = a.richtig;
+    return '<div class="flab" style="margin-top:0">Lösung: Zeile «' + a.rows[a.fehlerIdx].nm + '» war falsch</div><p class="notiz">' + a.erkl + '</p>';
+  }
+  if (a.form === 'zuordnen'){
+    return '<div class="flab" style="margin-top:0">Lösung</div><ol class="weg">' + a.paare.map(function(p){ return '<li><b>' + p.links + '</b> – ' + p.rechts + '</li>'; }).join('') + '</ol>';
+  }
+  return '';
+}
+
+/* =====================================================================
+   TRAINER
+   ===================================================================== */
+var tBer = 'E', tSt = 1, tForm = 'rechnen', tZeit = false, aufgabe = null, versucht = false, erledigt = false;
+var stand = { gel:0, ri:0, se:0, re:0, hist:[] };
+try { var s0 = JSON.parse(localStorage.getItem('wk-stand') || 'null'); if (s0 && typeof s0.gel === 'number'){ stand.gel = s0.gel; stand.ri = s0.ri; stand.re = s0.re; if (Object.prototype.toString.call(s0.hist) === '[object Array]') stand.hist = s0.hist.slice(-200); } } catch(e){}
+function speichern(){ try { localStorage.setItem('wk-stand', JSON.stringify({ gel:stand.gel, ri:stand.ri, re:stand.re, hist:stand.hist.slice(-200) })); } catch(e){} }
+function merke(ok, ber, form){ stand.hist.push({ ok:ok ? 1 : 0, b:ber, f:form }); if (stand.hist.length > 200) stand.hist = stand.hist.slice(-200); }
+function zeigeStand(){
+  $('scGel').textContent = stand.gel; $('scRi').textContent = stand.ri; $('scSe').textContent = stand.se; $('scRe').textContent = stand.re;
+  var h = stand.hist, box = $('entw');
+  if (!h.length){ box.innerHTML = '<p class="notiz" style="margin:0">Die Entwicklung erscheint nach den ersten Aufgaben: ein Strich pro Aufgabe, grün für auf Anhieb richtig.</p>'; return; }
+  var letzte = h.slice(-30);
+  var quote = function(liste){ return liste.length ? Math.round(liste.filter(function(x){ return x.ok; }).length / liste.length * 100) : null; };
+  var teile = ['<span>Trefferquote gesamt <b>' + quote(h) + ' %</b></span>'];
+  if (h.length >= 10) teile.push('<span>letzte 10 <b>' + quote(h.slice(-10)) + ' %</b></span>');
+  ['E','V','K'].forEach(function(b){ var l = h.filter(function(x){ return x.b === b; }); if (l.length >= 3) teile.push('<span>' + BER_NAME[b] + ' <b>' + quote(l) + ' %</b></span>'); });
+  box.innerHTML = '<div class="strip">' + letzte.map(function(x){ return '<i class="' + (x.ok ? 'ok' : 'no') + '"></i>'; }).join('') + '</div><div class="q">' + teile.join('') + '</div>';
+}
+var ctxT = { text:$('qText'), form:$('qForm'), num:$('qNum'), antwort:$('antwort'), vor:$('qVorEinheit'), ein:$('qEinheit'), label:$('qLabel'), feedback:$('feedback') };
+var uhrStart = 0, uhrTimer = null;
+function uhr(){
+  clearInterval(uhrTimer); $('qUhr').textContent = '';
+  if (!tZeit) return;
+  uhrStart = Date.now();
+  uhrTimer = setInterval(function(){ var s = Math.floor((Date.now() - uhrStart)/1000); $('qUhr').textContent = '⏱ ' + Math.floor(s/60) + ':' + (s % 60 < 10 ? '0' : '') + (s % 60); }, 500);
+}
+function abschluss(ok){
+  if (!versucht){ stand.gel++; if (ok){ stand.ri++; stand.se++; if (stand.se > stand.re) stand.re = stand.se; } else stand.se = 0; merke(ok, aufgabe.ber, aufgabe.form); speichern(); zeigeStand(); }
+  versucht = true;
+}
+function neueAufgabe(){
+  aufgabe = neueAufgabeFuer(tForm, tBer, tSt); versucht = false; erledigt = false;
+  $('qMeta').textContent = BER_NAME[aufgabe.ber] + ' · Stufe ' + (aufgabe.st || tSt) + ' · ' + FORM_NAME[aufgabe.form] + (aufgabe.name && aufgabe.form !== 'zuordnen' ? ' · ' + aufgabe.name : '');
+  ['tipp','loesung'].forEach(function(id){ $(id).className = $(id).className.replace(/\s*show/g, ''); $(id).innerHTML = ''; });
+  zeichneAufgabe(ctxT, aufgabe, {
+    onOk: function(erkl){
+      abschluss(aufgabe.fehlerFrei); erledigt = true; clearInterval(uhrTimer);
+      var fb = $('feedback'); fb.className = 'feedback ok show';
+      fb.innerHTML = (aufgabe.fehlerFrei ? pick(['Richtig!','Genau so.','Stimmt!','Sauber gerechnet.']) : 'Geschafft – mit Anlauf.') + (erkl ? '<span class="diag" style="border-color:rgba(46,157,107,.3)">' + erkl + '</span>' : '') + ' <span style="font-weight:600">Mit «Neue Aufgabe» oder Enter geht es weiter.</span>';
+      if (aufgabe.form === 'rechnen' || aufgabe.form === 'mc'){ $('loesung').innerHTML = loesungHTML(aufgabe); $('loesung').classList.add('show'); }
+      $('bPruefen').textContent = 'Nächste Aufgabe →';
+    },
+    onFalsch: function(hinweis){
+      if (!versucht){ stand.gel++; stand.se = 0; merke(false, aufgabe.ber, aufgabe.form); speichern(); zeigeStand(); versucht = true; }
+      var fb = $('feedback'); fb.className = 'feedback no show';
+      fb.innerHTML = 'Noch nicht richtig. Versuchen Sie es noch einmal.' + (hinweis ? '<span class="diag">🔎 ' + hinweis + '</span>' : '');
+    },
+    onSchritt: function(){ var fb = $('feedback'); fb.className = 'feedback ok show'; fb.innerHTML = 'Richtig – weiter zum nächsten Feld.'; }
+  });
+  $('bPruefen').textContent = aufgabe.form === 'rechnen' ? 'Prüfen' : 'Nächste Aufgabe →';
   $('bPruefen').disabled = false;
-}
-function stimmt(ein, w, einheit){
-  if (einheit === '%') return Math.abs(ein - w) <= 0.051;
-  var c = ein*100;
-  return Math.abs(c - w) <= 1.01;
-}
-function trifft(ein, w, einheit){ return einheit === '%' ? Math.abs(ein - w) <= 0.051 : Math.abs(ein*100 - w) <= 1.01; }
-function zeigeLoesung(){
-  var a = aufgabe;
-  var wert = a.einheit === '%' ? pz(a.w) : chf(a.w);
-  $('loesung').innerHTML = '<div class="flab" style="margin-top:0">Lösung: ' + a.label + ' = ' + wert + '</div>' +
-    '<div class="blattwrap">' + blattHTML(a.blatt) + '</div>' +
-    '<ol class="weg">' + a.weg.map(function(z){ return '<li>' + z + '</li>'; }).join('') + '</ol>';
-  $('loesung').classList.add('show');
+  uhr();
+  if (aufgabe.form === 'rechnen') $('antwort').focus();
 }
 function pruefen(){
-  if (erledigt){ neueAufgabe(); $('antwort').focus(); return; }
+  if (erledigt || aufgabe.form !== 'rechnen'){ neueAufgabe(); return; }
   var ein = zahl($('antwort').value), fb = $('feedback');
   if (isNaN(ein)){ fb.className = 'feedback no show'; fb.innerHTML = 'Bitte eine Zahl eingeben, zum Beispiel 1234.50'; return; }
   var ok = stimmt(ein, aufgabe.w, aufgabe.einheit);
-  if (!versucht){ stand.gel++; if (ok){ stand.ri++; stand.se++; if (stand.se > stand.re) stand.re = stand.se; } else stand.se = 0; speichern(); zeigeStand(); }
-  versucht = true;
+  abschluss(ok);
   $('antwort').className = ok ? 'richtig' : 'falsch';
   if (ok){
-    erledigt = true;
+    erledigt = true; clearInterval(uhrTimer);
     fb.className = 'feedback ok show';
     fb.innerHTML = pick(['Richtig!','Genau so.','Stimmt!','Sauber gerechnet.']) + ' ' + aufgabe.label + ' = ' + (aufgabe.einheit === '%' ? pz(aufgabe.w) : chf(aufgabe.w)) + '. <span style="font-weight:600">Mit Enter geht es weiter.</span>';
-    zeigeLoesung();
+    $('loesung').innerHTML = loesungHTML(aufgabe); $('loesung').classList.add('show');
+    $('bPruefen').textContent = 'Nächste Aufgabe →';
   } else {
     var d = (aufgabe.diag || []).filter(function(x){ return x.w != null && isFinite(x.w) && Math.abs(x.w - aufgabe.w) > 1 && trifft(ein, x.w, aufgabe.einheit); })[0];
     fb.className = 'feedback no show';
     fb.innerHTML = 'Noch nicht richtig. Versuchen Sie es noch einmal – oder holen Sie sich einen Tipp.' + (d ? '<span class="diag">🔎 ' + d.t + '</span>' : '');
   }
 }
+function stimmt(ein, w, einheit){ return einheit === '%' ? Math.abs(ein - w) <= 0.051 : Math.abs(ein*100 - w) <= 1.01; }
+function gleichWert(o, w, einheit){ return einheit === '%' ? Math.abs(o - w) <= 0.051 : Math.abs(o - w) <= 1.01; }
+function trifft(ein, w, einheit){ return stimmt(ein, w, einheit); }
 $('bPruefen').addEventListener('click', pruefen);
 $('antwort').addEventListener('keydown', function(ev){ if (ev.key === 'Enter'){ ev.preventDefault(); pruefen(); } });
+document.addEventListener('keydown', function(ev){ if (ev.key === 'Enter' && erledigt && $('p-trainer').classList.contains('active') && !ev.target.closest('input, textarea, button')) neueAufgabe(); });
 $('bTipp').addEventListener('click', function(){ $('tipp').innerHTML = '💡 ' + aufgabe.tipp; $('tipp').classList.add('show'); });
 $('bLoesung').addEventListener('click', function(){
-  if (!versucht){ stand.gel++; stand.se = 0; speichern(); zeigeStand(); versucht = true; }
-  erledigt = true; zeigeLoesung();
+  if (!versucht){ stand.gel++; stand.se = 0; merke(false, aufgabe.ber, aufgabe.form); speichern(); zeigeStand(); versucht = true; }
+  erledigt = true; aufgabe.fertig = true; clearInterval(uhrTimer);
+  $('loesung').innerHTML = loesungHTML(aufgabe); $('loesung').classList.add('show');
+  $('bPruefen').textContent = 'Nächste Aufgabe →';
+  $('qForm').querySelectorAll('input, button').forEach(function(x){ x.disabled = true; });
 });
 $('bNeu').addEventListener('click', function(){ neueAufgabe(); });
-function chipWahl(boxId, attr, setze){
+function chipWahl(boxId, attr, setze, danach){
   $(boxId).addEventListener('click', function(ev){
     var b = ev.target.closest('.chip'); if (!b) return;
     this.querySelectorAll('.chip').forEach(function(c){ c.classList.toggle('on', c === b); });
-    setze(b.getAttribute(attr)); neueAufgabe();
+    setze(b.getAttribute(attr)); if (danach !== false) neueAufgabe();
   });
 }
 chipWahl('tBereich', 'data-b', function(v){ tBer = v; });
 chipWahl('tStufe', 'data-s', function(v){ tSt = +v; });
+chipWahl('tForm', 'data-f', function(v){ tForm = v; });
+chipWahl('tZeit', 'data-z', function(v){ tZeit = v === '1'; uhr(); }, false);
 
 /* ---------- Taschenrechner ---------- */
 var cexpr = '';
@@ -1121,27 +2000,140 @@ function evalCalc(){
   cdisp();
 }
 $('cgrid').addEventListener('click', function(e){ var b = e.target.closest('button'); if (b) calcInput(b.dataset.k); });
-$('calcToAnswer').addEventListener('click', function(){ evalCalc(); if (cexpr && cexpr !== 'Fehler' && !isNaN(parseFloat(cexpr))){ $('antwort').value = cexpr; $('antwort').focus(); } });
+$('calcToAnswer').addEventListener('click', function(){
+  evalCalc(); if (!cexpr || cexpr === 'Fehler' || isNaN(parseFloat(cexpr))) return;
+  var ziel = $('p-test').classList.contains('active') ? ($('tqNum').hidden ? null : $('tAntwort')) : ($('qNum').hidden ? document.activeElement : $('antwort'));
+  if (ziel && ziel.tagName === 'INPUT'){ ziel.value = cexpr; ziel.focus(); }
+});
+
+/* =====================================================================
+   LERNKONTROLLE
+   ===================================================================== */
+var test = null, testBer = 'E';
+var ctxL = { text:$('tqText'), form:$('tqForm'), num:$('tqNum'), antwort:$('tAntwort'), vor:$('tqVorEinheit'), ein:$('tqEinheit'), label:$('tqLabel'), feedback:$('tFeedback') };
+function testPlan(ber){
+  var formen = ['rechnen','mc','luecke','rechnen','fehler','mc','rechnen','luecke'];
+  var stufen = [1,1,2,2,2,3,3,2];
+  return formen.map(function(f, i){
+    var b = ber === 'M' ? pick(['E','V','K']) : ber;
+    if (f === 'rechnen' && i === 6 && ber !== 'M') b = pick([ber, 'P', 'R']);
+    var a = neueAufgabeFuer(f, b, stufen[i]);
+    a.testBer = b; return a;
+  });
+}
+function testFrueher(){
+  var liste = []; try { liste = JSON.parse(localStorage.getItem('wk-tests') || '[]'); } catch(e){}
+  var box = $('testFrueher');
+  if (!liste.length){ box.innerHTML = ''; return; }
+  box.innerHTML = 'Bisherige Lernkontrollen: ' + liste.slice(-5).reverse().map(function(t){ return '<b>' + t.p + '/' + t.max + '</b> (' + BER_NAME[t.b] + ', ' + t.d + ')'; }).join(' · ');
+}
+function testStart(){
+  test = { ber:testBer, aufgaben:testPlan(testBer), i:0, erg:[] };
+  $('testStart').hidden = true; $('testErgebnis').hidden = true; $('testLauf').hidden = false;
+  testZeige();
+}
+function testZeige(){
+  var a = test.aufgaben[test.i];
+  $('testNr').textContent = 'Aufgabe ' + (test.i + 1) + ' von ' + test.aufgaben.length;
+  $('testBer').textContent = BER_NAME[a.ber] + ' · ' + FORM_NAME[a.form];
+  $('testBar').style.width = (test.i / test.aufgaben.length * 100) + '%';
+  $('testWeiter').disabled = false; $('testWeiter').textContent = 'Antwort abgeben →';
+  a.abgegeben = false;
+  zeichneAufgabe(ctxL, a, {
+    alleOffen:true, sofortFertig:true,
+    onOk: function(){ testAbgabe(); },
+    onFalsch: function(){ testAbgabe(); }
+  });
+  if (a.form === 'rechnen') $('tAntwort').focus();
+  window.scrollTo({ top: $('testLauf').offsetTop - 10, behavior:'smooth' });
+}
+function testAbgabe(){
+  var a = test.aufgaben[test.i]; if (a.abgegeben) return;
+  if (a.form === 'rechnen'){
+    var ein = zahl($('tAntwort').value);
+    if (isNaN(ein)){ ctxL.feedback.className = 'feedback no show'; ctxL.feedback.innerHTML = 'Bitte eine Zahl eingeben.'; return; }
+    a.anteil = stimmt(ein, a.w, a.einheit) ? 1 : 0; a.eingabe = ein;
+    $('tAntwort').className = a.anteil ? 'richtig' : 'falsch';
+    var d = (a.diag || []).filter(function(x){ return x.w != null && isFinite(x.w) && Math.abs(x.w - a.w) > 1 && trifft(ein, x.w, a.einheit); })[0];
+    a.erkl = a.anteil ? '' : (d ? d.t + ' ' : '') + 'Richtig: ' + a.label + ' = ' + (a.einheit === '%' ? pz(a.w) : chf(a.w)) + '.';
+  } else if (a.form === 'luecke'){
+    if (!a.fertig) a.pruefeAlle();
+    a.erkl = a.anteil === 1 ? '' : Math.round(a.anteil*a.inputs.length) + ' von ' + a.inputs.length + ' Feldern richtig. Achten Sie auf die Grundlage jedes Prozentsatzes.';
+  } else if (a.form === 'mc'){
+    if (!a.fertig){ ctxL.feedback.className = 'feedback no show'; ctxL.feedback.innerHTML = 'Bitte einen Betrag wählen.'; return; }
+    a.erkl = a.anteil ? '' : 'Richtig: ' + a.label + ' = ' + (a.einheit === '%' ? pz(a.w) : chf(a.w)) + '.';
+  } else if (a.form === 'fehler'){
+    if (!a.fertig && a.phase === 1){ ctxL.feedback.className = 'feedback no show'; ctxL.feedback.innerHTML = 'Bitte die falsche Zeile antippen.'; return; }
+    if (!a.fertig && a.phase === 2){ var w2 = zahl($(ctxL.form.id + 'Wert').value); if (isNaN(w2)){ ctxL.feedback.className = 'feedback no show'; ctxL.feedback.innerHTML = 'Bitte den richtigen Betrag eingeben.'; return; } a.anteil = Math.abs(w2*100 - a.richtig) <= 1.01 ? 1 : 0.5; a.fertig = true; }
+    a.erkl = a.anteil === 1 ? '' : (a.anteil === 0.5 ? 'Zeile gefunden, Betrag nicht. ' : 'Falsche Zeile. ') + a.erkl;
+  }
+  a.abgegeben = true;
+  ctxL.feedback.className = 'feedback ' + (a.anteil === 1 ? 'ok' : 'no') + ' show';
+  ctxL.feedback.innerHTML = (a.anteil === 1 ? 'Richtig.' : (a.anteil > 0 ? 'Teilweise richtig.' : 'Leider falsch.')) + (a.erkl ? '<span class="diag">' + a.erkl + '</span>' : '');
+  ctxL.form.querySelectorAll('input, button').forEach(function(x){ x.disabled = true; });
+  $('tAntwort').disabled = true;
+  $('testWeiter').textContent = test.i + 1 < test.aufgaben.length ? 'Nächste Aufgabe →' : 'Auswertung anzeigen';
+  $('testWeiter').onclick = testNaechste;
+}
+function testNaechste(){
+  $('testWeiter').onclick = null; $('tAntwort').disabled = false; $('tAntwort').className = '';
+  test.i++;
+  if (test.i >= test.aufgaben.length) testAuswertung(); else testZeige();
+}
+$('testWeiter').addEventListener('click', function(){ if (!this.onclick) testAbgabe(); });
+$('tAntwort').addEventListener('keydown', function(ev){ if (ev.key === 'Enter'){ ev.preventDefault(); if ($('testWeiter').onclick) testNaechste(); else testAbgabe(); } });
+function testAuswertung(){
+  var A = test.aufgaben, punkte = A.reduce(function(s, a){ return s + a.anteil; }, 0), max = A.length;
+  $('testLauf').hidden = true; $('testErgebnis').hidden = false;
+  var proz = Math.round(punkte/max*100);
+  var note = proz >= 85 ? 'gut' : (proz >= 60 ? 'mittel' : 'schwach');
+  $('testPunkte').innerHTML = '<div class="pk ' + note + '"><b>Punkte</b><span>' + (Math.round(punkte*10)/10) + ' von ' + max + '</span><small>' + proz + ' %' + (proz >= 85 ? ' – sehr gut' : (proz >= 60 ? ' – gut unterwegs' : ' – weiter üben')) + '</small></div>';
+  var gruppen = {};
+  A.forEach(function(a){
+    var tags = [a.ber]; if (a.typ && a.typ.tags) a.typ.tags.forEach(function(t){ if (tags.indexOf(t) < 0) tags.push(t); });
+    tags.forEach(function(t){ if (!gruppen[t]) gruppen[t] = { n:0, p:0 }; gruppen[t].n++; gruppen[t].p += a.anteil; });
+  });
+  $('testBild').innerHTML = Object.keys(gruppen).map(function(t){
+    var g = gruppen[t], q = Math.round(g.p/g.n*100), cls = q >= 85 ? 'gut' : (q >= 60 ? 'mittel' : 'schwach');
+    return '<div class="pk ' + cls + '"><b>' + BER_NAME[t] + '</b><span>' + q + ' %</span><small>' + (q >= 85 ? 'sitzt' : (q >= 60 ? 'noch unsicher' : 'üben')) + ' · ' + g.n + (g.n === 1 ? ' Aufgabe' : ' Aufgaben') + '</small></div>';
+  }).join('');
+  $('testListe').innerHTML = A.map(function(a, i){
+    return '<div class="' + (a.anteil === 1 ? 'ok' : 'no') + '"><span class="sym">' + (a.anteil === 1 ? '✓' : (a.anteil > 0 ? '½' : '✗')) + '</span><span><b>' + (i + 1) + '. ' + FORM_NAME[a.form] + '</b> · ' + BER_NAME[a.ber] + (a.name ? ' · ' + a.name : '') + (a.erkl ? '<span class="erk">' + a.erkl + '</span>' : '') + '</span></div>';
+  }).join('');
+  try {
+    var liste = JSON.parse(localStorage.getItem('wk-tests') || '[]');
+    var d = new Date(); liste.push({ d:d.getDate() + '.' + (d.getMonth() + 1) + '.' + d.getFullYear(), b:test.ber, p:Math.round(punkte*10)/10, max:max });
+    localStorage.setItem('wk-tests', JSON.stringify(liste.slice(-20)));
+  } catch(e){}
+  testFrueher();
+}
+$('testLos').addEventListener('click', testStart);
+$('testAbbruch').addEventListener('click', function(){ $('testLauf').hidden = true; $('testStart').hidden = false; test = null; });
+$('testNochmal').addEventListener('click', function(){ $('testErgebnis').hidden = true; $('testStart').hidden = false; });
+$('testZumTrainer').addEventListener('click', function(){ zeigeReiter('trainer'); });
+$('testBereich').addEventListener('click', function(ev){ var b = ev.target.closest('.chip'); if (!b) return; this.querySelectorAll('.chip').forEach(function(c){ c.classList.toggle('on', c === b); }); testBer = b.dataset.b; });
+testFrueher();
 
 /* ---------- Reiter ---------- */
-var REITER = ['einkauf','verkauf','kette','trainer'];
+var REITER = ['einkauf','verkauf','kette','trainer','test'];
 function zeigeReiter(name, still){
   if (REITER.indexOf(name) < 0) name = 'einkauf';
-  document.querySelectorAll('.tab').forEach(function(t){ t.classList.toggle('active', t.dataset.tab === name); });
+  document.querySelectorAll('.bereich').forEach(function(t){ t.classList.toggle('active', t.dataset.tab === name); t.setAttribute('aria-selected', String(t.dataset.tab === name)); });
   document.querySelectorAll('.panel').forEach(function(p){ p.classList.toggle('active', p.id === 'p-' + name); });
   if (!still){ try { history.replaceState(null, '', '#' + name); } catch(e){} }
   if (name === 'trainer' && !aufgabe) neueAufgabe();
 }
-document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click', function(){ zeigeReiter(t.dataset.tab); }); });
+document.querySelectorAll('.bereich').forEach(function(t){ t.addEventListener('click', function(){ zeigeReiter(t.dataset.tab); }); });
 window.addEventListener('hashchange', function(){ zeigeReiter(location.hash.slice(1), true); });
 
 /* Für Tests */
-window.__wk = { TYPEN:TYPEN, einkaufVor:einkaufVor, einkaufRueck:einkaufRueck, verkaufGkRg:verkaufGkRg, verkaufBg:verkaufBg, ketteRows:ketteRows, zahl:zahl, fr:fr, stimmt:stimmt, aufgabe:function(){ return aufgabe; } };
+window.__wk = { TYPEN:TYPEN, einkaufVor:einkaufVor, einkaufRueck:einkaufRueck, verkaufGkRg:verkaufGkRg, verkaufBg:verkaufBg, ketteRows:ketteRows, zahl:zahl, fr:fr, stimmt:stimmt, aufgabe:function(){ return aufgabe; }, neu:neueAufgabeFuer, test:function(){ return test; }, GLOSSAR:GLOSSAR };
 
 rechneEinkauf(); rechneVerkauf(); rechneKette(); zeigeStand();
 zeigeReiter(location.hash.slice(1) || 'einkauf', true);
 })();
 </script>
+
 <style>
 /* Zoomleiste: +/- und Vollbild */
 .zoomleiste{position:fixed; right:12px; top:12px; z-index:99999; display:flex; gap:2px;
@@ -1187,6 +2179,30 @@ zeigeReiter(location.hash.slice(1) || 'einkauf', true);
   });
   document.body.appendChild(leiste);
   setZ(z);
+})();
+</script>
+<script>
+/* ---- abu-tools.ch: eine Oeffnung dieses Werkzeugs melden ----
+   Gezaehlt wird nur, was wirklich auf abu-tools.ch laeuft; lokal per
+   Doppelklick geoeffnete Dateien bleiben draussen. Faellt der Aufruf aus,
+   passiert nichts. Der Schluessel ist oeffentlich und darf nur diese eine
+   Funktion aufrufen. Dieser Block ist in allen Werkzeugen zeichengleich —
+   bitte nur per Suchen-und-Ersetzen ueber alle Dateien aendern.        */
+(function(){
+  try{
+    if(location.protocol === 'file:') return;
+    if(!/(^|\.)abu-tools\.ch$/i.test(location.hostname)) return;
+    var n = (location.pathname.split('/').pop() || '');
+    if(!/^[a-z0-9][a-z0-9_.-]{2,59}\.html$/.test(n) || n === 'index.html') return;
+    var k = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlYm1ueXhxbHViaXJ3eXlrb2ZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxODA2MDYsImV4cCI6MjEwMzc1NjYwNn0.GhjZy-ZSQcRfdpUx1Jm3Yayk0iYhuiswpRuQILL1F7Q';
+    fetch('https://eebmnyxqlubirwyykofo.supabase.co/rest/v1/rpc/kachel_klick', {
+      method: 'POST',
+      headers: { 'apikey': k, 'Authorization': 'Bearer ' + k,
+                 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: '{"p_kachel":"' + n + '"}',
+      keepalive: true
+    }).catch(function(){});
+  }catch(e){}
 })();
 </script>
 </body>
