@@ -128,8 +128,15 @@ td.w{font-weight:700}
 footer{padding:0 20px;font-size:12.5px;color:var(--muted);display:flex;align-items:center;justify-content:space-between;gap:12px}
 
 /* Dialog Spieler */
-#dlg{position:absolute;inset:0;background:rgba(10,40,45,.55);display:grid;place-items:center;z-index:5}
-#dlg[hidden]{display:none}
+#dlg,#pinDlg{position:absolute;inset:0;background:rgba(10,40,45,.55);display:grid;place-items:center;z-index:5}
+#dlg[hidden],#pinDlg[hidden]{display:none}
+#pin{font:inherit;font-size:22px;letter-spacing:.2em;border:2px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--ink);width:100%}
+#pinMsg{color:var(--warn);min-height:1.4em;font-weight:600}
+/* Zuschauer-Ansicht: nur das Resultat, keine Knöpfe */
+body.ro .sets button[aria-pressed="false"],body.ro .sets .gap{display:none}
+body.ro .sets button[aria-pressed="true"]{background:var(--teal-d);border:2px solid var(--teal-d);color:#fff;cursor:default}
+body.ro .sets.empty::before{content:"offen";font-size:13px;font-style:italic;font-weight:500;color:var(--muted);padding:0 14px}
+body.ro #title{pointer-events:none}
 .dbox{width:560px;max-height:640px;background:#fff;border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:12px}
 .dbox h2{margin:0;font-size:21px}
 .dbox p{margin:0;font-size:14px;color:var(--muted);line-height:1.45}
@@ -247,9 +254,22 @@ footer{padding:0 20px;font-size:12.5px;color:var(--muted);display:flex;align-ite
       </div>
       <div class="drow">
         <button type="button" class="btn danger" id="reset">Alle Resultate löschen</button>
+        <button type="button" class="btn sec sm" id="logout" hidden>Abmelden</button>
         <span class="sp"></span>
         <button type="button" class="btn sec" id="cancel">Abbrechen</button>
         <button type="button" class="btn" id="apply">Übernehmen</button>
+      </div>
+    </div>
+  </div>
+  <div id="pinDlg" hidden role="dialog" aria-modal="true" aria-labelledby="pinT">
+    <div class="dbox" style="width:400px">
+      <h2 id="pinT">Turnierleitung</h2>
+      <p>Mit der PIN der Lehrperson lassen sich Namen und Resultate eintragen. Alle anderen sehen den Stand live mit.</p>
+      <input id="pin" type="password" inputmode="numeric" maxlength="12" autocomplete="off" aria-label="PIN der Lehrperson">
+      <p id="pinMsg" aria-live="polite"></p>
+      <div class="drow"><span class="sp"></span>
+        <button type="button" class="btn sec" id="pinCancel">Abbrechen</button>
+        <button type="button" class="btn" id="pinOk">Anmelden</button>
       </div>
     </div>
   </div>
@@ -258,7 +278,16 @@ footer{padding:0 20px;font-size:12.5px;color:var(--muted);display:flex;align-ite
 <script>
 (function(){
 'use strict';
-var KEY='tt_turnier_v3', KEY_OLD='tt_turnier_v2';
+/* Gemeinsamer Stand: mit ?t=kennung in der Adresse sehen alle Geräte dasselbe Turnier.
+   Ohne ?t= bleibt alles auf dem eigenen Gerät. Schreiben nur mit der PIN der Lehrperson. */
+var API='https://eebmnyxqlubirwyykofo.supabase.co/rest/v1/rpc/', APIKEY='sb_publishable_kaEkMADZLvc-Jok0dlxkBA_u3cbNaQt';
+var TID=''; try{TID=String(new URLSearchParams(location.search).get('t')||'').toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,40);}catch(e){}
+var SHARED=!!TID, PINKEY='tt_turnier_pin', PIN='';
+if(SHARED){ try{PIN=localStorage.getItem(PINKEY)||'';}catch(e){} }
+function canEdit(){return !SHARED||!!PIN;}
+function rpc(fn,daten){return fetch(API+fn,{method:'POST',headers:{'apikey':APIKEY,'Content-Type':'application/json'},body:JSON.stringify(daten)})
+  .then(function(r){return r.text().then(function(t){var d=t?JSON.parse(t):null;if(!r.ok)throw new Error((d&&d.message)||'Verbindung fehlgeschlagen.');return d;});});}
+var KEY='tt_turnier_v3'+(SHARED?'_'+TID:''), KEY_OLD=SHARED?'tt_turnier_v3':'tt_turnier_v2';
 var ROSTER=['Spieler 1','Spieler 2','Spieler 3','Spieler 4','Spieler 5','Spieler 6'];
 var ROSTER_PREV=ROSTER.join('|');
 var $=function(id){return document.getElementById(id);};
@@ -286,8 +315,74 @@ function load(){
 }
 var saveOK=true;
 function save(){ try{localStorage.setItem(KEY,JSON.stringify(S)); saveOK=true;}catch(e){saveOK=false;}
+  if(SHARED){ if(ready&&!applying&&canEdit()&&canon(shareable())!==syncJSON)schedulePush(); showStatus(); return; }
   $('saved').textContent=saveOK?'Resultate werden auf diesem Gerät gespeichert.':'Speichern nicht möglich: Resultate gehen beim Neuladen verloren.'; }
 var S=load()||defaults();
+
+/* ---------- Abgleich mit dem gemeinsamen Stand ---------- */
+var ready=false, applying=false, pushing=false, pushT=null, conn=true, remoteMissing=false, stamp='', syncJSON=null, seenRemote=null;
+var SHARE=['title','roster','rosterBase','players','scores','finals','seedSig','finSig'];
+function canon(v){
+  if(v===null||v===undefined||typeof v!=='object')return JSON.stringify(v===undefined?null:v);
+  if(Array.isArray(v))return '['+v.map(canon).join(',')+']';
+  return '{'+Object.keys(v).sort().map(function(k){return JSON.stringify(k)+':'+canon(v[k]);}).join(',')+'}';
+}
+function shareable(){ var o={}; SHARE.forEach(function(k){o[k]=S[k]===undefined?'':S[k];}); return o; }
+function setPending(on){ try{ if(on)localStorage.setItem(KEY+'_pending','1'); else localStorage.removeItem(KEY+'_pending'); }catch(e){} }
+function isPending(){ try{return localStorage.getItem(KEY+'_pending')==='1';}catch(e){return false;} }
+function schedulePush(){ setPending(true); clearTimeout(pushT); pushT=setTimeout(push,450); }
+function push(){
+  if(!canEdit())return;
+  if(pushing){ clearTimeout(pushT); pushT=setTimeout(push,450); return; }
+  var data=shareable(), j=canon(data); pushing=true; showStatus();
+  rpc('tt_speichern',{p_pin:PIN,p_id:TID,p_daten:data}).then(function(ts){
+    pushing=false; conn=true; remoteMissing=false; syncJSON=j; seenRemote=j; stamp=ts;
+    if(canon(shareable())!==j)schedulePush(); else setPending(false);
+    showStatus();
+  }).catch(function(e){
+    pushing=false;
+    if(/PIN/.test(e.message)){ logout(); } else { conn=false; clearTimeout(pushT); pushT=setTimeout(push,5000); }
+    showStatus();
+  });
+}
+function applyRemote(d){
+  applying=true; var r=S.round,v=S.view;
+  SHARE.forEach(function(k){ if(d[k]!==undefined)S[k]=d[k]; });
+  if(!S.scores||typeof S.scores!=='object'||Array.isArray(S.scores))S.scores={};
+  if(!S.finals||typeof S.finals!=='object'||Array.isArray(S.finals))S.finals={};
+  syncJSON=canon(shareable()); S.round=r; S.view=v;
+  renderAll(); document.title=S.title||'Tischtennis-Turnier'; applying=false; save();
+}
+function poll(){
+  if(ready&&document.hidden)return;
+  rpc('tt_laden',{p_id:TID}).then(function(res){
+    conn=true; var first=!ready;
+    if(!res){ remoteMissing=true; ready=true; if(first&&canEdit())schedulePush(); showStatus(); return; }
+    remoteMissing=false; stamp=res.geaendert; var rj=canon(res.daten);
+    if(first&&canEdit()&&isPending()){ ready=true; seenRemote=rj; schedulePush(); showStatus(); return; }
+    ready=true;
+    if(rj!==seenRemote){
+      var busy=!$('dlg').hidden||!$('pinDlg').hidden;
+      var mine=canEdit()&&syncJSON!==null&&canon(shareable())!==syncJSON;
+      if(!busy&&!mine){ seenRemote=rj; applyRemote(res.daten); }
+    }
+    showStatus();
+  }).catch(function(){ conn=false; showStatus(); });
+}
+function showStatus(){
+  if(!SHARED)return; var el=$('saved'),t=stamp?new Date(stamp):null;
+  var hm=t&&!isNaN(t)?' · Stand '+('0'+t.getHours()).slice(-2)+':'+('0'+t.getMinutes()).slice(-2):'';
+  if(canEdit()){
+    var pend=ready&&(syncJSON===null||canon(shareable())!==syncJSON);
+    el.textContent=!conn?'Keine Verbindung: Änderungen bleiben vorerst auf diesem Gerät.':(pushing||pend)?'Speichert …':'Für alle gespeichert'+hm;
+  }else el.textContent=!conn?'Keine Verbindung zum gemeinsamen Stand.':remoteMissing?'Noch kein Turnier gespeichert.':'Live'+hm;
+}
+function updateMode(){
+  document.body.classList.toggle('ro',!canEdit());
+  $('btnPlayers').textContent=canEdit()?'Spieler':'Leitung';
+  $('title').readOnly=!canEdit(); $('logout').hidden=!(SHARED&&canEdit());
+}
+function logout(){ PIN=''; try{localStorage.removeItem(PINKEY);}catch(e){} $('dlg').hidden=true; updateMode(); renderAll(); showStatus(); }
 
 /* ---------- Turnierlogik ---------- */
 function rounds(n){
@@ -312,7 +407,7 @@ var OPTS=[[2,0],[2,1],[1,2],[0,2]];
 function setBtns(sc,nameA,nameB,dis){
   var h=''; OPTS.forEach(function(o,k){
     var on=!!sc&&sc[0]===o[0]&&sc[1]===o[1];
-    h+=(k===2?'<span class="gap"></span>':'')+'<button type="button" data-s="'+k+'" aria-pressed="'+on+'"'+(dis?' disabled':'')+
+    h+=(k===2?'<span class="gap"></span>':'')+'<button type="button" data-s="'+k+'" aria-pressed="'+on+'"'+((dis||!canEdit())?' disabled':'')+
       ' aria-label="'+esc(o[0]>o[1]?nameA:nameB)+' gewinnt '+Math.max(o[0],o[1])+':'+Math.min(o[0],o[1])+'">'+o[0]+':'+o[1]+'</button>';
   }); return h;
 }
@@ -381,7 +476,7 @@ function renderRound(){
 }
 function markMatch(el){
   var a=+el.dataset.a,b=+el.dataset.b,sc=getScore(a,b),ok=valid(sc);
-  el.classList.toggle('done',ok);
+  el.classList.toggle('done',ok); el.querySelector('.sets').classList.toggle('empty',!ok);
   el.querySelector('.p.a').classList.toggle('win',ok&&sc[0]>sc[1]);
   el.querySelector('.p.b').classList.toggle('win',ok&&sc[1]>sc[0]);
   Array.prototype.forEach.call(el.querySelectorAll('.sets button'),function(bt){ var o=OPTS[+bt.dataset.s]; bt.setAttribute('aria-pressed',ok&&sc[0]===o[0]&&sc[1]===o[1]); });
@@ -435,7 +530,7 @@ function updateFinals(){
       pEl.classList.toggle('win',ok&&((s===0&&sc[0]>sc[1])||(s===1&&sc[1]>sc[0])));
       rows[s].querySelector('.sn').textContent=ok?sc[s]:'';
     }
-    box.querySelector('.fsets').innerHTML=setBtns(ok?sc:null,nm[0],nm[1],!active);
+    var bar=box.querySelector('.fsets'); bar.innerHTML=setBtns(ok?sc:null,nm[0],nm[1],!active); bar.classList.toggle('empty',!ok);
   });
   var f=M.pairs.f,p3=M.pairs.p3,fsc=fscore('f'),psc=fscore('p3');
   var pod=[winner(fsc,f[0],f[1]),loser(fsc,f[0],f[1]),winner(psc,p3[0],p3[1]),loser(psc,p3[0],p3[1])];
@@ -454,23 +549,23 @@ function setView(v){
 function renderAll(){ R=rounds(S.players.length); $('title').value=S.title; renderTable(); renderRound(); setView(S.view); }
 
 $('matches').addEventListener('click',function(e){
-  var bt=e.target.closest('.sets button'); if(!bt)return; var el=bt.closest('.m'),a=+el.dataset.a,b=+el.dataset.b,o=OPTS[+bt.dataset.s];
+  var bt=e.target.closest('.sets button'); if(!bt||!canEdit())return; var el=bt.closest('.m'),a=+el.dataset.a,b=+el.dataset.b,o=OPTS[+bt.dataset.s];
   if(bt.getAttribute('aria-pressed')==='true')setResult(a,b,null); else setResult(a,b,o[0],o[1]);
   markMatch(el); renderTable(); renderDots(); save();
 });
 $('vFinal').addEventListener('click',function(e){
-  var bt=e.target.closest('.fsets button'); if(!bt||bt.disabled)return; var m=bt.parentNode.dataset.m,o=OPTS[+bt.dataset.s],k=+bt.dataset.s;
+  var bt=e.target.closest('.fsets button'); if(!bt||bt.disabled||!canEdit())return; var m=bt.parentNode.dataset.m,o=OPTS[+bt.dataset.s],k=+bt.dataset.s;
   if(bt.getAttribute('aria-pressed')==='true')delete S.finals[m]; else S.finals[m]=[o[0],o[1]];
   updateFinals(); save();
   var nb=document.querySelector('.fsets[data-m="'+m+'"] button[data-s="'+k+'"]'); if(nb)nb.focus();
 });
-document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&!$('dlg').hidden)closeDlg(); });
+document.addEventListener('keydown',function(e){ if(e.key!=='Escape')return; if(!$('pinDlg').hidden)closePin(); else if(!$('dlg').hidden)closeDlg(); });
 $('prev').addEventListener('click',function(){ if(S.round>0){S.round--;renderRound();save();} });
 $('next').addEventListener('click',function(){ if(S.round<R.length-1){S.round++;renderRound();save();} });
 $('dots').addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b)return; S.round=+b.dataset.r; renderRound(); save(); });
 $('tabGroup').addEventListener('click',function(){setView('group');});
 $('tabFinal').addEventListener('click',function(){setView('final');});
-$('title').addEventListener('input',function(){ S.title=this.value; document.title=this.value||'Tischtennis-Turnier'; save(); });
+$('title').addEventListener('input',function(){ if(!canEdit())return; S.title=this.value; document.title=this.value||'Tischtennis-Turnier'; save(); });
 
 /* Dialog: Anwesenheit und Klassenliste */
 var D=[],editMode=false;
@@ -511,7 +606,24 @@ function applyPlayers(act){
   }
   S.players=act; S.scores=ns; S.finals={}; S.seedSig=''; S.finSig=''; S.round=0; S.view='group';
 }
-$('btnPlayers').addEventListener('click',openDlg);
+$('btnPlayers').addEventListener('click',function(){ if(canEdit())openDlg(); else openPin(); });
+function openPin(){ $('pin').value=''; $('pinMsg').textContent=''; $('pinDlg').hidden=false; $('pin').focus(); }
+function closePin(){ $('pinDlg').hidden=true; $('btnPlayers').focus(); }
+function tryPin(){
+  var v=$('pin').value.trim(); if(!v)return; $('pinOk').disabled=true; $('pinMsg').textContent='';
+  rpc('tt_pin',{p_pin:v}).then(function(ok){
+    $('pinOk').disabled=false;
+    if(!ok){ $('pinMsg').textContent='PIN falsch.'; $('pin').select(); return; }
+    PIN=v; try{localStorage.setItem(PINKEY,v);}catch(e){}
+    closePin(); updateMode(); renderAll();
+    if(ready&&(remoteMissing||canon(shareable())!==syncJSON))schedulePush();
+    showStatus();
+  }).catch(function(e){ $('pinOk').disabled=false; $('pinMsg').textContent='Keine Verbindung: '+e.message; });
+}
+$('pinOk').addEventListener('click',tryPin);
+$('pinCancel').addEventListener('click',closePin);
+$('pin').addEventListener('keydown',function(e){ if(e.key==='Enter'){e.preventDefault();tryPin();} });
+$('logout').addEventListener('click',logout);
 $('cancel').addEventListener('click',closeDlg);
 $('names').addEventListener('input',checkNames);
 $('toggleEdit').addEventListener('click',function(){setMode(!editMode);});
@@ -553,7 +665,8 @@ function fit(){
 }
 window.addEventListener('resize',fit); window.addEventListener('load',fit);
 
-renderAll(); document.title=S.title||'Tischtennis-Turnier'; save(); fit();
+updateMode(); renderAll(); document.title=S.title||'Tischtennis-Turnier'; save(); fit();
+if(SHARED){ poll(); setInterval(poll,4000); document.addEventListener('visibilitychange',function(){ if(!document.hidden)poll(); }); }
 })();
 </script>
 </body>
