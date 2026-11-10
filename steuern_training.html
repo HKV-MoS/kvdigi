@@ -54,6 +54,7 @@ nav button:focus-visible,button:focus-visible{outline:3px solid var(--brand);out
 .selbst button.an[data-w="0"]{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
 .fall{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:12px}
 .fall p{margin:0 0 10px}
+.fall .nr{display:inline-block;background:var(--brand);color:var(--surface);font-size:13px;font-weight:600;border-radius:6px;padding:1px 8px;margin-right:8px;vertical-align:1px}
 .opts{display:flex;flex-direction:column;gap:6px}
 .opts button{font:inherit;text-align:left;border:1px solid var(--line);border-radius:8px;padding:8px 12px;background:var(--surface);color:var(--ink);cursor:pointer}
 .opts button:hover{border-color:var(--brand)}
@@ -130,12 +131,12 @@ body.eingebettet nav{position:sticky;top:0;background:var(--surface);z-index:2;m
   </div>
   <div class="ergebnis" id="ergebnis"></div>
   <p class="sub" style="margin-top:10px;font-size:14px">Die Zahlen sind Beispiele. Den aktuellen Steuerfuss Ihrer Wohngemeinde finden Sie auf der Website des Kantonalen Steueramts oder Ihrer Gemeinde. Die direkte Bundessteuer kennt keinen Steuerfuss; sie ist in der ganzen Schweiz gleich hoch.</p>
-  <div class="fall" style="margin-top:14px" id="sfFrage"></div>
+  <div style="margin-top:14px" id="sfFrage"></div>
 </section>
 
 <!-- 3 Fälle -->
 <section class="teil" id="t3" role="tabpanel">
-  <div class="intro">Entscheiden Sie in jedem Fall. Die Rückmeldung erklärt, warum.</div>
+  <div class="intro">Fünfzehn Situationen, die Ihnen in den nächsten Jahren begegnen können. Entscheiden Sie in jedem Fall. Die Rückmeldung erklärt, warum. Die Angaben zu Kanton und Gemeinde beziehen sich auf den Aargau.</div>
   <div id="faelle"></div>
 </section>
 
@@ -198,17 +199,46 @@ const KARTEN = [
   "Sie zeigt, wie viel Steuern und obligatorische Sozialversicherungsbeiträge im Verhältnis zur Wirtschaftsleistung (BIP) bezahlt werden. Die Schweiz liegt bei rund 27 % und damit deutlich unter dem Durchschnitt der OECD-Länder (rund 34 %)."],
  ["Welches sind die grössten Einnahmen und Ausgaben des Bundes?",
   "Einnahmen: Mehrwertsteuer und direkte Bundessteuer, je etwa ein Drittel. Ausgaben: Am meisten geht an die soziale Wohlfahrt (v. a. AHV/IV), danach folgen Finanzen und Steuern (Anteile der Kantone), Verkehr, Bildung und Forschung sowie Armee. Aktuelle Zahlen: Taschenstatistik der Eidgenössischen Finanzverwaltung."],
+ ["Was ist der Unterschied zwischen einer Steuer und einer Gebühr?",
+  "Eine Steuer bezahlt man ohne direkte Gegenleistung; sie finanziert den Staat allgemein. Eine Gebühr bezahlt man für eine bestimmte Leistung, z. B. für den Pass, den Abfallsack, den Parkplatz oder die Baubewilligung. Beides sind öffentliche Abgaben."],
+ ["Welche Staatsebene erhebt welche Steuern?",
+  "Bund: direkte Bundessteuer, Mehrwertsteuer, Verrechnungssteuer, Mineralöl-, Tabak- und Alkoholsteuer, Zölle. Kanton und Gemeinde: Einkommens- und Vermögenssteuer, Erbschafts- und Schenkungssteuer, Motorfahrzeugsteuer, Grundstückgewinnsteuer, Hundesteuer. Die Kirchensteuer geht an die Landeskirchen."],
+ ["Was ist die Vermögenssteuer?",
+  "Kanton und Gemeinde besteuern jedes Jahr das Nettovermögen per 31. Dezember: Konten, Wertschriften, Fahrzeuge, Liegenschaften, abzüglich Schulden. Ein Freibetrag bleibt steuerfrei, darüber sind die Sätze tief (Promille). Der Bund erhebt keine Vermögenssteuer."],
+ ["Was ist ein Steuertarif, und wer legt ihn fest?",
+  "Der Tarif sagt, wie viel Prozent Steuer auf welches steuerbare Einkommen fällig wird; er steigt mit dem Einkommen (Progression). Jeder Kanton hat seinen eigenen Tarif für Kantons- und Gemeindesteuer, der Bund einen eigenen für die direkte Bundessteuer. Aus dem Tarif ergibt sich die einfache Steuer, die mit dem Steuerfuss multipliziert wird."],
+ ["Wie läuft das Steuerverfahren ab, von der Steuererklärung bis zur Rechnung?",
+  "1. Sie füllen die Steuererklärung aus und reichen sie ein (im Aargau bis 31. März, Verlängerung möglich). 2. Sie erhalten eine provisorische Rechnung nach dem Vorjahr. 3. Das Steueramt prüft und erlässt die Veranlagung. 4. Mit der definitiven Rechnung wird die Differenz nachbelastet oder zurückerstattet."],
+ ["Was können Sie tun, wenn die Veranlagung falsch ist?",
+  "Innert 30 Tagen schriftlich Einsprache erheben, kostenlos und ohne Anwalt. Sie begründen, was falsch ist, und legen Belege bei. Danach Rekurs an das Steuerrekursgericht. Wer die Frist verpasst, muss auch eine falsche Veranlagung bezahlen."],
+ ["Was ist der Unterschied zwischen Steueroptimierung und Steuerhinterziehung?",
+  "Optimieren ist legal: alle erlaubten Abzüge nutzen, in die Säule 3a einzahlen, den Wohnort wählen, Einkäufe in die Pensionskasse. Hinterziehen ist illegal: Einkommen oder Vermögen verschweigen. Die Grenze ist klar: Was in der Steuererklärung steht, muss vollständig und wahr sein."],
+ ["Was ist die Kirchensteuer, und wer bezahlt sie?",
+  "Mitglieder der Landeskirchen (reformiert, römisch-katholisch, christkatholisch) bezahlen einen Zuschlag zur Kantonssteuer, der an die Kirchgemeinden geht. Wer aus der Kirche austritt, bezahlt sie nicht mehr. Im Aargau bezahlen auch Firmen Kirchensteuer."],
+ ["Was ist die Motorfahrzeugsteuer, und wofür wird sie verwendet?",
+  "Eine kantonale Steuer, die jede Halterin und jeder Halter eines Fahrzeugs jährlich bezahlt. Im Aargau richtet sie sich nach Hubraum und Gesamtgewicht; einzelne Kantone begünstigen Elektroautos. Der Ertrag ist für die Strassen bestimmt."],
+ ["Was bedeutet Steuerharmonisierung?",
+  "Das Steuerharmonisierungsgesetz des Bundes verlangt, dass alle Kantone dieselben Regeln haben: was steuerbar ist, welche Abzüge es gibt, wie das Verfahren läuft (formelle Harmonisierung). Die Höhe der Steuern bleibt Sache der Kantone: Tarife und Steuerfüsse sind frei (keine materielle Harmonisierung)."],
+ ["Was ist der Steuerwettbewerb? Nennen Sie je ein Argument dafür und dagegen.",
+  "Kantone und Gemeinden locken mit tiefen Steuern Einwohner und Firmen an. Dafür: zwingt den Staat zu sparsamem Umgang mit Geld, Bürger können wählen. Dagegen: reiche Gemeinden werden reicher, arme müssen den Steuerfuss erhöhen; der Finanzausgleich zwischen Kantonen und Gemeinden gleicht das teilweise aus."],
+ ["Wo finden Sie heraus, wie hoch Ihre Steuern voraussichtlich sind?",
+  "Mit dem Steuerrechner des Kantons oder der Eidgenössischen Steuerverwaltung: Wohnort, Einkommen, Zivilstand eingeben, und Sie sehen Bund, Kanton und Gemeinde getrennt. Das hilft beim Budget und beim Vergleich von Gemeinden."],
 ];
 
-const SF_FRAGE = {
- q:"Der Gemeinderat schlägt vor, den Steuerfuss von 105 % auf 100 % zu senken. Wer entscheidet darüber?",
- o:["Das Kantonale Steueramt, weil es die Steuern veranlagt.",
-    "Die Stimmberechtigten der Gemeinde an der Gemeindeversammlung bzw. der Einwohnerrat, zusammen mit dem Budget.",
-    "Der Bundesrat, weil er für die ganze Schweiz einheitliche Steuern festlegt.",
-    "Der Gemeinderat allein, weil er die Gemeinde führt."],
- r:1,
- e:"Den Steuerfuss der Gemeinde beschliesst jedes Jahr die Gemeindeversammlung oder der Einwohnerrat mit dem Budget, den kantonalen Steuerfuss der Grosse Rat. Der Gemeinderat macht nur den Antrag."
-};
+const SF_FRAGEN = [
+ {q:"Der Gemeinderat schlägt vor, den Steuerfuss von 105 % auf 100 % zu senken. Wer entscheidet darüber?",
+  o:["Das Kantonale Steueramt, weil es die Steuern veranlagt.",
+     "Die Stimmberechtigten der Gemeinde an der Gemeindeversammlung bzw. der Einwohnerrat, zusammen mit dem Budget.",
+     "Der Bundesrat, weil er für die ganze Schweiz einheitliche Steuern festlegt.",
+     "Der Gemeinderat allein, weil er die Gemeinde führt."], r:1,
+  e:"Den Steuerfuss der Gemeinde beschliesst jedes Jahr die Gemeindeversammlung oder der Einwohnerrat mit dem Budget, den kantonalen Steuerfuss der Grosse Rat. Der Gemeinderat macht nur den Antrag."},
+ {q:"Zwei Nachbargemeinden im gleichen Kanton: In der einen liegt der Steuerfuss bei 85 %, in der anderen bei 118 %. Woher kommt der Unterschied?",
+  o:["Der Kanton verteilt die Steuerfüsse nach der Grösse der Gemeinden.",
+     "Die Gemeinden haben unterschiedliche Ausgaben und unterschiedlich viele gute Steuerzahlende; wer wenig Einnahmen hat, braucht einen hohen Steuerfuss.",
+     "In der teureren Gemeinde ist der kantonale Tarif höher.",
+     "Der Steuerfuss hängt vom Alter der Gemeinde ab."], r:1,
+  e:"Jede Gemeinde deckt ihre Ausgaben (Schulen, Strassen, Sozialhilfe, Verwaltung) mit dem Steuerfuss, den sie dafür braucht. Gemeinden mit vielen gut verdienenden Einwohnern oder Firmen kommen mit einem tiefen Steuerfuss aus. Der Tarif ist im ganzen Kanton gleich. Der Finanzausgleich mildert die Unterschiede."},
+];
 
 const FAELLE = [
  {q:"Nach der Lehre studieren Sie in Zürich und wohnen dort unter der Woche in einem WG-Zimmer. Jedes Wochenende fahren Sie zu Ihren Eltern nach Aarau, wo Ihr Freundeskreis und Ihr Verein sind. Wo bezahlen Sie Steuern?",
@@ -225,7 +255,37 @@ const FAELLE = [
   e:"Erwerbseinkommen von Minderjährigen wird selbständig besteuert, auch der Lehrlingslohn. Weil der Lohn tief ist und Abzüge möglich sind, bleibt oft wenig oder nichts zu bezahlen. Vermögen und übrige Einkünfte von Minderjährigen werden noch bei den Eltern versteuert."},
  {q:"Nach dem Lehrabschluss steigt Ihr Lohn von CHF 1’300 auf CHF 4’800. Worauf müssen Sie achten?",
   o:["Auf nichts, die Steuern werden direkt vom Lohn abgezogen.","Die Steuern steigen stärker als der Lohn; legen Sie jeden Monat Geld dafür zur Seite.","Die Steuern bleiben gleich, bis Sie 25 sind."], r:1,
-  e:"Wegen der Progression steigt die Steuer überproportional. Die Rechnung kommt erst nachträglich (provisorische Rechnung im laufenden Jahr, Schlussrechnung später). Wer kein Geld zurücklegt, erlebt eine böse Überraschung. Faustregel: rund einen Monatslohn pro Jahr reservieren und Raten zahlen. Quellenbesteuert sind nur Personen ohne Niederlassungsbewilligung."},
+  e:"Wegen der Progression steigt die Steuer überproportional. Die Rechnung kommt erst nachträglich (provisorische Rechnung im laufenden Jahr, Schlussrechnung später). Wer kein Geld zurücklegt, erlebt eine böse Überraschung. Faustregel: rund einen Monatslohn pro Jahr reservieren und Raten zahlen."},
+ {q:"Sie haben CHF 15’000 auf dem Sparkonto. Auf dem Zinsausweis steht: Zins CHF 240, Verrechnungssteuer CHF 84, gutgeschrieben CHF 156. Sind die 84 Franken weg?",
+  o:["Ja, das ist eine Steuer auf Zinsen, die der Bund behält.","Nein, Sie erhalten sie zurück, wenn Sie Konto und Zins in der Steuererklärung angeben.","Nein, die Bank zahlt sie am Jahresende automatisch zurück."], r:1,
+  e:"Die Verrechnungssteuer von 35 % wird auf Zinsen über CHF 200 pro Jahr abgezogen. Wer Konto und Zins deklariert, bekommt sie mit der Steuerrechnung verrechnet oder zurückbezahlt. Wer nicht deklariert, verliert das Geld. Genau das ist der Zweck: ehrlich angeben lohnt sich."},
+ {q:"Sie ziehen am 1. Oktober von Aarau nach Baden. Wo bezahlen Sie die Steuern für dieses Jahr?",
+  o:["Neun Monate in Aarau, drei Monate in Baden.","Das ganze Jahr in Baden.","Das ganze Jahr in Aarau, weil Sie dort länger gewohnt haben."], r:1,
+  e:"Bei einem Umzug innerhalb der Schweiz zählt der Wohnsitz am 31. Dezember. Die neue Gemeinde erhält die Steuern des ganzen Jahres. Darum lohnt sich ein Umzug in eine günstigere Gemeinde kurz vor Jahresende, umgekehrt nicht."},
+ {q:"Sie heiraten im Juni. Wie wird dieses Jahr besteuert?",
+  o:["Bis Juni getrennt, ab Juli gemeinsam.","Für das ganze Jahr gemeinsam: Einkommen und Vermögen beider werden zusammengezählt.","Weiterhin getrennt, bis Sie Kinder haben."], r:1,
+  e:"Ehepaare werden ab dem Jahr der Heirat für das ganze Jahr gemeinsam veranlagt. Beide Einkommen werden addiert, dafür gibt es den Verheiratetentarif und Abzüge. Bei zwei ähnlich hohen Einkommen führt die Progression trotzdem oft zu mehr Steuern als für zwei Ledige: die sogenannte Heiratsstrafe."},
+ {q:"Sie gewinnen bei Swiss Lotto CHF 50’000. Müssen Sie den Gewinn versteuern?",
+  o:["Ja, als Einkommen wie Lohn.","Nein, Gewinne aus Lotterien von Swisslos sind bis CHF 1 Million steuerfrei.","Nein, Lotteriegewinne sind immer steuerfrei."], r:1,
+  e:"Gewinne aus Grossspielen wie Swiss Lotto oder Euro Millions sind seit 2019 bis CHF 1 Million steuerfrei, bei der direkten Bundessteuer und in den meisten Kantonen. Nur der Teil darüber ist Einkommen. Das Geld gehört danach aber zu Ihrem Vermögen und wird dort versteuert."},
+ {q:"Sie haben vor zwei Jahren Aktien für CHF 5’000 gekauft und verkaufen sie nun für CHF 8’000. Dazu haben Sie CHF 120 Dividende erhalten. Was ist steuerbar?",
+  o:["Der Gewinn von CHF 3’000 und die Dividende.","Nur die Dividende von CHF 120.","Nichts, Börsengewinne sind Privatsache."], r:1,
+  e:"Kursgewinne auf privatem Vermögen sind in der Schweiz steuerfrei. Dividenden und Zinsen dagegen sind Einkommen und werden versteuert. Der Wert der Aktien zählt zudem jedes Jahr zum steuerbaren Vermögen."},
+ {q:"Die Steuererklärung liegt seit Wochen unausgefüllt auf dem Tisch. Die Frist ist längst vorbei. Was passiert, wenn Sie sie einfach nicht einreichen?",
+  o:["Nichts, dann müssen Sie für dieses Jahr keine Steuern bezahlen.","Sie erhalten eine Mahnung, dann schätzt das Steueramt Ihr Einkommen und verlangt zusätzlich eine Busse.","Das Steueramt übernimmt automatisch die Zahlen vom Vorjahr."], r:1,
+  e:"Nach einer Mahnung mit Gebühr wird nach Ermessen veranlagt, meist grosszügig zu Ihren Ungunsten, dazu kommt eine Busse. Wer es nicht schafft, beantragt vor Ablauf der Frist online eine Verlängerung. Das ist gratis und dauert zwei Minuten."},
+ {q:"Sie haben die Steuerrechnung über CHF 3’200 erhalten, aber im Moment nicht so viel Geld. Was tun?",
+  o:["Rechnung liegen lassen, bis das Geld da ist.","Das Steueramt kontaktieren und Ratenzahlung beantragen.","Die Rechnung ist freiwillig, solange die Veranlagung nicht definitiv ist."], r:1,
+  e:"Steuerämter gewähren auf Gesuch hin Ratenzahlungen oder einen Aufschub. Wer nicht reagiert, bezahlt Verzugszins, erhält Mahnungen und schliesslich eine Betreibung, die im Betreibungsregister steht und zum Beispiel die Wohnungssuche erschwert. Besser: Steuern laufend in Raten vorauszahlen, viele Kantone geben dafür sogar einen Zins."},
+ {q:"Nach dem QV finden Sie keine Stelle und beziehen vier Monate Arbeitslosentaggeld. Müssen Sie das versteuern?",
+  o:["Ja, Taggelder der Arbeitslosenversicherung sind steuerbares Einkommen.","Nein, Sozialleistungen sind steuerfrei.","Nur, wenn Sie mehr als CHF 2’000 pro Monat erhalten."], r:0,
+  e:"Arbeitslosentaggelder ersetzen den Lohn und sind darum steuerbar, wie EO, Krankentaggeld oder IV-Renten. Die Arbeitslosenkasse stellt dafür eine Bescheinigung aus. Steuerfrei sind nur Sozialhilfe und Ergänzungsleistungen."},
+ {q:"Ihre Grossmutter stirbt und hinterlässt Ihnen CHF 20’000. Müssen Sie darauf Steuern bezahlen?",
+  o:["Ja, die Erbschaft ist Einkommen und wird mit dem Lohn versteuert.","Im Kanton Aargau nein: Nachkommen bezahlen keine Erbschaftssteuer. Das Geld zählt aber ab jetzt zu Ihrem Vermögen.","Ja, der Bund erhebt auf jede Erbschaft 10 %."], r:1,
+  e:"Erbschaften sind kein Einkommen. Die Erbschaftssteuer ist kantonal, der Bund kennt keine. Der Aargau und die meisten Kantone befreien Ehepartner und Nachkommen, auch Enkel. Geschwister, Nichten oder Freunde bezahlen dagegen je nach Kanton deutlich. Das geerbte Geld unterliegt danach der Vermögenssteuer."},
+ {q:"Eine Kollegin aus Portugal mit B-Bewilligung arbeitet in Ihrer Apotheke. Sie wundert sich, dass sie keine Steuerrechnung bekommt. Warum?",
+  o:["Ausländische Arbeitnehmende bezahlen in der Schweiz keine Steuern.","Ihr Arbeitgeber zieht die Steuer direkt vom Lohn ab und liefert sie dem Steueramt ab (Quellensteuer).","Sie bezahlt die Steuern in Portugal."], r:1,
+  e:"Wer keine Niederlassungsbewilligung C hat, wird an der Quelle besteuert: Der Steuerabzug steht auf der Lohnabrechnung. Ab einem Einkommen von CHF 120’000 oder auf Antrag gibt es eine ordentliche Veranlagung mit Steuererklärung. Mit dem Ausweis C wechselt sie ins normale Verfahren."},
 ];
 
 const ABZUEGE = [
@@ -239,6 +299,16 @@ const ABZUEGE = [
  ["Neue Kleider für den Ausgang","nein","Lebenshaltungskosten sind nie abziehbar."],
  ["Privates Handyabo","nein","Private Ausgaben sind nicht abziehbar, auch wenn man das Handy manchmal für die Arbeit braucht."],
  ["Busse wegen zu schnellen Fahrens","nein","Bussen sind nicht abziehbar."],
+ ["Zinsen für einen Privatkredit","ja","Schuldzinsen sind abziehbar, Leasingraten und die Rückzahlung des Kredits selbst nicht."],
+ ["Leasingraten fürs Auto","nein","Leasing ist Miete, keine Schuld; die Raten sind Lebenshaltungskosten."],
+ ["Fitnessabo","nein","Private Ausgabe, auch wenn es der Gesundheit dient."],
+ ["Fachbücher, Berufskleidung, selbst bezahltes Werkzeug","ja","Übrige Berufskosten: meist als Pauschale (im Aargau 3 % des Nettolohns, mindestens CHF 2’000), ohne Belege."],
+ ["Beiträge an AHV, IV, ALV und Pensionskasse","ja","Sie werden vom Bruttolohn abgezogen; der Lohnausweis zeigt bereits den Nettolohn, den Sie übertragen."],
+ ["Studiengebühren an der Fachhochschule nach der Lehre","ja","Berufsorientierte Aus- und Weiterbildung nach dem ersten Abschluss ist bis zum Höchstbetrag abziehbar."],
+ ["Zahnarztrechnung über CHF 3’000","teilweise","Zahnarztkosten zählen zu den Krankheitskosten: abziehbar nur über dem Selbstbehalt von 5 % des Nettoeinkommens."],
+ ["Mitgliederbeitrag an eine politische Partei","ja","Parteibeiträge sind bis zu einem Höchstbetrag abziehbar."],
+ ["Ferienreise nach Portugal","nein","Lebenshaltungskosten."],
+ ["Freiwilliger Einkauf in die Pensionskasse","ja","Einkäufe sind voll abziehbar und eine der wirksamsten legalen Steueroptimierungen; das Geld bleibt aber bis zur Pensionierung gebunden."],
 ];
 const ABZ_OPT = [["ja","abziehbar"],["teilweise","teilweise"],["nein","nicht abziehbar"]];
 
@@ -250,6 +320,13 @@ const UNTERLAGEN = [
  ["Prämienrechnung und Leistungsabrechnung der Krankenkasse","ja","Für den Versicherungsabzug und allfällige Krankheitskosten."],
  ["Mietvertrag der Wohnung","nein","Mietkosten sind für Mieterinnen und Mieter nicht abziehbar (Ausnahme: einzelne Kantone kennen einen Mietabzug, Aargau nicht)."],
  ["Bescheinigung über EO oder Arbeitslosenentschädigung","ja","Ersatzeinkommen ist steuerbar."],
+ ["Rechnungen und Belege für Weiterbildungen","ja","Ohne Beleg kein Abzug; die Steuerverwaltung kann sie verlangen."],
+ ["Spendenbestätigungen","ja","Für den Abzug der Spenden an gemeinnützige Organisationen."],
+ ["Netflix- und Spotify-Rechnungen","nein","Private Abos spielen keine Rolle."],
+ ["Alle zwölf monatlichen Lohnabrechnungen","nein","Der Lohnausweis fasst das Jahr zusammen; die einzelnen Abrechnungen braucht es nicht."],
+ ["Kaufvertrag oder aktueller Wert Ihres Autos","ja","Fahrzeuge gehören zum steuerbaren Vermögen und werden mit dem Verkehrswert angegeben."],
+ ["Bestand Ihrer Kryptowährungen am 31. Dezember","ja","Bitcoin und Co. sind Vermögen und müssen zum Jahresendkurs deklariert werden, Gewinne aus dem Handel sind privat steuerfrei."],
+ ["Veranlagung des Vorjahres","ja","Zum Vergleich und zur Kontrolle: Was hat das Steueramt letztes Jahr akzeptiert, was gestrichen?"],
 ];
 const UNT_OPT = [["ja","brauche ich"],["nein","brauche ich nicht"]];
 
@@ -258,6 +335,10 @@ const DELIKTE = [
  ["Sara ändert auf ihrem Lohnausweis den Betrag von 62’000 auf 52’000 Franken.","b","Sie fälscht eine Urkunde, um Steuern zu sparen: Betrug."],
  ["Jonas vergisst, ein Sparkonto mit 8’000 Franken anzugeben.","h","Auch fahrlässig nicht angegebenes Vermögen ist Hinterziehung."],
  ["Mia lässt sich von einer Kollegin eine Rechnung für einen Kurs ausstellen, den sie nie besucht hat, und zieht ihn ab.","b","Eine inhaltlich unwahre Urkunde ist Betrug, auch wenn sie echt aussieht."],
+ ["Lina vermietet ihr Zimmer während der Ferien über Airbnb und gibt die CHF 1’800 Einnahmen nicht an.","h","Verschwiegenes Einkommen ohne falsche Dokumente: Hinterziehung."],
+ ["Ben erhöht auf der Quittung seines Sprachkurses am Computer den Betrag von 900 auf 1’900 Franken.","b","Eine veränderte Urkunde: Betrug."],
+ ["Nadia deklariert ihre Kryptowährungen im Wert von CHF 12’000 nicht, weil «das sowieso niemand sieht».","h","Verschwiegenes Vermögen: Hinterziehung. Auch Krypto-Handelsplätze liefern inzwischen Daten an Steuerbehörden."],
+ ["Luca reicht den echten Lohnausweis seiner alten Stelle ein und verschweigt, dass er seit April eine besser bezahlte neue Stelle hat.","h","Der Lohnausweis ist echt, aber die Angaben sind unvollständig: Hinterziehung, nicht Betrug."],
 ];
 const DEL_OPT = [["h","Hinterziehung"],["b","Betrug"]];
 
@@ -268,6 +349,12 @@ const FAELLE2 = [
  {q:"Warum schadet Steuerhinterziehung allen, nicht nur dem Staat?",
   o:["Weil die ehrlichen Steuerzahlenden mehr bezahlen müssen oder Leistungen gekürzt werden.","Weil die Hinterziehenden dann weniger Geld ausgeben.","Sie schadet niemandem, solange es kleine Beträge sind."], r:0,
   e:"Fehlende Einnahmen müssen andere bezahlen, oder der Staat spart bei Schulen, Spitälern und Verkehr. Ausserdem leidet das Vertrauen: Wenn alle das Gefühl haben, die anderen schummeln, sinkt die Steuermoral."},
+ {q:"Beim Aufräumen finden Sie Unterlagen zu einem Konto mit CHF 9’000, das Sie vor zwei Jahren in der Steuererklärung vergessen haben. Was ist der klügste Weg?",
+  o:["Nichts sagen; was vorbei ist, ist vorbei.","Das Konto in der nächsten Steuererklärung angeben und das alte Jahr dem Steueramt mit einer Selbstanzeige melden.","Das Konto auflösen, damit es keine Spuren gibt."], r:1,
+  e:"Bei einer straflosen Selbstanzeige bezahlen Sie nur die Nachsteuer mit Zins, aber keine Busse. Das geht einmal im Leben und nur, solange das Steueramt noch nichts weiss. Wer das Konto einfach weglässt, hinterzieht erneut; wer es auflöst, ändert nichts an den vergangenen Jahren."},
+ {q:"Ein Kollege sagt: «Kleine Beträge interessieren das Steueramt nicht, das merkt niemand.» Stimmt das?",
+  o:["Ja, kontrolliert werden nur Reiche und Firmen.","Nein: Arbeitgeber, Banken, Versicherungen und ausländische Behörden melden Daten, und das Steueramt kann bis zehn Jahre zurück nachfordern.","Nur Beträge über CHF 10’000 müssen deklariert werden."], r:1,
+  e:"Lohnausweise, EO- und ALV-Bescheinigungen gehen oft direkt an die Steuerämter, Banken im Ausland melden über den automatischen Informationsaustausch, und Abweichungen zum Vorjahr fallen bei der Veranlagung auf. Nachsteuern können für zehn Jahre erhoben werden, dazu kommt die Busse."},
 ];
 
 /* ---------- Speicher ---------- */
@@ -321,9 +408,9 @@ KARTEN.forEach(([q,a],i)=>{
 });
 function markSelbst(k,id){k.querySelectorAll(".selbst button").forEach(b=>b.classList.toggle("an",b.dataset.w===S[id]));}
 
-function mcBlock(f,id,ziel){
+function mcBlock(f,id,ziel,nr){
   const d=el("div","fall");
-  d.innerHTML=`<p><b>${f.q}</b></p><div class="opts"></div><div class="fb"></div>`;
+  d.innerHTML=`<p>${nr?`<span class="nr">Fall ${nr}</span>`:""}<b>${f.q}</b></p><div class="opts"></div><div class="fb"></div>`;
   const os=d.querySelector(".opts"), fb=d.querySelector(".fb");
   f.o.forEach((t,j)=>{const b=el("button",null,t); b.type="button"; b.addEventListener("click",()=>{S[id]=j;save();zeige();}); os.appendChild(b);});
   function zeige(){
@@ -335,10 +422,10 @@ function mcBlock(f,id,ziel){
   }
   zeige(); ziel.appendChild(d);
 }
-mcBlock(SF_FRAGE,"sf",document.getElementById("sfFrage"));
+SF_FRAGEN.forEach((f,i)=>mcBlock(f,"sf"+i,document.getElementById("sfFrage"),i+1));
 document.getElementById("sfFrage").classList.remove("fall");
-FAELLE.forEach((f,i)=>mcBlock(f,"f"+i,document.getElementById("faelle")));
-FAELLE2.forEach((f,i)=>mcBlock(f,"g"+i,document.getElementById("faelle2")));
+FAELLE.forEach((f,i)=>mcBlock(f,"f"+i,document.getElementById("faelle"),i+1));
+FAELLE2.forEach((f,i)=>mcBlock(f,"g"+i,document.getElementById("faelle2"),i+1));
 
 function sortBlock(liste,opts,pref,ziel){
   liste.forEach(([t,r,e],i)=>{
@@ -374,7 +461,7 @@ function rechne(){
 rechne();
 
 /* ---------- Fortschritt ---------- */
-const IDS=[...KARTEN.map((_,i)=>"k"+i),"sf",...FAELLE.map((_,i)=>"f"+i),...ABZUEGE.map((_,i)=>"a"+i),
+const IDS=[...KARTEN.map((_,i)=>"k"+i),...SF_FRAGEN.map((_,i)=>"sf"+i),...FAELLE.map((_,i)=>"f"+i),...ABZUEGE.map((_,i)=>"a"+i),
   ...UNTERLAGEN.map((_,i)=>"u"+i),...DELIKTE.map((_,i)=>"d"+i),...FAELLE2.map((_,i)=>"g"+i)];
 function fort(){
   const n=IDS.filter(i=>S[i]!=null).length;
