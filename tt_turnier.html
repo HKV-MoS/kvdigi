@@ -116,6 +116,8 @@ td.w{font-weight:700}
 .frow .p.win + .sn{color:var(--teal-d)}
 .fsets{justify-content:center;margin-top:10px;--bw:52px;--ih:40px}
 .lock{background:var(--ball-l);border:1px solid #f3cf9d;border-radius:10px;padding:10px 12px;font-size:14px;color:#6b3b06}
+.lock .lockbtns{display:flex;flex-direction:column;gap:6px;margin-top:9px}
+.lock .btn{width:100%}
 .podium{background:var(--teal-d);color:#fff;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
 .podium h3{margin:0;font-size:13px;text-transform:uppercase;letter-spacing:.07em;color:#bfd8d6}
 .prow{display:grid;grid-template-columns:38px 1fr;align-items:center;gap:8px;font-size:18px;font-weight:600}
@@ -295,7 +297,7 @@ var FIN=['hf1','hf2','f','p3'];
 
 function defaults(){
   return {title:'Tischtennis-Turnier',roster:ROSTER.map(function(n){return {name:n,on:true};}),rosterBase:ROSTER.join('|'),players:ROSTER.slice(),
-    scores:{},finals:{},seedSig:'',finSig:'',round:0,view:'group'};
+    scores:{},finals:{},seedSig:'',finSig:'',early:'',earlySeeds:[],round:0,view:'group'};
 }
 function load(){
   try{var s=JSON.parse(localStorage.getItem(KEY));
@@ -321,13 +323,13 @@ var S=load()||defaults();
 
 /* ---------- Abgleich mit dem gemeinsamen Stand ---------- */
 var ready=false, applying=false, pushing=false, pushT=null, conn=true, remoteMissing=false, stamp='', syncJSON=null, seenRemote=null;
-var SHARE=['title','roster','rosterBase','players','scores','finals','seedSig','finSig'];
+var SHARE=['title','roster','rosterBase','players','scores','finals','seedSig','finSig','early','earlySeeds'];
 function canon(v){
   if(v===null||v===undefined||typeof v!=='object')return JSON.stringify(v===undefined?null:v);
   if(Array.isArray(v))return '['+v.map(canon).join(',')+']';
   return '{'+Object.keys(v).sort().map(function(k){return JSON.stringify(k)+':'+canon(v[k]);}).join(',')+'}';
 }
-function shareable(){ var o={}; SHARE.forEach(function(k){o[k]=S[k]===undefined?'':S[k];}); return o; }
+function shareable(){ var o={}; SHARE.forEach(function(k){o[k]=S[k]===undefined?(k==='earlySeeds'?[]:''):S[k];}); return o; }
 function setPending(on){ try{ if(on)localStorage.setItem(KEY+'_pending','1'); else localStorage.removeItem(KEY+'_pending'); }catch(e){} }
 function isPending(){ try{return localStorage.getItem(KEY+'_pending')==='1';}catch(e){return false;} }
 function schedulePush(){ setPending(true); clearTimeout(pushT); pushT=setTimeout(push,450); }
@@ -347,7 +349,7 @@ function push(){
 }
 function applyRemote(d){
   applying=true; var r=S.round,v=S.view;
-  SHARE.forEach(function(k){ if(d[k]!==undefined)S[k]=d[k]; });
+  SHARE.forEach(function(k){ if(d[k]!==undefined)S[k]=d[k]; else if(k==='early')S[k]=''; else if(k==='earlySeeds')S[k]=[]; });
   if(!S.scores||typeof S.scores!=='object'||Array.isArray(S.scores))S.scores={};
   if(!S.finals||typeof S.finals!=='object'||Array.isArray(S.finals))S.finals={};
   syncJSON=canon(shareable()); S.round=r; S.view=v;
@@ -486,19 +488,28 @@ function markMatch(el){
 function winner(sc,a,b){ return valid(sc)?(sc[0]>sc[1]?a:b):-1; }
 function loser(sc,a,b){ return valid(sc)?(sc[0]>sc[1]?b:a):-1; }
 function fscore(m){ var sc=S.finals[m]; return sc?[sc[0],sc[1]]:[null,null]; }
+function earlyMode(){ return (S.early==='hf'||S.early==='f')&&Array.isArray(S.earlySeeds)&&S.earlySeeds.length===4?S.early:''; }
 function finalsModel(){
-  var c=counts(),open=c.total-c.done,st=standings(),seeds=st.slice(0,4).map(function(s){return s.i;});
-  var ready=open===0;
-  if(ready){ var sig=seeds.join(','); if(S.seedSig!==sig){ S.seedSig=sig; S.finals={}; S.finSig=''; } }
-  var hf1=[seeds[0],seeds[3]],hf2=[seeds[1],seeds[2]];
-  var w1=ready?winner(fscore('hf1'),hf1[0],hf1[1]):-1,w2=ready?winner(fscore('hf2'),hf2[0],hf2[1]):-1;
-  var l1=ready?loser(fscore('hf1'),hf1[0],hf1[1]):-1,l2=ready?loser(fscore('hf2'),hf2[0],hf2[1]):-1;
+  var c=counts(),open=c.total-c.done,st=standings(),early=earlyMode();
+  /* vorzeitig gestartet: Setzliste bleibt beim Tabellenstand des Starts eingefroren */
+  var seeds=early?S.earlySeeds.slice():st.slice(0,4).map(function(s){return s.i;});
+  var ready=open===0||!!early;
+  if(ready){ var sig=(early?early+':':'')+seeds.join(','); if(S.seedSig!==sig){ S.seedSig=sig; S.finals={}; S.finSig=''; } }
+  var direct=early==='f';
+  var hf1=direct?[-1,-1]:[seeds[0],seeds[3]],hf2=direct?[-1,-1]:[seeds[1],seeds[2]];
+  var w1,w2,l1,l2;
+  if(direct){ w1=seeds[0]; w2=seeds[1]; l1=seeds[2]; l2=seeds[3]; }
+  else{
+    w1=ready?winner(fscore('hf1'),hf1[0],hf1[1]):-1; w2=ready?winner(fscore('hf2'),hf2[0],hf2[1]):-1;
+    l1=ready?loser(fscore('hf1'),hf1[0],hf1[1]):-1; l2=ready?loser(fscore('hf2'),hf2[0],hf2[1]):-1;
+  }
   var fs=[w1,w2,l1,l2].join(',');
   if(ready&&S.finSig!==fs){ if(S.finSig!==''){ delete S.finals.f; delete S.finals.p3; } S.finSig=fs; }
-  return {ready:ready,open:open,seeds:seeds,
+  return {ready:ready,open:open,seeds:seeds,early:early,
     pairs:{hf1:hf1,hf2:hf2,f:[w1,w2],p3:[l1,l2]},
-    labels:{hf1:['1. der Tabelle','4. der Tabelle'],hf2:['2. der Tabelle','3. der Tabelle'],f:['Sieg Halbfinal 1','Sieg Halbfinal 2'],p3:['Verlierer Halbfinal 1','Verlierer Halbfinal 2']},
-    ranks:{hf1:[1,4],hf2:[2,3]}};
+    labels:direct?{hf1:['entfällt','entfällt'],hf2:['entfällt','entfällt'],f:['1. der Tabelle','2. der Tabelle'],p3:['3. der Tabelle','4. der Tabelle']}
+      :{hf1:['1. der Tabelle','4. der Tabelle'],hf2:['2. der Tabelle','3. der Tabelle'],f:['Sieg Halbfinal 1','Sieg Halbfinal 2'],p3:['Verlierer Halbfinal 1','Verlierer Halbfinal 2']},
+    ranks:direct?{f:[1,2],p3:[3,4]}:{hf1:[1,4],hf2:[2,3]}};
 }
 function buildFinals(){
   FIN.forEach(function(m){
@@ -515,8 +526,17 @@ function buildFinals(){
 }
 function updateFinals(){
   var M=finalsModel();
-  $('lock').hidden=M.ready;
-  if(!M.ready)$('lock').textContent='Die Finalrunde startet, sobald alle Gruppenspiele gespielt sind. Noch offen: '+M.open+(M.open===1?' Spiel.':' Spiele.')+' Die Paarungen unten zeigen den Zwischenstand.';
+  var lock=$('lock'),offen=M.open+(M.open===1?' Gruppenspiel':' Gruppenspiele');
+  if(!M.ready){
+    lock.hidden=false;
+    lock.innerHTML='<div>Die Finalrunde startet, sobald alle Gruppenspiele gespielt sind. Noch offen: '+offen+'. Die Paarungen unten zeigen den Zwischenstand.</div>'+
+      (canEdit()?'<div class="lockbtns"><button type="button" class="btn sm" id="earlyHf">Halbfinals jetzt starten</button>'+
+      '<button type="button" class="btn sec sm" id="earlyF">Direkt zum Final (Rang 1 gegen 2)</button></div>':'');
+  }else if(M.early){
+    lock.hidden=false;
+    lock.innerHTML='<div>Vorzeitig gestartet mit dem Tabellenstand beim Start'+(M.early==='f'?', ohne Halbfinals':'')+'.'+(M.open?' Noch offen: '+offen+'.':'')+'</div>'+
+      (canEdit()?'<div class="lockbtns"><button type="button" class="btn sec sm" id="earlyOff">Vorzeitigen Start aufheben</button></div>':'');
+  }else{ lock.hidden=true; lock.innerHTML=''; }
   FIN.forEach(function(m){
     var box=document.querySelector('.fm[data-m="'+m+'"]'),rows=box.querySelectorAll('.frow'),pr=M.pairs[m],sc=fscore(m);
     var active=M.ready&&pr[0]>=0&&pr[1]>=0,ok=active&&valid(sc),nm=[];
@@ -554,6 +574,11 @@ $('matches').addEventListener('click',function(e){
   markMatch(el); renderTable(); renderDots(); save();
 });
 $('vFinal').addEventListener('click',function(e){
+  var eb=e.target.closest('#earlyHf,#earlyF,#earlyOff');
+  if(eb){ if(!canEdit())return;
+    if(eb.id==='earlyOff'){ S.early=''; S.earlySeeds=[]; }
+    else{ S.early=eb.id==='earlyF'?'f':'hf'; S.earlySeeds=standings().slice(0,4).map(function(x){return x.i;}); }
+    updateFinals(); save(); return; }
   var bt=e.target.closest('.fsets button'); if(!bt||bt.disabled||!canEdit())return; var m=bt.parentNode.dataset.m,o=OPTS[+bt.dataset.s],k=+bt.dataset.s;
   if(bt.getAttribute('aria-pressed')==='true')delete S.finals[m]; else S.finals[m]=[o[0],o[1]];
   updateFinals(); save();
@@ -596,7 +621,7 @@ function setMode(edit){
 function openDlg(){ D=S.roster.map(function(r){return {name:r.name,on:!!r.on};}); disarm(); $('addName').value=''; $('dlg').hidden=false; editMode=false; setMode(false); }
 function closeDlg(){ $('dlg').hidden=true; disarm(); $('btnPlayers').focus(); }
 function disarm(){ var r=$('reset'); r.classList.remove('armed'); r.textContent='Alle Resultate löschen'; }
-function clearResults(){ S.scores={}; S.finals={}; S.seedSig=''; S.finSig=''; S.round=0; S.view='group'; }
+function clearResults(){ S.scores={}; S.finals={}; S.seedSig=''; S.finSig=''; S.early=''; S.earlySeeds=[]; S.round=0; S.view='group'; }
 function applyPlayers(act){
   if(act.join('\n')===S.players.join('\n'))return;
   var old={},ns={},i,j; S.players.forEach(function(n,k){old[n]=k;});
@@ -604,7 +629,7 @@ function applyPlayers(act){
     var a=old[act[i]],b=old[act[j]]; if(a===undefined||b===undefined)continue;
     var sc=getScore(a,b); if(sc[0]!==null||sc[1]!==null)ns[i+'-'+j]=[sc[0],sc[1]];
   }
-  S.players=act; S.scores=ns; S.finals={}; S.seedSig=''; S.finSig=''; S.round=0; S.view='group';
+  S.players=act; S.scores=ns; S.finals={}; S.seedSig=''; S.finSig=''; S.early=''; S.earlySeeds=[]; S.round=0; S.view='group';
 }
 $('btnPlayers').addEventListener('click',function(){ if(canEdit())openDlg(); else openPin(); });
 function openPin(){ $('pin').value=''; $('pinMsg').textContent=''; $('pinDlg').hidden=false; $('pin').focus(); }
