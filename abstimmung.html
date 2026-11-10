@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Abstimmung</title>
+<style>
+/* Bühne fix 976 × 720 (Rahmen kv digital), per zoom in jedes Fenster eingepasst.
+   Frage oben, darunter die Antworten als grosse Knöpfe; nach der Stimmabgabe füllen sie sich als Balken. */
+:root{
+  --ink:#12262b; --muted:#5d6f72; --bg:#e9efed; --card:#ffffff; --line:#d3dcd9;
+  --teal:#0e5a63; --teal-d:#0a3f46; --teal-l:#d7ebe8; --ball:#f08a1c; --warn:#b4530a;
+  --font:"Avenir Next","Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{background:#cfd8d5;font-family:var(--font);color:var(--ink);overflow:hidden;display:flex;align-items:center;justify-content:center}
+body.embedded{background:var(--bg)}
+#stage{width:976px;height:720px;flex:none;background:var(--bg);position:relative;overflow:hidden;display:grid;grid-template-rows:56px 1fr 34px;
+  border-radius:14px;box-shadow:0 10px 40px rgba(10,40,45,.28)}
+body.embedded #stage{border-radius:0;box-shadow:none}
+header{background:var(--teal-d);color:#fff;display:flex;align-items:center;gap:12px;padding:0 22px}
+.live{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--ball)}
+.dot.off{background:#7f9a9c}
+header .sp{flex:1}
+.hbtn{font:inherit;font-size:14px;font-weight:600;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.45);border-radius:8px;padding:7px 12px;cursor:pointer;text-decoration:none}
+.hbtn:hover{background:rgba(255,255,255,.12)}
+button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--ball);outline-offset:2px}
+main{padding:26px 40px 12px;min-height:0;display:flex;flex-direction:column;gap:22px}
+h1{margin:0;font-size:var(--qfs,38px);line-height:1.15;font-weight:800;text-wrap:balance}
+.hint{font-size:15px;color:var(--muted);margin:-12px 0 0}
+#opts{display:flex;flex-direction:column;gap:var(--gap,16px);flex:1;min-height:0;justify-content:center}
+.opt{position:relative;overflow:hidden;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px;width:100%;height:var(--oh,112px);
+  font:inherit;text-align:left;color:var(--ink);background:var(--card);border:3px solid var(--line);border-radius:16px;padding:0 26px;cursor:pointer}
+.opt:hover{border-color:var(--teal)}
+.opt .fill{position:absolute;inset:0 auto 0 0;width:0;background:var(--teal-l);z-index:0}
+.opt > span{position:relative;z-index:1}
+.opt .mark{width:30px;height:30px;border-radius:50%;border:3px solid var(--line);display:grid;place-items:center;font-size:18px;font-weight:900;color:transparent;background:#fff}
+.opt .lab{font-size:var(--lfs,30px);font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.opt .num{font-size:var(--lfs,30px);font-weight:800;font-variant-numeric:tabular-nums;color:var(--teal-d);white-space:nowrap}
+.opt .num small{font-size:.55em;font-weight:600;color:var(--muted);margin-left:8px}
+.opt.mine{border-color:var(--teal-d)}
+.opt.mine .mark{background:var(--teal-d);border-color:var(--teal-d);color:#fff}
+.opt.lead .lab{color:var(--teal-d)}
+body:not(.reveal) .opt .fill,body:not(.reveal) .opt .num{visibility:hidden}
+footer{padding:0 22px;font-size:13px;color:var(--muted);display:flex;align-items:center;justify-content:space-between;gap:12px}
+#msg{color:var(--warn);font-weight:600}
+/* Ersteller-Formular */
+#build{display:flex;flex-direction:column;gap:12px;max-width:640px;margin:0 auto;width:100%}
+#build label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:600;color:var(--muted)}
+#build input,#build textarea{font:inherit;font-size:17px;font-weight:500;color:var(--ink);border:2px solid var(--line);border-radius:9px;padding:8px 11px;background:#fff;width:100%}
+#build textarea{height:118px;resize:none;line-height:1.4}
+.btn{font:inherit;font-size:15px;font-weight:700;border-radius:9px;padding:10px 16px;cursor:pointer;border:1px solid var(--teal-d);background:var(--teal-d);color:#fff;text-decoration:none;display:inline-block}
+.btn.sec{background:#fff;color:var(--teal-d)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.copyrow{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start}
+.copyrow input,.copyrow textarea{font-family:ui-monospace,Menlo,Consolas,monospace!important;font-size:12.5px!important;background:#f6f8f8!important}
+#out textarea{height:70px}
+#bMsg{font-size:14px;font-weight:600;color:var(--warn);min-height:1.2em;margin:0}
+@media (prefers-reduced-motion:no-preference){.opt .fill{transition:width .5s ease}.opt{transition:border-color .15s}}
+</style>
+</head>
+<body>
+<div id="stage">
+  <header>
+    <div class="live"><span class="dot" id="dot"></span><span id="liveT">Abstimmung</span></div>
+    <span class="sp"></span>
+    <button type="button" class="hbtn" id="toggle" hidden>Resultat zeigen</button>
+  </header>
+
+  <main>
+    <section id="poll" hidden style="display:contents">
+      <h1 id="q"></h1>
+      <p class="hint" id="hint"></p>
+      <div id="opts"></div>
+    </section>
+
+    <section id="build" hidden>
+      <h1 style="--qfs:28px">Neue Abstimmung</h1>
+      <label>Frage<input id="bF" type="text" maxlength="140" placeholder="z. B. Wann schreiben wir die Prüfung?"></label>
+      <label>Antworten, eine pro Zeile (2 bis 6)<textarea id="bA" spellcheck="false" placeholder="Dienstag, 24. November&#10;Dienstag, 1. Dezember"></textarea></label>
+      <label>Klasse oder Kürzel (freiwillig, erscheint nur im Link)<input id="bK" type="text" maxlength="20" placeholder="z. B. P26A"></label>
+      <div class="row"><button type="button" class="btn" id="bGo">Abstimmung erstellen</button><p id="bMsg" aria-live="polite"></p></div>
+      <div id="out" hidden>
+        <label>Link<div class="copyrow"><input id="oL" type="text" readonly><button type="button" class="btn sec" data-copy="oL">Kopieren</button></div></label>
+        <label>Code für kv digital (Menü «⋮», dann «HTML»)<div class="copyrow"><textarea id="oC" readonly></textarea><button type="button" class="btn sec" data-copy="oC">Kopieren</button></div></label>
+        <div class="row"><a class="btn" id="oOpen" href="#">Abstimmung öffnen</a></div>
+      </div>
+    </section>
+  </main>
+
+  <footer><span id="total"></span><span id="msg" aria-live="polite"></span></footer>
+</div>
+
+<script>
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id);};
+var API='https://eebmnyxqlubirwyykofo.supabase.co/rest/v1/rpc/', APIKEY='sb_publishable_kaEkMADZLvc-Jok0dlxkBA_u3cbNaQt';
+function rpc(fn,daten){return fetch(API+fn,{method:'POST',headers:{'apikey':APIKEY,'Content-Type':'application/json'},body:JSON.stringify(daten)})
+  .then(function(r){return r.text().then(function(t){var d=t?JSON.parse(t):null;if(!r.ok)throw new Error((d&&d.message)||'Verbindung fehlgeschlagen.');return d;});});}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+function slug(s){ s=String(s).toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue'); try{s=s.normalize('NFD').replace(/[̀-ͯ]/g,'');}catch(e){} return s.replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''); }
+function hash(s){ var h=5381; for(var i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))>>>0; return h.toString(36); }
+
+var embedded=false; try{embedded=window.self!==window.top;}catch(e){embedded=true;}
+if(embedded)document.body.classList.add('embedded');
+function fit(){
+  var st=$('stage'),pad=embedded?0:24, k=Math.min((window.innerWidth-pad)/976,(window.innerHeight-pad)/720); if(!(k>0))k=1;
+  if('zoom' in st.style){ st.style.zoom=k; st.style.transform=''; } else { st.style.transform='scale('+k+')'; st.style.transformOrigin='center center'; }
+}
+window.addEventListener('resize',fit); window.addEventListener('load',fit);
+
+var Q; try{Q=new URLSearchParams(location.search);}catch(e){Q={get:function(){return null;}};}
+var FRAGE=String(Q.get('f')||'').replace(/\s+/g,' ').trim().slice(0,140);
+var OPT=String(Q.get('a')||'').split('|').map(function(s){return s.replace(/\s+/g,' ').trim().slice(0,60);}).filter(Boolean).slice(0,6);
+
+/* ---------- Ersteller ---------- */
+if(!FRAGE||OPT.length<2){
+  $('build').hidden=false; $('total').textContent='Anonym: Es werden keine Namen gespeichert, nur eine Stimme pro Gerät.'; $('dot').classList.add('off');
+  $('bGo').addEventListener('click',function(){
+    var f=$('bF').value.replace(/\s+/g,' ').trim(), seen={}, a=[];
+    $('bA').value.split(/\r?\n/).forEach(function(l){ l=l.replace(/[|]/g,'/').replace(/\s+/g,' ').trim().slice(0,60); if(l&&!seen[l]){seen[l]=1;a.push(l);} });
+    if(f.length<3){$('bMsg').textContent='Bitte eine Frage eingeben.';$('bF').focus();return;}
+    if(a.length<2||a.length>6){$('bMsg').textContent='Es braucht 2 bis 6 Antworten.';$('bA').focus();return;}
+    $('bMsg').textContent='';
+    var r=(slug($('bK').value).slice(0,20)||'abst')+'-'+Math.random().toString(36).slice(2,8);
+    var url=location.origin+location.pathname+'?f='+encodeURIComponent(f)+'&a='+encodeURIComponent(a.join('|'))+'&r='+r;
+    $('oL').value=url; $('oC').value='<iframe src="'+url+'" width="100%" height="720" loading="lazy" style="border:0" title="Abstimmung"></iframe>';
+    $('oOpen').href=url; $('out').hidden=false;
+  });
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('[data-copy]'); if(!b)return; var el=$(b.dataset.copy), ok=function(){b.textContent='Kopiert';setTimeout(function(){b.textContent='Kopieren';},1500);};
+    var sel=function(){ el.focus(); el.select(); try{ if(document.execCommand('copy'))ok(); }catch(x){} };
+    try{ navigator.clipboard.writeText(el.value).then(ok,sel); }catch(x){ sel(); }
+  });
+  fit(); return;
+}
+
+/* ---------- Abstimmung ---------- */
+var RAUM=String(Q.get('r')||'').toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,60); if(RAUM.length<3)RAUM='abst-'+hash(FRAGE+'|'+OPT.join('|'));
+var GERAET=lsGet('abstimmung_geraet'); if(!GERAET||GERAET.length<8){ GERAET='g-'+Math.random().toString(36).slice(2)+Date.now().toString(36); lsSet('abstimmung_geraet',GERAET); }
+var own=null, showAll=false, busy=false, conn=true, last={stimmen:{},total:0,eigene:null};
+document.title=FRAGE; $('poll').hidden=false; $('q').textContent=FRAGE; $('toggle').hidden=false; $('liveT').textContent='Live-Abstimmung';
+var n=OPT.length, st=$('stage').style;
+st.setProperty('--qfs',(FRAGE.length>70?30:FRAGE.length>40?34:38)+'px');
+st.setProperty('--oh',[0,0,116,100,84,70,60][n]+'px'); st.setProperty('--gap',[0,0,18,16,13,11,9][n]+'px'); st.setProperty('--lfs',[0,0,32,30,26,23,21][n]+'px');
+$('opts').innerHTML=OPT.map(function(o,i){
+  return '<button type="button" class="opt" data-i="'+i+'" aria-pressed="false"><span class="fill"></span><span class="mark" aria-hidden="true">✓</span><span class="lab">'+esc(o)+'</span><span class="num"></span></button>';
+}).join('');
+function render(){
+  var t=last.total||0, max=0, i; for(i=0;i<n;i++)max=Math.max(max,last.stimmen[i]||0);
+  document.body.classList.toggle('reveal',showAll||own!==null);
+  Array.prototype.forEach.call(document.querySelectorAll('.opt'),function(el){
+    var k=+el.dataset.i, c=last.stimmen[k]||0, p=t?Math.round(c/t*100):0;
+    el.classList.toggle('mine',own===k); el.setAttribute('aria-pressed',own===k);
+    el.classList.toggle('lead',c>0&&c===max);
+    el.querySelector('.fill').style.width=p+'%';
+    el.querySelector('.num').innerHTML=c+'<small>'+p+' %</small>';
+  });
+  $('hint').textContent=own===null?'Tippen Sie auf Ihre Antwort. Die Abstimmung ist anonym.':'Ihre Stimme ist gezählt. Sie können sie ändern, solange die Abstimmung läuft.';
+  $('total').textContent=t+(t===1?' Stimme':' Stimmen')+' · eine Stimme pro Gerät';
+  $('toggle').textContent=showAll?'Resultat verbergen':'Resultat zeigen'; $('toggle').hidden=own!==null;
+  $('dot').classList.toggle('off',!conn); $('msg').textContent=conn?'':'Keine Verbindung, neuer Versuch läuft …';
+}
+function load(){
+  if(busy||document.hidden)return;
+  rpc('abst_stand',{p_raum:RAUM,p_geraet:GERAET}).then(function(d){
+    conn=true; if(d){ last={stimmen:d.stimmen||{},total:d.total||0,eigene:d.eigene}; if(!busy)own=(d.eigene===null||d.eigene===undefined)?null:+d.eigene; } render();
+  }).catch(function(){ conn=false; render(); });
+}
+$('opts').addEventListener('click',function(e){
+  var el=e.target.closest('.opt'); if(!el||busy)return; var k=+el.dataset.i; if(k===own)return;
+  var prev=own; busy=true; own=k; render();
+  rpc('abst_stimmen',{p_raum:RAUM,p_geraet:GERAET,p_wahl:k}).then(function(){ busy=false; conn=true; load(); })
+    .catch(function(err){ busy=false; own=prev; render(); $('msg').textContent='Stimme nicht gespeichert: '+err.message; });
+});
+$('toggle').addEventListener('click',function(){ showAll=!showAll; render(); });
+render(); load(); setInterval(load,2000); document.addEventListener('visibilitychange',function(){ if(!document.hidden)load(); });
+fit();
+})();
+</script>
+</body>
+</html>
