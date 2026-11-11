@@ -276,6 +276,7 @@ nav button{padding:9px 8px;font-size:15px}
 
 </div></div>
 
+<script src="lernstand.js?v=1"></script>
 <script>
 (function(){
 const imRahmen = window.self !== window.top;
@@ -298,12 +299,14 @@ const IDS=[];
 const SOL={}, ALLE=[];
 function nochmal(fn){ const b=el("button","neu","Nochmals lösen"); b.type="button"; b.addEventListener("click",fn); return b; }
 function mischen(n){ const r=[...Array(n).keys()]; for(let a=n-1;a>0;a--){const z=Math.floor(Math.random()*(a+1)); [r[a],r[z]]=[r[z],r[a]];} return r; }
+const META={};
+function melde(id,ok){ if(window.Lernstand) Lernstand.melden(id,ok,META[id]); }
 function mcBlock(f,id,ziel,nr,thema){
-  IDS.push(id); SOL[id]=f.r; ALLE.push({f:f,thema:thema});
+  IDS.push(id); SOL[id]=f.r; ALLE.push({f:f,thema:thema}); META[id]={n:IDS.length,g:thema,t:f.q};
   const d=el("div","fall");
   d.innerHTML=`<p>${nr?`<span class="nr">Fall ${nr}</span>`:""}<b>${f.q}</b></p><div class="opts"></div><div class="fb"></div>`;
   const os=d.querySelector(".opts"), fb=d.querySelector(".fb");
-  mischen(f.o.length).forEach(j=>{const b=el("button",null,f.o[j]); b.type="button"; b.dataset.j=j; b.addEventListener("click",()=>{S[id]=j;save();zeige();}); os.appendChild(b);});
+  mischen(f.o.length).forEach(j=>{const b=el("button",null,f.o[j]); b.type="button"; b.dataset.j=j; b.addEventListener("click",()=>{S[id]=j;save();zeige();melde(id,j===f.r);}); os.appendChild(b);});
   function zeige(){
     const offen=S[id]==null, ok=S[id]===f.r;
     [...os.children].forEach(b=>{const j=+b.dataset.j; b.disabled=!offen;b.classList.toggle("richtig",!offen&&j===f.r);b.classList.toggle("falsch",!offen&&j===S[id]&&!ok);});
@@ -314,13 +317,13 @@ function mcBlock(f,id,ziel,nr,thema){
   }
   zeige(); ziel.appendChild(d);
 }
-function sortBlock(liste,opts,pref,ziel){
+function sortBlock(liste,opts,pref,ziel,thema){
   liste.forEach(([t,r,e],i)=>{
-    const id=pref+i; IDS.push(id); SOL[id]=r;
+    const id=pref+i; IDS.push(id); SOL[id]=r; META[id]={n:IDS.length,g:thema,t:t};
     const it=el("div","item");
     it.innerHTML=`<div class="txt">${t}</div><div class="wahl"></div><div class="erk"></div>`;
     const w=it.querySelector(".wahl"), erk=it.querySelector(".erk");
-    opts.forEach(([v,l])=>{const b=el("button",null,l); b.type="button"; b.dataset.v=v; b.addEventListener("click",()=>{S[id]=v;save();zeige();}); w.appendChild(b);});
+    opts.forEach(([v,l])=>{const b=el("button",null,l); b.type="button"; b.dataset.v=v; b.addEventListener("click",()=>{S[id]=v;save();zeige();melde(id,v===r);}); w.appendChild(b);});
     function zeige(){
       const offen=S[id]==null, ok=S[id]===r;
       [...w.children].forEach(b=>{b.disabled=!offen;b.classList.toggle("richtig",!offen&&b.dataset.v===r);b.classList.toggle("falsch",!offen&&b.dataset.v===S[id]&&!ok);});
@@ -333,17 +336,17 @@ function sortBlock(liste,opts,pref,ziel){
   });
 }
 const RFO=[["R","richtig"],["F","falsch"]];
-sortBlock(RF1,RFO,"r1",document.getElementById("rf1")); F1.forEach((f,i)=>mcBlock(f,"f1"+i,document.getElementById("f1"),i+1,"Konkubinat"));
-sortBlock(RF2,RFO,"r2",document.getElementById("rf2")); F2.forEach((f,i)=>mcBlock(f,"f2"+i,document.getElementById("f2"),i+1,"Verlobung"));
-sortBlock(CHECK3,[["ja","dürfen heiraten"],["nein","dürfen nicht"]],"c3",document.getElementById("check3"));
-sortBlock(RF3,RFO,"r3",document.getElementById("rf3")); F3.forEach((f,i)=>mcBlock(f,"f3"+i,document.getElementById("f3"),i+1,"Ehe"));
-sortBlock(ZU4,[["eig","Eigengut"],["err","Errungenschaft"]],"z4",document.getElementById("zu4")); F4.forEach((f,i)=>mcBlock(f,"f4"+i,document.getElementById("f4"),i+1,"Güterstände"));
-sortBlock(RF5,RFO,"r5",document.getElementById("rf5")); F5.forEach((f,i)=>mcBlock(f,"f5"+i,document.getElementById("f5"),i+1,"Scheidung"));
-sortBlock(RFN,RFO,"rn",document.getElementById("rfn"));
-sortBlock(CHECKN,[["ja","möglich"],["nein","nicht möglich"]],"cn",document.getElementById("checkn"));
+sortBlock(RF1,RFO,"r1",document.getElementById("rf1"),"Konkubinat"); F1.forEach((f,i)=>mcBlock(f,"f1"+i,document.getElementById("f1"),i+1,"Konkubinat"));
+sortBlock(RF2,RFO,"r2",document.getElementById("rf2"),"Verlobung"); F2.forEach((f,i)=>mcBlock(f,"f2"+i,document.getElementById("f2"),i+1,"Verlobung"));
+sortBlock(CHECK3,[["ja","dürfen heiraten"],["nein","dürfen nicht"]],"c3",document.getElementById("check3"),"Ehe");
+sortBlock(RF3,RFO,"r3",document.getElementById("rf3"),"Ehe"); F3.forEach((f,i)=>mcBlock(f,"f3"+i,document.getElementById("f3"),i+1,"Ehe"));
+sortBlock(ZU4,[["eig","Eigengut"],["err","Errungenschaft"]],"z4",document.getElementById("zu4"),"Güterstände"); F4.forEach((f,i)=>mcBlock(f,"f4"+i,document.getElementById("f4"),i+1,"Güterstände"));
+sortBlock(RF5,RFO,"r5",document.getElementById("rf5"),"Scheidung"); F5.forEach((f,i)=>mcBlock(f,"f5"+i,document.getElementById("f5"),i+1,"Scheidung"));
+sortBlock(RFN,RFO,"rn",document.getElementById("rfn"),"Name");
+sortBlock(CHECKN,[["ja","möglich"],["nein","nicht möglich"]],"cn",document.getElementById("checkn"),"Name");
 FN.forEach((f,i)=>mcBlock(f,"fn"+i,document.getElementById("fn"),i+1,"Name"));
-sortBlock(CHECKE,[["ja","erbt"],["nein","erbt nichts"]],"ce",document.getElementById("checke"));
-sortBlock(RFE,RFO,"re",document.getElementById("rfe"));
+sortBlock(CHECKE,[["ja","erbt"],["nein","erbt nichts"]],"ce",document.getElementById("checke"),"Erbrecht");
+sortBlock(RFE,RFO,"re",document.getElementById("rfe"),"Erbrecht");
 FE.forEach((f,i)=>mcBlock(f,"fe"+i,document.getElementById("fe"),i+1,"Erbrecht"));
 
 const chf=n=>"CHF "+Math.round(n).toLocaleString("de-CH").replace(/,/g,"’");
@@ -365,6 +368,9 @@ function fort(){
   document.getElementById("fortBalken").style.width=(100*n/IDS.length)+"%";
 }
 fort();
+if(window.Lernstand) Lernstand.start({tool:"ehe_training", titel:"Zusammenleben und Recht", total:IDS.length, kuerzel:"EHE", ziel:document.querySelector("header"),
+  alle:()=>IDS.filter(i=>S[i]!=null).map(i=>Object.assign({a:i,ok:S[i]===SOL[i]},META[i])),
+  stats:()=>({richtig:IDS.filter(i=>S[i]!=null&&S[i]===SOL[i]).length,total:IDS.length})});
 document.getElementById("reset").addEventListener("click",function(){
   if(this.dataset.sicher!=="1"){ this.dataset.sicher="1"; this.textContent="Wirklich alles zurücksetzen? Nochmals klicken"; return; }
   S={};save();location.reload();

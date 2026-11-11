@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Klassenstand</title>
+<style>
+:root{
+  --bg:#eef2f1; --surface:#ffffff; --ink:#17302b; --muted:#5b6e69; --line:#d4dedb;
+  --brand:#0b3d36; --brand-soft:#e3eeeb; --ok:#1f7a4d; --ok-soft:#e2f3ea; --bad:#b03a2e; --bad-soft:#f8e4e1;
+  --mid:#9a6b00; --mid-soft:#fbf0d6;
+  --f:"Aptos","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#101716; --surface:#18211f; --ink:#e3ece9; --muted:#9bb0aa; --line:#2c3a37;
+  --brand:#7fc4b6; --brand-soft:#1f2e2b; --ok:#6fd19c; --ok-soft:#163327; --bad:#f08a7e; --bad-soft:#3a1f1c;
+  --mid:#e8c46a; --mid-soft:#352c14; color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);font-size:16px;line-height:1.5}
+.wrap{padding:24px 16px 48px;display:flex;justify-content:center}
+.karte{background:var(--surface);max-width:1040px;width:100%;border-radius:14px;box-shadow:0 2px 14px rgba(0,0,0,.07);padding:26px 32px 22px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+header img{height:34px}
+@media (prefers-color-scheme: dark){header img{filter:brightness(0) invert(1)}}
+h1{font-size:26px;margin:4px 0 2px;line-height:1.2}
+.sub{color:var(--muted);margin:0}
+.fortschritt{min-width:220px}
+.balken{height:10px;background:var(--brand-soft);border-radius:6px;overflow:hidden}
+.balken i{display:block;height:100%;width:0;background:var(--brand);transition:width .4s}
+.fortschritt small{color:var(--muted)}
+nav{display:flex;gap:6px;margin:20px 0 16px;flex-wrap:wrap;border-bottom:2px solid var(--line)}
+nav button{font:inherit;font-weight:600;border:0;background:none;color:var(--muted);padding:9px 14px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+nav button[aria-selected="true"]{color:var(--brand);border-bottom-color:var(--brand)}
+nav button:focus-visible,button:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.teil{display:none}.teil.aktiv{display:block}
+.intro{background:var(--brand-soft);border-radius:10px;padding:12px 16px;margin-bottom:16px}
+.intro a{color:var(--brand);font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.fk{border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.fk h3{font-size:16px;margin:0}
+.fk .nr{color:var(--muted);font-weight:600;margin-right:4px}
+.fk textarea{font:inherit;font-size:15px;width:100%;min-height:54px;border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--bg);color:var(--ink);resize:vertical}
+.btn{font:inherit;font-weight:600;font-size:14px;border-radius:8px;padding:6px 12px;cursor:pointer;border:1px solid var(--brand);background:var(--surface);color:var(--brand)}
+.btn.voll{background:var(--brand);color:var(--surface)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.warte{font-size:13px;color:var(--muted);margin-left:8px}
+.loes{display:none;background:var(--bg);border-left:4px solid var(--brand);border-radius:6px;padding:8px 12px;font-size:15px}
+.fk.offen .loes{display:block}
+.selbst{display:none;gap:6px;flex-wrap:wrap;align-items:center;font-size:14px;color:var(--muted)}
+.fk.offen .selbst{display:flex}
+.selbst button{font:inherit;font-size:13px;border-radius:20px;padding:3px 10px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.selbst button.an[data-w="2"]{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.selbst button.an[data-w="1"]{background:var(--mid-soft);border-color:var(--mid);color:var(--mid)}
+.selbst button.an[data-w="0"]{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.fall{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.fall p{margin:0 0 10px}
+.fall .nr{display:inline-block;background:var(--brand);color:var(--surface);font-size:13px;font-weight:600;border-radius:6px;padding:1px 8px;margin-right:8px;vertical-align:1px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opts button{font:inherit;text-align:left;border:1px solid var(--line);border-radius:8px;padding:8px 12px;background:var(--surface);color:var(--ink);cursor:pointer}
+.opts button:hover{border-color:var(--brand)}
+.opts button.richtig{background:var(--ok-soft);border-color:var(--ok)}
+.opts button.falsch{background:var(--bad-soft);border-color:var(--bad)}
+.opts button:disabled{cursor:default}
+.fb{display:none;margin-top:10px;border-radius:8px;padding:8px 12px;font-size:15px}
+.fb.zeig{display:block}
+.fb.gut{background:var(--ok-soft)}.fb.schlecht{background:var(--bad-soft)}
+.sortier{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px}
+.sortier h3{margin:0 0 4px;font-size:17px}
+.sortier .hinweis{color:var(--muted);font-size:14px;margin:0 0 10px}
+.item{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--line)}
+.item:first-of-type{border-top:0}
+.item .txt{flex:1 1 260px}
+.item .wahl{display:flex;gap:6px}
+.item .wahl button{font:inherit;font-size:14px;border:1px solid var(--line);border-radius:8px;padding:4px 10px;background:var(--surface);color:var(--ink);cursor:pointer}
+.item .wahl button.richtig{background:var(--ok-soft);border-color:var(--ok);color:var(--ok);font-weight:600}
+.item .wahl button.falsch{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.item .erk{flex-basis:100%;display:none;font-size:14px;color:var(--muted);padding-left:2px}
+.item.fertig .erk{display:block}
+.rechner{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;align-items:end;margin:6px 0 4px}
+.rechner label{font-size:14px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+.rechner input{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:100%}
+.ergebnis{font-size:15px;background:var(--brand-soft);border-radius:8px;padding:10px 12px;margin-top:10px}
+.ergebnis b{font-size:18px}
+footer{margin-top:18px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:13px}
+footer button{font:inherit;font-size:13px;background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer}
+body.eingebettet{background:var(--surface)}
+body.eingebettet .wrap{padding:0}
+body.eingebettet .karte{border-radius:0;box-shadow:none;padding:18px 24px 16px}
+body.eingebettet nav{position:sticky;top:0;background:var(--surface);z-index:2;margin-top:12px}
+@media (max-width:600px){.karte{padding:18px 16px}h1{font-size:22px}}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+@media print{.teil{display:block!important}.loes{display:block!important}nav,footer button,.selbst,textarea,.btn{display:none!important}.karte{box-shadow:none}}
+
+[hidden]{display:none!important}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:14px 0}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.kpi .w{font-size:34px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums;color:var(--ink)}
+.kpi .l{font-size:13.5px;color:var(--muted);margin-top:2px}
+.saetze{list-style:none;margin:0 0 16px;padding:0;display:flex;flex-direction:column;gap:6px}
+.saetze li{background:var(--brand-soft);border-radius:10px;padding:9px 14px;font-size:16px}
+.saetze li b{color:var(--brand)}
+.zwei{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.kasten{border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.kasten h2{font-size:16px;margin:0 0 2px}
+.kasten p.h{font-size:13px;color:var(--muted);margin:0 0 10px}
+.bz{display:grid;grid-template-columns:110px 1fr 86px;gap:8px;align-items:center;margin:7px 0;font-size:14px}
+.bz .lab{color:var(--ink)}
+.bz .spur{height:18px;background:var(--bg);border-radius:4px;overflow:hidden}
+.bz .spur i{display:block;height:100%;background:var(--brand);border-radius:0 4px 4px 0;min-width:2px;transition:width .5s}
+.bz .wert{font-variant-numeric:tabular-nums;color:var(--muted);text-align:right}
+.tools{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
+.tools button{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);border-radius:8px;padding:6px 12px;background:var(--surface);color:var(--muted);cursor:pointer}
+.tools button[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--surface)}
+.start{max-width:420px;margin:24px 0}
+.feld{display:flex;flex-direction:column;gap:3px;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:9px}
+.feld input{font:inherit;font-size:16px;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 9px;background:var(--bg)}
+.meld{font-size:14px;font-weight:600;color:var(--bad);min-height:1.3em}
+.leer{color:var(--muted);font-size:16px;padding:20px 0}
+footer{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:16px;padding-top:10px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.eingebettet{background:var(--surface)}
+.eingebettet .wrap{padding:0}
+.eingebettet .karte{border-radius:0;box-shadow:none;padding:14px 20px 12px}
+.eingebettet h1{font-size:22px}
+.eingebettet .kpis{margin:10px 0}
+.eingebettet .saetze li{padding:7px 12px;font-size:15px}
+.eingebettet .kpi .w{font-size:30px}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="karte">
+<header>
+  <div><h1 id="titel">Klassenstand</h1><p class="sub" id="sub">Live und ohne Namen</p></div>
+</header>
+
+<div class="start" id="vStart">
+  <label class="feld">Klassencode<input id="kIn" autocomplete="off" spellcheck="false" placeholder="z. B. P24A-K7Q"></label>
+  <button class="btn voll" id="kGo" type="button">Anzeigen</button>
+  <p class="meld" id="kMsg"></p>
+</div>
+
+<section id="vStand" hidden>
+  <div class="tools" id="tools"></div>
+  <div class="kpis" id="kpis"></div>
+  <ul class="saetze" id="saetze"></ul>
+  <div class="zwei">
+    <div class="kasten"><h2>So weit ist die Klasse</h2><p class="h">Anzahl Lernende nach Anteil richtig gelöster Aufgaben</p><div id="vert"></div></div>
+    <div class="kasten"><h2>Beim ersten Versuch richtig</h2><p class="h" id="grpH">pro Teil, über alle Antworten der Klasse</p><div id="grp"></div></div>
+  </div>
+</section>
+
+<footer><span>HKV Aarau · ABU · Es werden keine Namen angezeigt.</span><span id="stand"></span></footer>
+</div></div>
+
+<script src="lernstand.js?v=1"></script>
+<script>
+(function(){
+const $ = id => document.getElementById(id);
+const el = (t,c,h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+if (window.self !== window.top) document.body.classList.add("eingebettet");
+let K = "", D = null, TOOL = null, T = null;
+const proz = (a,b) => b ? Math.round(100 * a / b) : 0;
+const zahl = n => Number(n).toLocaleString("de-CH").replace(/[,\u2019']/g, "’");
+
+function laden(){
+  return Lernstand.rpc("lern_klassenstand", {p_klasse:K}).then(d => {
+    if (!d) { $("kMsg").textContent = "Diesen Klassencode gibt es nicht."; $("vStart").hidden = false; $("vStand").hidden = true; return; }
+    D = d; $("vStart").hidden = true; $("vStand").hidden = false;
+    $("titel").textContent = "Klassenstand " + d.klasse.name;
+    if (!TOOL || !d.tools.some(t => t.tool === TOOL)) TOOL = d.tools.length ? d.tools[0].tool : null;
+    zeichne();
+    $("stand").textContent = "Live · Stand " + new Date().toLocaleTimeString("de-CH", {hour:"2-digit", minute:"2-digit", second:"2-digit"});
+  }).catch(() => { $("stand").textContent = "Keine Verbindung, nächster Versuch in 15 Sekunden"; });
+}
+
+function balken(ziel, zeilen){
+  ziel.innerHTML = "";
+  const max = Math.max(1, ...zeilen.map(z => z.wert));
+  zeilen.forEach(z => {
+    const r = el("div", "bz"); r.title = z.tip || "";
+    r.innerHTML = `<span class="lab">${esc(z.lab)}</span><span class="spur"><i style="width:${(z.anteil != null ? z.anteil : z.wert / max) * 100}%"></i></span><span class="wert">${esc(z.txt)}</span>`;
+    ziel.appendChild(r);
+  });
+}
+
+function zeichne(){
+  const tb = $("tools"); tb.innerHTML = "";
+  if (D.tools.length > 1) D.tools.forEach(t => { const b = el("button", null, esc(t.titel || t.tool)); b.type = "button";
+    b.setAttribute("aria-pressed", t.tool === TOOL ? "true" : "false"); b.onclick = () => { TOOL = t.tool; zeichne(); }; tb.appendChild(b); });
+  if (!TOOL) { $("kpis").innerHTML = ""; $("saetze").innerHTML = '<li>Noch keine Resultate. Sobald die ersten Aufgaben geprüft sind, erscheint hier der Stand der Klasse.</li>'; $("vert").innerHTML = ""; $("grp").innerHTML = ""; return; }
+  T = D.tools.find(t => t.tool === TOOL);
+  $("sub").textContent = (T.titel || T.tool) + " · live und ohne Namen";
+  const L = D.lernende.filter(x => x.tool === TOOL), St = D.stat.filter(x => x.tool === TOOL), A = D.aufgaben.filter(x => x.tool === TOOL);
+  const total = T.total || A.length, n = L.length;
+  const geloest = L.reduce((s,x) => s + x.b, 0), richtig = L.reduce((s,x) => s + x.r, 0), erst = L.reduce((s,x) => s + x.e, 0);
+  const alleRichtig = L.filter(x => x.r >= total).length, alleBearb = L.filter(x => x.b >= total).length, halb = L.filter(x => x.b >= total / 2).length;
+
+  $("kpis").innerHTML = [
+    [n, n === 1 ? "Lernende/r dabei" : "Lernende dabei"],
+    [zahl(geloest), "Aufgaben gelöst"],
+    [proz(richtig, geloest) + " %", "der gelösten Aufgaben richtig"],
+    [proz(alleRichtig, n) + " %", "haben alle " + total + " richtig"]
+  ].map(k => `<div class="kpi"><div class="w">${k[0]}</div><div class="l">${k[1]}</div></div>`).join("");
+
+  const s = [];
+  if (alleRichtig === 0) s.push(`Noch niemand hat alle ${total} Aufgaben richtig gelöst. Wer schafft es zuerst?`);
+  else s.push(`<b>${proz(alleRichtig, n)} %</b> der Klasse haben alle ${total} Aufgaben richtig gelöst.`);
+  if (alleBearb * 2 > n) s.push(`<b>Mehr als die Hälfte</b> der Klasse hat alle Aufgaben bearbeitet (${alleBearb} von ${n}).`);
+  else if (n > 1 && alleBearb * 2 === n) s.push(`<b>Die Hälfte</b> der Klasse hat alle Aufgaben bearbeitet (${alleBearb} von ${n}).`);
+  else if (alleBearb > 0) s.push(`<b>${alleBearb} von ${n}</b> haben alle Aufgaben bearbeitet.`);
+  if (halb > 0 && halb < n) s.push(`<b>${halb} von ${n}</b> sind mindestens bei der Hälfte angekommen.`);
+  else if (n > 1 && halb === n) s.push(`<b>Alle</b> sind mindestens bei der Hälfte angekommen.`);
+  if (geloest) s.push(`<b>${proz(erst, geloest)} %</b> aller Antworten waren schon beim ersten Versuch richtig.`);
+  const kand = St.filter(x => x.anz >= 2).map(x => Object.assign({q: x.eo / x.anz}, x, {info: A.find(a => a.a === x.a) || {}}));
+  if (kand.length >= 3) {
+    const schwer = kand.slice().sort((a,b) => a.q - b.q || b.anz - a.anz)[0], leicht = kand.slice().sort((a,b) => b.q - a.q || b.anz - a.anz)[0];
+    if (schwer.q < 1) s.push(`Knacknuss der Klasse: <b>Aufgabe ${schwer.info.n || "?"}</b>${schwer.info.g ? " (" + esc(schwer.info.g) + ")" : ""}, nur ${proz(schwer.eo, schwer.anz)} % beim ersten Versuch richtig.`);
+    if (leicht.q > schwer.q) s.push(`Am besten gelöst: <b>Aufgabe ${leicht.info.n || "?"}</b>, ${proz(leicht.eo, leicht.anz)} % beim ersten Versuch richtig.`);
+  }
+  $("saetze").innerHTML = s.map(x => `<li>${x}</li>`).join("");
+
+  const stufen = [["0 bis 24 %", 0, 0.25], ["25 bis 49 %", 0.25, 0.5], ["50 bis 74 %", 0.5, 0.75], ["75 bis 99 %", 0.75, 1], ["alles richtig", 1, 9]];
+  balken($("vert"), stufen.map(([lab, a, b]) => { const c = L.filter(x => { const q = total ? x.r / total : 0; return q >= a && q < b; }).length;
+    return {lab, wert:c, txt: c + (c === 1 ? " Person" : " Personen"), tip: `${c} von ${n} Lernenden: ${lab} der ${total} Aufgaben richtig`}; }));
+
+  const gruppen = []; A.forEach(a => { if (a.g && !gruppen.includes(a.g)) gruppen.push(a.g); });
+  balken($("grp"), gruppen.map(g => { const ids = A.filter(a => a.g === g).map(a => a.a); const w = St.filter(x => ids.includes(x.a));
+    const anz = w.reduce((t,x) => t + x.anz, 0), eo = w.reduce((t,x) => t + x.eo, 0);
+    return {lab: g.replace(/^Stufe (\d) · .*/, "Stufe $1"), anteil: anz ? eo / anz : 0, wert: 0, txt: anz ? proz(eo, anz) + " %" : "–", tip: `${g}: ${eo} von ${anz} Antworten beim ersten Versuch richtig`}; }));
+}
+
+function los(k){ K = String(k || "").trim().toUpperCase(); if (!K) return; $("kMsg").textContent = ""; laden(); clearInterval(window._lt); window._lt = setInterval(laden, 15000); }
+$("kGo").onclick = () => los($("kIn").value);
+$("kIn").addEventListener("keydown", e => { if (e.key === "Enter") los($("kIn").value); });
+let urlK = ""; try { urlK = new URLSearchParams(location.search).get("k") || ""; } catch(e){}
+if (urlK) { $("kIn").value = urlK.toUpperCase(); los(urlK); }
+})();
+</script>
+</body>
+</html>

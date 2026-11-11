@@ -125,7 +125,7 @@ body.eingebettet nav{position:sticky;top:0;background:var(--surface);z-index:2;m
 .wer{display:flex;align-items:center;gap:8px;font-weight:600;font-size:15px;line-height:1.25}
 .farbe{width:14px;height:14px;border-radius:4px;flex:none;border:1px solid rgba(0,0,0,.15)}
 .brueche{display:flex;flex-wrap:wrap;gap:4px}
-.brueche button{font:inherit;font-size:14px;font-variant-numeric:tabular-nums;min-width:42px;border:1px solid var(--line);border-radius:7px;padding:4px 6px;background:var(--surface);color:var(--ink);cursor:pointer}
+.brueche button{font:inherit;font-size:14px;font-variant-numeric:tabular-nums;min-width:38px;border:1px solid var(--line);border-radius:7px;padding:4px 5px;background:var(--surface);color:var(--ink);cursor:pointer}
 .brueche button:hover{border-color:var(--brand)}
 .brueche button.an{background:var(--brand);border-color:var(--brand);color:var(--surface);font-weight:600}
 .brueche button:disabled{cursor:default}
@@ -208,6 +208,7 @@ footer button{font:inherit;font-size:13px;background:none;border:0;color:var(--m
 
 </div></div>
 
+<script src="lernstand.js?v=1"></script>
 <script>
 (function(){
 if (window.self !== window.top) document.body.classList.add("eingebettet");
@@ -366,7 +367,9 @@ function zeige(){
     p.addEventListener("click", () => {
       if (z.v.some(v => v == null)) { meld.textContent = bruchMod ? "Wählen Sie bei jeder Person einen Anteil, auch 0." : "Tragen Sie bei jeder Person einen Betrag ein, auch 0."; return; }
       if (bruchMod) { const s = z.v.reduce((x,y) => x+y, 0); if (s !== 16) { meld.textContent = `Die Anteile ergeben zusammen ${s > 16 ? "mehr als" : "weniger als"} ein Ganzes (${bruch(s) === "1" ? "1" : s + "/16"}). Verteilen Sie genau den ganzen Nachlass.`; return; } }
-      z.done = true; z.ok = a.rows.every((r,j) => z.v[j] === r.s); save(); zeige();
+      z.done = true; z.ok = a.rows.every((r,j) => z.v[j] === r.s); save();
+      if (window.Lernstand) Lernstand.melden(a.id, z.ok, {n:i+1, g:STUFEN[a.st], t:a.lage});
+      zeige();
     });
     akt.appendChild(p); akt.appendChild(meld);
   } else {
@@ -467,6 +470,9 @@ document.getElementById("reset").addEventListener("click", function(){
   S = {b:{}}; CUR = 0; save(); location.reload();
 });
 fort(); zeige();
+if (window.Lernstand) Lernstand.start({tool:"erbteilung", titel:"Erbteilung rechnen", total:A.length, kuerzel:"ERB", ziel:document.querySelector("header"),
+  alle: () => A.map((a,i) => { const z = S.b[a.id]; return z && z.done ? {a:a.id, ok:z.ok, n:i+1, g:STUFEN[a.st], t:a.lage} : null; }).filter(Boolean),
+  stats: () => ({richtig: A.filter(a => S.b[a.id] && S.b[a.id].done && S.b[a.id].ok).length, total: A.length})});
 })();
 </script>
 </body>

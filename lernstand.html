@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Lernstand</title>
+<style>
+:root{
+  --bg:#eef2f1; --surface:#ffffff; --ink:#17302b; --muted:#5b6e69; --line:#d4dedb;
+  --brand:#0b3d36; --brand-soft:#e3eeeb; --ok:#1f7a4d; --ok-soft:#e2f3ea; --bad:#b03a2e; --bad-soft:#f8e4e1;
+  --mid:#9a6b00; --mid-soft:#fbf0d6;
+  --f:"Aptos","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#101716; --surface:#18211f; --ink:#e3ece9; --muted:#9bb0aa; --line:#2c3a37;
+  --brand:#7fc4b6; --brand-soft:#1f2e2b; --ok:#6fd19c; --ok-soft:#163327; --bad:#f08a7e; --bad-soft:#3a1f1c;
+  --mid:#e8c46a; --mid-soft:#352c14; color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);font-size:16px;line-height:1.5}
+.wrap{padding:24px 16px 48px;display:flex;justify-content:center}
+.karte{background:var(--surface);max-width:1040px;width:100%;border-radius:14px;box-shadow:0 2px 14px rgba(0,0,0,.07);padding:26px 32px 22px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+header img{height:34px}
+@media (prefers-color-scheme: dark){header img{filter:brightness(0) invert(1)}}
+h1{font-size:26px;margin:4px 0 2px;line-height:1.2}
+.sub{color:var(--muted);margin:0}
+.fortschritt{min-width:220px}
+.balken{height:10px;background:var(--brand-soft);border-radius:6px;overflow:hidden}
+.balken i{display:block;height:100%;width:0;background:var(--brand);transition:width .4s}
+.fortschritt small{color:var(--muted)}
+nav{display:flex;gap:6px;margin:20px 0 16px;flex-wrap:wrap;border-bottom:2px solid var(--line)}
+nav button{font:inherit;font-weight:600;border:0;background:none;color:var(--muted);padding:9px 14px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+nav button[aria-selected="true"]{color:var(--brand);border-bottom-color:var(--brand)}
+nav button:focus-visible,button:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.teil{display:none}.teil.aktiv{display:block}
+.intro{background:var(--brand-soft);border-radius:10px;padding:12px 16px;margin-bottom:16px}
+.intro a{color:var(--brand);font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.fk{border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.fk h3{font-size:16px;margin:0}
+.fk .nr{color:var(--muted);font-weight:600;margin-right:4px}
+.fk textarea{font:inherit;font-size:15px;width:100%;min-height:54px;border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--bg);color:var(--ink);resize:vertical}
+.btn{font:inherit;font-weight:600;font-size:14px;border-radius:8px;padding:6px 12px;cursor:pointer;border:1px solid var(--brand);background:var(--surface);color:var(--brand)}
+.btn.voll{background:var(--brand);color:var(--surface)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.warte{font-size:13px;color:var(--muted);margin-left:8px}
+.loes{display:none;background:var(--bg);border-left:4px solid var(--brand);border-radius:6px;padding:8px 12px;font-size:15px}
+.fk.offen .loes{display:block}
+.selbst{display:none;gap:6px;flex-wrap:wrap;align-items:center;font-size:14px;color:var(--muted)}
+.fk.offen .selbst{display:flex}
+.selbst button{font:inherit;font-size:13px;border-radius:20px;padding:3px 10px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.selbst button.an[data-w="2"]{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.selbst button.an[data-w="1"]{background:var(--mid-soft);border-color:var(--mid);color:var(--mid)}
+.selbst button.an[data-w="0"]{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.fall{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.fall p{margin:0 0 10px}
+.fall .nr{display:inline-block;background:var(--brand);color:var(--surface);font-size:13px;font-weight:600;border-radius:6px;padding:1px 8px;margin-right:8px;vertical-align:1px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opts button{font:inherit;text-align:left;border:1px solid var(--line);border-radius:8px;padding:8px 12px;background:var(--surface);color:var(--ink);cursor:pointer}
+.opts button:hover{border-color:var(--brand)}
+.opts button.richtig{background:var(--ok-soft);border-color:var(--ok)}
+.opts button.falsch{background:var(--bad-soft);border-color:var(--bad)}
+.opts button:disabled{cursor:default}
+.fb{display:none;margin-top:10px;border-radius:8px;padding:8px 12px;font-size:15px}
+.fb.zeig{display:block}
+.fb.gut{background:var(--ok-soft)}.fb.schlecht{background:var(--bad-soft)}
+.sortier{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px}
+.sortier h3{margin:0 0 4px;font-size:17px}
+.sortier .hinweis{color:var(--muted);font-size:14px;margin:0 0 10px}
+.item{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--line)}
+.item:first-of-type{border-top:0}
+.item .txt{flex:1 1 260px}
+.item .wahl{display:flex;gap:6px}
+.item .wahl button{font:inherit;font-size:14px;border:1px solid var(--line);border-radius:8px;padding:4px 10px;background:var(--surface);color:var(--ink);cursor:pointer}
+.item .wahl button.richtig{background:var(--ok-soft);border-color:var(--ok);color:var(--ok);font-weight:600}
+.item .wahl button.falsch{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.item .erk{flex-basis:100%;display:none;font-size:14px;color:var(--muted);padding-left:2px}
+.item.fertig .erk{display:block}
+.rechner{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;align-items:end;margin:6px 0 4px}
+.rechner label{font-size:14px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+.rechner input{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:100%}
+.ergebnis{font-size:15px;background:var(--brand-soft);border-radius:8px;padding:10px 12px;margin-top:10px}
+.ergebnis b{font-size:18px}
+footer{margin-top:18px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:13px}
+footer button{font:inherit;font-size:13px;background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer}
+body.eingebettet{background:var(--surface)}
+body.eingebettet .wrap{padding:0}
+body.eingebettet .karte{border-radius:0;box-shadow:none;padding:18px 24px 16px}
+body.eingebettet nav{position:sticky;top:0;background:var(--surface);z-index:2;margin-top:12px}
+@media (max-width:600px){.karte{padding:18px 16px}h1{font-size:22px}}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+@media print{.teil{display:block!important}.loes{display:block!important}nav,footer button,.selbst,textarea,.btn{display:none!important}.karte{box-shadow:none}}
+
+[hidden]{display:none!important}
+.zwei{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:18px}
+.kasten{border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.kasten h2{font-size:18px;margin:0 0 4px}
+.kasten p{margin:0 0 10px;color:var(--muted);font-size:14.5px}
+.feld{display:flex;flex-direction:column;gap:3px;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:9px}
+.feld input{font:inherit;font-size:15px;font-weight:500;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 9px;background:var(--bg)}
+.meld{font-size:14px;font-weight:600;color:var(--bad);min-height:1.3em;margin:6px 0 0}
+.meld.gut{color:var(--ok)}
+.ergebnis code,.snip{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px}
+.snipzeile{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start;margin:6px 0}
+.snip{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 9px;word-break:break-all;color:var(--ink)}
+.bigcode{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:26px;font-weight:700;letter-spacing:1px;color:var(--brand)}
+.liste{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.liste button{font:inherit;text-align:left;border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--surface);color:var(--ink);cursor:pointer;display:flex;justify-content:space-between;gap:8px}
+.liste button:hover{border-color:var(--brand)}
+.liste small{color:var(--muted)}
+.kopf2{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:16px 0 6px}
+.kopf2 h2{margin:0;font-size:22px}
+.kopf2 .code{font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--muted)}
+.sp{flex:1}
+.chk{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--muted)}
+.tools{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.tools button{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);border-radius:8px;padding:6px 12px;background:var(--surface);color:var(--muted);cursor:pointer}
+.tools button[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--surface)}
+.tabwrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+table.lt{border-collapse:collapse;width:100%;font-size:14px}
+table.lt th{text-align:left;font-size:12.5px;color:var(--muted);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line);background:var(--bg);white-space:nowrap}
+table.lt td{padding:8px 10px;border-top:1px solid var(--line);vertical-align:middle;white-space:nowrap}
+table.lt tr.person{cursor:pointer}
+table.lt tr.person:hover td{background:var(--brand-soft)}
+table.lt td.name{font-weight:700}
+.zahl{font-variant-numeric:tabular-nums}
+.bal{display:inline-block;width:90px;height:8px;border-radius:5px;background:var(--brand-soft);overflow:hidden;vertical-align:middle;margin-left:6px}
+.bal i{display:block;height:100%;background:var(--ok)}
+.grp{display:inline-block;min-width:44px;text-align:center;border-radius:6px;padding:1px 6px;font-size:13px;font-variant-numeric:tabular-nums}
+.grp.g0{background:var(--bg);color:var(--muted)}
+.grp.g1{background:var(--bad-soft);color:var(--bad)}
+.grp.g2{background:var(--mid-soft);color:var(--mid)}
+.grp.g3{background:var(--ok-soft);color:var(--ok)}
+tr.detail td{background:var(--bg);white-space:normal}
+.quad{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}
+.quad span{width:30px;height:26px;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--muted)}
+.quad span.ok1{background:var(--ok);border-color:var(--ok);color:#fff}
+.quad span.ok2{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.quad span.nok{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.grpname{font-size:12.5px;color:var(--muted);margin:8px 0 2px;font-weight:600}
+.legende{display:flex;flex-wrap:wrap;gap:12px;font-size:12.5px;color:var(--muted);margin:8px 0}
+.legende span{display:inline-flex;align-items:center;gap:5px}
+.legende i{width:14px;height:12px;border-radius:3px;border:1px solid var(--line);display:inline-block}
+.schwer{margin-top:18px}
+.schwer h3{font-size:17px;margin:0 0 6px}
+.schwer ol{margin:0;padding-left:22px;font-size:14.5px}
+.schwer li{margin-bottom:5px}
+.schwer small{color:var(--muted)}
+.leer{color:var(--muted);padding:16px}
+.dlg{position:fixed;inset:0;background:rgba(10,40,45,.5);display:flex;align-items:center;justify-content:center;z-index:20;padding:16px}
+.dlg>div{background:var(--surface);border-radius:12px;padding:18px 20px;max-width:640px;width:100%;max-height:90vh;overflow:auto}
+.dlg h3{margin:0 0 8px}
+.eingebettet{background:var(--surface)}
+.eingebettet .wrap{padding:0}
+.eingebettet .karte{border-radius:0;box-shadow:none;padding:14px 20px 12px}
+.eingebettet header h1{font-size:22px}
+.eingebettet .nurDirekt{display:none!important}
+footer{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:20px;padding-top:12px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="karte">
+<header>
+  <div><h1>Lernstand</h1><p class="sub">Was Ihre Klasse in den Übungsfolien von abu-tools.ch gelöst hat</p></div>
+</header>
+
+<section id="vStart">
+  <div class="zwei">
+    <div class="kasten">
+      <h2>Klasse öffnen</h2>
+      <p>Mit dem Klassencode und der PIN, die Sie beim Anlegen gewählt haben.</p>
+      <label class="feld">Klassencode<input id="oCode" autocomplete="off" spellcheck="false" placeholder="z. B. P24A-K7Q"></label>
+      <label class="feld">PIN<input id="oPin" type="password" autocomplete="off"></label>
+      <button class="btn voll" id="oGo" type="button">Öffnen</button>
+      <p class="meld" id="oMsg"></p>
+      <div class="liste" id="kListe"></div>
+    </div>
+    <div class="kasten nurDirekt">
+      <h2>Neue Klasse anlegen</h2>
+      <p>Sie erhalten einen Klassencode. Den hängen Sie an die Adresse der Folie; die Lernenden tragen dann nur noch ihren Vornamen ein.</p>
+      <label class="feld">Klassenname<input id="nName" maxlength="40" placeholder="z. B. P24A"></label>
+      <label class="feld">Eigene PIN (mindestens 4 Zeichen)<input id="nPin" type="text" autocomplete="off" spellcheck="false"></label>
+      <label class="feld">Lehrpersonen-Code<input id="nCode" type="password" autocomplete="off"></label>
+      <button class="btn voll" id="nGo" type="button">Klasse anlegen</button>
+      <p class="meld" id="nMsg"></p>
+    </div>
+  </div>
+</section>
+
+<section id="vKlasse" hidden>
+  <div class="kopf2">
+    <h2 id="kName"></h2><span class="code" id="kCode"></span><span class="sp"></span>
+    <label class="chk"><input type="checkbox" id="anon"> Namen verbergen</label>
+    <label class="chk"><input type="checkbox" id="live"> Live (alle 15 s)</label>
+    <button class="btn" id="bNeu" type="button">Aktualisieren</button>
+    <button class="btn nurDirekt" id="bLinks" type="button">Links für die Klasse</button>
+    <button class="btn nurDirekt" id="bCode" type="button">Code prüfen</button>
+    <button class="btn nurDirekt" id="bCsv" type="button">Excel-Datei</button>
+    <button class="btn" id="bAus" type="button">Schliessen</button>
+  </div>
+  <div class="tools" id="tools"></div>
+  <div class="legende"><span><i style="background:var(--ok);border-color:var(--ok)"></i>beim ersten Versuch richtig</span><span><i style="background:var(--ok-soft);border-color:var(--ok)"></i>richtig nach weiterem Versuch</span><span><i style="background:var(--bad-soft);border-color:var(--bad)"></i>falsch</span><span><i></i>nicht gelöst</span></div>
+  <div class="tabwrap"><table class="lt" id="tab"></table></div>
+  <p class="meld" id="kMsg"></p>
+  <div class="schwer" id="schwer"></div>
+</section>
+
+<footer><span>HKV Aarau · ABU · Nur zum Üben: Die Lernenden tragen ihren Vornamen selbst ein.</span><span id="stand"></span></footer>
+</div></div>
+
+<script src="lernstand.js?v=1"></script>
+<script>
+(function(){
+const TOOLS = [
+  {tool:"erbteilung", datei:"erbteilung.html", titel:"Erbteilung rechnen"},
+  {tool:"ehe_training", datei:"ehe_training.html", titel:"Zusammenleben und Recht"}
+];
+const $ = id => document.getElementById(id);
+const el = (t,c,h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const rpc = (f,d) => Lernstand.rpc(f,d);
+let K = null, PIN = null, D = null, TOOL = null, OFFEN = {}, liveT = null;
+
+function merken(){ try { sessionStorage.setItem("lernstand_dash", JSON.stringify({k:K, p:PIN})); } catch(e){} }
+function vergessen(){ try { sessionStorage.removeItem("lernstand_dash"); } catch(e){} }
+
+/* ---------- Start ---------- */
+$("oGo").onclick = oeffnen;
+$("oPin").addEventListener("keydown", e => { if (e.key === "Enter") oeffnen(); });
+function oeffnen(){
+  const k = $("oCode").value.trim().toUpperCase(), p = $("oPin").value;
+  $("oMsg").textContent = ""; $("kListe").innerHTML = "";
+  if (!p) { $("oMsg").textContent = "Bitte die PIN eintragen."; return; }
+  if (!k) { // Generalschlüssel: alle Klassen auflisten
+    rpc("lern_klassen", {p_pin:p}).then(l => {
+      if (!l.length) { $("oMsg").textContent = "Noch keine Klassen angelegt."; return; }
+      l.forEach(c => { const b = el("button", null, `<span><b>${esc(c.name)}</b> <small>${esc(c.code)}</small></span><small>${c.lernende} Lernende</small>`); b.type = "button";
+        b.onclick = () => laden(c.code, p); $("kListe").appendChild(b); });
+    }).catch(() => { $("oMsg").textContent = "Klassencode fehlt oder PIN falsch."; });
+    return;
+  }
+  laden(k, p);
+}
+$("nGo").onclick = () => {
+  const n = $("nName").value.trim(), p = $("nPin").value, c = $("nCode").value;
+  $("nMsg").className = "meld"; $("nMsg").textContent = "";
+  rpc("lern_klasse_anlegen", {p_code:c, p_name:n, p_pin:p}).then(r => {
+    $("nMsg").className = "meld gut"; $("nMsg").textContent = "Klasse angelegt: " + r.code;
+    K = r.code; PIN = p; merken(); laden(r.code, p, true);
+  }).catch(e => { $("nMsg").textContent = e.message; });
+};
+
+/* ---------- Klasse ---------- */
+function laden(k, p, linksZeigen){
+  return rpc("lern_daten", {p_klasse:k, p_pin:p}).then(d => {
+    K = d.klasse.code; PIN = p; D = d; merken();
+    $("vStart").hidden = true; $("vKlasse").hidden = false;
+    $("kName").textContent = d.klasse.name; $("kCode").textContent = d.klasse.code;
+    if (!TOOL || !d.tools.some(t => t.tool === TOOL)) TOOL = d.tools.length ? d.tools[0].tool : null;
+    zeichne();
+    $("stand").textContent = "Stand " + new Date().toLocaleTimeString("de-CH", {hour:"2-digit", minute:"2-digit", second:"2-digit"});
+    if (linksZeigen) links();
+  }).catch(e => {
+    if ($("vKlasse").hidden) $("oMsg").textContent = "Klassencode oder PIN falsch.";
+    else $("kMsg").textContent = "Aktualisieren fehlgeschlagen: " + e.message;
+  });
+}
+function gross(s){ return s ? s.charAt(0).toLocaleUpperCase("de-CH") + s.slice(1) : s; }
+
+function auswerten(){
+  const tool = D.tools.find(t => t.tool === TOOL);
+  const auf = D.aufgaben.filter(a => a.tool === TOOL).sort((x,y) => (x.n||0) - (y.n||0));
+  const ein = D.eintraege.filter(e => e.tool === TOOL);
+  const leute = {};
+  ein.forEach(e => {
+    const p = leute[e.nk] || (leute[e.nk] = {nk:e.nk, name:e.name, z:e.z, e:{}});
+    p.e[e.a] = e; if (e.z > p.z) { p.z = e.z; p.name = e.name; }
+  });
+  const liste = Object.values(leute).map(p => {
+    const w = Object.values(p.e);
+    return Object.assign(p, {name: gross(p.name), bearb: w.length, richtig: w.filter(x => x.ok).length, erst: w.filter(x => x.eo).length});
+  }).sort((a,b) => a.name.localeCompare(b.name, "de-CH"));
+  const gruppen = []; auf.forEach(a => { if (!gruppen.includes(a.g)) gruppen.push(a.g); });
+  return {tool, auf, liste, gruppen, total: (tool && tool.total) || auf.length};
+}
+
+function zeichne(){
+  const tb = $("tools"); tb.innerHTML = "";
+  D.tools.forEach(t => { const b = el("button", null, esc(t.titel || t.tool)); b.type = "button"; b.setAttribute("aria-pressed", t.tool === TOOL ? "true" : "false");
+    b.onclick = () => { TOOL = t.tool; OFFEN = {}; zeichne(); }; tb.appendChild(b); });
+  const tab = $("tab"); tab.innerHTML = ""; $("schwer").innerHTML = ""; $("kMsg").textContent = "";
+  if (!TOOL) { tab.innerHTML = '<tr><td class="leer">Noch keine Resultate. Sobald Lernende mit dem Klassencode eine Aufgabe prüfen, erscheinen sie hier.</td></tr>'; return; }
+  const R = auswerten();
+  const kopf = el("tr"); kopf.innerHTML = "<th>Vorname</th><th>Bearbeitet</th><th>Richtig</th><th>Beim 1. Versuch</th>" + R.gruppen.map(g => `<th>${esc(g)}</th>`).join("") + "<th>Zuletzt</th>";
+  tab.appendChild(kopf);
+  const anon = $("anon").checked;
+  R.liste.forEach((p, ix) => {
+    const tr = el("tr", "person");
+    const proz = R.total ? Math.round(100 * p.richtig / R.total) : 0;
+    tr.innerHTML = `<td class="name">${anon ? "Lernende " + (ix + 1) : esc(p.name)}</td><td class="zahl">${p.bearb} / ${R.total}</td>` +
+      `<td class="zahl">${p.richtig}<span class="bal"><i style="width:${proz}%"></i></span></td><td class="zahl">${p.erst}</td>` +
+      R.gruppen.map(g => { const ids = R.auf.filter(a => a.g === g).map(a => a.a); const r = ids.filter(i => p.e[i] && p.e[i].ok).length, b = ids.filter(i => p.e[i]).length;
+        const kl = b === 0 ? "g0" : r === ids.length ? "g3" : r >= ids.length / 2 ? "g2" : "g1"; return `<td><span class="grp ${kl}">${r}/${ids.length}</span></td>`; }).join("") +
+      `<td class="zahl">${new Date(p.z).toLocaleString("de-CH", {day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit"})}</td>`;
+    tr.onclick = () => { OFFEN[p.nk] = !OFFEN[p.nk]; zeichne(); };
+    tab.appendChild(tr);
+    if (OFFEN[p.nk]) {
+      const dt = el("tr", "detail"), td = el("td"); td.colSpan = 5 + R.gruppen.length;
+      R.gruppen.forEach(g => {
+        td.appendChild(el("div", "grpname", esc(g)));
+        const q = el("div", "quad");
+        R.auf.filter(a => a.g === g).forEach(a => { const e = p.e[a.a];
+          const s = el("span", e ? (e.ok ? (e.eo ? "ok1" : "ok2") : "nok") : null, String(a.n || "·"));
+          s.title = (a.t || a.a) + (e ? ` · ${e.ok ? "richtig" : "falsch"} · ${e.v} ${e.v === 1 ? "Versuch" : "Versuche"}` : " · nicht gelöst");
+          q.appendChild(s); });
+        td.appendChild(q);
+      });
+      if (R.auf.length < R.total) td.appendChild(el("div", "grpname", `${R.total - R.auf.length} weitere Aufgaben hat noch niemand aus der Klasse gelöst.`));
+      dt.appendChild(td); tab.appendChild(dt);
+    }
+  });
+  if (!R.liste.length) tab.appendChild(el("tr", null, '<td class="leer" colspan="9">Noch keine Resultate in diesem Werkzeug.</td>'));
+  // Schwierigste Aufgaben
+  const st = R.auf.map(a => { const w = R.liste.map(p => p.e[a.a]).filter(Boolean); return {a, n:w.length, erst:w.filter(x => x.eo).length}; })
+    .filter(x => x.n >= 2).sort((x,y) => x.erst/x.n - y.erst/y.n || y.n - x.n).slice(0, 8).filter(x => x.erst < x.n);
+  if (st.length) {
+    const s = $("schwer"); s.appendChild(el("h3", null, "Wo hapert es? Beim ersten Versuch am häufigsten falsch"));
+    const ol = el("ol"); st.forEach(x => ol.appendChild(el("li", null, `<b>Aufgabe ${x.a.n}</b> <small>${esc(x.a.g)}</small><br>${esc((x.a.t || "").slice(0, 120))}${(x.a.t || "").length > 120 ? " …" : ""} <small>· ${x.erst} von ${x.n} beim ersten Versuch richtig</small>`)));
+    s.appendChild(ol);
+  }
+}
+
+$("bNeu").onclick = () => laden(K, PIN);
+$("live").onchange = function(){ clearInterval(liveT); if (this.checked) liveT = setInterval(() => laden(K, PIN), 15000); };
+$("bAus").onclick = () => { clearInterval(liveT); $("live").checked = false; vergessen(); K = PIN = D = TOOL = null; OFFEN = {};
+  $("vKlasse").hidden = true; $("vStart").hidden = false; $("oPin").value = ""; };
+
+function dialog(html){
+  const d = el("div", "dlg"), b = el("div", null, html); d.appendChild(b); document.body.appendChild(d);
+  const zu = () => d.remove(); d.addEventListener("click", e => { if (e.target === d) zu(); });
+  const s = el("button", "btn", "Schliessen"); s.type = "button"; s.onclick = zu;
+  const r = el("div"); r.style.cssText = "display:flex;justify-content:flex-end;margin-top:12px"; r.appendChild(s); b.appendChild(r);
+  return b;
+}
+function links(){
+  const b = dialog(`<h3>Links für die Klasse ${esc(D ? D.klasse.name : K)}</h3><p>Klassencode: <span class="bigcode">${esc(K)}</span></p>
+    <p>In kv digital in der Folie Menü «⋮», dann «HTML», diesen Code einfügen. Die Lernenden tragen danach nur noch ihren Vornamen ein.</p><div id="snips"></div>`);
+  const s = b.querySelector("#snips");
+  TOOLS.forEach(t => {
+    const url = `https://abu-tools.ch/${t.datei}?k=${encodeURIComponent(K)}&v=1`;
+    const code = `<iframe src="${url}" width="100%" height="720" loading="lazy" style="border:0" title="${t.titel}"></iframe>`;
+    s.appendChild(el("div", "grpname", esc(t.titel)));
+    [code, url].forEach(txt => { const z = el("div", "snipzeile"); z.appendChild(el("div", "snip", esc(txt)));
+      const k = el("button", "btn", "Kopieren"); k.type = "button"; k.onclick = () => { try { navigator.clipboard.writeText(txt).then(() => { k.textContent = "Kopiert"; }); } catch(e){} };
+      z.appendChild(k); s.appendChild(z); });
+  });
+  const dash = `<iframe src="https://abu-tools.ch/lernstand.html?k=${encodeURIComponent(K)}" width="100%" height="720" loading="lazy" style="border:0" title="Lernstand ${D ? D.klasse.name : K}"></iframe>`;
+  s.appendChild(el("div", "grpname", "Live-Stand für eine eigene Folie (nur mit PIN sichtbar)"));
+  const z = el("div", "snipzeile"); z.appendChild(el("div", "snip", esc(dash)));
+  const kb = el("button", "btn", "Kopieren"); kb.type = "button"; kb.onclick = () => { try { navigator.clipboard.writeText(dash).then(() => { kb.textContent = "Kopiert"; }); } catch(e){} };
+  z.appendChild(kb); s.appendChild(z);
+  const anon = `<iframe src="https://abu-tools.ch/klassenstand.html?k=${encodeURIComponent(K)}" width="100%" height="720" loading="lazy" style="border:0" title="Klassenstand ${D ? D.klasse.name : K}"></iframe>`;
+  s.appendChild(el("div", "grpname", "Klassenstand ohne Namen, für alle sichtbar (ohne PIN)"));
+  const z2 = el("div", "snipzeile"); z2.appendChild(el("div", "snip", esc(anon)));
+  const kb2 = el("button", "btn", "Kopieren"); kb2.type = "button"; kb2.onclick = () => { try { navigator.clipboard.writeText(anon).then(() => { kb2.textContent = "Kopiert"; }); } catch(e){} };
+  z2.appendChild(kb2); s.appendChild(z2);
+}
+$("bLinks").onclick = links;
+$("bCode").onclick = () => {
+  const b = dialog(`<h3>Abschluss-Code prüfen</h3><p>Den Code aus kv digital einfügen, zum Beispiel «ERB 28/35 · Luca · 7KQ2».</p>
+    <label class="feld">Code<input id="cIn" autocomplete="off" spellcheck="false"></label><p class="meld" id="cMsg"></p>`);
+  const inp = b.querySelector("#cIn"), m = b.querySelector("#cMsg");
+  inp.addEventListener("input", () => { const r = Lernstand.codePruefen(inp.value);
+    if (!inp.value.trim()) { m.textContent = ""; return; }
+    if (!r) { m.className = "meld"; m.textContent = "Das ist kein gültiger Abschluss-Code."; return; }
+    m.className = r.echt ? "meld gut" : "meld"; m.textContent = r.echt ? `Echt: ${r.name}, ${r.richtig} von ${r.total} richtig (${r.kuerzel}).` : "Prüfzeichen stimmt nicht: Der Code wurde verändert oder falsch abgetippt."; });
+  inp.focus();
+};
+$("bCsv").onclick = () => {
+  if (!TOOL) return;
+  const R = auswerten(), z = [];
+  z.push(["Vorname","Bearbeitet","Richtig","Beim 1. Versuch richtig","Total"].concat(R.auf.map(a => "A" + a.n)).join(";"));
+  R.liste.forEach(p => z.push([p.name, p.bearb, p.richtig, p.erst, R.total].concat(R.auf.map(a => { const e = p.e[a.a]; return e ? (e.ok ? (e.eo ? "r" : "r2") : "f") : ""; })).join(";")));
+  z.push(""); z.push("Legende: r = beim ersten Versuch richtig; r2 = richtig nach weiterem Versuch; f = falsch; leer = nicht gelöst");
+  const blob = new Blob(["\ufeff" + z.join("\r\n")], {type:"text/csv;charset=utf-8"});
+  const a = el("a"); a.href = URL.createObjectURL(blob); a.download = `Lernstand_${K}_${TOOL}.csv`; document.body.appendChild(a); a.click(); a.remove();
+};
+
+$("anon").onchange = () => { if (D) zeichne(); };
+// Eingebettet (kv digital): schlanke Ansicht, Live von selbst an
+const imRahmen = window.self !== window.top;
+if (imRahmen) document.body.classList.add("eingebettet");
+let urlK = ""; try { urlK = (new URLSearchParams(location.search).get("k") || "").trim().toUpperCase(); } catch(e){}
+if (urlK) { $("oCode").value = urlK; setTimeout(() => { try { $("oPin").focus({preventScroll:true}); } catch(e){} }, 50); }
+const altLaden = laden;
+laden = function(k, p, l){ return altLaden(k, p, l).then(() => { if (imRahmen && !$("live").checked && D) { $("live").checked = true; $("live").onchange.call($("live")); } }); };
+// Sitzung wieder aufnehmen
+try { const s = JSON.parse(sessionStorage.getItem("lernstand_dash") || "null"); if (s && s.k && s.p && (!urlK || urlK === s.k)) laden(s.k, s.p); } catch(e){}
+})();
+</script>
+</body>
+</html>
