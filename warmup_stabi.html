@@ -8,12 +8,12 @@
 /* Hallenboden-Holz als Grundton, Petrol als Akzent, Signalorange für die Belastung */
 :root{
   --bg:#f4f1ea; --surface:#ffffff; --ink:#1d2a2a; --muted:#5d6b69; --line:#ddd6c8;
-  --accent:#0b4a4a; --accent-soft:#e1ecea; --last:#d9622b; --last-soft:#fbe7dc; --pause:#2f7d6d; --pause-soft:#dff0ea;
+  --accent:#0b4a4a; --accent-soft:#e1ecea; --last:#c62828; --last-soft:#fde4e2; --pause:#1e8a4c; --pause-soft:#dcf3e5;
   --f:"Aptos","Segoe UI",system-ui,-apple-system,sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#121615; --surface:#1b2220; --ink:#e7ecea; --muted:#9fb0ac; --line:#2e3936;
-  --accent:#86cdbf; --accent-soft:#1f302d; --last:#f0915f; --last-soft:#3a2418; --pause:#7fd0b5; --pause-soft:#18302a; color-scheme:dark}}
+  --accent:#86cdbf; --accent-soft:#1f302d; --last:#f2736b; --last-soft:#3d1c1a; --pause:#5fd38f; --pause-soft:#16301f; color-scheme:dark}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);font-size:16px;line-height:1.45}
 .wrap{max-width:1080px;margin:0 auto;padding:22px 18px 30px}
@@ -42,8 +42,15 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .zirkel{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:16px;margin-top:16px;align-items:start}
 @media (max-width:760px){.zirkel{grid-template-columns:1fr}}
 .buehne{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;position:relative}
-.buehne img{display:block;width:100%;aspect-ratio:3/2;object-fit:cover}
-.band{position:absolute;left:0;right:0;bottom:0;padding:8px 14px;font-weight:700;font-size:15px;color:#fff;background:rgba(11,74,74,.82)}
+.buehne img{display:block;width:100%;aspect-ratio:3/2;object-fit:cover;transition:filter .3s}
+.buehne.wartet img{filter:saturate(.35) brightness(.97)}
+.marke{position:absolute;top:12px;left:12px;font-weight:700;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:rgba(30,138,76,.95);border-radius:999px;padding:4px 12px}
+.band{position:absolute;left:0;right:0;bottom:0;padding:8px 14px;font-weight:700;font-size:15px;color:#fff;background:rgba(11,74,74,.85)}
+.buehne.belastung .band{background:rgba(198,40,40,.9)}
+.buehne.wartet .band{background:rgba(30,138,76,.92)}
+.buehne.belastung{border-color:var(--last);box-shadow:0 0 0 3px var(--last)}
+.buehne.wartet{border-color:var(--pause);box-shadow:0 0 0 3px var(--pause)}
+.balken.pause i{background:var(--pause)}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
 .phase{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:3px 10px;align-self:flex-start}
 .phase.last{background:var(--last-soft);color:var(--last)}
@@ -89,7 +96,7 @@ footer{margin-top:16px;font-size:12.5px;color:var(--muted)}
 
   <section id="vZir">
     <div class="zirkel">
-      <div class="buehne"><img id="zBild" alt=""><div class="band" id="zBand"></div></div>
+      <div class="buehne" id="zBuehne"><img id="zBild" alt=""><span class="marke" id="zMarke" hidden>Gleich</span><div class="band" id="zBand"></div></div>
       <div class="panel">
         <span class="phase bereit" id="zPhase">Bereit</span>
         <div class="zeit" id="zZeit">20</div>
@@ -155,7 +162,7 @@ function ton(f, d){ if (!$("sTon").checked) return; try { ctx = ctx || new (wind
 
 function zeige(){
   const p = plan[pos], u = U[p.i];
-  $("zBild").src = bild(p.i); $("zBild").alt = `Übung ${p.i+1}: ${u.t}`;
+  $("zBild").alt = `Übung ${p.i+1}: ${u.t}`;
   $("zBand").textContent = `${p.i+1} / ${U.length} · ${u.t}${p.seite ? " · " + p.seite : ""}`;
   $("zTitel").textContent = u.t + (p.seite ? ` (${p.seite})` : "");
   $("zTipps").innerHTML = u.tipps.map(t => `<li>${esc(t)}</li>`).join("");
@@ -164,7 +171,15 @@ function zeige(){
   $("zPunkte").innerHTML = U.map((_,i) => `<span class="${i === p.i ? "jetzt" : (i < p.i ? "fertig" : "")}">${i+1}</span>`).join("");
   anzeige();
 }
+function bildSetzen(){
+  const p = plan[pos], warten = phase === "pause";
+  const src = warten ? `stabi/uebung_${p.i+1}_still.jpg` : bild(p.i);
+  if ($("zBild").getAttribute("src") !== src) $("zBild").setAttribute("src", src);
+  $("zBuehne").classList.toggle("wartet", warten); $("zBuehne").classList.toggle("belastung", phase === "last"); $("zBalken").parentNode.classList.toggle("pause", warten); $("zMarke").hidden = !warten;
+  $("zMarke").textContent = seitenwechsel && warten ? "Seite wechseln" : "Gleich";
+}
 function anzeige(){
+  bildSetzen();
   const ph = $("zPhase"), z = $("zZeit");
   ph.className = "phase " + phase; z.className = "zeit " + (phase === "bereit" ? "" : phase);
   ph.textContent = phase === "last" ? "Belastung" : phase === "pause" ? (seitenwechsel ? "Seite wechseln" : "Pause") : phase === "fertig" ? "Geschafft" : "Bereit";
