@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Erbteilung rechnen</title>
+<style>
+:root{
+  --bg:#eef2f1; --surface:#ffffff; --ink:#17302b; --muted:#5b6e69; --line:#d4dedb;
+  --brand:#0b3d36; --brand-soft:#e3eeeb; --ok:#1f7a4d; --ok-soft:#e2f3ea; --bad:#b03a2e; --bad-soft:#f8e4e1;
+  --mid:#9a6b00; --mid-soft:#fbf0d6;
+  --f:"Aptos","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#101716; --surface:#18211f; --ink:#e3ece9; --muted:#9bb0aa; --line:#2c3a37;
+  --brand:#7fc4b6; --brand-soft:#1f2e2b; --ok:#6fd19c; --ok-soft:#163327; --bad:#f08a7e; --bad-soft:#3a1f1c;
+  --mid:#e8c46a; --mid-soft:#352c14; color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);font-size:16px;line-height:1.5}
+.wrap{padding:24px 16px 48px;display:flex;justify-content:center}
+.karte{background:var(--surface);max-width:1040px;width:100%;border-radius:14px;box-shadow:0 2px 14px rgba(0,0,0,.07);padding:26px 32px 22px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+header img{height:34px}
+@media (prefers-color-scheme: dark){header img{filter:brightness(0) invert(1)}}
+h1{font-size:26px;margin:4px 0 2px;line-height:1.2}
+.sub{color:var(--muted);margin:0}
+.fortschritt{min-width:220px}
+.balken{height:10px;background:var(--brand-soft);border-radius:6px;overflow:hidden}
+.balken i{display:block;height:100%;width:0;background:var(--brand);transition:width .4s}
+.fortschritt small{color:var(--muted)}
+nav{display:flex;gap:6px;margin:20px 0 16px;flex-wrap:wrap;border-bottom:2px solid var(--line)}
+nav button{font:inherit;font-weight:600;border:0;background:none;color:var(--muted);padding:9px 14px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+nav button[aria-selected="true"]{color:var(--brand);border-bottom-color:var(--brand)}
+nav button:focus-visible,button:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.teil{display:none}.teil.aktiv{display:block}
+.intro{background:var(--brand-soft);border-radius:10px;padding:12px 16px;margin-bottom:16px}
+.intro a{color:var(--brand);font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.fk{border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.fk h3{font-size:16px;margin:0}
+.fk .nr{color:var(--muted);font-weight:600;margin-right:4px}
+.fk textarea{font:inherit;font-size:15px;width:100%;min-height:54px;border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--bg);color:var(--ink);resize:vertical}
+.btn{font:inherit;font-weight:600;font-size:14px;border-radius:8px;padding:6px 12px;cursor:pointer;border:1px solid var(--brand);background:var(--surface);color:var(--brand)}
+.btn.voll{background:var(--brand);color:var(--surface)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.warte{font-size:13px;color:var(--muted);margin-left:8px}
+.loes{display:none;background:var(--bg);border-left:4px solid var(--brand);border-radius:6px;padding:8px 12px;font-size:15px}
+.fk.offen .loes{display:block}
+.selbst{display:none;gap:6px;flex-wrap:wrap;align-items:center;font-size:14px;color:var(--muted)}
+.fk.offen .selbst{display:flex}
+.selbst button{font:inherit;font-size:13px;border-radius:20px;padding:3px 10px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.selbst button.an[data-w="2"]{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.selbst button.an[data-w="1"]{background:var(--mid-soft);border-color:var(--mid);color:var(--mid)}
+.selbst button.an[data-w="0"]{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.fall{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.fall p{margin:0 0 10px}
+.fall .nr{display:inline-block;background:var(--brand);color:var(--surface);font-size:13px;font-weight:600;border-radius:6px;padding:1px 8px;margin-right:8px;vertical-align:1px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opts button{font:inherit;text-align:left;border:1px solid var(--line);border-radius:8px;padding:8px 12px;background:var(--surface);color:var(--ink);cursor:pointer}
+.opts button:hover{border-color:var(--brand)}
+.opts button.richtig{background:var(--ok-soft);border-color:var(--ok)}
+.opts button.falsch{background:var(--bad-soft);border-color:var(--bad)}
+.opts button:disabled{cursor:default}
+.fb{display:none;margin-top:10px;border-radius:8px;padding:8px 12px;font-size:15px}
+.fb.zeig{display:block}
+.fb.gut{background:var(--ok-soft)}.fb.schlecht{background:var(--bad-soft)}
+.sortier{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px}
+.sortier h3{margin:0 0 4px;font-size:17px}
+.sortier .hinweis{color:var(--muted);font-size:14px;margin:0 0 10px}
+.item{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--line)}
+.item:first-of-type{border-top:0}
+.item .txt{flex:1 1 260px}
+.item .wahl{display:flex;gap:6px}
+.item .wahl button{font:inherit;font-size:14px;border:1px solid var(--line);border-radius:8px;padding:4px 10px;background:var(--surface);color:var(--ink);cursor:pointer}
+.item .wahl button.richtig{background:var(--ok-soft);border-color:var(--ok);color:var(--ok);font-weight:600}
+.item .wahl button.falsch{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.item .erk{flex-basis:100%;display:none;font-size:14px;color:var(--muted);padding-left:2px}
+.item.fertig .erk{display:block}
+.rechner{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;align-items:end;margin:6px 0 4px}
+.rechner label{font-size:14px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+.rechner input{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:100%}
+.ergebnis{font-size:15px;background:var(--brand-soft);border-radius:8px;padding:10px 12px;margin-top:10px}
+.ergebnis b{font-size:18px}
+footer{margin-top:18px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:13px}
+footer button{font:inherit;font-size:13px;background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer}
+body.eingebettet{background:var(--surface)}
+body.eingebettet .wrap{padding:0}
+body.eingebettet .karte{border-radius:0;box-shadow:none;padding:18px 24px 16px}
+body.eingebettet nav{position:sticky;top:0;background:var(--surface);z-index:2;margin-top:12px}
+@media (max-width:600px){.karte{padding:18px 16px}h1{font-size:22px}}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+@media print{.teil{display:block!important}.loes{display:block!important}nav,footer button,.selbst,textarea,.btn{display:none!important}.karte{box-shadow:none}}
+
+.theorie{border:1px solid var(--line);border-radius:10px;margin-bottom:14px;background:var(--surface)}
+.theorie summary{cursor:pointer;font-weight:600;padding:12px 16px;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.theorie summary::-webkit-details-marker{display:none}
+.theorie summary::after{content:"+";color:var(--brand);font-size:20px}
+.theorie[open] summary::after{content:"–"}
+.theorie .inhalt{padding:0 16px 14px;font-size:15px}
+.theorie .inhalt p{margin:0 0 8px}
+.theorie .art{color:var(--muted);font-size:13px}
+.schritte{margin:0 0 8px 20px;padding:0}.schritte li{margin-bottom:3px}
+/* Stufen und Aufgabenwahl */
+.stufen{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0 8px}
+.stufen button{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);border-radius:8px;padding:6px 12px;background:var(--surface);color:var(--muted);cursor:pointer}
+.stufen button[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--surface)}
+.punkte{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 14px}
+.punkte button{font:inherit;font-size:13px;font-weight:600;width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer;padding:0}
+.punkte button.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.punkte button.nok{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.punkte button.akt{outline:3px solid var(--brand);outline-offset:1px}
+.punkte .trenn{width:10px}
+/* Aufgabe */
+.aufg{border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.aufg .kopf{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.aufg .nr{background:var(--brand);color:var(--surface);font-size:13px;font-weight:600;border-radius:6px;padding:1px 8px}
+.aufg .stufe{font-size:13px;color:var(--muted)}
+.aufg .lage{margin:0 0 6px}
+.aufg .frage{margin:0 0 12px;font-weight:600}
+.feld{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:18px;align-items:start}
+@media (max-width:720px){.feld{grid-template-columns:1fr}.torte{justify-self:center}}
+.zeile{display:grid;grid-template-columns:150px 1fr 28px;gap:8px;align-items:center;padding:7px 0;border-top:1px solid var(--line)}
+.zeile:first-child{border-top:0}
+@media (max-width:560px){.zeile{grid-template-columns:1fr 28px}.zeile .wer{grid-column:1/-1}}
+.wer{display:flex;align-items:center;gap:8px;font-weight:600;font-size:15px;line-height:1.25}
+.farbe{width:14px;height:14px;border-radius:4px;flex:none;border:1px solid rgba(0,0,0,.15)}
+.brueche{display:flex;flex-wrap:wrap;gap:4px}
+.brueche button{font:inherit;font-size:14px;font-variant-numeric:tabular-nums;min-width:42px;border:1px solid var(--line);border-radius:7px;padding:4px 6px;background:var(--surface);color:var(--ink);cursor:pointer}
+.brueche button:hover{border-color:var(--brand)}
+.brueche button.an{background:var(--brand);border-color:var(--brand);color:var(--surface);font-weight:600}
+.brueche button:disabled{cursor:default}
+.chf{display:flex;align-items:center;gap:6px;font-size:15px}
+.chf input{font:inherit;font-size:16px;width:150px;text-align:right;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-variant-numeric:tabular-nums}
+.chf input:focus{outline:2px solid var(--brand);outline-offset:1px}
+.chf input:disabled{opacity:.8}
+.mark{font-size:18px;font-weight:700;text-align:center}
+.mark.ok{color:var(--ok)}.mark.nok{color:var(--bad)}
+.soll{grid-column:2/-1;font-size:13.5px;color:var(--bad);margin-top:-2px}
+.torte{position:relative;width:250px}
+.torte svg{width:250px;height:250px;display:block;touch-action:none;user-select:none;-webkit-user-select:none}
+.torte .summe{text-align:center;font-size:14px;color:var(--muted);margin-top:4px}
+.torte .summe b{color:var(--ink)}
+.torte .summe.zuviel b{color:var(--bad)}
+.griff{cursor:grab}
+.griff:active{cursor:grabbing}
+.tipp{font-size:13px;color:var(--muted);margin:2px 0 0}
+.aktion{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
+.meld{font-size:14px;color:var(--bad);font-weight:600}
+.fb{display:none;margin-top:12px;border-radius:8px;padding:10px 12px;font-size:15px}
+.fb.zeig{display:block}.fb.gut{background:var(--ok-soft)}.fb.schlecht{background:var(--bad-soft)}
+.blaettern{display:flex;justify-content:space-between;gap:10px;margin-top:14px}
+/* Spickzettel */
+.spick{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+.spick th{font-size:13px;text-align:center;padding:6px 4px;color:var(--brand);border-bottom:1px solid var(--line)}
+.spick th.links{text-align:left}
+.spick td{border-top:1px solid var(--line);padding:6px 4px;vertical-align:top;text-align:center}
+.spick td.lage{text-align:left;font-weight:600;color:var(--ink);width:150px}
+.spick td.trenner,.spick th.trenner{border-left:2px solid var(--brand)}
+.mini{display:flex;flex-direction:column;align-items:center;gap:3px}
+.mini svg{width:62px;height:62px}
+.mini span{line-height:1.3;color:var(--muted)}
+.wrapx{overflow-x:auto}
+.alt{background:var(--mid-soft);border-radius:8px;padding:8px 12px;font-size:14px;margin-top:8px}
+footer{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:18px;padding-top:12px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+footer button{font:inherit;font-size:13px;background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer}
+.eingebettet{background:var(--surface)}
+.eingebettet .wrap{padding:0}
+.eingebettet .karte{border-radius:0;box-shadow:none;padding:18px 24px 16px}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="karte">
+
+<header>
+  <div>
+    <h1>Erbteilung rechnen</h1>
+    <p class="sub">Gesetzliche Erbteile · Pflichtteile und freie Quote · Beträge in CHF</p>
+  </div>
+  <div class="fortschritt">
+    <small id="fortText">0 von 20 gelöst</small>
+    <div class="balken"><i id="fortBalken"></i></div>
+  </div>
+</header>
+
+<details class="theorie" id="weg" style="margin-top:16px"><summary>So rechnen Sie</summary><div class="inhalt">
+<ol class="schritte">
+<li><b>Verheiratet?</b> Zuerst das Güterrecht: Was gehört dem überlebenden Ehegatten schon? Nur der Rest ist Nachlass.</li>
+<li><b>Ehegatte:</b> neben Nachkommen 1/2, neben dem elterlichen Stamm 3/4, sonst alles.</li>
+<li><b>Verwandte nach Stämmen:</b> Nachkommen vor Eltern vor Grosseltern. Ist jemand schon gestorben, treten seine Nachkommen an seine Stelle und teilen seinen Anteil.</li>
+<li><b>Pflichtteil</b> (bei einem Testament): die Hälfte des gesetzlichen Erbteils, nur für Nachkommen und Ehegatten. Der Rest ist die <b>freie Quote</b>.</li>
+</ol>
+<p class="art">Bedienung: Klicken Sie bei jeder Person einen Bruch an oder ziehen Sie die Punkte am Kreis. Bei den Beträgen tippen Sie die Zahl ohne Apostroph ein.</p>
+</div></details>
+
+<details class="theorie" id="spick"><summary>Spickzettel: alle Anteile auf einen Blick</summary><div class="inhalt">
+<div class="wrapx"><table class="spick" id="spickT"></table></div>
+<p class="alt"><b>Achtung, altes Recht:</b> Viele ältere Unterlagen zeigen noch die Pflichtteile vor 2023: Nachkommen 3/4 ihres Erbteils, Eltern 1/2. Seit dem 1. Januar 2023 gilt für Nachkommen und Ehegatten die Hälfte, die Eltern haben keinen Pflichtteil mehr.</p>
+</div></details>
+
+<div class="stufen" id="stufen" role="group" aria-label="Stufe"></div>
+<div class="punkte" id="punkte" aria-label="Aufgaben"></div>
+<div id="aufgabe"></div>
+
+<footer>
+  <span>HKV Aarau · ABU · Erbrecht nach ZGB, Stand November 2026</span>
+  <button id="reset" type="button">Alles zurücksetzen</button>
+</footer>
+
+</div></div>
+
+<script>
+(function(){
+if (window.self !== window.top) document.body.classList.add("eingebettet");
+const A = [{"st": 1, "mode": "bruch", "lage": "Peter stirbt ohne Testament. Er hinterlässt seine Ehefrau Rita und die Kinder Anna und Ben.", "frage": "Welchen Bruchteil des Nachlasses erhält jede Person?", "rows": [{"n": "Ehefrau Rita", "s": 8}, {"n": "Tochter Anna", "s": 4}, {"n": "Sohn Ben", "s": 4}], "e": "Neben Nachkommen erhält der Ehegatte die Hälfte (Art. 462 ZGB). Die andere Hälfte teilen die Kinder zu gleichen Teilen (Art. 457): je 1/4."}, {"st": 1, "mode": "bruch", "lage": "Sonja ist geschieden und stirbt ohne Testament. Sie hinterlässt ihre Kinder Lea und Tim. Ihr Ex-Mann Marc lebt.", "frage": "Welchen Bruchteil erhält jede Person?", "rows": [{"n": "Tochter Lea", "s": 8}, {"n": "Sohn Tim", "s": 8}, {"n": "Ex-Mann Marc", "s": 0}], "e": "Mit der Scheidung endet das gegenseitige Erbrecht (Art. 120 ZGB). Die Kinder erben alles zu gleichen Teilen: je 1/2."}, {"st": 1, "mode": "bruch", "lage": "Marco ist mit Nina verheiratet, sie haben keine Kinder. Marcos Mutter und Vater leben beide.", "frage": "Welchen Bruchteil erhält jede Person?", "rows": [{"n": "Ehefrau Nina", "s": 12}, {"n": "Mutter", "s": 2}, {"n": "Vater", "s": 2}], "e": "Neben dem elterlichen Stamm erhält der Ehegatte drei Viertel (Art. 462 ZGB). Das restliche Viertel teilen die Eltern: je 1/8 (Art. 458)."}, {"st": 1, "mode": "bruch", "lage": "Selin (29) ist ledig und kinderlos. Ihre Mutter und ihr Vater leben, sie hat eine Schwester, Eda.", "frage": "Welchen Bruchteil erhält jede Person?", "rows": [{"n": "Mutter", "s": 8}, {"n": "Vater", "s": 8}, {"n": "Schwester Eda", "s": 0}], "e": "Es erbt der elterliche Stamm: Jeder Elternteil erhält die Hälfte (Art. 458 ZGB). Geschwister erben nur an Stelle eines verstorbenen Elternteils, hier also nichts."}, {"st": 1, "mode": "bruch", "lage": "Luca (31) ist ledig und kinderlos. Sein Vater ist gestorben, seine Mutter lebt. Er hat einen Bruder, Noah, und eine Schwester, Lia.", "frage": "Welchen Bruchteil erhält jede Person?", "rows": [{"n": "Mutter", "s": 8}, {"n": "Bruder Noah", "s": 4}, {"n": "Schwester Lia", "s": 4}], "e": "Die Mutter erhält ihre Hälfte. Die Hälfte des verstorbenen Vaters geht an seine Nachkommen, also an die Geschwister: je 1/4 (Art. 458 Abs. 3 ZGB)."}, {"st": 1, "mode": "bruch", "lage": "Eva ist mit Jonas verheiratet, sie haben keine Kinder. Evas Eltern sind beide gestorben. Sie hat einen Bruder, Tom.", "frage": "Welchen Bruchteil erhält jede Person?", "rows": [{"n": "Ehemann Jonas", "s": 12}, {"n": "Bruder Tom", "s": 4}], "e": "Neben dem elterlichen Stamm erhält der Ehegatte drei Viertel. Das Viertel des elterlichen Stamms geht an Tom, weil er an die Stelle der verstorbenen Eltern tritt."}, {"st": 1, "mode": "bruch", "lage": "Walter stirbt ohne Testament. Er hinterlässt seine Ehefrau Ruth und seine Tochter Sara. Sein Sohn Daniel ist schon gestorben und hat zwei Kinder hinterlassen: Mila und Jan.", "frage": "Welchen Bruchteil erhält jede Person?", "rows": [{"n": "Ehefrau Ruth", "s": 8}, {"n": "Tochter Sara", "s": 4}, {"n": "Enkelin Mila", "s": 2}, {"n": "Enkel Jan", "s": 2}], "e": "Ruth erhält die Hälfte. Die andere Hälfte geht an die zwei Kinder, je 1/4. Weil Daniel schon gestorben ist, teilen seine Kinder sein Viertel: je 1/8 (Art. 457 Abs. 3 ZGB)."}, {"st": 1, "mode": "bruch", "lage": "Nadia ist mit Pascal verheiratet, sie haben keine Kinder. Nadias Vater ist gestorben, ihre Mutter lebt. Sie hat zwei Brüder, Elias und Finn.", "frage": "Welchen Bruchteil erhält jede Person?", "rows": [{"n": "Ehemann Pascal", "s": 12}, {"n": "Mutter", "s": 2}, {"n": "Bruder Elias", "s": 1}, {"n": "Bruder Finn", "s": 1}], "e": "Pascal erhält drei Viertel. Das Viertel des elterlichen Stamms wird halbiert: Die Mutter erhält 1/8. Das Achtel des Vaters geht an seine Nachkommen, die zwei Brüder: je 1/16."}, {"st": 2, "mode": "bruch", "lage": "Peter ist mit Rita verheiratet und hat die Kinder Anna und Ben. Er überlegt sich ein Testament.", "frage": "Wie gross sind die Pflichtteile und die freie Quote?", "rows": [{"n": "Ehefrau Rita", "s": 4}, {"n": "Tochter Anna", "s": 2}, {"n": "Sohn Ben", "s": 2}, {"n": "Freie Quote", "s": 8, "frei": true}], "e": "Der Pflichtteil ist die Hälfte des gesetzlichen Erbteils (Art. 471 ZGB). Rita: Hälfte von 1/2 = 1/4. Kinder: Hälfte von je 1/4 = je 1/8. Zusammen 1/2, die andere Hälfte ist frei verfügbar."}, {"st": 2, "mode": "bruch", "lage": "Mike ist ledig und hat eine Tochter, Zoe.", "frage": "Wie gross sind der Pflichtteil und die freie Quote?", "rows": [{"n": "Tochter Zoe", "s": 8}, {"n": "Freie Quote", "s": 8, "frei": true}], "e": "Gesetzlich würde Zoe alles erben. Ihr Pflichtteil ist die Hälfte davon: 1/2. Über die andere Hälfte kann Mike frei verfügen."}, {"st": 2, "mode": "bruch", "lage": "Marco ist mit Nina verheiratet, sie haben keine Kinder. Marcos Eltern leben beide.", "frage": "Wie gross sind die Pflichtteile und die freie Quote?", "rows": [{"n": "Ehefrau Nina", "s": 6}, {"n": "Mutter", "s": 0}, {"n": "Vater", "s": 0}, {"n": "Freie Quote", "s": 10, "frei": true}], "e": "Nina erbt gesetzlich 3/4, ihr Pflichtteil ist die Hälfte davon: 3/8. Die Eltern haben seit 2023 keinen Pflichtteil mehr. Frei verfügbar: 5/8."}, {"st": 2, "mode": "bruch", "lage": "Selin (29) ist ledig und kinderlos. Ihre Mutter und ihr Vater leben.", "frage": "Wie gross sind die Pflichtteile und die freie Quote?", "rows": [{"n": "Mutter", "s": 0}, {"n": "Vater", "s": 0}, {"n": "Freie Quote", "s": 16, "frei": true}], "e": "Seit dem 1. Januar 2023 haben die Eltern keinen Pflichtteil mehr. Selin kann mit einem Testament über ihren ganzen Nachlass frei verfügen. Nach altem Recht hätten die Eltern noch die Hälfte als Pflichtteil gehabt."}, {"st": 2, "mode": "bruch", "lage": "Rosa ist verwitwet und hat zwei Söhne, Ivo und Leo.", "frage": "Wie gross sind die Pflichtteile und die freie Quote?", "rows": [{"n": "Sohn Ivo", "s": 4}, {"n": "Sohn Leo", "s": 4}, {"n": "Freie Quote", "s": 8, "frei": true}], "e": "Gesetzlich erben die Söhne je 1/2. Ihr Pflichtteil ist je die Hälfte davon: je 1/4. Frei verfügbar ist die Hälfte."}, {"st": 2, "mode": "bruch", "lage": "Eva ist mit Jonas verheiratet, sie haben keine Kinder. Evas Eltern sind gestorben, sie hat einen Bruder, Tom.", "frage": "Wie gross sind die Pflichtteile und die freie Quote?", "rows": [{"n": "Ehemann Jonas", "s": 6}, {"n": "Bruder Tom", "s": 0}, {"n": "Freie Quote", "s": 10, "frei": true}], "e": "Jonas erbt gesetzlich 3/4, sein Pflichtteil ist 3/8. Geschwister haben keinen Pflichtteil. Frei verfügbar: 5/8."}, {"st": 3, "mode": "chf", "total": 240000, "lage": "Peter stirbt ohne Testament. Nach der güterrechtlichen Auseinandersetzung beträgt sein Nachlass CHF 240’000. Er hinterlässt seine Ehefrau Rita und die Kinder Anna und Ben.", "frage": "Wie viel erhält jede Person?", "rows": [{"n": "Ehefrau Rita", "s": 120000}, {"n": "Tochter Anna", "s": 60000}, {"n": "Sohn Ben", "s": 60000}], "e": "Rita erhält die Hälfte: 120’000. Die Kinder teilen die andere Hälfte: je 60’000."}, {"st": 3, "mode": "chf", "total": 300000, "lage": "Claudia ist mit Reto verheiratet, sie haben eine Tochter, Alina. Reto hat aus erster Ehe einen Sohn, Kevin, den Claudia nicht adoptiert hat. Claudia stirbt ohne Testament und hinterlässt CHF 300’000.", "frage": "Wie viel erhält jede Person?", "rows": [{"n": "Ehemann Reto", "s": 150000}, {"n": "Tochter Alina", "s": 150000}, {"n": "Stiefsohn Kevin", "s": 0}], "e": "Reto erhält als Ehegatte neben Nachkommen die Hälfte: 150’000. Die andere Hälfte erhält Alina allein. Kevin ist mit Claudia nicht verwandt und erbt ohne Testament nichts."}, {"st": 3, "mode": "chf", "total": 400000, "lage": "Hans ist verwitwet und hat zwei Töchter, Mara und Nora. In seinem Testament steht: «Meine Lebenspartnerin Eva soll so viel erhalten, wie das Gesetz erlaubt. Den Rest teilen meine Töchter.» Sein Nachlass beträgt CHF 400’000.", "frage": "Wie viel erhält jede Person?", "rows": [{"n": "Lebenspartnerin Eva", "s": 200000}, {"n": "Tochter Mara", "s": 100000}, {"n": "Tochter Nora", "s": 100000}], "e": "Die Töchter erben gesetzlich je 1/2, ihr Pflichtteil ist je 1/4 = 100’000. Die freie Quote, die Hälfte, also 200’000, geht an Eva."}, {"st": 3, "mode": "chf", "total": 800000, "lage": "Thomas ist mit Sandra verheiratet und hat zwei Kinder, Lars und Elin. In seinem Testament setzt er die Kinder auf den Pflichtteil; alles Übrige soll Sandra erhalten. Sein Nachlass beträgt CHF 800’000.", "frage": "Wie viel erhält jede Person?", "rows": [{"n": "Ehefrau Sandra", "s": 600000}, {"n": "Sohn Lars", "s": 100000}, {"n": "Tochter Elin", "s": 100000}], "e": "Die Kinder erben gesetzlich je 1/4, ihr Pflichtteil ist je 1/8 = 100’000. Sandra erhält den Rest: 800’000 − 200’000 = 600’000. Das sind ihr Pflichtteil (1/4) und die freie Quote (1/2) zusammen."}, {"st": 3, "mode": "chf", "total": 220000, "zeigeTotal": false, "lage": "Max und Vera leben in der Errungenschaftsbeteiligung und haben zwei Kinder, Tim und Pia. Max stirbt ohne Testament. Max hat ein Eigengut von CHF 100’000 und eine Errungenschaft von CHF 200’000. Vera hat kein Eigengut und eine Errungenschaft von CHF 40’000.", "frage": "Wie viel erbt jede Person? Rechnen Sie zuerst das Güterrecht, dann die Erbteilung.", "rows": [{"n": "Ehefrau Vera", "s": 110000}, {"n": "Sohn Tim", "s": 55000}, {"n": "Tochter Pia", "s": 55000}], "e": "Güterrecht: Die Vorschläge betragen zusammen 240’000, jeder Seite steht die Hälfte zu, 120’000. Der Nachlass von Max ist sein Eigengut plus seine Hälfte: 100’000 + 120’000 = 220’000. Erbrecht: Vera erbt davon die Hälfte, 110’000, die Kinder je 55’000. Zusammen mit ihrem güterrechtlichen Anteil erhält Vera insgesamt 230’000."}, {"st": 3, "mode": "chf", "total": 200000, "lage": "Anton ist verwitwet. Vor fünf Jahren hat er seinem Sohn Remo CHF 40’000 für den Start seines Geschäfts gegeben; seine Tochter Gina erhielt nichts. Anton stirbt ohne Testament und hinterlässt CHF 200’000.", "frage": "Wie viel erhält jede Person aus dem Nachlass?", "rows": [{"n": "Sohn Remo", "s": 80000}, {"n": "Tochter Gina", "s": 120000}], "e": "Die 40’000 sind ein Erbvorbezug und werden ausgeglichen (Art. 626 ZGB). Man zählt sie zum Nachlass: 200’000 + 40’000 = 240’000, je 120’000. Remo hat 40’000 schon erhalten, also bekommt er noch 80’000, Gina 120’000."}];
+const SP = [["mit Nachkommen", [["Ehegatte", 8], ["Nachkommen", 8]], [["Nachkommen", 16]], [["Ehegatte", 4], ["Nachkommen", 4], ["frei", 8]], [["Nachkommen", 8], ["frei", 8]]], ["ohne Nachkommen, beide Eltern", [["Ehegatte", 12], ["Eltern", 4]], [["Eltern", 16]], [["Ehegatte", 6], ["frei", 10]], [["frei", 16]]], ["ohne Nachkommen, ein Elternteil und Geschwister", [["Ehegatte", 12], ["Elternteil", 2], ["Geschwister", 2]], [["Elternteil", 8], ["Geschwister", 8]], [["Ehegatte", 6], ["frei", 10]], [["frei", 16]]], ["ohne Nachkommen, ohne Eltern, mit Geschwistern", [["Ehegatte", 12], ["Geschwister", 4]], [["Geschwister", 16]], [["Ehegatte", 6], ["frei", 10]], [["frei", 16]]]];
+const STUFEN = {1:"Stufe 1 · Gesetzliche Erbteile",2:"Stufe 2 · Pflichtteile",3:"Stufe 3 · Beträge in CHF"};
+const WAHL = [0,1,2,4,6,8,10,12,16];
+const FARBEN = ["#2f7d6d","#d08a2e","#4f78c0","#b5577f","#7d9a36","#8a6bc0"];
+const FREI = "#b4bdba";
+const KEY = "hkv_erbteilung_v1";
+let S = {};
+try { S = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch(e) { S = {}; }
+if (!S.a) S.a = {};
+if (typeof S.cur !== "number" || !A[S.cur]) S.cur = 0;
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {} fort(); }
+const el = (t,c,h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
+const NS = "http://www.w3.org/2000/svg";
+const sv = (t,at) => { const e = document.createElementNS(NS,t); for (const k in at) e.setAttribute(k, at[k]); return e; };
+
+function ggt(a,b){ return b ? ggt(b, a % b) : a; }
+function bruch(n){ if (n == null) return "–"; if (n === 0) return "0"; if (n === 16) return "1"; const g = ggt(n,16); return (n/g) + "/" + (16/g); }
+const chf = n => "CHF " + Math.round(n).toLocaleString("de-CH").replace(/[,’']/g, "’");
+function parseChf(s){ const t = String(s).replace(/CHF/i,"").replace(/[\s'’`.,]/g,""); if (t === "") return null; const n = Number(t); return isFinite(n) ? n : NaN; }
+function farbe(a,i){ return a.rows[i].frei ? FREI : FARBEN[i % FARBEN.length]; }
+
+/* Torte zeichnen */
+function punkt(cx,cy,r,anteil){ const w = anteil * 2 * Math.PI; return [cx + r*Math.sin(w), cy - r*Math.cos(w)]; }
+function sektor(cx,cy,r,a0,a1){
+  if (a1 - a0 >= 0.9999) return sv("circle",{cx:cx,cy:cy,r:r});
+  const [x0,y0] = punkt(cx,cy,r,a0), [x1,y1] = punkt(cx,cy,r,a1);
+  return sv("path",{d:`M${cx},${cy} L${x0},${y0} A${r},${r} 0 ${a1-a0>0.5?1:0} 1 ${x1},${y1} Z`});
+}
+function torte(svg, teile, opt){
+  // teile: [{w:anteil 0..1, f:farbe, txt}]
+  opt = opt || {};
+  const cx = opt.cx || 125, cy = opt.cy || 125, r = opt.r || 105;
+  while (svg.firstChild) svg.removeChild(svg.firstChild);
+  svg.appendChild(sv("circle",{cx:cx,cy:cy,r:r,fill:"none",stroke:"currentColor","stroke-opacity":"0.35","stroke-dasharray":"4 4"}));
+  let a = 0;
+  teile.forEach(t => {
+    if (t.w <= 0) return;
+    const s = sektor(cx,cy,r,a,Math.min(1,a+t.w));
+    s.setAttribute("fill", t.f); s.setAttribute("stroke", "var(--surface)"); s.setAttribute("stroke-width", opt.mini ? "1" : "2");
+    svg.appendChild(s);
+    if (!opt.mini && t.txt && t.w >= 0.09) {
+      const m = a + Math.min(t.w,1)/2, [x,y] = punkt(cx,cy, t.w >= 0.999 ? 0 : r*0.6, m);
+      const tx = sv("text",{x:x,y:y+5,"text-anchor":"middle","font-size":"15","font-weight":"700",fill:"#fff"}); tx.textContent = t.txt;
+      tx.setAttribute("paint-order","stroke"); tx.setAttribute("stroke","rgba(0,0,0,.35)"); tx.setAttribute("stroke-width","2.5");
+      svg.appendChild(tx);
+    }
+    a += t.w;
+  });
+  svg.appendChild(sv("circle",{cx:cx,cy:cy,r:r,fill:"none",stroke:"currentColor","stroke-opacity":"0.5"}));
+}
+
+/* Spickzettel */
+(function(){
+  const t = document.getElementById("spickT");
+  const kopf1 = el("tr"); kopf1.innerHTML = '<th class="links"></th><th colspan="2">Gesetzliche Erbfolge</th><th colspan="2" class="trenner">Pflichtteile und freie Quote</th>';
+  const kopf2 = el("tr"); kopf2.innerHTML = '<th class="links"></th><th>Ehepaar</th><th>Allein stehend</th><th class="trenner">Ehepaar</th><th>Allein stehend</th>';
+  t.appendChild(kopf1); t.appendChild(kopf2);
+  const fmap = {"Ehegatte":FARBEN[0],"Nachkommen":FARBEN[1],"Eltern":FARBEN[2],"Elternteil":FARBEN[2],"Geschwister":FARBEN[3],"frei":FREI};
+  SP.forEach(z => {
+    const tr = el("tr"); tr.appendChild(el("td","lage",z[0]));
+    for (let k = 1; k <= 4; k++) {
+      const td = el("td", k === 3 ? "trenner" : null), m = el("div","mini");
+      const s = sv("svg",{viewBox:"0 0 62 62","aria-hidden":"true"});
+      torte(s, z[k].map(p => ({w:p[1]/16, f:fmap[p[0]]})), {cx:31,cy:31,r:28,mini:true});
+      m.appendChild(s);
+      m.appendChild(el("span",null, z[k].map(p => `<span style="color:${fmap[p[0]]};font-weight:700">■</span> ${p[0]==="frei"?"freie Quote":p[0]} ${bruch(p[1])}`).join("<br>")));
+      td.appendChild(m); tr.appendChild(td);
+    }
+    t.appendChild(tr);
+  });
+})();
+
+/* Navigation */
+function zustand(i){ const z = S.a[i]; return z && z.done ? (z.ok ? "ok" : "nok") : ""; }
+function navi(){
+  const st = document.getElementById("stufen"); st.innerHTML = "";
+  [1,2,3].forEach(n => {
+    const idx = A.map((a,i) => a.st === n ? i : -1).filter(i => i >= 0);
+    const ok = idx.filter(i => zustand(i) === "ok").length;
+    const b = el("button", null, `${STUFEN[n]} <span style="opacity:.75;font-weight:500">${ok}/${idx.length}</span>`); b.type = "button";
+    b.setAttribute("aria-pressed", A[S.cur].st === n ? "true" : "false");
+    b.addEventListener("click", () => { S.cur = idx[0]; save(); zeige(); });
+    st.appendChild(b);
+  });
+  const p = document.getElementById("punkte"); p.innerHTML = "";
+  A.forEach((a,i) => {
+    if (i > 0 && A[i-1].st !== a.st) p.appendChild(el("span","trenn"));
+    const b = el("button", (zustand(i) + (i === S.cur ? " akt" : "")).trim(), String(i+1)); b.type = "button";
+    b.setAttribute("aria-label", "Aufgabe " + (i+1) + (zustand(i) === "ok" ? ", richtig" : zustand(i) === "nok" ? ", falsch" : ""));
+    b.addEventListener("click", () => { S.cur = i; save(); zeige(); });
+    p.appendChild(b);
+  });
+}
+function fort(){
+  const n = A.filter((a,i) => S.a[i] && S.a[i].done).length, ok = A.filter((a,i) => zustand(i) === "ok").length;
+  document.getElementById("fortText").textContent = n + " von " + A.length + " gelöst · " + ok + " richtig";
+  document.getElementById("fortBalken").style.width = (100*ok/A.length) + "%";
+}
+
+/* Aufgabe anzeigen */
+function zeige(){
+  navi();
+  const i = S.cur, a = A[i], box = document.getElementById("aufgabe");
+  if (!S.a[i]) S.a[i] = {v: a.rows.map(() => null), done:false, ok:false};
+  const z = S.a[i], fertig = z.done, bruchMod = a.mode === "bruch";
+  box.innerHTML = "";
+  const k = el("div","aufg");
+  k.appendChild(el("div","kopf", `<span class="nr">Aufgabe ${i+1}</span><span class="stufe">${STUFEN[a.st]}</span>`));
+  k.appendChild(el("p","lage", a.lage));
+  k.appendChild(el("p","frage", a.frage));
+  const feld = el("div","feld"), links = el("div"), rechts = el("div","torte");
+  const svg = sv("svg",{viewBox:"0 0 250 250",role:"img","aria-label":"Kreisdiagramm der Anteile"});
+  const summe = el("div","summe");
+  rechts.appendChild(svg); rechts.appendChild(summe);
+  if (bruchMod && !fertig) rechts.appendChild(el("p","tipp","Punkte am Rand ziehen oder Brüche anklicken."));
+  feld.appendChild(links); feld.appendChild(rechts); k.appendChild(feld);
+
+  const zeilen = [];
+  a.rows.forEach((r,j) => {
+    const zl = el("div","zeile");
+    zl.appendChild(el("div","wer", `<span class="farbe" style="background:${farbe(a,j)}"></span><span>${r.n}</span>`));
+    const mitte = el("div");
+    if (bruchMod) {
+      const br = el("div","brueche");
+      WAHL.forEach(w => {
+        const b = el("button", z.v[j] === w ? "an" : null, bruch(w)); b.type = "button"; b.disabled = fertig;
+        b.setAttribute("aria-label", r.n + ": " + (w === 0 ? "nichts" : bruch(w)));
+        b.addEventListener("click", () => { z.v[j] = w; save(); aktualisiere(); });
+        br.appendChild(b);
+      });
+      mitte.appendChild(br);
+    } else {
+      const c = el("label","chf"); c.innerHTML = "CHF ";
+      const inp = el("input"); inp.type = "text"; inp.inputMode = "numeric"; inp.autocomplete = "off"; inp.disabled = fertig;
+      inp.setAttribute("aria-label", r.n + " in Franken");
+      inp.value = z.v[j] == null ? "" : chf(z.v[j]).replace("CHF ","");
+      inp.addEventListener("input", () => { const n = parseChf(inp.value); z.v[j] = (n === null || isNaN(n)) ? null : n; save(); aktualisiere(true); });
+      c.appendChild(inp); mitte.appendChild(c);
+    }
+    zl.appendChild(mitte);
+    const mk = el("div","mark"); zl.appendChild(mk);
+    links.appendChild(zl); zeilen.push({zl:zl, mk:mk, mitte:mitte});
+  });
+
+  const akt = el("div","aktion"), meld = el("span","meld");
+  const fb = el("div","fb");
+  if (!fertig) {
+    const p = el("button","btn voll","Prüfen"); p.type = "button";
+    p.addEventListener("click", () => {
+      if (z.v.some(v => v == null)) { meld.textContent = bruchMod ? "Wählen Sie bei jeder Person einen Anteil, auch 0." : "Tragen Sie bei jeder Person einen Betrag ein, auch 0."; return; }
+      if (bruchMod) { const s = z.v.reduce((x,y) => x+y, 0); if (s !== 16) { meld.textContent = `Die Anteile ergeben zusammen ${s > 16 ? "mehr als" : "weniger als"} ein Ganzes (${bruch(s) === "1" ? "1" : s + "/16"}). Verteilen Sie genau den ganzen Nachlass.`; return; } }
+      z.done = true; z.ok = a.rows.every((r,j) => z.v[j] === r.s); save(); zeige();
+    });
+    akt.appendChild(p); akt.appendChild(meld);
+  } else {
+    fb.className = "fb zeig " + (z.ok ? "gut" : "schlecht");
+    fb.innerHTML = (z.ok ? "<b>Richtig.</b> " : "<b>Nicht ganz.</b> ") + a.e;
+    const n = el("button","btn","Nochmals lösen"); n.type = "button";
+    n.addEventListener("click", () => { S.a[i] = {v: a.rows.map(() => null), done:false, ok:false}; save(); zeige(); });
+    akt.appendChild(n);
+  }
+  k.appendChild(akt); k.appendChild(fb);
+
+  const bl = el("div","blaettern");
+  const vor = el("button","btn","‹ Zurück"); vor.type = "button"; vor.disabled = i === 0;
+  vor.addEventListener("click", () => { S.cur = i-1; save(); zeige(); });
+  const nach = el("button","btn" + (fertig ? " voll" : ""), "Weiter ›"); nach.type = "button"; nach.disabled = i === A.length-1;
+  nach.addEventListener("click", () => { S.cur = i+1; save(); zeige(); });
+  bl.appendChild(vor); bl.appendChild(nach); k.appendChild(bl);
+  box.appendChild(k);
+
+  function werte(){ return z.v.map(v => v == null ? 0 : v); }
+  function aktualisiere(nurTorte){
+    const v = werte();
+    if (bruchMod) {
+      zeilen.forEach((q,j) => [...q.mitte.querySelectorAll("button")].forEach((b,x) => b.classList.toggle("an", z.v[j] === WAHL[x])));
+      const s = v.reduce((x,y) => x+y, 0);
+      torte(svg, a.rows.map((r,j) => ({w:v[j]/16, f:farbe(a,j), txt:bruch(v[j])})));
+      summe.className = "summe" + (s > 16 ? " zuviel" : "");
+      summe.innerHTML = s === 16 ? "Verteilt: <b>der ganze Nachlass</b>" : s > 16 ? `Verteilt: <b>zu viel (${s}/16)</b>` : `Verteilt: <b>${s === 0 ? "noch nichts" : bruch(s)}</b>` + (s > 0 ? ` · offen ${bruch(16-s)}` : "");
+      if (!fertig) griffe(v);
+    } else {
+      const s = v.reduce((x,y) => x+y, 0), T = a.total;
+      torte(svg, a.rows.map((r,j) => ({w: T ? Math.max(0,v[j])/T : 0, f:farbe(a,j), txt: T && v[j] > 0 ? Math.round(100*v[j]/T) + " %" : ""})));
+      summe.className = "summe" + (s > T ? " zuviel" : "");
+      summe.innerHTML = "Verteilt: <b>" + chf(s) + "</b>" + (a.zeigeTotal === false ? "" : " von " + chf(T));
+    }
+    if (fertig) zeilen.forEach((q,j) => {
+      const ok = z.v[j] === a.rows[j].s; q.mk.textContent = ok ? "✓" : "✗"; q.mk.className = "mark " + (ok ? "ok" : "nok");
+      const alt = q.zl.querySelector(".soll"); if (alt) alt.remove();
+      if (!ok) q.zl.appendChild(el("div","soll", "Richtig wäre: " + (bruchMod ? bruch(a.rows[j].s) : chf(a.rows[j].s))));
+    });
+  }
+
+  /* Ziehen am Kreis */
+  let zug = null;
+  function griffe(v){
+    const cum = []; v.reduce((x,y,j) => (cum[j] = x+y), 0);
+    cum.forEach((c,j) => {
+      const [x,y] = punkt(125,125,105,c/16);
+      const g = sv("circle",{cx:x,cy:y,r:9,fill:"var(--surface)",stroke:"var(--brand)","stroke-width":"3",class:"griff"});
+      g.dataset.k = j; g.dataset.pos = c;
+      svg.appendChild(g);
+    });
+  }
+  function winkelPos(ev){
+    const r = svg.getBoundingClientRect(), x = (ev.clientX - r.left) * 250 / r.width - 125, y = (ev.clientY - r.top) * 250 / r.height - 125;
+    let w = Math.atan2(x, -y); if (w < 0) w += 2*Math.PI;
+    return Math.round(w / (2*Math.PI) * 16);
+  }
+  if (bruchMod && !fertig) {
+    svg.addEventListener("pointerdown", ev => {
+      const t = ev.target; if (!t.classList || !t.classList.contains("griff")) return;
+      ev.preventDefault();
+      const pos = +t.dataset.pos, v = werte(), cum = []; v.reduce((x,y,j) => (cum[j] = x+y), 0);
+      const bei = q => cum.map((c,j) => c === q ? j : -1).filter(j => j >= 0);
+      zug = {stapel:bei(pos), k:null, pos:pos, oben:(pos === 0 || pos === 16), s0:bei(0), s16:bei(16)};
+      try { svg.setPointerCapture(ev.pointerId); } catch(e) {}
+    });
+    svg.addEventListener("pointermove", ev => {
+      if (!zug) return;
+      let p = winkelPos(ev);
+      if (zug.k == null && zug.oben) {
+        // Griffe bei 0 und bei 16 liegen am gleichen Ort (oben): Richtung entscheidet
+        if (p === 0 || p === 16) return;
+        if (p <= 8 && zug.s0.length) { zug.k = zug.s0[zug.s0.length-1]; zug.pos = 0; }
+        else if (p > 8 && zug.s16.length) { zug.k = zug.s16[0]; zug.pos = 16; }
+        else return;
+      }
+      const cand = [p, p+16, p-16].sort((x,y) => Math.abs(x-zug.pos) - Math.abs(y-zug.pos)); p = cand[0];
+      if (p === zug.pos) return;
+      const v = werte(), n = v.length, cum = []; v.reduce((x,y,j) => (cum[j] = x+y), 0);
+      if (zug.k == null) zug.k = p > zug.pos ? zug.stapel[zug.stapel.length-1] : zug.stapel[0];
+      const k = zug.k, lo = k > 0 ? cum[k-1] : 0, hi = k < n-1 ? cum[k+1] : 16;
+      p = Math.max(lo, Math.min(hi, p));
+      if (p === cum[k]) return;
+      cum[k] = p; zug.pos = p;
+      z.v[k] = p - lo;
+      if (k < n-1) z.v[k+1] = hi - p;
+      meld.textContent = ""; save(); aktualisiere();
+    });
+    const ende = () => { zug = null; };
+    svg.addEventListener("pointerup", ende); svg.addEventListener("pointercancel", ende);
+  }
+  aktualisiere();
+}
+
+document.getElementById("reset").addEventListener("click", function(){
+  if (this.dataset.sicher !== "1") { this.dataset.sicher = "1"; this.textContent = "Wirklich alles zurücksetzen? Nochmals klicken"; return; }
+  S = {a:{}, cur:0}; save(); location.reload();
+});
+fort(); zeige();
+})();
+</script>
+</body>
+</html>
