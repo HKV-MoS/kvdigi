@@ -170,9 +170,10 @@ footer{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin
     <div class="kasten">
       <h2>Klasse öffnen</h2>
       <p>Mit dem Klassencode und der PIN, die Sie beim Anlegen gewählt haben.</p>
-      <label class="feld">Klassencode<input id="oCode" autocomplete="off" spellcheck="false" placeholder="z. B. P24A-K7Q"></label>
-      <label class="feld">PIN<input id="oPin" type="password" autocomplete="off"></label>
+      <label class="feld">Klassencode<input id="oCode" name="klassencode_lernstand" autocomplete="off" spellcheck="false" placeholder="z. B. P24A-K7Q"></label>
+      <label class="feld">PIN<input id="oPin" type="password" autocomplete="new-password"></label>
       <button class="btn voll" id="oGo" type="button">Öffnen</button>
+      <button class="btn nurDirekt" id="oAlle" type="button">Alle Klassen anzeigen</button>
       <p class="meld" id="oMsg"></p>
       <div class="liste" id="kListe"></div>
     </div>
@@ -180,7 +181,7 @@ footer{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin
       <h2>Neue Klasse anlegen</h2>
       <p>Sie erhalten einen Klassencode. Den hängen Sie an die Adresse der Folie; die Lernenden tragen dann nur noch ihren Vornamen ein.</p>
       <label class="feld">Klassenname<input id="nName" maxlength="40" placeholder="z. B. P24A"></label>
-      <label class="feld">Eigene PIN (mindestens 4 Zeichen)<input id="nPin" type="text" autocomplete="off" spellcheck="false"></label>
+      <label class="feld">Eigene PIN (mindestens 4 Zeichen)<input id="nPin" type="text" autocomplete="off" data-lpignore="true" spellcheck="false"></label>
       <label class="feld">Lehrpersonen-Code<input id="nCode" type="password" autocomplete="off"></label>
       <button class="btn voll" id="nGo" type="button">Klasse anlegen</button>
       <p class="meld" id="nMsg"></p>
@@ -229,20 +230,28 @@ function vergessen(){ try { sessionStorage.removeItem("lernstand_dash"); } catch
 /* ---------- Start ---------- */
 $("oGo").onclick = oeffnen;
 $("oPin").addEventListener("keydown", e => { if (e.key === "Enter") oeffnen(); });
+function alleKlassen(p, hinweis){
+  $("kListe").innerHTML = "";
+  return rpc("lern_klassen", {p_pin:p}).then(l => {
+    $("oMsg").className = "meld"; $("oMsg").textContent = hinweis || "";
+    if (!l.length) { $("oMsg").textContent = "Noch keine Klassen angelegt."; return true; }
+    l.forEach(c => { const b = el("button", null, `<span><b>${esc(c.name)}</b> <small>${esc(c.code)}</small></span><small>${c.lernende} Lernende</small>`); b.type = "button";
+      b.onclick = () => laden(c.code, p); $("kListe").appendChild(b); });
+    return true;
+  }).catch(() => false);
+}
 function oeffnen(){
   const k = $("oCode").value.trim().toUpperCase(), p = $("oPin").value;
   $("oMsg").textContent = ""; $("kListe").innerHTML = "";
   if (!p) { $("oMsg").textContent = "Bitte die PIN eintragen."; return; }
-  if (!k) { // Generalschlüssel: alle Klassen auflisten
-    rpc("lern_klassen", {p_pin:p}).then(l => {
-      if (!l.length) { $("oMsg").textContent = "Noch keine Klassen angelegt."; return; }
-      l.forEach(c => { const b = el("button", null, `<span><b>${esc(c.name)}</b> <small>${esc(c.code)}</small></span><small>${c.lernende} Lernende</small>`); b.type = "button";
-        b.onclick = () => laden(c.code, p); $("kListe").appendChild(b); });
-    }).catch(() => { $("oMsg").textContent = "Klassencode fehlt oder PIN falsch."; });
-    return;
-  }
-  laden(k, p);
+  if (!k) { alleKlassen(p).then(ok => { if (!ok) $("oMsg").textContent = "Diese PIN öffnet nicht alle Klassen. Für die Übersicht braucht es die Prompt-Wand-PIN; für eine einzelne Klasse den Klassencode."; }); return; }
+  rpc("lern_daten", {p_klasse:k, p_pin:p}).then(() => laden(k, p)).catch(() => {
+    // Klassencode unbekannt oder PIN passt nicht: mit dem Generalschlüssel trotzdem die Liste zeigen
+    alleKlassen(p, "Den Klassencode " + k + " finde ich nicht. Hier sind alle Klassen:").then(ok => { if (!ok) $("oMsg").textContent = "Klassencode oder PIN falsch."; });
+  });
 }
+$("oAlle").onclick = () => { const p = $("oPin").value; $("oMsg").textContent = ""; if (!p) { $("oMsg").textContent = "Bitte zuerst die Prompt-Wand-PIN eintragen."; return; }
+  alleKlassen(p).then(ok => { if (!ok) $("oMsg").textContent = "Diese PIN öffnet nicht alle Klassen. Dafür braucht es die Prompt-Wand-PIN."; }); };
 $("nGo").onclick = () => {
   const n = $("nName").value.trim(), p = $("nPin").value, c = $("nCode").value;
   $("nMsg").className = "meld"; $("nMsg").textContent = "";
