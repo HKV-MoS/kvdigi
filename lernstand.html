@@ -327,6 +327,13 @@ function zeichne(){
         td.appendChild(q);
       });
       if (R.auf.length < R.total) td.appendChild(el("div", "grpname", `${R.total - R.auf.length} weitere Aufgaben hat noch niemand aus der Klasse gelöst.`));
+      const weg = el("button", "btn nurDirekt", "Aus der Liste entfernen"); weg.type = "button"; weg.style.marginTop = "8px";
+      weg.onclick = ev => { ev.stopPropagation();
+        if (weg.dataset.sicher !== "1") { weg.dataset.sicher = "1"; weg.textContent = `${p.name} wirklich entfernen? Nochmals klicken`; return; }
+        rpc("lern_ausblenden", {p_klasse:K, p_pin:PIN, p_name:p.nk}).then(() => { OFFEN[p.nk] = false; laden(K, PIN); })
+          .catch(e => { $("kMsg").textContent = "Entfernen fehlgeschlagen: " + e.message; }); };
+      td.appendChild(el("div", "grpname", "Entfernt nur aus der Anzeige, in allen Übungen dieser Klasse. Was diese Person danach neu löst, erscheint wieder."));
+      td.appendChild(weg);
       dt.appendChild(td); tab.appendChild(dt);
     }
   });
