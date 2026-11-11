@@ -44,20 +44,27 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .buehne{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;position:relative}
 .buehne img{display:block;width:100%;aspect-ratio:3/2;object-fit:cover;transition:filter .3s}
 .buehne.wartet img{filter:saturate(.35) brightness(.97)}
+.daumen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:rgba(18,40,32,.35)}
+.daumen svg{width:min(34%,170px);height:auto;filter:drop-shadow(0 6px 18px rgba(0,0,0,.35))}
+.daumen b{font-size:clamp(22px,4vw,36px);color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+@media (prefers-reduced-motion: no-preference){.daumen svg{animation:hoch .6s cubic-bezier(.3,1.6,.6,1) both}}
+@keyframes hoch{from{transform:scale(.4) rotate(-20deg);opacity:0}to{transform:none;opacity:1}}
+.buehne.fertig{border-color:var(--pause);box-shadow:0 0 0 3px var(--pause)}
+.buehne.fertig .band{background:rgba(30,138,76,.92)}
 .marke{position:absolute;top:12px;left:12px;font-weight:700;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:rgba(30,138,76,.95);border-radius:999px;padding:4px 12px}
 .band{position:absolute;left:0;right:0;bottom:0;padding:8px 14px;font-weight:700;font-size:15px;color:#fff;background:rgba(11,74,74,.85)}
 .buehne.belastung .band{background:rgba(198,40,40,.9)}
 .buehne.wartet .band{background:rgba(30,138,76,.92)}
 .buehne.belastung{border-color:var(--last);box-shadow:0 0 0 3px var(--last)}
 .buehne.wartet{border-color:var(--pause);box-shadow:0 0 0 3px var(--pause)}
-.balken.pause i{background:var(--pause)}
+.balken.pause i,.balken.fertig i{background:var(--pause)}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
 .phase{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:3px 10px;align-self:flex-start}
 .phase.last{background:var(--last-soft);color:var(--last)}
-.phase.pause{background:var(--pause-soft);color:var(--pause)}
+.phase.pause,.phase.fertig{background:var(--pause-soft);color:var(--pause)}
 .phase.bereit{background:var(--accent-soft);color:var(--accent)}
 .zeit{font-size:84px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
-.zeit.last{color:var(--last)} .zeit.pause{color:var(--pause)}
+.zeit.last{color:var(--last)} .zeit.pause,.zeit.fertig{color:var(--pause)}
 .balken{height:8px;border-radius:4px;background:var(--bg);overflow:hidden}
 .balken i{display:block;height:100%;width:0;background:var(--last);transition:width .25s linear}
 .panel h2{margin:0;font-size:22px;line-height:1.2}
@@ -96,7 +103,7 @@ footer{margin-top:16px;font-size:12.5px;color:var(--muted)}
 
   <section id="vZir">
     <div class="zirkel">
-      <div class="buehne" id="zBuehne"><img id="zBild" alt=""><span class="marke" id="zMarke" hidden>Gleich</span><div class="band" id="zBand"></div></div>
+      <div class="buehne" id="zBuehne"><img id="zBild" alt=""><span class="marke" id="zMarke" hidden>Gleich</span><div class="daumen" id="zDaumen" hidden><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="56" fill="#1e8a4c"/><path d="M38 56h12v36H38z" fill="#fff"/><path d="M54 56l12-24c2-4 9-4 11 1 1 3 0 6-1 9l-4 11h18c5 0 9 5 7 10l-7 23c-1 4-5 6-9 6H54z" fill="#fff"/></svg><b>Geschafft!</b></div><div class="band" id="zBand"></div></div>
       <div class="panel">
         <span class="phase bereit" id="zPhase">Bereit</span>
         <div class="zeit" id="zZeit">20</div>
@@ -172,8 +179,10 @@ function zeige(){
   anzeige();
 }
 function bildSetzen(){
-  const p = plan[pos], warten = phase === "pause";
-  const src = warten ? `stabi/uebung_${p.i+1}_still.jpg` : bild(p.i);
+  const p = plan[pos], warten = phase === "pause", fertig = phase === "fertig";
+  const src = (warten || fertig) ? `stabi/uebung_${p.i+1}_still.jpg` : bild(p.i);
+  $("zDaumen").hidden = !fertig; $("zBuehne").classList.toggle("fertig", fertig);
+  if (fertig) $("zBand").textContent = "Stabilisation geschafft, gut gemacht!";
   if ($("zBild").getAttribute("src") !== src) $("zBild").setAttribute("src", src);
   $("zBuehne").classList.toggle("wartet", warten); $("zBuehne").classList.toggle("belastung", phase === "last"); $("zBalken").parentNode.classList.toggle("pause", warten); $("zMarke").hidden = !warten;
   $("zMarke").textContent = seitenwechsel && warten ? "Seite wechseln" : "Gleich";
@@ -185,8 +194,15 @@ function anzeige(){
   ph.textContent = phase === "last" ? "Belastung" : phase === "pause" ? (seitenwechsel ? "Seite wechseln" : "Pause") : phase === "fertig" ? "Geschafft" : "Bereit";
   const p = plan[pos], u = U[p.i];
   $("zTitel").textContent = (phase === "pause" ? "Gleich: " : "") + u.t + (p.seite ? ` (${p.seite})` : "");
+  $("zBalken").parentNode.classList.toggle("fertig", phase === "fertig");
+  if (phase === "fertig") {
+    $("zTitel").textContent = `Alle ${U.length} Übungen geschafft`;
+    $("zTipps").innerHTML = "<li>Kurz ausschütteln und etwas trinken</li><li>Mit «Nochmals» startet der Zirkel von vorn</li>";
+    $("zNext").textContent = "Teil 2 abgeschlossen.";
+    $("zPunkte").querySelectorAll("span").forEach(x => { x.className = "fertig"; });
+  }
   z.textContent = phase === "bereit" ? last() : phase === "fertig" ? "✓" : Math.max(0, Math.ceil(rest));
-  $("zBalken").style.width = total ? (100 * (1 - rest / total)) + "%" : "0%";
+  $("zBalken").style.width = phase === "fertig" ? "100%" : total ? (100 * (1 - rest / total)) + "%" : "0%";
   $("bStart").textContent = timer ? "Pause" : (phase === "bereit" ? "Start" : phase === "fertig" ? "Nochmals" : "Weiter");
 }
 function starte(ph, s){ phase = ph; total = s; rest = s; ende = performance.now() + s * 1000; ton(ph === "last" ? 880 : 520, .25); }
