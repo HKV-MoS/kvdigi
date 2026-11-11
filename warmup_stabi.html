@@ -77,7 +77,7 @@ footer{margin-top:16px;font-size:12.5px;color:var(--muted)}
     <div>
       <div class="eyebrow">Warm-up · Teil 2</div>
       <h1>Stabilisation im Stütz</h1>
-      <p class="regel">9 Übungen, jede mindestens 20 Sekunden. Wo es zwei Seiten gibt: rechts und links.</p>
+      <p class="regel">9 Übungen, jede mindestens 20 Sekunden. Wo es zwei Seiten gibt: rechts und links. Zwischen den Übungen 20 bis 30 Sekunden Pause.</p>
     </div>
     <div class="tabs" role="group" aria-label="Ansicht">
       <button type="button" id="tUeb" aria-pressed="false">Übersicht</button>
@@ -104,7 +104,7 @@ footer{margin-top:16px;font-size:12.5px;color:var(--muted)}
         </div>
         <div class="einst">
           <label>Belastung <select id="sLast"><option value="20" selected>20 s</option><option value="30">30 s</option><option value="40">40 s</option></select></label>
-          <label>Wechsel <select id="sPause"><option value="10" selected>10 s</option><option value="15">15 s</option><option value="20">20 s</option></select></label>
+          <label>Pause zwischen Übungen <select id="sPause"><option value="20">20 s</option><option value="25" selected>25 s</option><option value="30">30 s</option></select></label>
           <label><input type="checkbox" id="sTon" checked> Signalton</label>
         </div>
         <div class="punkte" id="zPunkte" aria-label="Übungen"></div>
@@ -146,7 +146,7 @@ $("tUeb").onclick = () => ansicht(false); $("tZir").onclick = () => ansicht(true
 /* Ablauf: seitige Übungen bekommen zwei Durchgänge */
 const plan = [];
 U.forEach((u,i) => { if (u.s === "rechts und links") { plan.push({i, seite:"rechts"}); plan.push({i, seite:"links"}); } else plan.push({i, seite:""}); });
-let pos = 0, phase = "bereit", rest = 0, total = 0, timer = null, ende = 0;
+let pos = 0, phase = "bereit", rest = 0, total = 0, timer = null, ende = 0, seitenwechsel = false;
 const last = () => +$("sLast").value, pause = () => +$("sPause").value;
 
 let ctx = null;
@@ -167,7 +167,9 @@ function zeige(){
 function anzeige(){
   const ph = $("zPhase"), z = $("zZeit");
   ph.className = "phase " + phase; z.className = "zeit " + (phase === "bereit" ? "" : phase);
-  ph.textContent = phase === "last" ? "Belastung" : phase === "pause" ? "Wechsel" : phase === "fertig" ? "Geschafft" : "Bereit";
+  ph.textContent = phase === "last" ? "Belastung" : phase === "pause" ? (seitenwechsel ? "Seite wechseln" : "Pause") : phase === "fertig" ? "Geschafft" : "Bereit";
+  const p = plan[pos], u = U[p.i];
+  $("zTitel").textContent = (phase === "pause" ? "Gleich: " : "") + u.t + (p.seite ? ` (${p.seite})` : "");
   z.textContent = phase === "bereit" ? last() : phase === "fertig" ? "✓" : Math.max(0, Math.ceil(rest));
   $("zBalken").style.width = total ? (100 * (1 - rest / total)) + "%" : "0%";
   $("bStart").textContent = timer ? "Pause" : (phase === "bereit" ? "Start" : phase === "fertig" ? "Nochmals" : "Weiter");
@@ -177,7 +179,8 @@ function tick(){
   rest = (ende - performance.now()) / 1000;
   if (phase === "last" && rest <= 3 && rest > 0 && Math.ceil(rest) !== tick.l) { tick.l = Math.ceil(rest); ton(660, .12); }
   if (rest <= 0) {
-    if (phase === "last") { if (pos >= plan.length - 1) { stop(); phase = "fertig"; ton(988, .5); anzeige(); return; } pos++; zeige(); starte("pause", pause()); }
+    if (phase === "last") { if (pos >= plan.length - 1) { stop(); phase = "fertig"; ton(988, .5); anzeige(); return; }
+      const gleiche = plan[pos+1].i === plan[pos].i; pos++; seitenwechsel = gleiche; zeige(); starte("pause", gleiche ? 5 : pause()); }
     else if (phase === "pause") starte("last", last());
   }
   anzeige();
