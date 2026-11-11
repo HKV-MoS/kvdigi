@@ -168,6 +168,7 @@ body.eingebettet nav{position:sticky;top:0;background:var(--surface);z-index:2;m
 
 </div></div>
 
+<script src="lernstand.js?v=1"></script>
 <script>
 (function(){
 const imRahmen = window.self !== window.top;
@@ -401,7 +402,7 @@ KARTEN.forEach(([q,a],i)=>{
   btn.addEventListener("click",()=>{if(!btn.disabled)k.classList.toggle("offen");});
   sperre();
   k.querySelectorAll(".selbst button").forEach(b=>b.addEventListener("click",()=>{
-    S[id]=b.dataset.w; save(); markSelbst(k,id);
+    S[id]=b.dataset.w; save(); markSelbst(k,id); melde(id);
   }));
   if(S[id]!=null){k.classList.add("offen");markSelbst(k,id);}
   kw.appendChild(k);
@@ -412,7 +413,7 @@ function mcBlock(f,id,ziel,nr){
   const d=el("div","fall");
   d.innerHTML=`<p>${nr?`<span class="nr">Fall ${nr}</span>`:""}<b>${f.q}</b></p><div class="opts"></div><div class="fb"></div>`;
   const os=d.querySelector(".opts"), fb=d.querySelector(".fb");
-  f.o.forEach((t,j)=>{const b=el("button",null,t); b.type="button"; b.addEventListener("click",()=>{S[id]=j;save();zeige();}); os.appendChild(b);});
+  f.o.forEach((t,j)=>{const b=el("button",null,t); b.type="button"; b.addEventListener("click",()=>{S[id]=j;save();zeige();melde(id);}); os.appendChild(b);});
   function zeige(){
     if(S[id]==null) return;
     const ok=S[id]===f.r;
@@ -432,7 +433,7 @@ function sortBlock(liste,opts,pref,ziel){
     const id=pref+i, it=el("div","item");
     it.innerHTML=`<div class="txt">${t}</div><div class="wahl"></div><div class="erk"></div>`;
     const w=it.querySelector(".wahl"), erk=it.querySelector(".erk");
-    opts.forEach(([v,l])=>{const b=el("button",null,l); b.type="button"; b.dataset.v=v; b.addEventListener("click",()=>{S[id]=v;save();zeige();}); w.appendChild(b);});
+    opts.forEach(([v,l])=>{const b=el("button",null,l); b.type="button"; b.dataset.v=v; b.addEventListener("click",()=>{S[id]=v;save();zeige();melde(id);}); w.appendChild(b);});
     function zeige(){
       if(S[id]==null) return;
       const ok=S[id]===r;
@@ -469,6 +470,25 @@ function fort(){
   document.getElementById("fortBalken").style.width=(100*n/IDS.length)+"%";
 }
 fort();
+
+/* ---------- Lernstand für die Lehrperson ---------- */
+function info(id){
+  const m=id.match(/^([a-z]+)(\d+)$/), p=m[1], i=+m[2];
+  if(p==="k") return {g:"1 · Grundlagen", t:"Karteikarte (selbst eingeschätzt): "+KARTEN[i][0], ok:S[id]==="2"};
+  if(p==="sf") return {g:"2 · Steuerfuss", t:SF_FRAGEN[i].q, ok:S[id]===SF_FRAGEN[i].r};
+  if(p==="f") return {g:"3 · Fälle", t:FAELLE[i].q, ok:S[id]===FAELLE[i].r};
+  if(p==="a") return {g:"4 · Abzüge & Belege", t:ABZUEGE[i][0], ok:S[id]===ABZUEGE[i][1]};
+  if(p==="u") return {g:"4 · Abzüge & Belege", t:UNTERLAGEN[i][0], ok:S[id]===UNTERLAGEN[i][1]};
+  if(p==="d") return {g:"5 · Ehrlich?", t:DELIKTE[i][0], ok:S[id]===DELIKTE[i][1]};
+  return {g:"5 · Ehrlich?", t:FAELLE2[i].q, ok:S[id]===FAELLE2[i].r};
+}
+function melde(id){
+  if(!window.Lernstand||S[id]==null) return;
+  const x=info(id); Lernstand.melden(id,x.ok,{n:IDS.indexOf(id)+1,g:x.g,t:x.t.replace(/<[^>]+>/g,"")});
+}
+if(window.Lernstand) Lernstand.start({tool:"steuern_training", titel:"Steuern verstehen", total:IDS.length, kuerzel:"STE", ziel:document.querySelector("header"),
+  alle:()=>IDS.filter(i=>S[i]!=null).map(i=>{const x=info(i); return {a:i, ok:x.ok, n:IDS.indexOf(i)+1, g:x.g, t:x.t.replace(/<[^>]+>/g,"")};}),
+  stats:()=>({richtig:IDS.filter(i=>S[i]!=null&&info(i).ok).length, total:IDS.length})});
 
 document.getElementById("reset").addEventListener("click",()=>{S={};save();location.reload();});
 
