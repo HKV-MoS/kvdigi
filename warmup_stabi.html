@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Warm-up Teil 2: Stabilisation</title>
+<style>
+/* Hallenboden-Holz als Grundton, Petrol als Akzent, Signalorange für die Belastung */
+:root{
+  --bg:#f4f1ea; --surface:#ffffff; --ink:#1d2a2a; --muted:#5d6b69; --line:#ddd6c8;
+  --accent:#0b4a4a; --accent-soft:#e1ecea; --last:#d9622b; --last-soft:#fbe7dc; --pause:#2f7d6d; --pause-soft:#dff0ea;
+  --f:"Aptos","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121615; --surface:#1b2220; --ink:#e7ecea; --muted:#9fb0ac; --line:#2e3936;
+  --accent:#86cdbf; --accent-soft:#1f302d; --last:#f0915f; --last-soft:#3a2418; --pause:#7fd0b5; --pause-soft:#18302a; color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);font-size:16px;line-height:1.45}
+.wrap{max-width:1080px;margin:0 auto;padding:22px 18px 30px}
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.eyebrow{font-size:12.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{margin:2px 0 0;font-size:28px;line-height:1.15}
+.regel{margin:4px 0 0;color:var(--muted)}
+.tabs{display:flex;gap:6px}
+.tabs button{font:inherit;font-weight:600;font-size:15px;border:1px solid var(--line);border-radius:999px;padding:7px 16px;background:var(--surface);color:var(--muted);cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+
+/* Übersicht */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-top:16px}
+.karte{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.karte img{display:block;width:100%;aspect-ratio:3/2;object-fit:cover;background:var(--accent-soft)}
+.karte .txt{padding:10px 14px 12px;display:flex;flex-direction:column;gap:4px}
+.kopf{display:flex;align-items:baseline;gap:8px}
+.nr{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--surface);font-weight:700;font-size:14px;flex:none}
+.karte h2{font-size:17px;margin:0;line-height:1.25}
+.seite{font-size:12.5px;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:1px 8px;margin-left:auto;white-space:nowrap}
+.karte ul{margin:2px 0 0;padding-left:18px;font-size:14.5px;color:var(--muted)}
+
+/* Zirkel */
+.zirkel{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:16px;margin-top:16px;align-items:start}
+@media (max-width:760px){.zirkel{grid-template-columns:1fr}}
+.buehne{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;position:relative}
+.buehne img{display:block;width:100%;aspect-ratio:3/2;object-fit:cover}
+.band{position:absolute;left:0;right:0;bottom:0;padding:8px 14px;font-weight:700;font-size:15px;color:#fff;background:rgba(11,74,74,.82)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.phase{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:3px 10px;align-self:flex-start}
+.phase.last{background:var(--last-soft);color:var(--last)}
+.phase.pause{background:var(--pause-soft);color:var(--pause)}
+.phase.bereit{background:var(--accent-soft);color:var(--accent)}
+.zeit{font-size:84px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.zeit.last{color:var(--last)} .zeit.pause{color:var(--pause)}
+.balken{height:8px;border-radius:4px;background:var(--bg);overflow:hidden}
+.balken i{display:block;height:100%;width:0;background:var(--last);transition:width .25s linear}
+.panel h2{margin:0;font-size:22px;line-height:1.2}
+.panel ul{margin:0;padding-left:18px;color:var(--muted)}
+.naechste{font-size:14px;color:var(--muted);border-top:1px solid var(--line);padding-top:8px}
+.knoepfe{display:flex;flex-wrap:wrap;gap:6px}
+.btn{font:inherit;font-weight:600;font-size:15px;border-radius:9px;padding:8px 14px;cursor:pointer;border:1px solid var(--accent);background:var(--surface);color:var(--accent)}
+.btn.voll{background:var(--accent);color:var(--surface)}
+.einst{display:flex;flex-wrap:wrap;gap:10px;font-size:14px;color:var(--muted);align-items:center}
+.einst select{font:inherit;font-size:14px;padding:4px 6px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink)}
+.punkte{display:flex;flex-wrap:wrap;gap:4px}
+.punkte span{width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:1px solid var(--line);color:var(--muted);background:var(--surface)}
+.punkte span.fertig{background:var(--accent-soft);color:var(--accent);border-color:var(--accent-soft)}
+.punkte span.jetzt{background:var(--accent);color:var(--surface);border-color:var(--accent)}
+footer{margin-top:16px;font-size:12.5px;color:var(--muted)}
+.eingebettet .wrap{padding:12px 16px 14px}
+.eingebettet h1{font-size:22px}
+@media (prefers-reduced-motion: reduce){.balken i{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Warm-up · Teil 2</div>
+      <h1>Stabilisation im Stütz</h1>
+      <p class="regel">9 Übungen, jede mindestens 20 Sekunden. Wo es zwei Seiten gibt: rechts und links.</p>
+    </div>
+    <div class="tabs" role="group" aria-label="Ansicht">
+      <button type="button" id="tUeb" aria-pressed="false">Übersicht</button>
+      <button type="button" id="tZir" aria-pressed="true">Zirkel mit Timer</button>
+    </div>
+  </header>
+
+  <section id="vUeb" hidden><div class="grid" id="grid"></div></section>
+
+  <section id="vZir">
+    <div class="zirkel">
+      <div class="buehne"><img id="zBild" alt=""><div class="band" id="zBand"></div></div>
+      <div class="panel">
+        <span class="phase bereit" id="zPhase">Bereit</span>
+        <div class="zeit" id="zZeit">20</div>
+        <div class="balken"><i id="zBalken"></i></div>
+        <h2 id="zTitel"></h2>
+        <ul id="zTipps"></ul>
+        <div class="knoepfe">
+          <button type="button" class="btn voll" id="bStart">Start</button>
+          <button type="button" class="btn" id="bZur" aria-label="Vorherige Übung">‹ Zurück</button>
+          <button type="button" class="btn" id="bWei" aria-label="Nächste Übung">Weiter ›</button>
+          <button type="button" class="btn" id="bNeu">Von vorn</button>
+        </div>
+        <div class="einst">
+          <label>Belastung <select id="sLast"><option value="20" selected>20 s</option><option value="30">30 s</option><option value="40">40 s</option></select></label>
+          <label>Wechsel <select id="sPause"><option value="10" selected>10 s</option><option value="15">15 s</option><option value="20">20 s</option></select></label>
+          <label><input type="checkbox" id="sTon" checked> Signalton</label>
+        </div>
+        <div class="punkte" id="zPunkte" aria-label="Übungen"></div>
+        <div class="naechste" id="zNext"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>HKV Aarau · Sport · Animationen aus «Werde stabil!» (planke.jimdofree.com, S. Mollet)</footer>
+</div>
+
+<script>
+(function(){
+if (window.self !== window.top) document.body.classList.add("eingebettet");
+const U = [
+ {t:"Hüftrotation im Stütz", s:"abwechselnd", tipps:["Hoher Stütz, Hände unter den Schultern","Hüfte kontrolliert zur Seite absenken, zurück in den Stütz, dann zur anderen Seite","Schultern bleiben ruhig über den Händen"]},
+ {t:"Stütz mit Armstrecken", s:"abwechselnd", tipps:["Hoher Stütz, Füsse etwas breiter für mehr Halt","Einen Arm diagonal nach vorne strecken, kurz halten, absetzen, Seite wechseln","Becken bleibt waagrecht, nicht mitdrehen"]},
+ {t:"Bergsteiger langsam", s:"abwechselnd", tipps:["Hoher Stütz, Rumpf gespannt","Knie abwechselnd Richtung Brust ziehen und wieder strecken","Ruhig und kontrolliert, nicht hüpfen"]},
+ {t:"Durchdrehen: Stütz und Krebs", s:"abwechselnd", tipps:["Aus dem Stütz einen Arm öffnen und in den umgekehrten Stütz (Krebs) drehen","Bauch nach oben, Hüfte hoch halten, über dieselbe Seite zurück","Nächste Wiederholung zur anderen Seite"]},
+ {t:"Bärenstand mit Beinkick", s:"rechts und links", tipps:["Vierfüsslerstand, Knie knapp über dem Boden","Ein Bein gestreckt nach hinten oben kicken, Knie wieder unter den Körper","Hände und Schultern bleiben stabil"]},
+ {t:"Seitstütz mit Durchfädeln", s:"rechts und links", tipps:["Seitstütz auf der gestreckten Hand, oberer Arm zeigt zur Decke","Oberen Arm unter dem Körper durchfädeln und wieder öffnen","Hüfte oben halten, nicht absinken"]},
+ {t:"Skorpion im Stütz", s:"rechts und links", tipps:["Hoher Stütz","Knie diagonal unter dem Körper zur Gegenschulter ziehen","Danach das Bein angewinkelt nach hinten oben öffnen"]},
+ {t:"Seitstern", s:"rechts und links", tipps:["Seitstütz auf der gestreckten Hand","Oberes Bein und oberen Arm gleichzeitig abspreizen","Körper bildet einen Stern, Hüfte hoch"]},
+ {t:"Seitstütz mit Armschwung", s:"rechts und links", tipps:["Seitstütz auf der gestreckten Hand","Oberen Arm über den Kopf nach vorne schwingen und zurück zur Hüfte","Blick folgt der Hand, Rumpf bleibt fest"]}
+];
+const bild = i => `stabi/uebung_${i+1}.gif`;
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* Übersicht */
+$("grid").innerHTML = U.map((u,i) => `<article class="karte"><img src="${bild(i)}" alt="Übung ${i+1}: ${esc(u.t)}" loading="lazy">
+  <div class="txt"><div class="kopf"><span class="nr">${i+1}</span><h2>${esc(u.t)}</h2><span class="seite">${esc(u.s)}</span></div>
+  <ul>${u.tipps.map(t => `<li>${esc(t)}</li>`).join("")}</ul></div></article>`).join("");
+
+/* Ansicht */
+function ansicht(z){ $("vUeb").hidden = z; $("vZir").hidden = !z; $("tUeb").setAttribute("aria-pressed", String(!z)); $("tZir").setAttribute("aria-pressed", String(z)); }
+$("tUeb").onclick = () => ansicht(false); $("tZir").onclick = () => ansicht(true);
+
+/* Ablauf: seitige Übungen bekommen zwei Durchgänge */
+const plan = [];
+U.forEach((u,i) => { if (u.s === "rechts und links") { plan.push({i, seite:"rechts"}); plan.push({i, seite:"links"}); } else plan.push({i, seite:""}); });
+let pos = 0, phase = "bereit", rest = 0, total = 0, timer = null, ende = 0;
+const last = () => +$("sLast").value, pause = () => +$("sPause").value;
+
+let ctx = null;
+function ton(f, d){ if (!$("sTon").checked) return; try { ctx = ctx || new (window.AudioContext || window.webkitAudioContext)(); const o = ctx.createOscillator(), g = ctx.createGain();
+  o.frequency.value = f; o.connect(g); g.connect(ctx.destination); g.gain.setValueAtTime(.18, ctx.currentTime); g.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + d); o.start(); o.stop(ctx.currentTime + d); } catch(e){} }
+
+function zeige(){
+  const p = plan[pos], u = U[p.i];
+  $("zBild").src = bild(p.i); $("zBild").alt = `Übung ${p.i+1}: ${u.t}`;
+  $("zBand").textContent = `${p.i+1} / ${U.length} · ${u.t}${p.seite ? " · " + p.seite : ""}`;
+  $("zTitel").textContent = u.t + (p.seite ? ` (${p.seite})` : "");
+  $("zTipps").innerHTML = u.tipps.map(t => `<li>${esc(t)}</li>`).join("");
+  const n = plan[pos+1];
+  $("zNext").textContent = n ? `Danach: ${U[n.i].t}${n.seite ? " (" + n.seite + ")" : ""}` : "Letzte Übung, danach ist Teil 2 geschafft.";
+  $("zPunkte").innerHTML = U.map((_,i) => `<span class="${i === p.i ? "jetzt" : (i < p.i ? "fertig" : "")}">${i+1}</span>`).join("");
+  anzeige();
+}
+function anzeige(){
+  const ph = $("zPhase"), z = $("zZeit");
+  ph.className = "phase " + phase; z.className = "zeit " + (phase === "bereit" ? "" : phase);
+  ph.textContent = phase === "last" ? "Belastung" : phase === "pause" ? "Wechsel" : phase === "fertig" ? "Geschafft" : "Bereit";
+  z.textContent = phase === "bereit" ? last() : phase === "fertig" ? "✓" : Math.max(0, Math.ceil(rest));
+  $("zBalken").style.width = total ? (100 * (1 - rest / total)) + "%" : "0%";
+  $("bStart").textContent = timer ? "Pause" : (phase === "bereit" ? "Start" : phase === "fertig" ? "Nochmals" : "Weiter");
+}
+function starte(ph, s){ phase = ph; total = s; rest = s; ende = performance.now() + s * 1000; ton(ph === "last" ? 880 : 520, .25); }
+function tick(){
+  rest = (ende - performance.now()) / 1000;
+  if (phase === "last" && rest <= 3 && rest > 0 && Math.ceil(rest) !== tick.l) { tick.l = Math.ceil(rest); ton(660, .12); }
+  if (rest <= 0) {
+    if (phase === "last") { if (pos >= plan.length - 1) { stop(); phase = "fertig"; ton(988, .5); anzeige(); return; } pos++; zeige(); starte("pause", pause()); }
+    else if (phase === "pause") starte("last", last());
+  }
+  anzeige();
+}
+function stop(){ clearInterval(timer); timer = null; }
+$("bStart").onclick = () => {
+  if (timer) { stop(); anzeige(); return; }
+  if (phase === "fertig") { pos = 0; phase = "bereit"; zeige(); }
+  if (phase === "bereit") starte("last", last()); else ende = performance.now() + rest * 1000;
+  timer = setInterval(tick, 200); anzeige();
+};
+$("bWei").onclick = () => { if (pos < plan.length - 1) { pos++; if (timer) starte("last", last()); else { phase = "bereit"; total = 0; } zeige(); } };
+$("bZur").onclick = () => { if (pos > 0) { pos--; if (timer) starte("last", last()); else { phase = "bereit"; total = 0; } zeige(); } };
+$("bNeu").onclick = () => { stop(); pos = 0; phase = "bereit"; total = 0; zeige(); };
+$("sLast").onchange = anzeige;
+zeige();
+})();
+</script>
+</body>
+</html>
