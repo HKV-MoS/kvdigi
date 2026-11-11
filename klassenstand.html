@@ -159,7 +159,8 @@ const $ = id => document.getElementById(id);
 const el = (t,c,h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
 const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 if (window.self !== window.top) document.body.classList.add("eingebettet");
-let K = "", D = null, TOOL = null, T = null;
+let K = "", D = null, TOOL = null, T = null, PREF = null;
+try { PREF = new URLSearchParams(location.search).get("t") || null; } catch(e){}
 const proz = (a,b) => b ? Math.round(100 * a / b) : 0;
 const zahl = n => Number(n).toLocaleString("de-CH").replace(/[,\u2019']/g, "’");
 
@@ -168,7 +169,8 @@ function laden(){
     if (!d) { $("kMsg").textContent = "Diesen Klassencode gibt es nicht."; $("vStart").hidden = false; $("vStand").hidden = true; return; }
     D = d; $("vStart").hidden = true; $("vStand").hidden = false;
     $("titel").textContent = "Klassenstand " + d.klasse.name;
-    if (!TOOL || !d.tools.some(t => t.tool === TOOL)) TOOL = d.tools.length ? d.tools[0].tool : null;
+    if (PREF) TOOL = PREF;
+    else if (!TOOL || !d.tools.some(t => t.tool === TOOL)) TOOL = d.tools.length ? d.tools[0].tool : null;
     zeichne();
     $("stand").textContent = "Live · Stand " + new Date().toLocaleTimeString("de-CH", {hour:"2-digit", minute:"2-digit", second:"2-digit"});
   }).catch(() => { $("stand").textContent = "Keine Verbindung, nächster Versuch in 15 Sekunden"; });
@@ -187,9 +189,10 @@ function balken(ziel, zeilen){
 function zeichne(){
   const tb = $("tools"); tb.innerHTML = "";
   if (D.tools.length > 1) D.tools.forEach(t => { const b = el("button", null, esc(t.titel || t.tool)); b.type = "button";
-    b.setAttribute("aria-pressed", t.tool === TOOL ? "true" : "false"); b.onclick = () => { TOOL = t.tool; zeichne(); }; tb.appendChild(b); });
+    b.setAttribute("aria-pressed", t.tool === TOOL ? "true" : "false"); b.onclick = () => { TOOL = t.tool; PREF = null; zeichne(); }; tb.appendChild(b); });
   if (!TOOL) { $("kpis").innerHTML = ""; $("saetze").innerHTML = '<li>Noch keine Resultate. Sobald die ersten Aufgaben geprüft sind, erscheint hier der Stand der Klasse.</li>'; $("vert").innerHTML = ""; $("grp").innerHTML = ""; return; }
   T = D.tools.find(t => t.tool === TOOL);
+  if (!T) { $("kpis").innerHTML = ""; $("saetze").innerHTML = '<li>Zu dieser Übung gibt es in der Klasse noch keine Resultate. Sobald die ersten Aufgaben geprüft sind, erscheint hier der Stand.</li>'; $("vert").innerHTML = ""; $("grp").innerHTML = ""; return; }
   $("sub").textContent = (T.titel || T.tool) + " · live und ohne Namen";
   const L = D.lernende.filter(x => x.tool === TOOL), St = D.stat.filter(x => x.tool === TOOL), A = D.aufgaben.filter(x => x.tool === TOOL);
   const total = T.total || A.length, n = L.length;

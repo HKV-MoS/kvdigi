@@ -368,7 +368,8 @@ function links(){
     const url = `https://abu-tools.ch/${t.datei}?k=${encodeURIComponent(K)}&v=1`;
     const code = `<iframe src="${url}" width="100%" height="720" loading="lazy" style="border:0" title="${t.titel}"></iframe>`;
     s.appendChild(el("div", "grpname", esc(t.titel)));
-    [code, url].forEach(txt => { const z = el("div", "snipzeile"); z.appendChild(el("div", "snip", esc(txt)));
+    const stand = `<iframe src="https://abu-tools.ch/klassenstand.html?k=${encodeURIComponent(K)}&t=${t.tool}" width="100%" height="720" loading="lazy" style="border:0" title="Klassenstand ${t.titel}"></iframe>`;
+    [code, url, stand].forEach((txt, ix) => { if (ix === 2) s.appendChild(el("div", "grpname", "Klassenstand nur zu dieser Übung, ohne Namen")); const z = el("div", "snipzeile"); z.appendChild(el("div", "snip", esc(txt)));
       const k = el("button", "btn", "Kopieren"); k.type = "button"; k.onclick = () => { try { navigator.clipboard.writeText(txt).then(() => { k.textContent = "Kopiert"; }); } catch(e){} };
       z.appendChild(k); s.appendChild(z); });
   });
