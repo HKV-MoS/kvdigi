@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wie viel Steuern zahle ich?</title>
+<style>
+/* Zwei Spalten: links Eingabe und Ergebnis, rechts die Progressionskurve */
+:root{
+  --bg:#eef2f1; --surface:#ffffff; --ink:#17302b; --muted:#5b6e69; --line:#d4dedb;
+  --brand:#0b3d36; --brand-soft:#e3eeeb;
+  --s-kanton:#0b5c56; --s-gemeinde:#3f8f86; --s-kirche:#8fbfb8; --s-bund:#c0662b;
+  --l-schnitt:#0b5c56; --l-grenz:#c0662b;
+  --f:"Aptos","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#101716; --surface:#18211f; --ink:#e3ece9; --muted:#9bb0aa; --line:#2c3a37;
+  --brand:#7fc4b6; --brand-soft:#1f2e2b;
+  --s-kanton:#5fb8ac; --s-gemeinde:#3e8a80; --s-kirche:#2c5d57; --s-bund:#e59362;
+  --l-schnitt:#7fd0c3; --l-grenz:#f0a273; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101716; --surface:#18211f; --ink:#e3ece9; --muted:#9bb0aa; --line:#2c3a37;
+  --brand:#7fc4b6; --brand-soft:#1f2e2b;
+  --s-kanton:#5fb8ac; --s-gemeinde:#3e8a80; --s-kirche:#2c5d57; --s-bund:#e59362;
+  --l-schnitt:#7fd0c3; --l-grenz:#f0a273; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);font-size:15px;line-height:1.45}
+.wrap{max-width:1100px;margin:0 auto;padding:18px 16px 24px}
+.karte{background:var(--surface);border-radius:14px;box-shadow:0 2px 14px rgba(0,0,0,.07);padding:18px 22px 16px}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.eyebrow{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{margin:2px 0 0;font-size:25px;line-height:1.15}
+.ort{display:flex;gap:10px;flex-wrap:wrap;font-size:13.5px;color:var(--muted)}
+.ort label{display:flex;flex-direction:column;gap:2px}
+select,input[type=number]{font:inherit;font-size:14.5px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:5px 8px}
+.raster{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:18px;margin-top:14px}
+@media (max-width:820px){.raster{grid-template-columns:1fr}}
+.lohn{display:flex;flex-direction:column;gap:6px}
+.lohn .lab{font-size:13.5px;color:var(--muted);font-weight:600}
+.lohnzeile{display:flex;align-items:center;gap:10px}
+.lohnzeile input[type=number]{font-size:24px;font-weight:700;width:170px;text-align:right;font-variant-numeric:tabular-nums}
+.lohnzeile span{font-size:15px;color:var(--muted)}
+input[type=range]{width:100%;accent-color:var(--brand)}
+.schnell{display:flex;flex-wrap:wrap;gap:5px}
+.schnell button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:3px 10px;cursor:pointer}
+.schnell button:hover{border-color:var(--brand)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.weg{margin-top:10px;font-size:13.5px;border-top:1px solid var(--line)}
+.weg div{display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px dashed var(--line)}
+.weg div span:last-child{font-variant-numeric:tabular-nums;white-space:nowrap}
+.weg .sum{font-weight:700;border-bottom:0}
+.ergebnis{margin-top:12px;background:var(--brand-soft);border-radius:12px;padding:12px 14px}
+.ergebnis .gross{font-size:34px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums}
+.ergebnis .klein{color:var(--muted);font-size:14px}
+.stapel{display:flex;height:16px;border-radius:5px;overflow:hidden;margin:10px 0 6px;gap:2px;background:var(--surface)}
+.stapel i{display:block;height:100%}
+.legende{display:grid;grid-template-columns:1fr auto;gap:2px 10px;font-size:13.5px}
+.legende span:nth-child(even){font-variant-numeric:tabular-nums;text-align:right}
+.punkt{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:0}
+details{margin-top:10px;font-size:13.5px}
+details summary{cursor:pointer;color:var(--brand);font-weight:600}
+.abz{display:grid;grid-template-columns:1fr auto;gap:6px 10px;align-items:center;margin-top:8px}
+.abz input[type=number]{width:110px;text-align:right}
+.diagramm h2{font-size:16px;margin:0 0 2px}
+.diagramm p.h{margin:0 0 6px;font-size:13px;color:var(--muted)}
+.svgbox{position:relative}
+svg{display:block;width:100%;height:auto;touch-action:none}
+.tip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 9px;font-size:12.5px;box-shadow:0 3px 10px rgba(0,0,0,.12);white-space:nowrap;font-variant-numeric:tabular-nums}
+.leg2{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-top:4px}
+.leg2 i{display:inline-block;width:18px;height:3px;border-radius:2px;vertical-align:4px;margin-right:6px}
+.vergleich{margin-top:10px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.vergleich div{border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:13px;color:var(--muted)}
+.vergleich b{display:block;font-size:17px;color:var(--ink);font-variant-numeric:tabular-nums}
+.vergleich div.jetzt{border-color:var(--brand);background:var(--brand-soft)}
+.merke{margin-top:10px;font-size:14px;border-left:4px solid var(--l-grenz);padding:4px 10px}
+footer{margin-top:12px;font-size:12px;color:var(--muted)}
+.eingebettet .wrap{padding:0}
+.eingebettet .karte{border-radius:0;box-shadow:none;padding:12px 18px 10px}
+.eingebettet h1{font-size:21px}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="karte">
+<header>
+  <div><div class="eyebrow">Steuern · Kanton Aargau · Steuerjahr 2026</div><h1>Wie viel Steuern zahle ich?</h1></div>
+  <div class="ort">
+    <label for="gem">Wohngemeinde<select id="gem"></select></label>
+    <label for="gemfuss" id="gemfussL" hidden>Steuerfuss Gemeinde %<input type="number" id="gemfuss" value="100" min="0" max="200" step="1"></label>
+    <label for="kirche">Kirchensteuer<select id="kirche"><option value="">keine</option><option value="ref">reformiert</option><option value="kath">römisch-katholisch</option></select></label>
+  </div>
+</header>
+
+<div class="raster">
+  <div>
+    <div class="lohn">
+      <label class="lab" for="lohn">Jahresverdienst (Bruttolohn laut Lohnausweis)</label>
+      <div class="lohnzeile"><input type="number" id="lohn" value="60000" min="0" max="1000000" step="1000"><span>CHF pro Jahr</span></div>
+      <input type="range" id="regler" min="0" max="250000" step="1000" value="60000" aria-label="Jahresverdienst">
+      <div class="schnell" aria-label="Beispiele">
+        <button type="button" data-l="12000">12’000 (Lehre)</button>
+        <button type="button" data-l="55000">55’000 (nach der Lehre)</button>
+        <button type="button" data-l="85000">85’000</button>
+        <button type="button" data-l="150000">150’000</button>
+      </div>
+    </div>
+
+    <div class="weg" id="weg"></div>
+
+    <div class="ergebnis" aria-live="polite">
+      <div class="klein">Steuern pro Jahr (Einkommen, ohne Vermögen)</div>
+      <div class="gross" id="total"></div>
+      <div class="klein" id="totalInfo"></div>
+      <div class="stapel" id="stapel"></div>
+      <div class="legende" id="legende"></div>
+    </div>
+
+    <details>
+      <summary>Abzüge anpassen</summary>
+      <div class="abz">
+        <label for="pk">Pensionskasse (Lohnanteil in %)</label><input type="number" id="pk" value="4" min="0" max="15" step="0.5">
+        <label for="fahr">Fahrkosten Arbeitsweg (CHF)</label><input type="number" id="fahr" value="0" min="0" step="100">
+        <label for="s3a">Einzahlung Säule 3a (CHF)</label><input type="number" id="s3a" value="0" min="0" max="7258" step="100">
+        <label for="vers">Versicherungsabzug (CHF)</label><input type="number" id="vers" value="2000" min="0" step="100">
+        <label for="verpf">Mittagessen auswärts (Pauschale CHF 3’200)</label><input type="checkbox" id="verpf" checked>
+      </div>
+    </details>
+  </div>
+
+  <div class="diagramm">
+    <h2>So wirkt die Progression</h2>
+    <p class="h">Je höher der Lohn, desto grösser der Anteil, der an die Steuern geht.</p>
+    <div class="svgbox"><svg id="svg" viewBox="0 0 520 270" role="img" aria-label="Kurve der Steuerbelastung nach Lohn"></svg><div class="tip" id="tip" hidden></div></div>
+    <div class="leg2"><span><i style="background:var(--l-schnitt)"></i>Steuern in % des ganzen Lohns (Durchschnitt)</span><span><i style="background:var(--l-grenz)"></i>von 100 Franken mehr Lohn an Steuern (Grenzsteuersatz)</span></div>
+    <div class="vergleich" id="vergleich"></div>
+    <div class="merke" id="merke"></div>
+  </div>
+</div>
+
+<footer>Vereinfachtes Modell für den Unterricht: alleinstehend, ohne Kinder, nur Einkommenssteuer. Tarif Kanton Aargau (Tarif A, gültig ab 2025), Kantonssteuerfuss 2026: 103 %, Gemeinde- und Kirchensteuerfüsse 2026 laut Kantonalem Steueramt; direkte Bundessteuer Tarif 2026. Abzüge pauschal und für Kanton und Bund gleich gerechnet. Für die eigene Steuererklärung gilt der Steuerrechner des Kantons.</footer>
+</div></div>
+
+<script>
+(function(){
+if (window.self !== window.top) document.body.classList.add("eingebettet");
+const $ = id => document.getElementById(id);
+const fr = n => "CHF " + Math.round(n).toLocaleString("de-CH").replace(/[,’']/g, "’");
+const zahl = n => Math.round(n).toLocaleString("de-CH").replace(/[,’']/g, "’");
+const pr = (n, d) => (n * 100).toFixed(d == null ? 1 : d).replace(".", ",") + " %";
+
+/* Gemeinde- und Kirchensteuerfüsse 2026 (Kantonales Steueramt Aargau) */
+const GEM = [
+  {n:"Aarau", g:96, ref:15, kath:19}, {n:"Baden", g:89, ref:18, kath:19}, {n:"Lenzburg", g:105, ref:17, kath:19},
+  {n:"Mägenwil", g:113, ref:20, kath:22}, {n:"Spreitenbach", g:100, ref:21, kath:19}, {n:"Wohlen", g:116, ref:18, kath:17},
+  {n:"andere Gemeinde", g:null, ref:18, kath:20}
+];
+const KANTON = 1.03;
+GEM.forEach((g,i) => { const o = document.createElement("option"); o.value = i; o.textContent = g.n + (g.g ? ` (${g.g} %)` : ""); $("gem").appendChild(o); });
+
+/* Kanton Aargau, einfache Steuer, Tarif A (§ 43 StG, gültig ab 2025): [Breite der Stufe, Satz] */
+const AG = [[4300,0],[3800,.01],[3900,.02],[4200,.03],[4300,.04],[5200,.05],[7400,.06],[8600,.07],[9600,.08],[11800,.085],[11700,.09],[35300,.095],[66300,.10],[176300,.105],[Infinity,.11]];
+function einfach(x){ let t = 0, r = x; for (const [b, s] of AG) { const d = Math.min(r, b); t += d * s; r -= d; if (r <= 0) break; } return t; }
+/* Direkte Bundessteuer 2026, Alleinstehende: [ab Einkommen, Franken je 100 Franken], höchstens 11,5 % */
+const BUND = [[15200,.77],[33200,.88],[43500,2.64],[58000,2.97],[76200,5.94],[82100,6.60],[108800,8.80],[141600,11.00],[185100,13.20]];
+function bund(x){ let t = 0; BUND.forEach(([s, r], k) => { const e = k + 1 < BUND.length ? BUND[k+1][0] : Infinity; if (x > s) t += (Math.min(x, e) - s) * r / 100; }); return Math.min(t, x * 0.115); }
+
+function rechne(brutto, glatt){
+  const gi = +$("gem").value, g = GEM[gi], k = $("kirche").value;
+  const gf = (g.g == null ? +$("gemfuss").value || 0 : g.g) / 100, kf = k ? g[k] / 100 : 0;
+  const ahv = brutto * 0.053, alv = Math.min(brutto, 148200) * 0.011;
+  const pk = brutto >= 22680 ? brutto * (+$("pk").value || 0) / 100 : 0;
+  const netto = Math.max(0, brutto - ahv - alv - pk);
+  const beruf = netto > 0 ? Math.min(netto, Math.max(2000, Math.min(4000, netto * 0.03))) : 0;
+  const verpf = $("verpf").checked && netto > 0 ? 3200 : 0;
+  const fahr = +$("fahr").value || 0, s3a = Math.min(+$("s3a").value || 0, 7258), vers = +$("vers").value || 0;
+  const roh = Math.max(0, netto - beruf - verpf - fahr - s3a - vers), steuerbar = glatt ? roh : Math.floor(roh / 100) * 100;
+  const e = einfach(steuerbar);
+  const t = {kanton: e * KANTON, gemeinde: e * gf, kirche: e * kf, bund: bund(steuerbar)};
+  t.total = t.kanton + t.gemeinde + t.kirche + t.bund;
+  return {brutto, ahv, alv, pk, netto, beruf, verpf, fahr, s3a, vers, steuerbar, einfach: e, t};
+}
+const totalBei = b => rechne(b).t.total, glattBei = b => rechne(b, true).t.total;
+
+/* Diagramm */
+const W = 520, H = 270, L = 46, R = 14, T = 14, B = 34;
+let xmax = 200000, ymax = 0.35;
+const sx = v => L + (W - L - R) * v / xmax, sy = v => T + (H - T - B) * (1 - v / ymax);
+function kurve(){
+  const b = +$("lohn").value || 0;
+  xmax = Math.max(200000, Math.ceil(b * 1.2 / 50000) * 50000);
+  const pts = []; const step = xmax / 200;
+  for (let x = step; x <= xmax; x += step) { const t0 = glattBei(x), t1 = glattBei(x + 2000); pts.push([x, t0 / x, (t1 - t0) / 2000]); }
+  ymax = Math.max(0.2, Math.ceil(Math.max(...pts.map(p => p[2])) * 10 + 0.5) / 10);
+  const svg = $("svg"); let s = "";
+  for (let y = 0; y <= ymax + 1e-9; y += 0.05) {
+    s += `<line x1="${L}" x2="${W - R}" y1="${sy(y)}" y2="${sy(y)}" stroke="var(--line)" stroke-width="1"/>`;
+    s += `<text x="${L - 6}" y="${sy(y) + 4}" text-anchor="end" font-size="11" fill="var(--muted)">${Math.round(y * 100)} %</text>`;
+  }
+  const tick = xmax <= 250000 ? 50000 : 100000;
+  for (let x = 0; x <= xmax; x += tick) s += `<text x="${sx(x)}" y="${H - B + 16}" text-anchor="middle" font-size="11" fill="var(--muted)">${x === 0 ? "0" : zahl(x / 1000) + "’000"}</text>`;
+  s += `<text x="${W - R}" y="${H - 4}" text-anchor="end" font-size="11" fill="var(--muted)">Bruttolohn pro Jahr (CHF)</text>`;
+  const pfad = i => pts.map((p, j) => (j ? "L" : "M") + sx(p[0]).toFixed(1) + " " + sy(Math.min(p[i], ymax)).toFixed(1)).join(" ");
+  s += `<path d="${pfad(2)}" fill="none" stroke="var(--l-grenz)" stroke-width="2" stroke-linejoin="round"/>`;
+  s += `<path d="${pfad(1)}" fill="none" stroke="var(--l-schnitt)" stroke-width="2.5" stroke-linejoin="round"/>`;
+  if (b > 0 && b <= xmax) {
+    const t0 = glattBei(b), avg = t0 / b, mar = (glattBei(b + 2000) - t0) / 2000;
+    s += `<line x1="${sx(b)}" x2="${sx(b)}" y1="${T}" y2="${H - B}" stroke="var(--ink)" stroke-width="1" stroke-dasharray="3 3"/>`;
+    s += `<circle cx="${sx(b)}" cy="${sy(Math.min(avg, ymax))}" r="5" fill="var(--l-schnitt)" stroke="var(--surface)" stroke-width="2"/>`;
+    s += `<circle cx="${sx(b)}" cy="${sy(Math.min(mar, ymax))}" r="5" fill="var(--l-grenz)" stroke="var(--surface)" stroke-width="2"/>`;
+  }
+  s += `<line id="hl" x1="0" x2="0" y1="${T}" y2="${H - B}" stroke="var(--muted)" stroke-width="1" visibility="hidden"/>`;
+  s += `<rect id="hit" x="${L}" y="${T}" width="${W - L - R}" height="${H - T - B}" fill="transparent" style="cursor:crosshair"/>`;
+  svg.innerHTML = s;
+  const hit = svg.querySelector("#hit"), hl = svg.querySelector("#hl"), tip = $("tip");
+  function lohnAus(ev){ const r = svg.getBoundingClientRect(); const x = (ev.clientX - r.left) * W / r.width; return Math.max(0, Math.min(xmax, Math.round((x - L) / (W - L - R) * xmax / 1000) * 1000)); }
+  hit.addEventListener("pointermove", ev => {
+    const x = lohnAus(ev); if (!x) { tip.hidden = true; hl.setAttribute("visibility", "hidden"); return; }
+    const t0 = totalBei(x), mar = (glattBei(x + 2000) - glattBei(x)) / 2000;
+    hl.setAttribute("x1", sx(x)); hl.setAttribute("x2", sx(x)); hl.setAttribute("visibility", "visible");
+    tip.hidden = false; tip.innerHTML = `Lohn <b>${fr(x)}</b><br>Steuern ${fr(t0)} · ${pr(t0 / x)}<br>Grenzsteuersatz ${pr(mar)}<br><span style="color:var(--muted)">Klicken übernimmt den Lohn</span>`;
+    const r = svg.getBoundingClientRect(), px = (ev.clientX - r.left);
+    tip.style.left = Math.min(px + 12, r.width - tip.offsetWidth - 4) + "px"; tip.style.top = "8px";
+  });
+  hit.addEventListener("pointerleave", () => { tip.hidden = true; hl.setAttribute("visibility", "hidden"); });
+  hit.addEventListener("click", ev => { const x = lohnAus(ev); if (x) setzen(x); });
+}
+
+function zeige(){
+  const b = Math.max(0, +$("lohn").value || 0), r = rechne(b), t = r.t;
+  const zeilen = [
+    ["Bruttolohn", fr(b)],
+    ["– AHV/IV/EO und ALV", fr(r.ahv + r.alv)],
+    ["– Pensionskasse", fr(r.pk)],
+    ["= Nettolohn", fr(r.netto), "sum"],
+    ["– Berufskosten, Mittagessen, Fahrt", fr(r.beruf + r.verpf + r.fahr)],
+    ["– Versicherungen, Säule 3a", fr(r.vers + r.s3a)],
+    ["= Steuerbares Einkommen", fr(r.steuerbar), "sum"]
+  ];
+  $("weg").innerHTML = zeilen.map(z => `<div class="${z[2] || ""}"><span>${z[0]}</span><span>${z[1]}</span></div>`).join("");
+  $("total").textContent = fr(t.total);
+  $("totalInfo").textContent = b ? `${pr(t.total / b)} des Bruttolohns · etwa ${fr(t.total / 12)} pro Monat` : "Kein Lohn, keine Einkommenssteuer.";
+  const teile = [["Kanton", t.kanton, "var(--s-kanton)"], ["Gemeinde", t.gemeinde, "var(--s-gemeinde)"], ["Kirche", t.kirche, "var(--s-kirche)"], ["Bund", t.bund, "var(--s-bund)"]].filter(x => x[0] !== "Kirche" || $("kirche").value);
+  $("stapel").innerHTML = t.total ? teile.map(x => `<i style="width:${100 * x[1] / t.total}%;background:${x[2]}" title="${x[0]}: ${fr(x[1])}"></i>`).join("") : "";
+  $("legende").innerHTML = teile.map(x => `<span><span class="punkt" style="background:${x[2]}"></span>${x[0]}</span><span>${fr(x[1])}</span>`).join("");
+  // Vergleich halber / doppelter Lohn
+  const h = totalBei(b / 2), d = totalBei(b * 2);
+  $("vergleich").innerHTML = b ? `<div>Halber Lohn<br>${fr(b / 2)}<b>${fr(h)}</b>${b / 2 ? pr(h / (b / 2)) : ""}</div><div class="jetzt">Ihr Lohn<br>${fr(b)}<b>${fr(t.total)}</b>${pr(t.total / b)}</div><div>Doppelter Lohn<br>${fr(b * 2)}<b>${fr(d)}</b>${pr(d / (b * 2))}</div>` : "";
+  const mar = (glattBei(b + 2000) - glattBei(b)) / 2000;
+  $("merke").innerHTML = !b ? "Geben Sie einen Jahreslohn ein." :
+    `Von 100 Franken Lohnerhöhung gehen bei Ihnen etwa <b>${Math.round(mar * 100)} Franken</b> an die Steuern.` +
+    (h > 0 && t.total > 0 ? ` Wer doppelt so viel verdient, zahlt <b>${(d / t.total).toFixed(1).replace(".", ",")}-mal</b> so viel Steuern: Das ist die Progression.` : ` Bei kleinen Einkommen fällt fast keine Steuer an.`);
+  kurve();
+}
+function setzen(v){ v = Math.max(0, Math.min(1000000, Math.round(v))); $("lohn").value = v; $("regler").value = Math.min(250000, v); zeige(); }
+$("lohn").addEventListener("input", () => { $("regler").value = Math.min(250000, +$("lohn").value || 0); zeige(); });
+$("regler").addEventListener("input", () => { $("lohn").value = $("regler").value; zeige(); });
+document.querySelectorAll(".schnell button").forEach(b => b.addEventListener("click", () => setzen(+b.dataset.l)));
+$("gem").addEventListener("change", () => { $("gemfussL").hidden = GEM[+$("gem").value].g != null; zeige(); });
+["gemfuss", "kirche", "pk", "fahr", "s3a", "vers", "verpf"].forEach(id => $(id).addEventListener("input", zeige));
+$("verpf").addEventListener("change", zeige);
+zeige();
+})();
+</script>
+</body>
+</html>
