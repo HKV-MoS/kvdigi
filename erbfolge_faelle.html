@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gesetzliche Erbfolge – Fälle</title>
+<style>
+:root{
+  --bg:#eef2f1; --surface:#ffffff; --ink:#17302b; --muted:#5b6e69; --line:#d4dedb;
+  --brand:#0b3d36; --brand-soft:#e3eeeb; --ok:#1f7a4d; --ok-soft:#e2f3ea; --bad:#b03a2e; --bad-soft:#f8e4e1;
+  --gold:#d79a12; --gold-soft:#fff3d6; --tot:#9aa7a4;
+  --f:"Aptos","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#101716; --surface:#18211f; --ink:#e3ece9; --muted:#9bb0aa; --line:#2c3a37;
+  --brand:#7fc4b6; --brand-soft:#1f2e2b; --ok:#6fd19c; --ok-soft:#163327; --bad:#f08a7e; --bad-soft:#3a1f1c;
+  --gold:#f2b84b; --gold-soft:#3a2f17; --tot:#62716d;
+}}
+:root[data-theme="dark"]{
+  --bg:#101716; --surface:#18211f; --ink:#e3ece9; --muted:#9bb0aa; --line:#2c3a37;
+  --brand:#7fc4b6; --brand-soft:#1f2e2b; --ok:#6fd19c; --ok-soft:#163327; --bad:#f08a7e; --bad-soft:#3a1f1c;
+  --gold:#f2b84b; --gold-soft:#3a2f17; --tot:#62716d;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);font-size:16px;line-height:1.45}
+.wrap{display:flex;justify-content:center;padding:18px 16px}
+.karte{background:var(--surface);max-width:1040px;width:100%;border-radius:14px;box-shadow:0 2px 14px rgba(0,0,0,.07);padding:20px 28px 18px}
+header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+h1{margin:0;font-size:24px;color:var(--brand)}
+.sub{color:var(--muted);font-size:14px}
+.pokale{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--muted)}
+.pokale svg{width:22px;height:22px}
+.pokale .an path{fill:var(--gold)}
+.pokale .aus path{fill:var(--line)}
+.reiter{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line);margin-top:8px;flex-wrap:wrap}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+.reiter .legende{padding-bottom:7px}
+nav button{font:inherit;font-size:15px;font-weight:600;background:none;border:0;border-bottom:3px solid transparent;color:var(--muted);padding:6px 14px 7px;cursor:pointer;display:flex;align-items:center;gap:6px}
+nav button[aria-selected="true"]{color:var(--brand);border-bottom-color:var(--brand)}
+nav button .m{font-size:13px}
+nav button .m.ok{color:var(--ok)}
+nav button .m.gold{color:var(--gold)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.auftrag{margin:8px 0 2px;font-size:15px}
+.auftrag b{color:var(--brand)}
+.legende{display:flex;gap:12px;font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+.legende span{display:inline-flex;align-items:center;gap:5px}
+.leg-e{width:14px;height:14px;border-radius:50%;border:3px solid var(--gold);display:inline-block}
+.leg-t{width:14px;height:14px;border-radius:50%;border:2px dashed var(--tot);display:inline-block}
+.buehne-aussen{position:relative;width:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
+.buehne{position:absolute;left:0;top:0;width:900px;transform-origin:0 0}
+.buehne svg.linien{position:absolute;left:0;top:0;overflow:visible}
+.linien line,.linien path{stroke:var(--muted);stroke-width:2;fill:none}
+.person{position:absolute;width:140px;margin-left:-70px;text-align:center}
+.symbol{width:50px;height:50px;margin:0 auto;border-radius:50%;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:42px;font-weight:400;line-height:1;background:var(--surface);position:relative;color:var(--ink)}
+.person.tot .symbol{border:2px dashed var(--tot);color:var(--tot)}
+.person.tot .symbol::after{content:"";position:absolute;left:-6px;right:-6px;top:50%;height:2px;background:var(--tot);transform:rotate(-40deg)}
+.person.erbl .symbol{border:4px solid var(--gold);color:var(--ink)}
+.person.erbl .symbol::after{content:"";position:absolute;left:-8px;right:-8px;top:50%;height:3px;background:var(--gold);transform:rotate(-40deg)}
+.person.erbl .symbol::before{content:"";position:absolute;left:-8px;right:-8px;top:50%;height:3px;background:var(--gold);transform:rotate(40deg)}
+.rolle{font-size:12.5px;color:var(--muted);margin-top:2px;line-height:1.2}
+.person.erbl .rolle{color:var(--gold);font-weight:700}
+.feld{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:4px}
+.feld label{font-size:12px;color:var(--muted)}
+.feld input{font:inherit;font-size:16px;font-weight:600;width:96px;text-align:right;padding:4px 6px;border:2px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink)}
+.feld .z{width:20px;font-weight:800;font-size:17px;text-align:left}
+.person.ok input{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.person.ok .z{color:var(--ok)}
+.person.falsch input{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}
+.person.falsch .z{color:var(--bad)}
+.person.gezeigt input{border-color:var(--line);color:var(--muted);font-style:italic}
+.ehe{position:absolute;font-size:30px;color:var(--muted);transform:translate(-50%,-50%)}
+.nachlass{position:absolute;transform:translateY(-50%);background:var(--brand-soft);color:var(--brand);font-weight:700;border-radius:8px;padding:4px 10px;font-size:15px;white-space:nowrap}
+.leiste{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.btn{font:inherit;font-weight:600;font-size:14.5px;border-radius:8px;padding:7px 14px;cursor:pointer;border:1px solid var(--brand);background:var(--surface);color:var(--brand)}
+.btn.voll{background:var(--brand);color:var(--surface)}
+.btn.leise{border-color:var(--line);color:var(--muted)}
+.meldung{font-size:15px;font-weight:600;min-height:22px}
+.meldung.ok{color:var(--ok)} .meldung.bad{color:var(--bad)}
+.weg{background:var(--bg);border-left:4px solid var(--brand);border-radius:6px;padding:8px 12px;font-size:14.5px;margin-top:8px}
+.weg ol{margin:4px 0 0;padding-left:20px}
+.sieg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.sieg .box{background:var(--gold-soft);border:2px solid var(--gold);border-radius:16px;padding:14px 26px;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.18);animation:hoch .5s cubic-bezier(.2,1.5,.4,1) both}
+.sieg svg{width:84px;height:84px;display:block;margin:0 auto 4px;animation:wackel 1.2s ease-in-out .4s 2}
+.sieg svg path{fill:var(--gold)}
+.sieg b{font-size:20px;color:var(--ink)}
+.sieg span{display:block;font-size:14px;color:var(--muted)}
+@keyframes hoch{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes wackel{0%,100%{transform:rotate(0)}25%{transform:rotate(-10deg)}75%{transform:rotate(10deg)}}
+.konf{position:fixed;top:-20px;width:10px;height:14px;border-radius:2px;pointer-events:none;animation:fall linear forwards;z-index:50}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+.fuss{margin-left:auto;font-size:12px;color:var(--muted)}
+.fuss button{font:inherit;font-size:12px;background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;padding:0}
+@media (prefers-reduced-motion: reduce){.sieg .box,.sieg svg{animation:none}.konf{display:none}}
+body.eingebettet{background:var(--surface)}
+body.eingebettet .wrap{padding:0}
+body.eingebettet .karte{border-radius:0;box-shadow:none;padding:10px 18px 8px}
+body.eingebettet h1{font-size:21px}
+body.eingebettet .sub{font-size:13px}
+.wisch{display:none}
+@media (max-width:640px){.wisch{display:inline}.karte{padding:16px}.auftrag{font-size:14px}}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="karte">
+<header>
+  <div><h1>Gesetzliche Erbfolge – wer erhält wie viel?</h1>
+  <div class="sub">Tragen Sie bei jeder lebenden Person den Betrag in CHF ein. Wer nichts erbt, erhält 0.<span class="wisch"> Baum seitlich wischen.</span></div></div>
+  <div class="pokale" id="pokale" aria-label="Gelöste Fälle"></div>
+</header>
+<div class="reiter"><nav id="nav" role="tablist"></nav>
+  <div class="legende"><span><i class="leg-e"></i>verstorbene Person (Erbschaft)</span><span><i class="leg-t"></i>bereits vorher verstorben</span><span>⚭ verheiratet</span></div></div>
+<div class="auftrag" id="auftrag"></div>
+<div class="buehne-aussen" id="aussen"><div class="buehne" id="buehne"></div><div class="sieg" id="sieg" hidden></div></div>
+<div class="leiste">
+  <button class="btn voll" id="pruefen" type="button">Prüfen</button>
+  <button class="btn leise" id="zeigen" type="button">Lösung zeigen</button>
+  <button class="btn leise" id="leeren" type="button">Fall neu beginnen</button>
+  <button class="btn leise" id="wegKnopf" type="button" hidden>Lösungsweg</button>
+  <button class="btn" id="weiter" type="button" hidden>Nächster Fall →</button>
+  <span class="meldung" id="meldung" aria-live="polite"></span>
+  <span class="fuss">Art. 457, 462 ZGB · MoS · <button type="button" id="reset">Alles zurücksetzen</button></span>
+</div>
+<div class="weg" id="weg" hidden></div>
+
+</div></div>
+
+<script src="lernstand.js?v=1"></script>
+<script>
+(function(){
+"use strict";
+try { if (window.self !== window.top) document.body.classList.add("eingebettet"); } catch(e){ document.body.classList.add("eingebettet"); }
+
+const F = "♀", M = "♂";
+// p: x/y = Mittelpunkt Symbol; s = Geschlecht; z = Zustand (e = Erblasser/in, t = vorverstorben, l = lebt); soll = Betrag
+const FAELLE = [
+ { id:"f1", titel:"Fall 1", nachlass:60000, h:285,
+   text:"Die Erblasserin hinterlässt ihren Ehemann und drei Töchter.",
+   p:[ {k:"a", x:340,y:45, s:F, z:"e", r:"Erblasserin"},
+       {k:"b", x:520,y:45, s:M, z:"l", r:"Ehemann", soll:30000},
+       {k:"c", x:220,y:190, s:F, z:"l", r:"Tochter", soll:10000},
+       {k:"d", x:430,y:190, s:F, z:"l", r:"Tochter", soll:10000},
+       {k:"e", x:640,y:190, s:F, z:"l", r:"Tochter", soll:10000} ],
+   ehe:[["a","b"]], kinder:[ [["a","b"],["c","d","e"]] ],
+   weg:["Ehemann und Nachkommen erben zusammen: Der Ehemann erhält ½ = CHF 30'000.",
+        "Die andere Hälfte, CHF 30'000, geht an die Nachkommen und wird durch drei geteilt: jede Tochter erhält CHF 10'000."] },
+ { id:"f2", titel:"Fall 2", nachlass:30000, h:385,
+   text:"Der Erblasser stirbt. Seine Ehefrau ist bereits vorher gestorben. Er hat zwei Söhne, einer davon hat selbst zwei Kinder.",
+   p:[ {k:"a", x:340,y:45, s:M, z:"e", r:"Erblasser"},
+       {k:"b", x:520,y:45, s:F, z:"t", r:"Ehefrau (vorverstorben)"},
+       {k:"c", x:240,y:170, s:M, z:"l", r:"Sohn", soll:15000},
+       {k:"d", x:620,y:170, s:M, z:"l", r:"Sohn", soll:15000},
+       {k:"e", x:520,y:295, s:F, z:"l", r:"Enkelin", soll:0},
+       {k:"f", x:720,y:295, s:M, z:"l", r:"Enkel", soll:0} ],
+   ehe:[["a","b"]], kinder:[ [["a","b"],["c","d"]], [["d"],["e","f"]] ],
+   weg:["Es gibt keinen Ehegatten mehr: Der ganze Nachlass geht an die Nachkommen.",
+        "Zwei Söhne: je CHF 15'000.",
+        "Die Enkel erhalten nichts, weil ihr Vater noch lebt. Kinder treten nur an die Stelle eines verstorbenen Elternteils."] },
+ { id:"f3", titel:"Fall 3", nachlass:100000, h:385,
+   text:"Die Erblasserin hinterlässt ihren Ehemann und einen Sohn. Ihre Tochter ist bereits gestorben und hatte zwei Kinder.",
+   p:[ {k:"a", x:340,y:45, s:F, z:"e", r:"Erblasserin"},
+       {k:"b", x:520,y:45, s:M, z:"l", r:"Ehemann", soll:50000},
+       {k:"c", x:260,y:170, s:F, z:"t", r:"Tochter (vorverstorben)"},
+       {k:"d", x:620,y:170, s:M, z:"l", r:"Sohn", soll:25000},
+       {k:"e", x:160,y:295, s:F, z:"l", r:"Enkelin", soll:12500},
+       {k:"f", x:360,y:295, s:M, z:"l", r:"Enkel", soll:12500} ],
+   ehe:[["a","b"]], kinder:[ [["a","b"],["c","d"]], [["c"],["e","f"]] ],
+   weg:["Der Ehemann erhält ½ = CHF 50'000.",
+        "Die Nachkommen erhalten CHF 50'000, aufgeteilt auf zwei Stämme: je CHF 25'000.",
+        "Der Sohn lebt und erhält CHF 25'000.",
+        "Die Tochter ist vorverstorben: Ihre zwei Kinder treten an ihre Stelle und teilen CHF 25'000, also je CHF 12'500."] },
+ { id:"f4", titel:"Fall 4", nachlass:120000, h:505,
+   text:"Die Erblasserin hinterlässt ihren Ehemann. Von ihren drei Söhnen lebt nur noch einer. Achten Sie genau darauf, wer vorverstorben ist.",
+   p:[ {k:"a", x:340,y:45, s:F, z:"e", r:"Erblasserin"},
+       {k:"b", x:520,y:45, s:M, z:"l", r:"Ehemann", soll:60000},
+       {k:"c", x:160,y:170, s:M, z:"l", r:"Sohn", soll:20000},
+       {k:"d", x:430,y:170, s:M, z:"t", r:"Sohn (vorverstorben)"},
+       {k:"e", x:700,y:170, s:M, z:"t", r:"Sohn (vorverstorben)"},
+       {k:"f", x:70, y:295, s:F, z:"l", r:"Enkelin", soll:0},
+       {k:"g", x:230,y:295, s:M, z:"l", r:"Enkel", soll:0},
+       {k:"h", x:430,y:295, s:F, z:"l", r:"Enkelin", soll:20000},
+       {k:"i", x:620,y:295, s:F, z:"t", r:"Enkelin (vorverstorben)"},
+       {k:"j", x:800,y:295, s:M, z:"l", r:"Enkel", soll:10000},
+       {k:"l", x:540,y:420, s:F, z:"l", r:"Urenkelin", soll:5000},
+       {k:"m", x:710,y:420, s:M, z:"l", r:"Urenkel", soll:5000} ],
+   ehe:[["a","b"]], kinder:[ [["a","b"],["c","d","e"]], [["c"],["f","g"]], [["d"],["h"]], [["e"],["i","j"]], [["i"],["l","m"]] ],
+   weg:["Der Ehemann erhält ½ = CHF 60'000.",
+        "Die Nachkommen erhalten CHF 60'000, aufgeteilt auf drei Stämme (drei Söhne): je CHF 20'000.",
+        "Sohn 1 lebt und erhält CHF 20'000. Seine Kinder erhalten nichts.",
+        "Sohn 2 ist vorverstorben: Seine einzige Tochter erhält seine CHF 20'000.",
+        "Sohn 3 ist vorverstorben: Seine zwei Kinder teilen CHF 20'000, je CHF 10'000.",
+        "Die Enkelin ist ebenfalls vorverstorben: Ihre zwei Kinder teilen ihre CHF 10'000, je CHF 5'000."] }
+];
+
+const KEY = "hkv_erbfolge_faelle_v1";
+let S;
+try { S = JSON.parse(localStorage.getItem(KEY) || "null"); } catch(e){ S = null; }
+if (!S || typeof S !== "object") S = {};
+S.w = S.w || {}; S.f = S.f || {}; if (typeof S.cur !== "number") S.cur = 0;
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
+
+const $ = id => document.getElementById(id);
+const chf = n => "CHF " + String(n).replace(/\B(?=(\d{3})+(?!\d))/g, "'");
+const POKAL = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v2h3v3a4 4 0 0 1-4 4h-.3A5 5 0 0 1 13 14.9V18h3v3H8v-3h3v-3.1A5 5 0 0 1 8.3 12H8a4 4 0 0 1-4-4V5h3V3zm0 4H6v1a2 2 0 0 0 1 1.7V7zm10 0v2.7A2 2 0 0 0 18 8V7h-1z"/></svg>';
+
+function lesen(v){
+  if (v == null) return null;
+  let t = String(v).trim();
+  if (!t) return null;
+  t = t.replace(/chf|fr\.?/ig, "").replace(/[–—-]+\s*$/, "").replace(/\.(00|[–—-])?\s*$/, "").replace(/[\s'’`´]/g, "");
+  if (!/^\d+$/.test(t)) return NaN;
+  return parseInt(t, 10);
+}
+function st(fid){ return S.f[fid] || (S.f[fid] = {versuche:0, geloest:false, gezeigt:false, erst:null}); }
+
+function navZeichnen(){
+  const nav = $("nav"); nav.innerHTML = "";
+  FAELLE.forEach((f, i) => {
+    const s = st(f.id), b = document.createElement("button");
+    b.type = "button"; b.setAttribute("role","tab"); b.setAttribute("aria-selected", i === S.cur ? "true" : "false");
+    const mark = s.geloest ? '<span class="m gold" title="gelöst">🏆</span>' : (s.gezeigt ? '<span class="m" title="Lösung angezeigt">👁</span>' : "");
+    b.innerHTML = f.titel + " " + mark;
+    b.addEventListener("click", () => { S.cur = i; save(); zeigen(); });
+    nav.appendChild(b);
+  });
+  $("pokale").innerHTML = FAELLE.map(f => '<span class="' + (st(f.id).geloest ? "an" : "aus") + '">' + POKAL + '</span>').join("") +
+    '<span>' + FAELLE.filter(f => st(f.id).geloest).length + " / " + FAELLE.length + '</span>';
+}
+
+function zeigen(){
+  const f = FAELLE[S.cur], s = st(f.id), b = $("buehne");
+  $("auftrag").innerHTML = "<b>" + f.titel + ":</b> " + f.text + " Nachlass: <b>" + chf(f.nachlass) + "</b>";
+  b.innerHTML = ""; b.style.height = f.h + "px";
+  const P = {}; f.p.forEach(p => P[p.k] = p);
+  const NS = "http://www.w3.org/2000/svg", svg = document.createElementNS(NS, "svg");
+  svg.setAttribute("class","linien"); svg.setAttribute("width", 900); svg.setAttribute("height", f.h);
+  const linie = (x1,y1,x2,y2) => { const l = document.createElementNS(NS,"line"); l.setAttribute("x1",x1); l.setAttribute("y1",y1); l.setAttribute("x2",x2); l.setAttribute("y2",y2); svg.appendChild(l); };
+  f.ehe.forEach(([a,c]) => { linie(P[a].x+27, P[a].y, P[c].x-27, P[c].y); });
+  f.kinder.forEach(([eltern, kids]) => {
+    let ox, oy;
+    if (eltern.length === 2) { ox = (P[eltern[0]].x + P[eltern[1]].x)/2; oy = P[eltern[0]].y; }
+    else { const e = P[eltern[0]]; ox = e.x; oy = e.y + (e.soll != null ? 80 : 46); }
+    const ys = Math.min(...kids.map(k => P[k].y)) - 27 - 14;
+    linie(ox, oy, ox, ys);
+    const xs = kids.map(k => P[k].x);
+    if (kids.length > 1) linie(Math.min(...xs, ox), ys, Math.max(...xs, ox), ys);
+    kids.forEach(k => linie(P[k].x, ys, P[k].x, P[k].y - 27));
+  });
+  b.appendChild(svg);
+  f.ehe.forEach(([a,c]) => {
+    const e = document.createElement("div"); e.className = "ehe"; e.textContent = "⚭";
+    e.style.left = (P[a].x + P[c].x)/2 + "px"; e.style.top = (P[a].y - 16) + "px"; b.appendChild(e);
+  });
+  const erb = f.p.find(p => p.z === "e");
+  const nl = document.createElement("div"); nl.className = "nachlass"; nl.textContent = "Nachlass " + chf(f.nachlass);
+  nl.style.left = Math.max(0, erb.x - 70 - 175) + "px"; nl.style.top = erb.y + "px"; b.appendChild(nl);
+
+  f.p.forEach(p => {
+    const d = document.createElement("div");
+    d.className = "person" + (p.z === "e" ? " erbl" : p.z === "t" ? " tot" : "");
+    d.style.left = p.x + "px"; d.style.top = (p.y - 25) + "px";
+    let h = '<div class="symbol" aria-hidden="true">' + p.s + '</div><div class="rolle">' + p.r + '</div>';
+    if (p.soll != null) {
+      const id = f.id + "_" + p.k, w = S.w[id] != null ? S.w[id] : "";
+      h += '<div class="feld"><label for="' + id + '">CHF</label><input id="' + id + '" inputmode="numeric" autocomplete="off" aria-label="' + p.r + ': Betrag in CHF" value="' + String(w).replace(/"/g,"&quot;") + '"><span class="z" aria-hidden="true"></span></div>';
+    }
+    d.innerHTML = h; d.dataset.k = p.k; b.appendChild(d);
+    const inp = d.querySelector("input");
+    if (inp) {
+      inp.addEventListener("input", () => { S.w[inp.id] = inp.value; save(); d.classList.remove("ok","falsch"); d.querySelector(".z").textContent = ""; $("meldung").textContent = ""; $("meldung").className = "meldung"; });
+      inp.addEventListener("keydown", ev => { if (ev.key === "Enter") { ev.preventDefault(); pruefen(); } });
+    }
+  });
+  $("sieg").hidden = true; $("weiter").hidden = true;
+  $("meldung").textContent = ""; $("meldung").className = "meldung";
+  $("weg").hidden = true; $("wegKnopf").hidden = !(s.geloest || s.gezeigt); $("wegKnopf").textContent = "Lösungsweg";
+  $("weg").innerHTML = "<b>Lösungsweg</b><ol>" + f.weg.map(x => "<li>" + x + "</li>").join("") + "</ol>";
+  if (s.geloest || s.gezeigt) markieren(false);
+  if (s.gezeigt && !s.geloest) b.querySelectorAll(".person").forEach(d => { if (d.querySelector("input")) d.classList.add("gezeigt"); });
+  navZeichnen(); skalieren();
+}
+
+function markieren(meldung){
+  const f = FAELLE[S.cur]; let richtig = 0, leer = 0, total = 0;
+  f.p.forEach(p => {
+    if (p.soll == null) return; total++;
+    const d = $("buehne").querySelector('.person[data-k="' + p.k + '"]'), inp = d.querySelector("input"), z = d.querySelector(".z");
+    const v = lesen(inp.value);
+    d.classList.remove("ok","falsch","gezeigt");
+    if (v === null) { leer++; z.textContent = ""; return; }
+    if (v === p.soll) { richtig++; d.classList.add("ok"); z.textContent = "✓"; }
+    else { d.classList.add("falsch"); z.textContent = "✗"; }
+  });
+  return {richtig, leer, total};
+}
+
+function pruefen(){
+  const f = FAELLE[S.cur], s = st(f.id);
+  const r = markieren(true), m = $("meldung");
+  if (r.leer === r.total) { m.textContent = "Tragen Sie zuerst Beträge ein."; m.className = "meldung bad"; return; }
+  if (r.leer) { m.textContent = r.leer === 1 ? "Ein Feld ist noch leer. Wer nichts erbt, erhält 0." : r.leer + " Felder sind noch leer. Wer nichts erbt, erhält 0."; m.className = "meldung bad"; return; }
+  s.versuche++;
+  const alle = r.richtig === r.total;
+  if (s.erst === null) s.erst = alle;
+  if (window.Lernstand) Lernstand.melden(f.id, alle, {n:S.cur+1, g:f.titel, t:f.text});
+  if (alle) {
+    const neu = !s.geloest && !s.gezeigt;
+    if (!s.gezeigt) s.geloest = true;
+    m.textContent = s.gezeigt ? "Alles richtig – mit Hilfe der Lösung." : "Alles richtig!"; m.className = "meldung ok";
+    $("wegKnopf").hidden = false;
+    if (neu) feiern();
+    if (S.cur < FAELLE.length - 1) $("weiter").hidden = false;
+  } else {
+    m.textContent = (r.total - r.richtig) === 1 ? "Ein Betrag stimmt noch nicht." : (r.total - r.richtig) + " Beträge stimmen noch nicht."; m.className = "meldung bad";
+    if (s.versuche >= 2 && !s.geloest) m.textContent += " Tipp: Zuerst den Anteil des Ehegatten, dann die Stämme der Kinder.";
+  }
+  save(); navZeichnen();
+}
+
+function feiern(){
+  const alle = FAELLE.every(f => st(f.id).geloest), sg = $("sieg");
+  sg.innerHTML = '<div class="box">' + POKAL + '<b>' + (alle ? "Alle Fälle gelöst!" : FAELLE[S.cur].titel + " gelöst!") + '</b><span>' +
+    (alle ? "Sie beherrschen die gesetzliche Erbfolge." : "Weiter zum nächsten Fall.") + '</span></div>';
+  sg.hidden = false; clearTimeout(feiern.t); feiern.t = setTimeout(() => { sg.hidden = true; }, alle ? 4500 : 2600);
+  try { if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return; } catch(e){}
+  const farben = ["#d79a12","#1f7a4d","#0b3d36","#b03a2e","#5d8dbd"], n = alle ? 90 : 40;
+  for (let i = 0; i < n; i++) {
+    const c = document.createElement("i"); c.className = "konf";
+    c.style.left = Math.random()*100 + "vw"; c.style.background = farben[i % farben.length];
+    c.style.animationDuration = (1.6 + Math.random()*1.6) + "s"; c.style.animationDelay = (Math.random()*0.5) + "s";
+    document.body.appendChild(c); setTimeout(() => c.remove(), 4200);
+  }
+}
+
+$("pruefen").addEventListener("click", pruefen);
+$("wegKnopf").addEventListener("click", () => { const w = $("weg"); w.hidden = !w.hidden; $("wegKnopf").textContent = w.hidden ? "Lösungsweg" : "Lösungsweg ausblenden"; if (!w.hidden) w.scrollIntoView({behavior:"smooth", block:"nearest"}); });
+$("zeigen").addEventListener("click", () => {
+  const f = FAELLE[S.cur], s = st(f.id);
+  if (!s.geloest) s.gezeigt = true;
+  f.p.forEach(p => { if (p.soll != null) { const id = f.id + "_" + p.k; S.w[id] = String(p.soll).replace(/\B(?=(\d{3})+(?!\d))/g, "'"); } });
+  save(); zeigen();
+  $("meldung").textContent = s.geloest ? "" : "Lösung angezeigt. Versuchen Sie den nächsten Fall selbst."; $("meldung").className = "meldung";
+});
+$("leeren").addEventListener("click", () => {
+  const f = FAELLE[S.cur], s = st(f.id);
+  f.p.forEach(p => { delete S.w[f.id + "_" + p.k]; });
+  s.gezeigt = false; if (!s.geloest) s.versuche = 0;
+  save(); zeigen();
+});
+$("weiter").addEventListener("click", () => { if (S.cur < FAELLE.length - 1) { S.cur++; save(); zeigen(); } });
+$("reset").addEventListener("click", function(){
+  if (this.dataset.sicher !== "1") { this.dataset.sicher = "1"; this.textContent = "Wirklich alles löschen? Nochmals klicken"; return; }
+  S = {w:{}, f:{}, cur:0}; save(); location.reload();
+});
+
+function skalieren(){
+  const a = $("aussen"), b = $("buehne"), f = FAELLE[S.cur];
+  a.style.height = "0px";
+  const w = $("weg"), wh = w.hidden ? 0 : w.offsetHeight + 8;
+  const rest = document.querySelector(".wrap").offsetHeight - wh;
+  const frei = window.innerHeight - rest - 6;
+  let sc = Math.min(1.15, a.clientWidth / 900);
+  if (frei > 200) sc = Math.min(sc, frei / f.h);
+  sc = Math.max(sc, Math.min(0.55, a.clientWidth / 900));
+  if (a.clientWidth / 900 < 0.6) sc = 0.8;   // Handy: lesbar bleiben, seitlich wischen
+  b.style.transform = "scale(" + sc + ")";
+  b.style.left = Math.max(0, (a.clientWidth - 900*sc)/2) + "px";
+  a.style.height = (f.h * sc) + "px";
+}
+window.addEventListener("resize", skalieren);
+
+zeigen();
+if (window.Lernstand) Lernstand.start({tool:"erbfolge_faelle", titel:"Gesetzliche Erbfolge – Fälle", total:FAELLE.length, kuerzel:"ERF", ziel:document.querySelector("header"),
+  alle: () => FAELLE.map((f,i) => { const s = st(f.id); return s.erst !== null ? {a:f.id, ok:s.geloest && s.erst, n:i+1, g:f.titel, t:f.text} : null; }).filter(Boolean),
+  stats: () => ({richtig: FAELLE.filter(f => st(f.id).geloest).length, total: FAELLE.length})});
+})();
+</script>
+</body>
+</html>
