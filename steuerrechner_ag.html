@@ -44,6 +44,12 @@ select,input[type=number]{font:inherit;font-size:14.5px;color:var(--ink);backgro
 .monat{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
 .monat input[type=number]{width:110px;text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
 .monat select{font-size:14px}
+.drei{margin-top:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface)}
+.drei-kopf{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.drei-wert{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--brand)}
+.drei-knoepfe{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.drei-knoepfe button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:20px;padding:2px 10px;cursor:pointer}
+.drei-info{font-size:13.5px;margin-top:6px;line-height:1.4}
 input[type=range]{width:100%;accent-color:var(--brand)}
 .schnell{display:flex;flex-wrap:wrap;gap:5px}
 .schnell button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:3px 10px;cursor:pointer}
@@ -120,12 +126,18 @@ footer{margin-top:12px;font-size:12px;color:var(--muted)}
       <div class="legende" id="legende"></div>
     </div>
 
+    <div class="drei" id="dreiBox">
+      <div class="drei-kopf"><label for="s3a"><b>Säule 3a</b> einzahlen</label><span class="drei-wert" id="s3aWert">CHF 0</span></div>
+      <input type="range" id="s3a" min="0" max="7258" step="1" value="0" aria-describedby="s3aInfo">
+      <div class="drei-knoepfe"><button type="button" data-3a="0">0</button><button type="button" data-3a="2000">2’000</button><button type="button" data-3a="4000">4’000</button><button type="button" data-3a="7258">Maximum 7’258</button></div>
+      <div class="drei-info" id="s3aInfo"></div>
+    </div>
+
     <details>
       <summary>Abzüge anpassen</summary>
       <div class="abz">
         <label for="pk">Pensionskasse (Lohnanteil in %)</label><input type="number" id="pk" value="4" min="0" max="15" step="0.5">
         <label for="fahr">Fahrkosten Arbeitsweg (CHF)</label><input type="number" id="fahr" value="0" min="0" step="100">
-        <label for="s3a">Einzahlung Säule 3a (CHF)</label><input type="number" id="s3a" value="0" min="0" max="7258" step="100">
         <label for="vers">Versicherungsabzug (CHF)</label><input type="number" id="vers" value="2000" min="0" step="100">
         <label for="verpf">Mittagessen auswärts (Pauschale CHF 3’200)</label><input type="checkbox" id="verpf" checked>
       </div>
@@ -169,7 +181,8 @@ function einfach(x){ let t = 0, r = x; for (const [b, s] of AG) { const d = Math
 const BUND = [[15200,.77],[33200,.88],[43500,2.64],[58000,2.97],[76200,5.94],[82100,6.60],[108800,8.80],[141600,11.00],[185100,13.20]];
 function bund(x){ let t = 0; BUND.forEach(([s, r], k) => { const e = k + 1 < BUND.length ? BUND[k+1][0] : Infinity; if (x > s) t += (Math.min(x, e) - s) * r / 100; }); return Math.min(t, x * 0.115); }
 
-function rechne(brutto, glatt){
+const MAX3A = 7258; /* Säule 3a 2026, mit Pensionskasse */
+function rechne(brutto, glatt, s3aFix){
   const gi = +$("gem").value, g = GEM[gi], k = $("kirche").value;
   const gf = (g.g == null ? +$("gemfuss").value || 0 : g.g) / 100, kf = k ? g[k] / 100 : 0;
   const ahv = brutto * 0.053, alv = Math.min(brutto, 148200) * 0.011;
@@ -177,7 +190,7 @@ function rechne(brutto, glatt){
   const netto = Math.max(0, brutto - ahv - alv - pk);
   const beruf = netto > 0 ? Math.min(netto, Math.max(2000, Math.min(4000, netto * 0.03))) : 0;
   const verpf = $("verpf").checked && netto > 0 ? 3200 : 0;
-  const fahr = +$("fahr").value || 0, s3a = Math.min(+$("s3a").value || 0, 7258), vers = +$("vers").value || 0;
+  const fahr = +$("fahr").value || 0, s3a = Math.min(s3aFix != null ? s3aFix : (+$("s3a").value || 0), MAX3A, brutto), vers = +$("vers").value || 0;
   const roh = Math.max(0, netto - beruf - verpf - fahr - s3a - vers), steuerbar = glatt ? roh : Math.floor(roh / 100) * 100;
   const e = einfach(steuerbar);
   const t = {kanton: e * KANTON, gemeinde: e * gf, kirche: e * kf, bund: bund(steuerbar)};
@@ -243,6 +256,14 @@ function zeige(){
   ];
   $("weg").innerHTML = zeilen.map(z => `<div class="${z[2] || ""}"><span>${z[0]}</span><span>${z[1]}</span></div>`).join("");
   $("total").textContent = fr(t.total);
+  // Säule 3a: Ersparnis gegenüber keiner Einzahlung
+  const ein = r.s3a, ohne = rechne(b, false, 0).t.total, spar = Math.max(0, ohne - t.total);
+  $("s3aWert").textContent = fr(+$("s3a").value || 0);
+  $("s3aInfo").innerHTML = !b ? "Einzahlen kann nur, wer Erwerbseinkommen hat." :
+    ein > 0 && spar < 1 ? `Bei diesem Einkommen zahlen Sie keine Steuern. Die Einzahlung spart darum auch keine Steuern.` :
+    ein > 0 ? `Sie sparen <b>${fr(spar)}</b> Steuern pro Jahr. Von den ${fr(ein)} auf Ihrem 3a-Konto tragen Sie selbst also nur ${fr(ein - spar)}. Den Rest (${pr(ein ? spar / ein : 0)}) erhalten Sie über tiefere Steuern zurück.` +
+      (+$("s3a").value > ein ? ` <span style="color:var(--muted)">Mehr als das Erwerbseinkommen kann nicht abgezogen werden.</span>` : "")
+    : (ohne < 1 ? `Bei diesem Einkommen zahlen Sie keine Steuern. Eine Einzahlung in die Säule 3a spart darum keine Steuern.` : `Mit dem Maximum von CHF 7’258 würden Sie etwa <b>${fr(Math.max(0, ohne - rechne(b, false, MAX3A).t.total))}</b> Steuern sparen.`);
   $("totalInfo").textContent = b ? `${pr(t.total / b)} des Bruttolohns · etwa ${fr(t.total / 12)} pro Monat` : "Kein Lohn, keine Einkommenssteuer.";
   const teile = [["Kanton", t.kanton, "var(--s-kanton)"], ["Gemeinde", t.gemeinde, "var(--s-gemeinde)"], ["Kirche", t.kirche, "var(--s-kirche)"], ["Bund", t.bund, "var(--s-bund)"]].filter(x => x[0] !== "Kirche" || $("kirche").value);
   $("stapel").innerHTML = t.total ? teile.map(x => `<i style="width:${100 * x[1] / t.total}%;background:${x[2]}" title="${x[0]}: ${fr(x[1])}"></i>`).join("") : "";
@@ -267,6 +288,7 @@ $("regler").addEventListener("input", () => { $("lohn").value = $("regler").valu
 document.querySelectorAll(".schnell button").forEach(b => b.addEventListener("click", () => setzen(+b.dataset.l)));
 $("gem").addEventListener("change", () => { $("gemfussL").hidden = GEM[+$("gem").value].g != null; zeige(); });
 ["gemfuss", "kirche", "pk", "fahr", "s3a", "vers", "verpf"].forEach(id => $(id).addEventListener("input", zeige));
+document.querySelectorAll("[data-3a]").forEach(k => k.addEventListener("click", () => { $("s3a").value = k.dataset["3a"]; zeige(); }));
 $("verpf").addEventListener("change", zeige);
 monatAnzeigen(); zeige();
 })();
