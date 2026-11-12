@@ -277,6 +277,7 @@
   .entw .q b{ color:var(--ink); }
   .trainer-shell{ display:flex; gap:16px; align-items:flex-start; }
   .trainer-shell .qcard{ flex:1 1 auto; min-width:0; }
+  #testCalcSlot{ display:contents; }
   .calc-card{ flex:0 0 232px; position:sticky; top:14px; margin-bottom:16px; }
   @media (max-width:820px){ .trainer-shell{ flex-direction:column; } .calc-card{ position:static; width:100%; max-width:320px; flex:1 1 auto; } }
   .qmeta{ font-size:11.5px; color:var(--dim); margin-bottom:6px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; }
@@ -724,7 +725,8 @@ html.eingebettet body{ zoom:.82; }
       <div class="btnbar"><button class="btn btn-primary" id="testLos"><span>Lernkontrolle starten</span></button></div>
       <div class="frueher" id="testFrueher"></div>
     </div>
-    <div class="card" id="testLauf" hidden>
+    <div class="trainer-shell" id="testShell">
+    <div class="card qcard" id="testLauf" hidden>
       <div class="testkopf"><b id="testNr"></b><span class="notiz" id="testBer" style="margin:0"></span></div>
       <div class="fortschritt"><i id="testBar" style="width:0%"></i></div>
       <div class="qtext" id="tqText"></div>
@@ -737,6 +739,8 @@ html.eingebettet body{ zoom:.82; }
       </div>
       <div class="btnbar"><button class="btn btn-primary" id="testWeiter">Antwort abgeben →</button><button class="btn btn-ghost" id="testAbbruch">Abbrechen</button></div>
       <div class="feedback" id="tFeedback"></div>
+    </div>
+    <div id="testCalcSlot"></div>
     </div>
     <div class="card" id="testErgebnis" hidden>
       <h2><svg><use href="#i-check"/></svg>Zieleinlauf</h2>
@@ -2280,6 +2284,13 @@ function evalCalc(){
   cdisp();
 }
 $('cgrid').addEventListener('click', function(e){ var b = e.target.closest('button'); if (b) calcInput(b.dataset.k); });
+/* Rechner wandert mit: im Trainer und während der Lernkontrolle */
+var calcKarte = document.querySelector('.calc-card'), calcHeim = calcKarte.parentNode;
+function rechnerNach(inTest){
+  if (!calcKarte) return;
+  var ziel = inTest ? $('testCalcSlot') : calcHeim;
+  if (calcKarte.parentNode !== ziel){ ziel.appendChild(calcKarte); cexpr = ''; cdisp(); }
+}
 $('calcToAnswer').addEventListener('click', function(){
   evalCalc(); if (!cexpr || cexpr === 'Fehler' || isNaN(parseFloat(cexpr))) return;
   var ziel = $('p-test').classList.contains('active') ? ($('tqNum').hidden ? null : $('tAntwort')) : ($('qNum').hidden ? document.activeElement : $('antwort'));
@@ -2309,7 +2320,7 @@ function testFrueher(){
 }
 function testStart(){
   test = { ber:testBer, aufgaben:testPlan(testBer), i:0, erg:[] };
-  $('testStart').hidden = true; $('testErgebnis').hidden = true; $('testLauf').hidden = false;
+  $('testStart').hidden = true; $('testErgebnis').hidden = true; $('testLauf').hidden = false; rechnerNach(true);
   testZeige();
 }
 function testZeige(){
@@ -2364,7 +2375,7 @@ $('testWeiter').addEventListener('click', function(){ if (!this.onclick) testAbg
 $('tAntwort').addEventListener('keydown', function(ev){ if (ev.key === 'Enter'){ ev.preventDefault(); if ($('testWeiter').onclick) testNaechste(); else testAbgabe(); } });
 function testAuswertung(){
   var A = test.aufgaben, punkte = A.reduce(function(s, a){ return s + a.anteil; }, 0), max = A.length;
-  $('testLauf').hidden = true; $('testErgebnis').hidden = false;
+  $('testLauf').hidden = true; $('testErgebnis').hidden = false; rechnerNach(false);
   var proz = Math.round(punkte/max*100);
   var note = proz >= 85 ? 'gut' : (proz >= 60 ? 'mittel' : 'schwach');
   $('testPunkte').innerHTML = '<div class="pk ' + note + '"><b>Punkte</b><span>' + (Math.round(punkte*10)/10) + ' von ' + max + '</span><small>' + proz + ' %' + (proz >= 85 ? ' – sehr gut' : (proz >= 60 ? ' – gut unterwegs' : ' – weiter üben')) + '</small></div>';
@@ -2388,7 +2399,7 @@ function testAuswertung(){
   testFrueher();
 }
 $('testLos').addEventListener('click', testStart);
-$('testAbbruch').addEventListener('click', function(){ $('testLauf').hidden = true; $('testStart').hidden = false; test = null; });
+$('testAbbruch').addEventListener('click', function(){ $('testLauf').hidden = true; $('testStart').hidden = false; test = null; rechnerNach(false); });
 $('testNochmal').addEventListener('click', function(){ $('testErgebnis').hidden = true; $('testStart').hidden = false; });
 $('testZumTrainer').addEventListener('click', function(){ zeigeReiter('trainer'); });
 $('testBereich').addEventListener('click', function(ev){ var b = ev.target.closest('.chip'); if (!b) return; this.querySelectorAll('.chip').forEach(function(c){ c.classList.toggle('on', c === b); }); testBer = b.dataset.b; });
@@ -2402,6 +2413,7 @@ function zeigeReiter(name, still){
   document.querySelectorAll('.panel').forEach(function(p){ p.classList.toggle('active', p.id === 'p-' + name); });
   if (!still){ try { history.replaceState(null, '', '#' + name); } catch(e){} }
   if (name === 'trainer' && !aufgabe) neueAufgabe();
+  if (typeof rechnerNach === 'function') rechnerNach(name === 'test' && !!test && !$('testLauf').hidden);
 }
 document.querySelectorAll('.bereich').forEach(function(t){ t.addEventListener('click', function(){ zeigeReiter(t.dataset.tab); }); });
 window.addEventListener('hashchange', function(){ zeigeReiter(location.hash.slice(1), true); });
