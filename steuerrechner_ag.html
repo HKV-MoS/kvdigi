@@ -41,6 +41,9 @@ select,input[type=number]{font:inherit;font-size:14.5px;color:var(--ink);backgro
 .lohnzeile{display:flex;align-items:center;gap:10px}
 .lohnzeile input[type=number]{font-size:24px;font-weight:700;width:170px;text-align:right;font-variant-numeric:tabular-nums}
 .lohnzeile span{font-size:15px;color:var(--muted)}
+.monat{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.monat input[type=number]{width:110px;text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.monat select{font-size:14px}
 input[type=range]{width:100%;accent-color:var(--brand)}
 .schnell{display:flex;flex-wrap:wrap;gap:5px}
 .schnell button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:3px 10px;cursor:pointer}
@@ -95,7 +98,9 @@ footer{margin-top:12px;font-size:12px;color:var(--muted)}
   <div>
     <div class="lohn">
       <label class="lab" for="lohn">Jahresverdienst (Bruttolohn laut Lohnausweis)</label>
-      <div class="lohnzeile"><input type="number" id="lohn" value="60000" min="0" max="1000000" step="1000"><span>CHF pro Jahr</span></div>
+      <div class="lohnzeile"><input type="number" id="lohn" value="60000" min="0" max="1000000" step="1000" aria-label="Jahreslohn"><span>CHF pro Jahr</span></div>
+      <div class="monat"><label for="monat">oder Monatslohn</label><input type="number" id="monat" min="0" max="100000" step="50" placeholder="z. B. 4600"><span>CHF</span>
+        <select id="anzahl" aria-label="Anzahl Monatslöhne"><option value="13" selected>× 13 Löhne</option><option value="12">× 12 Löhne</option></select></div>
       <input type="range" id="regler" min="0" max="250000" step="1000" value="60000" aria-label="Jahresverdienst">
       <div class="schnell" aria-label="Beispiele">
         <button type="button" data-l="12000">12’000 (Lehre)</button>
@@ -251,14 +256,19 @@ function zeige(){
     (h > 0 && t.total > 0 ? ` Wer doppelt so viel verdient, zahlt <b>${(d / t.total).toFixed(1).replace(".", ",")}-mal</b> so viel Steuern: Das ist die Progression.` : ` Bei kleinen Einkommen fällt fast keine Steuer an.`);
   kurve();
 }
-function setzen(v){ v = Math.max(0, Math.min(1000000, Math.round(v))); $("lohn").value = v; $("regler").value = Math.min(250000, v); zeige(); }
-$("lohn").addEventListener("input", () => { $("regler").value = Math.min(250000, +$("lohn").value || 0); zeige(); });
-$("regler").addEventListener("input", () => { $("lohn").value = $("regler").value; zeige(); });
+function monatAnzeigen(){ const j = +$("lohn").value || 0; if (document.activeElement !== $("monat")) $("monat").value = j ? Math.round(j / +$("anzahl").value) : ""; }
+function setzen(v){ v = Math.max(0, Math.min(1000000, Math.round(v))); $("lohn").value = v; $("regler").value = Math.min(250000, v); monatAnzeigen(); zeige(); }
+/* Monatslohn übersteuert den Jahreslohn */
+function vonMonat(){ const m = +$("monat").value || 0; const j = Math.round(m * +$("anzahl").value); $("lohn").value = j; $("regler").value = Math.min(250000, j); zeige(); }
+$("monat").addEventListener("input", vonMonat);
+$("anzahl").addEventListener("change", () => { if (+$("monat").value) vonMonat(); else monatAnzeigen(); });
+$("lohn").addEventListener("input", () => { $("regler").value = Math.min(250000, +$("lohn").value || 0); monatAnzeigen(); zeige(); });
+$("regler").addEventListener("input", () => { $("lohn").value = $("regler").value; monatAnzeigen(); zeige(); });
 document.querySelectorAll(".schnell button").forEach(b => b.addEventListener("click", () => setzen(+b.dataset.l)));
 $("gem").addEventListener("change", () => { $("gemfussL").hidden = GEM[+$("gem").value].g != null; zeige(); });
 ["gemfuss", "kirche", "pk", "fahr", "s3a", "vers", "verpf"].forEach(id => $(id).addEventListener("input", zeige));
 $("verpf").addEventListener("change", zeige);
-zeige();
+monatAnzeigen(); zeige();
 })();
 </script>
 </body>
