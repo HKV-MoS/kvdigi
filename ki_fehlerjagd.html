@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fehlerjagd Mietrecht</title>
+<style>
+:root{
+  --bg:#EEF3F1; --karte:#fff; --tinte:#16231f; --grau:#56645f; --linie:#d5e0dc;
+  --hkv:#003936; --hkv2:#2F6B60; --hell:#E3EEEA; --gold:#C08A2D; --goldhell:#FBF3E2;
+  --ok:#1f7a4d; --okhell:#e2f3ea; --falsch:#b3261e; --falschhell:#fbe4e2; --leer:#9a6300; --leerhell:#fff1d6;
+  --gruen:#2e8b57; --gelb:#d9a400; --rot:#c62828;
+  --f:"Aptos","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1715; --karte:#17211e; --tinte:#e2ece8; --grau:#9bb0a8; --linie:#2b3a36;
+  --hkv:#7fc4b4; --hkv2:#5fa898; --hell:#1d2b27; --gold:#e3b25c; --goldhell:#2e2716;
+  --ok:#6fd19c; --okhell:#163327; --falsch:#f08a80; --falschhell:#3a1d1b; --leer:#f2c46b; --leerhell:#3a2e14;
+  --gruen:#5cc98a; --gelb:#f0c43c; --rot:#ef6f6a;
+}}
+:root[data-theme="dark"]{
+  --bg:#0f1715; --karte:#17211e; --tinte:#e2ece8; --grau:#9bb0a8; --linie:#2b3a36;
+  --hkv:#7fc4b4; --hkv2:#5fa898; --hell:#1d2b27; --gold:#e3b25c; --goldhell:#2e2716;
+  --ok:#6fd19c; --okhell:#163327; --falsch:#f08a80; --falschhell:#3a1d1b; --leer:#f2c46b; --leerhell:#3a2e14;
+  --gruen:#5cc98a; --gelb:#f0c43c; --rot:#ef6f6a;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--tinte);font-family:var(--f);font-size:15px;line-height:1.45}
+.wrap{max-width:1000px;margin:0 auto;padding:16px}
+header small{display:block;font-size:11.5px;letter-spacing:1.4px;text-transform:uppercase;font-weight:700;color:var(--hkv2)}
+h1{margin:2px 0 0;font-size:23px;color:var(--hkv);line-height:1.15}
+.sub{color:var(--grau);font-size:14px;margin-top:2px}
+.btn{font:inherit;font-size:14px;font-weight:700;border-radius:9px;padding:7px 14px;cursor:pointer;border:1.5px solid var(--hkv);background:var(--karte);color:var(--hkv)}
+.btn.voll{background:var(--hkv);color:var(--karte)}
+.btn.leise{border-color:var(--linie);color:var(--grau)}
+.btn:disabled{opacity:.45;cursor:default}
+button:focus-visible,textarea:focus-visible{outline:3px solid var(--hkv2);outline-offset:2px}
+.karte{background:var(--karte);border:1px solid var(--linie);border-radius:14px;padding:14px 16px}
+.fuss{font-size:11.5px;color:var(--grau);margin-top:10px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.fuss button{font:inherit;font-size:11.5px;background:none;border:0;color:var(--grau);text-decoration:underline;cursor:pointer;padding:0}
+html.eingebettet body{background:var(--karte)}
+html.eingebettet .wrap{padding:8px 12px}
+html.eingebettet h1{font-size:20px}
+html.eingebettet .karte.aussen{border:0;padding:4px 0}
+.kopf{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.zaehler{font-size:14px;font-weight:800;color:var(--hkv);background:var(--hell);border-radius:20px;padding:4px 12px}
+.chat{display:grid;gap:8px}
+.frage{justify-self:end;max-width:80%;background:var(--hkv);color:var(--karte);border-radius:14px 14px 3px 14px;padding:7px 13px;font-weight:600}
+.antwort{background:var(--bg);border:1px solid var(--linie);border-radius:14px 14px 14px 3px;padding:8px 10px}
+.antwort .wer{font-size:11.5px;letter-spacing:1.2px;text-transform:uppercase;font-weight:800;color:var(--grau);margin:0 0 4px 4px}
+.satz{display:flex;gap:8px;width:100%;text-align:left;font:inherit;font-size:14.5px;line-height:1.45;color:var(--tinte);background:transparent;border:1.5px solid transparent;border-radius:8px;padding:4px 7px;cursor:pointer;margin:1px 0}
+.satz:hover:not(:disabled){background:var(--karte);border-color:var(--linie)}
+.satz:disabled{cursor:default}
+.satz .n{flex:0 0 20px;height:20px;border-radius:50%;background:var(--linie);color:var(--grau);font-size:11.5px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.satz.markiert{background:var(--leerhell);border-color:var(--gold)}
+.satz.markiert .n{background:var(--gold);color:#fff}
+.satz.treffer{background:var(--okhell);border-color:var(--ok)}
+.satz.treffer .n{background:var(--ok);color:#fff}
+.satz.verpasst{background:var(--falschhell);border-color:var(--falsch);border-style:dashed}
+.satz.verpasst .n{background:var(--falsch);color:#fff}
+.satz.fehlalarm{border-color:var(--falsch)}
+.satz .erkl{display:block;margin-top:3px;font-size:13px;color:var(--grau)}
+.satz .erkl b{color:var(--tinte)}
+.leiste{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.ergebnis{font-weight:700}
+.tipp{font-size:13px;color:var(--grau)}
+</style>
+</head>
+<body>
+<script>try{if(window.self!==window.top)document.documentElement.classList.add('eingebettet');}catch(e){document.documentElement.classList.add('eingebettet');}</script>
+<div class="wrap" id="wrap">
+<div class="kopf">
+  <header><small>KI im Unterricht · Prüfen: Fakten-Check</small><h1>Fehlerjagd Mietrecht</h1>
+  <div class="sub">Diese KI-Antwort enthält drei Fehler. Klick auf die falschen Sätze und prüf dann.</div></header>
+  <div class="zaehler" id="zaehler" aria-live="polite">0 von 3 markiert</div>
+</div>
+<div class="karte aussen">
+  <div class="chat">
+    <div class="frage">Was kann ich tun, wenn meine Mietwohnung einen Mangel hat?</div>
+    <div class="antwort"><div class="wer">KI-Antwort</div><div id="saetze"></div></div>
+  </div>
+  <div class="leiste">
+    <button class="btn voll" id="pruefen" type="button">Prüfen</button>
+    <button class="btn leise" id="neu" type="button" hidden>Nochmals</button>
+    <span class="ergebnis" id="ergebnis" aria-live="polite"></span>
+  </div>
+  <p class="tipp">Beleg jeden Fehler mit dem Gesetz: Obligationenrecht, Art. 253 ff. OR auf fedlex.admin.ch.</p>
+</div>
+<div class="fuss"><span>Stand der Artikel vor dem Einsatz auf fedlex.admin.ch kontrollieren. · HKV Aarau · MoS</span></div>
+<script>
+(function(){
+"use strict";
+const S = [
+ {t:"Wenn in Ihrer Wohnung ein Mangel auftritt, sollten Sie ihn der Vermieterin sofort melden, am besten schriftlich.", f:false,
+  e:"Stimmt. Mieterinnen und Mieter müssen Mängel melden, die sie nicht selbst beheben müssen (Art. 257g OR). Schriftlich dient als Beweis."},
+ {t:"Die Vermieterin muss Mängel, die Sie nicht selbst zu verantworten haben, innert angemessener Frist beseitigen.", f:false,
+  e:"Stimmt. Die Vermieterin muss die Sache in gebrauchstauglichem Zustand erhalten und Mängel beseitigen (Art. 256 und Art. 259a/259b OR)."},
+ {t:"Bis der Mangel behoben ist, dürfen Sie die Miete einfach zurückbehalten.", f:true,
+  e:"<b>Falsch.</b> Zurückbehalten ist nicht erlaubt. Der richtige Weg ist die Hinterlegung: schriftlich eine angemessene Frist setzen, die Hinterlegung androhen und den Mietzins bei der vom Kanton bezeichneten Stelle einzahlen (Art. 259g OR). Wer einfach nicht zahlt, riskiert die Kündigung wegen Zahlungsrückstand (Art. 257d OR)."},
+ {t:"Bei einem Mangel, der die Tauglichkeit der Wohnung beeinträchtigt, können Sie eine Herabsetzung des Mietzinses verlangen, und zwar rückwirkend ab Mietbeginn.", f:true,
+  e:"<b>Falsch.</b> Die Herabsetzung gilt ab dem Zeitpunkt, in dem die Vermieterin vom Mangel Kenntnis erhalten hat, bis zur Behebung, nicht ab Mietbeginn (Art. 259d OR)."},
+ {t:"Kleine Ausbesserungen, die für den gewöhnlichen Unterhalt nötig sind, zum Beispiel ein neuer Duschschlauch, gehen nach Ortsgebrauch zu Ihren Lasten.", f:false,
+  e:"Stimmt. Kleine Mängel, die durch Reinigen oder kleine Ausbesserungen behoben werden können, muss die Mieterin selbst beseitigen (Art. 259 OR)."},
+ {t:"Übrigens: Bei Wohnräumen darf die Vermieterin eine Sicherheit (Kaution) von bis zu sechs Monatszinsen verlangen.", f:true,
+  e:"<b>Falsch.</b> Bei Wohnräumen darf die Sicherheit höchstens drei Monatszinse betragen (Art. 257e Abs. 2 OR)."},
+ {t:"Die Kaution in Geld muss bei einer Bank auf einem Sparkonto oder Depot auf Ihren Namen hinterlegt werden.", f:false,
+  e:"Stimmt. So verlangt es Art. 257e Abs. 1 OR."}
+];
+const $ = id => document.getElementById(id);
+let mark = new Set(), fertig = false;
+function zeige(){
+  $("saetze").innerHTML = S.map((s, k) => {
+    let cls = "satz";
+    if (!fertig){ if (mark.has(k)) cls += " markiert"; }
+    else if (s.f && mark.has(k)) cls += " treffer";
+    else if (s.f) cls += " verpasst";
+    else if (mark.has(k)) cls += " fehlalarm";
+    const erkl = fertig ? `<span class="erkl">${s.e}</span>` : "";
+    return `<button type="button" class="${cls}" data-k="${k}" aria-pressed="${mark.has(k)}" ${fertig ? "disabled" : ""}><span class="n">${k + 1}</span><span>${s.t}${erkl}</span></button>`;
+  }).join("");
+  $("saetze").querySelectorAll(".satz").forEach(b => b.onclick = () => {
+    const k = +b.dataset.k; mark.has(k) ? mark.delete(k) : mark.add(k); zeige();
+  });
+  $("zaehler").textContent = `${mark.size} von 3 markiert`;
+}
+$("pruefen").onclick = () => {
+  fertig = true;
+  const tr = S.filter((s, k) => s.f && mark.has(k)).length, fa = S.filter((s, k) => !s.f && mark.has(k)).length;
+  $("ergebnis").textContent = `${tr} von 3 Fehlern gefunden` + (fa ? `, ${fa > 1 ? fa + " richtige Sätze" : "1 richtiger Satz"} zu Unrecht markiert` : "") + ".";
+  $("pruefen").hidden = true; $("neu").hidden = false; zeige();
+};
+$("neu").onclick = () => { mark = new Set(); fertig = false; $("ergebnis").textContent = ""; $("pruefen").hidden = false; $("neu").hidden = true; zeige(); };
+zeige();
+})();
+</script>
+</div>
+<script>
+/* In kv digital ist der Rahmen fix (ca. 976 x 720): bei Bedarf verkleinern, nie unter 72 % */
+(function(){
+  if(!document.documentElement.classList.contains('eingebettet')) return;
+  var w=document.getElementById('wrap'), t=0;
+  function fit(){
+    w.style.zoom=1;
+    var h=w.scrollHeight+4, H=window.innerHeight;
+    w.style.zoom = h>H ? Math.max(.72, H/h) : 1;
+  }
+  function bald(){ clearTimeout(t); t=setTimeout(fit,60); }
+  window.addEventListener('resize',bald); window.addEventListener('load',fit);
+  if(window.ResizeObserver) new ResizeObserver(bald).observe(w);
+  window.FIT=fit; fit();
+})();
+</script>
+</body>
+</html>

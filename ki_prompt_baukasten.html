@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prompt-Baukasten</title>
+<style>
+:root{
+  --bg:#EEF3F1; --karte:#fff; --tinte:#16231f; --grau:#56645f; --linie:#d5e0dc;
+  --hkv:#003936; --hkv2:#2F6B60; --hell:#E3EEEA; --gold:#C08A2D; --goldhell:#FBF3E2;
+  --ok:#1f7a4d; --okhell:#e2f3ea; --falsch:#b3261e; --falschhell:#fbe4e2; --leer:#9a6300; --leerhell:#fff1d6;
+  --gruen:#2e8b57; --gelb:#d9a400; --rot:#c62828;
+  --f:"Aptos","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1715; --karte:#17211e; --tinte:#e2ece8; --grau:#9bb0a8; --linie:#2b3a36;
+  --hkv:#7fc4b4; --hkv2:#5fa898; --hell:#1d2b27; --gold:#e3b25c; --goldhell:#2e2716;
+  --ok:#6fd19c; --okhell:#163327; --falsch:#f08a80; --falschhell:#3a1d1b; --leer:#f2c46b; --leerhell:#3a2e14;
+  --gruen:#5cc98a; --gelb:#f0c43c; --rot:#ef6f6a;
+}}
+:root[data-theme="dark"]{
+  --bg:#0f1715; --karte:#17211e; --tinte:#e2ece8; --grau:#9bb0a8; --linie:#2b3a36;
+  --hkv:#7fc4b4; --hkv2:#5fa898; --hell:#1d2b27; --gold:#e3b25c; --goldhell:#2e2716;
+  --ok:#6fd19c; --okhell:#163327; --falsch:#f08a80; --falschhell:#3a1d1b; --leer:#f2c46b; --leerhell:#3a2e14;
+  --gruen:#5cc98a; --gelb:#f0c43c; --rot:#ef6f6a;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--tinte);font-family:var(--f);font-size:15px;line-height:1.45}
+.wrap{max-width:1000px;margin:0 auto;padding:16px}
+header small{display:block;font-size:11.5px;letter-spacing:1.4px;text-transform:uppercase;font-weight:700;color:var(--hkv2)}
+h1{margin:2px 0 0;font-size:23px;color:var(--hkv);line-height:1.15}
+.sub{color:var(--grau);font-size:14px;margin-top:2px}
+.btn{font:inherit;font-size:14px;font-weight:700;border-radius:9px;padding:7px 14px;cursor:pointer;border:1.5px solid var(--hkv);background:var(--karte);color:var(--hkv)}
+.btn.voll{background:var(--hkv);color:var(--karte)}
+.btn.leise{border-color:var(--linie);color:var(--grau)}
+.btn:disabled{opacity:.45;cursor:default}
+button:focus-visible,textarea:focus-visible{outline:3px solid var(--hkv2);outline-offset:2px}
+.karte{background:var(--karte);border:1px solid var(--linie);border-radius:14px;padding:14px 16px}
+.fuss{font-size:11.5px;color:var(--grau);margin-top:10px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.fuss button{font:inherit;font-size:11.5px;background:none;border:0;color:var(--grau);text-decoration:underline;cursor:pointer;padding:0}
+html.eingebettet body{background:var(--karte)}
+html.eingebettet .wrap{padding:8px 12px}
+html.eingebettet h1{font-size:20px}
+html.eingebettet .karte.aussen{border:0;padding:4px 0}
+.kopf{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.meter{min-width:210px}
+.meter .zeile{display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:var(--grau)}
+.meter .balken{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:4px}
+.meter .balken i{height:9px;border-radius:5px;background:var(--linie)}
+.meter .balken i.an{background:var(--ok)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.tabs button{font:inherit;font-size:14px;font-weight:700;border:1.5px solid var(--linie);background:var(--karte);color:var(--tinte);border-radius:20px;padding:5px 12px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.tabs button .z{width:20px;height:20px;border-radius:50%;background:var(--linie);color:var(--grau);font-size:11.5px;display:flex;align-items:center;justify-content:center}
+.tabs button.fertig .z{background:var(--ok);color:#fff}
+.tabs button[aria-selected="true"]{border-color:var(--hkv);background:var(--hell)}
+.raster{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+@media (max-width:760px){.raster{grid-template-columns:1fr}}
+.frage{font-size:18px;font-weight:800;color:var(--hkv);margin:0}
+.tipp{font-size:13.5px;color:var(--grau);margin:2px 0 8px}
+textarea{font:inherit;font-size:14.5px;color:var(--tinte);background:var(--bg);border:1.5px solid var(--linie);border-radius:9px;padding:8px 10px;width:100%;min-height:92px;resize:vertical}
+textarea:focus{outline:none;border-color:var(--hkv2);background:var(--karte)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chips span{font-size:12px;font-weight:700;color:var(--grau);width:100%}
+.chips button{font:inherit;font-size:13px;border:1px solid var(--linie);background:var(--bg);color:var(--tinte);border-radius:20px;padding:3px 10px;cursor:pointer;text-align:left}
+.chips button:hover{border-color:var(--hkv2)}
+.nav{display:flex;justify-content:space-between;margin-top:10px;gap:8px}
+.vorschau{background:var(--bg);border:1px solid var(--linie);border-radius:10px;padding:10px 12px;font-size:14px;line-height:1.5;min-height:200px;max-height:300px;overflow:auto}
+.vorschau p{margin:0 0 6px}
+.vorschau .b{font-size:10.5px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:#fff;background:var(--hkv2);border-radius:3px;padding:0 4px;margin-right:5px;vertical-align:1px}
+.vorschau .leer{color:var(--leer);background:var(--leerhell);border-radius:4px;padding:0 4px;font-style:italic}
+.knoepfe{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.status{font-size:13.5px;font-weight:700;color:var(--ok)}
+h3{margin:0 0 6px;font-size:14px;color:var(--hkv)}
+</style>
+</head>
+<body>
+<script>try{if(window.self!==window.top)document.documentElement.classList.add('eingebettet');}catch(e){document.documentElement.classList.add('eingebettet');}</script>
+<div class="wrap" id="wrap">
+<div class="kopf">
+  <header><small>KI im Unterricht · Die Prompt-Formel</small><h1>Prompt-Baukasten</h1>
+  <div class="sub">Fünf Bausteine für deinen nächsten Unterricht. Rechts entsteht der fertige Prompt.</div></header>
+  <div class="meter"><div class="zeile"><span>Vollständigkeit</span><span id="mz">0 von 5</span></div><div class="balken" id="mb"></div></div>
+</div>
+<div class="tabs" role="tablist" id="tabs"></div>
+<div class="raster">
+  <div class="karte">
+    <p class="frage" id="frage"></p>
+    <p class="tipp" id="tipp"></p>
+    <label for="ein" class="tipp" style="display:none">Eingabe</label>
+    <textarea id="ein"></textarea>
+    <div class="chips" id="chips"></div>
+    <div class="nav"><button class="btn leise" id="zur" type="button">Zurück</button><button class="btn voll" id="vor" type="button">Weiter</button></div>
+  </div>
+  <div class="karte">
+    <h3>Dein Prompt</h3>
+    <div class="vorschau" id="vorschau" aria-live="polite"></div>
+    <div class="knoepfe">
+      <button class="btn voll" id="kopieren" type="button">Prompt kopieren</button>
+      <button class="btn" id="beispiel" type="button">Beispiel Mietrecht</button>
+      <button class="btn leise" id="leeren" type="button">Leeren</button>
+      <span class="status" id="status" aria-live="polite"></span>
+    </div>
+  </div>
+</div>
+<div class="fuss"><span>Nicht jeder Prompt braucht alle fünf Bausteine. Ein guter Prompt hilft, garantiert aber keine richtige Antwort. · HKV Aarau · MoS</span></div>
+<script>
+(function(){
+"use strict";
+const T = [
+ {k:"rolle", n:"Rolle", f:"Wer soll die KI sein?", t:"Eine Rolle setzt Fachsprache und Blickwinkel.",
+  c:["Du bist eine erfahrene Lehrperson an einer Berufsfachschule in der Schweiz.","Du bist Fachperson für Mietrecht und erklärst verständlich.","Du bist eine kritische Kollegin und prüfst mein Material."],
+  b:"Du bist eine erfahrene Lehrperson an einer Berufsfachschule in der Schweiz."},
+ {k:"auftrag", n:"Auftrag", f:"Was genau soll sie tun?", t:"Ein Verb und ein konkretes Thema: erstelle, überarbeite, prüfe …",
+  c:["Erstelle ein Arbeitsblatt zum Thema «…».","Schreibe eine Fallgeschichte zum Thema «…».","Überarbeite den folgenden Text: …"],
+  b:"Erstelle ein Arbeitsblatt zum Thema «Mängel an der Mietwohnung»."},
+ {k:"kontext", n:"Kontext", f:"Was muss sie wissen?", t:"Klasse, Lehrjahr, Vorwissen, Lernziel, Zeit. Keine Personendaten.",
+  c:["Die Klasse: …, 2. Lehrjahr.","Die Lernenden kennen bereits …","Lernziel: Die Lernenden können …","Zeit: 20 Minuten."],
+  b:"Die Klasse: Detailhandelsfachleute EFZ, 2. Lehrjahr. Sie kennen die Begriffe aus dem Mietvertrag. Lernziel: Sie können einen Mangel korrekt melden."},
+ {k:"format", n:"Format", f:"Wie soll das Ergebnis aussehen?", t:"Länge, Aufbau, Tabelle oder Liste, Lösungen separat.",
+  c:["Vier Aufgaben vom Wiedergeben bis zum Fall.","Danach separat die Lösungen.","Als Tabelle mit den Spalten …","Höchstens eine A4-Seite."],
+  b:"Vier Aufgaben vom Wiedergeben bis zum Fall, höchstens eine A4-Seite. Danach separat die Lösungen."},
+ {k:"grenzen", n:"Grenzen", f:"Was gilt, was nicht?", t:"Sprache, Anrede, Niveau, Umgang mit Unsicherheit.",
+  c:["Schreibe in Schweizer Rechtschreibung (ss statt ß).","Lernende werden mit «Sie» angesprochen.","Markiere unsichere Angaben mit [prüfen].","Nenne die Gesetzesartikel, damit ich sie prüfen kann.","Wenn dir Angaben fehlen, stelle mir zuerst Rückfragen."],
+  b:"Schweizer Rechtschreibung, Lernende mit «Sie» ansprechen, unsichere Angaben mit [prüfen] markieren."}
+];
+const KEY = "hkv_ki_baukasten_v1";
+let S; try { S = JSON.parse(localStorage.getItem(KEY) || "null"); } catch(e){ S = null; }
+if (!S || typeof S !== "object") S = {w:{}, i:0};
+S.w = S.w || {}; S.i = S.i || 0;
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} };
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const voll = k => (S.w[k] || "").trim().length > 3;
+function tabs(){
+  $("tabs").innerHTML = T.map((x, k) => `<button type="button" role="tab" aria-selected="${k === S.i}" class="${voll(x.k) ? "fertig" : ""}" data-i="${k}"><span class="z">${k + 1}</span>${x.n}</button>`).join("");
+  $("tabs").querySelectorAll("button").forEach(b => b.onclick = () => { S.i = +b.dataset.i; save(); zeige(); });
+}
+function meter(){
+  const n = T.filter(x => voll(x.k)).length;
+  $("mz").textContent = `${n} von 5`;
+  $("mb").innerHTML = T.map(x => `<i class="${voll(x.k) ? "an" : ""}"></i>`).join("");
+}
+function vorschau(){
+  $("vorschau").innerHTML = T.map(x => `<p><span class="b">${x.n}</span>${voll(x.k) ? esc(S.w[x.k].trim()) : `<span class="leer">${x.f}</span>`}</p>`).join("");
+  $("status").textContent = "";
+}
+function zeige(){
+  const x = T[S.i];
+  $("frage").textContent = `${S.i + 1} · ${x.n}: ${x.f}`; $("tipp").textContent = x.t;
+  $("ein").value = S.w[x.k] || ""; $("ein").placeholder = x.c[0];
+  $("chips").innerHTML = `<span>Bausteine zum Einfügen:</span>` + x.c.map(c => `<button type="button">${esc(c)}</button>`).join("");
+  $("chips").querySelectorAll("button").forEach(b => b.onclick = () => {
+    const v = $("ein").value.trim(); $("ein").value = (v ? v + " " : "") + b.textContent; upd(); $("ein").focus();
+  });
+  $("zur").disabled = S.i === 0; $("vor").textContent = S.i < 4 ? "Weiter" : "Fertig";
+  tabs(); meter(); vorschau();
+}
+function upd(){ S.w[T[S.i].k] = $("ein").value; save(); tabs(); meter(); vorschau(); }
+$("ein").addEventListener("input", upd);
+$("zur").onclick = () => { if (S.i > 0){ S.i--; save(); zeige(); } };
+$("vor").onclick = () => { if (S.i < 4){ S.i++; save(); zeige(); } else $("kopieren").focus(); };
+$("beispiel").onclick = () => { T.forEach(x => S.w[x.k] = x.b); save(); zeige(); };
+$("leeren").onclick = () => { S = {w:{}, i:0}; save(); zeige(); };
+function kopiere(t, fertig){
+  const fb = () => { const ta = document.createElement("textarea"); ta.value = t; ta.style.position = "fixed"; ta.style.opacity = "0"; document.body.appendChild(ta); ta.select(); let ok = false; try { ok = document.execCommand("copy"); } catch(e){} ta.remove(); fertig(ok); };
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(t).then(() => fertig(true), fb); else fb();
+}
+$("kopieren").onclick = () => {
+  const teile = T.filter(x => voll(x.k)).map(x => S.w[x.k].trim());
+  if (!teile.length){ $("status").textContent = "Noch leer: zuerst einen Baustein ausfüllen"; return; }
+  kopiere(teile.join("\n\n"), ok => { $("status").textContent = ok ? `Kopiert (${teile.length} von 5 Bausteinen)` : "Kopieren ging nicht: Text markieren und kopieren"; });
+};
+zeige();
+})();
+</script>
+</div>
+<script>
+/* In kv digital ist der Rahmen fix (ca. 976 x 720): bei Bedarf verkleinern, nie unter 72 % */
+(function(){
+  if(!document.documentElement.classList.contains('eingebettet')) return;
+  var w=document.getElementById('wrap'), t=0;
+  function fit(){
+    w.style.zoom=1;
+    var h=w.scrollHeight+4, H=window.innerHeight;
+    w.style.zoom = h>H ? Math.max(.72, H/h) : 1;
+  }
+  function bald(){ clearTimeout(t); t=setTimeout(fit,60); }
+  window.addEventListener('resize',bald); window.addEventListener('load',fit);
+  if(window.ResizeObserver) new ResizeObserver(bald).observe(w);
+  window.FIT=fit; fit();
+})();
+</script>
+</body>
+</html>

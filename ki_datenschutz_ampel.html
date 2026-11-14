@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Datenschutz-Ampel</title>
+<style>
+:root{
+  --bg:#EEF3F1; --karte:#fff; --tinte:#16231f; --grau:#56645f; --linie:#d5e0dc;
+  --hkv:#003936; --hkv2:#2F6B60; --hell:#E3EEEA; --gold:#C08A2D; --goldhell:#FBF3E2;
+  --ok:#1f7a4d; --okhell:#e2f3ea; --falsch:#b3261e; --falschhell:#fbe4e2; --leer:#9a6300; --leerhell:#fff1d6;
+  --gruen:#2e8b57; --gelb:#d9a400; --rot:#c62828;
+  --f:"Aptos","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1715; --karte:#17211e; --tinte:#e2ece8; --grau:#9bb0a8; --linie:#2b3a36;
+  --hkv:#7fc4b4; --hkv2:#5fa898; --hell:#1d2b27; --gold:#e3b25c; --goldhell:#2e2716;
+  --ok:#6fd19c; --okhell:#163327; --falsch:#f08a80; --falschhell:#3a1d1b; --leer:#f2c46b; --leerhell:#3a2e14;
+  --gruen:#5cc98a; --gelb:#f0c43c; --rot:#ef6f6a;
+}}
+:root[data-theme="dark"]{
+  --bg:#0f1715; --karte:#17211e; --tinte:#e2ece8; --grau:#9bb0a8; --linie:#2b3a36;
+  --hkv:#7fc4b4; --hkv2:#5fa898; --hell:#1d2b27; --gold:#e3b25c; --goldhell:#2e2716;
+  --ok:#6fd19c; --okhell:#163327; --falsch:#f08a80; --falschhell:#3a1d1b; --leer:#f2c46b; --leerhell:#3a2e14;
+  --gruen:#5cc98a; --gelb:#f0c43c; --rot:#ef6f6a;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--tinte);font-family:var(--f);font-size:15px;line-height:1.45}
+.wrap{max-width:1000px;margin:0 auto;padding:16px}
+header small{display:block;font-size:11.5px;letter-spacing:1.4px;text-transform:uppercase;font-weight:700;color:var(--hkv2)}
+h1{margin:2px 0 0;font-size:23px;color:var(--hkv);line-height:1.15}
+.sub{color:var(--grau);font-size:14px;margin-top:2px}
+.btn{font:inherit;font-size:14px;font-weight:700;border-radius:9px;padding:7px 14px;cursor:pointer;border:1.5px solid var(--hkv);background:var(--karte);color:var(--hkv)}
+.btn.voll{background:var(--hkv);color:var(--karte)}
+.btn.leise{border-color:var(--linie);color:var(--grau)}
+.btn:disabled{opacity:.45;cursor:default}
+button:focus-visible,textarea:focus-visible{outline:3px solid var(--hkv2);outline-offset:2px}
+.karte{background:var(--karte);border:1px solid var(--linie);border-radius:14px;padding:14px 16px}
+.fuss{font-size:11.5px;color:var(--grau);margin-top:10px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.fuss button{font:inherit;font-size:11.5px;background:none;border:0;color:var(--grau);text-decoration:underline;cursor:pointer;padding:0}
+html.eingebettet body{background:var(--karte)}
+html.eingebettet .wrap{padding:8px 12px}
+html.eingebettet h1{font-size:20px}
+html.eingebettet .karte.aussen{border:0;padding:4px 0}
+.kopf{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.stand{font-size:13.5px;color:var(--grau);font-weight:700}
+.raster{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:14px}
+@media (max-width:720px){.raster{grid-template-columns:1fr}}
+.nr{font-size:12px;letter-spacing:1.2px;text-transform:uppercase;font-weight:800;color:var(--hkv2)}
+.bsp{font-size:20px;line-height:1.35;font-weight:700;margin:6px 0 14px;min-height:82px}
+.ampel{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.ampel button{font:inherit;font-weight:800;font-size:15px;padding:12px 8px;border-radius:12px;cursor:pointer;border:2px solid var(--linie);background:var(--bg);color:var(--tinte);display:flex;flex-direction:column;align-items:center;gap:6px}
+.ampel button:hover:not(:disabled){border-color:var(--hkv2)}
+.ampel button:disabled{cursor:default;opacity:.55}
+.ampel button.gewaehlt{opacity:1;border-color:var(--tinte)}
+.ampel button.loesung{opacity:1;box-shadow:0 0 0 3px var(--ok)}
+.ampel .punkt{width:30px;height:30px;border-radius:50%}
+.ampel small{font-weight:600;font-size:12px;color:var(--grau);text-align:center;line-height:1.25}
+.g{background:var(--gruen)}.y{background:var(--gelb)}.r{background:var(--rot)}
+.fb{margin-top:12px;border-radius:10px;padding:10px 13px;border-left:5px solid var(--ok);background:var(--okhell)}
+.fb.no{border-color:var(--falsch);background:var(--falschhell)}
+.fb b{display:block;margin-bottom:2px}
+.weiter{display:flex;justify-content:flex-end;margin-top:10px}
+.seite h3{margin:0 0 6px;font-size:14px;color:var(--hkv)}
+.seite ol{margin:0;padding-left:0;list-style:none;display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
+.seite li{height:26px;border-radius:6px;background:var(--bg);border:1px solid var(--linie);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--grau)}
+.seite li.ok{background:var(--okhell);border-color:var(--ok);color:var(--ok)}
+.seite li.no{background:var(--falschhell);border-color:var(--falsch);color:var(--falsch)}
+.seite li.jetzt{border-color:var(--hkv);color:var(--hkv)}
+.leg{font-size:13px;margin-top:12px;display:grid;gap:7px}
+.leg div{display:flex;gap:8px;align-items:flex-start}
+.leg i{flex:0 0 14px;height:14px;border-radius:50%;margin-top:3px}
+.end h2{margin:0 0 4px;color:var(--hkv);font-size:21px}
+.end ul{margin:8px 0 0;padding-left:20px}
+.end li{margin-bottom:5px}
+</style>
+</head>
+<body>
+<script>try{if(window.self!==window.top)document.documentElement.classList.add('eingebettet');}catch(e){document.documentElement.classList.add('eingebettet');}</script>
+<div class="wrap" id="wrap">
+<div class="kopf">
+  <header><small>KI im Unterricht · Datenschutz und Regeln</small><h1>Datenschutz-Ampel</h1>
+  <div class="sub">Darf das in eine KI? Ordne jedes Beispiel zu.</div></header>
+  <div class="stand" id="stand" aria-live="polite"></div>
+</div>
+<div class="raster">
+  <div class="karte">
+    <div id="spiel">
+      <div class="nr" id="nr"></div>
+      <div class="bsp" id="bsp"></div>
+      <div class="ampel" id="ampel">
+        <button type="button" data-a="g"><span class="punkt g"></span>Grün<small>unbedenklich</small></button>
+        <button type="button" data-a="y"><span class="punkt y"></span>Gelb<small>nur angepasst</small></button>
+        <button type="button" data-a="r"><span class="punkt r"></span>Rot<small>gehört nicht hinein</small></button>
+      </div>
+      <div class="fb" id="fb" hidden aria-live="polite"></div>
+      <div class="weiter"><button class="btn voll" id="weiter" type="button" hidden>Weiter</button></div>
+    </div>
+    <div class="end" id="end" hidden>
+      <h2 id="ergebnis"></h2>
+      <ul>
+        <li><b>Nur freigegebene Tools:</b> Auch Grünes gehört in ein von der Schule freigegebenes KI-Tool.</li>
+        <li><b>Keine Personendaten:</b> Namen, Noten, Absenzen, Gesundheit, Fotos bleiben draussen.</li>
+        <li><b>Anonymisieren reicht nicht immer:</b> Ort, Betrieb und Situation zusammen machen Personen erkennbar.</li>
+        <li><b>Urheberrecht:</b> aus Lehrmitteln nur kurze Ausschnitte oder eigene Stichworte, Nutzungsbedingungen beachten.</li>
+      </ul>
+      <div class="weiter" style="justify-content:flex-start"><button class="btn" id="neu" type="button">Nochmals</button></div>
+    </div>
+  </div>
+  <aside class="karte seite">
+    <h3>Dein Stand</h3>
+    <ol id="liste" aria-hidden="true"></ol>
+    <div class="leg">
+      <div><i class="g"></i><span><b>Grün:</b> keine Personendaten, kein geschütztes Material</span></div>
+      <div><i class="y"></i><span><b>Gelb:</b> erst kürzen, anonymisieren oder Platzhalter setzen</span></div>
+      <div><i class="r"></i><span><b>Rot:</b> Personendaten, besonders schützenswerte Daten, Zugangsdaten</span></div>
+    </div>
+  </aside>
+</div>
+<div class="fuss"><span>Im Zweifel: Datenschutzverantwortliche der Schule fragen. · HKV Aarau · MoS</span></div>
+<script>
+(function(){
+"use strict";
+const B = [
+ {t:"«Erstelle zehn Quizfragen zum Thema Mietvertrag.»", a:"g", e:"Ein Fachthema ohne Personenbezug. Unbedenklich."},
+ {t:"Die Notenliste deiner Klasse mit Namen, damit die KI Durchschnitte und Auffälligkeiten berechnet.", a:"r", e:"Namen mit Noten sind Personendaten. Rechne mit einer Tabellenkalkulation, nicht mit einer KI."},
+ {t:"Ein Leserbrief einer Lernenden, der Name ist durch [Name] ersetzt. Du willst Feedback-Ideen.", a:"y", e:"Möglich, aber nur angepasst: freigegebenes Tool, alle Namen, Betriebe und Orte ersetzen und prüfen, ob der Inhalt die Person verrät."},
+ {t:"«Formuliere meinen Elternbrief zum Exkursionstag freundlicher.» Der Brief enthält keine Namen.", a:"g", e:"Dein eigener Text ohne Personendaten. Unbedenklich."},
+ {t:"Ein Bericht über einen Lernenden mit ADHS-Diagnose, damit die KI einen Förderplan vorschlägt.", a:"r", e:"Gesundheitsdaten sind besonders schützenswert. Sie gehören in keinen Prompt, auch nicht ohne Namen."},
+ {t:"Ein ganzes Kapitel aus dem Lehrmittel, eingescannt, damit die KI eine Zusammenfassung schreibt.", a:"y", e:"Urheberrecht: nicht ganze Kapitel hochladen. Kurze Ausschnitte oder deine eigenen Stichworte verwenden und die Nutzungsbedingungen des Verlags und der Schule beachten."},
+ {t:"Fotos der Klasse, damit die KI Namensschilder mit Gesicht gestaltet.", a:"r", e:"Fotos von Personen sind Personendaten. Nicht in eine KI laden."},
+ {t:"Eine Mail eines Berufsbildners zu einem Konflikt, mit Namen und Lehrbetrieb. Du brauchst einen Antwortentwurf.", a:"y", e:"Nur angepasst: Namen und Betrieb durch Platzhalter ersetzen, vertrauliche Details weglassen, Kern des Anliegens in eigenen Worten beschreiben."},
+ {t:"«Erstelle sechs Prüfungsfragen zur Haftpflichtversicherung mit Lösungen und Bewertungsraster.»", a:"g", e:"Fachlicher Auftrag ohne Personendaten. Unbedenklich. Das Ergebnis prüfst du trotzdem fachlich."},
+ {t:"«Lernende im 2. Lehrjahr, Lehrabbruch droht, arbeitet im einzigen Gartenbaubetrieb von [Dorf] im Betrieb der Eltern.» Wie soll ich vorgehen?", a:"y", e:"Anonymisieren reicht nicht immer: Kein Name, aber Dorf, Betrieb und Familie machen die Person erkennbar. Erst diese Details entfernen, sonst ist es Rot."},
+ {t:"Dein eigener Entwurf für ein Arbeitsblatt, den die KI sprachlich vereinfachen soll.", a:"g", e:"Dein eigenes Material ohne Personendaten. Unbedenklich."},
+ {t:"Benutzername und Passwort der Schulplattform, damit die KI den Notenexport Schritt für Schritt erklärt.", a:"r", e:"Zugangsdaten gehören nie in einen Prompt. Frag nach der Anleitung, ohne Zugangsdaten anzugeben."}
+];
+const N = {g:"Grün", y:"Gelb", r:"Rot"};
+const $ = id => document.getElementById(id);
+let i = 0, res = [];
+const knoepfe = [...document.querySelectorAll("#ampel button")];
+function liste(){
+  $("liste").innerHTML = B.map((_, k) => `<li class="${res[k] === true ? "ok" : res[k] === false ? "no" : k === i ? "jetzt" : ""}">${k + 1}</li>`).join("");
+  const n = res.filter(Boolean).length, d = res.filter(x => x !== undefined).length;
+  $("stand").textContent = d ? `${n} von ${d} richtig` : "";
+}
+function zeige(){
+  $("spiel").hidden = false; $("end").hidden = true;
+  $("nr").textContent = `Beispiel ${i + 1} von ${B.length}`;
+  $("bsp").textContent = B[i].t;
+  knoepfe.forEach(b => { b.disabled = false; b.classList.remove("gewaehlt","loesung"); });
+  $("fb").hidden = true; $("weiter").hidden = true; liste();
+}
+function waehle(a){
+  const b = B[i], ok = a === b.a; res[i] = ok;
+  knoepfe.forEach(k => { k.disabled = true; if (k.dataset.a === a) k.classList.add("gewaehlt"); if (k.dataset.a === b.a) k.classList.add("loesung"); });
+  const fb = $("fb"); fb.className = "fb" + (ok ? "" : " no"); fb.hidden = false;
+  fb.innerHTML = `<b>${ok ? "Richtig" : "Nicht ganz"}: ${N[b.a]}.</b>${b.e}`;
+  $("weiter").hidden = false; $("weiter").textContent = i < B.length - 1 ? "Weiter" : "Auswertung"; $("weiter").focus(); liste();
+}
+knoepfe.forEach(k => k.addEventListener("click", () => waehle(k.dataset.a)));
+$("weiter").onclick = () => { if (i < B.length - 1){ i++; zeige(); } else { $("spiel").hidden = true; $("end").hidden = false; $("ergebnis").textContent = `${res.filter(Boolean).length} von ${B.length} richtig eingeordnet`; i = B.length; liste(); } };
+$("neu").onclick = () => { i = 0; res = []; zeige(); };
+zeige();
+})();
+</script>
+</div>
+<script>
+/* In kv digital ist der Rahmen fix (ca. 976 x 720): bei Bedarf verkleinern, nie unter 72 % */
+(function(){
+  if(!document.documentElement.classList.contains('eingebettet')) return;
+  var w=document.getElementById('wrap'), t=0;
+  function fit(){
+    w.style.zoom=1;
+    var h=w.scrollHeight+4, H=window.innerHeight;
+    w.style.zoom = h>H ? Math.max(.72, H/h) : 1;
+  }
+  function bald(){ clearTimeout(t); t=setTimeout(fit,60); }
+  window.addEventListener('resize',bald); window.addEventListener('load',fit);
+  if(window.ResizeObserver) new ResizeObserver(bald).observe(w);
+  window.FIT=fit; fit();
+})();
+</script>
+</body>
+</html>

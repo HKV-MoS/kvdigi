@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vorher – nachher</title>
+<style>
+:root{
+  --bg:#EEF3F1; --karte:#fff; --tinte:#16231f; --grau:#56645f; --linie:#d5e0dc;
+  --hkv:#003936; --hkv2:#2F6B60; --hell:#E3EEEA; --gold:#C08A2D; --goldhell:#FBF3E2;
+  --ok:#1f7a4d; --okhell:#e2f3ea; --falsch:#b3261e; --falschhell:#fbe4e2; --leer:#9a6300; --leerhell:#fff1d6;
+  --gruen:#2e8b57; --gelb:#d9a400; --rot:#c62828;
+  --f:"Aptos","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1715; --karte:#17211e; --tinte:#e2ece8; --grau:#9bb0a8; --linie:#2b3a36;
+  --hkv:#7fc4b4; --hkv2:#5fa898; --hell:#1d2b27; --gold:#e3b25c; --goldhell:#2e2716;
+  --ok:#6fd19c; --okhell:#163327; --falsch:#f08a80; --falschhell:#3a1d1b; --leer:#f2c46b; --leerhell:#3a2e14;
+  --gruen:#5cc98a; --gelb:#f0c43c; --rot:#ef6f6a;
+}}
+:root[data-theme="dark"]{
+  --bg:#0f1715; --karte:#17211e; --tinte:#e2ece8; --grau:#9bb0a8; --linie:#2b3a36;
+  --hkv:#7fc4b4; --hkv2:#5fa898; --hell:#1d2b27; --gold:#e3b25c; --goldhell:#2e2716;
+  --ok:#6fd19c; --okhell:#163327; --falsch:#f08a80; --falschhell:#3a1d1b; --leer:#f2c46b; --leerhell:#3a2e14;
+  --gruen:#5cc98a; --gelb:#f0c43c; --rot:#ef6f6a;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--tinte);font-family:var(--f);font-size:15px;line-height:1.45}
+.wrap{max-width:1000px;margin:0 auto;padding:16px}
+header small{display:block;font-size:11.5px;letter-spacing:1.4px;text-transform:uppercase;font-weight:700;color:var(--hkv2)}
+h1{margin:2px 0 0;font-size:23px;color:var(--hkv);line-height:1.15}
+.sub{color:var(--grau);font-size:14px;margin-top:2px}
+.btn{font:inherit;font-size:14px;font-weight:700;border-radius:9px;padding:7px 14px;cursor:pointer;border:1.5px solid var(--hkv);background:var(--karte);color:var(--hkv)}
+.btn.voll{background:var(--hkv);color:var(--karte)}
+.btn.leise{border-color:var(--linie);color:var(--grau)}
+.btn:disabled{opacity:.45;cursor:default}
+button:focus-visible,textarea:focus-visible{outline:3px solid var(--hkv2);outline-offset:2px}
+.karte{background:var(--karte);border:1px solid var(--linie);border-radius:14px;padding:14px 16px}
+.fuss{font-size:11.5px;color:var(--grau);margin-top:10px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.fuss button{font:inherit;font-size:11.5px;background:none;border:0;color:var(--grau);text-decoration:underline;cursor:pointer;padding:0}
+html.eingebettet body{background:var(--karte)}
+html.eingebettet .wrap{padding:8px 12px}
+html.eingebettet h1{font-size:20px}
+html.eingebettet .karte.aussen{border:0;padding:4px 0}
+.spalten{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
+@media (max-width:720px){.spalten{grid-template-columns:1fr}}
+.sp{border-radius:14px;border:1px solid var(--linie);background:var(--karte);padding:12px 14px;display:flex;flex-direction:column;min-width:0}
+.sp.schwach{border-top:5px solid var(--falsch)}
+.sp.gut{border-top:5px solid var(--ok)}
+.etikett{font-size:12px;letter-spacing:1.2px;text-transform:uppercase;font-weight:800}
+.schwach .etikett{color:var(--falsch)}.gut .etikett{color:var(--ok)}
+.prompt{background:var(--bg);border-radius:10px;padding:9px 11px;margin:6px 0 8px;font-size:14.5px;line-height:1.5}
+.schwach .prompt{font-size:17px;font-weight:700}
+.bs{border-radius:4px;padding:0 2px;transition:background .15s}
+.zeigen .bs{background:var(--hell)}
+.zeigen .bs::before{content:attr(data-b);font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:#fff;background:var(--hkv2);border-radius:3px;padding:0 4px;margin-right:4px;vertical-align:2px}
+.leiste{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.erg{margin-top:8px;border:1px dashed var(--linie);border-radius:10px;padding:8px 11px;font-size:13.5px;line-height:1.45;background:var(--bg)}
+.erg h4{margin:0 0 4px;font-size:13px;color:var(--grau);text-transform:uppercase;letter-spacing:1px}
+.erg ol{margin:0;padding-left:18px}
+.erg .x{background:var(--falschhell);color:var(--falsch);border-radius:4px;padding:0 3px;font-weight:600}
+.erg .v{background:var(--okhell);color:var(--ok);border-radius:4px;padding:0 3px;font-weight:600}
+.urteil{margin-top:8px;font-size:13.5px}
+.urteil li{margin-bottom:2px}
+.urteil ul{margin:2px 0 0;padding-left:18px}
+.fazit{margin-top:12px;background:var(--goldhell);border-left:5px solid var(--gold);border-radius:8px;padding:9px 13px;font-weight:700}
+</style>
+</head>
+<body>
+<script>try{if(window.self!==window.top)document.documentElement.classList.add('eingebettet');}catch(e){document.documentElement.classList.add('eingebettet');}</script>
+<div class="wrap" id="wrap">
+<header><small>KI im Unterricht · Die Prompt-Formel</small><h1>Vorher – nachher</h1>
+<div class="sub">Derselbe Wunsch, zweimal formuliert. Klapp die Ergebnisse auf und vergleiche.</div></header>
+<div class="spalten">
+  <section class="sp schwach">
+    <div class="etikett">Vorher: schwacher Prompt</div>
+    <div class="prompt">«Mach ein Arbeitsblatt über Mietrecht.»</div>
+    <div class="leiste"><button class="btn" type="button" data-t="e1">Ergebnis zeigen</button></div>
+    <div class="erg" id="e1" hidden>
+      <h4>Auszug aus der Antwort</h4>
+      <b>Arbeitsblatt: Mietrecht</b>
+      <ol>
+        <li><span class="x">Erkläre</span> den Begriff Mietvertrag.</li>
+        <li>Welche Pflichten hat ein Mieter?</li>
+        <li>Was regelt <span class="x">§ 535 BGB</span>?</li>
+        <li>Diskutiere: Ist Mietrecht gerecht?</li>
+      </ol>
+      <div class="urteil"><b>Was nicht passt:</b>
+        <ul><li>deutsches statt Schweizer Recht</li><li>Du-Form, kein Bezug zur Klasse</li><li>kein Thema, keine Lösungen, kein Niveau</li></ul></div>
+    </div>
+  </section>
+  <section class="sp gut" id="gut">
+    <div class="etikett">Nachher: Prompt mit RAKFG</div>
+    <div class="prompt" id="gp"><span class="bs" data-b="Rolle">Du bist eine erfahrene Lehrperson an einer Berufsfachschule in der Schweiz.</span> <span class="bs" data-b="Auftrag">Erstelle ein Arbeitsblatt zum Thema «Mängel an der Mietwohnung».</span> <span class="bs" data-b="Kontext">Die Klasse: Detailhandelsfachleute EFZ, 2. Lehrjahr. Sie kennen die Begriffe aus dem Mietvertrag.</span> <span class="bs" data-b="Format">Vier Aufgaben vom Wiedergeben bis zum Fall, danach separat die Lösungen.</span> <span class="bs" data-b="Grenzen">Schweizer Rechtschreibung, Lernende mit «Sie» ansprechen, unsichere Angaben mit [prüfen] markieren.</span></div>
+    <div class="leiste"><button class="btn" type="button" id="bz" aria-pressed="false">Bausteine zeigen</button><button class="btn" type="button" data-t="e2">Ergebnis zeigen</button></div>
+    <div class="erg" id="e2" hidden>
+      <h4>Auszug aus der Antwort</h4>
+      <b>Arbeitsblatt: Mängel an der Mietwohnung</b>
+      <ol>
+        <li>Nennen Sie zwei Beispiele für einen leichten und zwei für einen schweren Mangel.</li>
+        <li>Wie und wann melden Sie einen Mangel der Vermieterin?</li>
+        <li>Erklären Sie, was eine Mietzinsreduktion ist. <span class="v">[prüfen: Art. 259d OR]</span></li>
+        <li>Fall: In Lenas Bad wächst Schimmel. Was raten Sie ihr?</li>
+      </ol>
+      <div class="urteil"><b>Was passt:</b>
+        <ul><li>Schweizer Bezug, passend zur Klasse</li><li>Sie-Form, aufsteigende Anforderungen</li><li>Lösungen separat, Unsicheres markiert</li></ul></div>
+    </div>
+  </section>
+</div>
+<div class="fazit">Der zweite Prompt braucht eine Minute länger und spart dir zwanzig Minuten Nacharbeit. Prüfen musst du trotzdem.</div>
+<div class="fuss"><span>Die Antworten sind gekürzte Beispiele. Jedes KI-Tool antwortet etwas anders. · HKV Aarau · MoS</span></div>
+<script>
+(function(){
+document.querySelectorAll("[data-t]").forEach(b => b.addEventListener("click", () => {
+  const e = document.getElementById(b.dataset.t); e.hidden = !e.hidden;
+  b.textContent = e.hidden ? "Ergebnis zeigen" : "Ergebnis verbergen";
+}));
+const bz = document.getElementById("bz");
+bz.addEventListener("click", () => {
+  const an = document.getElementById("gp").classList.toggle("zeigen");
+  bz.setAttribute("aria-pressed", an); bz.textContent = an ? "Bausteine verbergen" : "Bausteine zeigen";
+});
+})();
+</script>
+</div>
+<script>
+/* In kv digital ist der Rahmen fix (ca. 976 x 720): bei Bedarf verkleinern, nie unter 72 % */
+(function(){
+  if(!document.documentElement.classList.contains('eingebettet')) return;
+  var w=document.getElementById('wrap'), t=0;
+  function fit(){
+    w.style.zoom=1;
+    var h=w.scrollHeight+4, H=window.innerHeight;
+    w.style.zoom = h>H ? Math.max(.72, H/h) : 1;
+  }
+  function bald(){ clearTimeout(t); t=setTimeout(fit,60); }
+  window.addEventListener('resize',bald); window.addEventListener('load',fit);
+  if(window.ResizeObserver) new ResizeObserver(bald).observe(w);
+  window.FIT=fit; fit();
+})();
+</script>
+</body>
+</html>
