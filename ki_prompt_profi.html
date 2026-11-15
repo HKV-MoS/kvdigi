@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prompt-Profi</title>
+<style>
+:root{
+  --bg:#EEF3F1; --karte:#fff; --tinte:#16231f; --grau:#56645f; --linie:#d5e0dc;
+  --hkv:#003936; --hkv2:#2F6B60; --hell:#E3EEEA; --gold:#C08A2D; --goldhell:#FBF3E2;
+  --ok:#1f7a4d; --okhell:#e2f3ea; --falsch:#b3261e; --falschhell:#fbe4e2; --leer:#9a6300; --leerhell:#fff1d6;
+  --gruen:#2e8b57; --gelb:#d9a400; --rot:#c62828;
+  --f:"Aptos","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1715; --karte:#17211e; --tinte:#e2ece8; --grau:#9bb0a8; --linie:#2b3a36;
+  --hkv:#7fc4b4; --hkv2:#5fa898; --hell:#1d2b27; --gold:#e3b25c; --goldhell:#2e2716;
+  --ok:#6fd19c; --okhell:#163327; --falsch:#f08a80; --falschhell:#3a1d1b; --leer:#f2c46b; --leerhell:#3a2e14;
+  --gruen:#5cc98a; --gelb:#f0c43c; --rot:#ef6f6a;
+}}
+:root[data-theme="dark"]{
+  --bg:#0f1715; --karte:#17211e; --tinte:#e2ece8; --grau:#9bb0a8; --linie:#2b3a36;
+  --hkv:#7fc4b4; --hkv2:#5fa898; --hell:#1d2b27; --gold:#e3b25c; --goldhell:#2e2716;
+  --ok:#6fd19c; --okhell:#163327; --falsch:#f08a80; --falschhell:#3a1d1b; --leer:#f2c46b; --leerhell:#3a2e14;
+  --gruen:#5cc98a; --gelb:#f0c43c; --rot:#ef6f6a;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--tinte);font-family:var(--f);font-size:15px;line-height:1.45}
+.wrap{max-width:1000px;margin:0 auto;padding:16px}
+header small{display:block;font-size:11.5px;letter-spacing:1.4px;text-transform:uppercase;font-weight:700;color:var(--hkv2)}
+h1{margin:2px 0 0;font-size:23px;color:var(--hkv);line-height:1.15}
+.sub{color:var(--grau);font-size:14px;margin-top:2px}
+.btn{font:inherit;font-size:14px;font-weight:700;border-radius:9px;padding:7px 14px;cursor:pointer;border:1.5px solid var(--hkv);background:var(--karte);color:var(--hkv)}
+.btn.voll{background:var(--hkv);color:var(--karte)}
+.btn.leise{border-color:var(--linie);color:var(--grau)}
+.btn:disabled{opacity:.45;cursor:default}
+button:focus-visible,textarea:focus-visible{outline:3px solid var(--hkv2);outline-offset:2px}
+.karte{background:var(--karte);border:1px solid var(--linie);border-radius:14px;padding:14px 16px}
+.fuss{font-size:11.5px;color:var(--grau);margin-top:10px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.fuss button{font:inherit;font-size:11.5px;background:none;border:0;color:var(--grau);text-decoration:underline;cursor:pointer;padding:0}
+html.eingebettet body{background:var(--karte)}
+html.eingebettet .wrap{padding:8px 12px}
+html.eingebettet h1{font-size:20px}
+html.eingebettet .karte.aussen{border:0;padding:4px 0}
+.kopf{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.hud{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.chip{background:var(--hell);color:var(--hkv);border-radius:20px;padding:4px 12px;font-weight:800;font-size:14px}
+.chip.serie{background:var(--goldhell);color:var(--gold)}
+.zeit{height:8px;border-radius:5px;background:var(--linie);overflow:hidden;margin:4px 0 12px}
+.zeit i{display:block;height:100%;width:100%;background:var(--ok);transition:width .2s linear}
+.zeit i.knapp{background:var(--gold)}.zeit i.weg{background:var(--falsch)}
+.art{font-size:12px;letter-spacing:1.2px;text-transform:uppercase;font-weight:800;color:var(--hkv2)}
+.frage{font-size:20px;line-height:1.35;font-weight:700;margin:6px 0 10px}
+.zitat{background:var(--bg);border-left:4px solid var(--hkv2);border-radius:8px;padding:9px 12px;margin:0 0 12px;font-size:15px;line-height:1.5}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opts.drei{grid-template-columns:repeat(3,1fr)}
+.opts.fuenf{grid-template-columns:repeat(5,1fr)}
+@media (max-width:640px){.opts,.opts.drei,.opts.fuenf{grid-template-columns:1fr}}
+.opts button{font:inherit;font-size:15px;font-weight:700;padding:13px 10px;border-radius:12px;cursor:pointer;border:2px solid var(--linie);background:var(--karte);color:var(--tinte);text-align:center;line-height:1.3}
+.opts button:hover:not(:disabled){border-color:var(--hkv2);transform:translateY(-1px)}
+.opts button:disabled{cursor:default}
+.opts button.richtig{border-color:var(--ok);background:var(--okhell);color:var(--ok)}
+.opts button.falsch{border-color:var(--falsch);background:var(--falschhell);color:var(--falsch)}
+.opts .g{border-color:var(--gruen)}.opts .y{border-color:var(--gelb)}.opts .r{border-color:var(--rot)}
+.fb{margin-top:12px;border-radius:10px;padding:10px 13px;border-left:5px solid var(--ok);background:var(--okhell);display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.fb.no{border-color:var(--falsch);background:var(--falschhell)}
+.fb b{display:block}
+.plus{font-weight:800;color:var(--ok);white-space:nowrap}
+.start,.ende{text-align:center;padding:16px 8px}
+.start h2,.ende h2{margin:4px 0 6px;color:var(--hkv);font-size:24px}
+.start ul{text-align:left;max-width:560px;margin:10px auto 16px;padding-left:20px}
+.badge{width:120px;height:120px;border-radius:50%;margin:6px auto 10px;display:flex;align-items:center;justify-content:center;flex-direction:column;font-weight:800;color:#fff;box-shadow:0 6px 18px rgba(0,0,0,.15)}
+.badge svg{width:44px;height:44px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.badge.gold{background:linear-gradient(135deg,#e7b545,#b8860b)}
+.badge.silber{background:linear-gradient(135deg,#b9c3c7,#7d8a8f)}
+.badge.bronze{background:linear-gradient(135deg,#d39a6a,#9a5b2e)}
+.punkte{font-size:40px;font-weight:800;color:var(--hkv);line-height:1}
+.konf{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.konf i{position:absolute;top:-12px;width:9px;height:14px;border-radius:2px;animation:fall 2.6s linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+@media (prefers-reduced-motion: reduce){.konf{display:none}.opts button:hover:not(:disabled){transform:none}}
+.fachwahl{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:13px;font-weight:700;color:var(--grau)}
+.fachwahl button{font:inherit;font-size:13px;font-weight:700;border:1.5px solid var(--linie);background:var(--karte);color:var(--tinte);border-radius:20px;padding:4px 12px;cursor:pointer}
+.fachwahl button[aria-pressed="true"]{background:var(--hkv);border-color:var(--hkv);color:var(--karte)}
+</style>
+<script>
+/* Fachwahl: einmal waehlen, gilt fuer alle eingebetteten Tools (gleiche Herkunft) */
+window.FACH=(function(){
+  var K='hkv_ki_fach', L=[['abu','ABU'],['en','Englisch'],['wi','Wirtschaft']], cbs=[];
+  function get(){var v=null;try{v=localStorage.getItem(K);}catch(e){}return L.some(function(x){return x[0]===v;})?v:'abu';}
+  var cur=get();
+  function fire(){cbs.forEach(function(f){f(cur);});document.querySelectorAll('.fachwahl button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.f===cur);});}
+  function set(v){cur=v;try{localStorage.setItem(K,v);}catch(e){}fire();}
+  window.addEventListener('storage',function(e){if(e.key===K){cur=get();fire();}});
+  function bar(el){el.innerHTML='<span>Dein Fach:</span>'+L.map(function(x){return '<button type="button" data-f="'+x[0]+'" aria-pressed="'+(x[0]===cur)+'">'+x[1]+'</button>';}).join('');el.querySelectorAll('button').forEach(function(b){b.onclick=function(){set(b.dataset.f);};});}
+  return {get:function(){return cur;},set:set,on:function(f){cbs.push(f);},bar:bar};
+})();
+</script>
+
+</head>
+<body>
+<script>try{if(window.self!==window.top)document.documentElement.classList.add('eingebettet');}catch(e){document.documentElement.classList.add('eingebettet');}</script>
+<div class="wrap" id="wrap">
+<div class="kopf">
+  <header><small>KI im Unterricht · Zum Abschluss</small><h1>Prompt-Profi</h1>
+  <div class="sub">Zehn Runden aus allen vier Kapiteln. Je schneller, desto mehr Punkte.</div></header>
+  <div class="fachwahl" id="fw"></div>
+</div>
+<div class="karte aussen">
+  <div class="start" id="start">
+    <h2>Bist du bereit?</h2>
+    <ul>
+      <li>10 Runden, pro Runde 20 Sekunden</li>
+      <li>Richtig: 100 Punkte plus Zeitbonus, ab drei richtigen in Folge gibt es Serienpunkte</li>
+      <li>Einige Runden passen sich deinem Fach an</li>
+    </ul>
+    <button class="btn voll" id="los" type="button">Spiel starten</button>
+  </div>
+  <div id="spiel" hidden>
+    <div class="hud"><span class="chip" id="runde"></span><span class="chip" id="stand">0 Punkte</span><span class="chip serie" id="serie" hidden></span></div>
+    <div class="zeit"><i id="balken"></i></div>
+    <div class="art" id="art"></div>
+    <div class="frage" id="frage"></div>
+    <div class="zitat" id="zitat" hidden></div>
+    <div class="opts" id="opts"></div>
+    <div class="fb" id="fb" hidden><div id="fbtext"></div><button class="btn voll" id="weiter" type="button">Weiter</button></div>
+  </div>
+  <div class="ende" id="ende" hidden>
+    <div class="badge" id="badge"></div>
+    <div class="punkte" id="total"></div>
+    <h2 id="titel"></h2>
+    <div class="sub" id="satz"></div>
+    <p style="margin-top:14px"><button class="btn" id="nochmal" type="button">Nochmals spielen</button></p>
+  </div>
+</div>
+<div class="konf" id="konf" aria-hidden="true"></div>
+<div class="fuss"><span>HKV Aarau · MoS · KI im Unterricht</span></div>
+<script>
+(function(){
+"use strict";
+const B5 = ["Rolle","Auftrag","Kontext","Format","Grenzen"];
+const AMP = [["Grün","g"],["Gelb","y"],["Rot","r"]];
+/* Runde: {art, f, z (Zitat, optional, kann je Fach sein), o (Optionen), k (Index richtig), e (Erklärung)} */
+const R = [
+ {art:"Prompt-Formel", f:"Welcher Baustein fehlt in diesem Prompt?",
+  z:{abu:"«Erstelle vier Aufgaben zum Thema ‹Mängel an der Mietwohnung› für Detailhandelsfachleute im 2. Lehrjahr. Danach separat die Lösungen. Schweizer Rechtschreibung.»",
+     en:"«You are an experienced English teacher at a Swiss vocational school. Create a worksheet on the present perfect: four tasks and a separate answer key. Use British English.»",
+     wi:"«Du bist Lehrperson für Wirtschaft an einer Berufsfachschule. Erstelle Aufgaben zur Warenkalkulation für Kaufleute im 1. Lehrjahr. Schweizer Rechtschreibung, Beträge in CHF.»"},
+  o:B5, k:{abu:0,en:2,wi:3},
+  e:{abu:"Es fehlt die Rolle: Wer soll die KI sein?",en:"Es fehlt der Kontext: Welche Klasse, welches Niveau?",wi:"Es fehlt das Format: Wie viele Aufgaben, mit Lösungen?"}},
+ {art:"Datenschutz-Ampel", f:"Darf das in eine KI?", z:"Die Absenzenliste deiner Klasse mit Namen und Gründen, damit die KI Muster erkennt.",
+  o:AMP, k:2, e:"Rot: Namen mit Absenzen und Gründen sind Personendaten."},
+ {art:"KI verstehen", f:"Stimmt das?", z:"«Eine KI prüft automatisch, ob ihre Antwort stimmt.»",
+  o:["Stimmt","Stimmt nicht"], k:1, e:"Ein Sprachmodell schreibt das Wahrscheinlichste. Prüfen musst du selbst."},
+ {art:"Nachschärfen", f:"Das Arbeitsblatt ist brauchbar, aber zwei Seiten lang. Was ist der schnellste Weg?",
+  o:["«Kürze auf eine Seite.»","Einen ganz neuen Prompt schreiben","«Das ist schlecht.»"], k:0, e:"Eine kurze, gezielte Nachfrage ist schneller als ein neuer Prompt."},
+ {art:"Fakten-Check", f:"Stimmt dieser Satz aus einer KI-Antwort?",
+  z:{abu:"«Bei Wohnräumen darf die Vermieterin eine Kaution von bis zu sechs Monatszinsen verlangen.»",
+     en:"«With yesterday we use the present perfect: I have seen him yesterday.»",
+     wi:"«Exporte ins Ausland sind immer zum Normalsatz mehrwertsteuerpflichtig.»"},
+  o:["Stimmt","Stimmt nicht"], k:1,
+  e:{abu:"Höchstens drei Monatszinse (Art. 257e Abs. 2 OR).",en:"Mit yesterday steht das simple past: I saw him yesterday.",wi:"Exporte sind von der Steuer befreit (Art. 23 MWSTG)."}},
+ {art:"Datenschutz-Ampel", f:"Darf das in eine KI?", z:"Dein eigener Entwurf für ein Arbeitsblatt, den die KI sprachlich vereinfachen soll.",
+  o:AMP, k:0, e:"Grün: Eigenes Material ohne Personendaten ist unbedenklich."},
+ {art:"Prompt-Formel", f:"Welcher Prompt bringt das bessere Ergebnis?",
+  z:{abu:"A: «Mach was zu Mietrecht.»<br>B: «Du bist Lehrperson an einer Berufsfachschule. Erstelle vier Aufgaben zu Mängeln an der Mietwohnung für das 2. Lehrjahr, Lösungen separat.»",
+     en:"A: «Make a grammar test.»<br>B: «You are an English teacher. Create a ten-item test on the present perfect for level B1, with an answer key.»",
+     wi:"A: «Erkläre Break-even.»<br>B: «Du bist Lehrperson für Wirtschaft. Erkläre den Break-even für Kaufleute im 2. Lehrjahr mit einem Velo-Beispiel in CHF und drei Übungen mit Lösungen.»"},
+  o:["Prompt A","Prompt B"], k:1, e:"B enthält Rolle, Auftrag, Kontext und Format. A lässt die KI raten."},
+ {art:"Fakten-Check", f:"Die KI nennt einen Gesetzesartikel oder einen Steuersatz. Was machst du?",
+  o:["An der Quelle nachschlagen","Übernehmen, klingt plausibel","Die KI fragen, ob sie sicher ist"], k:0, e:"Zahlen, Daten und Artikel prüfst du an der Quelle, zum Beispiel auf fedlex.admin.ch."},
+ {art:"Datenschutz-Ampel", f:"Darf das in eine KI?", z:"Ein Text ohne Namen, aber mit Dorf, Lehrbetrieb und Familiensituation einer lernenden Person.",
+  o:AMP, k:1, e:"Gelb: Anonymisieren reicht nicht immer. Erst die erkennbaren Details entfernen."},
+ {art:"KI im Unterricht", f:"Lernende sollen eine Argumentation selbst schreiben. Welche KI-Regel passt?",
+  o:["KI nicht erlaubt","KI für Ideen erlaubt, offenlegen","KI frei, ohne Hinweis"], k:0, e:"Wenn genau diese Kompetenz geprüft wird, ist KI nicht erlaubt. Die Regel vorher klar ansagen."}
+];
+const ZEIT = 20;
+const $ = id => document.getElementById(id);
+let i = 0, punkte = 0, serie = 0, richtig = 0, t0 = 0, tick = null, offen = false;
+const val = (x) => (x && typeof x === "object" && !Array.isArray(x)) ? x[FACH.get()] : x;
+function zeigeRunde(){
+  const r = R[i];
+  $("runde").textContent = `Runde ${i + 1} / ${R.length}`;
+  $("art").textContent = r.art; $("frage").textContent = r.f;
+  const z = val(r.z); $("zitat").hidden = !z; $("zitat").innerHTML = z || "";
+  const o = r.o;
+  $("opts").className = "opts" + (o.length === 3 ? " drei" : o.length === 5 ? " fuenf" : "");
+  $("opts").innerHTML = o.map((x, k) => Array.isArray(x)
+    ? `<button type="button" class="${x[1]}" data-k="${k}">${x[0]}</button>`
+    : `<button type="button" data-k="${k}">${x}</button>`).join("");
+  $("opts").querySelectorAll("button").forEach(b => b.onclick = () => antwort(+b.dataset.k));
+  $("fb").hidden = true; offen = true;
+  t0 = Date.now(); clearInterval(tick);
+  tick = setInterval(zeit, 100); zeit();
+}
+function zeit(){
+  const rest = Math.max(0, ZEIT - (Date.now() - t0) / 1000), p = rest / ZEIT * 100, b = $("balken");
+  b.style.width = p + "%"; b.className = rest < 5 ? "weg" : rest < 10 ? "knapp" : "";
+  if (rest <= 0 && offen) antwort(-1);
+}
+function antwort(k){
+  if (!offen) return; offen = false; clearInterval(tick);
+  const r = R[i], ok = k === val(r.k), rest = Math.max(0, ZEIT - (Date.now() - t0) / 1000);
+  let plus = 0;
+  if (ok){ serie++; richtig++; plus = 100 + Math.round(rest * 5) + (serie >= 3 ? 50 : 0); punkte += plus; } else serie = 0;
+  $("opts").querySelectorAll("button").forEach(b => { b.disabled = true; const n = +b.dataset.k; if (n === val(r.k)) b.classList.add("richtig"); else if (n === k) b.classList.add("falsch"); });
+  $("fb").className = "fb" + (ok ? "" : " no"); $("fb").hidden = false;
+  $("fbtext").innerHTML = `<b>${ok ? "Richtig!" : (k < 0 ? "Zeit abgelaufen." : "Nicht ganz.")}</b>${val(r.e)}` + (ok ? ` <span class="plus">+${plus}</span>` : "");
+  $("stand").textContent = punkte + " Punkte";
+  $("serie").hidden = serie < 3; $("serie").textContent = `Serie ${serie}`;
+  $("weiter").textContent = i < R.length - 1 ? "Weiter" : "Auswertung"; $("weiter").focus();
+}
+function ende(){
+  $("spiel").hidden = true; $("ende").hidden = false;
+  const stufe = punkte >= 1800 ? ["gold","Prompt-Profi","Stark! Du steuerst die KI sicher."] : punkte >= 1200 ? ["silber","Prompt-Könnerin, Prompt-Könner","Gut gemacht. Schau dir die Runden mit Fehlern nochmals an."] : ["bronze","Auf gutem Weg","Wiederhol die Kapitel, in denen es gehapert hat, und spiel nochmals."];
+  $("badge").className = "badge " + stufe[0];
+  $("badge").innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.9z"/></svg>' + stufe[0].toUpperCase();
+  $("total").textContent = punkte + " Punkte";
+  $("titel").textContent = stufe[1];
+  $("satz").textContent = `${richtig} von ${R.length} richtig. ` + stufe[2];
+  if (stufe[0] === "gold") konfetti();
+}
+function konfetti(){
+  const f = ["#2e8b57","#d9a400","#003936","#C08A2D","#86efac"], k = $("konf"); k.innerHTML = "";
+  for (let n = 0; n < 60; n++){ const e = document.createElement("i"); e.style.left = Math.random() * 100 + "%"; e.style.background = f[n % f.length]; e.style.animationDelay = Math.random() * .8 + "s"; k.appendChild(e); }
+  setTimeout(() => k.innerHTML = "", 4000);
+}
+function start(){ i = 0; punkte = 0; serie = 0; richtig = 0; $("stand").textContent = "0 Punkte"; $("serie").hidden = true; $("start").hidden = true; $("ende").hidden = true; $("spiel").hidden = false; zeigeRunde(); }
+$("los").onclick = start; $("nochmal").onclick = start;
+$("weiter").onclick = () => { if (i < R.length - 1){ i++; zeigeRunde(); } else ende(); };
+FACH.bar($("fw")); FACH.on(() => { if (!$("spiel").hidden && offen) zeigeRunde(); });
+})();
+</script>
+</div>
+<script>
+/* In kv digital ist der Rahmen fix (ca. 976 x 720): bei Bedarf verkleinern, nie unter 72 % */
+(function(){
+  if(!document.documentElement.classList.contains('eingebettet')) return;
+  var w=document.getElementById('wrap'), t=0;
+  function fit(){
+    w.style.zoom=1;
+    var h=w.scrollHeight+4, H=window.innerHeight;
+    w.style.zoom = h>H ? Math.max(.72, H/h) : 1;
+  }
+  function bald(){ clearTimeout(t); t=setTimeout(fit,60); }
+  window.addEventListener('resize',bald); window.addEventListener('load',fit);
+  if(window.ResizeObserver) new ResizeObserver(bald).observe(w);
+  window.FIT=fit; fit();
+})();
+</script>
+</body>
+</html>
