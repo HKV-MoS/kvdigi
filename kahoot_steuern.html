@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kahoot: Steuern und Staatsausgaben</title>
+<style>
+:root{--bg:#F3F0F8;--karte:#fff;--tinte:#1d1630;--grau:#5b5670;--lila:#46178F;--lila2:#6b3fb8;--linie:#ddd5ea;--f:"Aptos","Segoe UI",system-ui,-apple-system,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tinte);font-family:var(--f);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.karte{background:var(--karte);border-radius:18px;box-shadow:0 6px 30px rgba(70,23,143,.12);max-width:900px;width:100%;padding:28px 34px;display:grid;grid-template-columns:auto 1fr;gap:34px;align-items:center}
+@media (max-width:700px){.karte{grid-template-columns:1fr;text-align:center;padding:22px}.qr{margin:0 auto}}
+.qr{background:#fff;border:2px solid var(--linie);border-radius:16px;padding:12px;width:max-content}
+.qr img{display:block;width:300px;height:300px;image-rendering:pixelated}
+small{display:block;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;font-weight:800;color:var(--lila2)}
+h1{margin:4px 0 4px;font-size:32px;line-height:1.1;color:var(--lila)}
+.sub{font-size:17px;color:var(--grau);margin-bottom:18px}
+ol{margin:0 0 16px;padding-left:22px;font-size:19px;line-height:1.55}
+.pin{background:var(--bg);border-radius:10px;padding:10px 14px;font-size:16px;margin-bottom:16px}
+.pin b{font-size:22px;letter-spacing:2px;color:var(--lila)}
+a.knopf{display:inline-block;background:var(--lila);color:#fff;font-size:18px;font-weight:700;padding:12px 26px;border-radius:10px;text-decoration:none}
+a.knopf:hover{background:var(--lila2)}
+a.knopf:focus-visible{outline:3px solid var(--lila2);outline-offset:3px}
+.stv{margin-top:16px;font-size:13.5px;color:var(--grau);border-top:1px solid var(--linie);padding-top:10px}
+html.eingebettet body{background:#fff;padding:0;min-height:0;height:100vh}
+html.eingebettet .karte{box-shadow:none}
+</style>
+</head>
+<body>
+<script>try{if(window.self!==window.top)document.documentElement.classList.add('eingebettet');}catch(e){document.documentElement.classList.add('eingebettet');}</script>
+<main class="karte">
+  <div class="qr"><img src="data:image/png;base64,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" alt="QR-Code zum Kahoot «Steuern und Staatsausgaben»"></div>
+  <div>
+    <small>Abschluss · Kapitel Steuern</small>
+    <h1>Kahoot: Steuern und Staatsausgaben</h1>
+    <div class="sub">25 Fragen · ca. 15 Minuten · allein lösen</div>
+    <ol>
+      <li>QR-Code mit dem Handy scannen.</li>
+      <li>Vor- und Nachnamen eingeben.</li>
+      <li>Alle Fragen lösen – bis zum Schluss.</li>
+    </ol>
+    <div class="pin">Ohne QR-Code: <strong>kahoot.it</strong> öffnen und die PIN eingeben: <b>06386727</b></div>
+    <a class="knopf" href="https://kahoot.it/challenge/06386727" target="_blank" rel="noopener noreferrer">Kahoot am Laptop öffnen ↗</a>
+    <div class="stv">Für die Stellvertretung: Folie einblenden, etwa 20 Minuten einplanen. Die Resultate sieht die Lehrperson in Kahoot. · HKV Aarau · MoS</div>
+  </div>
+</main>
+</body>
+</html>
