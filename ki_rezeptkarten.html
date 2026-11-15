@@ -90,14 +90,31 @@ html.eingebettet .chips button{font-size:12px;padding:2px 8px}
 html.eingebettet .check label{font-size:12.5px;margin-bottom:2px}
 html.eingebettet .fuss{margin-top:6px}
 @media print{.karten,.knoepfe,.unten,.fuss{display:none}.raster{grid-template-columns:1fr}.vorschau{max-height:none}}
+.fachwahl{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:13px;font-weight:700;color:var(--grau)}
+.fachwahl button{font:inherit;font-size:13px;font-weight:700;border:1.5px solid var(--linie);background:var(--karte);color:var(--tinte);border-radius:20px;padding:4px 12px;cursor:pointer}
+.fachwahl button[aria-pressed="true"]{background:var(--hkv);border-color:var(--hkv);color:var(--karte)}
 </style>
+<script>
+/* Fachwahl: einmal waehlen, gilt fuer alle eingebetteten Tools (gleiche Herkunft) */
+window.FACH=(function(){
+  var K='hkv_ki_fach', L=[['abu','ABU'],['en','Englisch'],['wi','Wirtschaft']], cbs=[];
+  function get(){var v=null;try{v=localStorage.getItem(K);}catch(e){}return L.some(function(x){return x[0]===v;})?v:'abu';}
+  var cur=get();
+  function fire(){cbs.forEach(function(f){f(cur);});document.querySelectorAll('.fachwahl button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.f===cur);});}
+  function set(v){cur=v;try{localStorage.setItem(K,v);}catch(e){}fire();}
+  window.addEventListener('storage',function(e){if(e.key===K){cur=get();fire();}});
+  function bar(el){el.innerHTML='<span>Dein Fach:</span>'+L.map(function(x){return '<button type="button" data-f="'+x[0]+'" aria-pressed="'+(x[0]===cur)+'">'+x[1]+'</button>';}).join('');el.querySelectorAll('button').forEach(function(b){b.onclick=function(){set(b.dataset.f);};});}
+  return {get:function(){return cur;},set:set,on:function(f){cbs.push(f);},bar:bar};
+})();
+</script>
 </head>
 <body>
 <script>try{if(window.self!==window.top)document.documentElement.classList.add('eingebettet');}catch(e){document.documentElement.classList.add('eingebettet');}</script>
 <div class="wrap">
 <header>
-  <div><small>KI im Unterricht · Abschnitt 5</small><h1>Rezeptkarten: Prompts für den Schulalltag</h1>
+  <div><small>KI im Unterricht · Rezeptkarten</small><h1>Rezeptkarten: Prompts für den Schulalltag</h1>
   <div class="sub">Karte wählen, Lücken ausfüllen, Prompt kopieren und in dein KI-Tool einfügen.</div></div>
+  <div class="fachwahl" id="fw"></div>
 </header>
 <div class="raster">
   <nav class="karten" id="karten" aria-label="Rezeptkarten"></nav>
@@ -151,11 +168,11 @@ const R = [
        {k:"vorwissen",l:"Vorwissen der Klasse",ph:"Was können sie schon?",bsp:"kennen die wichtigsten Begriffe aus dem Mietvertrag"},
        {k:"ziel",l:"Lernziel",ph:"Die Lernenden können …",bsp:"erklären, wie man einen Mangel korrekt und rechtzeitig meldet"},
        {k:"wunsch",l:"Methodenwunsch",ph:"z. B. mindestens eine Partnerarbeit",bsp:"mindestens eine Partnerarbeit und eine kurze Lernkontrolle am Schluss",w:1} ],
-   tpl:[["Rolle",ROLLE],
+   tpl:[["Rolle","{_rolle}"],
         ["Auftrag","Plane eine Lektion von {dauer} zum Thema «{thema}» im Fach {fach}."],
         ["Kontext","Die Klasse: {klasse}. Die Lernenden {vorwissen}. Lernziel: Die Lernenden können {ziel}."],
         ["Format","Eine Tabelle mit den Spalten Zeit, Phase, Tätigkeit der Lehrperson, Tätigkeit der Lernenden, Material. Danach drei Ideen für einen aktivierenden Einstieg."],
-        ["Grenzen","Realistische Zeitangaben, {wunsch}. "+GRENZE_CH+" Wenn dir wichtige Angaben fehlen, stelle mir zuerst Rückfragen."]] },
+        ["Grenzen","Realistische Zeitangaben, {wunsch}. {_sprache} Wenn dir wichtige Angaben fehlen, stelle mir zuerst Rückfragen."]] },
  { id:"blatt", ic:"blatt", titel:"Arbeitsblatt in drei Niveaus", kurz:"Gleiches Thema, drei Schwierigkeitsstufen",
    zweck:"Für Binnendifferenzierung: Basis, Standard und Erweitert zum selben Inhalt, mit separaten Lösungen.",
    f:[ {k:"thema",l:"Thema",ph:"z. B. Mängel an der Mietwohnung",bsp:"Mängel an der Mietwohnung"},
@@ -163,11 +180,11 @@ const R = [
        {k:"anzahl",l:"Aufgaben pro Niveau",t:"select",o:["3","4","5"],bsp:"4"},
        {k:"zeit",l:"Bearbeitungszeit",ph:"z. B. 20 Minuten",bsp:"25 Minuten"},
        {k:"inhalt",l:"Inhalt, auf dem es aufbaut (optional)",t:"area",ph:"Lehrmitteltext in eigenen Worten oder Stichworte – kein urheberrechtlich geschützter Volltext",bsp:"Mieter muss Mängel sofort melden, am besten schriftlich; Vermieter muss Mängel beheben; Mietzinsreduktion bei erheblichen Mängeln möglich, ab dem Zeitpunkt, in dem der Vermieter vom Mangel erfährt.",w:1} ],
-   tpl:[["Rolle",ROLLE],
+   tpl:[["Rolle","{_rolle}"],
         ["Auftrag","Erstelle ein Arbeitsblatt zum Thema «{thema}» in drei Niveaus: Basis, Standard und Erweitert. Jedes Niveau hat {anzahl} Aufgaben, vom Wiedergeben bis zum Anwenden auf einen Fall."],
         ["Kontext","Die Klasse: {klasse}. Bearbeitungszeit: {zeit}. Inhaltliche Grundlage: {inhalt}"],
         ["Format","Zuerst das Arbeitsblatt für die Lernenden, mit klarer Überschrift pro Niveau. Danach separat die Lösungen."],
-        ["Grenzen","Lernende werden mit «Sie» angesprochen. Kurze Sätze, Fachbegriffe kurz erklären. "+GRENZE_CH+" Markiere Angaben, bei denen du dir nicht sicher bist, mit [prüfen]."]] },
+        ["Grenzen","Lernende werden mit «Sie» angesprochen. Kurze Sätze, Fachbegriffe kurz erklären. {_sprache} Markiere Angaben, bei denen du dir nicht sicher bist, mit [prüfen]."]] },
  { id:"pruef", ic:"pruef", titel:"Prüfungsfragen mit Bewertungsraster", kurz:"Fragen, Punkte, erwartete Antworten",
    zweck:"Ein Entwurf für eine Lernkontrolle oder Prüfung mit Punkten und Lösungserwartung. Die Qualität prüfst du selbst.",
    f:[ {k:"thema",l:"Thema",ph:"z. B. Mietrecht",bsp:"Mietrecht: Mängel und Mietzinsreduktion"},
@@ -175,11 +192,11 @@ const R = [
        {k:"typen",l:"Fragetypen",t:"select",o:["gemischt: Auswahl, Kurzantwort, Fall","nur offene Fragen","nur Fallaufgaben"],bsp:"gemischt: Auswahl, Kurzantwort, Fall"},
        {k:"punkte",l:"Punkte total",ph:"z. B. 20",bsp:"20"},
        {k:"dauer",l:"Dauer",ph:"z. B. 30 Minuten",bsp:"30 Minuten"} ],
-   tpl:[["Rolle",ROLLE+" Du erstellst kompetenzorientierte Prüfungen."],
+   tpl:[["Rolle","{_rolle} Du erstellst kompetenzorientierte Prüfungen."],
         ["Auftrag","Erstelle Prüfungsfragen zum Thema «{thema}» mit insgesamt {punkte} Punkten für {dauer}."],
         ["Kontext","Diese Lernziele sollen geprüft werden:\n{ziele}\nFragetypen: {typen}. Mische die Anforderungen: wiedergeben, verstehen, anwenden."],
         ["Format","Pro Frage: Nummer, Frage, Punkte, Lernziel, erwartete Antwort und ein kurzes Bewertungsraster (wofür es wie viele Punkte gibt)."],
-        ["Grenzen","Eindeutige Formulierungen, keine Fangfragen. Lernende werden mit «Sie» angesprochen. "+GRENZE_CH+" Nenne bei rechtlichen Inhalten den Gesetzesartikel, damit ich ihn prüfen kann."]] },
+        ["Grenzen","Eindeutige Formulierungen, keine Fangfragen. Lernende werden mit «Sie» angesprochen. {_sprache} Nenne bei rechtlichen Inhalten den Gesetzesartikel, damit ich ihn prüfen kann."]] },
  { id:"feed", ic:"feed", titel:"Feedback auf einen Lernendentext", kurz:"Wertschätzend, konkret, ohne Note",
    zweck:"Ein Rückmeldungs-Entwurf zu einem Text, den du vorher anonymisiert hast. Du entscheidest, was du davon übernimmst.",
    warn:"<b>Datenschutz:</b> Nur in einem von der Schule freigegebenen KI-Tool verwenden. Namen, Betriebe, Orte und andere persönliche Angaben vor dem Einfügen entfernen oder durch [Name] ersetzen – und prüfen, ob der Text die Person trotzdem erkennbar macht. Keine Noten oder Gesundheitsdaten.",
@@ -191,7 +208,7 @@ const R = [
         ["Auftrag","Gib Feedback auf den folgenden Text (Textsorte: {art})."],
         ["Kontext","Auftrag und Kriterien: {auftrag}\n\nText:\n{text}"],
         ["Format","Zwei Stärken, zwei konkrete Verbesserungen mit je einem Beispiel aus dem Text, ein Tipp für das nächste Mal. Höchstens 150 Wörter."],
-        ["Grenzen","Ton: {ton}. Sprich die lernende Person mit «Sie» an. Keine Note. "+GRENZE_CH]] },
+        ["Grenzen","Ton: {ton}. Sprich die lernende Person mit «Sie» an. Keine Note. {_sprache}"]] },
  { id:"mail", ic:"mail", titel:"Mail an Lehrbetrieb oder Eltern", kurz:"Klar, freundlich, auf den Punkt",
    zweck:"Ein Entwurf für eine heikle oder alltägliche Mail. Echte Namen setzt du erst nachher im Mailprogramm ein.",
    warn:"<b>Datenschutz:</b> Im Prompt nur Platzhalter wie [Name Lernende/r] verwenden, keine vertraulichen Details.",
@@ -204,7 +221,7 @@ const R = [
         ["Auftrag","Schreibe eine E-Mail an: {an}. Anlass: {anlass}."],
         ["Kontext","Ziel der Mail: {ziel}. Kernpunkte:\n{punkte}"],
         ["Format","Betreff und Mailtext, höchstens 150 Wörter, mit Anrede und Gruss."],
-        ["Grenzen","Ton: {ton}. Verwende Platzhalter wie [Name Lernende/r] statt echter Namen. Keine Schuldzuweisungen, sondern Beobachtungen. "+GRENZE_CH]] },
+        ["Grenzen","Ton: {ton}. Verwende Platzhalter wie [Name Lernende/r] statt echter Namen. Keine Schuldzuweisungen, sondern Beobachtungen. {_sprache}"]] },
  { id:"fall", ic:"fall", titel:"Fall aus dem Berufsalltag", kurz:"Realistische Situation mit Fragen",
    zweck:"Eine Fallgeschichte als Einstieg oder Übung, mit Fragen und Lösungshinweisen. Gut für handlungsorientierten Unterricht.",
    f:[ {k:"beruf",l:"Beruf der Lernenden",ph:"z. B. Detailhandel",bsp:"Detailhandelsfachleute"},
@@ -212,14 +229,27 @@ const R = [
        {k:"niveau",l:"Schwierigkeit",t:"select",o:["einfach","mittel","anspruchsvoll"],bsp:"mittel"},
        {k:"fragen",l:"Anzahl Fragen",t:"select",o:["3","4","5"],bsp:"4"},
        {k:"rahmen",l:"Was soll vorkommen? (optional)",ph:"z. B. eine Frist, ein Brief",bsp:"eine Frist, eine Mietzinsreduktion und ein Gespräch mit der Verwaltung",w:1} ],
-   tpl:[["Rolle",ROLLE],
+   tpl:[["Rolle","{_rolle}"],
         ["Auftrag","Schreibe eine realistische Fallgeschichte (150 bis 200 Wörter) zum Thema «{thema}» für Lernende aus dem Beruf {beruf}, Schwierigkeit: {niveau}."],
         ["Kontext","Im Fall soll vorkommen: {rahmen}. Die Personen sind erfunden und in der Schweiz zu Hause."],
         ["Format","Zuerst der Fall, dann {fragen} Fragen vom Verstehen bis zum Beurteilen, am Schluss Lösungshinweise."],
-        ["Grenzen","Lernende werden mit «Sie» angesprochen. "+GRENZE_CH+" Nenne bei rechtlichen Fragen die Gesetzesartikel, damit ich sie prüfen kann."]] }
+        ["Grenzen","Lernende werden mit «Sie» angesprochen. {_sprache} Nenne bei rechtlichen Fragen die Gesetzesartikel, damit ich sie prüfen kann."]] }
 ];
 const NACH = ["Mach es einfacher, für das 1. Lehrjahr.","Kürze auf die Hälfte.","Gib das Ergebnis als Tabelle aus.","Was fehlt noch? Stelle mir drei Rückfragen.","Woher stammen diese Angaben? Nenne Quellen, die ich prüfen kann.","Formuliere alles für Lernende in der Sie-Form.","Mach daraus eine Variante für leistungsstarke Lernende."];
 
+const FD = {
+  abu:{_rolle:"Du bist eine erfahrene Lehrperson an einer Berufsfachschule in der Schweiz.", _sprache:"Schreibe in Schweizer Rechtschreibung (ss statt ß).", bsp:{}},
+  en:{_rolle:"Du bist eine erfahrene Englischlehrperson an einer Berufsfachschule in der Schweiz.", _sprache:"Schreibe das Material für die Lernenden auf Englisch (British English, Niveau passend zur Klasse), Erklärungen für mich auf Deutsch in Schweizer Rechtschreibung.",
+       bsp:{plan:{fach:"Englisch",thema:"Job interviews",klasse:"Kaufleute EFZ, 3. Lehrjahr, Niveau B1",vorwissen:"kennen die wichtigsten Fragen in einem Bewerbungsgespräch",ziel:"in einem kurzen Rollenspiel drei typische Fragen beantworten"},
+            blatt:{thema:"Simple past and present perfect",klasse:"Kaufleute EFZ, 2. Lehrjahr, Niveau A2 bis B1",inhalt:"simple past für abgeschlossene Zeitpunkte (yesterday, last week); present perfect mit since, for, ever, never, just"},
+            pruef:{thema:"Business emails",ziele:"eine Anfrage höflich formulieren\ntypische Wendungen für Beginn und Schluss einer Mail verwenden\neine Antwort auf eine Kundenreklamation schreiben"},
+            fall:{beruf:"Kaufleute",thema:"A customer complaint by email",rahmen:"eine verspätete Lieferung, eine Entschuldigung und ein Angebot"}}},
+  wi:{_rolle:"Du bist eine erfahrene Lehrperson für Wirtschaft und Gesellschaft an einer Berufsfachschule in der Schweiz.", _sprache:"Schreibe in Schweizer Rechtschreibung (ss statt ß), Beträge in CHF, Steuersätze mit [prüfen] markieren.",
+       bsp:{plan:{fach:"Wirtschaft und Gesellschaft",thema:"Warenkalkulation",klasse:"Kaufleute EFZ, 1. Lehrjahr",vorwissen:"kennen Rabatt und Skonto",ziel:"vom Einstandspreis bis zum Nettoerlös kalkulieren"},
+            blatt:{thema:"Break-even-Analyse",klasse:"Kaufleute EFZ, 2. Lehrjahr",inhalt:"fixe und variable Kosten, Deckungsbeitrag pro Stück, Nutzschwelle = fixe Kosten / Deckungsbeitrag pro Stück"},
+            pruef:{thema:"Mehrwertsteuer",ziele:"das Prinzip der Vorsteuer erklären\neine einfache MWST-Abrechnung erstellen\nan einem Fall begründen, ob ein Unternehmen mehrwertsteuerpflichtig ist"},
+            fall:{beruf:"Kaufleute",thema:"Ein Velogeschäft rechnet nicht mehr",rahmen:"steigende Fixkosten, ein Konkurrenzangebot und eine Preisentscheidung"}}}
+};
 const KEY = "hkv_ki_rezeptkarten_v1";
 let S; try { S = JSON.parse(localStorage.getItem(KEY) || "null"); } catch(e){ S = null; }
 if (!S || typeof S !== "object") S = {};
@@ -246,6 +276,7 @@ function felder(){
 }
 function fuellen(tpl, r, html){
   return tpl.replace(/\{(\w+)\}/g, (_, k) => {
+    if (k[0] === "_") return FD[FACH.get()][k];
     const f = r.f.find(x => x.k === k), v = wert(r, k);
     if (html) return v ? `<span class="v">${esc(v)}</span>` : `<span class="l">[${esc(f ? f.l : k)}]</span>`;
     return v || `[${f ? f.l : k}]`;
@@ -272,11 +303,12 @@ $("kopieren").addEventListener("click", () => {
   const r = akt(), leer = r.f.filter(f => !wert(r, f.k) && !/optional/.test(f.l)).length;
   kopiere(text(r), ok => { $("status").textContent = ok ? (leer ? `Kopiert – ${leer} Lücke${leer > 1 ? "n" : ""} noch als [Platzhalter]` : "Kopiert – jetzt im KI-Tool einfügen") : "Kopieren ging nicht – Text in der Vorschau markieren"; });
 });
-$("beispiel").addEventListener("click", () => { const r = akt(); S.w[r.id] = {}; r.f.forEach(f => S.w[r.id][f.k] = f.bsp || ""); save(); felder(); vorschau(); });
+$("beispiel").addEventListener("click", () => { const r = akt(); S.w[r.id] = {}; const ov = (FD[FACH.get()].bsp[r.id] || {}); r.f.forEach(f => S.w[r.id][f.k] = (ov[f.k] !== undefined ? ov[f.k] : f.bsp) || ""); save(); felder(); vorschau(); });
 $("leeren").addEventListener("click", () => { const r = akt(); S.w[r.id] = {}; save(); felder(); vorschau(); });
 $("nach").innerHTML = NACH.map(n => `<button type="button">${esc(n)}</button>`).join("");
 $("nach").querySelectorAll("button").forEach(b => b.addEventListener("click", () => kopiere(b.textContent, ok => { if (ok){ b.classList.add("kopiert"); setTimeout(() => b.classList.remove("kopiert"), 1400); } })));
 $("reset").addEventListener("click", function(){ if (this.dataset.s !== "1"){ this.dataset.s = "1"; this.textContent = "Wirklich alles löschen? Nochmals klicken"; return; } S = {w:{}, cur:"plan"}; save(); location.reload(); });
+FACH.bar($("fw")); FACH.on(() => vorschau());
 zeige();
 })();
 </script>

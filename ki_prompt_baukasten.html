@@ -72,7 +72,24 @@ textarea:focus{outline:none;border-color:var(--hkv2);background:var(--karte)}
 .knoepfe{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px;align-items:center}
 .status{font-size:13.5px;font-weight:700;color:var(--ok)}
 h3{margin:0 0 6px;font-size:14px;color:var(--hkv)}
+.fachwahl{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:13px;font-weight:700;color:var(--grau)}
+.fachwahl button{font:inherit;font-size:13px;font-weight:700;border:1.5px solid var(--linie);background:var(--karte);color:var(--tinte);border-radius:20px;padding:4px 12px;cursor:pointer}
+.fachwahl button[aria-pressed="true"]{background:var(--hkv);border-color:var(--hkv);color:var(--karte)}
 </style>
+<script>
+/* Fachwahl: einmal waehlen, gilt fuer alle eingebetteten Tools (gleiche Herkunft) */
+window.FACH=(function(){
+  var K='hkv_ki_fach', L=[['abu','ABU'],['en','Englisch'],['wi','Wirtschaft']], cbs=[];
+  function get(){var v=null;try{v=localStorage.getItem(K);}catch(e){}return L.some(function(x){return x[0]===v;})?v:'abu';}
+  var cur=get();
+  function fire(){cbs.forEach(function(f){f(cur);});document.querySelectorAll('.fachwahl button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.f===cur);});}
+  function set(v){cur=v;try{localStorage.setItem(K,v);}catch(e){}fire();}
+  window.addEventListener('storage',function(e){if(e.key===K){cur=get();fire();}});
+  function bar(el){el.innerHTML='<span>Dein Fach:</span>'+L.map(function(x){return '<button type="button" data-f="'+x[0]+'" aria-pressed="'+(x[0]===cur)+'">'+x[1]+'</button>';}).join('');el.querySelectorAll('button').forEach(function(b){b.onclick=function(){set(b.dataset.f);};});}
+  return {get:function(){return cur;},set:set,on:function(f){cbs.push(f);},bar:bar};
+})();
+</script>
+
 </head>
 <body>
 <script>try{if(window.self!==window.top)document.documentElement.classList.add('eingebettet');}catch(e){document.documentElement.classList.add('eingebettet');}</script>
@@ -80,7 +97,7 @@ h3{margin:0 0 6px;font-size:14px;color:var(--hkv)}
 <div class="kopf">
   <header><small>KI im Unterricht · Die Prompt-Formel</small><h1>Prompt-Baukasten</h1>
   <div class="sub">Fünf Bausteine für deinen nächsten Unterricht. Rechts entsteht der fertige Prompt.</div></header>
-  <div class="meter"><div class="zeile"><span>Vollständigkeit</span><span id="mz">0 von 5</span></div><div class="balken" id="mb"></div></div>
+  <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end"><div class="fachwahl" id="fw"></div><div class="meter"><div class="zeile"><span>Vollständigkeit</span><span id="mz">0 von 5</span></div><div class="balken" id="mb"></div></div></div>
 </div>
 <div class="tabs" role="tablist" id="tabs"></div>
 <div class="raster">
@@ -97,7 +114,7 @@ h3{margin:0 0 6px;font-size:14px;color:var(--hkv)}
     <div class="vorschau" id="vorschau" aria-live="polite"></div>
     <div class="knoepfe">
       <button class="btn voll" id="kopieren" type="button">Prompt kopieren</button>
-      <button class="btn" id="beispiel" type="button">Beispiel Mietrecht</button>
+      <button class="btn" id="beispiel" type="button">Beispiel einsetzen</button>
       <button class="btn leise" id="leeren" type="button">Leeren</button>
       <span class="status" id="status" aria-live="polite"></span>
     </div>
@@ -109,21 +126,25 @@ h3{margin:0 0 6px;font-size:14px;color:var(--hkv)}
 "use strict";
 const T = [
  {k:"rolle", n:"Rolle", f:"Wer soll die KI sein?", t:"Eine Rolle setzt Fachsprache und Blickwinkel.",
-  c:["Du bist eine erfahrene Lehrperson an einer Berufsfachschule in der Schweiz.","Du bist Fachperson für Mietrecht und erklärst verständlich.","Du bist eine kritische Kollegin und prüfst mein Material."],
-  b:"Du bist eine erfahrene Lehrperson an einer Berufsfachschule in der Schweiz."},
+  c:{abu:["Du bist eine erfahrene Lehrperson an einer Berufsfachschule in der Schweiz.","Du bist Fachperson für Mietrecht und erklärst verständlich."],
+     en:["You are an experienced English teacher at a vocational school in Switzerland.","You are a friendly native speaker who corrects mistakes gently."],
+     wi:["Du bist eine erfahrene Lehrperson für Wirtschaft und Gesellschaft an einer Berufsfachschule in der Schweiz.","Du bist Treuhänderin und erklärst Rechnungswesen verständlich."]},
+  x:["Du bist eine kritische Kollegin und prüfst mein Material."]},
  {k:"auftrag", n:"Auftrag", f:"Was genau soll sie tun?", t:"Ein Verb und ein konkretes Thema: erstelle, überarbeite, prüfe …",
-  c:["Erstelle ein Arbeitsblatt zum Thema «…».","Schreibe eine Fallgeschichte zum Thema «…».","Überarbeite den folgenden Text: …"],
-  b:"Erstelle ein Arbeitsblatt zum Thema «Mängel an der Mietwohnung»."},
+  c:{abu:["Erstelle ein Arbeitsblatt zum Thema «Mängel an der Mietwohnung»."],en:["Create a worksheet on the simple past and the present perfect."],wi:["Erstelle ein Arbeitsblatt zur Warenkalkulation vom Einstandspreis bis zum Nettoerlös."]},
+  x:["Schreibe eine Fallgeschichte zum Thema «…».","Überarbeite den folgenden Text: …"]},
  {k:"kontext", n:"Kontext", f:"Was muss sie wissen?", t:"Klasse, Lehrjahr, Vorwissen, Lernziel, Zeit. Keine Personendaten.",
-  c:["Die Klasse: …, 2. Lehrjahr.","Die Lernenden kennen bereits …","Lernziel: Die Lernenden können …","Zeit: 20 Minuten."],
-  b:"Die Klasse: Detailhandelsfachleute EFZ, 2. Lehrjahr. Sie kennen die Begriffe aus dem Mietvertrag. Lernziel: Sie können einen Mangel korrekt melden."},
+  c:{abu:["Die Klasse: Detailhandelsfachleute EFZ, 2. Lehrjahr. Sie kennen die Begriffe aus dem Mietvertrag."],en:["Class: Kaufleute EFZ, 2nd year, level A2 to B1. They know irregular past forms."],wi:["Die Klasse: Kaufleute EFZ, 1. Lehrjahr. Sie kennen Rabatt und Skonto."]},
+  x:["Lernziel: Die Lernenden können …","Zeit: 20 Minuten."]},
  {k:"format", n:"Format", f:"Wie soll das Ergebnis aussehen?", t:"Länge, Aufbau, Tabelle oder Liste, Lösungen separat.",
-  c:["Vier Aufgaben vom Wiedergeben bis zum Fall.","Danach separat die Lösungen.","Als Tabelle mit den Spalten …","Höchstens eine A4-Seite."],
-  b:"Vier Aufgaben vom Wiedergeben bis zum Fall, höchstens eine A4-Seite. Danach separat die Lösungen."},
+  c:{abu:["Vier Aufgaben vom Wiedergeben bis zum Fall, danach separat die Lösungen."],en:["Four tasks from gap-fill to a short text, then a separate answer key."],wi:["Vier Aufgaben vom Schema bis zum Fall, Beträge in CHF, Lösungen mit Rechenweg."]},
+  x:["Als Tabelle mit den Spalten …","Höchstens eine A4-Seite."]},
  {k:"grenzen", n:"Grenzen", f:"Was gilt, was nicht?", t:"Sprache, Anrede, Niveau, Umgang mit Unsicherheit.",
-  c:["Schreibe in Schweizer Rechtschreibung (ss statt ß).","Lernende werden mit «Sie» angesprochen.","Markiere unsichere Angaben mit [prüfen].","Nenne die Gesetzesartikel, damit ich sie prüfen kann.","Wenn dir Angaben fehlen, stelle mir zuerst Rückfragen."],
-  b:"Schweizer Rechtschreibung, Lernende mit «Sie» ansprechen, unsichere Angaben mit [prüfen] markieren."}
+  c:{abu:["Schweizer Rechtschreibung, Lernende mit «Sie» ansprechen, unsichere Angaben mit [prüfen] markieren.","Nenne die Gesetzesartikel, damit ich sie prüfen kann."],en:["British English, short instructions, mark anything you are unsure about with [check].","Explain grammar points for me in German."],wi:["Schweizer Rechtschreibung, Lernende mit «Sie» ansprechen, Steuersätze mit [prüfen] markieren.","Nenne die Quelle für Zahlen und Sätze."]},
+  x:["Wenn dir Angaben fehlen, stelle mir zuerst Rückfragen."]}
 ];
+const chips = x => x.c[FACH.get()].concat(x.x);
+const bsp = x => x.c[FACH.get()].slice(0, x.k === "format" || x.k === "kontext" || x.k === "auftrag" ? 1 : 1).join(" ");
 const KEY = "hkv_ki_baukasten_v1";
 let S; try { S = JSON.parse(localStorage.getItem(KEY) || "null"); } catch(e){ S = null; }
 if (!S || typeof S !== "object") S = {w:{}, i:0};
@@ -148,8 +169,8 @@ function vorschau(){
 function zeige(){
   const x = T[S.i];
   $("frage").textContent = `${S.i + 1} · ${x.n}: ${x.f}`; $("tipp").textContent = x.t;
-  $("ein").value = S.w[x.k] || ""; $("ein").placeholder = x.c[0];
-  $("chips").innerHTML = `<span>Bausteine zum Einfügen:</span>` + x.c.map(c => `<button type="button">${esc(c)}</button>`).join("");
+  $("ein").value = S.w[x.k] || ""; $("ein").placeholder = chips(x)[0];
+  $("chips").innerHTML = `<span>Bausteine zum Einfügen:</span>` + chips(x).map(c => `<button type="button">${esc(c)}</button>`).join("");
   $("chips").querySelectorAll("button").forEach(b => b.onclick = () => {
     const v = $("ein").value.trim(); $("ein").value = (v ? v + " " : "") + b.textContent; upd(); $("ein").focus();
   });
@@ -160,7 +181,7 @@ function upd(){ S.w[T[S.i].k] = $("ein").value; save(); tabs(); meter(); vorscha
 $("ein").addEventListener("input", upd);
 $("zur").onclick = () => { if (S.i > 0){ S.i--; save(); zeige(); } };
 $("vor").onclick = () => { if (S.i < 4){ S.i++; save(); zeige(); } else $("kopieren").focus(); };
-$("beispiel").onclick = () => { T.forEach(x => S.w[x.k] = x.b); save(); zeige(); };
+$("beispiel").onclick = () => { T.forEach(x => S.w[x.k] = bsp(x)); save(); zeige(); };
 $("leeren").onclick = () => { S = {w:{}, i:0}; save(); zeige(); };
 function kopiere(t, fertig){
   const fb = () => { const ta = document.createElement("textarea"); ta.value = t; ta.style.position = "fixed"; ta.style.opacity = "0"; document.body.appendChild(ta); ta.select(); let ok = false; try { ok = document.execCommand("copy"); } catch(e){} ta.remove(); fertig(ok); };
@@ -171,6 +192,7 @@ $("kopieren").onclick = () => {
   if (!teile.length){ $("status").textContent = "Noch leer: zuerst einen Baustein ausfüllen"; return; }
   kopiere(teile.join("\n\n"), ok => { $("status").textContent = ok ? `Kopiert (${teile.length} von 5 Bausteinen)` : "Kopieren ging nicht: Text markieren und kopieren"; });
 };
+FACH.bar($("fw")); FACH.on(() => zeige());
 zeige();
 })();
 </script>
