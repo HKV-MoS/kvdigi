@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Erbteilung rechnen · Zusatzaufgaben</title>
+<style>
+:root{
+  --bg:#eef2f1; --surface:#ffffff; --ink:#17302b; --muted:#5b6e69; --line:#d4dedb;
+  --brand:#0b3d36; --brand-soft:#e3eeeb; --ok:#1f7a4d; --ok-soft:#e2f3ea; --bad:#b03a2e; --bad-soft:#f8e4e1;
+  --mid:#9a6b00; --mid-soft:#fbf0d6;
+  --f:"Aptos","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#101716; --surface:#18211f; --ink:#e3ece9; --muted:#9bb0aa; --line:#2c3a37;
+  --brand:#7fc4b6; --brand-soft:#1f2e2b; --ok:#6fd19c; --ok-soft:#163327; --bad:#f08a7e; --bad-soft:#3a1f1c;
+  --mid:#e8c46a; --mid-soft:#352c14; color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);font-size:16px;line-height:1.5}
+.wrap{padding:24px 16px 48px;display:flex;justify-content:center}
+.karte{background:var(--surface);max-width:1040px;width:100%;border-radius:14px;box-shadow:0 2px 14px rgba(0,0,0,.07);padding:26px 32px 22px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+header img{height:34px}
+@media (prefers-color-scheme: dark){header img{filter:brightness(0) invert(1)}}
+h1{font-size:26px;margin:4px 0 2px;line-height:1.2}
+.sub{color:var(--muted);margin:0}
+.fortschritt{min-width:220px}
+.balken{height:10px;background:var(--brand-soft);border-radius:6px;overflow:hidden}
+.balken i{display:block;height:100%;width:0;background:var(--brand);transition:width .4s}
+.fortschritt small{color:var(--muted)}
+nav{display:flex;gap:6px;margin:20px 0 16px;flex-wrap:wrap;border-bottom:2px solid var(--line)}
+nav button{font:inherit;font-weight:600;border:0;background:none;color:var(--muted);padding:9px 14px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+nav button[aria-selected="true"]{color:var(--brand);border-bottom-color:var(--brand)}
+nav button:focus-visible,button:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.teil{display:none}.teil.aktiv{display:block}
+.intro{background:var(--brand-soft);border-radius:10px;padding:12px 16px;margin-bottom:16px}
+.intro a{color:var(--brand);font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.fk{border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.fk h3{font-size:16px;margin:0}
+.fk .nr{color:var(--muted);font-weight:600;margin-right:4px}
+.fk textarea{font:inherit;font-size:15px;width:100%;min-height:54px;border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--bg);color:var(--ink);resize:vertical}
+.btn{font:inherit;font-weight:600;font-size:14px;border-radius:8px;padding:6px 12px;cursor:pointer;border:1px solid var(--brand);background:var(--surface);color:var(--brand)}
+.btn.voll{background:var(--brand);color:var(--surface)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.warte{font-size:13px;color:var(--muted);margin-left:8px}
+.loes{display:none;background:var(--bg);border-left:4px solid var(--brand);border-radius:6px;padding:8px 12px;font-size:15px}
+.fk.offen .loes{display:block}
+.selbst{display:none;gap:6px;flex-wrap:wrap;align-items:center;font-size:14px;color:var(--muted)}
+.fk.offen .selbst{display:flex}
+.selbst button{font:inherit;font-size:13px;border-radius:20px;padding:3px 10px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.selbst button.an[data-w="2"]{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.selbst button.an[data-w="1"]{background:var(--mid-soft);border-color:var(--mid);color:var(--mid)}
+.selbst button.an[data-w="0"]{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.fall{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.fall p{margin:0 0 10px}
+.fall .nr{display:inline-block;background:var(--brand);color:var(--surface);font-size:13px;font-weight:600;border-radius:6px;padding:1px 8px;margin-right:8px;vertical-align:1px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opts button{font:inherit;text-align:left;border:1px solid var(--line);border-radius:8px;padding:8px 12px;background:var(--surface);color:var(--ink);cursor:pointer}
+.opts button:hover{border-color:var(--brand)}
+.opts button.richtig{background:var(--ok-soft);border-color:var(--ok)}
+.opts button.falsch{background:var(--bad-soft);border-color:var(--bad)}
+.opts button:disabled{cursor:default}
+.fb{display:none;margin-top:10px;border-radius:8px;padding:8px 12px;font-size:15px}
+.fb.zeig{display:block}
+.fb.gut{background:var(--ok-soft)}.fb.schlecht{background:var(--bad-soft)}
+.sortier{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px}
+.sortier h3{margin:0 0 4px;font-size:17px}
+.sortier .hinweis{color:var(--muted);font-size:14px;margin:0 0 10px}
+.item{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--line)}
+.item:first-of-type{border-top:0}
+.item .txt{flex:1 1 260px}
+.item .wahl{display:flex;gap:6px}
+.item .wahl button{font:inherit;font-size:14px;border:1px solid var(--line);border-radius:8px;padding:4px 10px;background:var(--surface);color:var(--ink);cursor:pointer}
+.item .wahl button.richtig{background:var(--ok-soft);border-color:var(--ok);color:var(--ok);font-weight:600}
+.item .wahl button.falsch{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.item .erk{flex-basis:100%;display:none;font-size:14px;color:var(--muted);padding-left:2px}
+.item.fertig .erk{display:block}
+.rechner{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;align-items:end;margin:6px 0 4px}
+.rechner label{font-size:14px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+.rechner input{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:100%}
+.ergebnis{font-size:15px;background:var(--brand-soft);border-radius:8px;padding:10px 12px;margin-top:10px}
+.ergebnis b{font-size:18px}
+footer{margin-top:18px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:13px}
+footer button{font:inherit;font-size:13px;background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer}
+body.eingebettet{background:var(--surface)}
+body.eingebettet .wrap{padding:0}
+body.eingebettet .karte{border-radius:0;box-shadow:none;padding:18px 24px 16px}
+body.eingebettet nav{position:sticky;top:0;background:var(--surface);z-index:2;margin-top:12px}
+@media (max-width:600px){.karte{padding:18px 16px}h1{font-size:22px}}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+@media print{.teil{display:block!important}.loes{display:block!important}nav,footer button,.selbst,textarea,.btn{display:none!important}.karte{box-shadow:none}}
+
+.theorie{border:1px solid var(--line);border-radius:10px;margin-bottom:14px;background:var(--surface)}
+.theorie summary{cursor:pointer;font-weight:600;padding:12px 16px;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.theorie summary::-webkit-details-marker{display:none}
+.theorie summary::after{content:"+";color:var(--brand);font-size:20px}
+.theorie[open] summary::after{content:"–"}
+.theorie .inhalt{padding:0 16px 14px;font-size:15px}
+.theorie .inhalt p{margin:0 0 8px}
+.theorie .art{color:var(--muted);font-size:13px}
+.schritte{margin:0 0 8px 20px;padding:0}.schritte li{margin-bottom:3px}
+/* Stufen und Aufgabenwahl */
+.stufen{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0 8px}
+.stufen button{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);border-radius:8px;padding:6px 12px;background:var(--surface);color:var(--muted);cursor:pointer}
+.stufen button[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--surface)}
+.punkte{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 14px}
+.punkte button{font:inherit;font-size:13px;font-weight:600;width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer;padding:0}
+.punkte button.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.punkte button.nok{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.punkte button.akt{outline:3px solid var(--brand);outline-offset:1px}
+.punkte .trenn{width:10px}
+/* Aufgabe */
+.aufg{border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.aufg .kopf{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.aufg .nr{background:var(--brand);color:var(--surface);font-size:13px;font-weight:600;border-radius:6px;padding:1px 8px}
+.aufg .stufe{font-size:13px;color:var(--muted)}
+.aufg .lage{margin:0 0 6px}
+.aufg .frage{margin:0 0 12px;font-weight:600}
+.feld{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:18px;align-items:start}
+@media (max-width:720px){.feld{grid-template-columns:1fr}.torte{justify-self:center}}
+.zeile{display:grid;grid-template-columns:150px 1fr 28px;gap:8px;align-items:center;padding:7px 0;border-top:1px solid var(--line)}
+.zeile:first-child{border-top:0}
+@media (max-width:560px){.zeile{grid-template-columns:1fr 28px}.zeile .wer{grid-column:1/-1}}
+.wer{display:flex;align-items:center;gap:8px;font-weight:600;font-size:15px;line-height:1.25}
+.farbe{width:14px;height:14px;border-radius:4px;flex:none;border:1px solid rgba(0,0,0,.15)}
+.brueche{display:flex;flex-wrap:wrap;gap:4px}
+.brueche button{font:inherit;font-size:14px;font-variant-numeric:tabular-nums;min-width:38px;border:1px solid var(--line);border-radius:7px;padding:4px 5px;background:var(--surface);color:var(--ink);cursor:pointer}
+.brueche button:hover{border-color:var(--brand)}
+.brueche button.an{background:var(--brand);border-color:var(--brand);color:var(--surface);font-weight:600}
+.brueche button:disabled{cursor:default}
+.chf{display:flex;align-items:center;gap:6px;font-size:15px}
+.chf input{font:inherit;font-size:16px;width:150px;text-align:right;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-variant-numeric:tabular-nums}
+.chf input:focus{outline:2px solid var(--brand);outline-offset:1px}
+.chf input:disabled{opacity:.8}
+.mark{font-size:18px;font-weight:700;text-align:center}
+.mark.ok{color:var(--ok)}.mark.nok{color:var(--bad)}
+.soll{grid-column:2/-1;font-size:13.5px;color:var(--bad);margin-top:-2px}
+.torte{position:relative;width:250px}
+.torte svg{width:250px;height:250px;display:block;touch-action:none;user-select:none;-webkit-user-select:none}
+.torte .summe{text-align:center;font-size:14px;color:var(--muted);margin-top:4px}
+.torte .summe b{color:var(--ink)}
+.torte .summe.zuviel b{color:var(--bad)}
+.griff{cursor:grab}
+.griff:active{cursor:grabbing}
+.tipp{font-size:13px;color:var(--muted);margin:2px 0 0}
+.aktion{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
+.meld{font-size:14px;color:var(--bad);font-weight:600}
+.fb{display:none;margin-top:12px;border-radius:8px;padding:10px 12px;font-size:15px}
+.fb.zeig{display:block}.fb.gut{background:var(--ok-soft)}.fb.schlecht{background:var(--bad-soft)}
+.blaettern{display:flex;justify-content:space-between;gap:10px;margin-top:14px}
+/* Spickzettel */
+.spick{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+.spick th{font-size:13px;text-align:center;padding:6px 4px;color:var(--brand);border-bottom:1px solid var(--line)}
+.spick th.links{text-align:left}
+.spick td{border-top:1px solid var(--line);padding:6px 4px;vertical-align:top;text-align:center}
+.spick td.lage{text-align:left;font-weight:600;color:var(--ink);width:150px}
+.spick td.trenner,.spick th.trenner{border-left:2px solid var(--brand)}
+.mini{display:flex;flex-direction:column;align-items:center;gap:3px}
+.mini svg{width:62px;height:62px}
+.mini span{line-height:1.3;color:var(--muted)}
+.wrapx{overflow-x:auto}
+.alt{background:var(--mid-soft);border-radius:8px;padding:8px 12px;font-size:14px;margin-top:8px}
+footer{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:18px;padding-top:12px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+footer button{font:inherit;font-size:13px;background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer}
+.eingebettet{background:var(--surface)}
+.eingebettet .wrap{padding:0}
+.eingebettet .karte{border-radius:0;box-shadow:none;padding:18px 24px 16px}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="karte">
+
+<header>
+  <div>
+    <h1>Erbteilung rechnen · Zusatzaufgaben</h1>
+    <p class="sub">25 Trainingsaufgaben · 25 Aufgaben im Level Chuck Norris</p>
+  </div>
+  <div class="fortschritt">
+    <small id="fortText">0 von 50 gelöst</small>
+    <div class="balken"><i id="fortBalken"></i></div>
+  </div>
+</header>
+
+<details class="theorie" id="weg" style="margin-top:16px"><summary>So rechnen Sie</summary><div class="inhalt">
+<ol class="schritte">
+<li><b>Verheiratet?</b> Zuerst das Güterrecht: Was gehört dem überlebenden Ehegatten schon? Nur der Rest ist Nachlass.</li>
+<li><b>Ehegatte:</b> neben Nachkommen 1/2, neben dem elterlichen Stamm 3/4, sonst alles.</li>
+<li><b>Verwandte nach Stämmen:</b> Nachkommen vor Eltern vor Grosseltern. Fällt jemand weg, weil er schon gestorben ist, enterbt wurde oder ausschlägt, treten seine Nachkommen an seine Stelle und teilen seinen Anteil.</li>
+<li><b>Pflichtteil</b> (bei einem Testament): die Hälfte des gesetzlichen Erbteils, nur für Nachkommen und Ehegatten. Der Rest ist die <b>freie Quote</b>. Schenkungen der letzten fünf Jahre vor dem Tod werden dafür zum Nachlass dazugezählt.</li>
+</ol>
+<p class="art">Bedienung: Klicken Sie bei jeder Person einen Bruch an oder ziehen Sie die Punkte am Kreis. Bei den Beträgen tippen Sie die Zahl ohne Apostroph ein.</p>
+</div></details>
+
+<details class="theorie" id="spick"><summary>Spickzettel: alle Anteile auf einen Blick</summary><div class="inhalt">
+<div class="wrapx"><table class="spick" id="spickT"></table></div>
+<p class="alt"><b>Achtung, altes Recht:</b> Viele ältere Unterlagen zeigen noch die Pflichtteile vor 2023: Nachkommen 3/4 ihres Erbteils, Eltern 1/2. Seit dem 1. Januar 2023 gilt für Nachkommen und Ehegatten die Hälfte, die Eltern haben keinen Pflichtteil mehr. Ohne Testament erben die Eltern aber weiterhin: Der gesetzliche Erbteil ist geblieben, nur der Pflichtteil ist weggefallen.</p>
+</div></details>
+
+<details class="theorie" id="zgb"><summary>Level Chuck Norris: Wo steht was im ZGB?</summary><div class="inhalt">
+<p>Im Level Chuck Norris kommen Regeln vor, die im Unterricht nicht behandelt wurden. Schlagen Sie im Gesetz nach, bevor Sie rechnen:</p>
+<ul class="schritte">
+<li><b>Stämme:</b> Nachkommen Art. 457 · Eltern Art. 458 · Grosseltern Art. 459 · Ende der Verwandtenerbfolge Art. 460 · Gemeinwesen Art. 466</li>
+<li><b>Ehegatten und eingetragene Partner:</b> Art. 462 · hängiges Scheidungsverfahren Art. 472</li>
+<li><b>Wer erben kann:</b> gleichzeitiger Tod Art. 32 · ungeborenes Kind Art. 544 · Erbunwürdigkeit Art. 540 und 541 · Adoption Art. 267</li>
+<li><b>Wer wegfällt:</b> Enterbung Art. 477 bis 479 · Erbverzicht Art. 495 · Ausschlagung Art. 572</li>
+<li><b>Pflichtteil schützen:</b> Pflichtteile Art. 471 · Schenkungen Art. 475 und 527 · Herabsetzung Art. 522, 525 und 532</li>
+<li><b>Vorbezug:</b> Ausgleichung Art. 626 und 627</li>
+<li><b>Güterrecht:</b> Vorschlag Art. 215 und 216 · Gütergemeinschaft Art. 241 · Gütertrennung Art. 247</li>
+</ul>
+</div></details>
+
+<div class="stufen" id="stufen" role="group" aria-label="Stufe"></div>
+<div class="punkte" id="punkte" aria-label="Aufgaben"></div>
+<div id="aufgabe"></div>
+
+<footer>
+  <span>HKV Aarau · ABU · Erbrecht nach ZGB, Stand November 2026</span>
+  <button id="reset" type="button">Alles zurücksetzen</button>
+</footer>
+
+</div></div>
+
+<script src="lernstand.js?v=1"></script>
+<script>
+(function(){
+if (window.self !== window.top) document.body.classList.add("eingebettet");
+const A = [{"id": "z1", "st": 1, "mode": "bruch", "lage": "Karin stirbt ohne Testament. Sie hinterlässt ihren Ehemann Urs und vier Kinder: Jana, Mirko, Sven und Tara.", "frage": "Welchen Bruchteil erhält jede Person?", "rows": [{"n": "Ehemann Urs", "s": 8}, {"n": "Tochter Jana", "s": 2}, {"n": "Sohn Mirko", "s": 2}, {"n": "Sohn Sven", "s": 2}, {"n": "Tochter Tara", "s": 2}], "e": "Urs erhält neben Nachkommen die Hälfte (Art. 462 ZGB). Die andere Hälfte teilen die vier Kinder zu gleichen Teilen: je 1/8 (Art. 457)."}, {"id": "z2", "st": 1, "mode": "bruch", "lage": "Dario stirbt ohne Testament. Er war ledig. Er hinterlässt seine Lebenspartnerin Mia, mit der er zwölf Jahre zusammenlebte, und den gemeinsamen Sohn Nico.", "frage": "Welchen Bruchteil erhält jede Person?", "rows": [{"n": "Sohn Nico", "s": 16}, {"n": "Lebenspartnerin Mia", "s": 0}], "e": "Konkubinatspartner sind keine gesetzlichen Erben, egal wie lange das Paar zusammenlebte. Nico erbt als einziger Nachkomme alles. Mia erhält nur etwas, wenn Dario ein Testament schreibt."}, {"id": "z3", "st": 1, "mode": "bruch", "lage": "Helga stirbt ohne Testament. Sie war verwitwet und kinderlos, ihre Eltern sind schon früher gestorben. Ihr Bruder Otto lebt. Ihre Schwester Berta ist schon früher gestorben und hat zwei Kinder hinterlassen: Carla und Dino.", "frage": "Welchen Bruchteil erhält jede Person?", "rows": [{"n": "Bruder Otto", "s": 8}, {"n": "Nichte Carla", "s": 4}, {"n": "Neffe Dino", "s": 4}], "e": "Es erbt der elterliche Stamm. Weil die Eltern gestorben sind, treten ihre Nachkommen an ihre Stelle: Otto und Berta je 1/2 (Art. 458 ZGB). Bertas Hälfte teilen ihre Kinder: je 1/4."}, {"id": "z4", "st": 1, "mode": "bruch", "lage": "Simon stirbt ohne Testament. Er hinterlässt seinen eingetragenen Partner Marc; Kinder hatten sie keine. Simons Mutter und Vater leben beide.", "frage": "Welchen Bruchteil erhält jede Person?", "rows": [{"n": "Partner Marc", "s": 12}, {"n": "Mutter", "s": 2}, {"n": "Vater", "s": 2}], "e": "Eingetragene Partnerinnen und Partner erben wie Ehegatten (Art. 462 ZGB): neben dem elterlichen Stamm drei Viertel. Das restliche Viertel teilen die Eltern: je 1/8."}, {"id": "z5", "st": 1, "mode": "bruch", "lage": "Jürg stirbt ohne Testament. Er lebte seit zwei Jahren von seiner Ehefrau Petra getrennt; ein Scheidungsverfahren lief nicht. Er hinterlässt Petra und die Tochter Lisa.", "frage": "Welchen Bruchteil erhält jede Person?", "rows": [{"n": "Ehefrau Petra", "s": 8}, {"n": "Tochter Lisa", "s": 8}], "e": "Getrennt ist nicht geschieden. Solange die Ehe besteht, erbt der Ehegatte seinen gesetzlichen Teil: neben Nachkommen die Hälfte. Lisa erhält die andere Hälfte."}, {"id": "z6", "st": 1, "mode": "bruch", "lage": "Ruedi stirbt ohne Testament. Er war verwitwet. Er hinterlässt seine Tochter Eva, seinen Stiefsohn Paul (Sohn seiner verstorbenen Frau aus erster Ehe, nie adoptiert) und seinen Bruder Hans.", "frage": "Welchen Bruchteil erhält jede Person?", "rows": [{"n": "Tochter Eva", "s": 16}, {"n": "Stiefsohn Paul", "s": 0}, {"n": "Bruder Hans", "s": 0}], "e": "Eva erbt als einzige Nachkommin alles. Stiefkinder sind nicht verwandt und erben ohne Testament nichts. Der Bruder gehört zum elterlichen Stamm und kommt erst zum Zug, wenn es keine Nachkommen gibt."}, {"id": "z7", "st": 1, "mode": "bruch", "lage": "Fabio stirbt ohne Testament. Er hinterlässt seine Ehefrau Lara, seinen Sohn Gino und seine Mutter.", "frage": "Welchen Bruchteil erhält jede Person?", "rows": [{"n": "Ehefrau Lara", "s": 8}, {"n": "Sohn Gino", "s": 8}, {"n": "Mutter", "s": 0}], "e": "Gibt es Nachkommen, erbt der elterliche Stamm nichts. Lara und Gino teilen: je 1/2 (Art. 462 und 457 ZGB)."}, {"id": "z8", "st": 1, "mode": "bruch", "lage": "Margrit stirbt ohne Testament. Sie war verwitwet. Ihre beiden Kinder Rolf und Susi sind schon früher gestorben. Rolf hat eine Tochter hinterlassen, Amélie. Susi hat zwei Kinder hinterlassen, Boris und Chiara.", "frage": "Welchen Bruchteil erhält jede Person?", "rows": [{"n": "Enkelin Amélie", "s": 8}, {"n": "Enkel Boris", "s": 4}, {"n": "Enkelin Chiara", "s": 4}], "e": "Geteilt wird nach Stämmen, nicht nach Köpfen (Art. 457 Abs. 3 ZGB): Rolfs Stamm und Susis Stamm erhalten je 1/2. Amélie erhält Rolfs Hälfte allein, Boris und Chiara teilen Susis Hälfte: je 1/4."}, {"id": "z9", "st": 1, "mode": "bruch", "lage": "Oliver (24) stirbt ohne Testament. Er war ledig und kinderlos. Er hinterlässt seine Mutter, seinen Vater, seinen Bruder Tim und seine Verlobte Sina.", "frage": "Welchen Bruchteil erhält jede Person?", "rows": [{"n": "Mutter", "s": 8}, {"n": "Vater", "s": 8}, {"n": "Bruder Tim", "s": 0}, {"n": "Verlobte Sina", "s": 0}], "e": "Es erbt der elterliche Stamm: Mutter und Vater je 1/2 (Art. 458 ZGB). Der Bruder erbt nur an Stelle eines verstorbenen Elternteils. Eine Verlobte ist keine gesetzliche Erbin."}, {"id": "z10", "st": 2, "mode": "bruch", "lage": "Karin will ein Testament schreiben. Sie ist mit Urs verheiratet und hat vier Kinder: Jana, Mirko, Sven und Tara.", "frage": "Wie viel muss das Testament den Angehörigen mindestens lassen (Pflichtteile), und wie gross ist die freie Quote?", "rows": [{"n": "Ehemann Urs", "s": 4}, {"n": "Tochter Jana", "s": 1}, {"n": "Sohn Mirko", "s": 1}, {"n": "Sohn Sven", "s": 1}, {"n": "Tochter Tara", "s": 1}, {"n": "Freie Quote", "s": 8, "frei": true}], "e": "Gesetzlich: Urs 1/2, die Kinder je 1/8. Der Pflichtteil ist je die Hälfte davon (Art. 471 ZGB): Urs 1/4, die Kinder je 1/16. Frei verfügbar: 1/2."}, {"id": "z11", "st": 2, "mode": "bruch", "lage": "Olivia will ein Testament schreiben. Sie ist ledig und kinderlos. Ihre Mutter lebt, ihr Vater ist gestorben. Sie hat eine Schwester, Pia.", "frage": "Wie viel muss das Testament den Angehörigen mindestens lassen (Pflichtteile), und wie gross ist die freie Quote?", "rows": [{"n": "Mutter", "s": 0}, {"n": "Schwester Pia", "s": 0}, {"n": "Freie Quote", "s": 16, "frei": true}], "e": "Einen Pflichtteil haben nur Nachkommen sowie Ehegatten und eingetragene Partner. Eltern haben seit 2023 keinen mehr, Geschwister hatten nie einen. Olivia kann über alles frei verfügen."}, {"id": "z12", "st": 2, "mode": "bruch", "lage": "Simon will ein Testament schreiben. Er lebt mit Marc in eingetragener Partnerschaft, Kinder haben sie keine. Simons Mutter lebt, sein Vater ist gestorben.", "frage": "Wie viel muss das Testament den Angehörigen mindestens lassen (Pflichtteile), und wie gross ist die freie Quote?", "rows": [{"n": "Partner Marc", "s": 6}, {"n": "Mutter", "s": 0}, {"n": "Freie Quote", "s": 10, "frei": true}], "e": "Marc erbt gesetzlich 3/4, wie ein Ehegatte neben dem elterlichen Stamm. Sein Pflichtteil ist die Hälfte davon: 3/8. Die Mutter hat keinen Pflichtteil. Frei verfügbar: 5/8."}, {"id": "z13", "st": 2, "mode": "bruch", "lage": "Margrit will ein Testament schreiben. Sie ist verwitwet, ihre beiden Kinder Rolf und Susi sind gestorben. Sie hat drei Enkel: Amélie (Tochter von Rolf) sowie Boris und Chiara (Kinder von Susi).", "frage": "Wie viel muss das Testament den Angehörigen mindestens lassen (Pflichtteile), und wie gross ist die freie Quote?", "rows": [{"n": "Enkelin Amélie", "s": 4}, {"n": "Enkel Boris", "s": 2}, {"n": "Enkelin Chiara", "s": 2}, {"n": "Freie Quote", "s": 8, "frei": true}], "e": "Gesetzlich: Amélie 1/2, Boris und Chiara je 1/4. Auch Enkel sind Nachkommen und haben einen Pflichtteil: je die Hälfte ihres gesetzlichen Erbteils, also 1/4, 1/8 und 1/8. Frei verfügbar: 1/2."}, {"id": "z14", "st": 2, "mode": "bruch", "lage": "Beat will ein Testament schreiben. Er ist verwitwet und hat vier Kinder: Anouk, Cyril, Dunja und Felix.", "frage": "Wie viel muss das Testament den Angehörigen mindestens lassen (Pflichtteile), und wie gross ist die freie Quote?", "rows": [{"n": "Tochter Anouk", "s": 2}, {"n": "Sohn Cyril", "s": 2}, {"n": "Tochter Dunja", "s": 2}, {"n": "Sohn Felix", "s": 2}, {"n": "Freie Quote", "s": 8, "frei": true}], "e": "Gesetzlich erben die Kinder je 1/4. Der Pflichtteil ist je die Hälfte davon: je 1/8. Frei verfügbar: 1/2."}, {"id": "z15", "st": 2, "mode": "bruch", "lage": "Tanja will ein Testament schreiben. Sie ist mit Reto verheiratet, Kinder haben sie keine. Tanjas Eltern und ihre Schwester sind gestorben. Ihre Nichte Flurina, die Tochter der Schwester, lebt.", "frage": "Wie viel muss das Testament den Angehörigen mindestens lassen (Pflichtteile), und wie gross ist die freie Quote?", "rows": [{"n": "Ehemann Reto", "s": 6}, {"n": "Nichte Flurina", "s": 0}, {"n": "Freie Quote", "s": 10, "frei": true}], "e": "Flurina gehört zum elterlichen Stamm. Neben ihr erbt Reto gesetzlich 3/4, sein Pflichtteil ist 3/8. Nichten und Neffen haben keinen Pflichtteil. Frei verfügbar: 5/8."}, {"id": "z16", "st": 2, "mode": "bruch", "lage": "Hugo will ein Testament schreiben. Er ist mit Ida verheiratet, Kinder haben sie keine. Hugos Eltern sind gestorben; Geschwister, Nichten und Neffen hat er nicht. Sein Onkel Fritz lebt.", "frage": "Wie viel muss das Testament den Angehörigen mindestens lassen (Pflichtteile), und wie gross ist die freie Quote?", "rows": [{"n": "Ehefrau Ida", "s": 8}, {"n": "Onkel Fritz", "s": 0}, {"n": "Freie Quote", "s": 8, "frei": true}], "e": "Ohne Nachkommen und ohne elterlichen Stamm erbt Ida gesetzlich alles (Art. 462 Ziff. 3 ZGB). Ihr Pflichtteil ist die Hälfte davon: 1/2. Die andere Hälfte ist frei verfügbar."}, {"id": "z17", "st": 3, "mode": "chf", "total": 480000, "lage": "Bettina stirbt ohne Testament. Ihr Nachlass beträgt CHF 480’000. Sie hinterlässt ihren Ehemann Claudio und drei Kinder: Dea, Enzo und Fabia.", "frage": "Wie viel erhält jede Person?", "rows": [{"n": "Ehemann Claudio", "s": 240000}, {"n": "Tochter Dea", "s": 80000}, {"n": "Sohn Enzo", "s": 80000}, {"n": "Tochter Fabia", "s": 80000}], "e": "Claudio erhält die Hälfte: 240’000. Die andere Hälfte teilen die drei Kinder: je 80’000."}, {"id": "z18", "st": 3, "mode": "chf", "total": 320000, "lage": "Gregor stirbt ohne Testament. Sein Nachlass beträgt CHF 320’000. Er hinterlässt seine Ehefrau Hanna; Kinder hatten sie keine. Gregors Mutter lebt, sein Vater ist schon früher gestorben. Zudem lebt Gregors Schwester Ines.", "frage": "Wie viel erhält jede Person?", "rows": [{"n": "Ehefrau Hanna", "s": 240000}, {"n": "Mutter", "s": 40000}, {"n": "Schwester Ines", "s": 40000}], "e": "Hanna erhält neben dem elterlichen Stamm drei Viertel: 240’000. Das restliche Viertel, 80’000, wird nach Eltern geteilt: Die Mutter erhält 40’000. Die 40’000 des verstorbenen Vaters gehen an seine Tochter Ines."}, {"id": "z19", "st": 3, "mode": "chf", "total": 500000, "lage": "Jasmin stirbt. Sie hinterlässt ihren Ehemann Kilian; Kinder hatten sie keine. Jasmins Mutter und Vater leben beide. In ihrem Testament steht: «Mein Mann Kilian erhält alles.» Ihr Nachlass beträgt CHF 500’000.", "frage": "Wie viel erhält jede Person?", "rows": [{"n": "Ehemann Kilian", "s": 500000}, {"n": "Mutter", "s": 0}, {"n": "Vater", "s": 0}], "e": "Ohne Testament hätten die Eltern zusammen ein Viertel geerbt. Sie haben aber seit 2023 keinen Pflichtteil mehr. Das Testament gilt deshalb voll: Kilian erhält alles."}, {"id": "z20", "st": 3, "mode": "chf", "total": 120000, "lage": "Lorenz stirbt ohne Testament. Er und seine Ehefrau Maja lebten in der Errungenschaftsbeteiligung und haben eine Tochter, Nele. Eigengut hatte keiner von beiden. Lorenz hatte eine Errungenschaft von CHF 160’000, Maja eine von CHF 80’000.", "frage": "Wie viel erbt jede Person? Rechnen Sie zuerst das Güterrecht, dann die Erbteilung.", "rows": [{"n": "Ehefrau Maja", "s": 60000}, {"n": "Tochter Nele", "s": 60000}], "e": "Güterrecht: Die Vorschläge betragen zusammen 240’000, jeder Seite steht die Hälfte zu: 120’000. Der Nachlass von Lorenz beträgt also 120’000. Erbrecht: Maja und Nele erben je die Hälfte, je 60’000. Maja hat danach insgesamt 180’000.", "zeigeTotal": false}, {"id": "z21", "st": 3, "mode": "chf", "total": 300000, "lage": "Oskar stirbt ohne Testament. Er und seine Ehefrau Paula hatten in einem Ehevertrag Gütertrennung vereinbart. Oskar besass CHF 300’000, Paula CHF 100’000. Sie haben zwei Kinder, Quentin und Ria.", "frage": "Wie viel erbt jede Person? Rechnen Sie zuerst das Güterrecht, dann die Erbteilung.", "rows": [{"n": "Ehefrau Paula", "s": 150000}, {"n": "Sohn Quentin", "s": 75000}, {"n": "Tochter Ria", "s": 75000}], "e": "Bei der Gütertrennung gibt es keinen Vorschlag zu teilen: Jeder behält, was ihm gehört. Der Nachlass ist Oskars ganzes Vermögen: 300’000. Paula erbt die Hälfte, 150’000, die Kinder je 75’000.", "zeigeTotal": false}, {"id": "z22", "st": 3, "mode": "chf", "total": 270000, "lage": "Silvia stirbt ohne Testament und hinterlässt CHF 270’000. Sie war verwitwet und hat drei Kinder: Tobias, Ursina und Valentin. Tobias hat vor drei Jahren CHF 30’000 als Erbvorbezug erhalten.", "frage": "Wie viel erhält jede Person aus dem Nachlass?", "rows": [{"n": "Sohn Tobias", "s": 70000}, {"n": "Tochter Ursina", "s": 100000}, {"n": "Sohn Valentin", "s": 100000}], "e": "Der Erbvorbezug wird ausgeglichen (Art. 626 ZGB). Man zählt ihn zum Nachlass: 270’000 + 30’000 = 300’000, je 100’000. Tobias hat 30’000 schon erhalten und bekommt noch 70’000."}, {"id": "z23", "st": 3, "mode": "chf", "total": 400000, "lage": "Werner stirbt. Er war verwitwet und hinterlässt zwei Kinder, Kurt und Rita. In seinem Testament hat er Kurt auf den Pflichtteil gesetzt; alles Übrige soll Rita erhalten. Sein Nachlass beträgt CHF 400’000.", "frage": "Wie viel erhält jede Person?", "rows": [{"n": "Sohn Kurt", "s": 100000}, {"n": "Tochter Rita", "s": 300000}], "e": "Kurt erbt gesetzlich 1/2, sein Pflichtteil ist 1/4 = 100’000. Rita erhält den Rest: ihre eigene Hälfte und dazu das Viertel, das Kurt entzogen wurde, zusammen 300’000."}, {"id": "z24", "st": 3, "mode": "chf", "total": 360000, "lage": "Yvonne stirbt ohne Testament. Ihr Nachlass beträgt CHF 360’000. Sie war verwitwet. Ihre Tochter Zita lebt. Ihr Sohn Armin ist schon früher gestorben und hat drei Kinder hinterlassen: Bela, Cora und Davide.", "frage": "Wie viel erhält jede Person?", "rows": [{"n": "Tochter Zita", "s": 180000}, {"n": "Enkel Bela", "s": 60000}, {"n": "Enkelin Cora", "s": 60000}, {"n": "Enkel Davide", "s": 60000}], "e": "Zuerst nach Kindern teilen: Zita 180’000, Armins Stamm 180’000. Weil Armin schon gestorben ist, teilen seine drei Kinder seinen Anteil: je 60’000 (Art. 457 Abs. 3 ZGB)."}, {"id": "z25", "st": 3, "mode": "chf", "total": 600000, "lage": "Edith stirbt. Sie hinterlässt ihren Ehemann Flavio und den Sohn Gian. In ihrem Testament hat sie Gian auf den Pflichtteil gesetzt; alles Übrige soll Flavio erhalten. Ihr Nachlass beträgt CHF 600’000.", "frage": "Wie viel erhält jede Person?", "rows": [{"n": "Ehemann Flavio", "s": 450000}, {"n": "Sohn Gian", "s": 150000}], "e": "Gian erbt gesetzlich 1/2, sein Pflichtteil ist 1/4 = 150’000. Flavio erhält den Rest, 450’000: seinen Pflichtteil (1/4) und die freie Quote (1/2) zusammen."}, {"id": "c1", "st": 4, "mode": "bruch", "lage": "Jonas (30) stirbt ohne Testament. Er war ledig und kinderlos. Seine Mutter lebt, sein Vater ist schon früher gestorben. Jonas hat einen Bruder, Kai, mit denselben Eltern. Der Vater hat aus einer früheren Beziehung zudem eine Tochter, Vera.", "frage": "Welchen Bruchteil erhält jede Person?", "rows": [{"n": "Mutter", "s": 8}, {"n": "Bruder Kai", "s": 4}, {"n": "Halbschwester Vera", "s": 4}], "e": "Die Erbschaft wird zuerst nach Eltern geteilt (Art. 458 ZGB). Die Mutter erhält ihre Hälfte. Die Hälfte des verstorbenen Vaters geht an alle seine Nachkommen, also an Kai und an Vera: je 1/4. Halbgeschwister erben nur auf der Seite des gemeinsamen Elternteils."}, {"id": "c2", "st": 4, "mode": "bruch", "lage": "Pia stirbt ohne Testament. Sie hinterlässt ihren Ehemann Leo; Kinder hatten sie keine. Pias Eltern sind schon früher gestorben. Ihr Bruder Max lebt. Ihre Schwester Ida ist schon früher gestorben und hat zwei Kinder hinterlassen: Ana und Ben.", "frage": "Welchen Bruchteil erhält jede Person?", "rows": [{"n": "Ehemann Leo", "s": 12}, {"n": "Bruder Max", "s": 2}, {"n": "Nichte Ana", "s": 1}, {"n": "Neffe Ben", "s": 1}], "e": "Leo erhält neben dem elterlichen Stamm drei Viertel. Das restliche Viertel geht an die Nachkommen der Eltern: Max 1/8, Idas Stamm 1/8. Idas Achtel teilen ihre Kinder: je 1/16."}, {"id": "c3", "st": 4, "mode": "bruch", "lage": "Monika (45) stirbt ohne Testament. Sie war ledig, kinderlos und Einzelkind; ihre Eltern sind schon früher gestorben. Von den Grosseltern lebt nur noch Rosa, die Mutter ihrer Mutter. Die anderen drei Grosseltern sind gestorben und haben keine lebenden Nachkommen. Monikas Lebenspartner Tom lebt.", "frage": "Welchen Bruchteil erhält jede Person?", "rows": [{"n": "Grossmutter Rosa", "s": 16}, {"n": "Lebenspartner Tom", "s": 0}], "e": "Es erbt der grosselterliche Stamm (Art. 459 ZGB). Hat der verstorbene Grossvater keine Nachkommen, fällt sein Teil an die Grossmutter der gleichen Seite. Fehlen auf der anderen Seite alle Erben, fällt auch diese Hälfte an sie. Rosa erbt alles. Tom ist als Lebenspartner kein gesetzlicher Erbe."}, {"id": "c4", "st": 4, "mode": "bruch", "lage": "Ernst (84) stirbt ohne Testament. Er war ledig, kinderlos und Einzelkind. Seine Eltern und Grosseltern sind gestorben; Onkel, Tanten, Cousins oder Cousinen gibt es nicht. Es leben sein Grossonkel Alfred, der Bruder seines Grossvaters, und seine langjährige Freundin Heidi.", "frage": "Welchen Bruchteil erhält jede Person?", "rows": [{"n": "Grossonkel Alfred", "s": 0}, {"n": "Freundin Heidi", "s": 0}, {"n": "Kanton oder Gemeinde", "s": 16}], "e": "Mit dem Stamm der Grosseltern hört das Erbrecht der Verwandten auf (Art. 460 ZGB). Ein Grossonkel gehört zum Stamm der Urgrosseltern und erbt nicht. Ohne Erben und ohne Testament fällt der Nachlass an den Kanton oder die Gemeinde (Art. 466)."}, {"id": "c5", "st": 4, "mode": "bruch", "lage": "Stefan stirbt ohne Testament. Er hinterlässt seine Ehefrau Laura und die Tochter Emma. Laura ist bei seinem Tod schwanger; drei Monate später kommt Sohn Leon gesund zur Welt.", "frage": "Welchen Bruchteil erhält jede Person?", "rows": [{"n": "Ehefrau Laura", "s": 8}, {"n": "Tochter Emma", "s": 4}, {"n": "Sohn Leon", "s": 4}], "e": "Ein Kind ist schon vor der Geburt erbfähig, sofern es lebend geboren wird (Art. 544 ZGB). Leon erbt also gleich wie Emma. Laura erhält die Hälfte, die Kinder je 1/4."}, {"id": "c6", "st": 4, "mode": "bruch", "lage": "Viktor stirbt. Er war verwitwet und hinterlässt zwei Söhne, Aldo und Bruno. Bruno hat das Testament seines Vaters nach dessen Tod heimlich vernichtet; was darin stand, lässt sich nicht mehr feststellen. Die Sache fliegt auf. Bruno hat eine Tochter, Cleo.", "frage": "Welchen Bruchteil erhält jede Person?", "rows": [{"n": "Sohn Aldo", "s": 8}, {"n": "Sohn Bruno", "s": 0}, {"n": "Enkelin Cleo", "s": 8}], "e": "Wer ein Testament vorsätzlich beseitigt, ist erbunwürdig und erbt nichts (Art. 540 ZGB). Die Unwürdigkeit trifft nur ihn selbst: Seine Nachkommen erben, wie wenn er vor dem Erblasser gestorben wäre (Art. 541). Weil der Inhalt des Testaments unbekannt bleibt, gilt die gesetzliche Erbfolge: Aldo 1/2, Cleo 1/2."}, {"id": "c7", "st": 4, "mode": "bruch", "lage": "Gerda stirbt ohne Testament. Sie war verwitwet und hinterlässt zwei Kinder, Heinz und Iris. Heinz hat vor zehn Jahren in einem Erbvertrag gegen eine Abfindung auf sein Erbe verzichtet; zu seinen Nachkommen sagt der Vertrag nichts. Heinz hat einen Sohn, Jan.", "frage": "Welchen Bruchteil erhält jede Person?", "rows": [{"n": "Tochter Iris", "s": 16}, {"n": "Sohn Heinz", "s": 0}, {"n": "Enkel Jan", "s": 0}], "e": "Wer im Erbvertrag verzichtet, fällt als Erbe weg. Anders als bei Enterbung, Ausschlagung oder Erbunwürdigkeit wirkt der Erbverzicht auch gegenüber den Nachkommen, wenn der Vertrag nichts anderes sagt (Art. 495 Abs. 3 ZGB). Jan tritt also nicht an Heinz’ Stelle, Iris erbt alles."}, {"id": "c8", "st": 4, "mode": "bruch", "lage": "Ralf stirbt. Er hinterlässt seine Ehefrau Tina und zwei Kinder, Uma und Vito. Bei seinem Tod lief ein Scheidungsverfahren, das die beiden gemeinsam eingeleitet hatten. In seinem Testament hat Ralf die Kinder als Alleinerben eingesetzt. Tina verlangt ihren Pflichtteil.", "frage": "Welchen Bruchteil erhält jede Person?", "rows": [{"n": "Ehefrau Tina", "s": 0}, {"n": "Tochter Uma", "s": 8}, {"n": "Sohn Vito", "s": 8}], "e": "Seit 2023 gilt: Läuft beim Tod ein Scheidungsverfahren auf gemeinsames Begehren (oder nach mindestens zwei Jahren Trennung), verliert der überlebende Ehegatte seinen Pflichtteil (Art. 472 ZGB). Das Testament gilt deshalb voll: Die Kinder erben je 1/2. Ohne Testament hätte Tina noch die Hälfte geerbt, weil die Ehe beim Tod noch bestand."}, {"id": "c9", "st": 4, "mode": "bruch", "lage": "Wanda will ein Testament schreiben. Sie ist mit Xaver verheiratet. Ihre Tochter Yara lebt. Ihr Sohn Zeno ist gestorben und hat zwei Kinder hinterlassen, Ava und Bo.", "frage": "Wie viel muss das Testament den Angehörigen mindestens lassen (Pflichtteile), und wie gross ist die freie Quote?", "rows": [{"n": "Ehemann Xaver", "s": 4}, {"n": "Tochter Yara", "s": 2}, {"n": "Enkelin Ava", "s": 1}, {"n": "Enkel Bo", "s": 1}, {"n": "Freie Quote", "s": 8, "frei": true}], "e": "Gesetzlich: Xaver 1/2, Yara 1/4, Zenos Stamm 1/4, also Ava und Bo je 1/8. Der Pflichtteil ist je die Hälfte davon: Xaver 1/4, Yara 1/8, Ava und Bo je 1/16. Frei verfügbar: 1/2."}, {"id": "c10", "st": 4, "mode": "bruch", "lage": "Mara (27) stirbt ohne Testament. Sie war ledig und kinderlos. Als Kleinkind wurde sie vom Ehepaar Keller adoptiert. Ihre Adoptivmutter und ihr Adoptivvater leben, ebenso ihre leibliche Mutter.", "frage": "Welchen Bruchteil erhält jede Person?", "rows": [{"n": "Adoptivmutter", "s": 8}, {"n": "Adoptivvater", "s": 8}, {"n": "Leibliche Mutter", "s": 0}], "e": "Mit der Adoption erhält das Kind die Rechtsstellung eines Kindes der Adoptiveltern; das bisherige Kindesverhältnis erlischt (Art. 267 ZGB). Es erben die Adoptiveltern als elterlicher Stamm: je 1/2. Die leibliche Mutter ist rechtlich nicht mehr verwandt."}, {"id": "c11", "st": 4, "mode": "chf", "total": 240000, "lage": "Timon (38) stirbt ohne Testament. Sein Nachlass beträgt CHF 240’000. Er war ledig und kinderlos; seine Eltern sind beide schon früher gestorben. Er hinterlässt seine Schwester Alma und seinen Bruder Björn mit denselben Eltern. Seine Mutter hatte aus einer früheren Ehe zudem einen Sohn, Curdin.", "frage": "Wie viel erhält jede Person?", "rows": [{"n": "Schwester Alma", "s": 100000}, {"n": "Bruder Björn", "s": 100000}, {"n": "Halbbruder Curdin", "s": 40000}], "e": "Zuerst nach Eltern teilen: je 120’000 für die väterliche und die mütterliche Seite (Art. 458 ZGB). Die Hälfte des Vaters teilen seine Nachkommen Alma und Björn: je 60’000. Die Hälfte der Mutter teilen ihre drei Nachkommen: je 40’000. Alma und Björn erhalten je 100’000, Curdin 40’000."}, {"id": "c12", "st": 4, "mode": "chf", "total": 240000, "lage": "Albert stirbt. Er war verwitwet und hinterlässt die Tochter Bea und den Sohn Carl. Carl hat eine Tochter, Dana. Im Testament hat Albert seinen Sohn Carl gültig und mit Begründung enterbt und bestimmt: «Carls Anteil erhält meine Freundin Elsa.» Der Nachlass beträgt CHF 240’000. Dana verlangt ihren Pflichtteil.", "frage": "Wie viel erhält jede Person?", "rows": [{"n": "Tochter Bea", "s": 120000}, {"n": "Sohn Carl", "s": 0}, {"n": "Enkelin Dana", "s": 60000}, {"n": "Freundin Elsa", "s": 60000}], "e": "Bea behält ihren gesetzlichen Erbteil: 120’000. Carl erhält nichts. Seine Nachkommen behalten aber ihren Pflichtteil, wie wenn Carl den Erbfall nicht erlebt hätte (Art. 478 Abs. 3 ZGB): Dana würde gesetzlich 1/2 erben, ihr Pflichtteil ist 1/4 = 60’000. Elsa erhält den Rest von Carls Anteil: 60’000."}, {"id": "c13", "st": 4, "mode": "chf", "total": 320000, "lage": "Frieda stirbt. Sie war verwitwet und hinterlässt zwei Söhne, Gerd und Holger. In ihrem Testament steht nur: «Ich enterbe Holger. Alles erhält Gerd.» Einen Grund nennt sie nicht. Holger ficht das Testament an. Der Nachlass beträgt CHF 320’000.", "frage": "Wie viel erhält jede Person?", "rows": [{"n": "Sohn Gerd", "s": 240000}, {"n": "Sohn Holger", "s": 80000}], "e": "Eine Enterbung ist nur gültig, wenn der Grund im Testament steht (Art. 479 ZGB). Fehlt er, bleibt das Testament so weit gültig, wie es der Pflichtteil erlaubt (Art. 479 Abs. 3). Holger erhält seinen Pflichtteil, 1/4 = 80’000, Gerd den Rest."}, {"id": "c14", "st": 4, "mode": "chf", "total": 120000, "lage": "Nils stirbt ohne Testament. Er und seine Ehefrau Olga lebten in der Errungenschaftsbeteiligung und haben zwei gemeinsame Kinder, Pius und Rea. In einem Ehevertrag haben sie vereinbart, dass der ganze Vorschlag an den überlebenden Ehegatten geht. Nils hatte ein Eigengut von CHF 120’000 und eine Errungenschaft von CHF 400’000. Olga hat kein Eigengut und eine Errungenschaft von CHF 100’000.", "frage": "Wie viel erbt jede Person? Rechnen Sie zuerst das Güterrecht, dann die Erbteilung.", "rows": [{"n": "Ehefrau Olga", "s": 60000}, {"n": "Sohn Pius", "s": 30000}, {"n": "Tochter Rea", "s": 30000}], "e": "Güterrecht: Der Ehevertrag weist den ganzen Vorschlag Olga zu (Art. 216 ZGB); bei gemeinsamen Kindern ist das zulässig. In den Nachlass fällt nur das Eigengut von Nils: 120’000. Erbrecht: Olga erbt die Hälfte, 60’000, die Kinder je 30’000. Olga hat danach insgesamt 560’000.", "zeigeTotal": false}, {"id": "c15", "st": 4, "mode": "chf", "total": 280000, "lage": "Quirin stirbt ohne Testament. Er und seine Ehefrau Rahel hatten in einem Ehevertrag die Gütergemeinschaft vereinbart und haben zwei Kinder, Selina und Till. Das Gesamtgut beträgt CHF 500’000. Quirin hatte zudem ein Eigengut von CHF 30’000.", "frage": "Wie viel erbt jede Person? Rechnen Sie zuerst das Güterrecht, dann die Erbteilung.", "rows": [{"n": "Ehefrau Rahel", "s": 140000}, {"n": "Tochter Selina", "s": 70000}, {"n": "Sohn Till", "s": 70000}], "e": "Güterrecht: Beim Tod wird das Gesamtgut hälftig geteilt (Art. 241 ZGB): 250’000 gehören Rahel, 250’000 fallen in den Nachlass. Dazu kommt Quirins Eigengut: Nachlass 280’000. Erbrecht: Rahel erbt die Hälfte, 140’000, die Kinder je 70’000.", "zeigeTotal": false}, {"id": "c16", "st": 4, "mode": "chf", "total": 300000, "lage": "Volker stirbt. Er und seine Ehefrau Wilma lebten in der Errungenschaftsbeteiligung und haben zwei Kinder, Xenia und Yann. Eigengut hatte keiner von beiden. Volker hatte eine Errungenschaft von CHF 500’000, Wilma eine von CHF 100’000. In seinem Testament steht: «Mein Patenkind Zoé erhält die ganze freie Quote. Meine Frau und meine Kinder setze ich auf den Pflichtteil.»", "frage": "Wie viel erbt jede Person? Rechnen Sie zuerst das Güterrecht, dann die Erbteilung.", "rows": [{"n": "Ehefrau Wilma", "s": 75000}, {"n": "Tochter Xenia", "s": 37500}, {"n": "Sohn Yann", "s": 37500}, {"n": "Patenkind Zoé", "s": 150000}], "e": "Güterrecht: Vorschläge zusammen 600’000, jeder Seite 300’000. Nachlass: 300’000. Pflichtteile: Wilma 1/4 = 75’000, die Kinder je 1/8 = 37’500. Die freie Quote, die Hälfte, also 150’000, geht an Zoé. Wilma hat danach mit ihrem güterrechtlichen Anteil insgesamt 375’000.", "zeigeTotal": false}, {"id": "c17", "st": 4, "mode": "chf", "total": 300000, "lage": "Egon stirbt ohne Testament und hinterlässt CHF 300’000. Er war verwitwet. Seine Tochter Fiona lebt. Sein Sohn Gabriel ist vor zwei Jahren gestorben; er hatte von Egon CHF 60’000 als Erbvorbezug erhalten. Gabriel hat zwei Kinder hinterlassen, Hana und Ilja.", "frage": "Wie viel erhält jede Person aus dem Nachlass?", "rows": [{"n": "Tochter Fiona", "s": 180000}, {"n": "Enkelin Hana", "s": 60000}, {"n": "Enkel Ilja", "s": 60000}], "e": "Der Erbvorbezug wird ausgeglichen, auch wenn der Empfänger schon gestorben ist: Die Pflicht geht auf die Erben über, die an seine Stelle treten (Art. 627 ZGB). Rechnung: 300’000 + 60’000 = 360’000, je 180’000 pro Stamm. Fiona erhält 180’000. Gabriels Stamm hat 60’000 schon erhalten, es bleiben 120’000: Hana und Ilja je 60’000."}, {"id": "c18", "st": 4, "mode": "chf", "total": 200000, "lage": "Konrad stirbt. Er hinterlässt seine Ehefrau Lena und den Sohn Milo. Vor acht Jahren hat er seiner Geschäftspartnerin Nina CHF 200’000 geschenkt; eine Absicht, die Pflichtteile zu umgehen, lässt sich nicht nachweisen. Im Testament hat er Nina als Alleinerbin eingesetzt. Sein Nachlass beträgt CHF 200’000. Lena und Milo klagen rechtzeitig auf ihre Pflichtteile.", "frage": "Wie viel erhält jede Person aus dem Nachlass?", "rows": [{"n": "Ehefrau Lena", "s": 50000}, {"n": "Sohn Milo", "s": 50000}, {"n": "Geschäftspartnerin Nina", "s": 100000}], "e": "Für den Pflichtteil werden nur Schenkungen der letzten fünf Jahre vor dem Tod dazugezählt (Art. 527 Ziff. 3 ZGB). Diese Schenkung liegt acht Jahre zurück und zählt nicht. Gerechnet wird also nur vom Nachlass: Pflichtteil Lena 1/4 = 50’000, Milo 1/4 = 50’000. Nina erhält die freie Quote von 100’000 und behält die Schenkung."}, {"id": "c19", "st": 4, "mode": "chf", "total": 240000, "lage": "Lotti stirbt. Sie war verwitwet und hinterlässt zwei Kinder, Marc und Nelly. In ihrem Testament steht: «Mein Nachbar Oswald erhält CHF 150’000, der Tierschutzverein CHF 50’000. Den Rest teilen meine Kinder.» Ihr Nachlass beträgt CHF 240’000. Die Kinder klagen rechtzeitig auf ihre Pflichtteile.", "frage": "Wie viel erhält jede Person?", "rows": [{"n": "Sohn Marc", "s": 60000}, {"n": "Tochter Nelly", "s": 60000}, {"n": "Nachbar Oswald", "s": 90000}, {"n": "Tierschutzverein", "s": 30000}], "e": "Pflichtteile der Kinder: je 1/4 = 60’000, zusammen 120’000. Frei verfügbar sind nur 120’000, vermacht hat Lotti aber 200’000. Die Vermächtnisse werden im gleichen Verhältnis herabgesetzt (Art. 525 ZGB), hier auf 60 Prozent: Oswald 90’000, Tierschutzverein 30’000."}, {"id": "c20", "st": 4, "mode": "chf", "total": 200000, "lage": "Selma und ihr Ehemann Theo sterben beim selben Autounfall. Wer zuerst gestorben ist, lässt sich nicht feststellen. Sie hatten keine Kinder und kein Testament. Selmas Nachlass beträgt nach der güterrechtlichen Auseinandersetzung CHF 200’000. Selmas Mutter und Vater leben, ebenso Theos Mutter.", "frage": "Wer erhält wie viel aus Selmas Nachlass?", "rows": [{"n": "Selmas Mutter", "s": 100000}, {"n": "Selmas Vater", "s": 100000}, {"n": "Theos Mutter", "s": 0}], "e": "Lässt sich nicht beweisen, wer wen überlebt hat, gelten beide als gleichzeitig gestorben (Art. 32 Abs. 2 ZGB). Erben kann nur, wer den Erbgang erlebt (Art. 542): Theo erbt nichts von Selma, also kann über ihn auch nichts an seine Mutter gehen. Selmas Nachlass geht an ihren elterlichen Stamm: je 100’000."}, {"id": "c21", "st": 4, "mode": "chf", "total": 500000, "lage": "Arno stirbt ohne Testament; sein Nachlass beträgt nach der güterrechtlichen Auseinandersetzung CHF 400’000. Er hinterlässt seine Ehefrau Berit und seinen Bruder Claus; Kinder hatten sie keine, Arnos Eltern sind gestorben. Eine Woche später stirbt auch Berit, ebenfalls ohne Testament. Sie besass daneben eigenes Vermögen von CHF 100’000. Ihre einzige Verwandte ist ihre Schwester Doris.", "frage": "Wie viel erhält jede Person am Schluss?", "rows": [{"n": "Bruder Claus", "s": 100000}, {"n": "Schwester Doris", "s": 400000}], "e": "Erster Erbgang (Arno): Berit erbt neben dem elterlichen Stamm 3/4 = 300’000, Claus 1/4 = 100’000. Zweiter Erbgang (Berit): Ihr Nachlass besteht aus ihren 100’000 und den geerbten 300’000. Alles geht an Doris: 400’000. Die Reihenfolge der Todesfälle entscheidet: Wäre Berit zuerst gestorben, sähe die Verteilung ganz anders aus.", "zeigeTotal": false}, {"id": "c22", "st": 4, "mode": "chf", "total": 400000, "lage": "Carmen stirbt. Sie hinterlässt ihren Ehemann Timo; Kinder hatten sie keine. Carmens Mutter und Vater leben, ebenso ihre Schwester Uta. In ihrem Testament steht: «Mein Mann erhält nur den Pflichtteil. Alles Übrige erhält meine Schwester Uta.» Ihr Nachlass beträgt CHF 400’000.", "frage": "Wie viel erhält jede Person?", "rows": [{"n": "Ehemann Timo", "s": 150000}, {"n": "Schwester Uta", "s": 250000}, {"n": "Mutter", "s": 0}, {"n": "Vater", "s": 0}], "e": "Timo erbt gesetzlich 3/4, sein Pflichtteil ist die Hälfte davon: 3/8 = 150’000. Die Eltern haben seit 2023 keinen Pflichtteil mehr und gehen leer aus. Uta erhält die freie Quote von 5/8 = 250’000."}, {"id": "c23", "st": 4, "mode": "chf", "total": 300000, "lage": "Dora stirbt ohne Testament und hinterlässt CHF 300’000, keine Schulden. Sie hinterlässt ihren Ehemann Emil und zwei Kinder, Franz und Greta. Greta ist kinderlos und schlägt die Erbschaft fristgerecht aus.", "frage": "Wie viel erhält jede Person?", "rows": [{"n": "Ehemann Emil", "s": 150000}, {"n": "Sohn Franz", "s": 150000}, {"n": "Tochter Greta", "s": 0}], "e": "Gretas Anteil vererbt sich, wie wenn sie den Erbfall nicht erlebt hätte (Art. 572 Abs. 1 ZGB). Dann gäbe es nur ein Kind: Franz erhält die ganze Hälfte der Nachkommen, 150’000. Emils Anteil bleibt bei der Hälfte; von Gretas Anteil erhält er nichts."}, {"id": "c24", "st": 4, "mode": "chf", "total": 300000, "lage": "Pascal stirbt. Er lebte 15 Jahre mit seiner Partnerin Ronja zusammen, verheiratet waren sie nicht. Sie haben zwei Kinder, Sami und Tess. Das Haus gehört beiden je zur Hälfte; nach Abzug der Hypothek ist es CHF 500’000 wert. Pascal besass zudem ein Konto mit CHF 50’000. In seinem Testament steht: «Ronja erhält so viel, wie das Gesetz erlaubt.»", "frage": "Wie viel erhält jede Person aus dem Nachlass?", "rows": [{"n": "Partnerin Ronja", "s": 150000}, {"n": "Sohn Sami", "s": 75000}, {"n": "Tochter Tess", "s": 75000}], "e": "Ohne Ehe gibt es kein Güterrecht: In den Nachlass fällt, was Pascal gehört, also seine Haushälfte (250’000) und sein Konto (50’000), zusammen 300’000. Die Kinder erben gesetzlich je 1/2, ihr Pflichtteil ist je 1/4 = 75’000. Ronja erhält die freie Quote: 150’000. Ohne Testament hätte sie nichts geerbt.", "zeigeTotal": false}, {"id": "c25", "st": 4, "mode": "chf", "total": 320000, "lage": "Gustav stirbt ohne Testament. Er und seine Ehefrau Helen lebten in der Errungenschaftsbeteiligung. Gustav hatte ein Eigengut von CHF 80’000 und eine Errungenschaft von CHF 360’000. Helen hat ein Eigengut von CHF 50’000 und eine Errungenschaft von CHF 120’000. Tochter Ina lebt. Sohn Jost ist schon früher gestorben und hat zwei Kinder hinterlassen, Kay und Lou.", "frage": "Wie viel erbt jede Person? Rechnen Sie zuerst das Güterrecht, dann die Erbteilung.", "rows": [{"n": "Ehefrau Helen", "s": 160000}, {"n": "Tochter Ina", "s": 80000}, {"n": "Enkel Kay", "s": 40000}, {"n": "Enkelin Lou", "s": 40000}], "e": "Güterrecht: Die Vorschläge betragen zusammen 480’000, jeder Seite stehen 240’000 zu. Nachlass von Gustav: Eigengut 80’000 + 240’000 = 320’000. Erbrecht: Helen erbt die Hälfte, 160’000. Die andere Hälfte geht an die Stämme der Kinder: Ina 80’000, Josts Stamm 80’000, also Kay und Lou je 40’000. Helen hat danach mit Eigengut und güterrechtlichem Anteil insgesamt 450’000.", "zeigeTotal": false}];
+const SP = [["mit Nachkommen", [["Ehegatte", 8], ["Nachkommen", 8]], [["Nachkommen", 16]], [["Ehegatte", 4], ["Nachkommen", 4], ["frei", 8]], [["Nachkommen", 8], ["frei", 8]]], ["ohne Nachkommen, beide Eltern", [["Ehegatte", 12], ["Eltern", 4]], [["Eltern", 16]], [["Ehegatte", 6], ["frei", 10]], [["frei", 16]]], ["ohne Nachkommen, ein Elternteil und Geschwister", [["Ehegatte", 12], ["Elternteil", 2], ["Geschwister", 2]], [["Elternteil", 8], ["Geschwister", 8]], [["Ehegatte", 6], ["frei", 10]], [["frei", 16]]], ["ohne Nachkommen, ohne Eltern, mit Geschwistern", [["Ehegatte", 12], ["Geschwister", 4]], [["Geschwister", 16]], [["Ehegatte", 6], ["frei", 10]], [["frei", 16]]]];
+const STUFEN = {1:"Training 1 · Gesetzliche Erbteile",2:"Training 2 · Pflichtteile",3:"Training 3 · Beträge in CHF",4:"Level Chuck Norris"};
+const WAHL = [0,1,2,4,6,8,10,12,16];
+const FARBEN = ["#2f7d6d","#d08a2e","#4f78c0","#b5577f","#7d9a36","#8a6bc0"];
+const FREI = "#b4bdba";
+const KEY = "hkv_erbteilung_plus_v1";
+let S = {};
+try { S = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch(e) { S = {}; }
+// Umstellung von der ersten Fassung (Speicher nach Position) auf feste Kennungen
+if (S.a && !S.b) { S.b = {}; Object.keys(S.a).forEach(k => { S.b["e" + (+k + 1)] = S.a[k]; }); if (typeof S.cur === "number") S.cid = "e" + (S.cur + 1); }
+delete S.a; delete S.cur;
+if (!S.b) S.b = {};
+let CUR = Math.max(0, A.findIndex(a => a.id === S.cid));
+function save(){ S.cid = A[CUR].id; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {} fort(); }
+const el = (t,c,h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
+const NS = "http://www.w3.org/2000/svg";
+const sv = (t,at) => { const e = document.createElementNS(NS,t); for (const k in at) e.setAttribute(k, at[k]); return e; };
+
+function ggt(a,b){ return b ? ggt(b, a % b) : a; }
+function bruch(n){ if (n == null) return "–"; if (n === 0) return "0"; if (n === 16) return "1"; const g = ggt(n,16); return (n/g) + "/" + (16/g); }
+const chf = n => "CHF " + Math.round(n).toLocaleString("de-CH").replace(/[,’']/g, "’");
+function parseChf(s){ const t = String(s).replace(/CHF/i,"").replace(/[\s'’`.,]/g,""); if (t === "") return null; const n = Number(t); return isFinite(n) ? n : NaN; }
+function farbe(a,i){ return a.rows[i].frei ? FREI : FARBEN[i % FARBEN.length]; }
+
+/* Torte zeichnen */
+function punkt(cx,cy,r,anteil){ const w = anteil * 2 * Math.PI; return [cx + r*Math.sin(w), cy - r*Math.cos(w)]; }
+function sektor(cx,cy,r,a0,a1){
+  if (a1 - a0 >= 0.9999) return sv("circle",{cx:cx,cy:cy,r:r});
+  const [x0,y0] = punkt(cx,cy,r,a0), [x1,y1] = punkt(cx,cy,r,a1);
+  return sv("path",{d:`M${cx},${cy} L${x0},${y0} A${r},${r} 0 ${a1-a0>0.5?1:0} 1 ${x1},${y1} Z`});
+}
+function torte(svg, teile, opt){
+  // teile: [{w:anteil 0..1, f:farbe, txt}]
+  opt = opt || {};
+  const cx = opt.cx || 125, cy = opt.cy || 125, r = opt.r || 105;
+  while (svg.firstChild) svg.removeChild(svg.firstChild);
+  svg.appendChild(sv("circle",{cx:cx,cy:cy,r:r,fill:"none",stroke:"currentColor","stroke-opacity":"0.35","stroke-dasharray":"4 4"}));
+  let a = 0;
+  teile.forEach(t => {
+    if (t.w <= 0) return;
+    const s = sektor(cx,cy,r,a,Math.min(1,a+t.w));
+    s.setAttribute("fill", t.f); s.setAttribute("stroke", "var(--surface)"); s.setAttribute("stroke-width", opt.mini ? "1" : "2");
+    svg.appendChild(s);
+    if (!opt.mini && t.txt && t.w >= 0.09) {
+      const m = a + Math.min(t.w,1)/2, [x,y] = punkt(cx,cy, t.w >= 0.999 ? 0 : r*0.6, m);
+      const tx = sv("text",{x:x,y:y+5,"text-anchor":"middle","font-size":"15","font-weight":"700",fill:"#fff"}); tx.textContent = t.txt;
+      tx.setAttribute("paint-order","stroke"); tx.setAttribute("stroke","rgba(0,0,0,.35)"); tx.setAttribute("stroke-width","2.5");
+      svg.appendChild(tx);
+    }
+    a += t.w;
+  });
+  svg.appendChild(sv("circle",{cx:cx,cy:cy,r:r,fill:"none",stroke:"currentColor","stroke-opacity":"0.5"}));
+}
+
+/* Spickzettel */
+(function(){
+  const t = document.getElementById("spickT");
+  const kopf1 = el("tr"); kopf1.innerHTML = '<th class="links"></th><th colspan="2">Gesetzliche Erbfolge</th><th colspan="2" class="trenner">Pflichtteile und freie Quote</th>';
+  const kopf2 = el("tr"); kopf2.innerHTML = '<th class="links"></th><th>Ehepaar</th><th>Allein stehend</th><th class="trenner">Ehepaar</th><th>Allein stehend</th>';
+  t.appendChild(kopf1); t.appendChild(kopf2);
+  const fmap = {"Ehegatte":FARBEN[0],"Nachkommen":FARBEN[1],"Eltern":FARBEN[2],"Elternteil":FARBEN[2],"Geschwister":FARBEN[3],"frei":FREI};
+  SP.forEach(z => {
+    const tr = el("tr"); tr.appendChild(el("td","lage",z[0]));
+    for (let k = 1; k <= 4; k++) {
+      const td = el("td", k === 3 ? "trenner" : null), m = el("div","mini");
+      const s = sv("svg",{viewBox:"0 0 62 62","aria-hidden":"true"});
+      torte(s, z[k].map(p => ({w:p[1]/16, f:fmap[p[0]]})), {cx:31,cy:31,r:28,mini:true});
+      m.appendChild(s);
+      m.appendChild(el("span",null, z[k].map(p => `<span style="color:${fmap[p[0]]};font-weight:700">■</span> ${p[0]==="frei"?"freie Quote":p[0]} ${bruch(p[1])}`).join("<br>")));
+      td.appendChild(m); tr.appendChild(td);
+    }
+    t.appendChild(tr);
+  });
+})();
+
+/* Navigation */
+function zustand(i){ const z = S.b[A[i].id]; return z && z.done ? (z.ok ? "ok" : "nok") : ""; }
+function navi(){
+  const st = document.getElementById("stufen"); st.innerHTML = "";
+  [1,2,3,4].forEach(n => {
+    const idx = A.map((a,i) => a.st === n ? i : -1).filter(i => i >= 0);
+    const ok = idx.filter(i => zustand(i) === "ok").length;
+    const b = el("button", null, `${STUFEN[n]} <span style="opacity:.75;font-weight:500">${ok}/${idx.length}</span>`); b.type = "button";
+    b.setAttribute("aria-pressed", A[CUR].st === n ? "true" : "false");
+    b.addEventListener("click", () => { CUR = idx[0]; save(); zeige(); });
+    st.appendChild(b);
+  });
+  const p = document.getElementById("punkte"); p.innerHTML = "";
+  A.forEach((a,i) => {
+    if (i > 0 && A[i-1].st !== a.st) p.appendChild(el("span","trenn"));
+    const b = el("button", (zustand(i) + (i === CUR ? " akt" : "")).trim(), String(i+1)); b.type = "button";
+    b.setAttribute("aria-label", "Aufgabe " + (i+1) + (zustand(i) === "ok" ? ", richtig" : zustand(i) === "nok" ? ", falsch" : ""));
+    b.addEventListener("click", () => { CUR = i; save(); zeige(); });
+    p.appendChild(b);
+  });
+}
+function fort(){
+  const n = A.filter((a,i) => S.b[A[i].id] && S.b[A[i].id].done).length, ok = A.filter((a,i) => zustand(i) === "ok").length;
+  document.getElementById("fortText").textContent = n + " von " + A.length + " gelöst · " + ok + " richtig";
+  document.getElementById("fortBalken").style.width = (100*ok/A.length) + "%";
+}
+
+/* Aufgabe anzeigen */
+function zeige(){
+  navi();
+  const i = CUR, a = A[i], box = document.getElementById("aufgabe");
+  if (!S.b[A[i].id]) S.b[A[i].id] = {v: a.rows.map(() => null), done:false, ok:false};
+  const z = S.b[A[i].id], fertig = z.done, bruchMod = a.mode === "bruch";
+  box.innerHTML = "";
+  const k = el("div","aufg");
+  k.appendChild(el("div","kopf", `<span class="nr">Aufgabe ${i+1}</span><span class="stufe">${STUFEN[a.st]}</span>`));
+  k.appendChild(el("p","lage", a.lage));
+  k.appendChild(el("p","frage", a.frage));
+  const feld = el("div","feld"), links = el("div"), rechts = el("div","torte");
+  const svg = sv("svg",{viewBox:"0 0 250 250",role:"img","aria-label":"Kreisdiagramm der Anteile"});
+  const summe = el("div","summe");
+  rechts.appendChild(svg); rechts.appendChild(summe);
+  if (bruchMod && !fertig) rechts.appendChild(el("p","tipp","Punkte am Rand ziehen oder Brüche anklicken."));
+  feld.appendChild(links); feld.appendChild(rechts); k.appendChild(feld);
+
+  const zeilen = [];
+  a.rows.forEach((r,j) => {
+    const zl = el("div","zeile");
+    zl.appendChild(el("div","wer", `<span class="farbe" style="background:${farbe(a,j)}"></span><span>${r.n}</span>`));
+    const mitte = el("div");
+    if (bruchMod) {
+      const br = el("div","brueche");
+      WAHL.forEach(w => {
+        const b = el("button", z.v[j] === w ? "an" : null, bruch(w)); b.type = "button"; b.disabled = fertig;
+        b.setAttribute("aria-label", r.n + ": " + (w === 0 ? "nichts" : bruch(w)));
+        b.addEventListener("click", () => { z.v[j] = w; save(); aktualisiere(); });
+        br.appendChild(b);
+      });
+      mitte.appendChild(br);
+    } else {
+      const c = el("label","chf"); c.innerHTML = "CHF ";
+      const inp = el("input"); inp.type = "text"; inp.inputMode = "numeric"; inp.autocomplete = "off"; inp.disabled = fertig;
+      inp.setAttribute("aria-label", r.n + " in Franken");
+      inp.value = z.v[j] == null ? "" : chf(z.v[j]).replace("CHF ","");
+      inp.addEventListener("input", () => { const n = parseChf(inp.value); z.v[j] = (n === null || isNaN(n)) ? null : n; save(); aktualisiere(true); });
+      c.appendChild(inp); mitte.appendChild(c);
+    }
+    zl.appendChild(mitte);
+    const mk = el("div","mark"); zl.appendChild(mk);
+    links.appendChild(zl); zeilen.push({zl:zl, mk:mk, mitte:mitte});
+  });
+
+  const akt = el("div","aktion"), meld = el("span","meld");
+  const fb = el("div","fb");
+  if (!fertig) {
+    const p = el("button","btn voll","Prüfen"); p.type = "button";
+    p.addEventListener("click", () => {
+      if (z.v.some(v => v == null)) { meld.textContent = bruchMod ? "Wählen Sie bei jeder Person einen Anteil, auch 0." : "Tragen Sie bei jeder Person einen Betrag ein, auch 0."; return; }
+      if (bruchMod) { const s = z.v.reduce((x,y) => x+y, 0); if (s !== 16) { meld.textContent = `Die Anteile ergeben zusammen ${s > 16 ? "mehr als" : "weniger als"} ein Ganzes (${bruch(s) === "1" ? "1" : s + "/16"}). Verteilen Sie genau den ganzen Nachlass.`; return; } }
+      z.done = true; z.ok = a.rows.every((r,j) => z.v[j] === r.s); save();
+      if (window.Lernstand) Lernstand.melden(a.id, z.ok, {n:i+1, g:STUFEN[a.st], t:a.lage});
+      zeige();
+    });
+    akt.appendChild(p); akt.appendChild(meld);
+  } else {
+    fb.className = "fb zeig " + (z.ok ? "gut" : "schlecht");
+    fb.innerHTML = (z.ok ? "<b>Richtig.</b> " : "<b>Nicht ganz.</b> ") + a.e;
+    const n = el("button","btn","Nochmals lösen"); n.type = "button";
+    n.addEventListener("click", () => { S.b[A[i].id] = {v: a.rows.map(() => null), done:false, ok:false}; save(); zeige(); });
+    akt.appendChild(n);
+  }
+  k.appendChild(akt); k.appendChild(fb);
+
+  const bl = el("div","blaettern");
+  const vor = el("button","btn","‹ Zurück"); vor.type = "button"; vor.disabled = i === 0;
+  vor.addEventListener("click", () => { CUR = i-1; save(); zeige(); });
+  const nach = el("button","btn" + (fertig ? " voll" : ""), "Weiter ›"); nach.type = "button"; nach.disabled = i === A.length-1;
+  nach.addEventListener("click", () => { CUR = i+1; save(); zeige(); });
+  bl.appendChild(vor); bl.appendChild(nach); k.appendChild(bl);
+  box.appendChild(k);
+
+  function werte(){ return z.v.map(v => v == null ? 0 : v); }
+  function aktualisiere(nurTorte){
+    const v = werte();
+    if (bruchMod) {
+      zeilen.forEach((q,j) => [...q.mitte.querySelectorAll("button")].forEach((b,x) => b.classList.toggle("an", z.v[j] === WAHL[x])));
+      const s = v.reduce((x,y) => x+y, 0);
+      torte(svg, a.rows.map((r,j) => ({w:v[j]/16, f:farbe(a,j), txt:bruch(v[j])})));
+      summe.className = "summe" + (s > 16 ? " zuviel" : "");
+      summe.innerHTML = s === 16 ? "Verteilt: <b>der ganze Nachlass</b>" : s > 16 ? `Verteilt: <b>zu viel (${s}/16)</b>` : `Verteilt: <b>${s === 0 ? "noch nichts" : bruch(s)}</b>` + (s > 0 ? ` · offen ${bruch(16-s)}` : "");
+      if (!fertig) griffe(v);
+    } else {
+      const s = v.reduce((x,y) => x+y, 0), T = a.total;
+      torte(svg, a.rows.map((r,j) => ({w: T ? Math.max(0,v[j])/T : 0, f:farbe(a,j), txt: T && v[j] > 0 ? Math.round(100*v[j]/T) + " %" : ""})));
+      summe.className = "summe" + (s > T ? " zuviel" : "");
+      summe.innerHTML = "Verteilt: <b>" + chf(s) + "</b>" + (a.zeigeTotal === false ? "" : " von " + chf(T));
+    }
+    if (fertig) zeilen.forEach((q,j) => {
+      const ok = z.v[j] === a.rows[j].s; q.mk.textContent = ok ? "✓" : "✗"; q.mk.className = "mark " + (ok ? "ok" : "nok");
+      const alt = q.zl.querySelector(".soll"); if (alt) alt.remove();
+      if (!ok) q.zl.appendChild(el("div","soll", "Richtig wäre: " + (bruchMod ? bruch(a.rows[j].s) : chf(a.rows[j].s))));
+    });
+  }
+
+  /* Ziehen am Kreis */
+  let zug = null;
+  function griffe(v){
+    const cum = []; v.reduce((x,y,j) => (cum[j] = x+y), 0);
+    cum.forEach((c,j) => {
+      const [x,y] = punkt(125,125,105,c/16);
+      const g = sv("circle",{cx:x,cy:y,r:9,fill:"var(--surface)",stroke:"var(--brand)","stroke-width":"3",class:"griff"});
+      g.dataset.k = j; g.dataset.pos = c;
+      svg.appendChild(g);
+    });
+  }
+  function winkelPos(ev){
+    const r = svg.getBoundingClientRect(), x = (ev.clientX - r.left) * 250 / r.width - 125, y = (ev.clientY - r.top) * 250 / r.height - 125;
+    let w = Math.atan2(x, -y); if (w < 0) w += 2*Math.PI;
+    return Math.round(w / (2*Math.PI) * 16);
+  }
+  if (bruchMod && !fertig) {
+    svg.addEventListener("pointerdown", ev => {
+      const t = ev.target; if (!t.classList || !t.classList.contains("griff")) return;
+      ev.preventDefault();
+      const pos = +t.dataset.pos, v = werte(), cum = []; v.reduce((x,y,j) => (cum[j] = x+y), 0);
+      const bei = q => cum.map((c,j) => c === q ? j : -1).filter(j => j >= 0);
+      zug = {stapel:bei(pos), k:null, pos:pos, oben:(pos === 0 || pos === 16), s0:bei(0), s16:bei(16)};
+      try { svg.setPointerCapture(ev.pointerId); } catch(e) {}
+    });
+    svg.addEventListener("pointermove", ev => {
+      if (!zug) return;
+      let p = winkelPos(ev);
+      if (zug.k == null && zug.oben) {
+        // Griffe bei 0 und bei 16 liegen am gleichen Ort (oben): Richtung entscheidet
+        if (p === 0 || p === 16) return;
+        if (p <= 8 && zug.s0.length) { zug.k = zug.s0[zug.s0.length-1]; zug.pos = 0; }
+        else if (p > 8 && zug.s16.length) { zug.k = zug.s16[0]; zug.pos = 16; }
+        else return;
+      }
+      const cand = [p, p+16, p-16].sort((x,y) => Math.abs(x-zug.pos) - Math.abs(y-zug.pos)); p = cand[0];
+      if (p === zug.pos) return;
+      const v = werte(), n = v.length, cum = []; v.reduce((x,y,j) => (cum[j] = x+y), 0);
+      if (zug.k == null) zug.k = p > zug.pos ? zug.stapel[zug.stapel.length-1] : zug.stapel[0];
+      const k = zug.k, lo = k > 0 ? cum[k-1] : 0, hi = k < n-1 ? cum[k+1] : 16;
+      p = Math.max(lo, Math.min(hi, p));
+      if (p === cum[k]) return;
+      cum[k] = p; zug.pos = p;
+      z.v[k] = p - lo;
+      if (k < n-1) z.v[k+1] = hi - p;
+      meld.textContent = ""; save(); aktualisiere();
+    });
+    const ende = () => { zug = null; };
+    svg.addEventListener("pointerup", ende); svg.addEventListener("pointercancel", ende);
+  }
+  aktualisiere();
+}
+
+document.getElementById("reset").addEventListener("click", function(){
+  if (this.dataset.sicher !== "1") { this.dataset.sicher = "1"; this.textContent = "Wirklich alles zurücksetzen? Nochmals klicken"; return; }
+  S = {b:{}}; CUR = 0; save(); location.reload();
+});
+fort(); zeige();
+if (window.Lernstand) Lernstand.start({tool:"erbteilung_plus", titel:"Erbteilung · Zusatzaufgaben", total:A.length, kuerzel:"ERBZ", ziel:document.querySelector("header"),
+  alle: () => A.map((a,i) => { const z = S.b[a.id]; return z && z.done ? {a:a.id, ok:z.ok, n:i+1, g:STUFEN[a.st], t:a.lage} : null; }).filter(Boolean),
+  stats: () => ({richtig: A.filter(a => S.b[a.id] && S.b[a.id].done && S.b[a.id].ok).length, total: A.length})});
+})();
+</script>
+</body>
+</html>
