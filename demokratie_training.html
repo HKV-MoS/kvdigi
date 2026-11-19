@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demokratie in der Schweiz · Training</title>
+<style>
+:root{
+  --bg:#eef2f1; --surface:#ffffff; --ink:#17302b; --muted:#5b6e69; --line:#d4dedb;
+  --brand:#0b3d36; --brand-soft:#e3eeeb; --ok:#1f7a4d; --ok-soft:#e2f3ea; --bad:#b03a2e; --bad-soft:#f8e4e1;
+  --mid:#9a6b00; --mid-soft:#fbf0d6;
+  --f:"Aptos","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#101716; --surface:#18211f; --ink:#e3ece9; --muted:#9bb0aa; --line:#2c3a37;
+  --brand:#7fc4b6; --brand-soft:#1f2e2b; --ok:#6fd19c; --ok-soft:#163327; --bad:#f08a7e; --bad-soft:#3a1f1c;
+  --mid:#e8c46a; --mid-soft:#352c14; color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);font-size:16px;line-height:1.5}
+.wrap{padding:24px 16px 48px;display:flex;justify-content:center}
+.karte{background:var(--surface);max-width:1040px;width:100%;border-radius:14px;box-shadow:0 2px 14px rgba(0,0,0,.07);padding:26px 32px 22px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+header img{height:34px}
+@media (prefers-color-scheme: dark){header img{filter:brightness(0) invert(1)}}
+h1{font-size:26px;margin:4px 0 2px;line-height:1.2}
+.sub{color:var(--muted);margin:0}
+.fortschritt{min-width:220px}
+.balken{height:10px;background:var(--brand-soft);border-radius:6px;overflow:hidden}
+.balken i{display:block;height:100%;width:0;background:var(--brand);transition:width .4s}
+.fortschritt small{color:var(--muted)}
+nav{display:flex;gap:6px;margin:20px 0 16px;flex-wrap:wrap;border-bottom:2px solid var(--line)}
+nav button{font:inherit;font-weight:600;border:0;background:none;color:var(--muted);padding:9px 14px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+nav button[aria-selected="true"]{color:var(--brand);border-bottom-color:var(--brand)}
+nav button:focus-visible,button:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.teil{display:none}.teil.aktiv{display:block}
+.intro{background:var(--brand-soft);border-radius:10px;padding:12px 16px;margin-bottom:16px}
+.intro a{color:var(--brand);font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.fk{border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.fk h3{font-size:16px;margin:0}
+.fk .nr{color:var(--muted);font-weight:600;margin-right:4px}
+.fk textarea{font:inherit;font-size:15px;width:100%;min-height:54px;border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--bg);color:var(--ink);resize:vertical}
+.btn{font:inherit;font-weight:600;font-size:14px;border-radius:8px;padding:6px 12px;cursor:pointer;border:1px solid var(--brand);background:var(--surface);color:var(--brand)}
+.btn.voll{background:var(--brand);color:var(--surface)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.warte{font-size:13px;color:var(--muted);margin-left:8px}
+.loes{display:none;background:var(--bg);border-left:4px solid var(--brand);border-radius:6px;padding:8px 12px;font-size:15px}
+.fk.offen .loes{display:block}
+.selbst{display:none;gap:6px;flex-wrap:wrap;align-items:center;font-size:14px;color:var(--muted)}
+.fk.offen .selbst{display:flex}
+.selbst button{font:inherit;font-size:13px;border-radius:20px;padding:3px 10px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.selbst button.an[data-w="2"]{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.selbst button.an[data-w="1"]{background:var(--mid-soft);border-color:var(--mid);color:var(--mid)}
+.selbst button.an[data-w="0"]{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.fall{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.fall p{margin:0 0 10px}
+.fall .nr{display:inline-block;background:var(--brand);color:var(--surface);font-size:13px;font-weight:600;border-radius:6px;padding:1px 8px;margin-right:8px;vertical-align:1px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opts button{font:inherit;text-align:left;border:1px solid var(--line);border-radius:8px;padding:8px 12px;background:var(--surface);color:var(--ink);cursor:pointer}
+.opts button:hover{border-color:var(--brand)}
+.opts button.richtig{background:var(--ok-soft);border-color:var(--ok)}
+.opts button.falsch{background:var(--bad-soft);border-color:var(--bad)}
+.opts button:disabled{cursor:default}
+.fb{display:none;margin-top:10px;border-radius:8px;padding:8px 12px;font-size:15px}
+.fb.zeig{display:block}
+.fb.gut{background:var(--ok-soft)}.fb.schlecht{background:var(--bad-soft)}
+.sortier{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px}
+.sortier h3{margin:0 0 4px;font-size:17px}
+.sortier .hinweis{color:var(--muted);font-size:14px;margin:0 0 10px}
+.item{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--line)}
+.item:first-of-type{border-top:0}
+.item .txt{flex:1 1 260px}
+.item .wahl{display:flex;gap:6px}
+.item .wahl button{font:inherit;font-size:14px;border:1px solid var(--line);border-radius:8px;padding:4px 10px;background:var(--surface);color:var(--ink);cursor:pointer}
+.item .wahl button.richtig{background:var(--ok-soft);border-color:var(--ok);color:var(--ok);font-weight:600}
+.item .wahl button.falsch{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.item .erk{flex-basis:100%;display:none;font-size:14px;color:var(--muted);padding-left:2px}
+.item.fertig .erk{display:block}
+.rechner{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;align-items:end;margin:6px 0 4px}
+.rechner label{font-size:14px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+.rechner input{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:100%}
+.ergebnis{font-size:15px;background:var(--brand-soft);border-radius:8px;padding:10px 12px;margin-top:10px}
+.ergebnis b{font-size:18px}
+footer{margin-top:18px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:13px}
+footer button{font:inherit;font-size:13px;background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer}
+body.eingebettet{background:var(--surface)}
+body.eingebettet .wrap{padding:0}
+body.eingebettet .karte{border-radius:0;box-shadow:none;padding:18px 24px 16px}
+body.eingebettet nav{position:sticky;top:0;background:var(--surface);z-index:2;margin-top:12px}
+@media (max-width:600px){.karte{padding:18px 16px}h1{font-size:22px}}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+@media print{.teil{display:block!important}.loes{display:block!important}nav,footer button,.selbst,textarea,.btn{display:none!important}.karte{box-shadow:none}}
+
+.stat{color:var(--muted);font-weight:500;font-size:13px;margin-left:4px}
+.auf{border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:12px}
+.auf.ok{border-color:var(--ok)}.auf.nok{border-color:var(--bad)}
+.auf .kopf{display:flex;gap:8px;align-items:baseline;margin-bottom:8px}
+.auf .nr{flex:none;background:var(--brand);color:var(--surface);font-size:13px;font-weight:600;border-radius:6px;padding:1px 8px}
+.auf .frage{font-weight:600;margin:0}
+.auf .hinw{font-size:13px;color:var(--muted);margin:0 0 8px}
+.res{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline;background:var(--bg);border-radius:8px;padding:8px 12px;margin:0 0 10px;font-size:15px}
+.res b{flex-basis:100%}
+.opts button[aria-pressed="true"]{border-color:var(--brand);background:var(--brand-soft);font-weight:600}
+.opts button.richtig[aria-pressed]{background:var(--ok-soft);border-color:var(--ok)}
+.opts button.falsch[aria-pressed]{background:var(--bad-soft);border-color:var(--bad)}
+.opts.mm button::before{content:"☐ ";color:var(--muted)}
+.opts.mm button[aria-pressed="true"]::before{content:"☑ ";color:var(--brand)}
+.opts.zwei{flex-direction:row;flex-wrap:wrap}
+.opts.zwei button{min-width:150px;text-align:center}
+.zl{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--line)}
+.zl:first-child{border-top:0}
+.zl .txt{flex:1 1 280px}
+.zl .wahl{display:flex;gap:6px;flex-wrap:wrap}
+.zl .wahl button{font:inherit;font-size:14px;border:1px solid var(--line);border-radius:8px;padding:5px 10px;background:var(--surface);color:var(--ink);cursor:pointer}
+.zl .wahl button:hover{border-color:var(--brand)}
+.zl .wahl button[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--surface);font-weight:600}
+.zl .wahl button:disabled{cursor:default}
+.zl select,.lt select{font:inherit;font-size:15px;border:1px solid var(--line);border-radius:8px;padding:5px 8px;background:var(--bg);color:var(--ink);max-width:100%}
+.zl .mk{flex:none;width:22px;text-align:center;font-weight:700}
+.zl.r .mk,.lt .mk.r{color:var(--ok)}.zl.f .mk,.lt .mk.f{color:var(--bad)}
+.zl .soll{flex-basis:100%;font-size:13.5px;color:var(--bad)}
+.lt{line-height:2.3}
+.lt .luecke{white-space:nowrap}
+.lt .soll{font-size:13.5px;color:var(--bad);margin-left:4px}
+.rf{list-style:none;margin:0;padding:0;counter-reset:rf}
+.rf li{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:8px;padding:6px 10px;margin-bottom:6px;background:var(--surface)}
+.rf li::before{counter-increment:rf;content:counter(rf) ".";font-weight:700;color:var(--muted);width:20px;flex:none}
+.rf li .txt{flex:1}
+.rf li .pf{display:flex;gap:4px;flex:none}
+.rf li .pf button{font:inherit;font-size:15px;line-height:1;width:34px;height:32px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);cursor:pointer}
+.rf li .pf button:hover:not(:disabled){border-color:var(--brand)}
+.rf li .pf button:disabled{opacity:.35;cursor:default}
+.rf li.r{border-color:var(--ok);background:var(--ok-soft)}.rf li.f{border-color:var(--bad);background:var(--bad-soft)}
+.aktion{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+.meld{font-size:14px;color:var(--bad);font-weight:600}
+.weiter{display:flex;justify-content:space-between;gap:10px;margin-top:6px}
+footer{align-items:center;padding-top:12px;border-top:1px solid var(--line)}
+@media (max-width:560px){.auf{padding:12px 12px}.opts.zwei button{flex:1 1 auto;min-width:0}}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="karte">
+
+<header>
+  <div>
+    <h1>Demokratie in der Schweiz</h1>
+    <p class="sub">Training zu Kapitel 6.1 · Geschichte · Wählen und abstimmen · Volksmehr und Ständemehr · Die Schweiz und die Welt</p>
+  </div>
+  <div class="fortschritt">
+    <small id="fortText">0 von 50 gelöst</small>
+    <div class="balken"><i id="fortBalken"></i></div>
+  </div>
+</header>
+
+<nav role="tablist" id="tabs"></nav>
+<div class="intro" id="intro"></div>
+<div id="liste"></div>
+<div class="weiter" id="weiter"></div>
+
+<footer>
+  <span>HKV Aarau · ABU · Kapitel 6.1 · Stand November 2026</span>
+  <button id="reset" type="button">Alles zurücksetzen</button>
+</footer>
+
+</div></div>
+
+<script src="lernstand.js?v=1"></script>
+<script>
+(function(){
+if (window.self !== window.top) document.body.classList.add("eingebettet");
+const T = [{"id": "g1", "st": 1, "typ": "rf", "f": "Bringen Sie die Ereignisse in die richtige zeitliche Reihenfolge. Das älteste Ereignis gehört zuoberst.", "i": ["Uri, Schwyz und Unterwalden schliessen das erste dokumentierte Bündnis.", "Französische Truppen marschieren ein, die Helvetische Republik entsteht.", "Wiener Kongress: Die Neutralität der Schweiz wird anerkannt.", "Im Sonderbundskrieg kämpfen Kantone gegeneinander.", "Die erste Bundesverfassung macht die Schweiz zum Bundesstaat.", "Die Frauen erhalten das Stimm- und Wahlrecht auf Bundesebene."], "e": "1291 erstes Bündnis · 1798 Einmarsch der Franzosen · 1815 Wiener Kongress · 1847 Sonderbundskrieg · 1848 Bundesverfassung · 1971 Frauenstimmrecht."}, {"id": "g2", "st": 1, "typ": "sel", "f": "Welche Jahreszahl gehört zu welchem Ereignis?", "o": ["1291", "1798", "1815", "1848", "1874", "1891", "1971"], "i": [["Erstes dokumentiertes Bündnis (Bundesbrief)", 0], ["Einmarsch der Franzosen, Helvetische Republik", 1], ["Wiener Kongress, Neutralität anerkannt", 2], ["Gründung des Bundesstaates", 3], ["Das fakultative Referendum wird eingeführt", 4], ["Die Volksinitiative wird eingeführt", 5], ["Frauenstimmrecht auf Bundesebene", 6]], "e": "Die Volksrechte kamen nach und nach dazu: 1874 das Referendum, 1891 die Volksinitiative. Die Hälfte der Bevölkerung durfte aber erst ab 1971 mitbestimmen."}, {"id": "g3", "st": 1, "typ": "mc", "f": "Wer beherrschte die Schweiz in den Jahren 1798 bis 1814?", "o": ["Österreich unter den Habsburgern", "Frankreich unter Napoleon", "Preussen", "Niemand, die Schweiz war unabhängig"], "r": 1, "e": "Französische Truppen marschierten 1798 ein. Zuerst wurde die Schweiz ein Einheitsstaat nach französischem Vorbild, die Helvetische Republik. Ab 1803 gab die Mediationsverfassung den Kantonen wieder mehr Eigenständigkeit, der französische Einfluss blieb aber bis zum Sturz Napoleons."}, {"id": "g4", "st": 1, "typ": "mm", "f": "Welche Folgen hatte der Sturz Napoleons (Wiener Kongress 1815) für die Schweiz? Mehrere Antworten stimmen.", "o": ["Die Neutralität der Schweiz wird international anerkannt.", "Die Frauen erhalten das Stimmrecht.", "Die Landesgrenzen werden festgelegt.", "Die Schweiz wird wieder ein lockerer Staatenbund.", "Die Schweiz erhält ihre erste Bundesverfassung."], "r": [0, 2, 3], "e": "1815 wurden die Grenzen und die Neutralität der Schweiz international festgelegt und anerkannt. Die Kantone schlossen sich wieder zu einem lockeren Staatenbund zusammen. Die Bundesverfassung kam erst 1848, das Frauenstimmrecht 1971."}, {"id": "g5", "st": 1, "typ": "mc", "f": "Im Jahr 1847 kam es in der Schweiz zu einem kurzen Bürgerkrieg. Wie heisst er?", "o": ["Landesstreik", "Bauernkrieg", "Sonderbundskrieg", "Schwabenkrieg"], "r": 2, "e": "Sieben katholisch-konservative Kantone hatten sich zum «Sonderbund» zusammengeschlossen. Die anderen Kantone lösten diesen Bund 1847 mit Waffengewalt auf."}, {"id": "g6", "st": 1, "typ": "mc", "f": "Welche zwei Seiten standen sich in diesem Krieg gegenüber?", "o": ["Liberale Kantone gegen katholisch-konservative Kantone", "Deutschschweiz gegen Westschweiz", "Arbeiter gegen Fabrikbesitzer", "Die Schweiz gegen Frankreich"], "r": 0, "e": "Die Liberalen wollten einen stärkeren, gemeinsamen Staat. Die Konservativen wollten möglichst eigenständige Kantone behalten. Die liberalen Kantone gewannen."}, {"id": "g7", "st": 1, "typ": "mc", "f": "Welches wichtige Dokument entstand 1848 als Folge dieses Krieges?", "o": ["Der Bundesbrief", "Die Mediationsakte", "Die Neutralitätserklärung", "Die erste Bundesverfassung"], "r": 3, "e": "Mit der Bundesverfassung von 1848 wurde die Schweiz zum Bundesstaat. Auf sie geht das heutige politische System zurück."}, {"id": "g8", "st": 1, "typ": "zu", "f": "Staatenbund oder Bundesstaat? Ordnen Sie zu.", "k": ["Staatenbund", "Bundesstaat"], "i": [["Die Kantone sind selbständige Staaten und arbeiten nur in wenigen Bereichen zusammen.", 0], ["Es gibt eine gemeinsame Verfassung, ein Parlament und eine Regierung für das ganze Land.", 1], ["Die Schweiz von 1815 bis 1848", 0], ["Die Schweiz seit 1848", 1], ["Einheitliche Währung und keine Zölle mehr zwischen den Kantonen", 1]], "e": "Im Staatenbund bleiben die Mitglieder selbständige Staaten. Im Bundesstaat geben sie Aufgaben an einen gemeinsamen Staat ab, behalten aber eigene Zuständigkeiten. Die Schweiz ist seit 1848 ein Bundesstaat."}, {"id": "g9", "st": 1, "typ": "lt", "f": "Setzen Sie die passenden Begriffe ein.", "t": "Die Schweiz ist über Jahrhunderte gewachsen. Im Jahr {0} schlossen Uri, Schwyz und Unterwalden ein Bündnis. Aus solchen Bündnissen entstand die alte {1}. 1798 machte Frankreich daraus einen Einheitsstaat, die {2} Republik. 1815 wurde die Schweiz wieder ein {3}, und ihre {4} wurde anerkannt. Nach dem {5} von 1847 gab sich die Schweiz eine {6} und wurde zum {7}.", "w": ["1291", "Eidgenossenschaft", "Helvetische", "Staatenbund", "Neutralität", "Sonderbundskrieg", "Bundesverfassung", "Bundesstaat"], "x": ["1971", "Monarchie"], "e": "1291 · Eidgenossenschaft · Helvetische · Staatenbund · Neutralität · Sonderbundskrieg · Bundesverfassung · Bundesstaat."}, {"id": "g10", "st": 1, "typ": "mc", "f": "Bis zu welchem Jahr durften auf Bundesebene nur Männer wählen und abstimmen?", "o": ["1848", "1919", "1971", "1991"], "r": 2, "e": "1971 stimmten die Männer an der Urne dem Frauenstimmrecht zu; 1959 hatten sie es noch abgelehnt. Als letzter Kanton führte Appenzell Innerrhoden das Frauenstimmrecht ein, nach einem Urteil des Bundesgerichts von 1990."}, {"id": "w1", "st": 2, "typ": "zu", "f": "Wird hier gewählt oder abgestimmt?", "k": ["Wählen", "Abstimmen"], "i": [["Sie schreiben den Namen einer Kandidatin auf den Zettel für den Gemeinderat.", 0], ["Sie sagen Ja oder Nein zum Kredit für ein neues Schulhaus.", 1], ["Die Stimmberechtigten bestimmen die Mitglieder des Nationalrats.", 0], ["Die Stimmberechtigten entscheiden über eine Volksinitiative.", 1], ["Die Klasse bestimmt ihre Klassensprecherin.", 0], ["Ihr Kanton entscheidet an der Urne über ein neues Energiegesetz.", 1]], "e": "Wählen heisst, Personen in ein Amt zu bestimmen. Abstimmen heisst, zu einer Sachfrage Ja oder Nein zu sagen."}, {"id": "w2", "st": 2, "typ": "zu", "f": "Auf welcher Ebene wird entschieden?", "k": ["Gemeinde", "Kanton", "Bund"], "i": [["Wahl des Nationalrats", 2], ["Wahl des Regierungsrats", 1], ["Abstimmung über den Kredit für eine neue Turnhalle", 0], ["Abstimmung über eine Änderung der Bundesverfassung", 2], ["Wahl des Gemeinderats", 0], ["Wahl des Grossen Rats (Kantonsparlament)", 1]], "e": "Die Schweiz hat drei politische Ebenen: Gemeinde, Kanton und Bund. Auf jeder Ebene wird gewählt und abgestimmt."}, {"id": "w3", "st": 2, "typ": "mc", "f": "Wer darf auf Bundesebene wählen und abstimmen?", "o": ["Alle, die in der Schweiz wohnen und Steuern zahlen", "Schweizerinnen und Schweizer ab 16 Jahren", "Alle ab 18 Jahren mit einer Niederlassungsbewilligung", "Schweizerinnen und Schweizer ab 18 Jahren"], "r": 3, "e": "Auf Bundesebene braucht es das Schweizer Bürgerrecht und das vollendete 18. Altersjahr. Kantone und Gemeinden können eigene Regeln kennen: Im Kanton Glarus dürfen schon 16-Jährige kantonal mitbestimmen, und in einigen Kantonen und Gemeinden haben auch Ausländerinnen und Ausländer ein Stimmrecht."}, {"id": "w4", "st": 2, "typ": "mc", "f": "Wie oft wird der Nationalrat gewählt?", "o": ["Jedes Jahr", "Alle vier Jahre", "Alle sechs Jahre", "Nur wenn der Bundesrat Neuwahlen ansetzt"], "r": 1, "e": "National- und Ständerat werden alle vier Jahre gewählt, das nächste Mal im Herbst 2027."}, {"id": "w5", "st": 2, "typ": "sel", "f": "Welche Zahl gehört wozu?", "o": ["7", "26", "46", "200", "246"], "i": [["Mitglieder des Nationalrats", 3], ["Mitglieder des Ständerats", 2], ["Mitglieder der Vereinigten Bundesversammlung", 4], ["Mitglieder des Bundesrats", 0], ["Kantone der Schweiz", 1]], "e": "Der Nationalrat (200) vertritt das Volk, der Ständerat (46) die Kantone. Zusammen bilden sie die Vereinigte Bundesversammlung mit 246 Mitgliedern. Der Bundesrat hat 7 Mitglieder."}, {"id": "w6", "st": 2, "typ": "mc", "f": "Wer wählt den Bundesrat?", "o": ["Das Stimmvolk an der Urne", "Die Kantonsregierungen", "Die Vereinigte Bundesversammlung", "Die Bundespräsidentin oder der Bundespräsident"], "r": 2, "e": "Die 246 Mitglieder von National- und Ständerat wählen die sieben Bundesrätinnen und Bundesräte. Die Kantonsregierungen dagegen wählt das Volk direkt. 2013 lehnten die Stimmenden eine Volkswahl des Bundesrates deutlich ab."}, {"id": "w7", "st": 2, "typ": "zu", "f": "Volksinitiative oder fakultatives Referendum? Ordnen Sie zu.", "k": ["Volksinitiative", "Referendum"], "i": [["Stimmberechtigte verlangen eine Änderung der Bundesverfassung.", 0], ["Stimmberechtigte verlangen eine Abstimmung über ein Gesetz, das das Parlament beschlossen hat.", 1], ["Es braucht 100’000 Unterschriften in 18 Monaten.", 0], ["Es braucht 50’000 Unterschriften in 100 Tagen.", 1], ["Für ein Ja braucht es das Volksmehr und das Ständemehr.", 0], ["Für ein Ja genügt das Volksmehr.", 1], ["Bildlich gesprochen: das Gaspedal. Man stösst etwas Neues an.", 0], ["Bildlich gesprochen: die Bremse. Man kann etwas verhindern.", 1]], "e": "Mit der Volksinitiative schlagen Stimmberechtigte selbst eine Änderung der Verfassung vor. Mit dem Referendum können sie ein Gesetz des Parlaments vors Volk bringen."}, {"id": "w8", "st": 2, "typ": "mc", "f": "Welche Aussage beschreibt die Demokratie in der Schweiz am besten?", "o": ["Das Volk wählt das Parlament und kann zusätzlich über Sachfragen selbst entscheiden.", "Das Volk wählt nur das Parlament; über Sachfragen entscheidet das Parlament allein.", "Das Volk wählt den Bundesrat, und dieser entscheidet über die Gesetze.", "Das Volk stimmt über jedes einzelne Gesetz ab; ein Parlament gibt es nicht."], "r": 0, "e": "Die Schweiz kennt eine halbdirekte Demokratie: Das Parlament macht die Gesetze, aber das Volk hat mit Initiative und Referendum das letzte Wort. In den meisten anderen Ländern wählt das Volk nur das Parlament."}, {"id": "m1", "st": 3, "typ": "mc", "f": "Was bedeutet «Volksmehr»?", "o": ["Die Mehrheit aller Einwohnerinnen und Einwohner stimmt zu.", "Die Mehrheit der gültigen Stimmen in der ganzen Schweiz lautet Ja.", "Die Mehrheit der Kantone stimmt zu.", "Die Mehrheit im Nationalrat stimmt zu."], "r": 1, "e": "Es zählen nur die gültigen Stimmen der Personen, die an der Abstimmung teilnehmen. Wer nicht abstimmt, zählt nicht mit."}, {"id": "m2", "st": 3, "typ": "mc", "f": "Wie kommt die Standesstimme eines Kantons zustande?", "o": ["Die Kantonsregierung legt sie fest.", "Die beiden Ständeräte des Kantons entscheiden.", "Das Kantonsparlament stimmt darüber ab.", "Es zählt das Resultat der Volksabstimmung im Kanton."], "r": 3, "e": "Sagt die Mehrheit der Stimmenden in einem Kanton Ja, zählt der Kanton als Ja-Stimme. Sagt sie Nein, zählt er als Nein-Stimme."}, {"id": "m3", "st": 3, "typ": "mc", "f": "Wie viele Standesstimmen gibt es insgesamt?", "o": ["20", "23", "26", "46"], "r": 1, "e": "20 Kantone haben eine ganze, 6 Kantone eine halbe Standesstimme: 20 + 3 = 23. Für das Ständemehr braucht es mindestens 12 Standesstimmen."}, {"id": "m4", "st": 3, "typ": "mm", "f": "Welche dieser Kantone haben nur eine halbe Standesstimme? Mehrere Antworten stimmen.", "o": ["Uri", "Obwalden", "Glarus", "Basel-Stadt", "Aargau", "Appenzell Innerrhoden"], "r": [1, 3, 5], "e": "Eine halbe Standesstimme haben Obwalden, Nidwalden, Basel-Stadt, Basel-Landschaft, Appenzell Ausserrhoden und Appenzell Innerrhoden."}, {"id": "m5", "st": 3, "typ": "zu", "f": "Braucht es das doppelte Mehr, oder genügt das Volksmehr?", "k": ["Volksmehr genügt", "Volks- und Ständemehr"], "i": [["Eine Volksinitiative will die Bundesverfassung ändern.", 1], ["Gegen ein neues Bundesgesetz wurde das Referendum ergriffen.", 0], ["Das Parlament hat eine Änderung der Bundesverfassung beschlossen.", 1], ["Die Schweiz soll einer Organisation wie der UNO beitreten.", 1]], "e": "Das doppelte Mehr braucht es immer dann, wenn die Bundesverfassung geändert wird, und beim Beitritt zu bestimmten internationalen Organisationen. Bei Gesetzen genügt das Volksmehr."}, {"id": "m6", "st": 3, "typ": "mc", "f": "Erfundenes Beispiel: Ist die Vorlage angenommen?", "d": "<div class=\"res\"><b>Änderung der Bundesverfassung</b><span>Volk: 54 % Ja</span><span>Stände: 14 Ja, 9 Nein</span></div>", "o": ["Angenommen", "Abgelehnt"], "r": 0, "e": "Das Volk sagt mehrheitlich Ja, und mit 14 Standesstimmen ist auch das Ständemehr (mindestens 12) erreicht. Das doppelte Mehr ist erfüllt."}, {"id": "m7", "st": 3, "typ": "mc", "f": "Erfundenes Beispiel: Ist die Vorlage angenommen?", "d": "<div class=\"res\"><b>Volksinitiative</b><span>Volk: 51 % Ja</span><span>Stände: 9,5 Ja, 13,5 Nein</span></div>", "o": ["Angenommen", "Abgelehnt"], "r": 1, "e": "Das Volksmehr ist erreicht, das Ständemehr aber nicht. Eine Volksinitiative braucht beides. Sie ist abgelehnt."}, {"id": "m8", "st": 3, "typ": "mc", "f": "Erfundenes Beispiel: Ist die Vorlage angenommen?", "d": "<div class=\"res\"><b>Volksinitiative</b><span>Volk: 48 % Ja</span><span>Stände: 13 Ja, 10 Nein</span></div>", "o": ["Angenommen", "Abgelehnt"], "r": 1, "e": "Die Mehrheit der Kantone sagt Ja, aber die Mehrheit der Stimmenden sagt Nein. Ohne Volksmehr ist die Initiative abgelehnt."}, {"id": "m9", "st": 3, "typ": "mc", "f": "Erfundenes Beispiel: Ist die Vorlage angenommen?", "d": "<div class=\"res\"><b>Referendum gegen ein Bundesgesetz</b><span>Volk: 52 % Ja</span><span>Stände: in 15 von 26 Kantonen eine Nein-Mehrheit</span></div>", "o": ["Angenommen", "Abgelehnt"], "r": 0, "e": "Bei einem Gesetz zählt nur das Volksmehr. Wie die einzelnen Kantone gestimmt haben, spielt keine Rolle. Das Gesetz ist angenommen."}, {"id": "m10", "st": 3, "typ": "mc", "f": "Erfundenes Beispiel: Ist die Vorlage angenommen?", "d": "<div class=\"res\"><b>Änderung der Bundesverfassung</b><span>Volk: 53 % Ja</span><span>Stände: 11,5 Ja, 11,5 Nein</span></div>", "o": ["Angenommen", "Abgelehnt"], "r": 1, "e": "Für das Ständemehr braucht es eine Mehrheit, also mindestens 12 Standesstimmen. Ein Unentschieden genügt nicht. Die Vorlage ist abgelehnt."}, {"id": "m11", "st": 3, "typ": "mc", "f": "Echtes Beispiel: Konzernverantwortungsinitiative, November 2020. Wie ging die Abstimmung aus?", "d": "<div class=\"res\"><b>Volksinitiative</b><span>Volk: 50,7 % Ja</span><span>Stände: 8,5 Ja, 14,5 Nein</span></div>", "o": ["Angenommen", "Abgelehnt"], "r": 1, "e": "Die Mehrheit der Stimmenden sagte Ja, aber die Mehrheit der Kantone Nein. Die Initiative scheiterte am Ständemehr. Das kommt selten vor."}, {"id": "m12", "st": 3, "typ": "mc", "f": "Was ist der Sinn des Ständemehrs?", "o": ["Der Bundesrat soll das letzte Wort haben.", "Abstimmungen sollen schneller ausgezählt sein.", "Kleine Kantone sollen von den bevölkerungsreichen Kantonen nicht einfach überstimmt werden.", "Grosse Kantone sollen mehr Gewicht erhalten."], "r": 2, "e": "Das Ständemehr schützt die kleinen Kantone. Es stammt aus der Gründung des Bundesstaates 1848: Die im Sonderbundskrieg unterlegenen, kleineren Kantone sollten im neuen Staat nicht überfahren werden."}, {"id": "m13", "st": 3, "typ": "mc", "f": "Welcher dieser Kantone profitiert am stärksten vom Ständemehr?", "o": ["Zürich", "Bern", "Waadt", "Uri"], "r": 3, "e": "Uri hat eine ganze Standesstimme, genau wie Zürich, obwohl in Zürich rund vierzigmal mehr Menschen leben. Eine Stimme aus Uri hat beim Ständemehr also viel mehr Gewicht."}, {"id": "s1", "st": 4, "typ": "zu", "f": "Welche Organisation ist gemeint?", "k": ["UNO", "EU", "Europarat", "NATO"], "i": [["Weltweite Organisation mit 193 Mitgliedstaaten; ihr Hauptziel ist der Frieden.", 0], ["Staatenverbund von 27 Staaten mit einem gemeinsamen Binnenmarkt.", 1], ["Verteidigungsbündnis europäischer und nordamerikanischer Staaten.", 3], ["Organisation von 46 europäischen Staaten, die vor allem die Menschenrechte schützt.", 2], ["Hat einen Sicherheitsrat mit fünf ständigen Mitgliedern.", 0], ["Kennt den freien Verkehr von Waren, Personen, Dienstleistungen und Kapital.", 1]], "e": "UNO: weltweit, Frieden. EU: wirtschaftlicher und politischer Verbund von 27 Staaten. Europarat: Menschenrechte, 46 Staaten. NATO: Verteidigungsbündnis."}, {"id": "s2", "st": 4, "typ": "zu", "f": "Ist die Schweiz Mitglied?", "k": ["Mitglied", "Nicht Mitglied"], "i": [["UNO (Vereinte Nationen)", 0], ["EU (Europäische Union)", 1], ["Europarat", 0], ["NATO", 1], ["WHO (Weltgesundheitsorganisation)", 0]], "e": "Die Schweiz ist Mitglied der UNO (seit 2002), des Europarats (seit 1963) und der WHO. Der EU und der NATO gehört sie nicht an."}, {"id": "s3", "st": 4, "typ": "mc", "f": "Wie regelt die Schweiz ihr Verhältnis zur EU?", "o": ["Über bilaterale Verträge", "Über eine Mitgliedschaft mit Sonderrechten", "Über die NATO", "Gar nicht, es gibt keine Abkommen"], "r": 0, "e": "Die Schweiz ist nicht EU-Mitglied. Sie hat mit der EU bilaterale Verträge abgeschlossen, zum Beispiel über die Personenfreizügigkeit und über Schengen und Dublin. «Bilateral» heisst zweiseitig."}, {"id": "s4", "st": 4, "typ": "mm", "f": "Welche vier Grundfreiheiten gelten im Binnenmarkt der EU? Vier Antworten stimmen.", "o": ["Freier Warenverkehr", "Freie Wahl der Währung", "Freier Personenverkehr", "Freier Dienstleistungsverkehr", "Freie Festlegung der Steuern", "Freier Kapitalverkehr"], "r": [0, 2, 3, 5], "e": "Waren, Personen, Dienstleistungen und Kapital sollen sich im Binnenmarkt frei bewegen können. Die Personenfreizügigkeit gilt über die bilateralen Verträge auch zwischen der Schweiz und der EU."}, {"id": "s5", "st": 4, "typ": "zu", "f": "Schengen oder Dublin? Ordnen Sie zu.", "k": ["Schengen", "Dublin"], "i": [["Keine systematischen Personenkontrollen an den Grenzen zwischen den beteiligten Staaten.", 0], ["Regelt, welcher Staat für ein Asylgesuch zuständig ist.", 1], ["Gemeinsame Fahndungsdatenbank für die Polizei.", 0], ["Verhindert, dass jemand in mehreren Staaten nacheinander ein Asylgesuch stellt.", 1]], "e": "Schengen betrifft Grenzen und Sicherheit, Dublin betrifft das Asylwesen. Die Schweiz macht bei beiden Abkommen mit."}, {"id": "s6", "st": 4, "typ": "mc", "f": "Was bedeutet die Neutralität der Schweiz?", "o": ["Die Schweiz hat keine Armee.", "Die Schweiz äussert sich nie zu Konflikten und trägt keine Sanktionen mit.", "Die Schweiz beteiligt sich nicht an Kriegen zwischen anderen Staaten und tritt keinem Militärbündnis bei.", "Die Schweiz darf keiner internationalen Organisation beitreten."], "r": 2, "e": "Die Neutralität ist militärisch gemeint. Die Schweiz hat eine Armee, ist UNO-Mitglied und kann wirtschaftliche Sanktionen mittragen; 2022 hat sie zum Beispiel die Sanktionen der EU gegen Russland übernommen. Das wird immer wieder diskutiert."}, {"id": "s7", "st": 4, "typ": "mc", "f": "Warum ist die Schweiz nicht Mitglied der NATO?", "o": ["Weil sie zu klein ist.", "Weil ein Militärbündnis mit Beistandspflicht nicht zur Neutralität passt.", "Weil sie nicht in Europa liegt.", "Weil die NATO keine neuen Mitglieder aufnimmt."], "r": 1, "e": "In der NATO verpflichten sich die Staaten, einander militärisch beizustehen. Das verträgt sich nicht mit der Neutralität. Finnland (2023) und Schweden (2024) haben ihre Bündnisfreiheit aufgegeben und sind der NATO beigetreten."}, {"id": "s8", "st": 4, "typ": "mc", "f": "Seit wann ist die Schweiz Mitglied der UNO?", "o": ["1945", "1971", "1992", "2002"], "r": 3, "e": "2002 sagten Volk und Stände Ja zum Beitritt. Der europäische Sitz der UNO in Genf besteht schon viel länger."}, {"id": "s9", "st": 4, "typ": "mc", "f": "1992 stimmte die Schweiz über den Beitritt zum Europäischen Wirtschaftsraum (EWR) ab. Wie ging die Abstimmung aus?", "o": ["Deutlich angenommen", "Knapp abgelehnt", "Die Abstimmung wurde abgesagt", "Angenommen, aber später rückgängig gemacht"], "r": 1, "e": "Volk und Stände lehnten den EWR-Beitritt 1992 ab, beim Volk sehr knapp. Danach schlug die Schweiz den bilateralen Weg ein."}, {"id": "s10", "st": 4, "typ": "mc", "f": "Welche Organisation der UNO mit Sitz in Genf kümmert sich um die Gesundheit?", "o": ["WTO", "UNESCO", "WHO", "UNICEF"], "r": 2, "e": "Die Weltgesundheitsorganisation WHO koordiniert die internationale Gesundheitspolitik, zum Beispiel bei Pandemien oder bei der Liste der unentbehrlichen Arzneimittel."}, {"id": "b1", "st": 5, "typ": "zu", "f": "Wie hat das Stimmvolk entschieden?", "k": ["Angenommen", "Abgelehnt"], "i": [["2021: Pflegeinitiative", 0], ["2022: Verbot von Tabakwerbung, die Kinder und Jugendliche erreicht", 0], ["2024: Prämien-Entlastungs-Initiative", 1], ["2013: Volkswahl des Bundesrates", 1]], "e": "Kaum eine Branche wird so stark von Volksentscheiden geprägt wie das Gesundheitswesen. Die Pflegeinitiative und das Tabakwerbeverbot wurden angenommen, die Prämien-Entlastungs-Initiative und die Volkswahl des Bundesrates abgelehnt."}, {"id": "b2", "st": 5, "typ": "mc", "f": "Eine Kundin sagt in der Apotheke: «Die in Bern machen ja sowieso, was sie wollen.» Welche Antwort ist sachlich richtig?", "o": ["«Stimmt, auf Gesetze hat das Volk in der Schweiz keinen Einfluss.»", "«Das Volk darf nur alle vier Jahre das Parlament wählen, mehr nicht.»", "«In der Schweiz kann das Volk mit Initiative und Referendum direkt mitentscheiden, zum Beispiel 2021 bei der Pflegeinitiative.»"], "r": 2, "e": "Mit Volksinitiative und Referendum hat das Volk in der Schweiz mehr Einfluss als in den meisten anderen Ländern. Die Pflegeinitiative zeigt, dass ein Anliegen aus dem Gesundheitswesen so in die Verfassung kommen kann."}, {"id": "b3", "st": 5, "typ": "mc", "f": "Der Apothekerverband nimmt zu einem Gesetzesentwurf des Bundes Stellung, bevor das Parlament darüber berät. Wie heisst dieses Verfahren?", "o": ["Referendum", "Vernehmlassung", "Petition", "Volksinitiative"], "r": 1, "e": "In der Vernehmlassung können Kantone, Parteien und Verbände zu einem Entwurf Stellung nehmen. So fliesst das Fachwissen der Branche ein, bevor das Parlament entscheidet."}, {"id": "b4", "st": 5, "typ": "zu", "f": "Was dürfen Sie schon vor dem 18. Geburtstag, und wofür braucht es das Stimmrecht?", "k": ["Auch unter 18", "Erst mit Stimmrecht"], "i": [["Eine Petition unterschreiben", 0], ["Eine eidgenössische Volksinitiative unterschreiben", 1], ["An einer eidgenössischen Abstimmung teilnehmen", 1], ["In einem Jugendparlament mitmachen", 0], ["An einer bewilligten Kundgebung teilnehmen", 0], ["Für den Nationalrat kandidieren", 1]], "e": "Eine Petition darf jede Person unterschreiben, unabhängig von Alter und Pass. Initiativen und Referenden unterschreiben, abstimmen, wählen und für den Nationalrat kandidieren dürfen auf Bundesebene nur Stimmberechtigte."}, {"id": "b5", "st": 5, "typ": "mc", "f": "Jemand sagt: «Meine Stimme zählt sowieso nicht.» Welche Aussage trifft zu?", "o": ["Stimmt nicht: Abstimmungen können sehr knapp ausgehen, und wer nicht teilnimmt, überlässt den Entscheid den anderen.", "Stimmt: Abstimmungen werden nie knapp entschieden.", "Stimmt: Die Stimmen von Personen unter 25 zählen nur halb.", "Stimmt: Am Schluss entscheidet immer der Bundesrat."], "r": 0, "e": "Jede Stimme zählt gleich viel. 2020 wurde die Beschaffung neuer Kampfflugzeuge mit 50,1 % Ja angenommen; der Unterschied betrug weniger als 9’000 Stimmen."}, {"id": "b6", "st": 5, "typ": "mc", "f": "Wie hoch ist die Beteiligung an eidgenössischen Wahlen und Abstimmungen meistens?", "o": ["Rund 90 %", "Rund 70 %", "Meistens unter 50 %", "Unter 10 %"], "r": 2, "e": "Meist nimmt weniger als die Hälfte der Stimmberechtigten teil; bei den Nationalratswahlen 2023 waren es knapp 47 %. Junge Erwachsene beteiligen sich deutlich seltener als ältere."}, {"id": "b7", "st": 5, "typ": "mc", "f": "Das Parlament hat ein neues Bundesgesetz beschlossen. Sie und viele andere sind damit nicht einverstanden. Welches Mittel passt?", "o": ["Eine Volksinitiative starten", "Das Referendum ergreifen", "Beim Bundesgericht klagen", "Den Bundesrat abwählen"], "r": 1, "e": "Mit 50’000 Unterschriften in 100 Tagen kommt das Gesetz vors Volk. Eine Volksinitiative ändert die Verfassung und dauert viel länger."}, {"id": "b8", "st": 5, "typ": "mc", "f": "Sie möchten, dass etwas Neues in die Bundesverfassung geschrieben wird. Welches Mittel passt?", "o": ["Das Referendum", "Die Vernehmlassung", "Die Volksinitiative", "Die Standesstimme"], "r": 2, "e": "Mit 100’000 Unterschriften in 18 Monaten kommt eine Volksinitiative zustande. Danach stimmen Volk und Stände darüber ab."}, {"id": "b9", "st": 5, "typ": "rf", "f": "Der Weg einer Volksinitiative: Bringen Sie die Schritte in die richtige Reihenfolge.", "i": ["Ein Komitee formuliert den Text der Initiative.", "Das Komitee sammelt 100’000 Unterschriften.", "Bundesrat und Parlament beraten die Initiative und geben eine Empfehlung ab.", "Volk und Stände stimmen ab.", "Bei einem doppelten Ja wird die Bundesverfassung geändert."], "e": "Von der Idee bis zur Abstimmung vergehen oft mehrere Jahre. Die Pflegeinitiative wurde 2017 eingereicht und 2021 angenommen."}];
+const ST = {"1": ["1 · Geschichte", "Vom ersten Bündnis zum Bundesstaat: Hier üben Sie die wichtigsten Stationen der Schweizer Geschichte. Tipp: Schauen Sie zuerst das Video zur Geschichte der Schweiz in KV digital."], "2": ["2 · Wählen und abstimmen", "Wählen heisst Personen bestimmen, abstimmen heisst über eine Sache entscheiden. Hier üben Sie, wer was entscheidet und mit welchen Mitteln das Volk mitredet."], "3": ["3 · Volksmehr und Ständemehr", "<b>Kurz erklärt:</b> Das <b>Volksmehr</b> ist die Mehrheit der gültigen Stimmen in der ganzen Schweiz. Für das <b>Ständemehr</b> zählt jeder Kanton als eine Stimme, sechs Kantone als halbe; das gibt 23 Standesstimmen, nötig sind mindestens 12. Beim <b>doppelten Mehr</b> braucht es beides."], "4": ["4 · Die Schweiz und die Welt", "UNO, EU, Europarat, NATO: Wer macht was, und wo ist die Schweiz dabei? Dazu kommt die Neutralität."], "5": ["5 · Mitbestimmen und Beruf", "Volksentscheide verändern auch die Arbeit in der Apotheke. Hier geht es um Beispiele aus dem Gesundheitswesen und um Ihre eigenen Möglichkeiten, mitzubestimmen."]};
+const KEY = "hkv_demokratie_training_v1";
+let S = {};
+try { S = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch(e) { S = {}; }
+if (!S.b) S.b = {};
+if (!ST[S.st]) S.st = 1;
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {} fort(); }
+const el = (t,c,h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
+
+/* feste, aber gemischte Reihenfolge pro Aufgabe (gleich bei jedem Laden) */
+function misch(n, saat){
+  let h = 2166136261; for (const c of saat) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619) >>> 0; }
+  const a = [...Array(n).keys()];
+  for (let i = n - 1; i > 0; i--) { h = (Math.imul(h, 1664525) + 1013904223) >>> 0; const j = h % (i + 1); [a[i], a[j]] = [a[j], a[i]]; }
+  if (n > 1 && a.every((v,i) => v === i)) a.push(a.shift());
+  return a;
+}
+function leer(t){
+  if (t.typ === "mc") return null;
+  if (t.typ === "mm") return t.o.map(() => false);
+  if (t.typ === "rf") return misch(t.i.length, t.id);
+  if (t.typ === "lt") return t.w.map(() => null);
+  return t.i.map(() => null);
+}
+function z(t){ if (!S.b[t.id]) S.b[t.id] = {v: leer(t), done:false, ok:false}; return S.b[t.id]; }
+function stand(t){ const x = S.b[t.id]; return x && x.done ? (x.ok ? "ok" : "nok") : ""; }
+function vollst(t, v){
+  if (t.typ === "mc") return v != null;
+  if (t.typ === "mm") return v.some(Boolean);
+  if (t.typ === "rf") return true;
+  return v.every(x => x != null);
+}
+function richtig(t, v){
+  if (t.typ === "mc") return v === t.r;
+  if (t.typ === "mm") return v.every((x,i) => x === t.r.includes(i));
+  if (t.typ === "rf") return v.every((x,i) => x === i);
+  if (t.typ === "lt") return v.every((x,i) => x === t.w[i]);
+  return v.every((x,i) => x === t.i[i][1]);
+}
+
+function fort(){
+  const n = T.filter(t => stand(t)).length, ok = T.filter(t => stand(t) === "ok").length;
+  document.getElementById("fortText").textContent = n + " von " + T.length + " gelöst · " + ok + " richtig";
+  document.getElementById("fortBalken").style.width = (100*ok/T.length) + "%";
+  document.querySelectorAll("#tabs button").forEach(b => {
+    const tt = T.filter(t => t.st === +b.dataset.st);
+    b.querySelector(".stat").textContent = tt.filter(t => stand(t) === "ok").length + "/" + tt.length;
+  });
+}
+function tabs(){
+  const nav = document.getElementById("tabs"); nav.innerHTML = "";
+  Object.keys(ST).forEach(k => {
+    const b = el("button", null, ST[k][0] + ' <span class="stat"></span>'); b.type = "button"; b.setAttribute("role","tab"); b.dataset.st = k;
+    b.setAttribute("aria-selected", +k === S.st ? "true" : "false");
+    b.addEventListener("click", () => { S.st = +k; save(); zeige(); window.scrollTo({top:0}); });
+    nav.appendChild(b);
+  });
+}
+
+function karte(t, nr){
+  const x = z(t), fertig = x.done, k = el("div", "auf " + stand(t)); k.id = "a_" + t.id;
+  const kopf = el("div","kopf"); kopf.appendChild(el("span","nr", String(nr))); kopf.appendChild(el("p","frage", t.f)); k.appendChild(kopf);
+  if (t.d) k.appendChild(el("div", null, t.d));
+  const feld = el("div"); k.appendChild(feld);
+  const meld = el("span","meld");
+
+  if (t.typ === "mc" || t.typ === "mm") {
+    const o = el("div","opts" + (t.typ === "mm" ? " mm" : "") + (t.o.length === 2 ? " zwei" : ""));
+    t.o.forEach((txt,i) => {
+      const b = el("button", null, txt); b.type = "button"; b.disabled = fertig;
+      const an = t.typ === "mc" ? x.v === i : x.v[i];
+      b.setAttribute("aria-pressed", an ? "true" : "false");
+      if (fertig) { const soll = t.typ === "mc" ? t.r === i : t.r.includes(i); if (soll) b.classList.add("richtig"); else if (an) b.classList.add("falsch"); }
+      b.addEventListener("click", () => {
+        if (t.typ === "mc") x.v = i; else x.v[i] = !x.v[i];
+        [...o.children].forEach((c,j) => c.setAttribute("aria-pressed", (t.typ === "mc" ? x.v === j : x.v[j]) ? "true" : "false"));
+        meld.textContent = ""; save();
+      });
+      o.appendChild(b);
+    });
+    feld.appendChild(o);
+  }
+  else if (t.typ === "zu" || t.typ === "sel") {
+    const namen = t.typ === "zu" ? t.k : t.o;
+    t.i.forEach((it,i) => {
+      const zl = el("div","zl"); zl.appendChild(el("div","txt", it[0]));
+      if (t.typ === "zu") {
+        const w = el("div","wahl");
+        namen.forEach((n,j) => {
+          const b = el("button", null, n); b.type = "button"; b.disabled = fertig; b.setAttribute("aria-pressed", x.v[i] === j ? "true" : "false");
+          b.addEventListener("click", () => { x.v[i] = j; [...w.children].forEach((c,q) => c.setAttribute("aria-pressed", q === j ? "true" : "false")); meld.textContent = ""; save(); });
+          w.appendChild(b);
+        });
+        zl.appendChild(w);
+      } else {
+        const s = el("select"); s.disabled = fertig; s.setAttribute("aria-label", it[0]);
+        s.appendChild(new Option("bitte wählen", ""));
+        namen.forEach((n,j) => s.appendChild(new Option(n, String(j))));
+        s.value = x.v[i] == null ? "" : String(x.v[i]);
+        s.addEventListener("change", () => { x.v[i] = s.value === "" ? null : +s.value; meld.textContent = ""; save(); });
+        zl.appendChild(s);
+      }
+      const mk = el("span","mk"); zl.appendChild(mk);
+      if (fertig) { const ok = x.v[i] === it[1]; zl.classList.add(ok ? "r" : "f"); mk.textContent = ok ? "✓" : "✗"; if (!ok) zl.appendChild(el("div","soll","Richtig wäre: " + namen[it[1]])); }
+      feld.appendChild(zl);
+    });
+  }
+  else if (t.typ === "rf") {
+    k.insertBefore(el("p","hinw","Verschieben Sie die Zeilen mit den Pfeilen."), feld);
+    const ol = el("ol","rf");
+    const mal = () => {
+      ol.innerHTML = "";
+      x.v.forEach((idx,pos) => {
+        const li = el("li"); li.dataset.idx = idx; li.appendChild(el("span","txt", t.i[idx]));
+        if (fertig) li.classList.add(idx === pos ? "r" : "f");
+        else {
+          const pf = el("span","pf");
+          const auf = el("button", null, "↑"), ab = el("button", null, "↓"); auf.type = ab.type = "button";
+          auf.setAttribute("aria-label","nach oben"); ab.setAttribute("aria-label","nach unten");
+          auf.disabled = pos === 0; ab.disabled = pos === x.v.length - 1;
+          auf.addEventListener("click", () => { [x.v[pos-1], x.v[pos]] = [x.v[pos], x.v[pos-1]]; save(); mal(); });
+          ab.addEventListener("click", () => { [x.v[pos+1], x.v[pos]] = [x.v[pos], x.v[pos+1]]; save(); mal(); });
+          pf.appendChild(auf); pf.appendChild(ab); li.appendChild(pf);
+        }
+        ol.appendChild(li);
+      });
+    };
+    mal(); feld.appendChild(ol);
+  }
+  else if (t.typ === "lt") {
+    const p = el("p","lt"), bank = t.w.concat(t.x || []), ord = misch(bank.length, t.id + "w");
+    t.t.split(/(\{\d+\})/).forEach(teil => {
+      const m = teil.match(/^\{(\d+)\}$/);
+      if (!m) { p.appendChild(document.createTextNode(teil)); return; }
+      const i = +m[1], sp = el("span","luecke"), s = el("select"); s.disabled = fertig; s.setAttribute("aria-label","Lücke " + (i+1));
+      s.appendChild(new Option("…", ""));
+      ord.forEach(q => s.appendChild(new Option(bank[q], bank[q])));
+      s.value = x.v[i] == null ? "" : x.v[i];
+      s.addEventListener("change", () => { x.v[i] = s.value === "" ? null : s.value; meld.textContent = ""; save(); });
+      sp.appendChild(s);
+      if (fertig) { const ok = x.v[i] === t.w[i]; sp.appendChild(el("span","mk " + (ok ? "r" : "f"), ok ? " ✓" : " ✗")); if (!ok) sp.appendChild(el("span","soll","(" + t.w[i] + ")")); }
+      p.appendChild(sp);
+    });
+    feld.appendChild(p);
+  }
+
+  const akt = el("div","aktion");
+  if (!fertig) {
+    const b = el("button","btn voll","Prüfen"); b.type = "button";
+    b.addEventListener("click", () => {
+      if (!vollst(t, x.v)) { meld.textContent = t.typ === "mm" ? "Wählen Sie mindestens eine Antwort." : t.typ === "mc" ? "Wählen Sie eine Antwort." : "Füllen Sie zuerst alle Zeilen aus."; return; }
+      x.done = true; x.ok = richtig(t, x.v); save();
+      if (window.Lernstand) Lernstand.melden(t.id, x.ok, {n: T.indexOf(t) + 1, g: ST[t.st][0], t: t.f});
+      k.replaceWith(karte(t, nr));
+    });
+    akt.appendChild(b); akt.appendChild(meld);
+  } else {
+    const b = el("button","btn","Nochmals lösen"); b.type = "button";
+    b.addEventListener("click", () => { S.b[t.id] = {v: leer(t), done:false, ok:false}; save(); k.replaceWith(karte(t, nr)); });
+    akt.appendChild(b);
+  }
+  k.appendChild(akt);
+  if (fertig) k.appendChild(el("div","fb zeig " + (x.ok ? "gut" : "schlecht"), (x.ok ? "<b>Richtig.</b> " : "<b>Nicht ganz.</b> ") + t.e));
+  return k;
+}
+
+function zeige(){
+  document.querySelectorAll("#tabs button").forEach(b => b.setAttribute("aria-selected", +b.dataset.st === S.st ? "true" : "false"));
+  document.getElementById("intro").innerHTML = ST[S.st][1];
+  const li = document.getElementById("liste"); li.innerHTML = "";
+  T.filter(t => t.st === S.st).forEach((t,i) => li.appendChild(karte(t, i + 1)));
+  const w = document.getElementById("weiter"); w.innerHTML = "";
+  const keys = Object.keys(ST).map(Number), pos = keys.indexOf(S.st);
+  const vor = el("button","btn","‹ Zurück"); vor.type = "button"; vor.disabled = pos === 0;
+  vor.addEventListener("click", () => { S.st = keys[pos-1]; save(); zeige(); window.scrollTo({top:0}); });
+  const nach = el("button","btn voll","Weiter ›"); nach.type = "button"; nach.disabled = pos === keys.length - 1;
+  nach.addEventListener("click", () => { S.st = keys[pos+1]; save(); zeige(); window.scrollTo({top:0}); });
+  w.appendChild(vor); w.appendChild(nach);
+  fort();
+}
+
+document.getElementById("reset").addEventListener("click", function(){
+  if (this.dataset.sicher !== "1") { this.dataset.sicher = "1"; this.textContent = "Wirklich alles zurücksetzen? Nochmals klicken"; return; }
+  S = {b:{}, st:1}; save(); location.reload();
+});
+tabs(); zeige();
+if (window.Lernstand) Lernstand.start({tool:"demokratie_training", titel:"Demokratie in der Schweiz", total:T.length, kuerzel:"DEM", ziel:document.querySelector("header"),
+  alle: () => T.map((t,i) => { const x = S.b[t.id]; return x && x.done ? {a:t.id, ok:x.ok, n:i+1, g:ST[t.st][0], t:t.f} : null; }).filter(Boolean),
+  stats: () => ({richtig: T.filter(t => stand(t) === "ok").length, total: T.length})});
+})();
+</script>
+</body>
+</html>
