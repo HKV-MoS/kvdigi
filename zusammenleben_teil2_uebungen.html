@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zusammenleben und Recht, Teil 2 · 100 Übungsaufgaben</title>
+<style>
+:root{
+  --bg:#eef2f1; --surface:#ffffff; --ink:#17302b; --muted:#5b6e69; --line:#d4dedb;
+  --brand:#0b3d36; --brand-soft:#e3eeeb; --ok:#1f7a4d; --ok-soft:#e2f3ea; --bad:#b03a2e; --bad-soft:#f8e4e1;
+  --mid:#9a6b00; --mid-soft:#fbf0d6;
+  --f:"Aptos","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#101716; --surface:#18211f; --ink:#e3ece9; --muted:#9bb0aa; --line:#2c3a37;
+  --brand:#7fc4b6; --brand-soft:#1f2e2b; --ok:#6fd19c; --ok-soft:#163327; --bad:#f08a7e; --bad-soft:#3a1f1c;
+  --mid:#e8c46a; --mid-soft:#352c14; color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);font-size:16px;line-height:1.5}
+.wrap{padding:24px 16px 48px;display:flex;justify-content:center}
+.karte{background:var(--surface);max-width:960px;width:100%;border-radius:14px;box-shadow:0 2px 14px rgba(0,0,0,.07);padding:24px 28px 20px}
+header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+header img{height:34px}
+@media (prefers-color-scheme: dark){header img{filter:brightness(0) invert(1)}}
+h1{font-size:24px;margin:0 0 2px;line-height:1.2}
+.sub{color:var(--muted);margin:0;font-size:15px}
+.stand{margin:14px 0 4px}
+.balken{height:10px;background:var(--brand-soft);border-radius:6px;overflow:hidden}
+.balken i{display:block;height:100%;width:0;background:var(--brand);transition:width .4s}
+.stand small{color:var(--muted)}
+.filter{display:flex;flex-wrap:wrap;gap:6px 14px;margin:14px 0 10px;align-items:center}
+.filter .gr{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.filter b{font-size:13px;color:var(--muted);font-weight:600;margin-right:2px}
+.chip{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:20px;padding:4px 12px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--surface);font-weight:600}
+button:focus-visible,input:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.kacheln{display:grid;grid-template-columns:repeat(auto-fill,minmax(38px,1fr));gap:5px;margin:6px 0 4px}
+.kachel{font:inherit;font-size:13px;font-variant-numeric:tabular-nums;height:32px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--muted);cursor:pointer;padding:0}
+.kachel.r{background:var(--ok-soft);border-color:var(--ok);color:var(--ok);font-weight:600}
+.kachel.f{background:var(--bad-soft);border-color:var(--bad);color:var(--bad);font-weight:600}
+.kachel.x{background:var(--mid-soft);border-color:var(--mid);color:var(--mid);font-weight:600}
+.kachel.akt{outline:3px solid var(--brand);outline-offset:1px;color:var(--ink)}
+.legende{font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 14px;margin:0 0 14px}
+.legende i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid var(--line)}
+.legende .r{background:var(--ok-soft);border-color:var(--ok)}.legende .x{background:var(--mid-soft);border-color:var(--mid)}.legende .f{background:var(--bad-soft);border-color:var(--bad)}
+.aufgabe{border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.kopf{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:10px}
+.kopf strong{margin-right:6px}
+.marke{font-size:12.5px;border-radius:6px;padding:2px 8px;background:var(--brand-soft);color:var(--brand);font-weight:600}
+.marke.lv1{background:var(--ok-soft);color:var(--ok)}.marke.lv2{background:var(--mid-soft);color:var(--mid)}.marke.lv3{background:var(--bad-soft);color:var(--bad)}
+.frage{font-size:17px;margin:0 0 14px}
+.rf{display:flex;gap:10px;flex-wrap:wrap}
+.wahl{font:inherit;font-weight:600;min-width:120px;border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:10px 16px;cursor:pointer}
+.wahl[aria-pressed="true"]{border-color:var(--brand);background:var(--brand-soft);color:var(--brand)}
+.zeile{display:flex;gap:8px 12px;align-items:center;justify-content:space-between;flex-wrap:wrap;border-top:1px solid var(--line);padding:8px 0}
+.zeile:first-child{border-top:0}
+.zeile .t{flex:1 1 260px}
+.zeile .k{display:flex;gap:5px;flex-wrap:wrap}
+.zeile .k button{font:inherit;font-size:13.5px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:5px 9px;cursor:pointer;text-align:left}
+.zeile .k button[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--surface);font-weight:600}
+.reihe{list-style:none;margin:0;padding:0;counter-reset:n}
+.reihe li{counter-increment:n;display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:9px;padding:7px 10px;margin-bottom:6px;background:var(--surface)}
+.reihe li::before{content:counter(n) ".";color:var(--muted);font-weight:600;min-width:22px}
+.reihe li span{flex:1}
+.reihe button{font:inherit;width:36px;height:32px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);cursor:pointer}
+.reihe button:disabled{opacity:.35;cursor:default}
+.feld{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.feld label{flex:1 1 220px}
+.feld input{font:inherit;width:150px;border:1px solid var(--line);border-radius:8px;padding:7px 9px;background:var(--bg);color:var(--ink);text-align:right}
+.feld .e{min-width:46px;color:var(--muted)}
+.knoepfe{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:16px}
+.btn{font:inherit;font-weight:600;font-size:15px;border-radius:9px;padding:8px 14px;cursor:pointer;border:1px solid var(--brand);background:var(--surface);color:var(--brand)}
+.btn.voll{background:var(--brand);color:var(--surface)}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn.leise{border-color:var(--line);color:var(--muted);font-weight:500}
+.fb{display:none;margin-top:12px;border-radius:8px;padding:8px 12px}
+.fb.zeig{display:block}.fb.gut{background:var(--ok-soft)}.fb.schlecht{background:var(--bad-soft)}
+.loes{display:none;margin-top:12px;background:var(--bg);border-left:4px solid var(--brand);border-radius:6px;padding:10px 14px}
+.loes.zeig{display:block}
+.loes h3{font-size:15px;margin:0 0 6px;color:var(--brand)}
+.loes ul,.loes ol{margin:0 0 8px;padding-left:22px}
+.loes p{margin:0}
+.loes .zu b{font-weight:600}
+.blaettern{display:flex;justify-content:space-between;gap:8px;margin-top:14px}
+footer{margin-top:18px;font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+body.eingebettet .wrap{padding:0}
+body.eingebettet .karte{max-width:none;border-radius:0;box-shadow:none;padding:16px 18px}
+@media (max-width:520px){.karte{padding:18px 14px}.wahl{flex:1}.feld input{width:120px}}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="karte">
+<header>
+  <div>
+    <h1>Zusammenleben und Recht, Teil 2</h1>
+    <p class="sub">100 Übungsaufgaben · Güterrecht · Erbrecht · Erbteilung rechnen</p>
+  </div>
+  <img src="hkv_logo.png" alt="HKV Aarau">
+</header>
+
+<div class="stand">
+  <div class="balken"><i id="balken"></i></div>
+  <small id="standtext" aria-live="polite"></small>
+</div>
+
+<div class="filter">
+  <div class="gr" id="fStufe"><b>Stufe</b></div>
+  <div class="gr" id="fStation"><b>Block</b></div>
+</div>
+<div class="kacheln" id="kacheln"></div>
+<p class="legende"><span><i class="r"></i>auf Anhieb richtig</span><span><i class="x"></i>später oder mit Lösung richtig</span><span><i class="f"></i>noch falsch</span><span><i></i>offen</span></p>
+
+<div class="aufgabe" id="aufgabe"></div>
+
+<footer>
+  <span id="speicher">Ihr Stand bleibt in diesem Browser gespeichert. Die Lösung lässt sich jeweils nach 60 Sekunden öffnen.</span>
+  <button class="btn leise" id="reset" type="button">Alles zurücksetzen</button>
+</footer>
+</div></div>
+
+<script>
+(function(){
+"use strict";
+if (window.self !== window.top) document.body.classList.add("eingebettet");
+var T = [{"id":"l01","lv":1,"st":1,"typ":"rf","q":"Bei der Errungenschaftsbeteiligung wird das Eigengut bei der Auflösung der Ehe nicht geteilt.","ans":"R","lo":"Jeder Ehegatte behält sein Eigengut. Geteilt wird nur der Vorschlag, also die Errungenschaft nach Abzug der Schulden."},{"id":"l02","lv":1,"st":1,"typ":"zu","q":"Eva und Jonas leben in der Errungenschaftsbeteiligung. Eigengut oder Errungenschaft?","kat":["Eigengut","Errungenschaft"],"items":[["Lohn von Jonas",1],["Velo, das Eva schon vor der Ehe besass",0],["Schenkung der Grosseltern an Eva",0],["Pensionskassenrente von Jonas",1],["Kleider von Eva",0]],"lo":"Eigengut: persönliche Gegenstände, alles von vor der Ehe, Erbschaften und Schenkungen. Errungenschaft: Lohn und Leistungen von Sozialversicherungen und Pensionskasse während der Ehe."},{"id":"l03","lv":1,"st":1,"typ":"zu","q":"Was geschieht damit bei der Auflösung der Ehe (Errungenschaftsbeteiligung)?","kat":["Wird hälftig geteilt","Bleibt bei der Person"],"items":[["Vorschlag",0],["Eigengut",1],["Rückschlag (Minus in der Errungenschaft)",1],["Ersparnisse aus dem Lohn, ohne Schulden",0]],"lo":"Der Vorschlag wird halbiert; Ersparnisse aus dem Lohn sind Errungenschaft und damit Teil des Vorschlags. Das Eigengut behält jeder, und einen Rückschlag trägt jeder selbst."},{"id":"l04","lv":1,"st":1,"typ":"re","q":"Laura hat eine Errungenschaft von CHF 64’000 und darauf Schulden von CHF 14’000. Wie gross ist ihr Vorschlag?","felder":[["Vorschlag",50000,"CHF"]],"lo":"Vorschlag = Errungenschaft minus Schulden: 64’000 − 14’000 = CHF 50’000."},{"id":"l05","lv":1,"st":1,"typ":"re","q":"Der Vorschlag von Ida beträgt CHF 40’000, der von Sven CHF 20’000. Die Ehe wird aufgelöst. Wie viel erhält jede Person aus den beiden Vorschlägen?","felder":[["Ida erhält",30000,"CHF"],["Sven erhält",30000,"CHF"]],"lo":"Jeder Vorschlag wird halbiert. Ida: 20’000 + 10’000 = CHF 30’000. Sven: 10’000 + 20’000 = CHF 30’000. Kürzer: (40’000 + 20’000) : 2."},{"id":"l06","lv":1,"st":2,"typ":"rf","q":"Zum Nachlass gehören das Vermögen und die Schulden der verstorbenen Person.","ans":"R","lo":"Wer stirbt, hinterlässt einen Nachlass: Vermögen und Schulden. Die Erben übernehmen beides."},{"id":"l07","lv":1,"st":2,"typ":"rf","q":"Hat die verstorbene Person nichts geregelt, bestimmt das Gesetz, wer erbt.","ans":"R","lo":"Dann erben die gesetzlichen Erben: die Verwandten nach Stämmen und der Ehegatte."},{"id":"l08","lv":1,"st":2,"typ":"rf","q":"Ein eigenhändiges Testament darf am Computer geschrieben werden, wenn es von Hand unterschrieben ist.","ans":"F","lo":"Das eigenhändige Testament muss vom ersten bis zum letzten Wort von Hand geschrieben sein, mit Jahr, Monat und Tag und mit Unterschrift (Art. 505 ZGB)."},{"id":"l09","lv":1,"st":2,"typ":"rf","q":"Konkubinatspartner gehören zu den gesetzlichen Erben.","ans":"F","lo":"Ohne Testament oder Erbvertrag erben Konkubinatspartner nichts, ebenso wenig Stiefkinder, geschiedene Ehegatten und Freunde."},{"id":"l10","lv":1,"st":2,"typ":"rf","q":"Wer eine Erbschaft nicht will, zum Beispiel wegen Schulden, kann sie ausschlagen.","ans":"R","lo":"Die Ausschlagung ist innert drei Monaten möglich (Art. 567 ZGB)."},{"id":"l11","lv":1,"st":2,"typ":"rf","q":"Die Eltern der verstorbenen Person haben einen Pflichtteil.","ans":"F","lo":"Seit dem 1. Januar 2023 haben nur noch Nachkommen und Ehegatte einen Pflichtteil. Die Eltern erben ohne Testament weiterhin, können aber im Testament übergangen werden."},{"id":"l12","lv":1,"st":2,"typ":"zu","q":"Welcher Begriff passt zur Erklärung?","kat":["Nachlass","Gesetzliche Erben","Pflichtteil","Verfügbare Quote"],"items":[["Vermögen und Schulden, die eine verstorbene Person hinterlässt",0],["Personen, die erben, wenn nichts geregelt ist",1],["Anteil, den Nachkommen und Ehegatte mindestens erhalten",2],["Teil, über den man im Testament frei bestimmen kann",3]],"lo":"Der Nachlass geht an die gesetzlichen Erben, wenn nichts geregelt ist. Mit einem Testament kann man über die verfügbare Quote (auch freie Quote genannt) frei bestimmen; die Pflichtteile bleiben geschützt."},{"id":"l13","lv":1,"st":2,"typ":"zu","q":"Milena stirbt ohne Testament. Gehört die Person zu ihren gesetzlichen Erben?","kat":["Gesetzliche Erbin oder gesetzlicher Erbe","Erbt ohne Testament nichts"],"items":[["Ihre Tochter",0],["Ihr Ehemann",0],["Ihre Konkubinatspartnerin aus späteren Jahren",1],["Ihr Stiefsohn, den sie nicht adoptiert hat",1],["Ihr geschiedener erster Ehemann",1]],"lo":"Gesetzliche Erben sind die Verwandten nach Stämmen und der Ehegatte. Konkubinatspartner, nicht adoptierte Stiefkinder und geschiedene Ehegatten erben nur mit Testament oder Erbvertrag."},{"id":"l14","lv":1,"st":2,"typ":"zu","q":"Zu welcher Form gehört das Merkmal?","kat":["Eigenhändiges Testament","Öffentliches Testament","Erbvertrag"],"items":[["Ganz von Hand geschrieben, mit Datum und Unterschrift",0],["Eine Person verfügt beim Notar, mit zwei Zeugen",1],["Beim Notar, beide Seiten unterschreiben",2],["Lässt sich nur gemeinsam wieder aufheben",2],["Braucht weder Notar noch Zeugen",0]],"lo":"Das eigenhändige Testament schreibt man allein von Hand. Das öffentliche Testament entsteht beim Notar mit zwei Zeugen. Der Erbvertrag bindet beide Seiten und lässt sich nur gemeinsam aufheben."},{"id":"l15","lv":1,"st":2,"typ":"zu","q":"Zu welchem Stamm gehört die Person?","kat":["1. Stamm","2. Stamm","3. Stamm"],"items":[["Kinder",0],["Enkel",0],["Eltern",1],["Geschwister",1],["Grosseltern",2],["Cousine",2]],"lo":"1. Stamm: die Nachkommen. 2. Stamm: die Eltern und an ihrer Stelle Geschwister, Nichten und Neffen. 3. Stamm: die Grosseltern und an ihrer Stelle Onkel, Tanten, Cousins und Cousinen."},{"id":"l16","lv":1,"st":2,"typ":"rh","q":"Wer erbt vor wem? Ordnen Sie von der ersten zur letzten Stelle.","steps":["Nachkommen","Eltern, an ihrer Stelle Geschwister","Grosseltern, an ihrer Stelle Onkel und Tanten","Kanton oder Gemeinde"],"start":[3,0,2,1],"lo":"Ein näherer Stamm schliesst die entfernteren aus. Erst wenn es gar keine Erben gibt, erbt der Kanton oder die Gemeinde."},{"id":"l17","lv":1,"st":2,"typ":"re","q":"Innert wie vielen Monaten kann eine Erbin oder ein Erbe die Erbschaft ausschlagen?","felder":[["Frist",3,"Monate"]],"lo":"Die Frist für die Ausschlagung beträgt drei Monate (Art. 567 ZGB)."},{"id":"l18","lv":1,"st":3,"typ":"rf","q":"Neben Nachkommen erbt der Ehegatte von Gesetzes wegen die Hälfte des Nachlasses.","ans":"R","lo":"Der Ehegatte erbt neben Nachkommen die Hälfte, neben dem elterlichen Stamm drei Viertel, sonst alles (Art. 462 ZGB)."},{"id":"l19","lv":1,"st":3,"typ":"rf","q":"Hinterlässt jemand drei Kinder und keinen Ehegatten, erbt das älteste Kind die Hälfte.","ans":"F","lo":"Kinder erben zu gleichen Teilen. Bei drei Kindern erhält jedes einen Drittel, das Alter spielt keine Rolle."},{"id":"l20","lv":1,"st":3,"typ":"rf","q":"Der Pflichtteil beträgt die Hälfte des gesetzlichen Erbteils.","ans":"R","lo":"Das gilt seit 2023 für Nachkommen und Ehegatte (Art. 471 ZGB). Andere Erben haben keinen Pflichtteil."},{"id":"l21","lv":1,"st":3,"typ":"rf","q":"Hinterlässt die verstorbene Person Kinder, erben ihre Eltern trotzdem einen Teil.","ans":"F","lo":"Die Nachkommen bilden den 1. Stamm. Ein näherer Stamm schliesst die entfernteren aus: Die Eltern erben nichts."},{"id":"l22","lv":1,"st":3,"typ":"zu","q":"Wie viel erbt der Ehegatte von Gesetzes wegen?","kat":["1/2","3/4","Alles"],"items":[["Neben zwei Kindern",0],["Neben den Eltern der verstorbenen Person",1],["Neben einem Bruder der verstorbenen Person (Eltern gestorben)",1],["Es gibt keine Nachkommen, Eltern oder Geschwister, nur noch einen Onkel",2],["Neben einem Enkel",0]],"lo":"Neben Nachkommen (auch Enkeln) die Hälfte, neben dem elterlichen Stamm (Eltern, Geschwister) drei Viertel. Gibt es nur noch Erben des grosselterlichen Stamms, erbt der Ehegatte alles."},{"id":"l23","lv":1,"st":3,"typ":"zu","q":"Hat die Person einen Pflichtteil?","kat":["Hat einen Pflichtteil","Hat keinen Pflichtteil"],"items":[["Tochter",0],["Ehemann",0],["Mutter",1],["Bruder",1],["Enkel, dessen Vater schon gestorben ist",0]],"lo":"Einen Pflichtteil haben nur Nachkommen und der Ehegatte. Der Enkel ist ein Nachkomme und tritt an die Stelle seines verstorbenen Vaters."},{"id":"l24","lv":1,"st":3,"typ":"zu","q":"Reto stirbt ohne Testament. Er hinterlässt seine Ehefrau und zwei Kinder. Wie viel erbt die Person?","kat":["Die Hälfte","Einen Viertel","Nichts"],"items":[["Seine Ehefrau",0],["Sein erstes Kind",1],["Sein zweites Kind",1],["Sein Bruder",2],["Seine Mutter",2]],"lo":"Die Ehefrau erbt neben Nachkommen die Hälfte. Die andere Hälfte teilen die zwei Kinder: je einen Viertel. Bruder und Mutter gehören zum 2. Stamm und erben neben Nachkommen nichts."},{"id":"l25","lv":1,"st":3,"typ":"rh","q":"Eine verheiratete Person stirbt. Bringen Sie die Schritte der Berechnung in die richtige Reihenfolge.","steps":["Güterrechtliche Teilung: Was gehört dem überlebenden Ehegatten schon?","Den Nachlass bestimmen","Die gesetzlichen Erben und ihre Anteile bestimmen","Die Anteile in Franken umrechnen"],"start":[3,2,0,1],"lo":"Bei Verheirateten kommt zuerst das Güterrecht. Nur der Rest ist Nachlass und wird unter den Erben geteilt."},{"id":"l26","lv":1,"st":3,"typ":"re","q":"Marta stirbt ohne Testament. Sie war nicht verheiratet und hinterlässt zwei Kinder. Welchen Bruchteil des Nachlasses erbt jedes Kind?","felder":[["Erstes Kind",0.5,"","1/2"],["Zweites Kind",0.5,"","1/2"]],"lo":"Die Nachkommen erben alles und teilen zu gleichen Teilen: je 1/2."},{"id":"l27","lv":1,"st":3,"typ":"re","q":"Paul stirbt ohne Testament. Er hinterlässt seine Ehefrau und einen Sohn. Welchen Bruchteil erbt jede Person?","felder":[["Ehefrau",0.5,"","1/2"],["Sohn",0.5,"","1/2"]],"lo":"Neben Nachkommen erbt die Ehefrau 1/2. Die andere Hälfte geht an die Nachkommen, hier an den einzigen Sohn."},{"id":"l28","lv":1,"st":3,"typ":"re","q":"Eine Witwe stirbt ohne Testament. Ihr Nachlass beträgt CHF 240’000, sie hinterlässt drei Kinder. Wie viel erbt jedes Kind?","felder":[["Jedes Kind",80000,"CHF"]],"lo":"Die drei Kinder teilen zu gleichen Teilen: 240’000 : 3 = CHF 80’000."},{"id":"l29","lv":1,"st":3,"typ":"re","q":"Sonja stirbt ohne Testament. Der Nachlass beträgt CHF 300’000. Sie hinterlässt ihren Ehemann und zwei Töchter. Wie viel erbt jede Person?","felder":[["Ehemann",150000,"CHF"],["Jede Tochter",75000,"CHF"]],"lo":"Ehemann: 1/2 von 300’000 = CHF 150’000. Die Töchter teilen die andere Hälfte: 150’000 : 2 = CHF 75’000."},{"id":"l30","lv":1,"st":3,"typ":"re","q":"Nico stirbt ohne Testament. Er war ledig und hatte keine Kinder. Beide Eltern leben. Welchen Bruchteil erbt jeder Elternteil?","felder":[["Mutter",0.5,"","1/2"],["Vater",0.5,"","1/2"]],"lo":"Gibt es keine Nachkommen, erbt der 2. Stamm: Mutter und Vater je 1/2."},{"id":"l31","lv":1,"st":3,"typ":"re","q":"Der gesetzliche Erbteil eines Kindes beträgt 1/2 des Nachlasses. Wie gross ist sein Pflichtteil (als Bruch des Nachlasses)?","felder":[["Pflichtteil",0.25,"","1/4"]],"lo":"Der Pflichtteil ist die Hälfte des gesetzlichen Erbteils: 1/2 von 1/2 = 1/4."},{"id":"l32","lv":1,"st":3,"typ":"re","q":"Der gesetzliche Erbteil einer Tochter beträgt CHF 100’000. Wie gross ist ihr Pflichtteil in Franken?","felder":[["Pflichtteil",50000,"CHF"]],"lo":"Die Hälfte des gesetzlichen Erbteils: 100’000 : 2 = CHF 50’000."},{"id":"l33","lv":1,"st":3,"typ":"re","q":"Ein Witwer hinterlässt ein einziges Kind. Der Nachlass beträgt CHF 180’000. Wie gross sind der Pflichtteil des Kindes und die verfügbare Quote?","felder":[["Pflichtteil des Kindes",90000,"CHF"],["Verfügbare Quote",90000,"CHF"]],"lo":"Das Kind würde von Gesetzes wegen alles erben. Sein Pflichtteil ist die Hälfte: CHF 90’000. Über die andere Hälfte, CHF 90’000, kann der Vater im Testament frei bestimmen."},{"id":"m01","lv":2,"st":1,"typ":"rf","q":"Mieteinnahmen aus einer geerbten Wohnung gehören zur Errungenschaft.","ans":"R","lo":"Die geerbte Wohnung ist Eigengut. Ihre Erträge, also die Mieteinnahmen, gehören aber zur Errungenschaft (Art. 197 ZGB)."},{"id":"m02","lv":2,"st":1,"typ":"zu","q":"Lena und Kai leben in der Errungenschaftsbeteiligung. Eigengut oder Errungenschaft?","kat":["Eigengut","Errungenschaft"],"items":[["Bonus, den Lena von ihrer Arbeitgeberin erhält",1],["Schmuck, den Kai von seiner Tante geerbt hat",0],["Zinsen auf dem Sparkonto, das Lena schon vor der Ehe hatte",1],["Das Sparkonto von Lena aus der Zeit vor der Ehe",0],["Taggeld der Arbeitslosenversicherung von Kai",1],["Genugtuungssumme, die Lena nach einem Unfall erhalten hat",0]],"lo":"Voreheliches Vermögen, Erbschaften und Genugtuung sind Eigengut. Lohn, Bonus und Leistungen der Sozialversicherungen sind Errungenschaft, ebenso die Erträge des Eigenguts wie Zinsen."},{"id":"m03","lv":2,"st":1,"typ":"re","q":"Mona hat ein Eigengut von CHF 40’000 und eine Errungenschaft von CHF 100’000. Tim hat kein Eigengut und eine Errungenschaft von CHF 60’000. Schulden gibt es keine. Wie viel erhält jede Person bei der Auflösung der Ehe?","felder":[["Mona erhält",120000,"CHF"],["Tim erhält",80000,"CHF"]],"lo":"Vorschläge: 100’000 und 60’000, zusammen 160’000, je die Hälfte ist 80’000. Mona: 40’000 Eigengut + 80’000 = CHF 120’000. Tim: CHF 80’000. Kontrolle: zusammen 200’000."},{"id":"m04","lv":2,"st":1,"typ":"re","q":"In der Errungenschaft von Anja stehen CHF 70’000 Guthaben und CHF 10’000 Schulden. Bei Ben sind es CHF 30’000 Guthaben und CHF 10’000 Schulden. Rechnen Sie.","felder":[["Vorschlag von Anja",60000,"CHF"],["Vorschlag von Ben",20000,"CHF"],["Jede Person erhält aus den Vorschlägen",40000,"CHF"]],"lo":"Anja: 70’000 − 10’000 = CHF 60’000. Ben: 30’000 − 10’000 = CHF 20’000. Zusammen 80’000, je die Hälfte: CHF 40’000."},{"id":"m05","lv":2,"st":1,"typ":"re","q":"Der Vorschlag von Claudia beträgt CHF 90’000. In der Errungenschaft von Marc stehen CHF 5’000 Guthaben und CHF 20’000 Schulden. Wie viel gibt jede Person der anderen ab?","felder":[["Claudia gibt an Marc ab",45000,"CHF"],["Marc gibt an Claudia ab",0,"CHF"]],"lo":"Claudia gibt die Hälfte ihres Vorschlags ab: CHF 45’000. Marc hat einen Rückschlag (5’000 − 20’000 = −15’000). Ein Rückschlag wird nicht geteilt: Marc gibt nichts ab und trägt sein Minus selbst."},{"id":"m06","lv":2,"st":2,"typ":"rf","q":"Lea schreibt ihr Testament ganz von Hand und unterschreibt es, vergisst aber das Datum. Damit sind die Formvorschriften trotzdem erfüllt.","ans":"F","lo":"Zum eigenhändigen Testament gehören Jahr, Monat und Tag (Art. 505 ZGB). Fehlt das Datum, ist die Form nicht eingehalten, und das Testament kann angefochten werden."},{"id":"m07","lv":2,"st":2,"typ":"rf","q":"Ein urteilsfähiger 16-Jähriger kann ein gültiges Testament errichten.","ans":"F","lo":"Ein Testament machen darf, wer 18 Jahre alt und urteilsfähig ist (Art. 467 ZGB)."},{"id":"m08","lv":2,"st":2,"typ":"rf","q":"Wer ein Testament findet, muss es der Behörde abgeben, auch wenn er selbst darin nicht bedacht ist.","ans":"R","lo":"Die Pflicht zur Abgabe gilt für alle, die ein Testament finden oder aufbewahren (Art. 556 ZGB)."},{"id":"m09","lv":2,"st":2,"typ":"rf","q":"Die Erben übernehmen mit der Erbschaft auch die Schulden der verstorbenen Person.","ans":"R","lo":"Vermögen und Schulden gehen automatisch auf die Erben über (Art. 560 ZGB). Wer das nicht will, muss innert drei Monaten ausschlagen."},{"id":"m10","lv":2,"st":2,"typ":"zu","q":"Sind die Formvorschriften erfüllt?","kat":["Erfüllt die Form","Erfüllt die Form nicht"],"items":[["Ganz von Hand geschrieben, mit Datum und Unterschrift",0],["Am Computer geschrieben, ausgedruckt und unterschrieben",1],["Beim Notar mit zwei Zeugen errichtet",0],["Der Tochter diktiert; sie schreibt von Hand, der Vater unterschreibt",1],["Als Sprachnachricht auf dem Handy, ohne Notlage",1]],"lo":"Das eigenhändige Testament muss die Person selbst vollständig von Hand schreiben. Diktieren oder Tippen genügt nicht. Mündlich geht es nur als Nottestament in einer Notlage vor zwei Zeugen."},{"id":"m11","lv":2,"st":2,"typ":"zu","q":"Welches Mittel passt zur Situation?","kat":["Testament","Erbvertrag","Ausschlagung"],"items":[["Ich will allein bestimmen und es jederzeit wieder ändern können",0],["Wir wollen uns gegenseitig binden, sodass keiner allein ändern kann",1],["Die Erbschaft besteht fast nur aus Schulden",2],["Ich möchte einem Verein einen Teil meines Nachlasses hinterlassen",0]],"lo":"Ein Testament lässt sich jederzeit ändern oder widerrufen. Der Erbvertrag bindet beide Seiten. Wer keine Schulden erben will, schlägt innert drei Monaten aus."},{"id":"m12","lv":2,"st":2,"typ":"zu","q":"Reto stirbt ohne Testament. Er war ledig und hatte keine Kinder. Wer erbt?","kat":["Erbt","Erbt nicht"],"items":[["Seine Mutter",0],["Sein Vater",0],["Seine Schwester (beide Eltern leben)",1],["Seine Lebenspartnerin",1],["Seine Grossmutter",1]],"lo":"Ohne Nachkommen erbt der 2. Stamm: zuerst die Eltern. Die Schwester käme nur anstelle eines verstorbenen Elternteils zum Zug. Die Grossmutter gehört zum 3. Stamm, die Lebenspartnerin ist keine gesetzliche Erbin."},{"id":"m13","lv":2,"st":2,"typ":"zu","q":"Sandra ist mit Urs verheiratet und stirbt ohne Testament. Wer gehört zu ihren gesetzlichen Erben?","kat":["Gehört dazu","Gehört nicht dazu"],"items":[["Urs, ihr Ehemann",0],["Ihre Tochter aus erster Ehe",0],["Der Sohn von Urs aus dessen erster Ehe, nicht adoptiert",1],["Ihr geschiedener erster Ehemann",1],["Der gemeinsame Sohn von Sandra und Urs",0]],"lo":"Gesetzliche Erben sind der Ehegatte und alle eigenen Kinder, auch aus früheren Beziehungen. Stiefkinder erben nur, wenn sie adoptiert sind; geschiedene Ehegatten erben nichts."},{"id":"m14","lv":2,"st":2,"typ":"rh","q":"Was geschieht nach einem Todesfall? Bringen Sie die Schritte in die richtige Reihenfolge.","steps":["Die Person stirbt","Wer ein Testament findet, gibt es der Behörde ab","Die Erben entscheiden innert drei Monaten, ob sie ausschlagen","Die Erbengemeinschaft verwaltet den Nachlass gemeinsam","Der Nachlass wird geteilt"],"start":[3,2,0,4,1],"lo":"Das Testament muss sofort zur Behörde. Dann läuft die Frist von drei Monaten für die Ausschlagung. Bis zur Teilung bilden die Erben eine Erbengemeinschaft und entscheiden gemeinsam."},{"id":"m15","lv":2,"st":2,"typ":"rh","q":"Wie gross ist der gesetzliche Erbteil des Ehegatten? Ordnen Sie vom kleinsten zum grössten Anteil.","steps":["Ehegatte neben Nachkommen","Ehegatte neben den Eltern der verstorbenen Person","Ehegatte, wenn es weder Nachkommen noch Erben des elterlichen Stamms gibt"],"start":[0,2,1],"lo":"Neben Nachkommen erbt der Ehegatte 1/2, neben dem elterlichen Stamm 3/4, sonst alles (Art. 462 ZGB)."},{"id":"m16","lv":2,"st":2,"typ":"re","q":"Wie alt muss eine Person mindestens sein, damit sie ein Testament errichten kann?","felder":[["Mindestalter",18,"Jahre"]],"lo":"Ein Testament machen darf, wer 18 Jahre alt und urteilsfähig ist (Art. 467 ZGB)."},{"id":"m17","lv":2,"st":3,"typ":"rf","q":"Lisa hinterlässt ihren Ehemann und ihre Eltern, aber keine Kinder. Ohne Testament erbt der Ehemann alles.","ans":"F","lo":"Neben dem elterlichen Stamm erbt der Ehegatte drei Viertel. Der restliche Viertel geht an die Eltern."},{"id":"m18","lv":2,"st":3,"typ":"rf","q":"Ist ein Kind der verstorbenen Person schon gestorben, erben dessen Kinder an seiner Stelle.","ans":"R","lo":"Die Enkel treten an die Stelle ihres verstorbenen Elternteils und teilen dessen Anteil unter sich."},{"id":"m19","lv":2,"st":3,"typ":"rf","q":"Wer nur Geschwister hinterlässt, kann im Testament über den ganzen Nachlass frei verfügen.","ans":"R","lo":"Geschwister haben keinen Pflichtteil. Die verfügbare Quote ist dann der ganze Nachlass."},{"id":"m20","lv":2,"st":3,"typ":"zu","q":"Ein Mann hinterlässt seine Ehefrau und Kinder. Welcher Anteil am ganzen Nachlass passt?","kat":["1/2","1/4"],"items":[["Gesetzlicher Erbteil der Ehefrau",0],["Pflichtteil der Ehefrau",1],["Gesetzlicher Erbteil aller Kinder zusammen",0],["Pflichtteil aller Kinder zusammen",1],["Verfügbare Quote",0]],"lo":"Gesetzlich erben Ehefrau und Kinder je 1/2. Die Pflichtteile sind je die Hälfte davon, also je 1/4. Es bleibt eine verfügbare Quote von 1/2."},{"id":"m21","lv":2,"st":3,"typ":"zu","q":"Wie gross ist die verfügbare Quote?","kat":["1/2","5/8","Der ganze Nachlass"],"items":[["Die Person hinterlässt nur Nachkommen",0],["Die Person hinterlässt Ehegatten und Nachkommen",0],["Die Person hinterlässt Ehegatten und Eltern",1],["Die Person hinterlässt nur ihre Eltern",2],["Die Person hinterlässt nur den Ehegatten",0],["Die Person hinterlässt nur Geschwister",2]],"lo":"Nur Nachkommen: Pflichtteil 1/2, frei 1/2. Ehegatte und Nachkommen: Pflichtteile 1/4 + 1/4, frei 1/2. Ehegatte und Eltern: Pflichtteil des Ehegatten 3/8, frei 5/8. Nur Ehegatte: Pflichtteil 1/2, frei 1/2. Eltern und Geschwister haben keinen Pflichtteil."},{"id":"m22","lv":2,"st":3,"typ":"zu","q":"Wahrt das Testament die Pflichtteile?","kat":["Pflichtteile gewahrt","Pflichtteil verletzt"],"items":[["Eine Witwe mit einem Sohn vermacht die Hälfte dem Tierschutzverein",0],["Eine Witwe mit einem Sohn vermacht drei Viertel ihrem Freund",1],["Eine ledige Frau ohne Kinder setzt ihre Freundin als Alleinerbin ein; ihre Eltern leben",0],["Ein Ehemann mit zwei Kindern setzt seine Ehefrau als Alleinerbin ein",1]],"lo":"Der Sohn der Witwe hat einen Pflichtteil von 1/2; mehr als die Hälfte darf sie nicht weggeben. Eltern haben keinen Pflichtteil. Die Kinder des Ehemanns haben zusammen einen Pflichtteil von 1/4, den die Einsetzung der Ehefrau als Alleinerbin verletzt."},{"id":"m23","lv":2,"st":3,"typ":"rh","q":"Sie prüfen, ob ein Testament die Pflichtteile verletzt. Bringen Sie die Schritte in die richtige Reihenfolge.","steps":["Gesetzliche Erben und ihre Erbteile bestimmen","Pflichtteile berechnen: die Hälfte des Erbteils von Nachkommen und Ehegatte","Verfügbare Quote bestimmen","Das Testament mit den Pflichtteilen vergleichen"],"start":[1,3,0,2],"lo":"Der Pflichtteil hängt vom gesetzlichen Erbteil ab, darum steht dieser am Anfang. Erst am Schluss wird das Testament geprüft."},{"id":"m24","lv":2,"st":3,"typ":"rh","q":"Ein Ehegatte stirbt. Das Paar lebte in der Errungenschaftsbeteiligung. Bringen Sie die Schritte in die richtige Reihenfolge.","steps":["Vermögen beider Ehegatten in Eigengut und Errungenschaft aufteilen","Vorschläge berechnen und halbieren","Nachlass bestimmen: Eigengut der verstorbenen Person und ihr Anteil an den Vorschlägen","Den Nachlass unter den Erben teilen"],"start":[0,3,1,2],"lo":"Zuerst das Güterrecht, dann das Erbrecht. Der überlebende Ehegatte behält sein Eigengut und seinen Anteil an den Vorschlägen; nur der Rest ist Nachlass."},{"id":"m25","lv":2,"st":3,"typ":"re","q":"Jana stirbt ohne Testament. Sie hinterlässt ihren Ehemann und beide Eltern, aber keine Kinder. Welchen Bruchteil erbt jede Person?","felder":[["Ehemann",0.75,"","3/4"],["Mutter",0.125,"","1/8"],["Vater",0.125,"","1/8"]],"lo":"Neben dem elterlichen Stamm erbt der Ehemann 3/4. Den restlichen Viertel teilen die Eltern: je 1/8."},{"id":"m26","lv":2,"st":3,"typ":"re","q":"Rosa war verwitwet und stirbt ohne Testament. Ihr Sohn Tom lebt. Ihre Tochter Eva ist schon gestorben und hinterlässt zwei Kinder. Welchen Bruchteil erbt jede Person?","felder":[["Tom",0.5,"","1/2"],["Jedes Kind von Eva",0.25,"","1/4"]],"lo":"Tom und Eva hätten je 1/2 geerbt. An die Stelle von Eva treten ihre zwei Kinder und teilen ihren Anteil: je 1/4."},{"id":"m27","lv":2,"st":3,"typ":"re","q":"Ein Mann stirbt ohne Testament. Der Nachlass beträgt CHF 480’000. Er hinterlässt seine Ehefrau und drei Kinder. Wie viel erbt jede Person?","felder":[["Ehefrau",240000,"CHF"],["Jedes Kind",80000,"CHF"]],"lo":"Ehefrau: 1/2 von 480’000 = CHF 240’000. Die Kinder teilen die andere Hälfte: 240’000 : 3 = CHF 80’000."},{"id":"m28","lv":2,"st":3,"typ":"re","q":"Dario stirbt ohne Testament; er war ledig und kinderlos. Der Nachlass beträgt CHF 200’000. Seine Mutter lebt, sein Vater ist gestorben. Dario hat einen Bruder (Sohn beider Eltern). Wie viel erbt jede Person?","felder":[["Mutter",100000,"CHF"],["Bruder",100000,"CHF"]],"lo":"Mutter und Vater hätten je die Hälfte geerbt. An die Stelle des verstorbenen Vaters tritt sein Nachkomme, der Bruder. Mutter CHF 100’000, Bruder CHF 100’000."},{"id":"m29","lv":2,"st":3,"typ":"re","q":"Eine Frau hinterlässt ihren Ehemann und zwei Kinder. Wie gross sind die Pflichtteile und die verfügbare Quote (als Brüche des Nachlasses)?","felder":[["Pflichtteil des Ehemanns",0.25,"","1/4"],["Pflichtteil jedes Kindes",0.125,"","1/8"],["Verfügbare Quote",0.5,"","1/2"]],"lo":"Gesetzlich: Ehemann 1/2, jedes Kind 1/4. Pflichtteile sind die Hälfte: Ehemann 1/4, jedes Kind 1/8. Zusammen 1/2, also bleibt 1/2 frei."},{"id":"m30","lv":2,"st":3,"typ":"re","q":"Der Nachlass beträgt CHF 600’000. Die verstorbene Frau hinterlässt ihren Ehemann und zwei Kinder. Wie gross sind die Pflichtteile und die verfügbare Quote in Franken?","felder":[["Pflichtteil des Ehemanns",150000,"CHF"],["Pflichtteil jedes Kindes",75000,"CHF"],["Verfügbare Quote",300000,"CHF"]],"lo":"Gesetzlich: Ehemann 300’000, jedes Kind 150’000. Pflichtteile: Ehemann CHF 150’000, jedes Kind CHF 75’000. Verfügbar: 600’000 − 150’000 − 2 × 75’000 = CHF 300’000."},{"id":"m31","lv":2,"st":3,"typ":"re","q":"Ein Witwer hinterlässt zwei Söhne und einen Nachlass von CHF 320’000. Im Testament vermacht er die ganze verfügbare Quote seinem Patenkind; der Rest geht an die Söhne. Wie viel erhält jede Person?","felder":[["Patenkind",160000,"CHF"],["Jeder Sohn",80000,"CHF"]],"lo":"Die Söhne hätten zusammen alles geerbt; ihr Pflichtteil ist die Hälfte: 160’000, je CHF 80’000. Die verfügbare Quote von CHF 160’000 geht an das Patenkind."},{"id":"m32","lv":2,"st":3,"typ":"re","q":"Ein Mann hinterlässt seine Ehefrau und eine Tochter. Der Nachlass beträgt CHF 360’000. Im Testament steht: «Meine Ehefrau soll so viel wie möglich erhalten.» Wie viel erhält jede Person?","felder":[["Tochter",90000,"CHF"],["Ehefrau",270000,"CHF"]],"lo":"Die Tochter hat einen gesetzlichen Erbteil von 1/2 und einen Pflichtteil von 1/4: CHF 90’000. Alles andere kann an die Ehefrau gehen: 360’000 − 90’000 = CHF 270’000."},{"id":"m33","lv":2,"st":3,"typ":"re","q":"Hans stirbt. Er hatte ein Eigengut von CHF 50’000 und eine Errungenschaft von CHF 120’000. Seine Ehefrau Vreni hat ein Eigengut von CHF 10’000 und eine Errungenschaft von CHF 40’000. Schulden gibt es keine. Rechnen Sie zuerst güterrechtlich.","felder":[["Vreni erhält aus dem Güterrecht",90000,"CHF"],["Nachlass von Hans",130000,"CHF"]],"lo":"Vorschläge: 120’000 + 40’000 = 160’000, je die Hälfte ist 80’000. Vreni: 10’000 Eigengut + 80’000 = CHF 90’000. Nachlass von Hans: 50’000 Eigengut + 80’000 = CHF 130’000. Kontrolle: zusammen 220’000."},{"id":"m34","lv":2,"st":3,"typ":"re","q":"Ein Ehepaar lebt in der Errungenschaftsbeteiligung und hat kein Eigengut. Die Errungenschaft des Mannes beträgt CHF 200’000, die der Frau CHF 100’000. Der Mann stirbt ohne Testament; das Paar hat ein Kind. Rechnen Sie.","felder":[["Nachlass des Mannes",150000,"CHF"],["Die Frau erhält insgesamt (Güterrecht und Erbe)",225000,"CHF"],["Das Kind erbt",75000,"CHF"]],"lo":"Güterrecht: Vorschläge zusammen 300’000, je die Hälfte ist 150’000. Der Nachlass beträgt CHF 150’000. Erbrecht: Frau 1/2 = 75’000, Kind 1/2 = CHF 75’000. Die Frau erhält 150’000 + 75’000 = CHF 225’000."},{"id":"s01","lv":3,"st":1,"typ":"rf","q":"Thomas kauft während der Ehe mit dem Geld aus seiner Erbschaft ein Boot. Bei der Scheidung muss er den Wert des Boots mit seiner Frau teilen.","ans":"F","lo":"Die Erbschaft ist Eigengut. Was als Ersatz für Eigengut gekauft wird, bleibt Eigengut. Das Boot wird nicht geteilt, wenn Thomas die Herkunft des Geldes beweisen kann."},{"id":"s02","lv":3,"st":1,"typ":"zu","q":"Mia und Leo leben in der Errungenschaftsbeteiligung. Eigengut oder Errungenschaft?","kat":["Eigengut","Errungenschaft"],"items":[["Lohn, den Mia auf ihrem eigenen Konto spart",1],["Haus, das Mia schon vor der Ehe gekauft hat",0],["Mietzins, den Mia für dieses Haus einnimmt",1],["Wertschrift, bei der niemand die Herkunft beweisen kann",1],["Schenkung der Eltern an Leo zur Hochzeit",0],["Motorrad, gekauft mit dem Erlös aus dem Verkauf einer geschenkten Uhr",0]],"lo":"Auch Lohn auf dem eigenen Konto ist Errungenschaft. Das voreheliche Haus ist Eigengut, sein Ertrag Errungenschaft. Was nicht als Eigengut bewiesen ist, gilt als Errungenschaft. Schenkungen und ihr Ersatz bleiben Eigengut."},{"id":"s03","lv":3,"st":1,"typ":"re","q":"Nora und David lassen sich scheiden (Errungenschaftsbeteiligung). Nora besitzt: Ersparnisse aus Lohn CHF 50’000, eine Erbschaft von CHF 80’000 und Zinsen auf dieser Erbschaft von CHF 2’000. David besitzt: Ersparnisse aus Lohn CHF 110’000 und ein Sparkonto aus der Zeit vor der Ehe von CHF 20’000; auf seiner Errungenschaft lasten Schulden von CHF 12’000. Wie viel erhält jede Person insgesamt?","felder":[["Nora erhält",155000,"CHF"],["David erhält",95000,"CHF"]],"lo":"Nora: Eigengut 80’000, Errungenschaft 50’000 + 2’000 = 52’000. David: Eigengut 20’000, Vorschlag 110’000 − 12’000 = 98’000. Vorschläge zusammen 150’000, je die Hälfte ist 75’000. Nora: 80’000 + 75’000 = CHF 155’000. David: 20’000 + 75’000 = CHF 95’000. Kontrolle: zusammen 250’000."},{"id":"s04","lv":3,"st":1,"typ":"re","q":"Iris hat ein Eigengut von CHF 15’000; in ihrer Errungenschaft stehen CHF 48’000 Guthaben und CHF 8’000 Schulden. Felix hat ein Eigengut von CHF 60’000; in seiner Errungenschaft stehen CHF 10’000 Guthaben und CHF 40’000 Schulden. Die Ehe wird aufgelöst. Rechnen Sie.","felder":[["Iris gibt an Felix ab",20000,"CHF"],["Felix gibt an Iris ab",0,"CHF"],["Iris bleiben insgesamt (Eigengut und Rest des Vorschlags)",35000,"CHF"]],"lo":"Vorschlag von Iris: 48’000 − 8’000 = 40’000; die Hälfte, CHF 20’000, geht an Felix. Felix hat einen Rückschlag (10’000 − 40’000 = −30’000) und gibt nichts ab. Iris bleiben 15’000 + 20’000 = CHF 35’000."},{"id":"s05","lv":3,"st":1,"typ":"re","q":"Karl stirbt. Er hatte ein Eigengut von CHF 70’000 und eine Errungenschaft von CHF 150’000. Seine Ehefrau Ruth hat ein Eigengut von CHF 30’000 und eine Errungenschaft von CHF 90’000. Schulden gibt es keine. Rechnen Sie güterrechtlich.","felder":[["Ruth erhält aus dem Güterrecht",150000,"CHF"],["Nachlass von Karl",190000,"CHF"]],"lo":"Vorschläge: 150’000 + 90’000 = 240’000, je die Hälfte ist 120’000. Ruth: 30’000 + 120’000 = CHF 150’000. Nachlass von Karl: 70’000 + 120’000 = CHF 190’000. Kontrolle: zusammen 340’000."},{"id":"s06","lv":3,"st":2,"typ":"rf","q":"Bea und Tim leben im Konkubinat. Bea setzt Tim im Testament als Alleinerben ein. Sie hat eine Tochter. Tim erhält deshalb höchstens die Hälfte des Nachlasses.","ans":"R","lo":"Die Tochter würde von Gesetzes wegen alles erben; ihr Pflichtteil ist die Hälfte. Tim kann nur die verfügbare Quote erhalten, also höchstens die andere Hälfte."},{"id":"s07","lv":3,"st":2,"typ":"rf","q":"Ein Erbvertrag kann von einer Partei jederzeit allein widerrufen werden, genau wie ein Testament.","ans":"F","lo":"Das Testament lässt sich jederzeit ändern oder widerrufen. Der Erbvertrag bindet beide Seiten und kann nur gemeinsam aufgehoben werden."},{"id":"s08","lv":3,"st":2,"typ":"rf","q":"Die Erben haben die Erbschaft angenommen. Ein halbes Jahr später tauchen hohe Schulden des Verstorbenen auf. Weil die Erben davon nichts wussten, müssen sie dafür nicht aufkommen.","ans":"F","lo":"Die Erben übernehmen Vermögen und Schulden automatisch. Schützen können sie sich nur, indem sie innert drei Monaten ausschlagen. Danach haften sie für die Schulden."},{"id":"s09","lv":3,"st":2,"typ":"rf","q":"In einer Patchworkfamilie erbt ein Stiefkind nur, wenn es adoptiert wurde oder in einem Testament oder Erbvertrag bedacht ist.","ans":"R","lo":"Stiefkinder sind keine gesetzlichen Erben. Wer sie absichern will, muss sie im Testament oder Erbvertrag berücksichtigen oder adoptieren."},{"id":"s10","lv":3,"st":2,"typ":"zu","q":"Sind die Formvorschriften erfüllt?","kat":["Erfüllt die Form","Erfüllt die Form nicht"],"items":[["Text am Computer geschrieben, nur Datum und Unterschrift von Hand",1],["Vollständig von Hand, mit Jahr, Monat, Tag und Unterschrift, ohne Zeugen",0],["Eine Bergsteigerin in Todesgefahr erklärt ihren letzten Willen mündlich vor zwei Begleitern",0],["Mündlich vor zwei Freunden am Stammtisch erklärt, ohne Notlage",1],["Erbvertrag, zu Hause von beiden unterschrieben, ohne Notar",1]],"lo":"Eigenhändig heisst: jedes Wort von Hand, Zeugen braucht es nicht. Mündlich ist ein Testament nur als Nottestament in einer Notlage vor zwei Zeugen möglich. Ein Erbvertrag muss beim Notar abgeschlossen werden."},{"id":"s11","lv":3,"st":2,"typ":"zu","q":"Mit welchem Mittel erreicht die Person ihr Ziel?","kat":["Testament","Erbvertrag","Adoption","Heirat"],"items":[["Der Lebenspartner soll die verfügbare Quote erhalten; die Verfügung soll jederzeit änderbar bleiben",0],["Der Stiefsohn soll erben wie ein eigenes Kind, mit Pflichtteil",2],["Die Partnerin soll gesetzliche Erbin mit Pflichtteil werden und keine Erbschaftssteuer bezahlen",3],["Zwei Partner wollen sich gegenseitig begünstigen, ohne dass einer allein etwas ändern kann",1]],"lo":"Ein Testament bleibt jederzeit änderbar, ein Erbvertrag bindet beide. Nur die Adoption macht ein Stiefkind zum Nachkommen mit Pflichtteil. Nur die Heirat macht die Partnerin zur gesetzlichen Erbin; Ehegatten bezahlen keine Erbschaftssteuer."},{"id":"s12","lv":3,"st":2,"typ":"zu","q":"Olga war verwitwet und kinderlos; ihre Eltern sind gestorben. Sie stirbt ohne Testament. Wer erbt?","kat":["Erbt","Erbt nicht"],"items":[["Ihr Bruder",0],["Ihre Nichte, die Tochter ihrer verstorbenen Schwester",0],["Ihr Neffe, der Sohn ihres lebenden Bruders",1],["Ihre Cousine",1],["Ihr Lebenspartner",1]],"lo":"Es erbt der 2. Stamm. An die Stelle der verstorbenen Eltern treten deren Nachkommen: der Bruder und, anstelle der verstorbenen Schwester, deren Tochter. Der Neffe erbt nicht, weil sein Vater noch lebt. Die Cousine gehört zum 3. Stamm."},{"id":"s13","lv":3,"st":2,"typ":"zu","q":"Drei Geschwister erben gemeinsam. Was darf eine Erbin allein tun?","kat":["Darf sie allein","Nur gemeinsam mit den anderen Erben"],"items":[["Ihren Erbteil innert drei Monaten ausschlagen",0],["Das geerbte Haus vor der Teilung verkaufen",1],["Das Auto des Verstorbenen vor der Teilung verschenken",1],["Ein gefundenes Testament der Behörde abgeben",0]],"lo":"Bis zur Teilung bilden die Erben eine Erbengemeinschaft und entscheiden über den Nachlass gemeinsam (Art. 602 ZGB). Ausschlagen kann jede Erbin für sich, und das Testament abgeben muss, wer es findet."},{"id":"s14","lv":3,"st":2,"typ":"rh","q":"Ein Sohn befürchtet, dass sein verstorbener Vater vor allem Schulden hinterlässt. Bringen Sie sein Vorgehen in die richtige Reihenfolge.","steps":["Der Vater stirbt","Der Sohn verschafft sich einen Überblick über Vermögen und Schulden","Er erklärt innert drei Monaten die Ausschlagung","Die Schulden gehen nicht auf ihn über"],"start":[1,2,0,3],"lo":"Ohne Ausschlagung übernehmen die Erben die Schulden automatisch. Die Frist beträgt drei Monate; wer sie verpasst, hat angenommen."},{"id":"s15","lv":3,"st":2,"typ":"rh","q":"Wie viel kann jemand im Testament frei vergeben? Ordnen Sie von der kleinsten zur grössten verfügbaren Quote.","steps":["Die Person hinterlässt Ehegatten und Nachkommen","Die Person hinterlässt Ehegatten und Eltern","Die Person hinterlässt nur ihre Eltern"],"start":[2,1,0],"lo":"Ehegatte und Nachkommen: Pflichtteile zusammen 1/2, frei 1/2. Ehegatte und Eltern: Pflichtteil des Ehegatten 3/8, frei 5/8. Nur Eltern: kein Pflichtteil, der ganze Nachlass ist frei."},{"id":"s16","lv":3,"st":2,"typ":"re","q":"Ein Vater stirbt am 14. Februar. Seine Kinder erfahren es am gleichen Tag. Bis zu welchem Monat können sie die Erbschaft ausschlagen? Geben Sie den Monat als Zahl an.","felder":[["Monat (als Zahl)",5,""]],"lo":"Die Frist beträgt drei Monate: 14. Februar plus drei Monate ergibt den 14. Mai, also Monat 5."},{"id":"s17","lv":3,"st":2,"typ":"re","q":"Jan war ledig. Er hinterlässt seine Lebenspartnerin Mia, zwei Kinder und einen Nachlass von CHF 500’000. Im Testament hat er Mia die ganze verfügbare Quote zugewiesen. Wie viel erhält jede Person?","felder":[["Mia",250000,"CHF"],["Jedes Kind",125000,"CHF"]],"lo":"Die Kinder würden von Gesetzes wegen alles erben. Ihr Pflichtteil ist die Hälfte: 250’000, je CHF 125’000. Die verfügbare Quote von CHF 250’000 geht an Mia. Als Konkubinatspartnerin bezahlt sie darauf in den meisten Kantonen Erbschaftssteuer."},{"id":"s18","lv":3,"st":3,"typ":"rf","q":"Mara hinterlässt ihren Ehemann und ihren Bruder; ihre Eltern sind gestorben. Ohne Testament erbt der Bruder einen Viertel.","ans":"R","lo":"Neben dem elterlichen Stamm erbt der Ehemann 3/4. Der Bruder tritt an die Stelle der verstorbenen Eltern und erhält den restlichen Viertel."},{"id":"s19","lv":3,"st":3,"typ":"rf","q":"Ein Witwer mit zwei Kindern vermacht im Testament seiner neuen Partnerin drei Viertel des Nachlasses. Die Kinder müssen das hinnehmen.","ans":"F","lo":"Die Kinder haben zusammen einen Pflichtteil von 1/2. Der Vater kann nur über die andere Hälfte frei verfügen. Die Kinder können verlangen, dass die Zuwendung an die Partnerin auf die verfügbare Quote herabgesetzt wird."},{"id":"s20","lv":3,"st":3,"typ":"zu","q":"Eine Frau hinterlässt ihren Ehemann und beide Eltern, aber keine Kinder. Welcher Bruch des Nachlasses passt?","kat":["3/4","3/8","5/8","1/8"],"items":[["Gesetzlicher Erbteil des Ehemanns",0],["Pflichtteil des Ehemanns",1],["Verfügbare Quote",2],["Gesetzlicher Erbteil der Mutter",3]],"lo":"Der Ehemann erbt neben den Eltern 3/4, sein Pflichtteil ist die Hälfte davon: 3/8. Die Eltern teilen 1/4, je 1/8, haben aber keinen Pflichtteil. Verfügbar ist 1 − 3/8 = 5/8."},{"id":"s21","lv":3,"st":3,"typ":"zu","q":"Ein Mann hinterlässt seine Ehefrau, zwei Kinder und CHF 400’000. Wahrt die Verteilung im Testament die Pflichtteile?","kat":["Pflichtteile gewahrt","Pflichtteil verletzt"],"items":[["Ehefrau 300’000, jedes Kind 50’000",0],["Ehefrau 350’000, jedes Kind 25’000",1],["Ehefrau 100’000, jedes Kind 50’000, Rotes Kreuz 200’000",0],["Ehefrau 80’000, jedes Kind 160’000",1],["Ehefrau 200’000, ein Kind 150’000, das andere 50’000",0]],"lo":"Gesetzlich: Ehefrau 200’000, jedes Kind 100’000. Pflichtteile: Ehefrau CHF 100’000, jedes Kind CHF 50’000. Wer weniger erhält, ist verletzt: die Kinder mit 25’000 und die Ehefrau mit 80’000."},{"id":"s22","lv":3,"st":3,"typ":"rh","q":"Eine verheiratete Person stirbt und hinterlässt ein Testament. Bringen Sie die Schritte in die richtige Reihenfolge.","steps":["Güterrechtliche Teilung durchführen","Den Nachlass bestimmen","Gesetzliche Erbteile der Erben bestimmen","Pflichtteile und verfügbare Quote berechnen","Das Testament anwenden und die Beträge verteilen"],"start":[3,2,4,0,1],"lo":"Zuerst das Güterrecht, dann der Nachlass. Die Pflichtteile lassen sich erst berechnen, wenn die gesetzlichen Erbteile feststehen. Das Testament gilt, soweit es die Pflichtteile wahrt."},{"id":"s23","lv":3,"st":3,"typ":"re","q":"Fritz stirbt ohne Testament. Er hinterlässt seine Ehefrau und seine Tochter Anna. Sein Sohn Beat ist schon gestorben und hinterlässt zwei Kinder. Welchen Bruchteil erbt jede Person?","felder":[["Ehefrau",0.5,"","1/2"],["Anna",0.25,"","1/4"],["Jedes Kind von Beat",0.125,"","1/8"]],"lo":"Ehefrau 1/2. Die andere Hälfte gehört den Nachkommen: Anna und der Stamm von Beat je 1/4. Die zwei Kinder von Beat teilen seinen Viertel: je 1/8."},{"id":"s24","lv":3,"st":3,"typ":"re","q":"Luca stirbt ohne Testament; er war ledig und kinderlos. Sein Vater lebt. Seine Mutter ist gestorben; sie hinterlässt neben Luca zwei weitere Kinder. Welchen Bruchteil erbt jede Person?","felder":[["Vater",0.5,"","1/2"],["Jedes Geschwister",0.25,"","1/4"]],"lo":"Vater und Mutter hätten je 1/2 geerbt. An die Stelle der Mutter treten ihre Nachkommen, die zwei Geschwister von Luca: je 1/4."},{"id":"s25","lv":3,"st":3,"typ":"re","q":"Petra stirbt ohne Testament und ohne Kinder. Sie hinterlässt ihren Ehemann, ihre Mutter und eine Schwester (Tochter beider Eltern); ihr Vater ist gestorben. Welchen Bruchteil erbt jede Person?","felder":[["Ehemann",0.75,"","3/4"],["Mutter",0.125,"","1/8"],["Schwester",0.125,"","1/8"]],"lo":"Ehemann 3/4 neben dem elterlichen Stamm. Den restlichen Viertel teilen die Elternseiten: Mutter 1/8; den Anteil des verstorbenen Vaters erhält die Schwester: 1/8."},{"id":"s26","lv":3,"st":3,"typ":"re","q":"Eine Frau stirbt ohne Testament. Der Nachlass beträgt CHF 640’000. Sie hinterlässt ihren Ehemann, einen Sohn und zwei Enkel, die Kinder ihrer verstorbenen Tochter. Wie viel erbt jede Person?","felder":[["Ehemann",320000,"CHF"],["Sohn",160000,"CHF"],["Jeder Enkel",80000,"CHF"]],"lo":"Ehemann: 1/2 = CHF 320’000. Sohn und Stamm der Tochter je 1/4 = 160’000. Die zwei Enkel teilen den Anteil ihrer Mutter: je CHF 80’000."},{"id":"s27","lv":3,"st":3,"typ":"re","q":"Eine Frau hinterlässt ihren Ehemann und beide Eltern, aber keine Kinder. Wie gross sind die Pflichtteile und die verfügbare Quote (als Brüche des Nachlasses)? Wo es keinen Pflichtteil gibt, tragen Sie 0 ein.","felder":[["Pflichtteil des Ehemanns",0.375,"","3/8"],["Pflichtteil der Eltern",0.0,"","0"],["Verfügbare Quote",0.625,"","5/8"]],"lo":"Gesetzlich erbt der Ehemann 3/4, sein Pflichtteil ist 3/8. Die Eltern haben seit 2023 keinen Pflichtteil. Verfügbar: 1 − 3/8 = 5/8."},{"id":"s28","lv":3,"st":3,"typ":"re","q":"Der Nachlass beträgt CHF 720’000. Der verstorbene Mann hinterlässt seine Ehefrau und drei Kinder. Wie gross sind die Pflichtteile und die verfügbare Quote in Franken?","felder":[["Pflichtteil der Ehefrau",180000,"CHF"],["Pflichtteil jedes Kindes",60000,"CHF"],["Verfügbare Quote",360000,"CHF"]],"lo":"Gesetzlich: Ehefrau 360’000, jedes Kind 120’000. Pflichtteile: Ehefrau CHF 180’000, jedes Kind CHF 60’000. Verfügbar: 720’000 − 180’000 − 3 × 60’000 = CHF 360’000."},{"id":"s29","lv":3,"st":3,"typ":"re","q":"Eine Frau hinterlässt ihren Ehemann, zwei Kinder und CHF 800’000. Im Testament steht: «Mein Ehemann soll so viel wie möglich erhalten.» Wie viel erhält jede Person?","felder":[["Jedes Kind",100000,"CHF"],["Ehemann",600000,"CHF"]],"lo":"Die Kinder erben gesetzlich zusammen 1/2, ihr Pflichtteil ist zusammen 1/4 = 200’000, je CHF 100’000. Alles andere kann der Ehemann erhalten: 800’000 − 200’000 = CHF 600’000."},{"id":"s30","lv":3,"st":3,"typ":"re","q":"Eine Witwe hinterlässt drei Kinder und CHF 540’000. Im Testament weist sie die ganze verfügbare Quote ihrer Tochter Lea zu, zusätzlich zu deren Pflichtteil. Die anderen zwei Kinder erhalten ihren Pflichtteil. Wie viel erhält jede Person?","felder":[["Lea",360000,"CHF"],["Jedes der anderen Kinder",90000,"CHF"]],"lo":"Gesetzlich erbt jedes Kind 1/3 = 180’000, der Pflichtteil ist je CHF 90’000. Verfügbare Quote: 540’000 − 3 × 90’000 = 270’000. Lea: 90’000 + 270’000 = CHF 360’000."},{"id":"s31","lv":3,"st":3,"typ":"re","q":"Ein Witwer hinterlässt eine Tochter und CHF 300’000. Im Testament vermacht er seiner Freundin CHF 240’000 und der Tochter CHF 60’000. Die Tochter wehrt sich. Rechnen Sie.","felder":[["Pflichtteil der Tochter",150000,"CHF"],["So viel fehlt der Tochter",90000,"CHF"],["Die Freundin erhält höchstens",150000,"CHF"]],"lo":"Die Tochter würde von Gesetzes wegen alles erben; ihr Pflichtteil ist die Hälfte: CHF 150’000. Sie hat nur 60’000 erhalten, es fehlen CHF 90’000. Die Zuwendung an die Freundin wird auf die verfügbare Quote herabgesetzt: CHF 150’000."},{"id":"s32","lv":3,"st":3,"typ":"re","q":"Bruno stirbt ohne Testament. Er hatte ein Eigengut von CHF 100’000 und eine Errungenschaft von CHF 300’000. Seine Ehefrau Carla hat kein Eigengut und eine Errungenschaft von CHF 100’000. Das Paar hat zwei Kinder; Schulden gibt es keine. Rechnen Sie.","felder":[["Nachlass von Bruno",300000,"CHF"],["Carla erhält insgesamt (Güterrecht und Erbe)",350000,"CHF"],["Jedes Kind erbt",75000,"CHF"]],"lo":"Güterrecht: Vorschläge 300’000 + 100’000 = 400’000, je die Hälfte ist 200’000. Carla erhält 200’000. Nachlass: 100’000 Eigengut + 200’000 = CHF 300’000. Erbrecht: Carla 1/2 = 150’000, jedes Kind 1/4 = CHF 75’000. Carla insgesamt: 200’000 + 150’000 = CHF 350’000."},{"id":"s33","lv":3,"st":3,"typ":"re","q":"Erika stirbt. Sie hatte ein Eigengut von CHF 40’000 und eine Errungenschaft von CHF 160’000. Ihr Ehemann Otto hat ein Eigengut von CHF 20’000 und eine Errungenschaft von CHF 80’000. Das Paar hat eine Tochter. Im Testament steht: «Otto soll so viel wie möglich erhalten.» Rechnen Sie.","felder":[["Nachlass von Erika",160000,"CHF"],["Die Tochter erhält",40000,"CHF"],["Otto erhält insgesamt (Güterrecht und Erbe)",260000,"CHF"]],"lo":"Güterrecht: Vorschläge 160’000 + 80’000 = 240’000, je die Hälfte ist 120’000. Otto: 20’000 + 120’000 = 140’000. Nachlass: 40’000 + 120’000 = CHF 160’000. Pflichtteil der Tochter: 1/4 = CHF 40’000. Otto erbt 120’000 und erhält insgesamt 140’000 + 120’000 = CHF 260’000."}];
+var ST = {"1": "Güterrecht", "2": "Erbrecht", "3": "Erbteilung rechnen"};
+var SPERRE = 60;
+var KEY = "hkv_zus2_ueb100_v1";
+var STUFE = {1:"Leicht",2:"Mittel",3:"Schwer"};
+var TYP = {rf:"Richtig oder falsch",zu:"Zuordnen",rh:"Reihenfolge",re:"Rechnen"};
+var S = {a:{}, sek:{}, pos:T[0].id, fl:0, fs:0};
+var speicherOk = true;
+function laden(){ try{ var s = localStorage.getItem(KEY); if(s){ var o = JSON.parse(s); if(o && o.a){ S = o; } } }catch(e){ speicherOk = false; } }
+function sichern(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){ speicherOk = false; } }
+laden();
+if(!S.sek) S.sek = {};
+var NR = {}; T.forEach(function(t,i){ NR[t.id] = i+1; });
+function aufg(id){ for(var i=0;i<T.length;i++) if(T[i].id===id) return T[i]; return T[0]; }
+function el(tag, cls, txt){ var e = document.createElement(tag); if(cls) e.className = cls; if(txt!==undefined) e.textContent = txt; return e; }
+function fmt(n){ var s = String(Math.abs(n)), o = ""; while(s.length>3){ o = "’"+s.slice(-3)+o; s = s.slice(0,-3); } return (n<0?"−":"")+s+o; }
+function zahl(str, bruch){
+  var s = String(str).toLowerCase().replace(/chf|sfr\.?|fr\.|franken|jahre?n?|monate?n?|%/g,"").replace(/[\s'’`´]/g,"").replace(/\.[–\-]+$/,"").replace(",",".");
+  if(s==="") return null;
+  var br = /^(-?\d+)\/(\d+)$/.exec(s); if(br){ return Number(br[2])===0 ? null : Number(br[1])/Number(br[2]); }
+  if(!bruch && /^-?[1-9]\d{0,2}(\.\d{3})+$/.test(s)) s = s.replace(/\./g,"");
+  var n = Number(s); return isFinite(n) ? n : null;
+}
+function mischen(arr, seed){ var a = arr.slice(), h = 0, i; for(i=0;i<seed.length;i++) h = (h*31 + seed.charCodeAt(i))>>>0;
+  for(i=a.length-1;i>0;i--){ h = (h*1103515245 + 12345)>>>0; var j = h % (i+1), x = a[i]; a[i] = a[j]; a[j] = x; } return a; }
+
+/* ---------- Filter und Kacheln ---------- */
+function passt(t){ return (!S.fl || t.lv===S.fl) && (!S.fs || t.st===S.fs); }
+function liste(){ return T.filter(passt); }
+function chips(wo, werte, feld){
+  var box = document.getElementById(wo);
+  werte.forEach(function(w){
+    var b = el("button","chip",w[1]); b.type = "button"; b.dataset.w = w[0];
+    b.addEventListener("click", function(){ S[feld] = w[0]; var l = liste(); if(l.length && !passt(aufg(S.pos))) S.pos = l[0].id; sichern(); alles(); });
+    box.appendChild(b);
+  });
+}
+chips("fStufe", [[0,"Alle"],[1,"Leicht"],[2,"Mittel"],[3,"Schwer"]], "fl");
+chips("fStation", [[0,"Alle"]].concat(Object.keys(ST).map(function(k){ return [Number(k), "ABC".charAt(k-1)+" "+ST[k]]; })), "fs");
+function status(id){ var a = S.a[id]; if(!a || !a.e) return ""; if(a.e==="r") return "r"; return a.ok ? "x" : "f"; }
+function kacheln(){
+  var box = document.getElementById("kacheln"); box.textContent = "";
+  liste().forEach(function(t){
+    var b = el("button","kachel "+status(t.id)+(t.id===S.pos?" akt":""), String(NR[t.id])); b.type = "button";
+    b.setAttribute("aria-label","Aufgabe "+NR[t.id]+", "+STUFE[t.lv]+", "+ST[t.st]);
+    b.addEventListener("click", function(){ gehe(t.id); });
+    box.appendChild(b);
+  });
+  ["fStufe","fStation"].forEach(function(wo){ var f = wo==="fStufe" ? S.fl : S.fs;
+    document.getElementById(wo).querySelectorAll(".chip").forEach(function(c){ c.setAttribute("aria-pressed", String(Number(c.dataset.w)===f)); }); });
+}
+function fortschritt(){
+  var bearb = 0, anhieb = 0; T.forEach(function(t){ var a = S.a[t.id]; if(a && a.e){ bearb++; if(a.e==="r") anhieb++; } });
+  document.getElementById("balken").style.width = (100*bearb/T.length)+"%";
+  document.getElementById("standtext").textContent = bearb+" von "+T.length+" Aufgaben bearbeitet · "+anhieb+" auf Anhieb richtig";
+}
+
+/* ---------- Aufgabe zeichnen ---------- */
+var antwort = null, timer = null;
+function gehe(id){ S.pos = id; sichern(); alles(); var a = document.getElementById("aufgabe"); if(a.scrollIntoView && a.getBoundingClientRect().top < 0) a.scrollIntoView({block:"start"}); }
+function alles(){ kacheln(); fortschritt(); zeichne(); }
+function offen(id){ return (S.sek[id]||0) >= SPERRE; }
+function zeichne(){
+  var t = aufg(S.pos), box = document.getElementById("aufgabe"), st = S.a[t.id] || {};
+  box.textContent = "";
+  var kopf = el("div","kopf");
+  kopf.appendChild(el("strong","", "Aufgabe "+NR[t.id]+" von "+T.length));
+  kopf.appendChild(el("span","marke lv"+t.lv, STUFE[t.lv]));
+  kopf.appendChild(el("span","marke", "Block "+"ABC".charAt(t.st-1)+" · "+ST[t.st]));
+  kopf.appendChild(el("span","marke", TYP[t.typ]));
+  box.appendChild(kopf);
+  box.appendChild(el("p","frage", t.typ==="rf" ? "Richtig oder falsch? " + t.q : t.q));
+  var feld = el("div","eingabe"); box.appendChild(feld);
+
+  if(t.typ==="rf"){
+    antwort = st.w || null;
+    var r = el("div","rf");
+    [["R","Richtig"],["F","Falsch"]].forEach(function(o){
+      var b = el("button","wahl",o[1]); b.type = "button"; b.dataset.w = o[0]; b.setAttribute("aria-pressed", String(antwort===o[0]));
+      b.addEventListener("click", function(){ antwort = o[0]; r.querySelectorAll(".wahl").forEach(function(x){ x.setAttribute("aria-pressed", String(x.dataset.w===antwort)); }); });
+      r.appendChild(b);
+    });
+    feld.appendChild(r);
+  }
+  if(t.typ==="zu"){
+    var reihenf = mischen(t.items.map(function(_,i){ return i; }), t.id);
+    antwort = (st.w && st.w.length===t.items.length) ? st.w.slice() : t.items.map(function(){ return -1; });
+    reihenf.forEach(function(i){
+      var z = el("div","zeile"); z.appendChild(el("div","t", t.items[i][0]));
+      var k = el("div","k");
+      t.kat.forEach(function(name, ki){
+        var b = el("button","",name); b.type = "button"; b.setAttribute("aria-pressed", String(antwort[i]===ki));
+        b.addEventListener("click", function(){ antwort[i] = ki; k.querySelectorAll("button").forEach(function(x, xi){ x.setAttribute("aria-pressed", String(xi===ki)); }); });
+        k.appendChild(b);
+      });
+      z.appendChild(k); feld.appendChild(z);
+    });
+  }
+  if(t.typ==="rh"){
+    antwort = (st.w && st.w.length===t.steps.length) ? st.w.slice() : t.start.slice();
+    var ol = el("ol","reihe"); feld.appendChild(ol);
+    var zeichneReihe = function(){
+      ol.textContent = "";
+      antwort.forEach(function(si, pos){
+        var li = el("li"); li.appendChild(el("span","", t.steps[si]));
+        var auf = el("button","","▲"), ab = el("button","","▼"); auf.type = ab.type = "button";
+        auf.setAttribute("aria-label","Nach oben"); ab.setAttribute("aria-label","Nach unten");
+        auf.disabled = pos===0; ab.disabled = pos===antwort.length-1;
+        auf.addEventListener("click", function(){ var x = antwort[pos-1]; antwort[pos-1] = antwort[pos]; antwort[pos] = x; zeichneReihe(); });
+        ab.addEventListener("click", function(){ var x = antwort[pos+1]; antwort[pos+1] = antwort[pos]; antwort[pos] = x; zeichneReihe(); });
+        li.appendChild(auf); li.appendChild(ab); ol.appendChild(li);
+      });
+    };
+    zeichneReihe();
+  }
+  if(t.typ==="re"){
+    antwort = (st.w && st.w.length===t.felder.length) ? st.w.slice() : t.felder.map(function(){ return ""; });
+    t.felder.forEach(function(f, i){
+      var z = el("div","feld"), id = "f"+i, lab = el("label","", f[0]); lab.htmlFor = id;
+      var inp = el("input"); inp.id = id; inp.type = "text"; inp.inputMode = f[3] ? "text" : "decimal"; if(f[3]) inp.placeholder = "Bruch, z. B. 1/4"; inp.autocomplete = "off"; inp.value = antwort[i];
+      inp.addEventListener("input", function(){ antwort[i] = inp.value; });
+      inp.addEventListener("keydown", function(e){ if(e.key==="Enter") pruefe(); });
+      z.appendChild(lab); z.appendChild(inp); z.appendChild(el("span","e", f[2])); feld.appendChild(z);
+    });
+  }
+
+  var kn = el("div","knoepfe");
+  var bp = el("button","btn voll","Prüfen"); bp.type = "button"; bp.id = "pruefen"; bp.addEventListener("click", pruefe);
+  var bl = el("button","btn",""); bl.type = "button"; bl.id = "loesung"; bl.addEventListener("click", function(){ zeigeLoesung(true); });
+  kn.appendChild(bp); kn.appendChild(bl); box.appendChild(kn);
+  var fb = el("div","fb"); fb.id = "fb"; fb.setAttribute("role","status"); fb.setAttribute("aria-live","polite"); box.appendChild(fb);
+  var lo = el("div","loes"); lo.id = "loes"; box.appendChild(lo);
+
+  var l = liste(), idx = l.indexOf(t), bl2 = el("div","blaettern");
+  var zur = el("button","btn leise","← Zurück"), vor = el("button","btn","Weiter →"); zur.type = vor.type = "button";
+  zur.disabled = idx<=0; vor.disabled = idx<0 || idx>=l.length-1;
+  zur.addEventListener("click", function(){ if(idx>0) gehe(l[idx-1].id); });
+  vor.addEventListener("click", function(){ if(idx<l.length-1) gehe(l[idx+1].id); });
+  bl2.appendChild(zur); bl2.appendChild(vor); box.appendChild(bl2);
+
+  if(st.fb) zeigeFb(st.fb[0], st.fb[1]);
+  if(st.auf) zeigeLoesung(false);
+  uhr();
+}
+function zeigeFb(gut, text){ var fb = document.getElementById("fb"); fb.className = "fb zeig " + (gut ? "gut" : "schlecht"); fb.textContent = text; }
+
+/* ---------- Prüfen ---------- */
+function pruefe(){
+  var t = aufg(S.pos), gut = false, text = "", n, ok = 0;
+  if(t.typ==="rf"){
+    if(!antwort){ zeigeFb(false,"Wählen Sie zuerst «Richtig» oder «Falsch»."); return; }
+    gut = antwort===t.ans; text = gut ? "Richtig." : "Das stimmt nicht.";
+  }
+  if(t.typ==="zu"){
+    if(antwort.indexOf(-1)>=0){ zeigeFb(false,"Ordnen Sie zuerst jeden Posten zu."); return; }
+    n = t.items.length; t.items.forEach(function(it,i){ if(antwort[i]===it[1]) ok++; });
+    gut = ok===n; text = gut ? "Richtig, alles stimmt." : ok+" von "+n+" richtig zugeordnet.";
+  }
+  if(t.typ==="rh"){
+    n = t.steps.length; antwort.forEach(function(si,pos){ if(si===pos) ok++; });
+    gut = ok===n; text = gut ? "Richtig, die Reihenfolge stimmt." : "Die Reihenfolge stimmt noch nicht: "+ok+" von "+n+" Schritten stehen an der richtigen Stelle.";
+  }
+  if(t.typ==="re"){
+    var leer = false; n = t.felder.length;
+    t.felder.forEach(function(f,i){ var z = zahl(antwort[i], !!f[3]); if(z===null) leer = true; else if(Math.abs(z-f[1])<(f[3] ? 0.006 : 0.5)) ok++; });
+    if(leer){ zeigeFb(false,"Tragen Sie zuerst in jedes Feld eine Zahl oder einen Bruch ein."); return; }
+    gut = ok===n; text = gut ? "Richtig gerechnet." : (n===1 ? "Das Ergebnis stimmt nicht." : ok+" von "+n+" Ergebnissen stimmen.");
+  }
+  if(!gut) text += offen(t.id) ? " Versuchen Sie es noch einmal oder öffnen Sie die Lösung." : " Versuchen Sie es noch einmal. Die Lösung lässt sich nach 60 Sekunden öffnen.";
+  var a = S.a[t.id] || (S.a[t.id] = {});
+  if(!a.e) a.e = a.auf ? "x" : (gut ? "r" : "f");
+  if(gut) a.ok = true;
+  a.w = (t.typ==="rf") ? antwort : antwort.slice();
+  a.fb = [gut, text];
+  sichern(); zeigeFb(gut, text); kacheln(); fortschritt();
+}
+
+/* ---------- Lösung ---------- */
+function zeigeLoesung(geklickt){
+  var t = aufg(S.pos);
+  if(!offen(t.id)) return;
+  var a = S.a[t.id] || (S.a[t.id] = {});
+  if(geklickt){ a.auf = true; sichern(); }
+  var lo = document.getElementById("loes"); lo.textContent = ""; lo.className = "loes zeig";
+  lo.appendChild(el("h3","","Lösung"));
+  if(t.typ==="rf") lo.appendChild(el("p","", "Die Aussage ist " + (t.ans==="R" ? "richtig." : "falsch.")));
+  if(t.typ==="zu"){ var ul = el("ul","zu"); t.items.forEach(function(it){ var li = el("li","", it[0]+" → "); li.appendChild(el("b","", t.kat[it[1]])); ul.appendChild(li); }); lo.appendChild(ul); }
+  if(t.typ==="rh"){ var ol = el("ol"); t.steps.forEach(function(s){ ol.appendChild(el("li","",s)); }); lo.appendChild(ol); }
+  if(t.typ==="re"){ var u2 = el("ul"); t.felder.forEach(function(f){
+      var w = f[3] ? f[3] : f[2]==="CHF" ? "CHF "+fmt(f[1]) : ((f[1]>1900 && f[1]<2100 && f[2]==="") ? String(f[1]) : fmt(f[1])) + (f[2] ? " "+f[2] : "");
+      u2.appendChild(el("li","", f[0]+": "+w)); }); lo.appendChild(u2); }
+  lo.appendChild(el("p","", t.lo));
+  var bl = document.getElementById("loesung"); if(bl){ bl.disabled = true; bl.textContent = "Lösung geöffnet"; }
+}
+
+/* ---------- 60-Sekunden-Sperre: zählt nur, solange die Aufgabe sichtbar ist ---------- */
+function knopf(){
+  var t = aufg(S.pos), bl = document.getElementById("loesung"); if(!bl) return;
+  var a = S.a[t.id] || {};
+  if(a.auf){ bl.disabled = true; bl.textContent = "Lösung geöffnet"; return; }
+  if(offen(t.id)){ bl.disabled = false; bl.textContent = "Lösung anzeigen"; }
+  else { bl.disabled = true; bl.textContent = "Lösung in "+(SPERRE-(S.sek[t.id]||0))+" s"; }
+}
+function uhr(){
+  if(timer) clearInterval(timer);
+  knopf();
+  timer = setInterval(function(){
+    var id = S.pos;
+    if(document.hidden || offen(id)) { knopf(); return; }
+    S.sek[id] = (S.sek[id]||0) + 1;
+    if(S.sek[id] % 5 === 0 || offen(id)) sichern();
+    knopf();
+  }, 1000);
+}
+
+/* ---------- Zurücksetzen (zweistufig, ohne Dialogfenster) ---------- */
+var rs = document.getElementById("reset"), rsT = null;
+rs.addEventListener("click", function(){
+  if(rs.dataset.sicher==="1"){ S = {a:{}, sek:{}, pos:T[0].id, fl:0, fs:0}; sichern(); rs.dataset.sicher = ""; rs.textContent = "Alles zurücksetzen"; alles(); return; }
+  rs.dataset.sicher = "1"; rs.textContent = "Wirklich alles löschen? Nochmals klicken";
+  clearTimeout(rsT); rsT = setTimeout(function(){ rs.dataset.sicher = ""; rs.textContent = "Alles zurücksetzen"; }, 4000);
+});
+
+if(!passt(aufg(S.pos))){ var l0 = liste(); if(l0.length) S.pos = l0[0].id; }
+alles();
+try{ localStorage.setItem(KEY+"_t","1"); localStorage.removeItem(KEY+"_t"); }catch(e){ speicherOk = false; }
+if(!speicherOk) document.getElementById("speicher").textContent = "Speichern ist in diesem Rahmen blockiert: Ihr Stand gilt nur, solange die Seite offen ist. Die Lösung lässt sich jeweils nach 60 Sekunden öffnen.";
+window.__ueb = {T:T, S:function(){ return S; }};
+})();
+</script>
+</body>
+</html>
