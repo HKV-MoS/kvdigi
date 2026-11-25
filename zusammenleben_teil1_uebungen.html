@@ -86,6 +86,39 @@ footer{margin-top:18px;font-size:13px;color:var(--muted);display:flex;justify-co
 body.eingebettet .wrap{padding:0}
 body.eingebettet .karte{max-width:none;border-radius:0;box-shadow:none;padding:16px 18px}
 @media (max-width:520px){.karte{padding:18px 14px}.wahl{flex:1}.feld input{width:120px}}
+
+.pdfpanel{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;margin:10px 0 0;padding:10px 14px;border:1px solid var(--line);border-radius:6px}
+.pdfpanel[hidden],.pdfhinweis[hidden],#pdflink[hidden]{display:none}
+.pdfpanel input{font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:4px;min-width:200px;flex:1 1 200px;max-width:320px}
+.pdfpanel small{flex-basis:100%;font-size:12px;opacity:.75}
+.pdfpanel a{font-size:13px}
+.pdfhinweis{margin:10px 0 0;padding:8px 12px;border-radius:6px;background:#FBF3DC;color:#3a2f00;font-size:14px}
+#pdfkopf{display:none}
+.pdfpanel input{background:var(--bg);color:var(--ink)}
+.pdfhinweis{background:var(--mid-soft);color:var(--ink)}
+#druck{display:none;margin-top:14px}
+#druck h2{font-size:17px;margin:16px 0 6px}
+#druck .dk{border:1px solid var(--line);border-radius:8px;padding:8px 12px;line-height:1.55}
+#druck table{border-collapse:collapse;width:100%;margin:4px 0 6px;font-size:14px}
+#druck th,#druck td{border:1px solid var(--line);padding:4px 8px;text-align:center}
+#druck th:first-child,#druck td:first-child{text-align:left}
+#druck .gitter{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;font-size:13px;font-variant-numeric:tabular-nums}
+#druck .gitter span{border:1px solid var(--line);border-radius:5px;padding:3px 4px;text-align:center;white-space:nowrap}
+#druck .leg{font-size:12.5px;color:var(--muted);margin:0 0 6px}
+body.nurpdf #druck{display:block}
+body.nurpdf .stand,body.nurpdf .filter,body.nurpdf .kacheln,body.nurpdf .legende,body.nurpdf .aufgabe,body.nurpdf #reset,body.nurpdf #speicher,body.nurpdf #pdfbtn{display:none}
+@media print{
+  body{background:#fff}
+  .wrap{padding:0}.karte{box-shadow:none;max-width:none;padding:0}
+  .stand,.filter,.kacheln,.legende,.aufgabe,footer,.pdfpanel,.pdfhinweis{display:none!important}
+  #druck{display:block;margin-top:8px}
+  #druck h2{font-size:14px;margin:10px 0 4px}
+  #druck table{font-size:12px}#druck th,#druck td{padding:2px 6px}
+  #druck .gitter{font-size:11.5px;gap:3px}#druck .gitter span{padding:1px 3px}
+  #druck .dk{font-size:13px;padding:6px 10px}
+  h1{font-size:20px}header img{height:28px}
+  #druck .gitter span,#druck tr{break-inside:avoid}
+}
 </style>
 </head>
 <body>
@@ -114,8 +147,17 @@ body.eingebettet .karte{max-width:none;border-radius:0;box-shadow:none;padding:1
 
 <footer>
   <span id="speicher">Ihr Stand bleibt in diesem Browser gespeichert. Die Lösung lässt sich jeweils nach 60 Sekunden öffnen.</span>
-  <button class="btn leise" id="reset" type="button">Alles zurücksetzen</button>
+  <span><button class="btn" id="pdfbtn" type="button">Als PDF speichern</button> <button class="btn leise" id="reset" type="button">Alles zurücksetzen</button></span>
 </footer>
+<div class="pdfpanel" id="pdfpanel" hidden>
+  <label for="pdfname">Ihr Name für das PDF</label>
+  <input id="pdfname" type="text" maxlength="60" autocomplete="off">
+  <button type="button" id="pdfgo">PDF erstellen</button>
+  <a id="pdflink" target="_blank" rel="noopener" hidden>Öffnet sich kein Druckfenster? Hier in eigenem Tab öffnen</a>
+  <small>Wählen Sie im Druckfenster «Als PDF sichern». Ihr Name bleibt auf diesem Gerät.</small>
+</div>
+<p class="pdfhinweis" id="pdfhinweis" hidden></p>
+<div id="druck"></div>
 </div></div>
 
 <script>
@@ -348,6 +390,53 @@ if(!passt(aufg(S.pos))){ var l0 = liste(); if(l0.length) S.pos = l0[0].id; }
 alles();
 try{ localStorage.setItem(KEY+"_t","1"); localStorage.removeItem(KEY+"_t"); }catch(e){ speicherOk = false; }
 if(!speicherOk) document.getElementById("speicher").textContent = "Speichern ist in diesem Rahmen blockiert: Ihr Stand gilt nur, solange die Seite offen ist. Die Lösung lässt sich jeweils nach 60 Sekunden öffnen.";
+
+/* ---------- Als PDF speichern ---------- */
+var nurPdf = null;   /* Stand aus der Adresse (#pdf=…), wenn die Seite aus kv digital in einem eigenen Tab geöffnet wurde */
+var pp = document.getElementById("pdfpanel"), pn = document.getElementById("pdfname"), pl = document.getElementById("pdflink"), ph = document.getElementById("pdfhinweis"), dr = document.getElementById("druck");
+try{ pn.value = localStorage.getItem(KEY+"_name") || ""; }catch(e){}
+function zwei(n){ return (n<10?"0":"")+n; }
+function jetzt(){ var d = new Date(); return zwei(d.getDate())+"."+zwei(d.getMonth()+1)+"."+d.getFullYear()+", "+zwei(d.getHours())+":"+zwei(d.getMinutes())+" Uhr"; }
+function standKette(){ return T.map(function(t){ return status(t.id) || "-"; }).join(""); }
+function zeichen(c){ return c==="r" ? "✓" : c==="x" ? "(✓)" : c==="f" ? "✗" : "○"; }
+function bericht(){
+  var kette = nurPdf || standKette(), name = (pn.value||"").trim();
+  var z = {r:0,x:0,f:0,"-":0}; kette.split("").forEach(function(c){ z[c]++; });
+  dr.textContent = "";
+  var dk = el("div","dk"); dk.appendChild(el("b","", "Name: "+(name||"______________________"))); dk.appendChild(document.createElement("br"));
+  dk.appendChild(document.createTextNode("Stand vom "+jetzt())); dk.appendChild(document.createElement("br"));
+  dk.appendChild(document.createTextNode((T.length-z["-"])+" von "+T.length+" Aufgaben bearbeitet · "+z.r+" auf Anhieb richtig · "+z.x+" später oder mit Lösung richtig · "+z.f+" noch falsch · "+z["-"]+" offen"));
+  dr.appendChild(dk);
+  function tabelle(titel, gruppen){
+    dr.appendChild(el("h2","",titel));
+    var t = el("table"), k = el("tr"); ["","Aufgaben","auf Anhieb richtig","später richtig","noch falsch","offen"].forEach(function(x){ k.appendChild(el("th","",x)); }); t.appendChild(k);
+    gruppen.forEach(function(g){ var c = {r:0,x:0,f:0,"-":0}, n = 0; T.forEach(function(a,i){ if(g[1](a)){ n++; c[kette.charAt(i)]++; } });
+      var r = el("tr"); [g[0],n,c.r,c.x,c.f,c["-"]].forEach(function(x){ r.appendChild(el("td","",String(x))); }); t.appendChild(r); });
+    dr.appendChild(t);
+  }
+  tabelle("Nach Stufe", [1,2,3].map(function(l){ return [STUFE[l], function(a){ return a.lv===l; }]; }));
+  tabelle("Nach Thema", Object.keys(ST).map(function(k){ return [ST[k], function(a){ return a.st===Number(k); }]; }));
+  dr.appendChild(el("h2","","Alle Aufgaben"));
+  dr.appendChild(el("p","leg","✓ auf Anhieb richtig · (✓) später oder mit Lösung richtig · ✗ noch falsch · ○ offen"));
+  var g = el("div","gitter"); T.forEach(function(a,i){ g.appendChild(el("span","", (i+1)+" "+zeichen(kette.charAt(i)))); }); dr.appendChild(g);
+}
+function pdfAdresse(){ return location.href.split("#")[0]+"#pdf="+standKette()+"&n="+encodeURIComponent((pn.value||"").trim()); }
+function drucken(){
+  try{ if(!nurPdf) localStorage.setItem(KEY+"_name",(pn.value||"").trim()); }catch(e){}
+  bericht(); if(!nurPdf){ pl.href = pdfAdresse(); pl.hidden = !(window.self !== window.top); }
+  try{ window.print(); }catch(e){ if(!nurPdf) pl.hidden = false; }
+}
+document.getElementById("pdfbtn").addEventListener("click", function(){ pp.hidden = !pp.hidden; if(!pp.hidden){ try{ pn.focus(); }catch(e){} } });
+document.getElementById("pdfgo").addEventListener("click", drucken);
+pn.addEventListener("keydown", function(e){ if(e.key==="Enter") drucken(); });
+pl.addEventListener("click", function(){ pl.href = pdfAdresse(); });
+(function(){ var mit = /^#pdf=([rxf\-]+)(?:&n=(.*))?$/.exec(location.hash);
+  if(!mit || mit[1].length !== T.length) return;
+  nurPdf = mit[1]; try{ pn.value = decodeURIComponent(mit[2]||""); }catch(e){}
+  document.body.classList.add("nurpdf"); pp.hidden = false; ph.hidden = false;
+  ph.textContent = "Das ist Ihr Stand aus kv digital. Klicken Sie auf «PDF erstellen».";
+  bericht(); setTimeout(drucken, 600);
+})();
 window.__ueb = {T:T, S:function(){ return S; }};
 })();
 </script>
