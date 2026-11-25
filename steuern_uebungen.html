@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Steuern · 45 Übungsaufgaben</title>
+<style>
+:root{
+  --bg:#eef2f1; --surface:#ffffff; --ink:#17302b; --muted:#5b6e69; --line:#d4dedb;
+  --brand:#0b3d36; --brand-soft:#e3eeeb; --ok:#1f7a4d; --ok-soft:#e2f3ea; --bad:#b03a2e; --bad-soft:#f8e4e1;
+  --mid:#9a6b00; --mid-soft:#fbf0d6;
+  --f:"Aptos","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#101716; --surface:#18211f; --ink:#e3ece9; --muted:#9bb0aa; --line:#2c3a37;
+  --brand:#7fc4b6; --brand-soft:#1f2e2b; --ok:#6fd19c; --ok-soft:#163327; --bad:#f08a7e; --bad-soft:#3a1f1c;
+  --mid:#e8c46a; --mid-soft:#352c14; color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);font-size:16px;line-height:1.5}
+.wrap{padding:24px 16px 48px;display:flex;justify-content:center}
+.karte{background:var(--surface);max-width:960px;width:100%;border-radius:14px;box-shadow:0 2px 14px rgba(0,0,0,.07);padding:24px 28px 20px}
+header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+header img{height:34px}
+@media (prefers-color-scheme: dark){header img{filter:brightness(0) invert(1)}}
+h1{font-size:24px;margin:0 0 2px;line-height:1.2}
+.sub{color:var(--muted);margin:0;font-size:15px}
+.stand{margin:14px 0 4px}
+.balken{height:10px;background:var(--brand-soft);border-radius:6px;overflow:hidden}
+.balken i{display:block;height:100%;width:0;background:var(--brand);transition:width .4s}
+.stand small{color:var(--muted)}
+.filter{display:flex;flex-wrap:wrap;gap:6px 14px;margin:14px 0 10px;align-items:center}
+.filter .gr{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.filter b{font-size:13px;color:var(--muted);font-weight:600;margin-right:2px}
+.chip{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:20px;padding:4px 12px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--surface);font-weight:600}
+button:focus-visible,input:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.kacheln{display:grid;grid-template-columns:repeat(auto-fill,minmax(38px,1fr));gap:5px;margin:6px 0 4px}
+.kachel{font:inherit;font-size:13px;font-variant-numeric:tabular-nums;height:32px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--muted);cursor:pointer;padding:0}
+.kachel.r{background:var(--ok-soft);border-color:var(--ok);color:var(--ok);font-weight:600}
+.kachel.f{background:var(--bad-soft);border-color:var(--bad);color:var(--bad);font-weight:600}
+.kachel.x{background:var(--mid-soft);border-color:var(--mid);color:var(--mid);font-weight:600}
+.kachel.akt{outline:3px solid var(--brand);outline-offset:1px;color:var(--ink)}
+.legende{font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 14px;margin:0 0 14px}
+.legende i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid var(--line)}
+.legende .r{background:var(--ok-soft);border-color:var(--ok)}.legende .x{background:var(--mid-soft);border-color:var(--mid)}.legende .f{background:var(--bad-soft);border-color:var(--bad)}
+.aufgabe{border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.kopf{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:10px}
+.kopf strong{margin-right:6px}
+.marke{font-size:12.5px;border-radius:6px;padding:2px 8px;background:var(--brand-soft);color:var(--brand);font-weight:600}
+.marke.lv1{background:var(--ok-soft);color:var(--ok)}.marke.lv2{background:var(--mid-soft);color:var(--mid)}.marke.lv3{background:var(--bad-soft);color:var(--bad)}
+.frage{font-size:17px;margin:0 0 14px}
+.rf{display:flex;gap:10px;flex-wrap:wrap}
+.wahl{font:inherit;font-weight:600;min-width:120px;border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:10px 16px;cursor:pointer}
+.wahl[aria-pressed="true"]{border-color:var(--brand);background:var(--brand-soft);color:var(--brand)}
+.zeile{display:flex;gap:8px 12px;align-items:center;justify-content:space-between;flex-wrap:wrap;border-top:1px solid var(--line);padding:8px 0}
+.zeile:first-child{border-top:0}
+.zeile .t{flex:1 1 260px}
+.zeile .k{display:flex;gap:5px;flex-wrap:wrap}
+.zeile .k button{font:inherit;font-size:13.5px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:5px 9px;cursor:pointer;text-align:left}
+.zeile .k button[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--surface);font-weight:600}
+.reihe{list-style:none;margin:0;padding:0;counter-reset:n}
+.reihe li{counter-increment:n;display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:9px;padding:7px 10px;margin-bottom:6px;background:var(--surface)}
+.reihe li::before{content:counter(n) ".";color:var(--muted);font-weight:600;min-width:22px}
+.reihe li span{flex:1}
+.reihe button{font:inherit;width:36px;height:32px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);cursor:pointer}
+.reihe button:disabled{opacity:.35;cursor:default}
+.feld{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.feld label{flex:1 1 220px}
+.feld input{font:inherit;width:150px;border:1px solid var(--line);border-radius:8px;padding:7px 9px;background:var(--bg);color:var(--ink);text-align:right}
+.feld .e{min-width:46px;color:var(--muted)}
+.knoepfe{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:16px}
+.btn{font:inherit;font-weight:600;font-size:15px;border-radius:9px;padding:8px 14px;cursor:pointer;border:1px solid var(--brand);background:var(--surface);color:var(--brand)}
+.btn.voll{background:var(--brand);color:var(--surface)}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn.leise{border-color:var(--line);color:var(--muted);font-weight:500}
+.fb{display:none;margin-top:12px;border-radius:8px;padding:8px 12px}
+.fb.zeig{display:block}.fb.gut{background:var(--ok-soft)}.fb.schlecht{background:var(--bad-soft)}
+.loes{display:none;margin-top:12px;background:var(--bg);border-left:4px solid var(--brand);border-radius:6px;padding:10px 14px}
+.loes.zeig{display:block}
+.loes h3{font-size:15px;margin:0 0 6px;color:var(--brand)}
+.loes ul,.loes ol{margin:0 0 8px;padding-left:22px}
+.loes p{margin:0}
+.loes .zu b{font-weight:600}
+.blaettern{display:flex;justify-content:space-between;gap:8px;margin-top:14px}
+footer{margin-top:18px;font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+body.eingebettet .wrap{padding:0}
+body.eingebettet .karte{max-width:none;border-radius:0;box-shadow:none;padding:16px 18px}
+@media (max-width:520px){.karte{padding:18px 14px}.wahl{flex:1}.feld input{width:120px}}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="karte">
+<header>
+  <div>
+    <h1>Steuern</h1>
+    <p class="sub">45 Übungsaufgaben · Steuerarten · Steuerfuss · Steuererklärung · ehrlich versteuern</p>
+  </div>
+  <img src="hkv_logo.png" alt="HKV Aarau">
+</header>
+
+<div class="stand">
+  <div class="balken"><i id="balken"></i></div>
+  <small id="standtext" aria-live="polite"></small>
+</div>
+
+<div class="filter">
+  <div class="gr" id="fStufe"><b>Stufe</b></div>
+  <div class="gr" id="fStation"><b>Teil</b></div>
+</div>
+<div class="kacheln" id="kacheln"></div>
+<p class="legende"><span><i class="r"></i>auf Anhieb richtig</span><span><i class="x"></i>später oder mit Lösung richtig</span><span><i class="f"></i>noch falsch</span><span><i></i>offen</span></p>
+
+<div class="aufgabe" id="aufgabe"></div>
+
+<footer>
+  <span id="speicher">Ihr Stand bleibt in diesem Browser gespeichert. Die Lösung lässt sich jeweils nach 60 Sekunden öffnen.</span>
+  <button class="btn leise" id="reset" type="button">Alles zurücksetzen</button>
+</footer>
+</div></div>
+
+<script>
+(function(){
+"use strict";
+if (window.self !== window.top) document.body.classList.add("eingebettet");
+var T = [{"id":"l01","lv":1,"st":1,"typ":"rf","q":"Eine Gebühr bezahlt man für eine bestimmte Leistung des Staates, zum Beispiel für einen neuen Pass.","ans":"R","lo":"Eine Gebühr hat eine direkte Gegenleistung: Pass, Abfallsack, Parkplatz, Baubewilligung. Eine Steuer bezahlt man ohne direkte Gegenleistung; sie finanziert den Staat allgemein."},{"id":"l02","lv":1,"st":1,"typ":"zu","q":"Steuer oder Gebühr?","kat":["Steuer","Gebühr"],"items":[["Einkommenssteuer",0],["Kosten für einen neuen Pass",1],["Mehrwertsteuer beim Einkaufen",0],["Preis für den Abfallsack der Gemeinde",1],["Hundesteuer",0]],"lo":"Für eine Gebühr erhält man eine bestimmte Leistung (Pass, Abfallentsorgung). Steuern bezahlt man ohne direkte Gegenleistung; damit erfüllen Bund, Kantone und Gemeinden ihre Aufgaben."},{"id":"l03","lv":1,"st":2,"typ":"rf","q":"Die Mehrwertsteuer ist eine direkte Steuer.","ans":"F","lo":"Die Mehrwertsteuer steckt im Preis von Waren und Dienstleistungen: Sie ist eine indirekte Steuer. Direkte Steuern werden bei der Person selbst erhoben, zum Beispiel die Einkommenssteuer."},{"id":"l04","lv":1,"st":2,"typ":"zu","q":"Direkte oder indirekte Steuer?","kat":["Direkte Steuer","Indirekte Steuer"],"items":[["Einkommenssteuer",0],["Vermögenssteuer",0],["Mehrwertsteuer",1],["Tabaksteuer",1],["Mineralölsteuer",1]],"lo":"Direkte Steuern richten sich nach der Leistungsfähigkeit der Person: Einkommen, Vermögen, Gewinn. Indirekte Steuern stecken im Preis, zum Beispiel bei Einkäufen, Benzin, Tabak und Alkohol."},{"id":"l05","lv":1,"st":2,"typ":"re","q":"Ein Velo kostet ohne Mehrwertsteuer CHF 1’000. Der Normalsatz beträgt 8,1 %. Wie viel Mehrwertsteuer kommt dazu?","felder":[["Mehrwertsteuer",81,"CHF"]],"lo":"8,1 % von 1’000: 1’000 × 0.081 = CHF 81. Der Preis im Laden beträgt also CHF 1’081."},{"id":"l06","lv":1,"st":3,"typ":"rf","q":"Die direkte Bundessteuer hat in jeder Gemeinde einen anderen Steuerfuss.","ans":"F","lo":"Die direkte Bundessteuer kennt keinen Steuerfuss; sie ist in der ganzen Schweiz gleich hoch. Unterschiedliche Steuerfüsse haben Kantone und Gemeinden."},{"id":"l07","lv":1,"st":3,"typ":"zu","q":"Wovon hängt die Höhe Ihrer Einkommenssteuer ab?","kat":["Hat Einfluss","Hat keinen Einfluss"],"items":[["Höhe des Einkommens",0],["Wohngemeinde",0],["Abzüge",0],["Zivilstand und Kinder",0],["Der Monat, in dem Sie Geburtstag haben",1]],"lo":"Die Steuer hängt ab von Einkommen und Vermögen, von den Abzügen, von Zivilstand und Kindern, vom Wohnkanton und der Wohngemeinde (Tarif und Steuerfuss) und von der Konfession (Kirchensteuer)."},{"id":"l08","lv":1,"st":3,"typ":"re","q":"Die einfache Steuer von Nora beträgt CHF 2’000. Der Steuerfuss ihrer Gemeinde liegt bei 110 %. Wie hoch ist ihre Gemeindesteuer?","felder":[["Gemeindesteuer",2200,"CHF"]],"lo":"Einfache Steuer × Steuerfuss: 2’000 × 110 % = CHF 2’200."},{"id":"l09","lv":1,"st":4,"typ":"rf","q":"Die Steuer wird auf dem ganzen Einkommen berechnet; Abzüge spielen dabei keine Rolle.","ans":"F","lo":"Vom Einkommen werden die erlaubten Abzüge abgezogen. Was übrig bleibt, ist das steuerbare Einkommen; nur darauf wird die Steuer berechnet."},{"id":"l10","lv":1,"st":4,"typ":"zu","q":"Darf man das in der Steuererklärung abziehen?","kat":["Abziehbar","Nicht abziehbar"],"items":[["Einzahlung in die Säule 3a",0],["Abonnement für den Arbeitsweg",0],["Neue Kleider für den Ausgang",1],["Busse wegen zu schnellen Fahrens",1],["Spende an eine gemeinnützige Organisation",0]],"lo":"Abziehbar sind Berufskosten wie der Arbeitsweg, Einzahlungen in die Säule 3a (bis zum Maximum) und Spenden. Lebenshaltungskosten und Bussen sind nie abziehbar."},{"id":"l11","lv":1,"st":4,"typ":"zu","q":"Brauchen Sie diese Unterlage für die Steuererklärung?","kat":["Brauche ich","Brauche ich nicht"],"items":[["Lohnausweis",0],["Zinsausweis der Bank per 31. Dezember",0],["Kassenzettel vom Wocheneinkauf",1],["Bescheinigung über die Einzahlung in die Säule 3a",0],["Rechnung für das private Streaming-Abo",1]],"lo":"Der Lohnausweis belegt das Einkommen, der Zinsausweis Vermögen und Zinsen, die Bescheinigung den Abzug für die Säule 3a. Lebenshaltungskosten und private Abos spielen keine Rolle."},{"id":"l12","lv":1,"st":4,"typ":"rh","q":"Von der Steuererklärung bis zur Schlussrechnung: Bringen Sie die Schritte in die richtige Reihenfolge.","steps":["Steuererklärung ausfüllen und einreichen","Provisorische Rechnung erhalten","Das Steueramt prüft und erlässt die Veranlagung","Definitive Rechnung: Die Differenz wird nachbelastet oder zurückerstattet"],"start":[0,2,1,3],"lo":"Die provisorische Rechnung stützt sich auf das Vorjahr. Erst nach der Veranlagung steht fest, wie viel wirklich geschuldet ist. Im Aargau ist die Steuererklärung bis 31. März einzureichen; eine Verlängerung ist möglich."},{"id":"l13","lv":1,"st":4,"typ":"re","q":"Sie finden, dass Ihre Veranlagung falsch ist. Innert wie vielen Tagen können Sie Einsprache erheben?","felder":[["Frist",30,"Tage"]],"lo":"Die Einsprache muss innert 30 Tagen schriftlich erfolgen. Sie ist kostenlos und ohne Anwalt möglich."},{"id":"l14","lv":1,"st":5,"typ":"rf","q":"Wer die erlaubten Abzüge nutzt und in die Säule 3a einzahlt, betreibt legale Steueroptimierung.","ans":"R","lo":"Optimieren ist legal: erlaubte Abzüge nutzen, in die Säule 3a einzahlen, den Wohnort wählen. Illegal ist es, Einkommen oder Vermögen zu verschweigen."},{"id":"l15","lv":1,"st":5,"typ":"zu","q":"Was ist das?","kat":["Legale Steueroptimierung","Steuerhinterziehung","Steuerbetrug"],"items":[["In die Säule 3a einzahlen",0],["Ein Sparkonto in der Steuererklärung verschweigen",1],["Den Betrag auf dem Lohnausweis fälschen",2],["Einen Nebenverdienst nicht angeben",1]],"lo":"Hinterziehung heisst: Einkommen oder Vermögen nicht oder zu tief angeben. Betrug heisst: dafür gefälschte oder unwahre Urkunden verwenden. Erlaubte Abzüge zu nutzen, ist legal."},{"id":"m01","lv":2,"st":1,"typ":"rf","q":"Jan ist 16 Jahre alt und verdient als Lernender CHF 900 im Monat. Sein Lohn wird bis zum 18. Geburtstag bei den Eltern besteuert.","ans":"F","lo":"Erwerbseinkommen von Minderjährigen wird selbständig besteuert, auch der Lehrlingslohn. Bei den Eltern versteuert werden nur das Vermögen und die übrigen Einkünfte von Minderjährigen. Eine eigene Steuererklärung füllt man ab dem Jahr aus, in dem man 18 wird."},{"id":"m02","lv":2,"st":1,"typ":"zu","q":"Wie wird die Person in diesem Jahr besteuert?","kat":["Bleibt am bisherigen Ort steuerpflichtig","Bezahlt für das ganze Jahr in der neuen Gemeinde","Wird an der Quelle besteuert"],"items":[["Remo reist drei Monate durch Neuseeland; seine Wohnung behält er, abgemeldet hat er sich nicht",0],["Ein Verkäufer aus Italien mit Aufenthaltsbewilligung B",2],["Selma zieht am 1. November von Suhr nach Brugg",1],["Tina studiert in Bern, wohnt dort unter der Woche und kehrt jedes Wochenende zu den Eltern nach Zofingen zurück",0]],"lo":"Der Wohnsitz bleibt bei einer Reise bestehen, ebenso bei Wochenaufenthaltern in Ausbildung. Bei einem Umzug innerhalb der Schweiz zählt der Wohnsitz am 31. Dezember. Wer keine Niederlassungsbewilligung C hat, bezahlt die Steuer über den Lohnabzug (Quellensteuer)."},{"id":"m03","lv":2,"st":2,"typ":"zu","q":"Welche Staatsebene erhebt diese Steuer?","kat":["Bund","Kanton und Gemeinde"],"items":[["Mehrwertsteuer",0],["Verrechnungssteuer",0],["Vermögenssteuer",1],["Motorfahrzeugsteuer",1],["Hundesteuer",1],["Tabaksteuer",0]],"lo":"Der Bund erhebt die direkte Bundessteuer, die Mehrwertsteuer, die Verrechnungssteuer, die Mineralöl-, Tabak- und Alkoholsteuer und die Zölle. Vermögens-, Motorfahrzeug- und Hundesteuer erheben Kantone und Gemeinden; der Bund kennt keine Vermögenssteuer."},{"id":"m04","lv":2,"st":2,"typ":"re","q":"Auf Ihrem Sparkonto erhalten Sie CHF 300 Zins. Die Bank zieht 35 % Verrechnungssteuer ab. Wie viel wird abgezogen, und wie viel wird Ihnen gutgeschrieben?","felder":[["Verrechnungssteuer",105,"CHF"],["Gutgeschrieben",195,"CHF"]],"lo":"35 % von 300 = CHF 105. Gutgeschrieben werden 300 − 105 = CHF 195. Die CHF 105 erhalten Sie zurück, wenn Sie Konto und Zins in der Steuererklärung angeben."},{"id":"m05","lv":2,"st":2,"typ":"rf","q":"Die CO2-Abgabe auf Heizöl soll vor allem ein Verhalten steuern; ein grosser Teil des Ertrags fliesst an die Bevölkerung zurück.","ans":"R","lo":"Das ist eine Lenkungsabgabe: Sie macht fossile Brennstoffe teurer. Ein grosser Teil des Ertrags wird über die Krankenkassenprämien zurückverteilt."},{"id":"m06","lv":2,"st":3,"typ":"re","q":"Die einfache Steuer von Leon beträgt CHF 3’000. Der Steuerfuss des Kantons liegt bei 112 %, der seiner Gemeinde bei 98 %. Rechnen Sie.","felder":[["Kantonssteuer",3360,"CHF"],["Gemeindesteuer",2940,"CHF"],["Total Kanton und Gemeinde",6300,"CHF"]],"lo":"Kanton: 3’000 × 112 % = CHF 3’360. Gemeinde: 3’000 × 98 % = CHF 2’940. Zusammen CHF 6’300. Dazu kommt die direkte Bundessteuer, die keinen Steuerfuss kennt."},{"id":"m07","lv":2,"st":3,"typ":"rf","q":"Wer doppelt so viel verdient, bezahlt wegen der Progression mehr als doppelt so viel Einkommenssteuer.","ans":"R","lo":"Mit steigendem Einkommen steigt nicht nur der Betrag, sondern auch der Steuersatz in Prozent. Begründung: Wer mehr hat, ist wirtschaftlich leistungsfähiger."},{"id":"m08","lv":2,"st":3,"typ":"zu","q":"Wer ist zuständig?","kat":["Gemeindeversammlung oder Einwohnerrat","Grosser Rat","Steueramt"],"items":[["Beschliesst den Steuerfuss der Gemeinde",0],["Beschliesst den Steuerfuss des Kantons",1],["Prüft die Steuererklärung und erlässt die Veranlagung",2],["Beschliesst das Budget der Gemeinde",0]],"lo":"Den Steuerfuss der Gemeinde beschliesst jedes Jahr die Gemeindeversammlung oder der Einwohnerrat zusammen mit dem Budget, den kantonalen der Grosse Rat. Der Gemeinderat stellt nur den Antrag. Das Steueramt veranlagt."},{"id":"m09","lv":2,"st":4,"typ":"zu","q":"Abziehbar, nur teilweise abziehbar oder nicht abziehbar?","kat":["Abziehbar","Nur teilweise abziehbar","Nicht abziehbar"],"items":[["Krankenkassenprämien",1],["Selbst bezahlte Arzt- und Zahnarztrechnungen",1],["Zinsen für einen Privatkredit",0],["Leasingraten für das Auto",2],["Fitnessabo",2],["Mehrkosten für das Mittagessen auswärts (Pauschale)",0]],"lo":"Krankenkassenprämien zählen nur im Rahmen des Versicherungsabzugs, Krankheitskosten nur, soweit sie 5 % des Nettoeinkommens übersteigen. Schuldzinsen sind abziehbar, Leasingraten nicht: Leasing ist Miete. Das Fitnessabo ist eine private Ausgabe."},{"id":"m10","lv":2,"st":4,"typ":"re","q":"Der Nettolohn von Aylin gemäss Lohnausweis beträgt CHF 52’000. Ihre Abzüge: Fahrkosten CHF 1’800, auswärtige Verpflegung CHF 1’600, Säule 3a CHF 3’000, Versicherungsabzug CHF 2’000, übrige Berufskosten CHF 2’000. Rechnen Sie.","felder":[["Total der Abzüge",10400,"CHF"],["Steuerbares Einkommen",41600,"CHF"]],"lo":"Abzüge: 1’800 + 1’600 + 3’000 + 2’000 + 2’000 = CHF 10’400. Steuerbares Einkommen: 52’000 − 10’400 = CHF 41’600. Nur darauf wird die Steuer berechnet."},{"id":"m11","lv":2,"st":4,"typ":"rh","q":"Ihre Veranlagung enthält einen Fehler. Bringen Sie das Vorgehen in die richtige Reihenfolge.","steps":["Veranlagung mit der eigenen Steuererklärung vergleichen","Innert 30 Tagen schriftlich Einsprache erheben, mit Begründung und Belegen","Das Steueramt prüft die Einsprache und entscheidet","Wird die Einsprache abgelehnt: Rekurs beim Steuerrekursgericht"],"start":[2,0,3,1],"lo":"Die Einsprache ist kostenlos und braucht keinen Anwalt, muss aber innert 30 Tagen schriftlich und begründet erfolgen. Wer die Frist verpasst, muss auch eine falsche Veranlagung bezahlen."},{"id":"m12","lv":2,"st":4,"typ":"rf","q":"Wer die Steuerrechnung nicht auf einmal bezahlen kann, wartet am besten ab, bis die Mahnung kommt.","ans":"F","lo":"Besser ist es, das Steueramt sofort zu kontaktieren und eine Ratenzahlung zu beantragen. Wer nicht reagiert, bezahlt Verzugszins, erhält Mahnungen und am Ende eine Betreibung."},{"id":"m13","lv":2,"st":5,"typ":"zu","q":"Was ist das?","kat":["Steuerhinterziehung","Steuerbetrug","Legale Steueroptimierung"],"items":[["Tim gibt die Einnahmen aus seinem Nebenjob als DJ nicht an",0],["Eva ändert auf einer Spendenquittung den Betrag von 50 auf 500 Franken",1],["Noah zahlt den Maximalbetrag in die Säule 3a ein",2],["Sina vergisst, ein altes Sparkonto anzugeben",0],["Luis lässt sich eine Rechnung für einen Kurs ausstellen, den er nie besucht hat",1]],"lo":"Verschwiegenes Einkommen oder Vermögen ist Hinterziehung, auch aus Nachlässigkeit. Wer dafür eine gefälschte oder inhaltlich unwahre Urkunde verwendet, begeht Steuerbetrug. Die Säule 3a auszuschöpfen, ist legal."},{"id":"m14","lv":2,"st":5,"typ":"rf","q":"Bei einer Steuerhinterziehung muss man die fehlende Steuer nachzahlen; eine Busse gibt es erst beim Steuerbetrug.","ans":"F","lo":"Schon bei der Hinterziehung kommen zur Nachsteuer der Verzugszins und eine Busse, in der Regel so hoch wie die hinterzogene Steuer. Beim Steuerbetrug kommt ein Strafverfahren dazu."},{"id":"m15","lv":2,"st":5,"typ":"rh","q":"Sie entdecken, dass Sie vor zwei Jahren ein Konto nicht angegeben haben. Bringen Sie den klügsten Weg in die richtige Reihenfolge.","steps":["Sie bemerken den Fehler in der früheren Steuererklärung","Sie melden ihn dem Steueramt von sich aus, bevor es davon weiss","Sie bezahlen die Nachsteuer und den Zins","Eine Busse gibt es nicht: Die Selbstanzeige ist straflos"],"start":[2,3,0,1],"lo":"Die straflose Selbstanzeige ist einmal im Leben möglich, solange das Steueramt noch nichts weiss. Man bezahlt Nachsteuer und Zins, aber keine Busse."},{"id":"s01","lv":3,"st":1,"typ":"rf","q":"Mara heiratet am 20. November. Für die Monate Januar bis Oktober wird sie noch allein besteuert, erst danach gemeinsam mit ihrem Mann.","ans":"F","lo":"Ehepaare werden ab dem Jahr der Heirat für das ganze Jahr gemeinsam veranlagt. Einkommen und Vermögen beider werden zusammengezählt."},{"id":"s02","lv":3,"st":1,"typ":"zu","q":"Muss man das als Einkommen versteuern?","kat":["Steuerbares Einkommen","Kein steuerbares Einkommen"],"items":[["Sold in der Rekrutenschule",1],["Erwerbsersatz (EO) während der Rekrutenschule",0],["Taggeld der Arbeitslosenversicherung",0],["Gewinn von CHF 20’000 bei Swiss Lotto",1],["Kursgewinn beim Verkauf privater Aktien",1],["Dividende auf Aktien",0]],"lo":"Was den Lohn ersetzt, ist steuerbar: Erwerbsersatz und Arbeitslosentaggeld. Der Sold ist steuerfrei. Lotteriegewinne von Swisslos sind bis CHF 1 Million steuerfrei, private Kursgewinne ebenfalls. Dividenden und Zinsen sind Einkommen."},{"id":"s03","lv":3,"st":1,"typ":"rf","q":"Ein Arbeitnehmer mit Aufenthaltsbewilligung B erhält keine Steuerrechnung, weil ihm die Steuer direkt vom Lohn abgezogen wird.","ans":"R","lo":"Das ist die Quellensteuer: Der Arbeitgeber zieht die Steuer ab und liefert sie dem Steueramt ab. Mit der Niederlassungsbewilligung C wechselt die Person ins normale Verfahren mit Steuererklärung."},{"id":"s04","lv":3,"st":2,"typ":"re","q":"Sie haben zwei Sparkonten. Konto A bringt CHF 180 Zins im Jahr, Konto B CHF 500. Wie viel Verrechnungssteuer zieht die Bank auf jedem Konto ab?","felder":[["Abzug auf Konto A",0,"CHF"],["Abzug auf Konto B",175,"CHF"]],"lo":"Die Verrechnungssteuer von 35 % wird erst auf Zinsen über CHF 200 pro Jahr abgezogen. Konto A: kein Abzug. Konto B: 35 % von 500 = CHF 175. Angeben müssen Sie beide Konten und beide Zinsen."},{"id":"s05","lv":3,"st":2,"typ":"zu","q":"Um welche Art von Abgabe handelt es sich?","kat":["Direkte Steuer","Indirekte Steuer","Lenkungsabgabe","Gebühr"],"items":[["Direkte Bundessteuer",0],["Alkoholsteuer",1],["CO2-Abgabe auf Heizöl",2],["Kosten für die Baubewilligung",3],["Vermögenssteuer",0]],"lo":"Direkte Steuern treffen Einkommen und Vermögen der Person. Indirekte Steuern stecken im Preis. Die Lenkungsabgabe soll ein Verhalten steuern. Die Gebühr bezahlt man für eine bestimmte Leistung."},{"id":"s06","lv":3,"st":2,"typ":"rf","q":"Wer sein Sparkonto und den Zins in der Steuererklärung nicht angibt, verliert die abgezogene Verrechnungssteuer.","ans":"R","lo":"Zurück erhält die 35 % nur, wer Konto und Zins deklariert. Genau das ist der Zweck der Verrechnungssteuer: Ehrlich angeben lohnt sich."},{"id":"s07","lv":3,"st":3,"typ":"re","q":"Die einfache Steuer von Familie Baumann beträgt CHF 4’000. Der Steuerfuss des Kantons liegt bei 110 %. In Gemeinde A beträgt der Steuerfuss 120 %, in Gemeinde B 90 %. Rechnen Sie Kantons- und Gemeindesteuer zusammen.","felder":[["Total in Gemeinde A",9200,"CHF"],["Total in Gemeinde B",8000,"CHF"],["Unterschied pro Jahr",1200,"CHF"]],"lo":"Kanton: 4’000 × 110 % = 4’400. Gemeinde A: 4’000 × 120 % = 4’800, zusammen CHF 9’200. Gemeinde B: 4’000 × 90 % = 3’600, zusammen CHF 8’000. Unterschied: CHF 1’200 pro Jahr. Für einen fairen Vergleich gehören auch Mieten und Krankenkassenprämien dazu."},{"id":"s08","lv":3,"st":3,"typ":"zu","q":"Steuerwettbewerb zwischen Gemeinden und Kantonen: Ist das ein Argument dafür oder dagegen?","kat":["Argument dafür","Argument dagegen"],"items":[["Der Staat wird gezwungen, sparsam mit dem Geld umzugehen",0],["Einwohner und Firmen können wählen, wo sie sich niederlassen",0],["Gemeinden mit wenig Einnahmen müssen den Steuerfuss erhöhen oder Leistungen kürzen",1],["Reiche Gemeinden ziehen noch mehr gute Steuerzahlende an",1]],"lo":"Dafür spricht der Druck zu sparsamem Haushalten und die Wahlfreiheit. Dagegen spricht, dass die Unterschiede wachsen: Reiche Gemeinden werden reicher, arme müssen die Steuern erhöhen. Der Finanzausgleich gleicht das teilweise aus."},{"id":"s09","lv":3,"st":3,"typ":"rf","q":"In zwei Gemeinden desselben Kantons gilt derselbe Steuertarif; unterschiedlich ist der Steuerfuss der Gemeinde.","ans":"R","lo":"Der Tarif ist im ganzen Kanton gleich und ergibt die einfache Steuer. Jede Gemeinde legt dazu den Steuerfuss fest, den sie für ihre Ausgaben braucht."},{"id":"s10","lv":3,"st":4,"typ":"re","q":"Das Nettoeinkommen von Fabio beträgt CHF 60’000. Er hat CHF 4’200 Krankheitskosten selbst bezahlt (Zahnarzt, Franchise, Selbstbehalt). Abziehbar ist nur der Teil, der 5 % des Nettoeinkommens übersteigt. Rechnen Sie.","felder":[["5 % des Nettoeinkommens",3000,"CHF"],["Abziehbarer Betrag",1200,"CHF"]],"lo":"5 % von 60’000 = CHF 3’000. Abziehbar ist, was darüber liegt: 4’200 − 3’000 = CHF 1’200."},{"id":"s11","lv":3,"st":4,"typ":"re","q":"Im Aargau beträgt die Pauschale für die übrigen Berufskosten 3 % des Nettolohns, mindestens aber CHF 2’000. Wie hoch ist der Abzug bei einem Nettolohn von CHF 48’000 und bei einem Nettolohn von CHF 90’000?","felder":[["Abzug bei CHF 48’000",2000,"CHF"],["Abzug bei CHF 90’000",2700,"CHF"]],"lo":"3 % von 48’000 = 1’440; das liegt unter dem Minimum, also gilt CHF 2’000. 3 % von 90’000 = CHF 2’700."},{"id":"s12","lv":3,"st":4,"typ":"zu","q":"Ronja (22) arbeitet im Detailhandel. Sie hat ein Sparkonto und ein Auto, zahlt in die Säule 3a ein, hat einen Weiterbildungskurs selbst bezahlt und war zwei Monate arbeitslos. Wozu braucht sie die Unterlage in der Steuererklärung?","kat":["Für das Einkommen","Für das Vermögen","Für einen Abzug"],"items":[["Lohnausweis",0],["Bescheinigung der Arbeitslosenkasse",0],["Bescheinigung über die Einzahlung in die Säule 3a",2],["Rechnung des Weiterbildungskurses",2],["Aktueller Wert des Autos",1],["Kontostand des Sparkontos am 31. Dezember",1]],"lo":"Lohn und Arbeitslosentaggeld sind Einkommen. Säule 3a und berufliche Weiterbildung sind Abzüge, die belegt werden müssen. Auto und Kontostand gehören zum steuerbaren Vermögen per 31. Dezember."},{"id":"s13","lv":3,"st":4,"typ":"rh","q":"Jemand reicht die Steuererklärung einfach nicht ein. Was geschieht der Reihe nach?","steps":["Die Frist für die Steuererklärung läuft ab","Das Steueramt schickt eine Mahnung mit Gebühr","Das Steueramt schätzt das Einkommen (Veranlagung nach Ermessen)","Die Rechnung nach dieser Schätzung trifft ein, dazu eine Busse"],"start":[2,0,1,3],"lo":"Wer nicht einreicht, wird nach Ermessen veranlagt, meist zu seinen Ungunsten, und erhält eine Busse. Besser: vor Ablauf der Frist online eine Verlängerung beantragen."},{"id":"s14","lv":3,"st":5,"typ":"re","q":"Kevin hat CHF 2’400 Steuern hinterzogen. Das Steueramt verlangt die Nachsteuer, CHF 150 Verzugszins und eine Busse in der üblichen Höhe, nämlich das Einfache der hinterzogenen Steuer. Wie viel muss Kevin insgesamt bezahlen?","felder":[["Total",4950,"CHF"]],"lo":"Nachsteuer 2’400 + Zins 150 + Busse 2’400 = CHF 4’950. Die Busse kann bis zum Dreifachen der hinterzogenen Steuer betragen."},{"id":"s15","lv":3,"st":5,"typ":"zu","q":"Wie ist das Verhalten rechtlich einzuordnen?","kat":["Legale Steueroptimierung","Steuerhinterziehung","Steuerbetrug","Straflose Selbstanzeige"],"items":[["Paula zieht kurz vor Jahresende in eine Gemeinde mit tieferem Steuerfuss",0],["Ivan meldet dem Steueramt von sich aus ein Konto, das er im Vorjahr vergessen hat",3],["Dana verkauft regelmässig selbst genähte Taschen und gibt den Gewinn nicht an",1],["Marco erstellt am Computer eine Bestätigung für eine Spende, die er nie gemacht hat, und zieht sie ab",2]],"lo":"Den Wohnort zu wählen, ist legal. Verschwiegenes Einkommen ist Hinterziehung. Eine unwahre Urkunde macht daraus Steuerbetrug. Wer einen Fehler von sich aus meldet, bevor das Steueramt davon weiss, bezahlt Nachsteuer und Zins, aber keine Busse."}];
+var ST = {"1": "Wozu Steuern und wer bezahlt sie", "2": "Steuerarten und Staatsebenen", "3": "Wie hoch sind meine Steuern?", "4": "Die Steuererklärung", "5": "Ehrlich versteuern"};
+var SPERRE = 60;
+var KEY = "hkv_steuern_ueb45_v1";
+var STUFE = {1:"Leicht",2:"Mittel",3:"Schwer"};
+var TYP = {rf:"Richtig oder falsch",zu:"Zuordnen",rh:"Reihenfolge",re:"Rechnen"};
+var S = {a:{}, sek:{}, pos:T[0].id, fl:0, fs:0};
+var speicherOk = true;
+function laden(){ try{ var s = localStorage.getItem(KEY); if(s){ var o = JSON.parse(s); if(o && o.a){ S = o; } } }catch(e){ speicherOk = false; } }
+function sichern(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){ speicherOk = false; } }
+laden();
+if(!S.sek) S.sek = {};
+var NR = {}; T.forEach(function(t,i){ NR[t.id] = i+1; });
+function aufg(id){ for(var i=0;i<T.length;i++) if(T[i].id===id) return T[i]; return T[0]; }
+function el(tag, cls, txt){ var e = document.createElement(tag); if(cls) e.className = cls; if(txt!==undefined) e.textContent = txt; return e; }
+function fmt(n){ var s = String(Math.abs(n)), o = ""; while(s.length>3){ o = "’"+s.slice(-3)+o; s = s.slice(0,-3); } return (n<0?"−":"")+s+o; }
+function zahl(str){
+  var s = String(str).toLowerCase().replace(/chf|sfr\.?|fr\.|franken|jahre?n?|monate?n?|%/g,"").replace(/[\s'’`´]/g,"").replace(/\.[–\-]+$/,"").replace(",",".");
+  if(s==="") return null;
+  if(/^-?\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g,"");
+  var n = Number(s); return isFinite(n) ? n : null;
+}
+function mischen(arr, seed){ var a = arr.slice(), h = 0, i; for(i=0;i<seed.length;i++) h = (h*31 + seed.charCodeAt(i))>>>0;
+  for(i=a.length-1;i>0;i--){ h = (h*1103515245 + 12345)>>>0; var j = h % (i+1), x = a[i]; a[i] = a[j]; a[j] = x; } return a; }
+
+/* ---------- Filter und Kacheln ---------- */
+function passt(t){ return (!S.fl || t.lv===S.fl) && (!S.fs || t.st===S.fs); }
+function liste(){ return T.filter(passt); }
+function chips(wo, werte, feld){
+  var box = document.getElementById(wo);
+  werte.forEach(function(w){
+    var b = el("button","chip",w[1]); b.type = "button"; b.dataset.w = w[0];
+    b.addEventListener("click", function(){ S[feld] = w[0]; var l = liste(); if(l.length && !passt(aufg(S.pos))) S.pos = l[0].id; sichern(); alles(); });
+    box.appendChild(b);
+  });
+}
+chips("fStufe", [[0,"Alle"],[1,"Leicht"],[2,"Mittel"],[3,"Schwer"]], "fl");
+chips("fStation", [[0,"Alle"]].concat(Object.keys(ST).map(function(k){ return [Number(k), "ABCDE".charAt(k-1)+" "+ST[k]]; })), "fs");
+function status(id){ var a = S.a[id]; if(!a || !a.e) return ""; if(a.e==="r") return "r"; return a.ok ? "x" : "f"; }
+function kacheln(){
+  var box = document.getElementById("kacheln"); box.textContent = "";
+  liste().forEach(function(t){
+    var b = el("button","kachel "+status(t.id)+(t.id===S.pos?" akt":""), String(NR[t.id])); b.type = "button";
+    b.setAttribute("aria-label","Aufgabe "+NR[t.id]+", "+STUFE[t.lv]+", "+ST[t.st]);
+    b.addEventListener("click", function(){ gehe(t.id); });
+    box.appendChild(b);
+  });
+  ["fStufe","fStation"].forEach(function(wo){ var f = wo==="fStufe" ? S.fl : S.fs;
+    document.getElementById(wo).querySelectorAll(".chip").forEach(function(c){ c.setAttribute("aria-pressed", String(Number(c.dataset.w)===f)); }); });
+}
+function fortschritt(){
+  var bearb = 0, anhieb = 0; T.forEach(function(t){ var a = S.a[t.id]; if(a && a.e){ bearb++; if(a.e==="r") anhieb++; } });
+  document.getElementById("balken").style.width = (100*bearb/T.length)+"%";
+  document.getElementById("standtext").textContent = bearb+" von "+T.length+" Aufgaben bearbeitet · "+anhieb+" auf Anhieb richtig";
+}
+
+/* ---------- Aufgabe zeichnen ---------- */
+var antwort = null, timer = null;
+function gehe(id){ S.pos = id; sichern(); alles(); var a = document.getElementById("aufgabe"); if(a.scrollIntoView && a.getBoundingClientRect().top < 0) a.scrollIntoView({block:"start"}); }
+function alles(){ kacheln(); fortschritt(); zeichne(); }
+function offen(id){ return (S.sek[id]||0) >= SPERRE; }
+function zeichne(){
+  var t = aufg(S.pos), box = document.getElementById("aufgabe"), st = S.a[t.id] || {};
+  box.textContent = "";
+  var kopf = el("div","kopf");
+  kopf.appendChild(el("strong","", "Aufgabe "+NR[t.id]+" von "+T.length));
+  kopf.appendChild(el("span","marke lv"+t.lv, STUFE[t.lv]));
+  kopf.appendChild(el("span","marke", "Teil "+"ABCDE".charAt(t.st-1)+" · "+ST[t.st]));
+  kopf.appendChild(el("span","marke", TYP[t.typ]));
+  box.appendChild(kopf);
+  box.appendChild(el("p","frage", t.typ==="rf" ? "Richtig oder falsch? " + t.q : t.q));
+  var feld = el("div","eingabe"); box.appendChild(feld);
+
+  if(t.typ==="rf"){
+    antwort = st.w || null;
+    var r = el("div","rf");
+    [["R","Richtig"],["F","Falsch"]].forEach(function(o){
+      var b = el("button","wahl",o[1]); b.type = "button"; b.dataset.w = o[0]; b.setAttribute("aria-pressed", String(antwort===o[0]));
+      b.addEventListener("click", function(){ antwort = o[0]; r.querySelectorAll(".wahl").forEach(function(x){ x.setAttribute("aria-pressed", String(x.dataset.w===antwort)); }); });
+      r.appendChild(b);
+    });
+    feld.appendChild(r);
+  }
+  if(t.typ==="zu"){
+    var reihenf = mischen(t.items.map(function(_,i){ return i; }), t.id);
+    antwort = (st.w && st.w.length===t.items.length) ? st.w.slice() : t.items.map(function(){ return -1; });
+    reihenf.forEach(function(i){
+      var z = el("div","zeile"); z.appendChild(el("div","t", t.items[i][0]));
+      var k = el("div","k");
+      t.kat.forEach(function(name, ki){
+        var b = el("button","",name); b.type = "button"; b.setAttribute("aria-pressed", String(antwort[i]===ki));
+        b.addEventListener("click", function(){ antwort[i] = ki; k.querySelectorAll("button").forEach(function(x, xi){ x.setAttribute("aria-pressed", String(xi===ki)); }); });
+        k.appendChild(b);
+      });
+      z.appendChild(k); feld.appendChild(z);
+    });
+  }
+  if(t.typ==="rh"){
+    antwort = (st.w && st.w.length===t.steps.length) ? st.w.slice() : t.start.slice();
+    var ol = el("ol","reihe"); feld.appendChild(ol);
+    var zeichneReihe = function(){
+      ol.textContent = "";
+      antwort.forEach(function(si, pos){
+        var li = el("li"); li.appendChild(el("span","", t.steps[si]));
+        var auf = el("button","","▲"), ab = el("button","","▼"); auf.type = ab.type = "button";
+        auf.setAttribute("aria-label","Nach oben"); ab.setAttribute("aria-label","Nach unten");
+        auf.disabled = pos===0; ab.disabled = pos===antwort.length-1;
+        auf.addEventListener("click", function(){ var x = antwort[pos-1]; antwort[pos-1] = antwort[pos]; antwort[pos] = x; zeichneReihe(); });
+        ab.addEventListener("click", function(){ var x = antwort[pos+1]; antwort[pos+1] = antwort[pos]; antwort[pos] = x; zeichneReihe(); });
+        li.appendChild(auf); li.appendChild(ab); ol.appendChild(li);
+      });
+    };
+    zeichneReihe();
+  }
+  if(t.typ==="re"){
+    antwort = (st.w && st.w.length===t.felder.length) ? st.w.slice() : t.felder.map(function(){ return ""; });
+    t.felder.forEach(function(f, i){
+      var z = el("div","feld"), id = "f"+i, lab = el("label","", f[0]); lab.htmlFor = id;
+      var inp = el("input"); inp.id = id; inp.type = "text"; inp.inputMode = "decimal"; inp.autocomplete = "off"; inp.value = antwort[i];
+      inp.addEventListener("input", function(){ antwort[i] = inp.value; });
+      inp.addEventListener("keydown", function(e){ if(e.key==="Enter") pruefe(); });
+      z.appendChild(lab); z.appendChild(inp); z.appendChild(el("span","e", f[2])); feld.appendChild(z);
+    });
+  }
+
+  var kn = el("div","knoepfe");
+  var bp = el("button","btn voll","Prüfen"); bp.type = "button"; bp.id = "pruefen"; bp.addEventListener("click", pruefe);
+  var bl = el("button","btn",""); bl.type = "button"; bl.id = "loesung"; bl.addEventListener("click", function(){ zeigeLoesung(true); });
+  kn.appendChild(bp); kn.appendChild(bl); box.appendChild(kn);
+  var fb = el("div","fb"); fb.id = "fb"; fb.setAttribute("role","status"); fb.setAttribute("aria-live","polite"); box.appendChild(fb);
+  var lo = el("div","loes"); lo.id = "loes"; box.appendChild(lo);
+
+  var l = liste(), idx = l.indexOf(t), bl2 = el("div","blaettern");
+  var zur = el("button","btn leise","← Zurück"), vor = el("button","btn","Weiter →"); zur.type = vor.type = "button";
+  zur.disabled = idx<=0; vor.disabled = idx<0 || idx>=l.length-1;
+  zur.addEventListener("click", function(){ if(idx>0) gehe(l[idx-1].id); });
+  vor.addEventListener("click", function(){ if(idx<l.length-1) gehe(l[idx+1].id); });
+  bl2.appendChild(zur); bl2.appendChild(vor); box.appendChild(bl2);
+
+  if(st.fb) zeigeFb(st.fb[0], st.fb[1]);
+  if(st.auf) zeigeLoesung(false);
+  uhr();
+}
+function zeigeFb(gut, text){ var fb = document.getElementById("fb"); fb.className = "fb zeig " + (gut ? "gut" : "schlecht"); fb.textContent = text; }
+
+/* ---------- Prüfen ---------- */
+function pruefe(){
+  var t = aufg(S.pos), gut = false, text = "", n, ok = 0;
+  if(t.typ==="rf"){
+    if(!antwort){ zeigeFb(false,"Wählen Sie zuerst «Richtig» oder «Falsch»."); return; }
+    gut = antwort===t.ans; text = gut ? "Richtig." : "Das stimmt nicht.";
+  }
+  if(t.typ==="zu"){
+    if(antwort.indexOf(-1)>=0){ zeigeFb(false,"Ordnen Sie zuerst jeden Posten zu."); return; }
+    n = t.items.length; t.items.forEach(function(it,i){ if(antwort[i]===it[1]) ok++; });
+    gut = ok===n; text = gut ? "Richtig, alles stimmt." : ok+" von "+n+" richtig zugeordnet.";
+  }
+  if(t.typ==="rh"){
+    n = t.steps.length; antwort.forEach(function(si,pos){ if(si===pos) ok++; });
+    gut = ok===n; text = gut ? "Richtig, die Reihenfolge stimmt." : "Die Reihenfolge stimmt noch nicht: "+ok+" von "+n+" Schritten stehen an der richtigen Stelle.";
+  }
+  if(t.typ==="re"){
+    var leer = false; n = t.felder.length;
+    t.felder.forEach(function(f,i){ var z = zahl(antwort[i]); if(z===null) leer = true; else if(Math.abs(z-f[1])<0.5) ok++; });
+    if(leer){ zeigeFb(false,"Tragen Sie zuerst in jedes Feld eine Zahl ein."); return; }
+    gut = ok===n; text = gut ? "Richtig gerechnet." : (n===1 ? "Das Ergebnis stimmt nicht." : ok+" von "+n+" Ergebnissen stimmen.");
+  }
+  if(!gut) text += offen(t.id) ? " Versuchen Sie es noch einmal oder öffnen Sie die Lösung." : " Versuchen Sie es noch einmal. Die Lösung lässt sich nach 60 Sekunden öffnen.";
+  var a = S.a[t.id] || (S.a[t.id] = {});
+  if(!a.e) a.e = a.auf ? "x" : (gut ? "r" : "f");
+  if(gut) a.ok = true;
+  a.w = (t.typ==="rf") ? antwort : antwort.slice();
+  a.fb = [gut, text];
+  sichern(); zeigeFb(gut, text); kacheln(); fortschritt();
+}
+
+/* ---------- Lösung ---------- */
+function zeigeLoesung(geklickt){
+  var t = aufg(S.pos);
+  if(!offen(t.id)) return;
+  var a = S.a[t.id] || (S.a[t.id] = {});
+  if(geklickt){ a.auf = true; sichern(); }
+  var lo = document.getElementById("loes"); lo.textContent = ""; lo.className = "loes zeig";
+  lo.appendChild(el("h3","","Lösung"));
+  if(t.typ==="rf") lo.appendChild(el("p","", "Die Aussage ist " + (t.ans==="R" ? "richtig." : "falsch.")));
+  if(t.typ==="zu"){ var ul = el("ul","zu"); t.items.forEach(function(it){ var li = el("li","", it[0]+" → "); li.appendChild(el("b","", t.kat[it[1]])); ul.appendChild(li); }); lo.appendChild(ul); }
+  if(t.typ==="rh"){ var ol = el("ol"); t.steps.forEach(function(s){ ol.appendChild(el("li","",s)); }); lo.appendChild(ol); }
+  if(t.typ==="re"){ var u2 = el("ul"); t.felder.forEach(function(f){
+      var w = f[2]==="CHF" ? "CHF "+fmt(f[1]) : ((f[1]>1900 && f[1]<2100 && f[2]==="") ? String(f[1]) : fmt(f[1])) + (f[2] ? " "+f[2] : "");
+      u2.appendChild(el("li","", f[0]+": "+w)); }); lo.appendChild(u2); }
+  lo.appendChild(el("p","", t.lo));
+  var bl = document.getElementById("loesung"); if(bl){ bl.disabled = true; bl.textContent = "Lösung geöffnet"; }
+}
+
+/* ---------- 60-Sekunden-Sperre: zählt nur, solange die Aufgabe sichtbar ist ---------- */
+function knopf(){
+  var t = aufg(S.pos), bl = document.getElementById("loesung"); if(!bl) return;
+  var a = S.a[t.id] || {};
+  if(a.auf){ bl.disabled = true; bl.textContent = "Lösung geöffnet"; return; }
+  if(offen(t.id)){ bl.disabled = false; bl.textContent = "Lösung anzeigen"; }
+  else { bl.disabled = true; bl.textContent = "Lösung in "+(SPERRE-(S.sek[t.id]||0))+" s"; }
+}
+function uhr(){
+  if(timer) clearInterval(timer);
+  knopf();
+  timer = setInterval(function(){
+    var id = S.pos;
+    if(document.hidden || offen(id)) { knopf(); return; }
+    S.sek[id] = (S.sek[id]||0) + 1;
+    if(S.sek[id] % 5 === 0 || offen(id)) sichern();
+    knopf();
+  }, 1000);
+}
+
+/* ---------- Zurücksetzen (zweistufig, ohne Dialogfenster) ---------- */
+var rs = document.getElementById("reset"), rsT = null;
+rs.addEventListener("click", function(){
+  if(rs.dataset.sicher==="1"){ S = {a:{}, sek:{}, pos:T[0].id, fl:0, fs:0}; sichern(); rs.dataset.sicher = ""; rs.textContent = "Alles zurücksetzen"; alles(); return; }
+  rs.dataset.sicher = "1"; rs.textContent = "Wirklich alles löschen? Nochmals klicken";
+  clearTimeout(rsT); rsT = setTimeout(function(){ rs.dataset.sicher = ""; rs.textContent = "Alles zurücksetzen"; }, 4000);
+});
+
+if(!passt(aufg(S.pos))){ var l0 = liste(); if(l0.length) S.pos = l0[0].id; }
+alles();
+try{ localStorage.setItem(KEY+"_t","1"); localStorage.removeItem(KEY+"_t"); }catch(e){ speicherOk = false; }
+if(!speicherOk) document.getElementById("speicher").textContent = "Speichern ist in diesem Rahmen blockiert: Ihr Stand gilt nur, solange die Seite offen ist. Die Lösung lässt sich jeweils nach 60 Sekunden öffnen.";
+window.__ueb = {T:T, S:function(){ return S; }};
+})();
+</script>
+</body>
+</html>
