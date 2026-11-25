@@ -50,6 +50,27 @@ body.eingebettet header{margin-bottom:10px;padding-bottom:6px}
 body.eingebettet h1{font-size:20px}
 body.eingebettet .stand{position:sticky;top:0;z-index:2;box-shadow:0 2px 6px rgba(0,0,0,.08)}
 @media print{.stand button{display:none}main{padding:0}h2{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+
+.pdfpanel{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;margin:10px 0 0;padding:10px 14px;border:1px solid var(--linie);border-radius:6px}
+.pdfpanel[hidden],.pdfhinweis[hidden],#pdflink[hidden]{display:none}
+.pdfpanel input{font:inherit;padding:5px 8px;border:1px solid var(--linie);border-radius:4px;min-width:200px;flex:1 1 200px;max-width:320px}
+.pdfpanel small{flex-basis:100%;font-size:12px;opacity:.75}
+.pdfpanel a{font-size:13px}
+.pdfhinweis{margin:10px 0 0;padding:8px 12px;border-radius:6px;background:#FBF3DC;color:#3a2f00;font-size:14px}
+#pdfkopf{display:none}
+.stand .knoepfe{display:flex;flex-direction:column;gap:6px}
+@media print{
+  #pdfkopf{display:block;margin:0 0 12px;padding:8px 12px;border:1px solid #8A9EA3;font-size:13px;line-height:1.5}
+  #pdfkopf b{font-size:14px}
+  .stand button,.pdfpanel,.pdfhinweis,#speicherhinweis{display:none!important}
+  body.eingebettet .stand{position:static;box-shadow:none}
+  td.ok input{display:none}
+  td.ok::after{content:"☐";font-size:16px}
+  tr:has(input:checked) td.ok::after{content:"✓";font-weight:700}
+  tr.np td.ok::after{content:"–"}
+  tr{break-inside:avoid} h2,h3{break-after:avoid}
+  tr:has(input:checked) td{background:none}
+}
 </style>
 </head>
 <body>
@@ -82,8 +103,17 @@ body.eingebettet .stand{position:sticky;top:0;z-index:2;box-shadow:0 2px 6px rgb
     <span><i class="ie" id="farbe"></i>erledigt <strong id="ne">0</strong></span><span><i class="io"></i>offen <strong id="no">40</strong></span>
     <small id="speicherhinweis">Ihr Stand bleibt in diesem Browser gespeichert.</small>
   </div>
-  <button type="button" id="reset">Alle Häkchen entfernen</button>
+  <div class="knoepfe"><button type="button" id="pdfbtn">Als PDF speichern</button><button type="button" id="reset">Alle Häkchen entfernen</button></div>
 </div>
+<div class="pdfpanel" id="pdfpanel" hidden>
+  <label for="pdfname">Ihr Name für das PDF</label>
+  <input id="pdfname" type="text" maxlength="60" autocomplete="off">
+  <button type="button" id="pdfgo">PDF erstellen</button>
+  <a id="pdflink" target="_blank" rel="noopener" hidden>Öffnet sich kein Druckfenster? Hier in eigenem Tab öffnen</a>
+  <small>Wählen Sie im Druckfenster «Als PDF sichern». Ihr Name bleibt auf diesem Gerät.</small>
+</div>
+<p class="pdfhinweis" id="pdfhinweis" hidden></p>
+<div id="pdfkopf"></div>
 
 <section class="kap"><h2><span>Versicherungen</span>Risiko, Solidarität, Unfall und Haftpflicht · Leistungsziel F.4.2.B</h2><h3>Block A · Risiko und Versicherungsprinzip</h3><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">1</td><td>Sie erklären den Begriff Risiko und nennen die drei Schritte des Risikomanagements.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 1 erreicht"></td></tr><tr><td class="nr">2</td><td>Sie beschreiben die drei Risikotypen und ordnen ihnen Verhaltensweisen aus dem Alltag zu.</td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 2 erreicht"></td></tr><tr><td class="nr">3</td><td>Sie erklären das Solidaritätsprinzip mit den Begriffen Prämie, Versicherungsgesellschaft und Schaden und begründen, warum es nur mit vielen Versicherten funktioniert.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 3 erreicht"></td></tr><tr><td class="nr">4</td><td>Sie definieren den Begriff Versicherung und begründen, warum Menschen das Bedürfnis haben, sich gegen finanzielle Risiken abzusichern.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 4 erreicht"></td></tr><tr><td class="nr">5</td><td>Sie nennen die beiden Vertragsparteien einer Versicherung und erklären die Begriffe Police, Allgemeine Versicherungsbedingungen und Prämie.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 5 erreicht"></td></tr></tbody></table><h3>Block B · Arten der Versicherung</h3><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">6</td><td>Sie nennen die drei Arten der Versicherung und erklären, was bei jeder Art versichert ist.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 6 erreicht"></td></tr><tr><td class="nr">7</td><td>Sie ordnen konkrete Versicherungen aus dem Alltag der richtigen Art zu.</td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 7 erreicht"></td></tr><tr><td class="nr">8</td><td>Sie unterscheiden obligatorische Sozialversicherungen von freiwilligen Privatversicherungen und nennen zu beiden Beispiele.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 8 erreicht"></td></tr><tr><td class="nr">9</td><td>Sie erklären, welche persönlichen Schäden aufgrund risikoreichen Verhaltens nicht mit einer Versicherung abgedeckt werden können.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 9 erreicht"></td></tr></tbody></table><h3>Block C · Unfall und Krankheit</h3><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">10</td><td>Sie nennen die fünf Bedingungen, die einen Unfall im Sinne des Gesetzes ausmachen.</td><td class="k">K1</td><td class="ok"><input type="checkbox" aria-label="Lernziel 10 erreicht"></td></tr><tr><td class="nr">11</td><td>Sie beurteilen an Fallbeispielen, ob versicherungsrechtlich ein Unfall oder eine Krankheit vorliegt, und begründen mit den fünf Bedingungen.</td><td class="k">K4</td><td class="ok"><input type="checkbox" aria-label="Lernziel 11 erreicht"></td></tr><tr><td class="nr">12</td><td>Sie unterscheiden Berufsunfall und Nichtberufsunfall und erklären, wer die Prämie bezahlt.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 12 erreicht"></td></tr><tr><td class="nr">13</td><td>Sie erklären, was für die Unfallversicherung gilt, wenn jemand weniger als acht Stunden pro Woche arbeitet.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 13 erreicht"></td></tr><tr><td class="nr">14</td><td>Sie erklären die Lohnfortzahlungspflicht des Arbeitgebers bei Krankheit und den Zweck einer Krankentaggeldversicherung.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 14 erreicht"></td></tr><tr><td class="nr">15</td><td>Sie erklären, welche Kostenanteile bei medizinischen Behandlungen selbst bezahlt werden müssen, und beschreiben, wie Franchise und Selbstbehalt die Prämie beeinflussen.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 15 erreicht"></td></tr><tr><td class="nr">16</td><td>Sie erklären am Beispiel eines Schneesportunfalls, welche Kosten entstehen und wer sie trägt.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 16 erreicht"></td></tr></tbody></table><h3>Block D · Haftpflicht und Motorfahrzeug</h3><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">17</td><td>Sie erklären, warum die Motorfahrzeughaftpflichtversicherung obligatorisch ist und welche Schäden sie deckt.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 17 erreicht"></td></tr><tr><td class="nr">18</td><td>Sie erklären den Begriff Regress und nennen Beispiele für grobe Fahrlässigkeit im Strassenverkehr.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 18 erreicht"></td></tr><tr><td class="nr">19</td><td>Sie berechnen an einem Fallbeispiel den Regressbetrag und beurteilen die Folgen für die verursachende Person.</td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 19 erreicht"></td></tr><tr><td class="nr">20</td><td>Sie unterscheiden Teilkasko und Vollkasko und beurteilen, wann eine Vollkaskoversicherung sinnvoll ist.</td><td class="k">K4</td><td class="ok"><input type="checkbox" aria-label="Lernziel 20 erreicht"></td></tr><tr><td class="nr">21</td><td>Sie erklären das Bonus-Malus-System und seine Folgen für die Prämie.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 21 erreicht"></td></tr><tr><td class="nr">22</td><td>Sie erklären die rechtlichen und versicherungstechnischen Folgen, wenn jemand ohne passenden Führerausweis fährt.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 22 erreicht"></td></tr><tr><td class="nr">23</td><td>Sie begründen, weshalb eine Privathaftpflichtversicherung ratsam ist, und entscheiden an Schadenbeispielen aus dem Alltag, welche Versicherung bezahlt.</td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 23 erreicht"></td></tr></tbody></table></section><section class="kap"><h2><span>Ökologie</span>Energie, Klimawandel und nachhaltiges Handeln · Leistungsziele F.4.3.A und F.4.3.B</h2><h3>Block E · Grundbegriffe und Energie</h3><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">24</td><td>Sie erklären die Begriffe Ökologie, Ressource, Nachhaltigkeit und ökologischer Fussabdruck in eigenen Worten.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 24 erreicht"></td></tr><tr><td class="nr">25</td><td>Sie unterscheiden erneuerbare und nicht erneuerbare Energieträger und ordnen Beispiele zu.</td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 25 erreicht"></td></tr><tr><td class="nr">26</td><td>Sie beschreiben zu je zwei erneuerbaren und nicht erneuerbaren Energiequellen einen Vorteil und einen Nachteil.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 26 erreicht"></td></tr><tr><td class="nr">27</td><td>Sie nennen den Energieträger mit dem grössten Anteil am Endenergieverbrauch der Schweiz und begründen, warum das aus ökologischer Sicht problematisch ist.</td><td class="k">K1</td><td class="ok"><input type="checkbox" aria-label="Lernziel 27 erreicht"></td></tr></tbody></table><h3>Block F · Treibhauseffekt und Klimawandel</h3><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">28</td><td>Sie erklären die Funktionsweise des Treibhauseffekts mit dem Vergleich zum Gewächshaus.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 28 erreicht"></td></tr><tr><td class="nr">29</td><td>Sie unterscheiden den natürlichen vom anthropogenen Treibhauseffekt.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 29 erreicht"></td></tr><tr><td class="nr">30</td><td>Sie beschreiben den Kohlenstoffkreislauf und erklären die Rolle der fossilen Brennstoffe darin.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 30 erreicht"></td></tr><tr><td class="nr">31</td><td>Sie erklären die Kausalkette von der Nutzung fossiler Energieträger bis zu den spürbaren Folgen im Alltag.</td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 31 erreicht"></td></tr><tr><td class="nr">32</td><td>Sie beschreiben Ursachen und Auswirkungen des Klimawandels anhand von konkreten Beispielen.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 32 erreicht"></td></tr></tbody></table><h3>Block G · Nachhaltig handeln</h3><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">33</td><td>Sie erklären die Notwendigkeit nachhaltigen Handelns anhand eines konkreten Beispiels.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 33 erreicht"></td></tr><tr><td class="nr">34</td><td>Sie erklären Herstellung und Recycling von Aludosen und beurteilen, ob Getränkedosen aus Aluminium ökologisch problematisch sind.</td><td class="k">K4</td><td class="ok"><input type="checkbox" aria-label="Lernziel 34 erreicht"></td></tr><tr><td class="nr">35</td><td>Sie beschreiben den korrekten Umgang mit gebrauchten Batterien und begründen ihn.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 35 erreicht"></td></tr><tr><td class="nr">36</td><td>Sie nennen Massnahmen zum Energiesparen im Alltag und begründen ihre Wirkung.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 36 erreicht"></td></tr><tr><td class="nr">37</td><td>Sie erklären, was der Earth Overshoot Day über den Ressourcenverbrauch eines Landes aussagt.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 37 erreicht"></td></tr><tr><td class="nr">38</td><td>Sie erklären den Begriff Greenwashing und erkennen ihn an einem Beispiel.</td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 38 erreicht"></td></tr><tr><td class="nr">39</td><td>Sie erklären am Beispiel Palmöl die Zielkonflikte zwischen Wirtschaft, Umwelt und Konsum.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 39 erreicht"></td></tr><tr><td class="nr">40</td><td>Sie analysieren das eigene Konsumverhalten und leiten daraus zwei konkrete Verbesserungen ab.</td><td class="k">K4</td><td class="ok"><input type="checkbox" aria-label="Lernziel 40 erreicht"></td></tr></tbody></table></section>
 
@@ -92,6 +122,7 @@ body.eingebettet .stand{position:sticky;top:0;z-index:2;box-shadow:0 2px 6px rgb
 <script>
 (function(){
   if(window.self!==window.top){document.body.classList.add('eingebettet');}
+  var nurAnzeige=false;
   var boxes=document.querySelectorAll('.ok input'),stand=document.getElementById('stand');
   var ring=document.getElementById('ringdone'),pct=document.getElementById('ringpct'),ne=document.getElementById('ne'),no=document.getElementById('no'),farbe=document.getElementById('farbe');
   var U=2*Math.PI*40;
@@ -101,7 +132,7 @@ body.eingebettet .stand{position:sticky;top:0;z-index:2;box-shadow:0 2px 6px rgb
   var hinweis=document.getElementById('speicherhinweis');
   function kannSpeichern(){try{localStorage.setItem(KEY+'_t','1');localStorage.removeItem(KEY+'_t');return true;}catch(e){return false;}}
   function lesen(){try{var s=localStorage.getItem(KEY);if(!s)return;var a=JSON.parse(s);boxes.forEach(function(b,i){b.checked=!!a[i]});}catch(e){}}
-  function speichern(){try{var a=[];boxes.forEach(function(b){a.push(b.checked?1:0)});localStorage.setItem(KEY,JSON.stringify(a));}catch(e){}}
+  function speichern(){if(nurAnzeige)return;try{var a=[];boxes.forEach(function(b){a.push(b.checked?1:0)});localStorage.setItem(KEY,JSON.stringify(a));}catch(e){}}
   function statusZeigen(){
     if(kannSpeichern()){hinweis.innerHTML='Ihr Stand bleibt in diesem Browser gespeichert.';return;}
     hinweis.innerHTML='Speichern ist in diesem Rahmen blockiert. <a href="'+location.href.split('?')[0]+'" target="_blank" rel="noopener">Liste in eigenem Tab öffnen</a>, dort bleibt der Stand erhalten.';
@@ -117,7 +148,35 @@ body.eingebettet .stand{position:sticky;top:0;z-index:2;box-shadow:0 2px 6px rgb
     var c=farbeFuer(f);ring.style.stroke=c;farbe.style.background=c;}
   boxes.forEach(function(b){b.addEventListener('change',z)});
   document.getElementById('reset').addEventListener('click',function(){boxes.forEach(function(b){b.checked=false});z();});
+
+  /* ---------- Als PDF speichern ---------- */
+  var pp=document.getElementById('pdfpanel'),pn=document.getElementById('pdfname'),pk=document.getElementById('pdfkopf'),pl=document.getElementById('pdflink'),ph=document.getElementById('pdfhinweis');
+  try{pn.value=localStorage.getItem(KEY+'_name')||'';}catch(e){}
+  function zwei(n){return (n<10?'0':'')+n;}
+  function jetzt(){var d=new Date();return zwei(d.getDate())+'.'+zwei(d.getMonth()+1)+'.'+d.getFullYear()+', '+zwei(d.getHours())+':'+zwei(d.getMinutes())+' Uhr';}
+  function pdfKopf(){var n=0,m=0;boxes.forEach(function(b){if(b.disabled)return;m++;if(b.checked)n++;});
+    var name=(pn.value||'').trim();pk.textContent='';
+    var b=document.createElement('b');b.textContent='Name: '+(name||'______________________');pk.appendChild(b);
+    pk.appendChild(document.createElement('br'));
+    pk.appendChild(document.createTextNode('Stand vom '+jetzt()+' · '+n+' von '+m+' Lernzielen abgehakt ('+(m?Math.round(100*n/m):0)+' %)'));
+    pk.appendChild(document.createElement('br'));
+    pk.appendChild(document.createTextNode('Selbsteinschätzung: Die Häkchen hat die lernende Person selbst gesetzt.'));}
+  function pdfAdresse(){var bits='';boxes.forEach(function(b){bits+=b.checked?'1':'0';});
+    return location.href.split('#')[0]+'#pdf='+bits+'&n='+encodeURIComponent((pn.value||'').trim());}
+  function drucken(){try{if(!nurAnzeige)localStorage.setItem(KEY+'_name',(pn.value||'').trim());}catch(e){}
+    pdfKopf();if(pl){pl.href=pdfAdresse();pl.hidden=!(window.self!==window.top);}
+    try{window.print();}catch(e){if(pl)pl.hidden=false;}}
+  document.getElementById('pdfbtn').addEventListener('click',function(){pp.hidden=!pp.hidden;if(!pp.hidden){try{pn.focus();}catch(e){}}});
+  document.getElementById('pdfgo').addEventListener('click',drucken);
+  pn.addEventListener('keydown',function(e){if(e.key==='Enter')drucken();});
+  if(pl){pl.addEventListener('click',function(){pl.href=pdfAdresse();});}
   lesen();z();statusZeigen();
+  var mit=/^#pdf=([01]+)(?:&n=(.*))?$/.exec(location.hash);
+  if(mit&&mit[1].length===boxes.length){nurAnzeige=true;
+    boxes.forEach(function(b,i){b.checked=mit[1].charAt(i)==='1';});z();
+    try{pn.value=decodeURIComponent(mit[2]||'');}catch(e){}
+    pp.hidden=false;ph.hidden=false;ph.textContent='Das ist Ihr Stand aus kv digital. Änderungen in diesem Fenster werden nicht gespeichert. Klicken Sie auf «PDF erstellen».';
+    setTimeout(function(){drucken();},600);}
 })();
 </script>
 </body>

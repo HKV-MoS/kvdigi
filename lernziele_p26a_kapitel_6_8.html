@@ -51,6 +51,27 @@ body.eingebettet header{margin-bottom:10px;padding-bottom:6px}
 body.eingebettet h1{font-size:20px}
 body.eingebettet .stand{position:sticky;top:0;z-index:2;box-shadow:0 2px 6px rgba(0,0,0,.08)}
 @media print{.stand button{display:none}main{padding:0}h2{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+
+.pdfpanel{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;margin:10px 0 0;padding:10px 14px;border:1px solid var(--linie);border-radius:6px}
+.pdfpanel[hidden],.pdfhinweis[hidden],#pdflink[hidden]{display:none}
+.pdfpanel input{font:inherit;padding:5px 8px;border:1px solid var(--linie);border-radius:4px;min-width:200px;flex:1 1 200px;max-width:320px}
+.pdfpanel small{flex-basis:100%;font-size:12px;opacity:.75}
+.pdfpanel a{font-size:13px}
+.pdfhinweis{margin:10px 0 0;padding:8px 12px;border-radius:6px;background:#FBF3DC;color:#3a2f00;font-size:14px}
+#pdfkopf{display:none}
+.stand .knoepfe{display:flex;flex-direction:column;gap:6px}
+@media print{
+  #pdfkopf{display:block;margin:0 0 12px;padding:8px 12px;border:1px solid #8A9EA3;font-size:13px;line-height:1.5}
+  #pdfkopf b{font-size:14px}
+  .stand button,.pdfpanel,.pdfhinweis,#speicherhinweis{display:none!important}
+  body.eingebettet .stand{position:static;box-shadow:none}
+  td.ok input{display:none}
+  td.ok::after{content:"☐";font-size:16px}
+  tr:has(input:checked) td.ok::after{content:"✓";font-weight:700}
+  tr.np td.ok::after{content:"–"}
+  tr{break-inside:avoid} h2,h3{break-after:avoid}
+  tr:has(input:checked) td{background:none}
+}
 </style>
 </head>
 <body>
@@ -82,8 +103,17 @@ body.eingebettet .stand{position:sticky;top:0;z-index:2;box-shadow:0 2px 6px rgb
     <span><i class="ie" id="farbe"></i>erledigt <strong id="ne">0</strong></span><span><i class="io"></i>offen <strong id="no">23</strong></span>
     <small id="speicherhinweis">Ihr Stand bleibt in diesem Browser gespeichert.</small>
   </div>
-  <button type="button" id="reset">Alle Häkchen entfernen</button>
+  <div class="knoepfe"><button type="button" id="pdfbtn">Als PDF speichern</button><button type="button" id="reset">Alle Häkchen entfernen</button></div>
 </div>
+<div class="pdfpanel" id="pdfpanel" hidden>
+  <label for="pdfname">Ihr Name für das PDF</label>
+  <input id="pdfname" type="text" maxlength="60" autocomplete="off">
+  <button type="button" id="pdfgo">PDF erstellen</button>
+  <a id="pdflink" target="_blank" rel="noopener" hidden>Öffnet sich kein Druckfenster? Hier in eigenem Tab öffnen</a>
+  <small>Wählen Sie im Druckfenster «Als PDF sichern». Ihr Name bleibt auf diesem Gerät.</small>
+</div>
+<p class="pdfhinweis" id="pdfhinweis" hidden></p>
+<div id="pdfkopf"></div>
 
 <section class="kap"><h2><span>Kapitel 6</span>Arbeit – Schule – Freizeit in Balance</h2><h3>Block A · Die Woche planen</h3><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">1</td><td>Sie nennen die Anzahl Stunden einer Woche und den Richtwert für den Schlaf.</td><td class="k">K1</td><td class="ok"><input type="checkbox" aria-label="Lernziel 1 erreicht"></td></tr><tr><td class="nr">2</td><td>Sie beurteilen einen vorgegebenen Wochenplan nach festgelegten Kriterien und leiten begründete Verbesserungen ab.</td><td class="k">K4</td><td class="ok"><input type="checkbox" aria-label="Lernziel 2 erreicht"></td></tr><tr><td class="nr">3</td><td>Sie ordnen Aufgaben mit der Eisenhower-Matrix ein.</td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 3 erreicht"></td></tr></tbody></table><h3>Block B · Belastung und Erholung</h3><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">4</td><td>Sie nennen mindestens drei Warnsignale von Überlastung.</td><td class="k">K1</td><td class="ok"><input type="checkbox" aria-label="Lernziel 4 erreicht"></td></tr><tr><td class="nr">5</td><td>Sie erklären, wann Belastung nützlich ist und wann sie schädlich wird.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 5 erreicht"></td></tr><tr><td class="nr">6</td><td>Sie ordnen Warnsignalen in einem Fallbeispiel passende, umsetzbare Gegenmassnahmen zu.</td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 6 erreicht"></td></tr></tbody></table></section><section class="kap"><h2><span>Kapitel 7</span>Gesundheit: physisch, psychisch, sozial</h2><h3>Block C · Drei Dimensionen der Gesundheit</h3><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">7</td><td>Sie erklären die drei Dimensionen der Gesundheit mit je einem Beispiel.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 7 erreicht"></td></tr></tbody></table><h3>Block D · Stress und Unterstützung</h3><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">8</td><td>Sie unterscheiden Eustress und Distress und erklären, unter welchen Bedingungen Stress schädlich wird.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 8 erreicht"></td></tr><tr><td class="nr">9</td><td>Sie begründen, warum frühes Hilfeholen bei psychischer Belastung sinnvoll ist.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 9 erreicht"></td></tr></tbody></table><h3>Block E · Ernährung, Bewegung und Sport</h3><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">10</td><td>Sie beurteilen eine Diät oder einen Ernährungstrend aus Social Media kritisch anhand der Definition von Diät.</td><td class="k">K4</td><td class="ok"><input type="checkbox" aria-label="Lernziel 10 erreicht"></td></tr><tr><td class="nr">11</td><td>Sie begründen mit mindestens drei Argumenten, warum Sport gesund ist.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 11 erreicht"></td></tr></tbody></table></section><section class="kap"><h2><span>Kapitel 8</span>Lehrvertrag und OR-Grundlagen · Schwerpunkt</h2><h3>Block F · Obligationenrecht und Lehrvertrag</h3><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">12</td><td>Sie ordnen das Obligationenrecht in das Schweizer Recht ein, nennen Vertragsarten, die darin geregelt sind, und die Artikel, die den Lehrvertrag regeln.</td><td class="k">K1</td><td class="ok"><input type="checkbox" aria-label="Lernziel 12 erreicht"></td></tr><tr><td class="nr">13</td><td>Sie erklären, worin sich der Lehrvertrag von einem gewöhnlichen Arbeitsvertrag unterscheidet.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 13 erreicht"></td></tr></tbody></table><h3>Block G · Parteien, Form und Genehmigung</h3><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">14</td><td>Sie nennen die Vertragsparteien und erklären, wer bei minderjährigen Lernenden zusätzlich zustimmen muss und warum.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 14 erreicht"></td></tr><tr><td class="nr">15</td><td>Sie erklären die Formvorschrift des Lehrvertrags und nennen die Stelle, die ihn prüft und genehmigt.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 15 erreicht"></td></tr></tbody></table><h3>Block H · Obligatorische Bestandteile und zwingendes Recht</h3><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">16</td><td>Sie nennen die obligatorischen Bestandteile des Lehrvertrags und unterscheiden sie von freiwilligen Regelungen.</td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 16 erreicht"></td></tr><tr><td class="nr">17</td><td>Sie erklären den Begriff «zwingendes Recht» und beurteilen damit, ob eine Vertragsklausel zulässig ist.</td><td class="k">K4</td><td class="ok"><input type="checkbox" aria-label="Lernziel 17 erreicht"></td></tr></tbody></table><h3>Block I · Probezeit</h3><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">18</td><td>Sie nennen die gesetzliche Mindest- und Höchstdauer der Probezeit, die Regel ohne Vereinbarung und die Bedingungen für eine Verlängerung.</td><td class="k">K1</td><td class="ok"><input type="checkbox" aria-label="Lernziel 18 erreicht"></td></tr><tr><td class="nr">19</td><td>Sie erklären den Zweck der Probezeit und nennen die Kündigungsfrist während der Probezeit.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 19 erreicht"></td></tr></tbody></table><h3>Block J · Dauer und Beendigung</h3><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">20</td><td>Sie erklären, wann ein Lehrvertrag normalerweise endet und warum eine ordentliche Kündigung nach der Probezeit nicht vorgesehen ist.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 20 erreicht"></td></tr><tr><td class="nr">21</td><td>Sie nennen die Möglichkeiten, einen Lehrvertrag vorzeitig zu beenden, erklären den Begriff «wichtiger Grund» und wissen, wer bei einer Auflösung informiert werden muss.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 21 erreicht"></td></tr><tr><td class="nr">22</td><td>Sie beurteilen an einem Fallbeispiel, ob und wie ein Lehrverhältnis beendet werden kann, und begründen mit dem Gesetz.</td><td class="k">K4</td><td class="ok"><input type="checkbox" aria-label="Lernziel 22 erreicht"></td></tr></tbody></table><h3>Block K · Anwendung: einen Lehrvertrag prüfen</h3><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">23</td><td>Sie prüfen einen kurzen Vertragsauszug, erkennen unzulässige oder fehlende Regelungen und begründen, weshalb sie nicht zulässig sind.</td><td class="k">K5</td><td class="ok"><input type="checkbox" aria-label="Lernziel 23 erreicht"></td></tr></tbody></table></section>
 
@@ -92,6 +122,7 @@ body.eingebettet .stand{position:sticky;top:0;z-index:2;box-shadow:0 2px 6px rgb
 <script>
 (function(){
   if(window.self!==window.top){document.body.classList.add('eingebettet');}
+  var nurAnzeige=false;
   var boxes=document.querySelectorAll('.ok input'),stand=document.getElementById('stand');
   var ring=document.getElementById('ringdone'),pct=document.getElementById('ringpct'),ne=document.getElementById('ne'),no=document.getElementById('no'),farbe=document.getElementById('farbe');
   var U=2*Math.PI*40;
@@ -101,7 +132,7 @@ body.eingebettet .stand{position:sticky;top:0;z-index:2;box-shadow:0 2px 6px rgb
   var hinweis=document.getElementById('speicherhinweis');
   function kannSpeichern(){try{localStorage.setItem(KEY+'_t','1');localStorage.removeItem(KEY+'_t');return true;}catch(e){return false;}}
   function lesen(){try{var s=localStorage.getItem(KEY);if(!s)return;var a=JSON.parse(s);boxes.forEach(function(b,i){b.checked=!!a[i]});}catch(e){}}
-  function speichern(){try{var a=[];boxes.forEach(function(b){a.push(b.checked?1:0)});localStorage.setItem(KEY,JSON.stringify(a));}catch(e){}}
+  function speichern(){if(nurAnzeige)return;try{var a=[];boxes.forEach(function(b){a.push(b.checked?1:0)});localStorage.setItem(KEY,JSON.stringify(a));}catch(e){}}
   function statusZeigen(){
     if(kannSpeichern()){hinweis.innerHTML='Ihr Stand bleibt in diesem Browser gespeichert.';return;}
     hinweis.innerHTML='Speichern ist in diesem Rahmen blockiert. <a href="'+location.href.split('?')[0]+'" target="_blank" rel="noopener">Liste in eigenem Tab öffnen</a>, dort bleibt der Stand erhalten.';
@@ -117,7 +148,35 @@ body.eingebettet .stand{position:sticky;top:0;z-index:2;box-shadow:0 2px 6px rgb
     var c=farbeFuer(f);ring.style.stroke=c;farbe.style.background=c;}
   boxes.forEach(function(b){b.addEventListener('change',z)});
   document.getElementById('reset').addEventListener('click',function(){boxes.forEach(function(b){b.checked=false});z();});
+
+  /* ---------- Als PDF speichern ---------- */
+  var pp=document.getElementById('pdfpanel'),pn=document.getElementById('pdfname'),pk=document.getElementById('pdfkopf'),pl=document.getElementById('pdflink'),ph=document.getElementById('pdfhinweis');
+  try{pn.value=localStorage.getItem(KEY+'_name')||'';}catch(e){}
+  function zwei(n){return (n<10?'0':'')+n;}
+  function jetzt(){var d=new Date();return zwei(d.getDate())+'.'+zwei(d.getMonth()+1)+'.'+d.getFullYear()+', '+zwei(d.getHours())+':'+zwei(d.getMinutes())+' Uhr';}
+  function pdfKopf(){var n=0,m=0;boxes.forEach(function(b){if(b.disabled)return;m++;if(b.checked)n++;});
+    var name=(pn.value||'').trim();pk.textContent='';
+    var b=document.createElement('b');b.textContent='Name: '+(name||'______________________');pk.appendChild(b);
+    pk.appendChild(document.createElement('br'));
+    pk.appendChild(document.createTextNode('Stand vom '+jetzt()+' · '+n+' von '+m+' Lernzielen abgehakt ('+(m?Math.round(100*n/m):0)+' %)'));
+    pk.appendChild(document.createElement('br'));
+    pk.appendChild(document.createTextNode('Selbsteinschätzung: Die Häkchen hat die lernende Person selbst gesetzt.'));}
+  function pdfAdresse(){var bits='';boxes.forEach(function(b){bits+=b.checked?'1':'0';});
+    return location.href.split('#')[0]+'#pdf='+bits+'&n='+encodeURIComponent((pn.value||'').trim());}
+  function drucken(){try{if(!nurAnzeige)localStorage.setItem(KEY+'_name',(pn.value||'').trim());}catch(e){}
+    pdfKopf();if(pl){pl.href=pdfAdresse();pl.hidden=!(window.self!==window.top);}
+    try{window.print();}catch(e){if(pl)pl.hidden=false;}}
+  document.getElementById('pdfbtn').addEventListener('click',function(){pp.hidden=!pp.hidden;if(!pp.hidden){try{pn.focus();}catch(e){}}});
+  document.getElementById('pdfgo').addEventListener('click',drucken);
+  pn.addEventListener('keydown',function(e){if(e.key==='Enter')drucken();});
+  if(pl){pl.addEventListener('click',function(){pl.href=pdfAdresse();});}
   lesen();z();statusZeigen();
+  var mit=/^#pdf=([01]+)(?:&n=(.*))?$/.exec(location.hash);
+  if(mit&&mit[1].length===boxes.length){nurAnzeige=true;
+    boxes.forEach(function(b,i){b.checked=mit[1].charAt(i)==='1';});z();
+    try{pn.value=decodeURIComponent(mit[2]||'');}catch(e){}
+    pp.hidden=false;ph.hidden=false;ph.textContent='Das ist Ihr Stand aus kv digital. Änderungen in diesem Fenster werden nicht gespeichert. Klicken Sie auf «PDF erstellen».';
+    setTimeout(function(){drucken();},600);}
 })();
 </script>
 </body>

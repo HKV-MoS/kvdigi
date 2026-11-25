@@ -51,6 +51,27 @@ body.eingebettet header{margin-bottom:10px;padding-bottom:6px}
 body.eingebettet h1{font-size:20px}
 body.eingebettet .stand{position:sticky;top:0;z-index:2;box-shadow:0 2px 6px rgba(0,0,0,.08)}
 @media print{.stand button{display:none}main{padding:0}h2{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+
+.pdfpanel{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;margin:10px 0 0;padding:10px 14px;border:1px solid var(--linie);border-radius:6px}
+.pdfpanel[hidden],.pdfhinweis[hidden],#pdflink[hidden]{display:none}
+.pdfpanel input{font:inherit;padding:5px 8px;border:1px solid var(--linie);border-radius:4px;min-width:200px;flex:1 1 200px;max-width:320px}
+.pdfpanel small{flex-basis:100%;font-size:12px;opacity:.75}
+.pdfpanel a{font-size:13px}
+.pdfhinweis{margin:10px 0 0;padding:8px 12px;border-radius:6px;background:#FBF3DC;color:#3a2f00;font-size:14px}
+#pdfkopf{display:none}
+.stand .knoepfe{display:flex;flex-direction:column;gap:6px}
+@media print{
+  #pdfkopf{display:block;margin:0 0 12px;padding:8px 12px;border:1px solid #8A9EA3;font-size:13px;line-height:1.5}
+  #pdfkopf b{font-size:14px}
+  .stand button,.pdfpanel,.pdfhinweis,#speicherhinweis{display:none!important}
+  body.eingebettet .stand{position:static;box-shadow:none}
+  td.ok input{display:none}
+  td.ok::after{content:"☐";font-size:16px}
+  tr:has(input:checked) td.ok::after{content:"✓";font-weight:700}
+  tr.np td.ok::after{content:"–"}
+  tr{break-inside:avoid} h2,h3{break-after:avoid}
+  tr:has(input:checked) td{background:none}
+}
 </style>
 </head>
 <body>
@@ -82,8 +103,17 @@ body.eingebettet .stand{position:sticky;top:0;z-index:2;box-shadow:0 2px 6px rgb
     <span><i class="ie" id="farbe"></i>erledigt <strong id="ne">0</strong></span><span><i class="io"></i>offen <strong id="no">19</strong></span>
     <small id="speicherhinweis">Ihr Stand bleibt in diesem Browser gespeichert.</small>
   </div>
-  <button type="button" id="reset">Alle Häkchen entfernen</button>
+  <div class="knoepfe"><button type="button" id="pdfbtn">Als PDF speichern</button><button type="button" id="reset">Alle Häkchen entfernen</button></div>
 </div>
+<div class="pdfpanel" id="pdfpanel" hidden>
+  <label for="pdfname">Ihr Name für das PDF</label>
+  <input id="pdfname" type="text" maxlength="60" autocomplete="off">
+  <button type="button" id="pdfgo">PDF erstellen</button>
+  <a id="pdflink" target="_blank" rel="noopener" hidden>Öffnet sich kein Druckfenster? Hier in eigenem Tab öffnen</a>
+  <small>Wählen Sie im Druckfenster «Als PDF sichern». Ihr Name bleibt auf diesem Gerät.</small>
+</div>
+<p class="pdfhinweis" id="pdfhinweis" hidden></p>
+<div id="pdfkopf"></div>
 
 <section class="kap"><h2><span>Teil A</span>Wozu Steuern und wer bezahlt sie</h2><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">1</td><td>Sie erklären, wozu der Staat Steuern braucht, und unterscheiden Steuern von Gebühren an Beispielen.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 1 erreicht"></td></tr><tr><td class="nr">2</td><td>Sie erklären, wer in der Schweiz steuerpflichtig ist und ab wann Sie selbst Ihren Lohn versteuern und eine eigene Steuererklärung ausfüllen.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 2 erreicht"></td></tr><tr><td class="nr">3</td><td>Sie bestimmen an einem Fall, wo und wie eine Person besteuert wird, zum Beispiel bei Umzug, Heirat, Auslandaufenthalt oder mit einer Aufenthaltsbewilligung.</td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 3 erreicht"></td></tr></tbody></table></section><section class="kap"><h2><span>Teil B</span>Steuerarten und Staatsebenen</h2><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">4</td><td>Sie unterscheiden direkte und indirekte Steuern und ordnen Beispiele richtig zu.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 4 erreicht"></td></tr><tr><td class="nr">5</td><td>Sie ordnen wichtige Steuern den Staatsebenen Bund, Kanton und Gemeinde zu.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 5 erreicht"></td></tr><tr><td class="nr">6</td><td>Sie erklären die Verrechnungssteuer und ihren Zweck und zeigen an einem Zinsausweis, was mit dem abgezogenen Betrag geschieht.</td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 6 erreicht"></td></tr><tr><td class="nr">7</td><td>Sie erklären, was eine Lenkungsabgabe ist, und nennen ein Beispiel.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 7 erreicht"></td></tr></tbody></table></section><section class="kap"><h2><span>Teil C</span>Wie hoch sind meine Steuern?</h2><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">8</td><td>Sie nennen die Faktoren, von denen die Höhe Ihrer Steuern abhängt.</td><td class="k">K1</td><td class="ok"><input type="checkbox" aria-label="Lernziel 8 erreicht"></td></tr><tr><td class="nr">9</td><td>Sie erklären die Begriffe Steuertarif, Steuerfuss und Progression und was die Progression für Ihren Lohn nach der Lehre bedeutet.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 9 erreicht"></td></tr><tr><td class="nr">10</td><td>Sie erklären, wer über Budget und Steuerfuss einer Gemeinde entscheidet und weshalb Gemeinden im gleichen Kanton unterschiedliche Steuerfüsse haben.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 10 erreicht"></td></tr><tr><td class="nr">11</td><td>Sie nennen Argumente für und gegen den Steuerwettbewerb und nehmen begründet Stellung.</td><td class="k">K4</td><td class="ok"><input type="checkbox" aria-label="Lernziel 11 erreicht"></td></tr></tbody></table></section><section class="kap"><h2><span>Teil D</span>Die Steuererklärung</h2><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">12</td><td>Sie erklären den Unterschied zwischen Einkommen und steuerbarem Einkommen und was zum steuerbaren Vermögen zählt.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 12 erreicht"></td></tr><tr><td class="nr">13</td><td>Sie entscheiden bei einzelnen Ausgaben, ob sie abziehbar, teilweise abziehbar oder nicht abziehbar sind, und begründen Ihren Entscheid.</td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 13 erreicht"></td></tr><tr><td class="nr">14</td><td>Sie stellen die Unterlagen zusammen, die Sie für Ihre Steuererklärung brauchen, und erklären, wozu jede dient.</td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 14 erreicht"></td></tr><tr><td class="nr">15</td><td>Sie beschreiben den Ablauf von der Steuererklärung bis zur definitiven Rechnung.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 15 erreicht"></td></tr><tr><td class="nr">16</td><td>Sie beschreiben, wie Sie vorgehen, wenn die Veranlagung falsch ist, wenn Sie die Frist verpassen oder wenn Sie die Rechnung nicht bezahlen können.</td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 16 erreicht"></td></tr><tr><td class="nr">17</td><td>Sie schätzen mit einem Steuerrechner die Steuern für eine vorgegebene Situation und vergleichen zwei Wohngemeinden.</td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 17 erreicht"></td></tr></tbody></table></section><section class="kap"><h2><span>Teil E</span>Ehrlich versteuern</h2><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">18</td><td>Sie unterscheiden Steueroptimierung, Steuerhinterziehung und Steuerbetrug und ordnen Fälle richtig zu.</td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 18 erreicht"></td></tr><tr><td class="nr">19</td><td>Sie nennen die Folgen einer Steuerhinterziehung, erklären, weshalb sie allen schadet, und beschreiben, wie Sie einen Fehler in einer früheren Steuererklärung korrigieren.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 19 erreicht"></td></tr></tbody></table></section>
 
@@ -92,6 +122,7 @@ body.eingebettet .stand{position:sticky;top:0;z-index:2;box-shadow:0 2px 6px rgb
 <script>
 (function(){
   if(window.self!==window.top){document.body.classList.add('eingebettet');}
+  var nurAnzeige=false;
   var boxes=document.querySelectorAll('.ok input'),stand=document.getElementById('stand');
   var ring=document.getElementById('ringdone'),pct=document.getElementById('ringpct'),ne=document.getElementById('ne'),no=document.getElementById('no'),farbe=document.getElementById('farbe');
   var U=2*Math.PI*40;
@@ -101,7 +132,7 @@ body.eingebettet .stand{position:sticky;top:0;z-index:2;box-shadow:0 2px 6px rgb
   var hinweis=document.getElementById('speicherhinweis');
   function kannSpeichern(){try{localStorage.setItem(KEY+'_t','1');localStorage.removeItem(KEY+'_t');return true;}catch(e){return false;}}
   function lesen(){try{var s=localStorage.getItem(KEY);if(!s)return;var a=JSON.parse(s);boxes.forEach(function(b,i){b.checked=!!a[i]});}catch(e){}}
-  function speichern(){try{var a=[];boxes.forEach(function(b){a.push(b.checked?1:0)});localStorage.setItem(KEY,JSON.stringify(a));}catch(e){}}
+  function speichern(){if(nurAnzeige)return;try{var a=[];boxes.forEach(function(b){a.push(b.checked?1:0)});localStorage.setItem(KEY,JSON.stringify(a));}catch(e){}}
   function statusZeigen(){
     if(kannSpeichern()){hinweis.innerHTML='Ihr Stand bleibt in diesem Browser gespeichert.';return;}
     hinweis.innerHTML='Speichern ist in diesem Rahmen blockiert. <a href="'+location.href.split('?')[0]+'" target="_blank" rel="noopener">Liste in eigenem Tab öffnen</a>, dort bleibt der Stand erhalten.';
@@ -117,7 +148,35 @@ body.eingebettet .stand{position:sticky;top:0;z-index:2;box-shadow:0 2px 6px rgb
     var c=farbeFuer(f);ring.style.stroke=c;farbe.style.background=c;}
   boxes.forEach(function(b){b.addEventListener('change',z)});
   document.getElementById('reset').addEventListener('click',function(){boxes.forEach(function(b){b.checked=false});z();});
+
+  /* ---------- Als PDF speichern ---------- */
+  var pp=document.getElementById('pdfpanel'),pn=document.getElementById('pdfname'),pk=document.getElementById('pdfkopf'),pl=document.getElementById('pdflink'),ph=document.getElementById('pdfhinweis');
+  try{pn.value=localStorage.getItem(KEY+'_name')||'';}catch(e){}
+  function zwei(n){return (n<10?'0':'')+n;}
+  function jetzt(){var d=new Date();return zwei(d.getDate())+'.'+zwei(d.getMonth()+1)+'.'+d.getFullYear()+', '+zwei(d.getHours())+':'+zwei(d.getMinutes())+' Uhr';}
+  function pdfKopf(){var n=0,m=0;boxes.forEach(function(b){if(b.disabled)return;m++;if(b.checked)n++;});
+    var name=(pn.value||'').trim();pk.textContent='';
+    var b=document.createElement('b');b.textContent='Name: '+(name||'______________________');pk.appendChild(b);
+    pk.appendChild(document.createElement('br'));
+    pk.appendChild(document.createTextNode('Stand vom '+jetzt()+' · '+n+' von '+m+' Lernzielen abgehakt ('+(m?Math.round(100*n/m):0)+' %)'));
+    pk.appendChild(document.createElement('br'));
+    pk.appendChild(document.createTextNode('Selbsteinschätzung: Die Häkchen hat die lernende Person selbst gesetzt.'));}
+  function pdfAdresse(){var bits='';boxes.forEach(function(b){bits+=b.checked?'1':'0';});
+    return location.href.split('#')[0]+'#pdf='+bits+'&n='+encodeURIComponent((pn.value||'').trim());}
+  function drucken(){try{if(!nurAnzeige)localStorage.setItem(KEY+'_name',(pn.value||'').trim());}catch(e){}
+    pdfKopf();if(pl){pl.href=pdfAdresse();pl.hidden=!(window.self!==window.top);}
+    try{window.print();}catch(e){if(pl)pl.hidden=false;}}
+  document.getElementById('pdfbtn').addEventListener('click',function(){pp.hidden=!pp.hidden;if(!pp.hidden){try{pn.focus();}catch(e){}}});
+  document.getElementById('pdfgo').addEventListener('click',drucken);
+  pn.addEventListener('keydown',function(e){if(e.key==='Enter')drucken();});
+  if(pl){pl.addEventListener('click',function(){pl.href=pdfAdresse();});}
   lesen();z();statusZeigen();
+  var mit=/^#pdf=([01]+)(?:&n=(.*))?$/.exec(location.hash);
+  if(mit&&mit[1].length===boxes.length){nurAnzeige=true;
+    boxes.forEach(function(b,i){b.checked=mit[1].charAt(i)==='1';});z();
+    try{pn.value=decodeURIComponent(mit[2]||'');}catch(e){}
+    pp.hidden=false;ph.hidden=false;ph.textContent='Das ist Ihr Stand aus kv digital. Änderungen in diesem Fenster werden nicht gespeichert. Klicken Sie auf «PDF erstellen».';
+    setTimeout(function(){drucken();},600);}
 })();
 </script>
 </body>

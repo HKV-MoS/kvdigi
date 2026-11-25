@@ -51,6 +51,27 @@ body.eingebettet header{margin-bottom:10px;padding-bottom:6px}
 body.eingebettet h1{font-size:20px}
 body.eingebettet .stand{position:sticky;top:0;z-index:2;box-shadow:0 2px 6px rgba(0,0,0,.08)}
 @media print{.stand button{display:none}main{padding:0}h2{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+
+.pdfpanel{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;margin:10px 0 0;padding:10px 14px;border:1px solid var(--linie);border-radius:6px}
+.pdfpanel[hidden],.pdfhinweis[hidden],#pdflink[hidden]{display:none}
+.pdfpanel input{font:inherit;padding:5px 8px;border:1px solid var(--linie);border-radius:4px;min-width:200px;flex:1 1 200px;max-width:320px}
+.pdfpanel small{flex-basis:100%;font-size:12px;opacity:.75}
+.pdfpanel a{font-size:13px}
+.pdfhinweis{margin:10px 0 0;padding:8px 12px;border-radius:6px;background:#FBF3DC;color:#3a2f00;font-size:14px}
+#pdfkopf{display:none}
+.stand .knoepfe{display:flex;flex-direction:column;gap:6px}
+@media print{
+  #pdfkopf{display:block;margin:0 0 12px;padding:8px 12px;border:1px solid #8A9EA3;font-size:13px;line-height:1.5}
+  #pdfkopf b{font-size:14px}
+  .stand button,.pdfpanel,.pdfhinweis,#speicherhinweis{display:none!important}
+  body.eingebettet .stand{position:static;box-shadow:none}
+  td.ok input{display:none}
+  td.ok::after{content:"☐";font-size:16px}
+  tr:has(input:checked) td.ok::after{content:"✓";font-weight:700}
+  tr.np td.ok::after{content:"–"}
+  tr{break-inside:avoid} h2,h3{break-after:avoid}
+  tr:has(input:checked) td{background:none}
+}
 </style>
 </head>
 <body>
@@ -82,8 +103,17 @@ body.eingebettet .stand{position:sticky;top:0;z-index:2;box-shadow:0 2px 6px rgb
     <span><i class="ie" id="farbe"></i>erledigt <strong id="ne">0</strong></span><span><i class="io"></i>offen <strong id="no">14</strong></span>
     <small id="speicherhinweis">Ihr Stand bleibt in diesem Browser gespeichert.</small>
   </div>
-  <button type="button" id="reset">Alle Häkchen entfernen</button>
+  <div class="knoepfe"><button type="button" id="pdfbtn">Als PDF speichern</button><button type="button" id="reset">Alle Häkchen entfernen</button></div>
 </div>
+<div class="pdfpanel" id="pdfpanel" hidden>
+  <label for="pdfname">Ihr Name für das PDF</label>
+  <input id="pdfname" type="text" maxlength="60" autocomplete="off">
+  <button type="button" id="pdfgo">PDF erstellen</button>
+  <a id="pdflink" target="_blank" rel="noopener" hidden>Öffnet sich kein Druckfenster? Hier in eigenem Tab öffnen</a>
+  <small>Wählen Sie im Druckfenster «Als PDF sichern». Ihr Name bleibt auf diesem Gerät.</small>
+</div>
+<p class="pdfhinweis" id="pdfhinweis" hidden></p>
+<div id="pdfkopf"></div>
 
 <section class="kap"><h2><span>Station 1</span>Konkubinat</h2><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">1</td><td>Sie erklären, was ein Konkubinat ist und wie das Gesetz ein Konkubinatspaar behandelt.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 1 erreicht"></td></tr><tr><td class="nr">2</td><td>Sie vergleichen Konkubinat und Ehe bei Erbe, Vorsorge, Unterhalt, Steuern und Vertretung im Spital und beurteilen an einem Fall die Vor- und Nachteile.</td><td class="k">K4</td><td class="ok"><input type="checkbox" aria-label="Lernziel 2 erreicht"></td></tr><tr><td class="nr">3</td><td>Sie zeigen an einem Fall, was ein Konkubinatspaar selbst regeln sollte und mit welchen Mitteln.</td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 3 erreicht"></td></tr><tr><td class="nr">4</td><td>Sie erklären, was unverheiratete Eltern für ihr gemeinsames Kind regeln müssen.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 4 erreicht"></td></tr><tr><td class="nr">5</td><td>Sie bestimmen an einem Fall, wem ein Gegenstand nach der Trennung eines Konkubinatspaars gehört.</td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 5 erreicht"></td></tr></tbody></table></section><section class="kap"><h2><span>Station 2</span>Verlobung</h2><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">6</td><td>Sie erklären, was eine Verlobung ist und wozu sie verpflichtet.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 6 erreicht"></td></tr><tr><td class="nr">7</td><td>Sie beurteilen an einem Fall, was nach einer aufgelösten Verlobung zurückgefordert werden kann und wie lange.</td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 7 erreicht"></td></tr></tbody></table></section><section class="kap"><h2><span>Station 3</span>Ehe</h2><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">8</td><td>Sie nennen die Voraussetzungen für eine Heirat und entscheiden an Beispielen, ob ein Paar heiraten darf.</td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 8 erreicht"></td></tr><tr><td class="nr">9</td><td>Sie beschreiben den Ablauf von der Anmeldung bis zur Trauung.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 9 erreicht"></td></tr><tr><td class="nr">10</td><td>Sie erklären die Rechte und Pflichten der Ehegatten und wenden sie auf Fälle aus dem Alltag an.</td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 10 erreicht"></td></tr><tr><td class="nr">11</td><td>Sie beurteilen an einem Fall, wer für die Schulden eines Ehegatten haftet.</td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 11 erreicht"></td></tr></tbody></table></section><section class="kap"><h2><span>Station 4</span>Name und Bürgerrecht</h2><table><thead><tr><th class="nr">Nr.</th><th>Lernziel</th><th class="k">K</th><th class="ok">✓</th></tr></thead><tbody><tr><td class="nr">12</td><td>Sie bestimmen an einem Fall, welche Namen ein Paar bei der Heirat wählen kann, nach heutigem und nach neuem Namensrecht.</td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 12 erreicht"></td></tr><tr><td class="nr">13</td><td>Sie bestimmen, welchen Namen die Kinder verheirateter und unverheirateter Eltern erhalten.</td><td class="k">K3</td><td class="ok"><input type="checkbox" aria-label="Lernziel 13 erreicht"></td></tr><tr><td class="nr">14</td><td>Sie erklären, was nach Scheidung oder Tod mit dem Namen geschieht und was die Heirat für den Heimatort bedeutet.</td><td class="k">K2</td><td class="ok"><input type="checkbox" aria-label="Lernziel 14 erreicht"></td></tr></tbody></table></section>
 
@@ -92,6 +122,7 @@ body.eingebettet .stand{position:sticky;top:0;z-index:2;box-shadow:0 2px 6px rgb
 <script>
 (function(){
   if(window.self!==window.top){document.body.classList.add('eingebettet');}
+  var nurAnzeige=false;
   var boxes=document.querySelectorAll('.ok input'),stand=document.getElementById('stand');
   var ring=document.getElementById('ringdone'),pct=document.getElementById('ringpct'),ne=document.getElementById('ne'),no=document.getElementById('no'),farbe=document.getElementById('farbe');
   var U=2*Math.PI*40;
@@ -101,7 +132,7 @@ body.eingebettet .stand{position:sticky;top:0;z-index:2;box-shadow:0 2px 6px rgb
   var hinweis=document.getElementById('speicherhinweis');
   function kannSpeichern(){try{localStorage.setItem(KEY+'_t','1');localStorage.removeItem(KEY+'_t');return true;}catch(e){return false;}}
   function lesen(){try{var s=localStorage.getItem(KEY);if(!s)return;var a=JSON.parse(s);boxes.forEach(function(b,i){b.checked=!!a[i]});}catch(e){}}
-  function speichern(){try{var a=[];boxes.forEach(function(b){a.push(b.checked?1:0)});localStorage.setItem(KEY,JSON.stringify(a));}catch(e){}}
+  function speichern(){if(nurAnzeige)return;try{var a=[];boxes.forEach(function(b){a.push(b.checked?1:0)});localStorage.setItem(KEY,JSON.stringify(a));}catch(e){}}
   function statusZeigen(){
     if(kannSpeichern()){hinweis.innerHTML='Ihr Stand bleibt in diesem Browser gespeichert.';return;}
     hinweis.innerHTML='Speichern ist in diesem Rahmen blockiert. <a href="'+location.href.split('?')[0]+'" target="_blank" rel="noopener">Liste in eigenem Tab öffnen</a>, dort bleibt der Stand erhalten.';
@@ -117,7 +148,35 @@ body.eingebettet .stand{position:sticky;top:0;z-index:2;box-shadow:0 2px 6px rgb
     var c=farbeFuer(f);ring.style.stroke=c;farbe.style.background=c;}
   boxes.forEach(function(b){b.addEventListener('change',z)});
   document.getElementById('reset').addEventListener('click',function(){boxes.forEach(function(b){b.checked=false});z();});
+
+  /* ---------- Als PDF speichern ---------- */
+  var pp=document.getElementById('pdfpanel'),pn=document.getElementById('pdfname'),pk=document.getElementById('pdfkopf'),pl=document.getElementById('pdflink'),ph=document.getElementById('pdfhinweis');
+  try{pn.value=localStorage.getItem(KEY+'_name')||'';}catch(e){}
+  function zwei(n){return (n<10?'0':'')+n;}
+  function jetzt(){var d=new Date();return zwei(d.getDate())+'.'+zwei(d.getMonth()+1)+'.'+d.getFullYear()+', '+zwei(d.getHours())+':'+zwei(d.getMinutes())+' Uhr';}
+  function pdfKopf(){var n=0,m=0;boxes.forEach(function(b){if(b.disabled)return;m++;if(b.checked)n++;});
+    var name=(pn.value||'').trim();pk.textContent='';
+    var b=document.createElement('b');b.textContent='Name: '+(name||'______________________');pk.appendChild(b);
+    pk.appendChild(document.createElement('br'));
+    pk.appendChild(document.createTextNode('Stand vom '+jetzt()+' · '+n+' von '+m+' Lernzielen abgehakt ('+(m?Math.round(100*n/m):0)+' %)'));
+    pk.appendChild(document.createElement('br'));
+    pk.appendChild(document.createTextNode('Selbsteinschätzung: Die Häkchen hat die lernende Person selbst gesetzt.'));}
+  function pdfAdresse(){var bits='';boxes.forEach(function(b){bits+=b.checked?'1':'0';});
+    return location.href.split('#')[0]+'#pdf='+bits+'&n='+encodeURIComponent((pn.value||'').trim());}
+  function drucken(){try{if(!nurAnzeige)localStorage.setItem(KEY+'_name',(pn.value||'').trim());}catch(e){}
+    pdfKopf();if(pl){pl.href=pdfAdresse();pl.hidden=!(window.self!==window.top);}
+    try{window.print();}catch(e){if(pl)pl.hidden=false;}}
+  document.getElementById('pdfbtn').addEventListener('click',function(){pp.hidden=!pp.hidden;if(!pp.hidden){try{pn.focus();}catch(e){}}});
+  document.getElementById('pdfgo').addEventListener('click',drucken);
+  pn.addEventListener('keydown',function(e){if(e.key==='Enter')drucken();});
+  if(pl){pl.addEventListener('click',function(){pl.href=pdfAdresse();});}
   lesen();z();statusZeigen();
+  var mit=/^#pdf=([01]+)(?:&n=(.*))?$/.exec(location.hash);
+  if(mit&&mit[1].length===boxes.length){nurAnzeige=true;
+    boxes.forEach(function(b,i){b.checked=mit[1].charAt(i)==='1';});z();
+    try{pn.value=decodeURIComponent(mit[2]||'');}catch(e){}
+    pp.hidden=false;ph.hidden=false;ph.textContent='Das ist Ihr Stand aus kv digital. Änderungen in diesem Fenster werden nicht gespeichert. Klicken Sie auf «PDF erstellen».';
+    setTimeout(function(){drucken();},600);}
 })();
 </script>
 </body>
