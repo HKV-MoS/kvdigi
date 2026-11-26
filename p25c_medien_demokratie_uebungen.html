@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Medien und Demokratie · 48 Übungsaufgaben</title>
+<style>
+:root{
+  --bg:#eef2f1; --surface:#ffffff; --ink:#17302b; --muted:#5b6e69; --line:#d4dedb;
+  --brand:#0b3d36; --brand-soft:#e3eeeb; --ok:#1f7a4d; --ok-soft:#e2f3ea; --bad:#b03a2e; --bad-soft:#f8e4e1;
+  --mid:#9a6b00; --mid-soft:#fbf0d6;
+  --f:"Aptos","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#101716; --surface:#18211f; --ink:#e3ece9; --muted:#9bb0aa; --line:#2c3a37;
+  --brand:#7fc4b6; --brand-soft:#1f2e2b; --ok:#6fd19c; --ok-soft:#163327; --bad:#f08a7e; --bad-soft:#3a1f1c;
+  --mid:#e8c46a; --mid-soft:#352c14; color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);font-size:16px;line-height:1.5}
+.wrap{padding:24px 16px 48px;display:flex;justify-content:center}
+.karte{background:var(--surface);max-width:960px;width:100%;border-radius:14px;box-shadow:0 2px 14px rgba(0,0,0,.07);padding:24px 28px 20px}
+header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+header img{height:34px}
+@media (prefers-color-scheme: dark){header img{filter:brightness(0) invert(1)}}
+h1{font-size:24px;margin:0 0 2px;line-height:1.2}
+.sub{color:var(--muted);margin:0;font-size:15px}
+.stand{margin:14px 0 4px}
+.balken{height:10px;background:var(--brand-soft);border-radius:6px;overflow:hidden}
+.balken i{display:block;height:100%;width:0;background:var(--brand);transition:width .4s}
+.stand small{color:var(--muted)}
+.filter{display:flex;flex-wrap:wrap;gap:6px 14px;margin:14px 0 10px;align-items:center}
+.filter .gr{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.filter b{font-size:13px;color:var(--muted);font-weight:600;margin-right:2px}
+.chip{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:20px;padding:4px 12px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--surface);font-weight:600}
+button:focus-visible,input:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.kacheln{display:grid;grid-template-columns:repeat(auto-fill,minmax(38px,1fr));gap:5px;margin:6px 0 4px}
+.kachel{font:inherit;font-size:13px;font-variant-numeric:tabular-nums;height:32px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--muted);cursor:pointer;padding:0}
+.kachel.r{background:var(--ok-soft);border-color:var(--ok);color:var(--ok);font-weight:600}
+.kachel.f{background:var(--bad-soft);border-color:var(--bad);color:var(--bad);font-weight:600}
+.kachel.x{background:var(--mid-soft);border-color:var(--mid);color:var(--mid);font-weight:600}
+.kachel.akt{outline:3px solid var(--brand);outline-offset:1px;color:var(--ink)}
+.legende{font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 14px;margin:0 0 14px}
+.legende i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid var(--line)}
+.legende .r{background:var(--ok-soft);border-color:var(--ok)}.legende .x{background:var(--mid-soft);border-color:var(--mid)}.legende .f{background:var(--bad-soft);border-color:var(--bad)}
+.aufgabe{border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.kopf{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:10px}
+.kopf strong{margin-right:6px}
+.marke{font-size:12.5px;border-radius:6px;padding:2px 8px;background:var(--brand-soft);color:var(--brand);font-weight:600}
+.marke.lv1{background:var(--ok-soft);color:var(--ok)}.marke.lv2{background:var(--mid-soft);color:var(--mid)}.marke.lv3{background:var(--bad-soft);color:var(--bad)}
+.frage{font-size:17px;margin:0 0 14px}
+.rf{display:flex;gap:10px;flex-wrap:wrap}
+.wahl{font:inherit;font-weight:600;min-width:120px;border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:10px 16px;cursor:pointer}
+.wahl[aria-pressed="true"]{border-color:var(--brand);background:var(--brand-soft);color:var(--brand)}
+.zeile{display:flex;gap:8px 12px;align-items:center;justify-content:space-between;flex-wrap:wrap;border-top:1px solid var(--line);padding:8px 0}
+.zeile:first-child{border-top:0}
+.zeile .t{flex:1 1 260px}
+.zeile .k{display:flex;gap:5px;flex-wrap:wrap}
+.zeile .k button{font:inherit;font-size:13.5px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:5px 9px;cursor:pointer;text-align:left}
+.zeile .k button[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--surface);font-weight:600}
+.reihe{list-style:none;margin:0;padding:0;counter-reset:n}
+.reihe li{counter-increment:n;display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:9px;padding:7px 10px;margin-bottom:6px;background:var(--surface)}
+.reihe li::before{content:counter(n) ".";color:var(--muted);font-weight:600;min-width:22px}
+.reihe li span{flex:1}
+.reihe button{font:inherit;width:36px;height:32px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);cursor:pointer}
+.reihe button:disabled{opacity:.35;cursor:default}
+.feld{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.feld label{flex:1 1 220px}
+.feld input{font:inherit;width:150px;border:1px solid var(--line);border-radius:8px;padding:7px 9px;background:var(--bg);color:var(--ink);text-align:right}
+.feld .e{min-width:46px;color:var(--muted)}
+.knoepfe{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:16px}
+.btn{font:inherit;font-weight:600;font-size:15px;border-radius:9px;padding:8px 14px;cursor:pointer;border:1px solid var(--brand);background:var(--surface);color:var(--brand)}
+.btn.voll{background:var(--brand);color:var(--surface)}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn.leise{border-color:var(--line);color:var(--muted);font-weight:500}
+.fb{display:none;margin-top:12px;border-radius:8px;padding:8px 12px}
+.fb.zeig{display:block}.fb.gut{background:var(--ok-soft)}.fb.schlecht{background:var(--bad-soft)}
+.loes{display:none;margin-top:12px;background:var(--bg);border-left:4px solid var(--brand);border-radius:6px;padding:10px 14px}
+.loes.zeig{display:block}
+.loes h3{font-size:15px;margin:0 0 6px;color:var(--brand)}
+.loes ul,.loes ol{margin:0 0 8px;padding-left:22px}
+.loes p{margin:0}
+.loes .zu b{font-weight:600}
+.blaettern{display:flex;justify-content:space-between;gap:8px;margin-top:14px}
+footer{margin-top:18px;font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+body.eingebettet .wrap{padding:0}
+body.eingebettet .karte{max-width:none;border-radius:0;box-shadow:none;padding:16px 18px}
+@media (max-width:520px){.karte{padding:18px 14px}.wahl{flex:1}.feld input{width:120px}}
+
+.pdfpanel{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;margin:10px 0 0;padding:10px 14px;border:1px solid var(--line);border-radius:6px}
+.pdfpanel[hidden],.pdfhinweis[hidden],#pdflink[hidden]{display:none}
+.pdfpanel input{font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:4px;min-width:200px;flex:1 1 200px;max-width:320px}
+.pdfpanel small{flex-basis:100%;font-size:12px;opacity:.75}
+.pdfpanel a{font-size:13px}
+.pdfhinweis{margin:10px 0 0;padding:8px 12px;border-radius:6px;background:#FBF3DC;color:#3a2f00;font-size:14px}
+#pdfkopf{display:none}
+.pdfpanel input{background:var(--bg);color:var(--ink)}
+.pdfhinweis{background:var(--mid-soft);color:var(--ink)}
+#druck{display:none;margin-top:14px}
+#druck h2{font-size:17px;margin:16px 0 6px}
+#druck .dk{border:1px solid var(--line);border-radius:8px;padding:8px 12px;line-height:1.55}
+#druck table{border-collapse:collapse;width:100%;margin:4px 0 6px;font-size:14px}
+#druck th,#druck td{border:1px solid var(--line);padding:4px 8px;text-align:center}
+#druck th:first-child,#druck td:first-child{text-align:left}
+#druck .gitter{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;font-size:13px;font-variant-numeric:tabular-nums}
+#druck .gitter span{border:1px solid var(--line);border-radius:5px;padding:3px 4px;text-align:center;white-space:nowrap}
+#druck .leg{font-size:12.5px;color:var(--muted);margin:0 0 6px}
+body.nurpdf #druck{display:block}
+body.nurpdf .stand,body.nurpdf .filter,body.nurpdf .kacheln,body.nurpdf .legende,body.nurpdf .aufgabe,body.nurpdf #reset,body.nurpdf #speicher,body.nurpdf #pdfbtn{display:none}
+@media print{
+  body{background:#fff}
+  .wrap{padding:0}.karte{box-shadow:none;max-width:none;padding:0}
+  .stand,.filter,.kacheln,.legende,.aufgabe,footer,.pdfpanel,.pdfhinweis{display:none!important}
+  #druck{display:block;margin-top:8px}
+  #druck h2{font-size:14px;margin:10px 0 4px}
+  #druck table{font-size:12px}#druck th,#druck td{padding:2px 6px}
+  #druck .gitter{font-size:11.5px;gap:3px}#druck .gitter span{padding:1px 3px}
+  #druck .dk{font-size:13px;padding:6px 10px}
+  h1{font-size:20px}header img{height:28px}
+  #druck .gitter span,#druck tr{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="karte">
+<header>
+  <div>
+    <h1>Beeinflussen: Medien und Demokratie</h1>
+    <p class="sub">48 Übungsaufgaben · Kapitel 5.1 bis 6.2 · Medien · Fakt oder Fake · Demokratie · drei Gewalten</p>
+  </div>
+  <img src="hkv_logo.png" alt="HKV Aarau">
+</header>
+
+<div class="stand">
+  <div class="balken"><i id="balken"></i></div>
+  <small id="standtext" aria-live="polite"></small>
+</div>
+
+<div class="filter">
+  <div class="gr" id="fStufe"><b>Stufe</b></div>
+  <div class="gr" id="fStation"><b>Kapitel</b></div>
+</div>
+<div class="kacheln" id="kacheln"></div>
+<p class="legende"><span><i class="r"></i>auf Anhieb richtig</span><span><i class="x"></i>später oder mit Lösung richtig</span><span><i class="f"></i>noch falsch</span><span><i></i>offen</span></p>
+
+<div class="aufgabe" id="aufgabe"></div>
+
+<footer>
+  <span id="speicher">Ihr Stand bleibt in diesem Browser gespeichert. Die Lösung lässt sich jeweils nach 60 Sekunden öffnen.</span>
+  <span><button class="btn" id="pdfbtn" type="button">Als PDF speichern</button> <button class="btn leise" id="reset" type="button">Alles zurücksetzen</button></span>
+</footer>
+<div class="pdfpanel" id="pdfpanel" hidden>
+  <label for="pdfname">Ihr Name für das PDF</label>
+  <input id="pdfname" type="text" maxlength="60" autocomplete="off">
+  <button type="button" id="pdfgo">PDF erstellen</button>
+  <a id="pdflink" target="_blank" rel="noopener" hidden>Öffnet sich kein Druckfenster? Hier in eigenem Tab öffnen</a>
+  <small>Wählen Sie im Druckfenster «Als PDF sichern». Ihr Name bleibt auf diesem Gerät.</small>
+</div>
+<p class="pdfhinweis" id="pdfhinweis" hidden></p>
+<div id="druck"></div>
+</div></div>
+
+<script>
+(function(){
+"use strict";
+if (window.self !== window.top) document.body.classList.add("eingebettet");
+var T = [{"id":"l01","lv":1,"st":1,"typ":"zu","q":"Zu welcher Medienart gehört das Angebot?","kat":["Print","Audio und audiovisuell","Digital (journalistisch)","Social Media"],"items":[["NZZ auf Papier",0],["Radio Argovia",1],["Tele M1",1],["App von 20 Minuten",2],["TikTok-Kanal einer Influencerin",3]],"lo":"Print sind Zeitungen und Zeitschriften. Radio und Fernsehen sind Audio- und audiovisuelle Medien. Apps und Websites von Redaktionen sind digitale journalistische Medien. Auf Social Media produzieren die Nutzerinnen und Nutzer die Inhalte selbst."},{"id":"l02","lv":1,"st":1,"typ":"rf","q":"Auf Social Media prüft in der Regel eine Redaktion, ob ein Beitrag stimmt, bevor er erscheint.","ans":"F","lo":"Auf Social Media prüft meist niemand. Jede Person kann zur Senderin werden. Bei journalistischen Medien prüft eine Redaktion die Inhalte."},{"id":"l03","lv":1,"st":1,"typ":"rf","q":"Die Haushaltabgabe für Radio und Fernsehen bezahlt grundsätzlich jeder Haushalt, auch wer nie SRF schaut.","ans":"R","lo":"Die Abgabe hängt nicht davon ab, ob jemand die Programme nutzt. Mit ihr wird hauptsächlich die SRG finanziert."},{"id":"l04","lv":1,"st":2,"typ":"rf","q":"Die Medien heissen «vierte Gewalt», weil die Bundesverfassung sie als vierte Staatsgewalt aufführt.","ans":"F","lo":"Die Bezeichnung ist nur ein Sinnbild. Die Medien gehören nicht zum Staat. Sie beobachten und kontrollieren die drei Staatsgewalten von aussen."},{"id":"l05","lv":1,"st":2,"typ":"zu","q":"Dürfen Medien das?","kat":["Erlaubt","Nicht erlaubt"],"items":[["Kritisch über eine Regierungsrätin berichten",0],["Geheim halten, von wem eine Information stammt",0],["Bezahlte Werbung als normalen Artikel tarnen",1],["Einen Verdächtigen vor dem Urteil als Täter bezeichnen",1],["Einen Kommentar veröffentlichen, der als Kommentar gekennzeichnet ist",0]],"lo":"Medien dürfen kritisch berichten, ihre Quellen schützen (Redaktionsgeheimnis) und Meinungen veröffentlichen, wenn diese erkennbar sind. Sie dürfen Werbung nicht tarnen und müssen die Unschuldsvermutung beachten."},{"id":"l06","lv":1,"st":2,"typ":"rf","q":"Der Schweizer Presserat kann keine Strafen aussprechen; er veröffentlicht eine Stellungnahme.","ans":"R","lo":"Der Presserat prüft eine Beschwerde anhand des Journalistenkodex. Seine Wirkung ist die Öffentlichkeit."},{"id":"l07","lv":1,"st":3,"typ":"zu","q":"Desinformation, Fehlinformation oder Satire?","kat":["Desinformation","Fehlinformation","Satire"],"items":[["Ein Komitee verbreitet vor einer Abstimmung bewusst eine erfundene Zahl",0],["Ihre Tante leitet eine falsche Warnung weiter, die sie für wahr hält",1],["Der «Postillon» meldet, der Mond werde aus Spargründen abgeschaltet",2],["Ein Onlineshop erfindet Kundenbewertungen, um mehr zu verkaufen",0]],"lo":"Desinformation ist eine Falschmeldung mit Absicht. Eine Fehlinformation wird aus Versehen verbreitet. Satire ist erfunden, aber die Absicht ist erkennbar."},{"id":"l08","lv":1,"st":3,"typ":"rh","q":"Bringen Sie die vier Prüfschritte in die Reihenfolge aus dem Unterricht.","steps":["Stopp: Was löst der Beitrag in mir aus?","Absender: Wer steckt dahinter?","Andere Quellen: Berichten seriöse Medien auch?","Ursprung: Woher stammt das Bild wirklich?"],"start":[1,3,2,0],"lo":"Stopp, Absender, andere Quellen, Ursprung. Wer diese vier Schritte macht, fällt auf die meisten Fakes nicht herein."},{"id":"l09","lv":1,"st":3,"typ":"rf","q":"Empfiehlt eine bekannte Ärztin in einem Video ein Mittel, ist das ein Beweis dafür, dass die Werbung echt ist.","ans":"F","lo":"Eine bekannte Person im Video ist kein Beweis. Gesicht und Stimme lassen sich mit KI fälschen (Deepfake). Prüfen Sie, ob die Person das wirklich gesagt hat, zum Beispiel auf ihrer offiziellen Website."},{"id":"l10","lv":1,"st":4,"typ":"rf","q":"Auch wer schweigt und wegschaut, teilt seinem Gegenüber etwas mit.","ans":"R","lo":"«Man kann nicht nicht kommunizieren.» Auch Schweigen, Blick und Körperhaltung sind Botschaften."},{"id":"l11","lv":1,"st":5,"typ":"zu","q":"Wählen oder abstimmen?","kat":["Wählen","Abstimmen"],"items":[["Sie entscheiden, wer für Ihren Kanton im Nationalrat sitzt",0],["Sie sagen Ja oder Nein zu einer Volksinitiative",1],["Ihre Gemeinde bestimmt den neuen Gemeindeammann",0],["Der Kanton fragt, ob ein neues Spital gebaut werden soll",1],["Sie sagen Ja oder Nein zu einem Gesetz, gegen das das Referendum ergriffen wurde",1]],"lo":"Wählen heisst, Personen in ein Amt zu bestimmen. Abstimmen heisst, zu einer Sachfrage Ja oder Nein zu sagen."},{"id":"l12","lv":1,"st":5,"typ":"re","q":"Zwei Jahreszahlen der Schweizer Geschichte: In welchem Jahr wurde der Bundesstaat gegründet? Seit welchem Jahr dürfen Frauen auf Bundesebene wählen und abstimmen?","felder":[["Gründung des Bundesstaats",1848,""],["Frauenstimmrecht auf Bundesebene",1971,""]],"lo":"1848 erhielt die Schweiz ihre erste Bundesverfassung und wurde zum Bundesstaat. 1971 wurde das Stimm- und Wahlrecht der Frauen auf Bundesebene eingeführt."},{"id":"l13","lv":1,"st":5,"typ":"rf","q":"Die Schweiz ist seit 2002 Mitglied der UNO.","ans":"R","lo":"Die Schweiz ist seit 2002 Mitglied der Vereinten Nationen. Mitglied der EU ist sie nicht; ihr Verhältnis zur EU regelt sie mit bilateralen Verträgen."},{"id":"l14","lv":1,"st":6,"typ":"zu","q":"Zu welcher Staatsgewalt gehört die Behörde?","kat":["Legislative","Exekutive","Judikative"],"items":[["Nationalrat und Ständerat",0],["Bundesrat",1],["Bundesgericht",2],["Bundesverwaltung, zum Beispiel das Bundesamt für Gesundheit",1]],"lo":"Das Parlament macht die Gesetze (Legislative). Bundesrat und Verwaltung setzen sie um (Exekutive). Die Gerichte entscheiden im Streitfall (Judikative)."},{"id":"l15","lv":1,"st":6,"typ":"re","q":"Wie viele Mitglieder haben die drei Bundesbehörden?","felder":[["Nationalrat",200,""],["Ständerat",46,""],["Bundesrat",7,""]],"lo":"Der Nationalrat hat 200 Mitglieder und vertritt das Volk. Der Ständerat hat 46 Mitglieder und vertritt die Kantone. Der Bundesrat hat sieben Mitglieder."},{"id":"l16","lv":1,"st":6,"typ":"rf","q":"Das Bundesgericht hat seinen Sitz in Bern.","ans":"F","lo":"Das Bundesgericht ist in Lausanne. In Bern tagen das Parlament und der Bundesrat."},{"id":"m01","lv":2,"st":1,"typ":"zu","q":"Wie finanziert sich das Angebot hauptsächlich?","kat":["Haushaltabgabe (öffentlich-rechtlich)","Werbung und Abonnemente (privat)","Werbung und Daten (Social Media)"],"items":[["Radio SRF 3",0],["Blick",1],["watson",1],["YouTube-Kanal eines Gamers",2],["RTS (Radio und Fernsehen der Westschweiz)",0],["Tages-Anzeiger",1]],"lo":"SRF, RTS, RSI und RTR gehören zur SRG und werden hauptsächlich über die Abgabe bezahlt. Private Medien leben von Werbung und Abonnementen. Social Media verdienen mit Werbung und mit den Daten der Nutzerinnen und Nutzer."},{"id":"m02","lv":2,"st":1,"typ":"zu","q":"Welcher Artikel der Bundesverfassung schützt das?","kat":["Art. 16 Meinungs- und Informationsfreiheit","Art. 17 Medienfreiheit"],"items":[["Sie äussern in einem Leserbrief Ihre Meinung zu den Krankenkassenprämien",0],["Der Staat darf einen Zeitungsartikel nicht vor dem Druck kontrollieren",1],["Sie informieren sich aus öffentlich zugänglichen Quellen",0],["Eine Journalistin muss ihren Informanten nicht nennen",1]],"lo":"Art. 16 gilt für jede Person: Meinung frei bilden, äussern und sich informieren. Art. 17 schützt die Medien: Zensur ist verboten, das Redaktionsgeheimnis ist geschützt."},{"id":"m03","lv":2,"st":1,"typ":"re","q":"Quellen-Check: Ein Instagram-Post empfiehlt ein Schlafmittel. Das Profil hat kein Impressum, die Werbung ist nicht gekennzeichnet, Quellen fehlen. Das Datum ist sichtbar. Kein seriöses Medium berichtet darüber, Fehler werden nicht korrigiert. Wie viele der sechs Kriterien sind erfüllt, wie viele fehlen?","felder":[["Erfüllte Kriterien",1,""],["Fehlende Kriterien",5,""]],"lo":"Erfüllt ist nur das Datum. Es fehlen Absender, Trennung, Quellen, Bestätigung und Korrekturen. Je mehr der sechs Fragen Sie mit Ja beantworten können, desto eher können Sie der Quelle vertrauen."},{"id":"m04","lv":2,"st":2,"typ":"rf","q":"Decken die Medien einen Missstand auf, können sie dem Bundesrat verbindliche Anweisungen geben.","ans":"F","lo":"Die Medien haben keine Macht, etwas zu befehlen. Ihre Macht liegt in der Öffentlichkeit: Was sie aufdecken, können Politik und Justiz nicht mehr ignorieren."},{"id":"m05","lv":2,"st":2,"typ":"zu","q":"Welche Grenze der Medienfreiheit ist verletzt?","kat":["Persönlichkeitsschutz","Ehrverletzung","Unschuldsvermutung"],"items":[["Eine Zeitung druckt die Krankengeschichte einer Privatperson, ohne dass ein öffentliches Interesse besteht",0],["Ein Portal behauptet ohne Beweise, ein Arzt habe sein Diplom gefälscht",1],["Ein Titel nennt einen Festgenommenen «den Einbrecher», der Prozess hat noch nicht begonnen",2],["Ein Magazin druckt heimlich aufgenommene Ferienfotos einer Verkäuferin",0]],"lo":"Die Privatsphäre ist geschützt, wenn kein öffentliches Interesse besteht (ZGB Art. 28). Falsche Tatsachen über eine Person zu behaupten, ist eine Ehrverletzung (StGB). Vor einem Urteil gilt jede Person als unschuldig."},{"id":"m06","lv":2,"st":2,"typ":"zu","q":"Eine Region verliert ihre Lokalzeitung. Ist das eine Folge davon?","kat":["Folge","Keine Folge"],"items":[["Niemand berichtet mehr aus der Gemeindeversammlung",0],["Lokale Missstände werden seltener aufgedeckt",0],["Die Menschen beteiligen sich stärker an Abstimmungen",1],["Gerüchte in Social-Media-Gruppen füllen die Lücke",0],["Die Gemeinde darf keine Abstimmungen mehr durchführen",1]],"lo":"Ohne Lokalzeitung wissen die Menschen weniger über ihre Gemeinde und beteiligen sich weniger. Fachleute sprechen von «Nachrichtenwüsten». Abstimmen darf die Gemeinde weiterhin."},{"id":"m07","lv":2,"st":3,"typ":"zu","q":"Welche Art der Täuschung liegt vor?","kat":["Frei erfunden","Bearbeitet oder mit KI erzeugt","Ausschnitt oder gestellt","Echt, aber falscher Zusammenhang"],"items":[["Ein echtes Foto eines Waldbrands in Kanada wird als Brand im Wallis von gestern verbreitet",3],["Eine KI erzeugt ein Bild des Bundeshauses unter Wasser",1],["Ein Blog meldet eine Studie, die es nie gegeben hat",0],["Ein Influencer stellt eine «zufällige» Rettung für die Kamera nach",2],["Auf einem Foto wird der blaue Himmel durch eine Gewitterfront ersetzt",1]],"lo":"Fragen Sie nicht nur «Ist das Bild echt?», sondern auch «Ist es das, was es zu sein behauptet?». Ein echtes Bild mit falschem Ort oder falscher Zeit täuscht ebenfalls."},{"id":"m08","lv":2,"st":3,"typ":"zu","q":"Eine Umfrage ergibt: 48 Prozent der Lernenden wünschen sich mehr Unterricht am Computer. Wie ist die Schlagzeile gefärbt?","kat":["Reisserisch","Verharmlosend","Sachlich"],"items":[["«Lernende rebellieren: Weg mit dem Papier!»",0],["«Kaum jemand will mehr Computer im Unterricht»",1],["«48 Prozent wünschen mehr Unterricht am Computer»",2],["«Computer-Revolution an den Berufsschulen»",0]],"lo":"Mit dem Titel lässt sich die Aussage einer Meldung verschieben. Suchen Sie die Zahl und die Frage hinter der Schlagzeile, und lesen Sie den Text, nicht nur den Titel."},{"id":"m09","lv":2,"st":3,"typ":"zu","q":"Ist das ein Warnzeichen für einen Deepfake?","kat":["Warnzeichen","Kein Warnzeichen"],"items":[["Die Lippen bewegen sich nicht passend zur Stimme",0],["Der Blick ist starr, das Blinzeln fehlt",0],["Das Video ist im Querformat aufgenommen",1],["Das Licht auf dem Gesicht passt nicht zum Hintergrund",0],["Die Person spricht Schweizerdeutsch",1],["Der Inhalt verspricht «nur heute» und «garantiert»",0]],"lo":"Warnzeichen sind Lippen, die nicht zur Stimme passen, ein starrer Blick, eine flache Stimme, unpassendes Licht und ein Inhalt, der zu schön ist, um wahr zu sein. Format und Sprache sagen nichts aus."},{"id":"m10","lv":2,"st":4,"typ":"zu","q":"Die Apothekerin sagt zur Lernenden: «Die Lieferung steht seit heute Morgen im Gang.» Zu welcher Seite der Nachricht nach Schulz von Thun gehört die Deutung?","kat":["Sachinhalt","Selbstkundgabe","Beziehung","Appell"],"items":[["«Im Gang steht seit dem Morgen eine Lieferung.»",0],["«Mich stört die Unordnung.»",1],["«Auf Sie kann ich mich nicht verlassen.»",2],["«Räumen Sie die Lieferung jetzt ein.»",3]],"lo":"Sachinhalt: worüber informiert wird. Selbstkundgabe: was die Sprecherin über sich zeigt. Beziehung: wie sie zum Gegenüber steht. Appell: wozu sie das Gegenüber veranlassen will."},{"id":"m11","lv":2,"st":5,"typ":"rh","q":"Vom ersten Bündnis zum Bundesstaat: Bringen Sie die Stationen in die richtige Reihenfolge.","steps":["Uri, Schwyz und Unterwalden schliessen das erste dokumentierte Bündnis","Napoleon erobert die Eidgenossenschaft, es entsteht die Helvetische Republik","Die Schweiz wird ein Staatenbund, ihre Neutralität wird anerkannt","Sonderbundskrieg zwischen liberalen und konservativen Kantonen","Die Bundesverfassung macht die Schweiz zum Bundesstaat"],"start":[2,1,0,4,3],"lo":"1291 erstes Bündnis, 1798 Helvetische Republik, 1815 Staatenbund und anerkannte Neutralität, 1847 Sonderbundskrieg, 1848 Bundesstaat."},{"id":"m12","lv":2,"st":5,"typ":"re","q":"Das Ständemehr: Wie viele Standesstimmen gibt es insgesamt? Wie viele Standesstimmen braucht es mindestens für das Ständemehr?","felder":[["Standesstimmen insgesamt",23,""],["Nötig für das Ständemehr",12,""]],"lo":"20 Kantone haben je eine Standesstimme, die sechs Halbkantone je eine halbe: 20 + 3 = 23. Die Mehrheit davon sind 12. Bei 11,5 zu 11,5 ist das Ständemehr nicht erreicht."},{"id":"m13","lv":2,"st":5,"typ":"zu","q":"Wie hat das Stimmvolk entschieden?","kat":["Angenommen","Abgelehnt"],"items":[["Pflegeinitiative (2021)",0],["Verbot von Tabakwerbung, die Kinder und Jugendliche erreicht (2022)",0],["Prämien-Entlastungs-Initiative (2024)",1],["SRG-Initiative «200 Franken sind genug!» (2026)",1]],"lo":"Kaum eine Branche wird so stark von Volksentscheiden geprägt wie das Gesundheitswesen: Sie bestimmen mit, was die Apotheke verkaufen darf, was die Kundschaft bezahlt und wie viel Personal arbeitet."},{"id":"m14","lv":2,"st":6,"typ":"rf","q":"Jeder Kanton hat im Nationalrat gleich viele Sitze.","ans":"F","lo":"Im Nationalrat richtet sich die Sitzzahl nach der Bevölkerung: Zürich hat 36 Sitze, Uri einen. Gleich viele Sitze haben die Kantone im Ständerat: je zwei, die Halbkantone je einen."},{"id":"m15","lv":2,"st":6,"typ":"rf","q":"Der Bundesrat wird alle vier Jahre von der Vereinigten Bundesversammlung gewählt, also von National- und Ständerat gemeinsam.","ans":"R","lo":"Nicht das Volk wählt den Bundesrat, sondern das Parlament. Eine Volksinitiative für die Volkswahl wurde 2013 abgelehnt."},{"id":"m16","lv":2,"st":6,"typ":"rf","q":"Gewaltenteilung bedeutet auch, dass dieselbe Person nicht gleichzeitig im Parlament, im Bundesrat und am Bundesgericht sitzen darf.","ans":"R","lo":"Die Macht ist auf drei Gewalten verteilt, damit niemand allein Regeln macht, sie durchsetzt und über Verstösse richtet."},{"id":"s01","lv":3,"st":1,"typ":"rf","q":"Die Kantonsregierung verlangt von einem Onlineportal, einen Bericht über das Kantonsspital vor der Veröffentlichung prüfen zu dürfen. Das Portal muss den Text vorlegen.","ans":"F","lo":"Das wäre Zensur, und die ist nach Art. 17 der Bundesverfassung verboten. Das Portal darf frei berichten. Fühlt sich die Regierung falsch dargestellt, kann sie sich nachher wehren."},{"id":"s02","lv":3,"st":1,"typ":"zu","q":"Schützt die Meinungsfreiheit diese Äusserung?","kat":["Geschützt","Nicht geschützt"],"items":[["«Ich finde, die Gemeinde gibt zu viel Geld für den neuen Kreisel aus.»",0],["Ohne Beweis auf Facebook: «Der Wirt vom Löwen panscht den Wein.»",1],["In einem Leserbrief die Politik des Bundesrats als verfehlt bezeichnen",0],["Im Klassenchat eine Mitschülerin als Diebin bezeichnen, obwohl nichts bewiesen ist",1]],"lo":"Eine Meinung darf jede Person äussern (Art. 16 BV). Die Grenze liegt dort, wo jemand über andere falsche Tatsachen verbreitet oder sie beschimpft: Das kann als Ehrverletzung strafbar sein."},{"id":"s03","lv":3,"st":1,"typ":"rf","q":"Zum Auftrag der SRG gehört es, die Bevölkerung in allen Landessprachen zu informieren.","ans":"R","lo":"Das ist der Service public: Die SRG informiert die ganze Bevölkerung in allen Landessprachen, fördert Kultur und Bildung und bietet Unterhaltung. Dafür erhält sie die Abgabe."},{"id":"s04","lv":3,"st":2,"typ":"zu","q":"Wer ist zuständig?","kat":["Schweizer Presserat","Unabhängige Beschwerdeinstanz (UBI)","Gericht"],"items":[["Beschwerde über einen unfairen Zeitungsartikel",0],["Beschwerde über eine einseitige Fernsehsendung",1],["Klage auf Schadenersatz wegen einer Persönlichkeitsverletzung",2],["Beschwerde über einen Beitrag auf einem Online-Newsportal",0]],"lo":"Für Zeitungen und Onlineportale ist der Presserat zuständig, für Radio und Fernsehen die UBI. Schadenersatz oder ein Verbot kann nur ein Gericht anordnen."},{"id":"s05","lv":3,"st":2,"typ":"rf","q":"Eine Zeitung berichtet mit Namen darüber, dass ein Gemeindepräsident Geld aus der Gemeindekasse genommen haben soll, um Spielschulden zu bezahlen. Weil es um sein Privatleben geht, ist der Bericht in jedem Fall unzulässig.","ans":"F","lo":"Abzuwägen sind das öffentliche Interesse und der Schutz der Privatsphäre. Hier betrifft der Vorwurf das Amt und öffentliches Geld, das öffentliche Interesse ist gross. Die Zeitung muss aber die Unschuldsvermutung beachten und darf ihn nicht als Täter darstellen."},{"id":"s06","lv":3,"st":2,"typ":"rf","q":"Lokalzeitungen verschwinden vor allem, weil Werbung und Abonnemente ins Internet abwandern und die Verlage ihre Redaktionen zusammenlegen.","ans":"R","lo":"Werbegeld fliesst heute zu Google, Meta und Co. Wenige grosse Verlage produzieren dieselben Artikel für mehrere Zeitungen und bauen Stellen ab."},{"id":"s07","lv":3,"st":3,"typ":"rh","q":"Eine Kundin zeigt Ihnen eine Werbung für ein «Wundermittel» und will es bestellen. In welcher Reihenfolge gehen Sie vor?","steps":["Nachfragen, wofür die Kundin das Mittel braucht und welche Medikamente sie nimmt","Sachlich erklären, weshalb die Werbung nicht vertrauenswürdig ist, ohne die Kundin blosszustellen","Eine geprüfte Alternative zeigen und bei Bedarf die Apothekerin beiziehen"],"start":[2,1,0],"lo":"Zuerst nachfragen, dann sachlich erklären, zuletzt eine Alternative anbieten. Sie bewerten die Werbung nicht abschätzig, Sie ersetzen sie durch verlässliche Information."},{"id":"s08","lv":3,"st":3,"typ":"rf","q":"Ein Foto zeigt Polarlichter über dem Säntis. Die Bilder-Rückwärtssuche findet dasselbe Foto schon 2019 auf einer norwegischen Reiseseite. Das Foto gehört damit zur Täuschungsart «bearbeitet oder mit KI erzeugt».","ans":"F","lo":"Das Foto ist echt, aber Ort und Zeit stimmen nicht: «echt, aber falscher Zusammenhang». Ältere Fundstellen in der Rückwärtssuche zeigen den wahren Ursprung."},{"id":"s09","lv":3,"st":3,"typ":"zu","q":"Gesundheitswerbung im Internet: Warnzeichen oder Hinweis auf eine seriöse Quelle?","kat":["Warnzeichen","Spricht für Seriosität"],"items":[["«Heilt Arthrose garantiert in zehn Tagen»",0],["Impressum mit Firma und Adresse",1],["«Was die Pharmaindustrie Ihnen verschweigt»",0],["Verweis auf die Arzneimittelinformation von Swissmedic",1],["Countdown: «Angebot endet in 12 Minuten»",0],["Begeisterte Bewertungen, alle am gleichen Tag geschrieben",0]],"lo":"Heilsversprechen, Zeitdruck, Verschwörungston und erfundene Bewertungen sind typische Warnzeichen. Fachinformation stammt aus geprüften Quellen, zum Beispiel von Swissmedic."},{"id":"s10","lv":3,"st":4,"typ":"zu","q":"Das Eisbergmodell: Was liegt über der Wasseroberfläche, was darunter?","kat":["Über der Wasseroberfläche (sichtbar)","Unter der Wasseroberfläche (unsichtbar)"],"items":[["Die ausgesprochenen Worte",0],["Zahlen und Fakten im Gespräch",0],["Gefühle wie Ärger oder Angst",1],["Werte und Erfahrungen einer Person",1],["Unausgesprochene Erwartungen",1]],"lo":"Sichtbar ist nur der kleine Teil: die Sachebene mit Worten und Fakten. Der grössere Teil liegt darunter: Gefühle, Werte, Erfahrungen und Erwartungen. Dort entstehen die meisten Missverständnisse."},{"id":"s11","lv":3,"st":5,"typ":"zu","q":"Ist die Vorlage angenommen?","kat":["Angenommen","Abgelehnt"],"items":[["Volksinitiative: 54 Prozent Ja, 13 von 23 Standesstimmen Ja",0],["Volksinitiative: 51 Prozent Ja, 10 von 23 Standesstimmen Ja",1],["Gesetz (Referendum): 51 Prozent Ja, 9 von 23 Standesstimmen Ja",0],["Volksinitiative: 48 Prozent Ja, 14 von 23 Standesstimmen Ja",1]],"lo":"Eine Volksinitiative ändert die Bundesverfassung und braucht das doppelte Mehr: Volksmehr und Ständemehr. Bei einem Gesetz genügt das Volksmehr, die Standesstimmen zählen nicht."},{"id":"s12","lv":3,"st":5,"typ":"re","q":"Abstimmung über eine Änderung der Bundesverfassung: 10 Kantone und 4 Halbkantone sagen Ja, alle anderen Nein. Wie viele Standesstimmen gibt es für Ja, wie viele für Nein?","felder":[["Standesstimmen Ja",12,""],["Standesstimmen Nein",11,""]],"lo":"Ja: 10 + 4 halbe = 12. Nein: 23 − 12 = 11. Das Ständemehr ist knapp erreicht. Angenommen ist die Vorlage nur, wenn auch die Mehrheit der Stimmenden Ja sagt."},{"id":"s13","lv":3,"st":5,"typ":"zu","q":"Die Schweiz und die Welt: Trifft die Aussage zu?","kat":["Trifft zu","Trifft nicht zu"],"items":[["Die Schweiz ist Mitglied der UNO",0],["Die Schweiz ist Mitglied der NATO",1],["Die Schweiz regelt ihr Verhältnis zur EU mit bilateralen Verträgen",0],["Neutralität heisst: Die Schweiz beteiligt sich nicht an Kriegen zwischen anderen Staaten",0],["Die Schweiz gehört zur EU, hat aber den Euro nicht eingeführt",1]],"lo":"Die Schweiz ist seit 2002 in der UNO, aber weder in der EU noch in der NATO. Als neutraler Staat tritt sie keinem Militärbündnis bei und nimmt an Kriegen anderer Staaten nicht teil."},{"id":"s14","lv":3,"st":6,"typ":"zu","q":"Die drei Gewalten in Ihrem Beruf: Welche Staatsgewalt handelt hier?","kat":["Legislative","Exekutive","Judikative"],"items":[["Das Parlament beschliesst das Heilmittelgesetz",0],["Swissmedic lässt ein neues Medikament zu",1],["Das Bundesamt für Gesundheit legt den Preis eines kassenpflichtigen Medikaments fest",1],["Das Bundesgericht entscheidet im Streit zwischen einer Versandapotheke und einer Behörde",2],["National- und Ständerat ändern das Krankenversicherungsgesetz",0]],"lo":"Das Parlament macht die Regeln, Bundesrat und Verwaltung (Swissmedic, BAG) setzen sie um, die Gerichte entscheiden im Streitfall."},{"id":"s15","lv":3,"st":6,"typ":"rf","q":"Ein Gesetz kommt nur zustande, wenn Nationalrat und Ständerat zustimmen; der Nationalrat kann den Ständerat trotz seiner 200 Sitze nicht überstimmen.","ans":"R","lo":"Die beiden Kammern sind gleichberechtigt. So haben das Volk (Nationalrat) und die Kantone (Ständerat) gleich viel Gewicht, auch die kleinen Kantone."},{"id":"s16","lv":3,"st":6,"typ":"rf","q":"Die Schweiz hat sieben gleichberechtigte Mitglieder im Bundesrat statt einer Präsidentin mit Sonderrechten, damit die Macht verteilt ist und die grossen Parteien und die Landesteile in der Regierung vertreten sind.","ans":"R","lo":"Der Bundesrat entscheidet gemeinsam (Kollegialregierung). Die Bundespräsidentin oder der Bundespräsident leitet die Sitzungen nur für ein Jahr und hat nicht mehr Macht als die anderen."}];
+var ST = {"1": "5.1 Meine Medienwelt", "2": "5.2 Medien als vierte Gewalt", "3": "5.3 Fakt oder Fake?", "4": "Repetition Kommunikationsmodelle", "5": "6.1 Demokratie in der Schweiz", "6": "6.2 Die drei Gewalten"};
+var SPERRE = 60;
+var KEY = "hkv_p25c_medien_ueb48_v1";
+var STUFE = {1:"Leicht",2:"Mittel",3:"Schwer"};
+var TYP = {rf:"Richtig oder falsch",zu:"Zuordnen",rh:"Reihenfolge",re:"Rechnen"};
+var S = {a:{}, sek:{}, pos:T[0].id, fl:0, fs:0};
+var speicherOk = true;
+function laden(){ try{ var s = localStorage.getItem(KEY); if(s){ var o = JSON.parse(s); if(o && o.a){ S = o; } } }catch(e){ speicherOk = false; } }
+function sichern(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){ speicherOk = false; } }
+laden();
+if(!S.sek) S.sek = {};
+var NR = {}; T.forEach(function(t,i){ NR[t.id] = i+1; });
+function aufg(id){ for(var i=0;i<T.length;i++) if(T[i].id===id) return T[i]; return T[0]; }
+function el(tag, cls, txt){ var e = document.createElement(tag); if(cls) e.className = cls; if(txt!==undefined) e.textContent = txt; return e; }
+function fmt(n){ var s = String(Math.abs(n)), o = ""; while(s.length>3){ o = "’"+s.slice(-3)+o; s = s.slice(0,-3); } return (n<0?"−":"")+s+o; }
+function zahl(str){
+  var s = String(str).toLowerCase().replace(/chf|sfr\.?|fr\.|franken|jahre?n?|monate?n?|%/g,"").replace(/[\s'’`´]/g,"").replace(/\.[–\-]+$/,"").replace(",",".");
+  if(s==="") return null;
+  if(/^-?\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g,"");
+  var n = Number(s); return isFinite(n) ? n : null;
+}
+function mischen(arr, seed){ var a = arr.slice(), h = 0, i; for(i=0;i<seed.length;i++) h = (h*31 + seed.charCodeAt(i))>>>0;
+  for(i=a.length-1;i>0;i--){ h = (h*1103515245 + 12345)>>>0; var j = h % (i+1), x = a[i]; a[i] = a[j]; a[j] = x; } return a; }
+
+/* ---------- Filter und Kacheln ---------- */
+function passt(t){ return (!S.fl || t.lv===S.fl) && (!S.fs || t.st===S.fs); }
+function liste(){ return T.filter(passt); }
+function chips(wo, werte, feld){
+  var box = document.getElementById(wo);
+  werte.forEach(function(w){
+    var b = el("button","chip",w[1]); b.type = "button"; b.dataset.w = w[0];
+    b.addEventListener("click", function(){ S[feld] = w[0]; var l = liste(); if(l.length && !passt(aufg(S.pos))) S.pos = l[0].id; sichern(); alles(); });
+    box.appendChild(b);
+  });
+}
+chips("fStufe", [[0,"Alle"],[1,"Leicht"],[2,"Mittel"],[3,"Schwer"]], "fl");
+chips("fStation", [[0,"Alle"]].concat(Object.keys(ST).map(function(k){ return [Number(k), ST[k]]; })), "fs");
+function status(id){ var a = S.a[id]; if(!a || !a.e) return ""; if(a.e==="r") return "r"; return a.ok ? "x" : "f"; }
+function kacheln(){
+  var box = document.getElementById("kacheln"); box.textContent = "";
+  liste().forEach(function(t){
+    var b = el("button","kachel "+status(t.id)+(t.id===S.pos?" akt":""), String(NR[t.id])); b.type = "button";
+    b.setAttribute("aria-label","Aufgabe "+NR[t.id]+", "+STUFE[t.lv]+", "+ST[t.st]);
+    b.addEventListener("click", function(){ gehe(t.id); });
+    box.appendChild(b);
+  });
+  ["fStufe","fStation"].forEach(function(wo){ var f = wo==="fStufe" ? S.fl : S.fs;
+    document.getElementById(wo).querySelectorAll(".chip").forEach(function(c){ c.setAttribute("aria-pressed", String(Number(c.dataset.w)===f)); }); });
+}
+function fortschritt(){
+  var bearb = 0, anhieb = 0; T.forEach(function(t){ var a = S.a[t.id]; if(a && a.e){ bearb++; if(a.e==="r") anhieb++; } });
+  document.getElementById("balken").style.width = (100*bearb/T.length)+"%";
+  document.getElementById("standtext").textContent = bearb+" von "+T.length+" Aufgaben bearbeitet · "+anhieb+" auf Anhieb richtig";
+}
+
+/* ---------- Aufgabe zeichnen ---------- */
+var antwort = null, timer = null;
+function gehe(id){ S.pos = id; sichern(); alles(); var a = document.getElementById("aufgabe"); if(a.scrollIntoView && a.getBoundingClientRect().top < 0) a.scrollIntoView({block:"start"}); }
+function alles(){ kacheln(); fortschritt(); zeichne(); }
+function offen(id){ return (S.sek[id]||0) >= SPERRE; }
+function zeichne(){
+  var t = aufg(S.pos), box = document.getElementById("aufgabe"), st = S.a[t.id] || {};
+  box.textContent = "";
+  var kopf = el("div","kopf");
+  kopf.appendChild(el("strong","", "Aufgabe "+NR[t.id]+" von "+T.length));
+  kopf.appendChild(el("span","marke lv"+t.lv, STUFE[t.lv]));
+  kopf.appendChild(el("span","marke", ST[t.st]));
+  kopf.appendChild(el("span","marke", TYP[t.typ]));
+  box.appendChild(kopf);
+  box.appendChild(el("p","frage", t.typ==="rf" ? "Richtig oder falsch? " + t.q : t.q));
+  var feld = el("div","eingabe"); box.appendChild(feld);
+
+  if(t.typ==="rf"){
+    antwort = st.w || null;
+    var r = el("div","rf");
+    [["R","Richtig"],["F","Falsch"]].forEach(function(o){
+      var b = el("button","wahl",o[1]); b.type = "button"; b.dataset.w = o[0]; b.setAttribute("aria-pressed", String(antwort===o[0]));
+      b.addEventListener("click", function(){ antwort = o[0]; r.querySelectorAll(".wahl").forEach(function(x){ x.setAttribute("aria-pressed", String(x.dataset.w===antwort)); }); });
+      r.appendChild(b);
+    });
+    feld.appendChild(r);
+  }
+  if(t.typ==="zu"){
+    var reihenf = mischen(t.items.map(function(_,i){ return i; }), t.id);
+    antwort = (st.w && st.w.length===t.items.length) ? st.w.slice() : t.items.map(function(){ return -1; });
+    reihenf.forEach(function(i){
+      var z = el("div","zeile"); z.appendChild(el("div","t", t.items[i][0]));
+      var k = el("div","k");
+      t.kat.forEach(function(name, ki){
+        var b = el("button","",name); b.type = "button"; b.setAttribute("aria-pressed", String(antwort[i]===ki));
+        b.addEventListener("click", function(){ antwort[i] = ki; k.querySelectorAll("button").forEach(function(x, xi){ x.setAttribute("aria-pressed", String(xi===ki)); }); });
+        k.appendChild(b);
+      });
+      z.appendChild(k); feld.appendChild(z);
+    });
+  }
+  if(t.typ==="rh"){
+    antwort = (st.w && st.w.length===t.steps.length) ? st.w.slice() : t.start.slice();
+    var ol = el("ol","reihe"); feld.appendChild(ol);
+    var zeichneReihe = function(){
+      ol.textContent = "";
+      antwort.forEach(function(si, pos){
+        var li = el("li"); li.appendChild(el("span","", t.steps[si]));
+        var auf = el("button","","▲"), ab = el("button","","▼"); auf.type = ab.type = "button";
+        auf.setAttribute("aria-label","Nach oben"); ab.setAttribute("aria-label","Nach unten");
+        auf.disabled = pos===0; ab.disabled = pos===antwort.length-1;
+        auf.addEventListener("click", function(){ var x = antwort[pos-1]; antwort[pos-1] = antwort[pos]; antwort[pos] = x; zeichneReihe(); });
+        ab.addEventListener("click", function(){ var x = antwort[pos+1]; antwort[pos+1] = antwort[pos]; antwort[pos] = x; zeichneReihe(); });
+        li.appendChild(auf); li.appendChild(ab); ol.appendChild(li);
+      });
+    };
+    zeichneReihe();
+  }
+  if(t.typ==="re"){
+    antwort = (st.w && st.w.length===t.felder.length) ? st.w.slice() : t.felder.map(function(){ return ""; });
+    t.felder.forEach(function(f, i){
+      var z = el("div","feld"), id = "f"+i, lab = el("label","", f[0]); lab.htmlFor = id;
+      var inp = el("input"); inp.id = id; inp.type = "text"; inp.inputMode = "decimal"; inp.autocomplete = "off"; inp.value = antwort[i];
+      inp.addEventListener("input", function(){ antwort[i] = inp.value; });
+      inp.addEventListener("keydown", function(e){ if(e.key==="Enter") pruefe(); });
+      z.appendChild(lab); z.appendChild(inp); z.appendChild(el("span","e", f[2])); feld.appendChild(z);
+    });
+  }
+
+  var kn = el("div","knoepfe");
+  var bp = el("button","btn voll","Prüfen"); bp.type = "button"; bp.id = "pruefen"; bp.addEventListener("click", pruefe);
+  var bl = el("button","btn",""); bl.type = "button"; bl.id = "loesung"; bl.addEventListener("click", function(){ zeigeLoesung(true); });
+  kn.appendChild(bp); kn.appendChild(bl); box.appendChild(kn);
+  var fb = el("div","fb"); fb.id = "fb"; fb.setAttribute("role","status"); fb.setAttribute("aria-live","polite"); box.appendChild(fb);
+  var lo = el("div","loes"); lo.id = "loes"; box.appendChild(lo);
+
+  var l = liste(), idx = l.indexOf(t), bl2 = el("div","blaettern");
+  var zur = el("button","btn leise","← Zurück"), vor = el("button","btn","Weiter →"); zur.type = vor.type = "button";
+  zur.disabled = idx<=0; vor.disabled = idx<0 || idx>=l.length-1;
+  zur.addEventListener("click", function(){ if(idx>0) gehe(l[idx-1].id); });
+  vor.addEventListener("click", function(){ if(idx<l.length-1) gehe(l[idx+1].id); });
+  bl2.appendChild(zur); bl2.appendChild(vor); box.appendChild(bl2);
+
+  if(st.fb) zeigeFb(st.fb[0], st.fb[1]);
+  if(st.auf) zeigeLoesung(false);
+  uhr();
+}
+function zeigeFb(gut, text){ var fb = document.getElementById("fb"); fb.className = "fb zeig " + (gut ? "gut" : "schlecht"); fb.textContent = text; }
+
+/* ---------- Prüfen ---------- */
+function pruefe(){
+  var t = aufg(S.pos), gut = false, text = "", n, ok = 0;
+  if(t.typ==="rf"){
+    if(!antwort){ zeigeFb(false,"Wählen Sie zuerst «Richtig» oder «Falsch»."); return; }
+    gut = antwort===t.ans; text = gut ? "Richtig." : "Das stimmt nicht.";
+  }
+  if(t.typ==="zu"){
+    if(antwort.indexOf(-1)>=0){ zeigeFb(false,"Ordnen Sie zuerst jeden Posten zu."); return; }
+    n = t.items.length; t.items.forEach(function(it,i){ if(antwort[i]===it[1]) ok++; });
+    gut = ok===n; text = gut ? "Richtig, alles stimmt." : ok+" von "+n+" richtig zugeordnet.";
+  }
+  if(t.typ==="rh"){
+    n = t.steps.length; antwort.forEach(function(si,pos){ if(si===pos) ok++; });
+    gut = ok===n; text = gut ? "Richtig, die Reihenfolge stimmt." : "Die Reihenfolge stimmt noch nicht: "+ok+" von "+n+" Schritten stehen an der richtigen Stelle.";
+  }
+  if(t.typ==="re"){
+    var leer = false; n = t.felder.length;
+    t.felder.forEach(function(f,i){ var z = zahl(antwort[i]); if(z===null) leer = true; else if(Math.abs(z-f[1])<0.5) ok++; });
+    if(leer){ zeigeFb(false,"Tragen Sie zuerst in jedes Feld eine Zahl ein."); return; }
+    gut = ok===n; text = gut ? "Richtig gerechnet." : (n===1 ? "Das Ergebnis stimmt nicht." : ok+" von "+n+" Ergebnissen stimmen.");
+  }
+  if(!gut) text += offen(t.id) ? " Versuchen Sie es noch einmal oder öffnen Sie die Lösung." : " Versuchen Sie es noch einmal. Die Lösung lässt sich nach 60 Sekunden öffnen.";
+  var a = S.a[t.id] || (S.a[t.id] = {});
+  if(!a.e) a.e = a.auf ? "x" : (gut ? "r" : "f");
+  if(gut) a.ok = true;
+  a.w = (t.typ==="rf") ? antwort : antwort.slice();
+  a.fb = [gut, text];
+  sichern(); zeigeFb(gut, text); kacheln(); fortschritt();
+}
+
+/* ---------- Lösung ---------- */
+function zeigeLoesung(geklickt){
+  var t = aufg(S.pos);
+  if(!offen(t.id)) return;
+  var a = S.a[t.id] || (S.a[t.id] = {});
+  if(geklickt){ a.auf = true; sichern(); }
+  var lo = document.getElementById("loes"); lo.textContent = ""; lo.className = "loes zeig";
+  lo.appendChild(el("h3","","Lösung"));
+  if(t.typ==="rf") lo.appendChild(el("p","", "Die Aussage ist " + (t.ans==="R" ? "richtig." : "falsch.")));
+  if(t.typ==="zu"){ var ul = el("ul","zu"); t.items.forEach(function(it){ var li = el("li","", it[0]+" → "); li.appendChild(el("b","", t.kat[it[1]])); ul.appendChild(li); }); lo.appendChild(ul); }
+  if(t.typ==="rh"){ var ol = el("ol"); t.steps.forEach(function(s){ ol.appendChild(el("li","",s)); }); lo.appendChild(ol); }
+  if(t.typ==="re"){ var u2 = el("ul"); t.felder.forEach(function(f){
+      var w = f[2]==="CHF" ? "CHF "+fmt(f[1]) : ((f[1]>1200 && f[1]<2100 && f[2]==="") ? String(f[1]) : fmt(f[1])) + (f[2] ? " "+f[2] : "");
+      u2.appendChild(el("li","", f[0]+": "+w)); }); lo.appendChild(u2); }
+  lo.appendChild(el("p","", t.lo));
+  var bl = document.getElementById("loesung"); if(bl){ bl.disabled = true; bl.textContent = "Lösung geöffnet"; }
+}
+
+/* ---------- 60-Sekunden-Sperre: zählt nur, solange die Aufgabe sichtbar ist ---------- */
+function knopf(){
+  var t = aufg(S.pos), bl = document.getElementById("loesung"); if(!bl) return;
+  var a = S.a[t.id] || {};
+  if(a.auf){ bl.disabled = true; bl.textContent = "Lösung geöffnet"; return; }
+  if(offen(t.id)){ bl.disabled = false; bl.textContent = "Lösung anzeigen"; }
+  else { bl.disabled = true; bl.textContent = "Lösung in "+(SPERRE-(S.sek[t.id]||0))+" s"; }
+}
+function uhr(){
+  if(timer) clearInterval(timer);
+  knopf();
+  timer = setInterval(function(){
+    var id = S.pos;
+    if(document.hidden || offen(id)) { knopf(); return; }
+    S.sek[id] = (S.sek[id]||0) + 1;
+    if(S.sek[id] % 5 === 0 || offen(id)) sichern();
+    knopf();
+  }, 1000);
+}
+
+/* ---------- Zurücksetzen (zweistufig, ohne Dialogfenster) ---------- */
+var rs = document.getElementById("reset"), rsT = null;
+rs.addEventListener("click", function(){
+  if(rs.dataset.sicher==="1"){ S = {a:{}, sek:{}, pos:T[0].id, fl:0, fs:0}; sichern(); rs.dataset.sicher = ""; rs.textContent = "Alles zurücksetzen"; alles(); return; }
+  rs.dataset.sicher = "1"; rs.textContent = "Wirklich alles löschen? Nochmals klicken";
+  clearTimeout(rsT); rsT = setTimeout(function(){ rs.dataset.sicher = ""; rs.textContent = "Alles zurücksetzen"; }, 4000);
+});
+
+if(!passt(aufg(S.pos))){ var l0 = liste(); if(l0.length) S.pos = l0[0].id; }
+alles();
+try{ localStorage.setItem(KEY+"_t","1"); localStorage.removeItem(KEY+"_t"); }catch(e){ speicherOk = false; }
+if(!speicherOk) document.getElementById("speicher").textContent = "Speichern ist in diesem Rahmen blockiert: Ihr Stand gilt nur, solange die Seite offen ist. Die Lösung lässt sich jeweils nach 60 Sekunden öffnen.";
+
+/* ---------- Als PDF speichern ---------- */
+var nurPdf = null;   /* Stand aus der Adresse (#pdf=…), wenn die Seite aus kv digital in einem eigenen Tab geöffnet wurde */
+var pp = document.getElementById("pdfpanel"), pn = document.getElementById("pdfname"), pl = document.getElementById("pdflink"), ph = document.getElementById("pdfhinweis"), dr = document.getElementById("druck");
+try{ pn.value = localStorage.getItem(KEY+"_name") || ""; }catch(e){}
+function zwei(n){ return (n<10?"0":"")+n; }
+function jetzt(){ var d = new Date(); return zwei(d.getDate())+"."+zwei(d.getMonth()+1)+"."+d.getFullYear()+", "+zwei(d.getHours())+":"+zwei(d.getMinutes())+" Uhr"; }
+function standKette(){ return T.map(function(t){ return status(t.id) || "-"; }).join(""); }
+function zeichen(c){ return c==="r" ? "✓" : c==="x" ? "(✓)" : c==="f" ? "✗" : "○"; }
+function bericht(){
+  var kette = nurPdf || standKette(), name = (pn.value||"").trim();
+  var z = {r:0,x:0,f:0,"-":0}; kette.split("").forEach(function(c){ z[c]++; });
+  dr.textContent = "";
+  var dk = el("div","dk"); dk.appendChild(el("b","", "Name: "+(name||"______________________"))); dk.appendChild(document.createElement("br"));
+  dk.appendChild(document.createTextNode("Stand vom "+jetzt())); dk.appendChild(document.createElement("br"));
+  dk.appendChild(document.createTextNode((T.length-z["-"])+" von "+T.length+" Aufgaben bearbeitet · "+z.r+" auf Anhieb richtig · "+z.x+" später oder mit Lösung richtig · "+z.f+" noch falsch · "+z["-"]+" offen"));
+  dr.appendChild(dk);
+  function tabelle(titel, gruppen){
+    dr.appendChild(el("h2","",titel));
+    var t = el("table"), k = el("tr"); ["","Aufgaben","auf Anhieb richtig","später richtig","noch falsch","offen"].forEach(function(x){ k.appendChild(el("th","",x)); }); t.appendChild(k);
+    gruppen.forEach(function(g){ var c = {r:0,x:0,f:0,"-":0}, n = 0; T.forEach(function(a,i){ if(g[1](a)){ n++; c[kette.charAt(i)]++; } });
+      var r = el("tr"); [g[0],n,c.r,c.x,c.f,c["-"]].forEach(function(x){ r.appendChild(el("td","",String(x))); }); t.appendChild(r); });
+    dr.appendChild(t);
+  }
+  tabelle("Nach Stufe", [1,2,3].map(function(l){ return [STUFE[l], function(a){ return a.lv===l; }]; }));
+  tabelle("Nach Thema", Object.keys(ST).map(function(k){ return [ST[k], function(a){ return a.st===Number(k); }]; }));
+  dr.appendChild(el("h2","","Alle Aufgaben"));
+  dr.appendChild(el("p","leg","✓ auf Anhieb richtig · (✓) später oder mit Lösung richtig · ✗ noch falsch · ○ offen"));
+  var g = el("div","gitter"); T.forEach(function(a,i){ g.appendChild(el("span","", (i+1)+" "+zeichen(kette.charAt(i)))); }); dr.appendChild(g);
+}
+function pdfAdresse(){ return location.href.split("#")[0]+"#pdf="+standKette()+"&n="+encodeURIComponent((pn.value||"").trim()); }
+function drucken(){
+  try{ if(!nurPdf) localStorage.setItem(KEY+"_name",(pn.value||"").trim()); }catch(e){}
+  bericht(); if(!nurPdf){ pl.href = pdfAdresse(); pl.hidden = !(window.self !== window.top); }
+  try{ window.print(); }catch(e){ if(!nurPdf) pl.hidden = false; }
+}
+document.getElementById("pdfbtn").addEventListener("click", function(){ pp.hidden = !pp.hidden; if(!pp.hidden){ try{ pn.focus(); }catch(e){} } });
+document.getElementById("pdfgo").addEventListener("click", drucken);
+pn.addEventListener("keydown", function(e){ if(e.key==="Enter") drucken(); });
+pl.addEventListener("click", function(){ pl.href = pdfAdresse(); });
+(function(){ var mit = /^#pdf=([rxf\-]+)(?:&n=(.*))?$/.exec(location.hash);
+  if(!mit || mit[1].length !== T.length) return;
+  nurPdf = mit[1]; try{ pn.value = decodeURIComponent(mit[2]||""); }catch(e){}
+  document.body.classList.add("nurpdf"); pp.hidden = false; ph.hidden = false;
+  ph.textContent = "Das ist Ihr Stand aus kv digital. Klicken Sie auf «PDF erstellen».";
+  bericht(); setTimeout(drucken, 600);
+})();
+window.__ueb = {T:T, S:function(){ return S; }};
+})();
+</script>
+</body>
+</html>
